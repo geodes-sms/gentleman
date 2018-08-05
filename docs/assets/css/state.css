@@ -1,0 +1,5 @@
+.collapse { }
+
+.hidden { display: none; }
+
+.selected { background-color: rgba(45, 105, 196, 0.5); }

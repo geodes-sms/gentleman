@@ -163,7 +163,7 @@ main {
 .card-role { color: #555; }
 
 article[data-page="docs"] {
-    background: #f0f0f0 url(../images/books-1845614_1920.jpg) 100%/cover no-repeat;
+    background: #f0f0f0 url(https://raw.github.com/geodes-sms/gentleman/master/assets/images/books-1845614_1920.jpg) 100%/cover no-repeat;
 }
 
 .article-header { 
