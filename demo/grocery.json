@@ -1,0 +1,212 @@
+{
+    "notebook":{
+        "name": "notebook",
+        "attr": {
+            "name": { "name": "name", "type": "ID" }
+        },
+        "composition": [
+            {
+                "name": "Store section",
+                "position": 1,
+                "optional": true,
+                "multiple": true,
+                "attr": {
+                    "stores": { "name": "stores", "type": "store", "multiple": true }
+                },
+                "representation": { "type": "text", "val": "#stores" }
+            },
+            {
+                "name": "Category section",
+                "position": 2,
+                "optional": true,
+                "attr": {
+                    "categories": { "name": "categories", "type": "category", "multiple": true }
+                },
+                "representation": { "type": "text", "val": "#categories" }
+            },
+            {
+                "name": "List declaration",
+                "position": 3,
+                "attr": {
+                    "list": { "name": "list", "type": "list" }
+                },
+                "representation": { "type": "text", "val": "#list" }
+            }
+        ],
+        "representation": { "type": "text", "val": "#name $composition" }
+    },
+    "store": {
+        "name": "store",
+        "attr": {
+            "name": { "name": "name", "type": "ID" },
+            "address": { "name": "address", "type": "string", "optional": true },
+            "hours": { 
+                "name": "hours", "type": "hour", "optional": true,
+                "representation": { "type": "table", "row": "$val" } 
+            },
+            "phoneNumber": { "name": "phoneNumber", "type": "string", "optional": true },
+            "isFavorite": { "name": "isFavorite", "type": "boolean", "val": false }
+        },
+        "representation": {
+            "type": "text",
+            "k1": { "type": "keyword", "val": "STORE" },
+            "val": "$k1 #name &NL #address"
+        }
+    },
+    "category": {
+        "name": "category",
+        "attr": {
+            "name": { "name": "name", "type": "ID" },
+            "description": { 
+                "name": "name", "type": "string", "optional": true,
+                "representation": { "type": "text", "val": "[$val]" }}
+        },
+        "representation": { "type": "text", "val": "#name #description" }
+    },
+    "list": {
+        
+        "name": "list",
+        "attr": {
+            "name": { "name": "name", "type": "string", "optional": true },
+            "date": { "name": "date", "type": "date" }
+        },
+        "composition": [
+            {
+                "name": "Section",
+                "position": 1,
+                "optional": true,
+                "multiple": true,
+                "attr": {
+                    "section": { "name": "section", "type": "section" }
+                },
+                "representation": { "type": "text", "val": "#section" }
+            },
+            {
+                "name": "Items",
+                "position": 2,
+                "optional": true,
+                "attr": {
+                    "items": { "name": "items", "type": "item", "multiple": true, "min": 1, "inline": false }
+                },
+                "representation": { "type": "text", "val": "#items" }
+            }
+        ],
+        "representation": { 
+            "type": "text", 
+            "k1": { "type": "keyword", "val": "Liste d'épicerie" },
+            "val": "$k1 #name du #date $composition" 
+        }
+    },
+    "hour": {
+        "name": "hour",
+        "attr": {
+            "day": { "name": "day", "type": "weekday" },
+            "opentime": { "name": "opentime", "type": "time" },
+            "closetime": { "name": "closetime", "type": "time" }
+        },
+        "representation":{
+            "type": "table",
+            "col": { "val": "#day" },
+            "cell": { "val": "#opentime - #closetime" }
+        }
+    },
+
+    "section": {
+        "name": "section",
+        "attr": {
+            "name": { "name": "name", "type": "string" },
+            "category": { "name": "category", "type": "IDREF", "ref": "category" }
+        },
+        "composition": [
+            {
+                "name": "items",
+                "keyword": "Items",
+                "position": 1,
+                "attr": {
+                    "items": { "name": "items", "type": "item", "multiple": true, "min": 1, "inline": false }
+                },
+                "representation": { "type": "text", "val": "#items" }
+            }
+        ],
+        "representation": {
+            "type": "text",
+            "k1": "Market",
+            "val": "$k1 #name $composition"
+        }
+    },
+    "item": {
+        "name": "item",
+        "attr": {
+            "name": { "name": "name", "type": "string" },
+            "quantity": { "name": "quantity", "type": "integer", "val": "1" },
+            "category": { "name": "category", "type": "IDREF", "ref": "category" },
+            "note": { 
+                "name": "note", "type": "string", "optional": true, 
+                "representation": { "type": "text", "val": "<<$val>>" }
+            }
+        },
+        "representation": {
+            "type": "text",
+            "val": "#name(#quantity) #note"
+        }
+    },
+
+    "schdedule": {
+        "name": "schdedule",
+        "attr": {
+            "day": { "name": "day", "type": "string" },
+            "time": { "name": "time", "type": "string" },
+            "task": { "name": "task", "type": "map", "key": "day,time" }
+        },
+        "representation":{
+            "type": "table",
+            "col": { "val": "#day" },
+            "row": { "val": "#time" },
+            "cell": { "val": "#task" }
+        }
+    },
+    "classification": {
+        "name": "classification",
+        "attr": {
+            "class": { "name": "class", "type": "string" },
+            "item": { "name": "item", "type": "map", "key": "class" }
+        },
+        "representation":{
+            "type": "table",
+            "col": { "val": "#class" },
+            "row": { "val": "&index" },
+            "cell": { "val": "#item" }
+        }
+    },
+ 
+    "date": {
+        "name": "date",
+        "base": "date",
+        "type": "data-type",
+        "format": "[1-9][0-9]{3}-[01][0-9]-[0-3][0-9]"
+    },
+    "time": {
+        "name": "time",
+        "type": "data-type",
+        "format": "([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+
+    "weekday": {
+        "type": "enum",
+        "values": {
+            "monday": { "val": "monday" },
+            "tuesday": { "val": "tuesday" },
+            "wednesday": { "val": "wednesday" },
+            "thursday": { "val": "thursday" },
+            "friday": { "val": "friday" }
+        }
+    },
+    "@root": "notebook",
+    "@config": {
+        "language": "Grocery",
+        "settings": {
+            "autosave": true
+        }
+    },
+    "@resources": ["grocery.css"]
+}

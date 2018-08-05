@@ -1,0 +1,138 @@
+{
+    "transcript": {
+        "root": true,
+        "name": "transcript",
+        "attr": {
+            "issue_date": { "name": "issue_date", "type": "date" },
+            "unip": { "name": "unip", "type": "string" },
+            "permanent_code": { "name": "permanent_code", "type": "string" },
+            "full_name": { "name": "full_name", "type": "string" },
+            "address": { "name": "address", "type": "string", "optional": true }
+        },
+        "composition": [
+            {
+                "name": "c1",
+                "keyword": "Diplômes décernés",
+                "position": 1,
+                "optional": true,
+                "attr": {
+                    "diploma": { "name": "diploma", "type": "diploma", "multiple": true, "min": 1, "inline": false }
+                },
+                "representation": { "type": "text", "val": "$keyword #diploma" }
+            },
+            {
+                "name": "c2",
+                "keyword": "Relevés des études de premier cycle",
+                "position": 2,
+                "optional": true,
+                "attr": {
+                    "undergraduate": { "name": "undergraduate", "type": "undergraduate", "multiple": true, "min": 1, "inline": false }
+                },
+                "representation": { "type": "text", "val": "$keyword #undergraduate" }
+            }
+        ],
+        "representation": {
+            "type": "text",
+            "k1": { "type": "keyword", "val": "RELEVÉ DE NOTES" },
+            "g1": { "type": "group", "inline": false, "align": "right", "val": "Date d'émission: #issue_date &NL Matricule: #unip &NL Code permanent: #permanent_code" },
+            "g2": { "type": "group", "inline": false, "val": "#full_name &NL #address" },
+            "val": "$k1 &NL $g1 &CL $g2 $composition"
+        }
+    },
+    "header": {
+        "name": "header",
+        "composition": [
+            {
+                "name": "c1",
+                "position": 1,
+                "attr": {
+                    "issue_date": { "name": "issue_date", "type": "date" },
+                    "unip": { "name": "unip", "type": "string" },
+                    "permanent_code": { "name": "permanent_code", "type": "string" }
+                },
+                "representation": {
+                    "type": "text",
+                    "inline": false,
+                    "align": "right",
+                    "val": "Date d'émission: #issue_date &NL Matricule: #unip &NL Code permanent: #permanent_code"
+                }
+            },
+            {
+                "name": "c2",
+                "position": 2,
+                "attr": {
+                    "full_name": { "name": "full_name", "type": "string" },
+                    "address": { "name": "address", "type": "string", "optional": true }
+                },
+                "representation": {
+                    "type": "text",
+                    "inline": false,
+                    "align": "right",
+                    "val": "#full_name &NL #address"
+                }
+            }
+        ],
+        "representation": { "type": "text", "val": "$composition" }
+    },
+    "diploma": {
+        "name": "diploma",
+        "attr": {
+            "grant_date": { "name": "grant_date", "type": "date" },
+            "degree": { "name": "degree", "type": "string" }
+        },
+        "representation": {
+            "type": "text",
+            "val": "Date d'octroi: #grant_date &NL Diplôme: #degree"
+        }
+    },
+    "undergraduate": {
+        "name": "undergraduate",
+        "attr": {
+            "session": { "name": "session", "type": "string" },
+            "grades": {
+                "name": "grades", "type": "grade", "multiple": true, "representation": {
+                    "type": "table",
+                    "useheader": false,
+                    "containerless": true,
+                    "cols": [
+                        { "val": "#grades" }
+                    ]
+                }
+            }
+        },
+        "representation": { "type": "text", "val": "#session #grades" }
+    },
+    "grade": {
+        "name": "grade",
+        "attr": {
+            "course": { "name": "course", "type": "string" },
+            "description": { "name": "description", "type": "string" },
+            "credit_followed": { "name": "credit_followed", "type": "integer" },
+            "credit_obtained": { "name": "credit_obtained", "type": "integer" },
+            "mark": { "name": "mark", "type": "string" },
+            "points": { "name": "points", "type": "real" },
+            "average": { "name": "average", "type": "string" }
+        },
+        "representation": {
+            "type": "table",
+            "useheader": true,
+            "containerless": true,
+            "cols": [
+                { "name": "Cours", "val": "#course" },
+                { "name": "Description", "val": "#description" },
+                { "name": "Suivis", "val": "#credit_followed" },
+                { "name": "Obtenus", "val": "#credit_obtained" },
+                { "name": "Note", "val": "#mark" },
+                { "name": "Points", "val": "#points" },
+                { "name": "Moy gr.", "val": "#average" }
+            ]
+        }
+    },
+    "date": {
+        "name": "date",
+        "base": "date",
+        "type": "data-type",
+        "format": "[1-9][0-9]{3}-[01][0-9]-[0-3][0-9]"
+    },
+    "@language": "Transcript"
+}

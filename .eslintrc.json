@@ -1,0 +1,48 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "indent": [
+            "error",
+            4,
+            {
+                "SwitchCase": 1
+            }
+        ],
+        "linebreak-style": [
+            "error",
+            "windows"
+        ],
+        "quotes": [
+            "off",
+            "double"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "no-unused-vars": "off",
+        "no-useless-escape": "warn"
+    },
+    "globals": {
+        "DOC": false,
+        "KEY": false,
+        "HIDDEN": false,
+        "EMPTY": false,
+        "SELECTED": false,
+        "DATATYPE": false,
+        "HTMLAttribute": false,
+        "UTIL": true,
+        "HELPER": true,
+        "Autocomplete": false,
+        "Projection": false,
+        "Exception": false,
+        "MetaModel": false,
+        "ModelElement": false,
+        "ModelAttribute": false,
+        "Representation": false
+    }
+}

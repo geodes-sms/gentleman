@@ -1,0 +1,11 @@
+table .array { 
+    display: table;
+}
+
+table .array-item {
+    display: table-row;
+}
+
+table .attr {
+    display: cell;
+}

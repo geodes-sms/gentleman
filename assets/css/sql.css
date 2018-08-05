@@ -1,0 +1,17 @@
+#container {
+    color: #222;
+    font-family: Consolas, 'Courrier New', monospace;
+}
+
+.keyword {
+    color: blue;
+    text-transform: uppercase;
+}
+
+.attr[data-type="ID"] {
+    color: #222;
+}
+/* 
+.attr[data-type="string"] {
+    color: blue;
+} */

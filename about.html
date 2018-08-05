@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>About</title>
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/docs.css">
+</head>
+
+<body>
+    <header>
+        <div class="content-wrapper"></div>
+        <div class="content-wrapper content-wrapper--header">
+            <a class="logo noselect" href="/index.html">
+                Gentleman
+            </a>
+            <nav class="header-nav">
+                <ul class="bare-list menu">
+                    <li class="menu-item selected">
+                        <a class="menu-item__link" href="about.html">About</a>
+                    </li>
+                    <li class="menu-item">
+                        <a class="menu-item__link" href="docs/index.html">Documentation</a>
+                    </li>
+                    <li class="menu-item">
+                        <a class="menu-item__link" href="faq.html">FAQ</a>
+                    </li>
+                    <li class="menu-item">
+                        <a class="menu-item__link" href="#">Code</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="action-call-wrapper">
+                <a class="action-call" href="/index.html">Try the demo</a>
+            </div>
+        </div>
+    </header>
+    <main>
+        <article class="clear">
+            <header class="article-header">
+                <div class="content-wrapper">
+                    <h1 class="page-title">About</h1>
+                    <p class="gentleman-quote">Take a look at our story and ourselves.</p>
+                </div>
+            </header>
+
+            <div class="body content-wrapper">
+                <section>
+
+                    <h2 class="section-title">The story: From an idea to a project</h2>
+                </section>
+
+                <section>
+                    <h2 class="section-title">Gentleman in a gist</h2>
+                    <p>
+                        Various types of text editors exist to write software. The most popular is a plain text editor that highlights keywords and
+                        proposes code completion depending on the context of the cursor. Programmers start with a blank page
+                        and type in the code. This requires them to know in advance the structure of the code, as it is common
+                        to all programs written in a programming language, like Java. However, when it comes to domain-specific
+                        languages (DSL), users are typically not programmers. DSLs are small heavily constrained languages
+                        that are tailored to a specific expertise. Starting from a blank page does not help them and not
+                        seeing the overall structure is the source of lots of errors.
+                    </p>
+                    <p>
+                        Projectional editors (PE) are an attractive solution because they prepopulate the structure of the code. PEs present text
+                        and other visualizations, such as tables and equations, with placeholders. Users are only allowed
+                        to write text in these placeholders, which reduces significantly the chances of making an error.
+                        The editable parts of the code support advanced editing features, including syntax highlighting,
+                        automatic text completion, and context-dependent suggestions.
+                    </p>
+
+                    <p>
+                        The goal of this project is to implement the framework to automatically generate web-based PEs. The only input required is
+                        the grammar of a DSL. In this project, the projectional editor generator should produce the editors
+                        of two DSLs that will be integrated in the online software to conduct systematic literature reviews
+                        we have been developing in our lab:
+                        <em>
+                            <a class="link link-out" href="http://www-ens.iro.umontreal.ca/~syriani/research_fr.html">ReLiS</a>
+                        </em>. One editor is for a limited SQL to restrain queries to the database of a ReLiS project. It targets
+                        users with programming experience. The other editor is for a DSL to configure projects in ReLiS.
+                        It targets all users of ReLiS who are researchers in any domain.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="section-title">The team</h2>
+                    <div class="card-container">
+                        <div class="card">
+                            <img class="card-img" src="assets/images/eugene_syriani.jpg" alt="Photo d'Eugène SYRIANI">
+                            <p class="card-name">Dr. Eugène SYRIANI, Ph.D.</p>
+                            <p class="card-role">Supervisor</p>
+                            <p class="card-description">Eugène is an Associate Professor in Computer Science at the University of Montreal. He is one
+                                of the leaders of the GEODES Software Engineering Research Group.</p>
+                        </div>
+                        <div class="card">
+                            <img class="card-img" src="assets/images/louis-edouard_lafontant.jpg" alt="Photo de Louis-Edouard LAFONTANT">
+                            <p class="card-name">Louis-Edouard LAFONTANT</p>
+                            <p class="card-role">Developer</p>
+                            <p class="card-description">Louis-Edouard is a Computer Science major with a speciality in software engineering.</p>
+                        </div>
+                    </div>
+
+                    <h3 class="title">Contributors</h3>
+                    <div class="card-container card-container--small">
+                        <div class="card">
+                            <img class="card-img card-img--small" src="assets/images/safaa_allamy.jpg" alt="Photo de Safaa ALLAMY">
+                            <p class="card-name">Safaa ALLAMY</p>
+                            <p class="card-role">Developer</p>
+                            <p class="card-description">Worked on the model generator.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </article>
+    </main>
+    <footer>
+        <div class="content-wrapper">
+            Terms of use|License | UdeM
+        </div>
+    </footer>
+</body>
+
+</html>
