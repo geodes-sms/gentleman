@@ -16,7 +16,7 @@ If you can't wait to play with Gentleman, download the src folder. Please, be in
 
 ## Documentation
 
-You can read the documentation for Gentleman [here](http://gentleman.azurewebsites.net/docs). If you would like to help improve this documentation, the source for many of the docs can be found in the doc folder within this repository.
+You can read the documentation for Gentleman [here](https://geodes-sms.github.io/gentleman/). If you would like to help improve this documentation, the source for many of the docs can be found in the doc folder within this repository.
 
 # Distribution
 
