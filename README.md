@@ -12,9 +12,25 @@ Gentleman is a web-based projectionnal editor generator. It allows you to expres
 
 # Installation
 
-If you can't wait to play with Gentleman, download the src folder. Please, be informed that Gentleman is currently in alpha. Proceed with caution.
+If you can't wait to play with Gentleman, download the src folder.<br> **Please, be informed that Gentleman is currently in alpha. Proceed with caution.**
 
-## Documentation
+## Building the Code
+To build the code, follow these steps.
+
+1. Ensure that [NodeJS](http://nodejs.org/) is installed. This provides the platform on which the build tooling runs.
+2. From the project folder, execute the following command:
+
+```
+$ npm install
+```
+
+## Running the Tests
+
+```
+$ npm run test
+```
+
+# Documentation
 
 You can read the documentation for Gentleman [here](https://geodes-sms.github.io/gentleman/). If you would like to help improve this documentation, the source for many of the docs can be found in the doc folder within this repository.
 

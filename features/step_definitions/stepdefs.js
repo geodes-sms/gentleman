@@ -27,7 +27,7 @@ When('I give it the {string}', function (value) {
     this.isValid = validateRequired.call(this, this.attr);
 });
 
-Then('I should get {boolean}', function (isValid) {
+Then('the attribute should be {boolean}', function (isValid) {
     expect(this.isValid).to.equal(isValid);
 });
 

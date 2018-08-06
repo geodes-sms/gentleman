@@ -4,11 +4,11 @@ Feature: Optional attribute property
   Scenario Outline: Validate a required/optional attribute
     Given an attribute is <optional>
     When I give it the <value>
-    Then I should get <error>
+    Then the attribute should be <valid>
     Then I should get a <message>
 
   Examples:
-    | optional | value | error | message |
+    | optional | value | valid | message |
     |     true |    "" |  true |   false | #optional
     |     true |  "ok" |  true |   false | #optional
     |    false |    "" | false |    true | #required
