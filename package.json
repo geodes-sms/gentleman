@@ -1,0 +1,32 @@
+{
+  "name": "gentleman",
+  "version": "0.7.0",
+  "description": "Gentleman is a web-based projectionnal editor generator. It allows you to express and interact with your DSL.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "cucumber-js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geodes-sms/gentleman.git"
+  },
+  "keywords": [
+    "projectionnal-editor",
+    "mde",
+    "dsl",
+    "js"
+  ],
+  "author": "Louis-Edouard LAFONTANT",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/geodes-sms/gentleman/issues"
+  },
+  "homepage": "https://github.com/geodes-sms/gentleman#readme",
+  "dependencies": {
+    "chai": "^4.1.2",
+    "cucumber": "^4.2.1"
+  }
+}

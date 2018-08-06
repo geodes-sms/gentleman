@@ -29,6 +29,7 @@
     },
     "globals": {
         "DOC": false,
+        "require": false,
         "KEY": false,
         "HIDDEN": false,
         "EMPTY": false,

@@ -1,4 +1,4 @@
-var HELPER = (function () {
+const HELPER = (function () {
     var pub = {
         cloneObject: function (obj) {
             if (obj === null || typeof (obj) !== 'object')
@@ -103,8 +103,11 @@ var HELPER = (function () {
             xhr.send();
         },
 
-        toBoolean: function (val) {
-            return val === true || val === 'true';
+        toBoolean: function(val) {
+            return val === true || val.toLowerCase() === 'true';
+        },
+        boolToInt(val) {
+            return val ? 1 : 0;
         },
 
         /**
@@ -185,5 +188,8 @@ var HELPER = (function () {
         var d = parseDate(arrDateTime[0]).setHours(+arrTime[0], +arrTime[1]);
         return new Date(d);
     }
+
     return pub;
 }());
+
+exports.HELPER = HELPER;
