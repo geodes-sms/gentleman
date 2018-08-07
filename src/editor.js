@@ -34,7 +34,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
             var undo = function () {
                 instance.current = past.pop();
                 future = [instance.current, ...future];
-
+                console.log(future);
             };
 
             var redo = function () {
@@ -163,13 +163,6 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
 
             // // draw the editor
             this.render();
-        },
-        render: function () {
-            var self = this;
-
-            self.currentLine.appendChild(self.current.render());
-            self.currentLine = self.currentLine.firstChild;
-            self.currentLine.contentEditable = false;
 
             // Get next element
             var next = $.getElement('.attr', self.currentLine) || $.getElement('.option', container);
@@ -179,6 +172,13 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
             }
 
             next.focus();
+        },
+        render: function () {
+            var self = this;
+
+            self.currentLine.appendChild(self.current.render());
+            self.currentLine = self.currentLine.firstChild;
+            self.currentLine.contentEditable = false;
         },
         bindEvents: function () {
             var self = this;
@@ -252,10 +252,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                         }, 1500);
                         break;
                     case btnCopy:
-
-                        var el = $.createElement('textarea');
-                        el.value = self.abstract.toString();
-                        el.setAttribute('readonly', '');
+                        var el = $.createTextArea({ value: self.abstract.toString(), readonly: true });
                         el.style.position = 'absolute';
                         el.style.left = '-9999px';
                         container.appendChild(el);
@@ -268,6 +265,14 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                         break;
                     case btnUndo:
                         self.state.undo();
+                        self._concrete = self.state.current;
+                        self._current = self._abstract.createModelElement(self._concrete.root);
+                        $.removeChildren(self._body);
+                        self._currentLine = self._body;
+                        self.render();
+                        break;
+                    case btnRedo:
+                        self.state.redo();
                         self._concrete = self.state.current;
                         self._current = self._abstract.createModelElement(self._concrete.root);
                         $.removeChildren(self._body);
@@ -431,7 +436,8 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                     if (projection) {
                         projection.focusOut();
                         projection.update();
-                        // self.save();
+                        console.log("i am saving state");
+                        self.state.set(_.cloneObject(self.concrete));
                     }
 
                     if (self.autocomplete.hasFocus) {

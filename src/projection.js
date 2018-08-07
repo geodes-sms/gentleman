@@ -538,10 +538,8 @@ var Projection = (function ($, _, ERR) {
         var isValid = true;
         // required validation
         if (!this.isOptional) {
-            
             isValid = !_.isNullOrWhiteSpace(this.value.toString());
             if (!isValid) {
-                
                 this.error = "This attribute is <strong>required</strong>.";
             }
         }

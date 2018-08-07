@@ -2,12 +2,12 @@ const { Given, When, Then } = require('cucumber');
 const expect = require('chai').expect;
 const _ = require('../../src/helpers/helpers').HELPER;
 
-function validateRequired(attr) {
+function validateRequired() {
     var isValid = true;
     this.error = null;
 
-    if (!attr.isOptional) {
-        isValid = !_.isNullOrWhiteSpace(attr.value.toString());
+    if (!this.isOptional) {
+        isValid = !_.isNullOrWhiteSpace(this.value.toString());
         if (!isValid) {
             this.error = "This attribute is <strong>required</strong>.";
         }
@@ -17,14 +17,12 @@ function validateRequired(attr) {
 }
 
 Given('an attribute is {boolean}', function (optional) {
-    this.attr = {
-        isOptional: optional
-    };
+    this.isOptional = optional;
 });
 
 When('I give it the {string}', function (value) {
-    this.attr.value = value;
-    this.isValid = validateRequired.call(this, this.attr);
+    this.value = value;
+    this.isValid = validateRequired.call(this);
 });
 
 Then('the attribute should be {boolean}', function (isValid) {

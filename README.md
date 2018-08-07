@@ -32,7 +32,7 @@ $ npm run test
 
 # Documentation
 
-You can read the documentation for Gentleman [here](https://geodes-sms.github.io/gentleman/). If you would like to help improve this documentation, the source for many of the docs can be found in the doc folder within this repository.
+You can read the documentation for Gentleman [here](https://geodes-sms.github.io/gentleman/docs). If you would like to help improve this documentation, the source for many of the docs can be found in the doc folder within this repository.
 
 # Distribution
 

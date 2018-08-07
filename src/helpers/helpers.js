@@ -104,7 +104,8 @@ const HELPER = (function () {
         },
 
         toBoolean: function(val) {
-            return val === true || val.toLowerCase() === 'true';
+            val = this.valOrDefault(val, false);
+            return val === true || val.toString().toLowerCase() === 'true';
         },
         boolToInt(val) {
             return val ? 1 : 0;

@@ -25,7 +25,7 @@ var UTIL = (function (_) {
         /**
          * Gets the window's width
          */
-        getWindowWidth: function () { return window.innerWidth || DOC.documentElement.clientWidth || DOC.body.clientWidth; },
+        getWindowWidth() { return window.innerWidth || DOC.documentElement.clientWidth || DOC.body.clientWidth; },
 
         /**
          * Returns the first element that matches the query selector.
@@ -33,7 +33,7 @@ var UTIL = (function (_) {
          * @param {HTMLElement} p container
          * @returns {HTMLElement}
          */
-        getElement: function (e, p) {
+        getElement(e, p) {
             p = _.valOrDefault(p, DOC);
 
             switch (e.charAt(0)) {
@@ -53,7 +53,7 @@ var UTIL = (function (_) {
          * @param {HTMLElement} p containter
          * @returns {HTMLElement[]}
          */
-        getElements: function (e, p) {
+        getElements(e, p) {
             p = _.valOrDefault(p, DOC);
 
             switch (e.charAt(0)) {
@@ -71,7 +71,7 @@ var UTIL = (function (_) {
          * @param {string} dir sibling direction
          * @returns {(Element|null)} Element or null
          */
-        getElementSibling: function (el, dir) {
+        getElementSibling(el, dir) {
             var sibling = el[dir];
 
             while (sibling && this.hasClass(sibling, "autocomplete")) sibling = sibling[dir];
@@ -83,13 +83,13 @@ var UTIL = (function (_) {
          * @param {HTMLElement} el element
          * @returns {(Element|null)} Element or null if the specified element is the first one in the list
          */
-        getPreviousElementSibling: function (el) { return this.getElementSibling(el, "previousElementSibling"); },
+        getPreviousElementSibling(el) { return this.getElementSibling(el, "previousElementSibling"); },
         /**
          * Gets the element following the specified one in its parent's children list
          * @param {HTMLElement} el element
          * @returns {(Element|null)} Element or null if the specified element is the last one in the list
          */
-        getNextElementSibling: function (el) { return this.getElementSibling(el, "nextElementSibling"); },
+        getNextElementSibling(el) { return this.getElementSibling(el, "nextElementSibling"); },
         /**
          * Inserts a given element before the targetted element
          * @param {HTMLElement} target 
@@ -107,7 +107,7 @@ var UTIL = (function (_) {
          * @param {HTMLElement} e element
          * @param {string} c class
          */
-        hasClass: function (e, c) {
+        hasClass(e, c) {
             var classes = e.className.split(" ");
             for (let i = 0, len = classes.length; i < len; i++) {
                 if (c == classes[i])
@@ -120,7 +120,7 @@ var UTIL = (function (_) {
          * @param {HTMLElement} e element
          * @param {string} c class
          */
-        removeClass: function (e, c) {
+        removeClass(e, c) {
             if (this.hasClass(e, c)) {
                 var classes = e.className.split(" ");
                 var classes2 = "";
@@ -136,7 +136,7 @@ var UTIL = (function (_) {
          * @param {HTMLElement} e element
          * @param {string} c classes
          */
-        addClass: function (e, c) {
+        addClass(e, c) {
             // If c is an Array => Format c as a space-separated string
             if (Array.isArray(c)) c = c.join(' ');
 
@@ -146,14 +146,14 @@ var UTIL = (function (_) {
                 e.className += " " + c;
         },
         // Toggle a class for an element
-        toggleClass: function (e, c) {
+        toggleClass(e, c) {
             if (this.hasClass(e, c))
                 this.removeClass(e, c);
             else
                 this.addClass(e, c);
         },
         // Replace a class with another for an element
-        replaceClass: function (c1, c2, e) {
+        replaceClass(c1, c2, e) {
             if (this.hasClass(e, c1))
                 e.className = e.className.replace(c1, c2);
             else if (pub.hasClass(e, c2))
@@ -166,7 +166,7 @@ var UTIL = (function (_) {
          * Removes all children of a node from the DOM
          * @param {Node} node 
          */
-        removeChildren: function (node) {
+        removeChildren(node) {
             while (node.hasChildNodes())
                 node.removeChild(node.lastChild);
         },
@@ -176,7 +176,7 @@ var UTIL = (function (_) {
          * @param {string} tagName element
          * @returns {HTMLElement}
          */
-        createElement: function (tagName, eId, eClass) {
+        createElement (tagName, eId, eClass) {
             var el = DOC.createElement(tagName);
             if (eId) el.id = eId;
             if (eClass) this.addClass(el, eClass);
@@ -185,7 +185,7 @@ var UTIL = (function (_) {
         /**
          * Creates a document fragment
          */
-        createDocFragment: function () {
+        createDocFragment () {
             return DOC.createDocumentFragment();
         },
         /**
@@ -194,7 +194,7 @@ var UTIL = (function (_) {
          * @param {*} href 
          * @param {*} attr 
          */
-        createLink: function (rel, href, attr) {
+        createLink (rel, href, attr) {
             var link = this.createElement("link");
             link.rel = rel;
             link.href = href;
@@ -212,11 +212,11 @@ var UTIL = (function (_) {
          * @returns {HTMLAnchorElement}
          */
         createAnchor(href, attr) {
-            var a  = this.createElement('a');
-            if(href) {
+            var a = this.createElement('a');
+            if (href) {
                 a.href = href;
             }
-            if(attr) {
+            if (attr) {
                 this.addAttributes(a, attr);
             }
 
@@ -226,7 +226,7 @@ var UTIL = (function (_) {
          * Creates a <div> element with some attributes
          * @param {Object} [attr] attributes
          */
-        createDiv: function (attr) {
+        createDiv(attr) {
             var div = this.createElement("div");
 
             if (attr) {
@@ -239,7 +239,7 @@ var UTIL = (function (_) {
          * Creates a <ul> element with some attributes
          * @param {Object} [attr] attributes
          */
-        createUl: function (attr) {
+        createUl(attr) {
             var ul = this.createElement("ul");
 
             if (attr) {
@@ -252,7 +252,7 @@ var UTIL = (function (_) {
          * Creates a <p> element with some attributes
          * @param {Object} [attr] attributes
          */
-        createP: function (attr) {
+        createP(attr) {
             var p = this.createElement("p");
 
             if (attr) {
@@ -265,7 +265,7 @@ var UTIL = (function (_) {
          * Create a <input.checkbox> element with some attributes
          * @param {Object} [attr] attributes
          */
-        createCheckbox: function (attr) {
+        createCheckbox(attr) {
             var chk = this.createElement("input");
             chk.type = "checkbox";
             var lbl = this.createElement("label");
@@ -301,13 +301,27 @@ var UTIL = (function (_) {
             if (attr) {
                 this.addAttributes(label, attr);
             }
+
             return label;
+        },
+        createTextArea(attr) {
+            /**
+             * @type {HTMLTextAreaElement}
+             */
+            var textArea = this.createElement('textarea');
+
+            if (attr) {
+                this.addFormAttributes(textArea, attr);
+                this.addAttributes(textArea, attr);
+            }
+
+            return textArea;
         },
         /**
          * Creates a <li> element with some attributes
          * @param {Object} [attr] attributes
          */
-        createLi: function (attr) {
+        createLi(attr) {
             var li = this.createElement("li");
 
             if (attr) {
@@ -320,7 +334,7 @@ var UTIL = (function (_) {
          * Creates a <span> element with some attributes
          * @param {Object} [attr] attributes
          */
-        createSpan: function (attr) {
+        createSpan(attr) {
             var span = this.createElement("span");
 
             if (attr) {
@@ -333,7 +347,7 @@ var UTIL = (function (_) {
          * Creates a <strong> element with some attributes
          * @param {Object} [attr] attributes
          */
-        createStrong: function (attr) {
+        createStrong(attr) {
             var strong = this.createElement("strong");
 
             if (attr) {
@@ -346,7 +360,7 @@ var UTIL = (function (_) {
          * Creates a <button> element with some attributes
          * @param {Object} [attr] attributes
          */
-        createButton: function (attr) {
+        createButton(attr) {
             var btn = this.createElement("button");
             btn.type = "button";
 
@@ -360,7 +374,7 @@ var UTIL = (function (_) {
          * Creates a <tr> element with some attributes
          * @param {Object} [attr] attributes
          */
-        createTableRow: function (attr) {
+        createTableRow(attr) {
             var tr = this.createElement("tr");
 
             if (attr) {
@@ -373,7 +387,7 @@ var UTIL = (function (_) {
          * Creates a <td> element with some attributes
          * @param {Object} [attr] attributes
          */
-        createTableCell: function (attr) {
+        createTableCell(attr) {
             var td = this.createElement("td");
 
             if (attr) {
@@ -387,7 +401,7 @@ var UTIL = (function (_) {
          * @param {HTMLElement} el element
          * @param {Object} attr attribute
          */
-        addAttributes: function (el, attr) {
+        addAttributes(el, attr) {
             // HTML attributes
             if (attr.id) el.id = attr.id;
             if (attr.class) this.addClass(el, attr.class);
@@ -395,7 +409,16 @@ var UTIL = (function (_) {
             if (attr.html) el.innerHTML = attr.html;
 
             // Custom attributes
-            if(attr.data) Object.assign(el.dataset, attr.data);
+            if (attr.data) Object.assign(el.dataset, attr.data);
+        },
+        /**
+         * Sets the attributes of a form element
+         * @param {HTMLInputElement|HTMLTextAreaElement} el element
+         * @param {Object} attr attribute
+         */
+        addFormAttributes(el, attr) {
+            if (attr.value) el.value = attr.value;
+            if (attr.readonly) el.readOnly = attr.readonly;
         }
     };
 
