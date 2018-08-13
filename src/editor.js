@@ -140,6 +140,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
             var rootFound = false;
             if (model) {
                 this._concrete = model;
+                rootFound = true;
             } else {
                 var root = this.MM[KEY_ROOT];
                 if (root) {
@@ -166,8 +167,8 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
 
             this._current = this._abstract.createModelElement(this._concrete.root, true);
 
-                     // add the event handlers
-                     this.bindEvents();
+            // add the event handlers
+            this.bindEvents();
 
             // set the initial state
             this.state.init(this.concrete);
@@ -1160,7 +1161,8 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
             if (file.name.endsWith('.json')) {
                 reader.onload = function (e) {
                     clear();
-                    editor.init(reader.result);
+                    $.hide(splashscreen);
+                    editor.init(JSON.parse(reader.result));
                 };
                 reader.readAsText(file);
             } else {
@@ -1208,7 +1210,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
             { type: 0, val: ".\nTo begin, please load a " },
             { type: 2, val: "Metamodel.", tooltip: "A metamodel is ..." }
         ], function () {
-            if (modelTest) {
+            if (!modelTest) {
                 editor = core.create(JSON.parse(JSON.stringify(modelTest)));
                 SmartType(instruction, [
                     { type: 1, val: "\n......." },

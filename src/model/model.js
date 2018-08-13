@@ -35,9 +35,9 @@ var MetaModel = (function ($, _, ELEM, ERR) {
         createModelElement: function (el, origin) {
             origin = _.valOrDefault(origin, false);
             var mElement = ELEM.create(this, el);
-            if(origin) {
+            if (origin) {
                 this.root = mElement;
-            } 
+            }
             return mElement;
         },
         addModelElement: function (attr) {
@@ -124,7 +124,9 @@ var MetaModel = (function ($, _, ELEM, ERR) {
          * @param {string} type 
          * @returns {boolean}
          */
-        isDataType: function (type) { return DataType.hasOwnProperty(type.split(':')[0]) || this.isModelDataType(type); },
+        isDataType: function (type) {
+            return DataType.hasOwnProperty(type.split(':')[0]) || this.isModelDataType(type);
+        },
         /**
          * Gets a value indicating whether the element is of type "DATATYPE"
          * @param {string} type 
@@ -142,7 +144,7 @@ var MetaModel = (function ($, _, ELEM, ERR) {
             return this.getModelElementType(this.getModelElement(el.base)) + "." + el.name;
         },
 
-        toString(){
+        toString() {
             return this.root.toString();
         }
     };

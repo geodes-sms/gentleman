@@ -424,6 +424,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
         }
         else if (element) {
             let elementType = M.getModelElementType(element);
+            console.log(element);
             if (M.isEnum(elementType)) {
                 projection = PN.Enum.create(packet);
                 projection.values = element.values;

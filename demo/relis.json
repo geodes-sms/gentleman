@@ -253,56 +253,28 @@
         }
     },
     "simpleType": {
+        "name": "simpleType",
         "type": "enum",
-        "case": {
+        "values": {
             "bool": { "representation": { "type": "text", "val": "bool" } },
-            "date": {
-                "param": {
-                    "max": {
-                        "name": "max", "type": "date", "optional": true,
-                        "representation": { "type": "text", "val": "($this)" }
-                    }
-                },
-                "representation": { "type": "text", "val": "date #max" }
-            },
-            "int": {
-                "param": [{
-                    "name": "max", "type": "integer", "optional": true,
-                    "representation": { "type": "text", "val": "($this)" }
-                }],
-                "representation": { "type": "text", "val": "int #max" }
-            },
-            "real": {
-                "param": [{
-                    "name": "max", "type": "real", "optional": true,
-                    "representation": { "type": "text", "val": "($this)" }
-                }],
-                "representation": { "type": "text", "val": "real #max" }
-            },
-            "string": {
-                "param": [{ "name": "max", "type": "integer", "optional": true, "representation": { "type": "text", "val": "($this)" } }],
-                "representation": { "type": "text", "val": "string #max" }
-            },
-            "text": {
-                "param": [{
-                    "name": "max", "type": "integer", "optional": true,
-                    "representation": { "type": "text", "val": "($this)" }
-                }],
-                "representation": { "type": "text", "val": "text #max" }
-            }
+            "date": { "representation": { "type": "text", "val": "date #max" } },
+            "int": { "representation": { "type": "text", "val": "int #max" } },
+            "real": { "representation": { "type": "text", "val": "real #max" } },
+            "string": { "representation": { "type": "text", "val": "string #max" } },
+            "text": { "representation": { "type": "text", "val": "text #max" } }
         }
     },
     "assignmentMode": {
         "name": "assignmentMode",
         "type": "enum",
         "values": {
-            "info": { "val": "Info" },
-            "normal": { "val": "Normal" },
-            "veto": { "val": "Veto" }
+            "info": "Info",
+            "normal": "Normal",
+            "veto": "Veto"
         }
     },
     "conflictType": {
-        "name": "ConflictType",
+        "name": "conflictType",
         "type": "enum",
         "values": {
             "exclusionCriteria": { "val": "Criteria" },
@@ -310,6 +282,7 @@
         }
     },
     "conflictResolution": {
+        "name": "conflictResolution",
         "type": "enum",
         "values": {
             "majority": { "val": "majority", "representation": { "type": "text", "val": "$val" } },
@@ -317,22 +290,14 @@
         }
     },
     "graphType": {
+        "name": "graphType",
         "type": "enum",
-        "values": {
-            "bar": { "val": "bar" },
-            "line": { "val": "line" },
-            "pie": { "val": "pie" }
-        }
+        "values": ["bar", "line", "pie"]
     },
     "field": {
+        "name": "field",
         "type": "enum",
-        "values": {
-            "abstract": { "val": "abstract" },
-            "bibtex": { "val": "bibtex" },
-            "link": { "val": "link" },
-            "preview": { "val": "preview" },
-            "title": { "val": "title" }
-        }
+        "values": ["abstract", "bibtex", "link", "preview", "title"]
     },
     "@root": "project",
     "@config": {
@@ -341,5 +306,5 @@
             "autosave": true
         }
     },
-    "@resources": ["relis.css"]
+    "@resources": ["../assets/css/relis.css"]
 }
