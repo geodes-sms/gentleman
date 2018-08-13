@@ -1,25 +1,5 @@
 ﻿const DOC = document;
 
-const KEY = {
-    backspace: "Backspace",
-    tab: "Tab",
-    enter: "Enter",
-    ctrl: "Control",
-    alt: "Alt",
-    escape: "Esc",
-    spacebar: " ",
-    page_up: "PageUp",
-    page_down: "PageDown",
-    end: "End",
-    home: "Home",
-    left_arrow: "ArrowLeft",
-    up_arrow: "ArrowUp",
-    right_arrow: "ArrowRight",
-    down_arrow: "ArrowDown",
-    delete: "Delete",
-    period: "."
-};
-
 var UTIL = (function (_) {
     var pub = {
         /**
@@ -176,7 +156,7 @@ var UTIL = (function (_) {
          * @param {string} tagName element
          * @returns {HTMLElement}
          */
-        createElement (tagName, eId, eClass) {
+        createElement(tagName, eId, eClass) {
             var el = DOC.createElement(tagName);
             if (eId) el.id = eId;
             if (eClass) this.addClass(el, eClass);
@@ -185,16 +165,17 @@ var UTIL = (function (_) {
         /**
          * Creates a document fragment
          */
-        createDocFragment () {
+        createDocFragment() {
             return DOC.createDocumentFragment();
         },
+        createLineBreak() { return this.createElement('br'); },
         /**
          * Creates a <link> element with some attributes
          * @param {*} rel 
          * @param {*} href 
          * @param {*} attr 
          */
-        createLink (rel, href, attr) {
+        createLink(rel, href, attr) {
             var link = this.createElement("link");
             link.rel = rel;
             link.href = href;
@@ -357,6 +338,19 @@ var UTIL = (function (_) {
             return strong;
         },
         /**
+         * Creates a <em> element with some attributes
+         * @param {Object} [attr] attributes
+         */
+        createEm(attr) {
+            var em = this.createElement("em");
+
+            if (attr) {
+                this.addAttributes(em, attr);
+            }
+
+            return em;
+        },
+        /**
          * Creates a <button> element with some attributes
          * @param {Object} [attr] attributes
          */
@@ -419,8 +413,39 @@ var UTIL = (function (_) {
         addFormAttributes(el, attr) {
             if (attr.value) el.value = attr.value;
             if (attr.readonly) el.readOnly = attr.readonly;
-        }
+        },
+
+        /**
+         * Inserts an item in an array at the specified index
+         * @param {Object[]} arr array
+         * @param {number} index 
+         * @param {object} item 
+         */
+        insert: function (arr, index, item) { arr.splice(index, 0, item); },
     };
+
+    
+    /**
+     * Simulates typing
+     * @param {HTMLElement} element 
+     * @param {string} text 
+     */
+    function typeWrite(element, text, callback) {
+        var i = 0;
+        var len = text.length;
+        var timeout = Math.ceil(20 + Math.log(len) * (200 / len));
+        element.innerHTML += text[i++];
+        if (i < len) {
+            var a = setInterval(function () {
+                element.innerHTML += text[i++];
+                if (i == len) {
+                    clearInterval(a);
+                    if (callback) callback();
+                }
+            }, timeout);
+        }
+    }
+
 
     return pub;
 }(HELPER));

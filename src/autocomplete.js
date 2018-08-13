@@ -1,3 +1,4 @@
+/// <reference path="enums.js" />
 /// <reference path="utils/utils.js" />
 
 var Autocomplete = (function ($, _) {
@@ -103,10 +104,10 @@ var Autocomplete = (function ($, _) {
 
             self._target.addEventListener('keyup', function (event) {
                 switch (event.key) {
-                    case KEY.down_arrow:
+                    case Key.down_arrow:
                         self.down();
                         break;
-                    case KEY.up_arrow:
+                    case Key.up_arrow:
                         self.up();
                         break;
                     default:

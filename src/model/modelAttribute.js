@@ -1,3 +1,5 @@
+/// <reference path="../enums.js" />
+
 const ModelAttribute = (function ($, _, PN, ERR) {
     "use strict";
 
@@ -90,7 +92,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                 self.MODEL.path.push(isMultiple ? _.addPath(path, 'val[' + valIndex + ']') : path);
                 projection = self.createProjection(val);
 
-                if (attr.type === DATATYPE.ID) {
+                if (attr.type === DataType.ID) {
                     self.MODEL.ID.push({
                         projection: projection,
                         type: self.MODEL.getModelElementType(self.Element._source)
@@ -315,9 +317,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                 if (self.value.length === 0) {
                     // create add button to add more item
 
-                    let btnCreate = $.createButton({ class: "btn btn-new" });
-                    btnCreate.appendChild($.createSpan({ class: "btn-new-content", html: "<strong>New</strong> " + self.name }));
-                    btnCreate.addEventListener('click', btnCreate_Click, false);
+                    let btnCreate = $.createButtonNew(self.name, btnCreate_Click);
                     container.appendChild(btnCreate);
                 } else {
                     for (let j = 0, len = self.value.length, last = len - 1; j < len; j++) {
@@ -433,7 +433,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
             } else {
                 projection = PN.Base.create(packet);
             }
-        } else if (self.type === DATATYPE.IDREF) {
+        } else if (self.type === DataType.IDREF) {
             projection = PN.Pointer.create(packet);
             projection.reference = self._source.ref;
         } else {

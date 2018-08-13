@@ -8,6 +8,7 @@
     <meta name="desciption" content="A web-based projectional editor. Enjoy a new way to express and interact with your DSL.">
     <link rel="stylesheet" href="../assets/css/normalize.css">
     <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/site.css">
     <link rel="stylesheet" href="../assets/css/editor.css">
     <link rel="stylesheet" href="../assets/css/state.css">
     <script type="application/json" id="model">
@@ -549,8 +550,33 @@
 </head>
 
 <body>
+    <header>
+        <div class="content-wrapper"></div>
+        <div class="content-wrapper content-wrapper--header">
+            <a class="logo noselect" href="/">
+                Gentleman
+            </a>
+            <nav class="header-nav">
+                <ul class="bare-list nav">
+                    <li class="nav-item">
+                        <a class="nav-item__link" href="about.html">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-item__link" href="docs/index.html">Documentation</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-item__link" href="faq.html">FAQ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-item__link" href="https://github.com/geodes-sms/gentleman">Code</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
     <div data-gentleman-editor></div>
 
+    <script src="../src/enums.js"></script>
     <script src="../src/helpers/helpers.js"></script>
     <script src="../src/utils/utils.js"></script>
     <script src="../src/utils/effects.js"></script> 

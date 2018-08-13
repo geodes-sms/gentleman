@@ -1,31 +1,7 @@
+/// <reference path="../enums.js" />
 /// <reference path="../utils/utils.js" />
 /// <reference path="../exception.js" />
 /// <reference path="../projection.js" />
-
-/**
- * Enum for datatype values.
- * @readonly
- * @enum {string}
- */
-const DATATYPE = {
-    ID: "ID",
-    IDREF: "IDREF",
-    boolean: "boolean",
-    enum: "enum",
-    integer: "integer",
-    real: "real",
-    string: "string"
-};
-
-const HTMLAttribute = {
-    Optional: 'data-optional',
-    Type: 'data-type',
-    Name: 'data-name',
-    Path: 'data-path',
-    Error: 'data-error',
-    Prop: 'data-prop',
-    Position: 'data-position'
-};
 
 var MetaModel = (function ($, _, ELEM, ERR) {
     "use strict";
@@ -142,13 +118,13 @@ var MetaModel = (function ($, _, ELEM, ERR) {
          * @param {string} type 
          * @returns {boolean}
          */
-        isEnum: function (type) { return this.isElement(type) && this.MM[type].type == DATATYPE.enum; },
+        isEnum: function (type) { return this.isElement(type) && this.MM[type].type == DataType.enum; },
         /**
          * Gets a value indicating whether the element is of type "PRIMITIVE" or "DATATYPE"
          * @param {string} type 
          * @returns {boolean}
          */
-        isDataType: function (type) { return DATATYPE.hasOwnProperty(type.split(':')[0]) || this.isModelDataType(type); },
+        isDataType: function (type) { return DataType.hasOwnProperty(type.split(':')[0]) || this.isModelDataType(type); },
         /**
          * Gets a value indicating whether the element is of type "DATATYPE"
          * @param {string} type 

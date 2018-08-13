@@ -1,17 +1,8 @@
+/// <reference path="enums.js" />
 /// <reference path="model/model.js" />
 /// <reference path="helpers/helpers.js" />
 
 var Projection = (function ($, _, ERR) {
-
-    const DATATYPE = {
-        ID: "ID",
-        IDREF: "IDREF",
-        boolean: "boolean",
-        enum: "enum",
-        integer: "integer",
-        real: "real",
-        string: "string"
-    };
 
     // State
     const DISABLED = 'disabled';
@@ -127,7 +118,7 @@ var Projection = (function ($, _, ERR) {
             this.value = val;
             this._update(self.value, self.index);
 
-            if (attr.type === DATATYPE.ID) {
+            if (attr.type === DataType.ID) {
                 let src = attr.MODEL.ID.find(function (x) { return x.id == self.id; });
                 if (src) {
                     let arr = src.ref;
@@ -148,7 +139,7 @@ var Projection = (function ($, _, ERR) {
             var mAttr = this._mAttribute;
             var mElement = this._mAttribute.Element;
 
-            if (mAttr.type === DATATYPE.boolean) {
+            if (mAttr.type === DataType.boolean) {
                 var chk = $.createCheckbox({ id: this._id, class: "attr--bool", data: { name: mAttr.name } });
                 chk.setAttribute('data-representation', mAttr.representation.val);
                 chk.addEventListener('change', function (event) {
@@ -176,7 +167,7 @@ var Projection = (function ($, _, ERR) {
             this._input = input;
 
             if (mAttr.isMultiple && mElement.representation.type == "text") {
-                var li = $.createLi({ class: "array-item", data:{ prop: "val"} });
+                var li = $.createLi({ class: "array-item", data: { prop: "val" } });
                 li.appendChild(input);
 
                 var valIndex = mAttr.value.indexOf(this._val);
@@ -236,7 +227,12 @@ var Projection = (function ($, _, ERR) {
                 }
             }
 
-            return self.modelAttribute.validate(this);
+            if (self.modelAttribute.validate(self)) {
+                self.error = "";
+                return true;
+            }
+            
+            return false;
         },
         remove() {
             var self = this;
@@ -354,7 +350,7 @@ var Projection = (function ($, _, ERR) {
             var mAttr = self.modelAttribute;
             const MODEL = mAttr.MODEL;
             var instance = MODEL.createInstance(type);
-            
+
             var mElem = MODEL.createModelElement(instance);
             mAttr._source = instance;
             $.insertBeforeElement(self._input, mElem.render());
@@ -492,7 +488,7 @@ var Projection = (function ($, _, ERR) {
             });
 
             var data = projections.map(function (x) { return { key: x.projection.id, val: x.projection.value }; });
-            
+
             return data;
         }
     });
@@ -550,12 +546,12 @@ var Projection = (function ($, _, ERR) {
     function validateDataType(type) {
         var isValid = true;
         switch (type) {
-            case DATATYPE.ID:
+            case DataType.ID:
                 break;
-            case DATATYPE.boolean:
+            case DataType.boolean:
                 // TODO
                 break;
-            case DATATYPE.IDREF:
+            case DataType.IDREF:
                 var typeRef = self.type.split(':')[1];
                 var data = self.ID.filter(function (x) {
                     return !_.isNullOrWhiteSpace(x.attr.val) && x.type && x.type.indexOf(typeRef) !== -1;
@@ -577,13 +573,13 @@ var Projection = (function ($, _, ERR) {
             case "date":
                 // TODO
                 break;
-            case DATATYPE.integer:
+            case DataType.integer:
                 isValid = /^(-|\+)?[0-9]+$/.test(self.value) && _.isInt(self.value);
                 if (!isValid) {
                     this.error = "Please enter a valid number.";
                 }
                 break;
-            case DATATYPE.real:
+            case DataType.real:
                 isValid = /^(-|\+)?[0-9]+((,|\.)?[0-9]+)?$/.test(self.value);
                 if (!isValid) {
                     this.error = "Please enter a valid number.";

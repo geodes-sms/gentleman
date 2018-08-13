@@ -20,7 +20,6 @@ var ModelElement = (function ($, _, ATTR, ERR) {
             instance._model = parent;
             instance._representation = el.representation;
             instance._position = _.valOrDefault(el.position, 0);
-            instance._composition = el.composition;
             instance._attributes = [];
             instance._elements = [];
 
@@ -44,7 +43,7 @@ var ModelElement = (function ($, _, ATTR, ERR) {
          * @type {boolean}
          */
         get isMultiple() { return _.toBoolean(this._source.multiple); },
-        get composition() { return this._composition; },
+        get composition() { return this._source.composition; },
         /**
          * @type {ModelElement[]}
          */
@@ -138,7 +137,7 @@ var ModelElement = (function ($, _, ATTR, ERR) {
             var compo = this.composition;
             var container = DOC.createDocumentFragment();
 
-            if (!compo.hasOwnProperty('options')) this._source.composition.options = [];
+            this._source.composition.options = [];
             var options = compo.options;
             var remain = options.length > 0;
 
@@ -338,13 +337,13 @@ var ModelElement = (function ($, _, ATTR, ERR) {
                 var minmax;
 
                 if (prev && $.hasClass(prev, OPTION)) {
-                    let position = prev.getAttribute(HTMLAttribute.Position);
+                    let position = prev.dataset[HTMLAttribute.Position];
                     minmax = position.split("..");
                     if (minmax[0] < min) min = minmax[0];
                     prev.remove();
                 }
                 if (next && $.hasClass(next, OPTION)) {
-                    let position = next.getAttribute(HTMLAttribute.Position);
+                    let position = next.dataset[HTMLAttribute.Position];
                     minmax = position.split("..");
                     if (minmax[1] > max) max = minmax[1];
                     next.remove();

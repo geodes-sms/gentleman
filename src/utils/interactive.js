@@ -1,3 +1,4 @@
+/// <reference path="../enums.js" />
 /// <reference path="utils.js" />
 
 /**
@@ -7,9 +8,11 @@ var UTIL = (function (me) {
     me.createOptionSelect = function (min, max, path) {
         var input = me.createSpan({
             class: ['option', EMPTY],
-            placeholder: "What next?",
-            path: path,
-            position: min + ".." + max
+            data: {
+                placeholder: "What next?",
+                path: path,
+                position: min + ".." + max
+            }
         });
         input.contentEditable = true;
 
@@ -17,11 +20,8 @@ var UTIL = (function (me) {
     };
 
     me.createButtonNew = function (caption, clickHandler) {
-        var btnNew = me.createButton({ class: ['btn', 'btn-new'] });
-        btnNew.appendChild(me.createSpan({
-            class: "btn-new-content",
-            html: "<strong>New</strong> " + caption
-        }));
+        var btnNew = me.createButton({ class: ['btn', 'btn-new'], data: { action: 'add' } });
+        btnNew.appendChild(me.createSpan({ class: "btn-new-content", html: "<strong>New</strong> " + caption }));
         btnNew.tabIndex = -1;
 
         btnNew.addEventListener('click', clickHandler, false);
@@ -30,7 +30,11 @@ var UTIL = (function (me) {
     };
 
     me.createButtonAdd = function (clickHandler) {
-        var btnAdd = me.createButton({ class: ['btn', 'btn-add'], text: "Add" });
+        var btnAdd = me.createButton({
+            class: ['btn', 'btn-add'],
+            text: "Add",
+            data: { action: 'add' }
+        });
         btnAdd.tabIndex = -1;
 
         btnAdd.addEventListener('click', clickHandler, false);
@@ -44,7 +48,11 @@ var UTIL = (function (me) {
      * @param {Object} clickHandler 
      */
     me.createButtonDelete = function (container, clickHandler) {
-        var btnDelete = me.createButton({ class: ['btn', 'btn-delete'], text: "✖" });
+        var btnDelete = me.createButton({
+            class: ['btn', 'btn-delete'],
+            text: "✖",
+            data: { action: 'remove' }
+        });
 
         btnDelete.addEventListener('click', clickHandler);
         btnDelete.addEventListener('mouseenter', function (event) {

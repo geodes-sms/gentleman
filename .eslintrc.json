@@ -1,6 +1,7 @@
 {
     "env": {
         "browser": true,
+        "node": true,
         "es6": true
     },
     "extends": "eslint:recommended",
@@ -28,22 +29,22 @@
         "no-useless-escape": "warn"
     },
     "globals": {
-        "DOC": false,
-        "require": false,
-        "KEY": false,
-        "HIDDEN": false,
-        "EMPTY": false,
-        "SELECTED": false,
-        "DATATYPE": false,
-        "HTMLAttribute": false,
-        "UTIL": true,
-        "HELPER": true,
         "Autocomplete": false,
-        "Projection": false,
+        "DataType": false,
+        "DOC": false,        
+        "EMPTY": false,
+        "EventType": false,
         "Exception": false,
+        "HELPER": true,
+        "HIDDEN": false,   
+        "HTMLAttribute": false,
+        "Key": false,
         "MetaModel": false,
-        "ModelElement": false,
         "ModelAttribute": false,
-        "Representation": false
+        "ModelElement": false,
+        "Projection": false,
+        "Representation": false,
+        "SELECTED": false,
+        "UTIL": true
     }
 }

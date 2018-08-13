@@ -30,7 +30,7 @@ th { text-align: center; }
     border: none;
     background: none;
     font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
-    text-decoration: none;
+    text-decoration: none; text-align: center;
 }
 
 [contenteditable=true] { outline: none; }
@@ -72,6 +72,10 @@ th { text-align: center; }
 }
     .btn-menu:hover { background-color: #0F3877; }
     .btn-menu.selected { background-color: #5497FF; box-shadow: 0 1px 1px rgba(55, 55, 55, 0.8); }
+    .btn-menu:disabled {
+        box-shadow: none;
+        background-color: #999;
+    }
 
 /* Reset */
 

@@ -72,14 +72,6 @@ const HELPER = (function () {
         },
 
         /**
-         * Inserts an item in an array at the specified index
-         * @param {Object[]} arr array
-         * @param {number} index 
-         * @param {object} item 
-         */
-        insert: function (arr, index, item) { arr.splice(index, 0, item); },
-
-        /**
          * Return the singular or plural form of a word based on a predicate
          * @param {boolean} predicate 
          * @param {string} singular 
@@ -103,12 +95,23 @@ const HELPER = (function () {
             xhr.send();
         },
 
-        toBoolean: function(val) {
+        /**
+         * Converts to boolean
+         */
+        toBoolean: function (val) {
             val = this.valOrDefault(val, false);
             return val === true || val.toString().toLowerCase() === 'true';
         },
+        /**
+         * Converts a boolean to an integer
+         * @param {boolean} val 
+         * @returns {int} 1 or 0
+         */
         boolToInt(val) {
             return val ? 1 : 0;
+        },
+        isString(str) {
+            return typeof myVar === 'string' || str instanceof String;
         },
 
         /**
@@ -193,4 +196,6 @@ const HELPER = (function () {
     return pub;
 }());
 
-exports.HELPER = HELPER;
+if(typeof module !== 'undefined'){
+    module.exports = HELPER;
+}
