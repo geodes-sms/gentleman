@@ -5,6 +5,13 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## Version 0 (2018-08-05)
 
+### Version 0.9.0 (2018-08-23)
+#### Added
+- Metamodel and Model loader
+- Homescreen design
+#### Changed
+- Menu behaviour and appearance
+
 ### Version 0.8.0 (2018-08-13)
 #### Added
 - Metamodel and Model loader
