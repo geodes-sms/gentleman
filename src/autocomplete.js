@@ -74,10 +74,10 @@ var Autocomplete = (function ($, _) {
             this._items = [];
             for (let i = 0, len = this.data.length; i < len; i++) {
                 if (this.data[i].val.toLowerCase().indexOf(text.toLowerCase()) === -1) {
-                    $.addClass(this._input.children[i], HIDDEN);
+                    $.addClass(this._input.children[i], UI.HIDDEN);
                 } else {
                     this._items.push(i);
-                    $.removeClass(this._input.children[i], HIDDEN);
+                    $.removeClass(this._input.children[i], UI.HIDDEN);
                 }
                 $.unhighlight(this._input.children[i]);
             }

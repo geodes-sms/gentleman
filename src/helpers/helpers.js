@@ -9,6 +9,8 @@ const HELPER = (function () {
                     obj['isActiveClone'] = null;
                     temp[key] = this.cloneObject(obj[key]);
                     delete obj['isActiveClone'];
+                }else{
+                    console.log(key);
                 }
             }
             return temp;

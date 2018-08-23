@@ -4,7 +4,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
     "use strict";
 
     const COMPOSITION = 'composition';
-    const BUTTON_TYPE = {
+    const ButtonType = {
         Add: 'Add',
         New: 'New'
     };
@@ -127,15 +127,15 @@ const ModelAttribute = (function ($, _, PN, ERR) {
 
                         if (!isInline) {
                             $.addClass(item, "block");
-                            if (isLast) return renderButton(item, BUTTON_TYPE.New);
+                            if (isLast) return renderButton(item, ButtonType.New);
                         } else {
-                            if (isLast) return renderButton(item, BUTTON_TYPE.Add);
+                            if (isLast) return renderButton(item, ButtonType.Add);
                         }
                     } else {
                         // create an attribute wrapper and put the attributes in it
                         item = mElement.render(newpath);
 
-                        if (isLast) return renderButton(item, BUTTON_TYPE.New);
+                        if (isLast) return renderButton(item, ButtonType.New);
                     }
 
                     return item;
@@ -151,12 +151,12 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                 fragment.appendChild(item);
 
                 switch (btnType) {
-                    case BUTTON_TYPE.New:
+                    case ButtonType.New:
                         fragment.appendChild($.createButtonNew(attr.name, function () {
                             buttonClickHandler(this);
                         }));
                         break;
-                    case BUTTON_TYPE.Add:
+                    case ButtonType.Add:
                         fragment.appendChild($.createButtonAdd(function () {
                             buttonClickHandler(this);
                         }));
@@ -424,7 +424,6 @@ const ModelAttribute = (function ($, _, PN, ERR) {
         }
         else if (element) {
             let elementType = M.getModelElementType(element);
-            console.log(element);
             if (M.isEnum(elementType)) {
                 projection = PN.Enum.create(packet);
                 projection.values = element.values;

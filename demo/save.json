@@ -17,6 +17,8 @@
       {
         "name": "Screening section",
         "position": 1,
+        "optional": true,
+        "flag": true,
         "attr": {
           "screen_action": {
             "name": "screen_action",

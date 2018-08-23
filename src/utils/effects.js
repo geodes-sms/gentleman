@@ -1,32 +1,54 @@
+/// <reference path="../enums.js" />
 /// <reference path="utils.js" />
 
-const HIDDEN = 'hidden';
-const EMPTY = 'empty';
-const SELECTED = 'selected';
-
 var UTIL = (function (me) {
+
     /**
      * Shows an element
-     * @param {Element} el element
+     * @param {Element} el Element
      */
-    me.show = function (el) {
-        me.removeClass(el, HIDDEN);
-    };
+    me.show = function (el) { me.removeClass(el, UI.HIDDEN); };
 
     /**
      * Hides an element
      * @param {Element} el element
      */
-    me.hide = function (el) {
-        me.addClass(el, HIDDEN);
+    me.hide = function (el) { me.addClass(el, UI.HIDDEN); };
+
+    /**
+     * Applies highlighting style to an element
+     * @param {HTMLElement} el Element
+     */
+    me.highlight = function (el) { me.addClass(el, UI.SELECTED); };
+
+    /**
+     * Removes highlighting style of an element
+     * @param {HTMLElement} el Element
+     */
+    me.unhighlight = function (el) { me.removeClass(el, UI.SELECTED); };
+
+    /**
+     * Enable an element
+     * @param {HTMLElement} el Element
+     */
+    me.enable = function (el) {
+        if (el.hasAttribute(UI.DISABLED)) {
+            el.disabled = false;
+        }
+
+        el.dataset.disabled = false;
     };
 
-    me.highlight = function (el) {
-        me.addClass(el, SELECTED);
-    };
+    /**
+     * Disable an element
+     * @param {HTMLElement} el 
+     */
+    me.disable = function (el) {
+        if (el.hasAttribute(UI.DISABLED)) {
+            el.disabled = true;
+        }
 
-    me.unhighlight = function (el) {
-        me.removeClass(el, SELECTED);
+        el.dataset.disabled = true;
     };
 
     return me;

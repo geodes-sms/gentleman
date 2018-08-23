@@ -1,13 +1,10 @@
 /// <reference path="../enums.js" />
 /// <reference path="utils.js" />
 
-/**
- * @augments UTIL
- */
 var UTIL = (function (me) {
     me.createOptionSelect = function (min, max, path) {
         var input = me.createSpan({
-            class: ['option', EMPTY],
+            class: ['option', UI.EMPTY],
             data: {
                 placeholder: "What next?",
                 path: path,

@@ -118,7 +118,9 @@ var UTIL = (function (_) {
          */
         addClass(e, c) {
             // If c is an Array => Format c as a space-separated string
-            if (Array.isArray(c)) c = c.join(' ');
+            if (Array.isArray(c)) {
+                c = c.map(function (c) { return _.valOrDefault(c.class, c); }).join(' ');
+            }
 
             if (_.isNullOrWhiteSpace(e.className))
                 e.className = c;
@@ -217,6 +219,19 @@ var UTIL = (function (_) {
             return div;
         },
         /**
+         * Creates a <div> element with some attributes
+         * @param {Object} [attr] attributes
+         */
+        createAside(attr) {
+            var aside = this.createElement('aside');
+
+            if (attr) {
+                this.addAttributes(aside, attr);
+            }
+
+            return aside;
+        },
+        /**
          * Creates a <ul> element with some attributes
          * @param {Object} [attr] attributes
          */
@@ -241,6 +256,15 @@ var UTIL = (function (_) {
             }
 
             return p;
+        },
+        createHeader(attr){
+            var header = this.createElement('header');
+
+            if (attr) {
+                this.addAttributes(header, attr);
+            }
+
+            return header;   
         },
         /**
          * Create a <input.checkbox> element with some attributes
@@ -359,6 +383,7 @@ var UTIL = (function (_) {
             btn.type = "button";
 
             if (attr) {
+                this.addFormAttributes(btn, attr);
                 this.addAttributes(btn, attr);
             }
 
@@ -412,6 +437,7 @@ var UTIL = (function (_) {
          */
         addFormAttributes(el, attr) {
             if (attr.value) el.value = attr.value;
+            if (attr.disabled) el.disabled = attr.disabled;
             if (attr.readonly) el.readOnly = attr.readonly;
         },
 
@@ -424,7 +450,7 @@ var UTIL = (function (_) {
         insert: function (arr, index, item) { arr.splice(index, 0, item); },
     };
 
-    
+
     /**
      * Simulates typing
      * @param {HTMLElement} element 

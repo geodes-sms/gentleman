@@ -2,6 +2,8 @@ li, td, th { font-size: 1.2em; }
 
 .content-wrapper--header { height: 28px; font-size: 0.9em; }
 
+.editor-header-content { display: flex;}
+
 .logo { line-height: 28px; }
 
 #header {
@@ -13,11 +15,10 @@ li, td, th { font-size: 1.2em; }
 }
 
 #language {
-    display: inline-block;
+    align-self: center;
     margin-right: 5px;
-    font-weight: 600;
+    font-size: 1.5em; font-weight: 600;
     color: #36454F;
-    font-size: 1.5em;
 }
 #language:before{ content:"@"; font-weight: 700; }
 
@@ -48,7 +49,7 @@ li, td, th { font-size: 1.2em; }
     margin-left: 1%;
     display: inline-block;
     padding: 5px 10px;
-    width: 30%; max-width: 400px;
+    width: 30%; max-width: 500px;
     line-height: 1.5;
     font-size: 1.6em;
     background: #fefefe;
@@ -84,8 +85,7 @@ li, td, th { font-size: 1.2em; }
         font: 500 0.9em 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
         background: rgba(245, 245, 245, 0.8);
         box-shadow: 0 1px 2px #999;
-        transition: 0.2s;
-        transition-delay: 0.3s;
+        transition: 0.2s 0.3s;
         opacity: 0;
     }
         [data-tooltip]:hover:after{
@@ -94,14 +94,8 @@ li, td, th { font-size: 1.2em; }
             transition: 0.3s;    
         }
 
-.splashscreen {
-    height: calc(100vh - 60px);
-}
+.splashscreen { height: calc(100vh - 60px); }
 
-.btn-loader.hidden {
-    display: block;
-    opacity: 0;
-}
 .btn-loader {
     position: relative;
     display: block;
@@ -119,6 +113,7 @@ li, td, th { font-size: 1.2em; }
     z-index: 2;
     transition: opacity 1s, border 0.2s, padding 0.2s;
 }
+    .btn-loader.hidden { display: block; opacity: 0; }
     .btn-loader:hover { 
         border-radius: 3px;
         padding-left: 50px;  
@@ -128,9 +123,9 @@ li, td, th { font-size: 1.2em; }
         content: "";
         position: absolute;
         top: 18px; right: 25px; bottom: 20px; left: 25px;
+        z-index: -2;
         border-radius: 5px;
         background-color: #fff;
-        z-index: -2;
         box-shadow: 0 1px 2px #c0c0c0;
     }
         .btn-loader:hover:before {
@@ -167,8 +162,36 @@ li, td, th { font-size: 1.2em; }
     z-index: -3;
     padding-bottom: 20px;
     width: 30%; min-width: 320px;
-    background-color: #f9f9f9;
-    box-shadow: -1px 0 2px #d9d9d9;
+    background-color: #e5e4e2;
+}
+
+.note-attr {
+    margin: 0;
+    padding: 10px 10px 8px;
+    color: #343434;
+    font-size: 1.6em; font-weight: bold;
+    background: #e5e4e2;
+}
+
+.note-section {
+    padding: 5px 10px;
+    margin: 0;
+}
+
+.note-error {
+    color: #fff;
+    background-color: #BF1932;
+    line-height: 1.5;
+}
+
+.note-error--valid {
+    color: #fff;
+    background-color: #009473;
+    line-height: 1.5;
+}
+
+.note-info {
+    background-color: #f2f1ef;
 }
 
 .line { position: relative; }
@@ -713,34 +736,6 @@ table {
     z-index: 2;;
 }
 
-.note-attr {
-    margin: 0;
-    padding: 10px 10px 8px;
-    color: #36454F;
-    font-size: 1.6em; font-weight: bold;
-    background-color: #fff;
-}
-
-.note-section {
-    padding: 5px 10px;
-    margin: 0;
-}
-
-.note-error {
-    color: #fff;
-    background-color: #BF1932;
-    line-height: 1.5;
-}
-
-.note-error--valid {
-    color: #fff;
-    background-color: #009473;
-    line-height: 1.5;
-}
-
-.note-info {
-    background: #f0f0f0;
-}
 
 /* SCREEN SIZE: Narrow */
 @media screen and (max-width: 44.99em) {

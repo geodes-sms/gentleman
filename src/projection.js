@@ -57,7 +57,7 @@ var Projection = (function ($, _, ERR) {
         set value(val) {
             this._input.textContent = val;
             if (val) {
-                $.removeClass(this._input, EMPTY);
+                $.removeClass(this._input, UI.EMPTY);
             }
             for (let i = 0, len = this.refs.length; i < len; i++) {
                 this.modelAttribute.MODEL.projections[this.refs[i]].update();
@@ -111,9 +111,9 @@ var Projection = (function ($, _, ERR) {
             var val = self._input.textContent;
 
             if (val === "") {
-                $.addClass(self._input, EMPTY);
+                $.addClass(self._input, UI.EMPTY);
                 if ($.hasClass(self._input.parentElement, "attr-wrapper"))
-                    $.addClass(self._input.parentElement, EMPTY);
+                    $.addClass(self._input.parentElement, UI.EMPTY);
             }
             this.value = val;
             this._update(self.value, self.index);
@@ -125,8 +125,8 @@ var Projection = (function ($, _, ERR) {
                     for (let i = 0, len = arr.length; i < len; i++) {
                         let el = $.getElement('#' + arr[i]);
                         el.textContent = src.attr.val;
-                        if (_.isNullOrWhiteSpace(src.attr.val)) $.addClass(el, EMPTY);
-                        else $.removeClass(el, EMPTY);
+                        if (_.isNullOrWhiteSpace(src.attr.val)) $.addClass(el, UI.EMPTY);
+                        else $.removeClass(el, UI.EMPTY);
                     }
                 }
             }
@@ -163,7 +163,7 @@ var Projection = (function ($, _, ERR) {
             if (self._options) $.addAttributes(input, self._options);
             input.contentEditable = _.valOrDefault(editable, true);
             input.tabIndex = 0;
-            if (_.isNullOrWhiteSpace(this._val)) $.addClass(input, EMPTY);
+            if (_.isNullOrWhiteSpace(this._val)) $.addClass(input, UI.EMPTY);
             this._input = input;
 
             if (mAttr.isMultiple && mElement.representation.type == "text") {
@@ -205,7 +205,7 @@ var Projection = (function ($, _, ERR) {
                 }
 
                 if (mAttr.representation) {
-                    var wrapper = $.createDiv({ class: ['attr-wrapper', EMPTY] });
+                    var wrapper = $.createDiv({ class: ['attr-wrapper', UI.EMPTY] });
                     var surround = mAttr.representation.val.split("$val");
                     Object.assign(wrapper.dataset, { before: surround[0], after: surround[1] });
                     wrapper.appendChild(input);
@@ -303,8 +303,8 @@ var Projection = (function ($, _, ERR) {
             //     for (let i = 0, len = arr.length; i < len; i++) {
             //         let el = $.getElement('#' + arr[i]);
             //         el.textContent = src.attr.val;
-            //         if (_.isNullOrWhiteSpace(src.attr.val)) $.addClass(el, EMPTY);
-            //         else $.removeClass(el, EMPTY);
+            //         if (_.isNullOrWhiteSpace(src.attr.val)) $.addClass(el, UI.EMPTY);
+            //         else $.removeClass(el, UI.EMPTY);
             //     }
             // }
         },
@@ -313,7 +313,7 @@ var Projection = (function ($, _, ERR) {
             var mAttr = this._mAttribute;
 
             var input = $.createSpan({
-                class: ['attr', 'attr--extension', EMPTY],
+                class: ['attr', 'attr--extension', UI.EMPTY],
                 id: self._id,
                 data: {
                     name: mAttr.name,
@@ -383,12 +383,12 @@ var Projection = (function ($, _, ERR) {
                             wrapper.appendChild(this._input);
                         } else {
                             if ($.hasClass(this._input.parentElement, 'attr-wrapper')) {
-                                $.addClass(this._input.parentElement, EMPTY);
+                                $.addClass(this._input.parentElement, UI.EMPTY);
                             }
                         }
                     }
 
-                    $.removeClass(this._input, EMPTY);
+                    $.removeClass(this._input, UI.EMPTY);
                 }
             });
 
@@ -413,9 +413,9 @@ var Projection = (function ($, _, ERR) {
             var val = self._input.textContent;
 
             if (val === "") {
-                $.addClass(self._input, EMPTY);
+                $.addClass(self._input, UI.EMPTY);
                 if ($.hasClass(self._input.parentElement, "attr-wrapper"))
-                    $.addClass(self._input.parentElement, EMPTY);
+                    $.addClass(self._input.parentElement, UI.EMPTY);
             }
 
             self._value = _.valOrDefault(_.find(self.values, val), val);
@@ -457,7 +457,7 @@ var Projection = (function ($, _, ERR) {
                         self.pointsTo = +val;
                         this._input.textContent = refProjection.value;
                         refProjection.addReference(self.id);
-                        $.removeClass(self._input, EMPTY);
+                        $.removeClass(self._input, UI.EMPTY);
                     }
                 }
             });

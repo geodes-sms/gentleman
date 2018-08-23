@@ -7,7 +7,6 @@ const DataType = {
     ID: "ID",
     IDREF: "IDREF",
     boolean: "boolean",
-    enum: "enum",
     integer: "integer",
     real: "real",
     string: "string"
@@ -36,6 +35,15 @@ const HTMLAttribute = {
     Position: 'position'
 };
 
+const ModelType = {
+    ABSTRACT: 'abstract',
+    DATATYPE: 'data-type',
+    ENUM: 'enum',
+    ELEMENT: 'element',
+    RULE: 'rule',
+    PRIMITIVE: DataType
+};
+
 const Key = {
     backspace: "Backspace",
     tab: "Tab",
@@ -55,3 +63,32 @@ const Key = {
     delete: "Delete",
     period: "."
 };
+
+const UI = (function () {
+    const BUTTON = 'BUTTON';
+    const ANCHOR = 'ANCHOR';
+
+    var pub = {
+        HIDDEN: 'hidden',
+        EMPTY: 'empty',
+        SELECTED: 'selected',
+        DISABLED: 'disabled',
+        Element: {
+            ANCHOR: {
+                name: ANCHOR
+            },
+            BUTTON: {
+                name: BUTTON,
+                class: 'btn',
+                toString() { return 'BUTTON'; }
+            },
+            BUTTON_MENU: {
+                name: BUTTON,
+                class: 'btn btn-menu',
+                toString() { return 'MENU BUTTON'; }
+            }
+        }
+    };
+
+    return pub;
+})();

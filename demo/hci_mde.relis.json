@@ -1,557 +1,225 @@
 {
-  "name": "project",
-  "attr": {
-    "short_name": {
-      "name": "short_name",
-      "type": "ID",
-      "val": "hci_mde"
-    },
-    "name": {
-      "name": "name",
-      "type": "string",
-      "val": "User interaction and interface in MDE"
-    }
-  },
-  "composition": [
-    {
-      "name": "Data extraction section",
-      "position": 3,
-      "attr": {
-        "class_action": {
-          "name": "class_action",
-          "type": "ID",
-          "optional": true,
-          "val": ""
-        },
-        "category": {
-          "name": "category",
-          "type": "category",
-          "multiple": {
-            "type": "array",
-            "min": 1
-          },
-          "inline": false,
-          "val": [
-            {
-              "name": "category",
-              "attr": {
-                "name": {
-                  "name": "name",
-                  "type": "ID"
-                },
-                "title": {
-                  "name": "title",
-                  "type": "string",
-                  "optional": true
-                },
-                "mandatory": {
-                  "name": "mandatory",
-                  "type": "boolean",
-                  "representation": {
-                    "val": "*"
-                  },
-                  "val": true
-                },
-                "numberOfValues": {
-                  "name": "numberOfValues",
-                  "type": "integer",
-                  "val": "1",
-                  "rule": {
-                    "greaterThan": -1,
-                    "equalTo": -1
-                  },
-                  "ruleset": [
-                    {
-                      "greaterThan": -1,
-                      "equalTo": -1
-                    }
-                  ],
-                  "representation": {
-                    "type": "text",
-                    "val": "[$val]"
-                  }
-                },
-                "subCategory": {
-                  "name": "subCategory",
-                  "type": "category",
-                  "multiple": {
-                    "type": "array",
-                    "min": 1
-                  },
-                  "representation": {
-                    "type": "text",
-                    "val": "{$val}"
-                  }
-                }
-              },
-              "named_composition": [
-                {
-                  "name": "subCategory",
-                  "type": "category",
-                  "multiple": true
-                }
-              ],
-              "abstract": true,
-              "extensions": [
-                "freeCategory",
-                "staticCategory",
-                "independantDynamicCategory",
-                "dependantDynamicCategory"
-              ]
-            }
-          ]
-        }
+  "root": {
+    "name": "project",
+    "attr": {
+      "short_name": {
+        "name": "short_name",
+        "type": "ID",
+        "val": "hci_mde"
       },
-      "representation": {
-        "type": "text",
-        "k1": {
-          "type": "keyword",
-          "val": "DATA EXTRACTION"
-        },
-        "val": "$k1 #class_action #category"
+      "name": {
+        "name": "name",
+        "type": "string",
+        "val": "User interaction and interface in MDE"
       }
     },
-    {
-      "name": "Screening section",
-      "position": 1,
-      "optional": true,
-      "attr": {
-        "screen_action": {
-          "name": "screen_action",
-          "type": "ID",
-          "optional": true,
-          "val": ""
-        },
-        "screening": {
-          "name": "screening",
-          "type": "screening",
-          "multiple": {
-            "type": "array",
-            "min": 1
+    "composition": [
+      {
+        "name": "Screening section",
+        "position": 1,
+        "optional": true,
+        "flag": true,
+        "attr": {
+          "screen_action": {
+            "name": "screen_action",
+            "type": "ID",
+            "optional": true,
+            "val": ""
           },
-          "val": [
-            {
-              "name": "screening",
-              "composition": [
-                {
-                  "name": "reviews",
-                  "keyword": "Reviews",
-                  "position": 1,
-                  "attr": {
-                    "review_per_paper": {
-                      "name": "review_per_paper",
-                      "type": "integer",
-                      "val": "3"
-                    }
-                  },
-                  "representation": {
-                    "type": "text",
-                    "val": "$keyword #review_per_paper"
-                  }
-                },
-                {
-                  "name": "conflict",
-                  "keyword": "Conflict",
-                  "position": 2,
-                  "attr": {
-                    "conflict_type": {
-                      "name": "conflict_type",
-                      "type": "conflictType",
-                      "val": "includeExclude"
+          "screening": {
+            "name": "screening",
+            "type": "screening",
+            "multiple": {
+              "type": "array",
+              "min": 1
+            },
+            "val": [
+              {
+                "name": "screening",
+                "composition": [
+                  {
+                    "name": "reviews",
+                    "keyword": "Reviews",
+                    "position": 1,
+                    "attr": {
+                      "review_per_paper": {
+                        "name": "review_per_paper",
+                        "type": "integer",
+                        "val": "2"
+                      }
                     },
-                    "conflict_resolution": {
-                      "name": "conflict_resolution",
-                      "type": "conflictResolution",
-                      "val": "majority"
+                    "representation": {
+                      "type": "text",
+                      "val": "$keyword #review_per_paper"
                     }
                   },
-                  "representation": {
-                    "type": "text",
-                    "val": "$keyword on #conflict_type resolved by #conflict_resolution"
-                  }
-                },
-                {
-                  "name": "criteria",
-                  "keyword": "Criteria",
-                  "position": 3,
-                  "attr": {
-                    "exclusion_criteria": {
-                      "name": "exclusion_criteria",
-                      "type": "string",
-                      "multiple": {
-                        "type": "array",
-                        "min": 1
+                  {
+                    "name": "conflict",
+                    "keyword": "Conflict",
+                    "position": 2,
+                    "attr": {
+                      "conflict_type": {
+                        "name": "conflict_type",
+                        "type": "conflictType",
+                        "val": ""
                       },
-                      "val": [
-                        "No MDE",
-                        "No user interface"
-                      ]
+                      "conflict_resolution": {
+                        "name": "conflict_resolution",
+                        "type": "conflictResolution",
+                        "val": "unanimity"
+                      }
+                    },
+                    "representation": {
+                      "type": "text",
+                      "val": "$keyword on #conflict_type resolved by #conflict_resolution"
                     }
                   },
-                  "representation": {
-                    "type": "text",
-                    "val": "$keyword = [#exclusion_criteria]"
-                  }
-                },
-                {
-                  "name": "sources",
-                  "keyword": "Sources",
-                  "position": 4,
-                  "optional": true,
-                  "attr": {
-                    "source_papers": {
-                      "name": "source_papers",
-                      "type": "string",
-                      "multiple": {
-                        "type": "array"
-                      },
-                      "val": [
-                        "SIGCHI"
-                      ]
-                    }
-                  },
-                  "representation": {
-                    "type": "text",
-                    "val": "$keyword = [#source_papers]"
-                  },
-                  "flag": true
-                },
-                {
-                  "name": "strategies",
-                  "keyword": "Strategies",
-                  "position": 5,
-                  "optional": true,
-                  "attr": {
-                    "search_strategy": {
-                      "name": "search_strategy",
-                      "type": "string",
-                      "multiple": {
-                        "type": "array",
-                        "min": 0
-                      },
-                      "val": [
-                        "Database search"
-                      ]
-                    }
-                  },
-                  "representation": {
-                    "type": "text",
-                    "val": "$keyword = [#search_strategy]"
-                  },
-                  "flag": true
-                },
-                {
-                  "name": "phases",
-                  "keyword": "Phases",
-                  "position": 7,
-                  "optional": true,
-                  "attr": {
-                    "phases": {
-                      "name": "phases",
-                      "type": "phase",
-                      "multiple": {
-                        "type": "array",
-                        "min": 0
-                      },
-                      "inline": false,
-                      "val": [
-                        {
-                          "name": "phase",
-                          "attr": {
-                            "title": {
-                              "name": "title",
-                              "type": "string",
-                              "val": "Screening"
-                            },
-                            "description": {
-                              "name": "description",
-                              "type": "string",
-                              "optional": true,
-                              "val": "Screening"
-                            },
-                            "fields": {
-                              "name": "fields",
-                              "type": "field",
-                              "multiple": {
-                                "type": "array"
-                              },
-                              "val": [
-                                4,
-                                0,
-                                2,
-                                3
-                              ]
-                            }
-                          },
-                          "representation": {
-                            "type": "text",
-                            "val": "#title #description Fields (#fields)"
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  "representation": {
-                    "type": "text",
-                    "val": "$keyword #phases"
-                  },
-                  "flag": true
-                }
-              ],
-              "representation": {
-                "type": "text",
-                "val": "$composition"
-              },
-              "attr": {}
-            }
-          ]
-        }
-      },
-      "representation": {
-        "type": "text",
-        "k1": {
-          "type": "keyword",
-          "val": "SCREENING"
-        },
-        "val": "$k1 #screen_action &NL #screening"
-      },
-      "flag": true
-    },
-    {
-      "name": "Question/Answer section",
-      "position": 2,
-      "optional": true,
-      "attr": {
-        "qa_action": {
-          "name": "qa_action",
-          "type": "ID",
-          "optional": true,
-          "val": ""
-        },
-        "quality_assess": {
-          "name": "quality_assess",
-          "type": "qa",
-          "multiple": {
-            "type": "array",
-            "min": 0
-          },
-          "val": [
-            {
-              "name": "qa",
-              "composition": [
-                {
-                  "name": "questions",
-                  "keyword": "Questions",
-                  "position": 1,
-                  "attr": {
-                    "question": {
-                      "name": "question",
-                      "type": "string",
-                      "multiple": {
-                        "type": "array",
-                        "min": 1
-                      },
-                      "val": [
-                        "Is there a model",
-                        "Is it a contribution to MDE",
-                        "Is it a contribution to HCI"
-                      ]
-                    }
-                  },
-                  "representation": {
-                    "type": "text",
-                    "val": "$keyword [#question]"
-                  }
-                },
-                {
-                  "name": "response",
-                  "keyword": "Response",
-                  "position": 2,
-                  "attr": {
-                    "response": {
-                      "name": "response",
-                      "type": "response",
-                      "multiple": {
-                        "type": "array",
-                        "min": 1
-                      },
-                      "inline": true,
-                      "val": [
-                        {
-                          "name": "response",
-                          "attr": {
-                            "title": {
-                              "name": "title",
-                              "type": "string",
-                              "val": "Yes"
-                            },
-                            "score": {
-                              "name": "score",
-                              "type": "double",
-                              "val": "3"
-                            }
-                          },
-                          "representation": {
-                            "type": "text",
-                            "val": "#title:#score"
-                          }
+                  {
+                    "name": "criteria",
+                    "keyword": "Criteria",
+                    "position": 3,
+                    "attr": {
+                      "exclusion_criteria": {
+                        "name": "exclusion_criteria",
+                        "type": "string",
+                        "multiple": {
+                          "type": "array",
+                          "min": 1
                         },
-                        {
-                          "name": "response",
-                          "attr": {
-                            "title": {
-                              "name": "title",
-                              "type": "string",
-                              "val": "Partially"
-                            },
-                            "score": {
-                              "name": "score",
-                              "type": "double",
-                              "val": "1"
-                            }
-                          },
-                          "representation": {
-                            "type": "text",
-                            "val": "#title:#score"
-                          }
-                        },
-                        {
-                          "name": "response",
-                          "attr": {
-                            "title": {
-                              "name": "title",
-                              "type": "string",
-                              "val": "No"
-                            },
-                            "score": {
-                              "name": "score",
-                              "type": "double",
-                              "val": "0"
-                            }
-                          },
-                          "representation": {
-                            "type": "text",
-                            "val": "#title:#score"
-                          }
-                        }
-                      ]
+                        "val": [
+                          ""
+                        ]
+                      }
+                    },
+                    "representation": {
+                      "type": "text",
+                      "val": "$keyword = [#exclusion_criteria]"
                     }
-                  },
-                  "representation": {
-                    "type": "text",
-                    "val": "$keyword [#response]"
                   }
-                },
-                {
-                  "name": "min_score",
-                  "keyword": "Min_score",
-                  "position": 3,
-                  "attr": {
-                    "min_score": {
-                      "name": "min_score",
-                      "type": "double",
-                      "val": "6"
-                    }
-                  },
-                  "representation": {
-                    "type": "text",
-                    "val": "$keyword #min_score"
-                  }
+                ],
+                "representation": {
+                  "type": "text",
+                  "val": "$composition"
                 }
-              ],
-              "representation": {
-                "type": "text",
-                "val": "$composition"
-              },
-              "attr": {}
-            }
-          ]
-        }
-      },
-      "representation": {
-        "type": "text",
-        "k1": {
-          "type": "keyword",
-          "val": "QA"
+              }
+            ]
+          }
         },
-        "val": "$k1 #qa_action #quality_assess"
-      },
-      "flag": true
-    },
-    {
-      "name": "Report section",
-      "keyword": "",
-      "position": 4,
-      "optional": true,
-      "attr": {
-        "reporting": {
-          "name": "reporting",
-          "type": "report",
-          "multiple": {
-            "type": "array"
+        "representation": {
+          "type": "text",
+          "k1": {
+            "type": "keyword",
+            "val": "SCREENING"
           },
-          "val": [
-            {
-              "name": "report",
-              "attr": {
-                "name": {
-                  "name": "name",
-                  "type": "ID"
-                },
-                "title": {
-                  "name": "title",
-                  "type": "string",
-                  "optional": true
-                },
-                "value": {
-                  "name": "value",
-                  "type": "IDREF",
-                  "ref": "category"
-                },
-                "chart": {
-                  "name": "chart",
-                  "type": "graphType",
-                  "multiple": {
-                    "type": "array"
-                  }
-                }
-              },
-              "abstract": true,
-              "extensions": [
-                "simple_graph",
-                "compare_graph"
-              ]
-            }
-          ]
+          "val": "$k1 #screen_action #screening"
         }
       },
-      "representation": {
-        "type": "text",
-        "k1": {
-          "type": "keyword",
-          "val": "SYNTHESIS"
+      {
+        "name": "Data extraction section",
+        "position": 3,
+        "attr": {
+          "class_action": {
+            "name": "class_action",
+            "type": "ID",
+            "optional": true,
+            "val": ""
+          },
+          "category": {
+            "name": "category",
+            "type": "category",
+            "multiple": {
+              "type": "array",
+              "min": 1
+            },
+            "inline": false,
+            "val": [
+              {
+                "name": "category",
+                "attr": {
+                  "name": {
+                    "name": "name",
+                    "type": "ID"
+                  },
+                  "title": {
+                    "name": "title",
+                    "type": "string",
+                    "optional": true
+                  },
+                  "mandatory": {
+                    "name": "mandatory",
+                    "type": "boolean",
+                    "representation": {
+                      "val": "*"
+                    },
+                    "val": true
+                  },
+                  "numberOfValues": {
+                    "name": "numberOfValues",
+                    "type": "integer",
+                    "val": "1",
+                    "rule": {
+                      "greaterThan": -1,
+                      "equalTo": -1
+                    },
+                    "ruleset": [
+                      {
+                        "greaterThan": -1,
+                        "equalTo": -1
+                      }
+                    ],
+                    "representation": {
+                      "type": "text",
+                      "val": "[$val]"
+                    }
+                  },
+                  "subCategory": {
+                    "name": "subCategory",
+                    "type": "category",
+                    "multiple": {
+                      "type": "array",
+                      "min": 1
+                    },
+                    "representation": {
+                      "type": "text",
+                      "val": "{$val}"
+                    }
+                  }
+                },
+                "named_composition": [
+                  {
+                    "name": "subCategory",
+                    "type": "category",
+                    "multiple": true
+                  }
+                ],
+                "abstract": true,
+                "extensions": [
+                  "freeCategory",
+                  "staticCategory",
+                  "independantDynamicCategory",
+                  "dependantDynamicCategory"
+                ]
+              }
+            ]
+          }
         },
-        "val": "$k1 #reporting"
+        "representation": {
+          "type": "text",
+          "k1": {
+            "type": "keyword",
+            "val": "DATA EXTRACTION"
+          },
+          "val": "$k1 #class_action #category"
+        }
+      }
+    ],
+    "representation": {
+      "type": "text",
+      "k1": {
+        "type": "keyword",
+        "val": "PROJECT"
       },
-      "flag": true
+      "val": "$k1 #short_name #name $composition"
     }
-  ],
-  "representation": {
-    "type": "text",
-    "k1": {
-      "type": "keyword",
-      "val": "PROJECT"
-    },
-    "val": "$k1 #short_name #name $composition"
-  },
-  "@root": "project",
-  "@config": {
-    "language": "ReLiS",
-    "settings": {
-      "autosave": true
-    }
-  },
-  "@resources": [
-    "relis.css"
-  ]
+  }
 }

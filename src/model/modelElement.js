@@ -5,19 +5,19 @@ var ModelElement = (function ($, _, ATTR, ERR) {
 
     const OPTION = 'option';
     const COMPOSITION = 'composition';
-    const REPRESENTATION_TYPE = {
+    const RepresentationType = {
         TEXT: 'text',
         TABLE: 'table'
     };
 
     var pub = {
-        create: function (parent, el) {
+        create: function (model, el) {
             var instance = Object.create(this);
 
             // private members
             instance._source = el;
             instance._path = '';
-            instance._model = parent;
+            instance._model = model;
             instance._representation = el.representation;
             instance._position = _.valOrDefault(el.position, 0);
             instance._attributes = [];
@@ -35,25 +35,22 @@ var ModelElement = (function ($, _, ATTR, ERR) {
         get attributes() { return this._attributes; },
         set path(val) { this._path = val; },
         get path() { return this._path; },
-        /**
-         * @type {boolean}
-         */
+        /** @type {boolean} */
         get isOptional() { return _.toBoolean(this._source.optional); },
-        /**
-         * @type {boolean}
-         */
+        /** @type {boolean} */
         get isMultiple() { return _.toBoolean(this._source.multiple); },
         get composition() { return this._source.composition; },
-        /**
-         * @type {ModelElement[]}
-         */
+        /** @type {ModelElement[]} */
         get elements() { return this._elements; },
         get position() { return this._position; },
+        get name() { return this._source.name; },
         get representation() { return this._representation; },
         /**
          * @type {HTMLElement}
          */
         eHTML: undefined,
+        options: [],
+        parent:null,
         render: function (path, containerless) {
             var self = this;
             // set element's concrete path
@@ -88,9 +85,9 @@ var ModelElement = (function ($, _, ATTR, ERR) {
             if (self._source.base)
                 Object.assign(self._source.attr, this.model.getModelElement(self._source.base).attr, self._source.attr);
 
-            if (self._source.representation.type === REPRESENTATION_TYPE.TEXT) {
+            if (self._source.representation.type === RepresentationType.TEXT) {
                 return self.representation_handler();
-            } else if (self._source.representation.type === REPRESENTATION_TYPE.TABLE) {
+            } else if (self._source.representation.type === RepresentationType.TABLE) {
                 var fragment = DOC.createDocumentFragment();
 
                 var col = self._source.representation.col;
@@ -137,8 +134,15 @@ var ModelElement = (function ($, _, ATTR, ERR) {
             var compo = this.composition;
             var container = DOC.createDocumentFragment();
 
-            this._source.composition.options = [];
-            var options = compo.options;
+            // get options (unused composition elements)
+            var modelComposition = self.model.getModelElement(self.name)[COMPOSITION];
+            var options = modelComposition.filter(function (c) {
+                return self.composition.findIndex(function (val) {
+                    return val.position == c.position;
+                }) === -1;
+            });
+            self.options = options;
+
             var remain = options.length > 0;
 
             var pos = 1;
@@ -151,22 +155,27 @@ var ModelElement = (function ($, _, ATTR, ERR) {
                     compo.splice(i, 1); // remove element from composition
                     remain = true;
                 } else {
-                    let mElement = pub.create(this.model, current);
+                    let mElement = pub.create(self.model, current);
+                    mElement.parent = self;
                     self.elements.push(mElement);
+
                     let children = mElement.render(_.addPath(this.path, COMPOSITION + '[' + i + ']'));
                     Object.assign(children.dataset, { prop: COMPOSITION, position: compo[i].position });
                     if (current.optional) {
                         children.appendChild($.createButtonDelete(children, function () {
-                            this.removeElement(this, current, container, _.addPath(this.path, COMPOSITION));
+                            self.remove(this, current, container, _.addPath(this.path, COMPOSITION));
                         }));
                     }
 
-                    if (pos + 1 <= current.position && options.length > 0) {
+                    if (pos + 1 < current.position) {
                         let input = $.createOptionSelect(pos, current.position - 1, _.addPath(this.path, COMPOSITION));
                         input.dataset.index = self.model.options.length;
                         self.model.options.push(self);
                         container.appendChild(input);
-                        remain = current.position < getLastOption().position;
+
+                        // verify the presence of remaining options
+                        let last = getLastOption();
+                        remain = last && current.position < last.position;
                     }
 
                     container.appendChild(children);
@@ -299,14 +308,17 @@ var ModelElement = (function ($, _, ATTR, ERR) {
             var path = _.addPath(_.getDir(self.path), COMPOSITION);
             // remove element from parent in model
 
-            self.attributes.splice(0).forEach(function (attr) {
-                attr.remove();
-            });
-            var parent = self.model.findModelElement(_.getDir(path));
-            if (parent.hasOwnProperty(COMPOSITION)) {
-                let compo = parent[COMPOSITION];
+            console.log(self.attributes);
+
+            // self.attributes.splice(0).forEach(function (attr) {
+            //     attr.remove();
+            // });
+            
+            
+            if (self.parent && self.parent.composition) {
+                let compo = self.parent.composition;
                 compo.splice(compo.indexOf(self._source), 1);
-                if (self.isOptional && !self.isMultiple) compo.options.push(self._source);
+                if (self.isOptional && !self.isMultiple) self.parent.options.push(self._source);
             }
 
             // var projection = self.getProjection(self.eHTML.id);
@@ -327,11 +339,13 @@ var ModelElement = (function ($, _, ATTR, ERR) {
             //     // }
             // } else listHandler();
 
-            self.eHTML.remove();
+            // self.eHTML.remove();
 
             function optionHandler() {
                 var prev = $.getPreviousElementSibling(self.eHTML);
                 var next = $.getNextElementSibling(self.eHTML);
+                
+
                 var min = self.position;
                 var max = min;
                 var minmax;
@@ -348,8 +362,11 @@ var ModelElement = (function ($, _, ATTR, ERR) {
                     if (minmax[1] > max) max = minmax[1];
                     next.remove();
                 }
-
-                $.insertAfterElement(self.eHTML, $.createOptionSelect(min, max, path));
+                
+                var input = $.createOptionSelect(min, max, path);
+                input.dataset.index = self.model.options.length;
+                self.model.options.push(self.parent);
+                $.insertAfterElement(self.eHTML, input);
             }
 
             function listHandler() {

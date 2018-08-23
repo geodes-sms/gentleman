@@ -31,20 +31,19 @@
     "globals": {
         "Autocomplete": false,
         "DataType": false,
-        "DOC": false,        
-        "EMPTY": false,
+        "DOC": false,
         "EventType": false,
         "Exception": false,
         "HELPER": true,
-        "HIDDEN": false,   
         "HTMLAttribute": false,
         "Key": false,
         "MetaModel": false,
         "ModelAttribute": false,
         "ModelElement": false,
+        "ModelType": false,
         "Projection": false,
         "Representation": false,
-        "SELECTED": false,
+        "UI": true,
         "UTIL": true
     }
 }

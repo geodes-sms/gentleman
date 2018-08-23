@@ -6,13 +6,6 @@
 var MetaModel = (function ($, _, ELEM, ERR) {
     "use strict";
 
-    // Keywords
-    const PLACEHOLDER = 'placeholder';
-
-
-    const MODEL_DATATYPE = 'data-type';
-
-
     var pub = {
         create: function (metamodel, model) {
             var instance = Object.create(this);
@@ -32,6 +25,12 @@ var MetaModel = (function ($, _, ELEM, ERR) {
         get concrete() { return this._model; },
         get MM() { return this._metamodel; },
 
+        /**
+         * Creates and returns a model element
+         * @param {Object} el
+         * @param {boolean} origin
+         * @returns {ModelElement}
+         */
         createModelElement: function (el, origin) {
             origin = _.valOrDefault(origin, false);
             var mElement = ELEM.create(this, el);
@@ -118,21 +117,19 @@ var MetaModel = (function ($, _, ELEM, ERR) {
          * @param {string} type 
          * @returns {boolean}
          */
-        isEnum: function (type) { return this.isElement(type) && this.MM[type].type == DataType.enum; },
+        isEnum: function (type) { return this.isElement(type) && this.MM[type].type == ModelType.ENUM; },
         /**
          * Gets a value indicating whether the element is of type "PRIMITIVE" or "DATATYPE"
          * @param {string} type 
          * @returns {boolean}
          */
-        isDataType: function (type) {
-            return DataType.hasOwnProperty(type.split(':')[0]) || this.isModelDataType(type);
-        },
+        isDataType: function (type) { return DataType.hasOwnProperty(type.split(':')[0]) || this.isModelDataType(type); },
         /**
          * Gets a value indicating whether the element is of type "DATATYPE"
          * @param {string} type 
          * @returns {boolean}
          */
-        isModelDataType: function (type) { return this.isElement(type) && this.MM[type].type === MODEL_DATATYPE; },
+        isModelDataType: function (type) { return this.isElement(type) && this.MM[type].type === ModelType.DATATYPE; },
 
         /**
          * Gets a model element type

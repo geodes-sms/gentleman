@@ -11,12 +11,57 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
     "use strict";
 
     const container = $.getElement("[data-gentleman-editor]");
+    const EL = UI.Element;
+    const EditorMode = {
+        READ: 'read',
+        EDIT: 'edit'
+    };
 
     // Indicates whether the display is mobile mode
     var MOBILE = $.getWindowWidth() <= 700;
 
+    /**
+     * Gets the name of the object if available
+     * @param {Object} obj 
+     * @returns {string|null} name
+     */
+    function nameof(obj) { return _.valOrDefault(obj.name, null); }
+
+    /**
+     * Preprend a string with a dot
+     * @param {string} str 
+     * @returns {string}
+     */
+    function dot(str) { return '.' + str; }
+
     // Allow responsive design
     var mql = window.matchMedia("(max-width: 800px)");
+
+    // Pub-Sub pattern implementation
+    const events = {
+        events: {},
+        on: function (eventName, fn) {
+            this.events[eventName] = this.events[eventName] || [];
+            this.events[eventName].push(fn);
+        },
+        off: function (eventName, fn) {
+            if (this.events[eventName]) {
+                for (var i = 0; i < this.events[eventName].length; i++) {
+                    if (this.events[eventName][i] === fn) {
+                        this.events[eventName].splice(i, 1);
+                        break;
+                    }
+                }
+            }
+        },
+        emit: function (eventName, data) {
+            if (this.events[eventName]) {
+                this.events[eventName].forEach(function (fn) {
+                    fn(data);
+                });
+            }
+        }
+    };
 
     const state = {
         create: function () {
@@ -59,9 +104,212 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
         current: undefined
     };
 
+    var Menu = {
+        /** @type {core} */
+        editor: undefined,
+        /** @type {HTMLElement} */
+        container: undefined,
+        /** @type {HTMLButtonElement} */
+        btnUndo: undefined,
+        /** @type {HTMLButtonElement} */
+        btnRedo: undefined,
+        /** @type {HTMLButtonElement} */
+        btnEdit: undefined,
+        /** @type {HTMLButtonElement} */
+        btnRead: undefined,
+        /** @type {HTMLButtonElement} */
+        btnPrint: undefined,
+        /** @type {HTMLButtonElement} */
+        btnCopy: undefined,
+        /** @type {HTMLButtonElement} */
+        btnNew: undefined,
+
+        create() {
+            var instance = Object.create(this);
+
+            return instance;
+        },
+        init(editor, container) {
+            var self = this;
+
+            self.editor = editor;
+            events.on('editor.initialized', function () {
+                $.enable(self.btnPrint);
+                $.enable(self.btnCopy);
+                $.enable(self.btnRead);
+                $.enable(self.btnEdit);
+                $.enable(self.btnSave);
+            });
+            container.appendChild(this.render());
+            this.bindEvents();
+        },
+        render() {
+            var self = this;
+
+            self.container = $.createUl({ id: 'menu', class: ['bare-list', 'menu'] });
+
+            self.btnOpen = $.createLabel({ class: 'btn btn-menu', text: "Open" });
+            var modelSelector = $.createFileInput({ id: 'fileInput', accept: '.json' });
+            modelSelector.addEventListener('change', function (e) {
+                var file = this.files[0];
+                var reader = new FileReader();
+                if (file.name.endsWith('.json')) {
+                    reader.onload = function (e) {
+                        // clearBody();
+                        self.editor.init(JSON.parse(reader.result));
+                    };
+                    reader.readAsText(file);
+                } else {
+                    alert("File not supported!");
+                }
+            });
+            self.btnOpen.appendChild(modelSelector);
+
+            self.btnNew = createButton('btnNew', "New");
+            self.btnEdit = createButton("btnEdit", "Edit", true, true);
+            self.btnRead = createButton('btnRead', "Read", true);
+            self.btnUndo = createButton('btnUndo', "Undo", true);
+            self.btnRedo = createButton('btnRedo', "Redo", true);
+            self.btnSave = createButton('btnSave', "Save", true);
+            self.btnCopy = createButton('btnCopy', "Copy", true);
+            self.btnPrint = createButton('btnPrint', "Download", true, false, EL.ANCHOR.name);
+
+            appendChildren(self.container, [
+                createMenuItem(self.btnNew),
+                createMenuItem(self.btnOpen),
+                createMenuItem(self.btnSave),
+                createMenuItem(self.btnCopy),
+                createMenuItem(self.btnPrint),
+                createMenuItem([self.btnUndo, self.btnRedo]),
+                createMenuItem([self.btnEdit, self.btnRead])
+            ]);
+
+            return self.container;
+
+
+            /**
+             * Creates a menu item button
+             * @param {string} name 
+             * @param {string} text 
+             * @param {boolean} disabled 
+             * @param {boolean} selected 
+             * @param {string} el 
+             */
+            function createButton(name, text, disabled, selected, el) {
+                disabled = _.valOrDefault(disabled, false);
+                var btnClass = _.valOrDefault(selected, false) ? [EL.BUTTON_MENU, UI.SELECTED] : [EL.BUTTON_MENU];
+                switch (_.valOrDefault(el, EL.BUTTON.name)) {
+                    case EL.ANCHOR.name:
+                        return $.createAnchor(null, { id: name, class: btnClass, text: text, data: { disabled: disabled } });
+                    case EL.BUTTON.name:
+                        return $.createButton({ id: name, class: btnClass, disabled: disabled, text: text });
+                }
+            }
+
+            /**
+             * Creates a menu item
+             * @param {HTMLElement} el 
+             * @returns {HTMLLIElement} menu item
+             */
+            function createMenuItem(el, attr) {
+                attr = _.valOrDefault(attr, { class: 'menu-item' });
+                var item = $.createLi(attr);
+                if (Array.isArray(el)) {
+                    appendChildren(item, el);
+                }
+                else if (el) {
+                    item.appendChild(el);
+                }
+                return item;
+            }
+        },
+        bindEvents() {
+            var self = this;
+
+            const MIME_TYPE = 'application/json';
+            var editor = self.editor;
+
+            self.container.addEventListener(EventType.CLICK, function (event) {
+                var target = event.target;
+                switch (target) {
+                    case self.btnNew:
+                        editor.init();
+
+                        break;
+                    case self.btnRead:
+                        editor.mode = EditorMode.READ;
+                        $.unhighlight(self.btnEdit);
+                        $.highlight(self.btnRead);
+
+                        break;
+                    case self.btnEdit:
+                        editor.mode = EditorMode.EDIT;
+                        $.unhighlight(self.btnRead);
+                        $.highlight(self.btnEdit);
+
+                        break;
+                    case self.btnPrint:
+                        if (_.toBoolean(self.btnPrint.dataset.disabled)) {
+                            return false;
+                        }
+                        window.URL = window.webkitURL || window.URL;
+                        if (!_.isNullOrWhiteSpace(self.btnPrint.href)) {
+                            window.URL.revokeObjectURL(self.btnPrint.href);
+                        }
+
+                        var bb = new Blob([JSON.stringify(editor.model)], { type: MIME_TYPE });
+                        Object.assign(self.btnPrint, {
+                            download: 'model_' + editor.language + '_' + Date.now() + '.json',
+                            href: window.URL.createObjectURL(bb),
+                        });
+                        self.btnPrint.dataset.downloadurl = [MIME_TYPE, self.btnPrint.download, self.btnPrint.href].join(':');
+
+                        $.disable(self.btnPrint);
+                        // Need a small delay for the revokeObjectURL to work properly.
+                        setTimeout(function () {
+                            window.URL.revokeObjectURL(self.btnPrint.href);
+                            $.enable(self.btnPrint);
+                        }, 1500);
+
+                        break;
+                    case self.btnCopy:
+                        editor.copy();
+
+                        break;
+                    case self.btnSave:
+                        editor.save();
+
+                        break;
+                    case self.btnUndo:
+                        editor.undo();
+
+                        break;
+                    case self.btnRedo:
+                        editor.redo();
+
+                        break;
+                    default:
+                        break;
+                }
+            });
+            events.on('editor.undo', function (hasUndo) {
+                self.btnUndo.disabled = !hasUndo;
+                self.btnRedo.disabled = false;
+            });
+            events.on('editor.redo', function (hasRedo) {
+                self.btnRedo.disabled = !hasRedo;
+                self.btnUndo.disabled = false;
+            });
+            events.on('editor.save', function () {
+                self.btnUndo.disabled = false;
+            });
+        }
+    };
+
     var core = {
         /** @type {state} */
         state: state.create(),
+        menu: null,
         MM: null,
         create(model) {
             const KEY_CONFIG = '@config';
@@ -75,44 +323,96 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
             if (model[KEY_CONFIG]) {
                 let config = model[KEY_CONFIG];
                 if (config.language) {
-                    $.getElement('#language').textContent = config.language;
                     instance._language = config.language;
                 }
             }
 
             // add stylesheets
             if (model[KEY_RESOURCE]) {
-                model[KEY_RESOURCE].forEach(function (val) {
-                    DOC.head.appendChild($.createLink('stylesheet', val, { class: 'gentleman-css' }));
+                let dir = '../assets/css/';
+                model[KEY_RESOURCE].forEach(function (name) {
+                    DOC.head.appendChild($.createLink('stylesheet', dir + name, { class: 'gentleman-css' }));
                 });
             }
-
 
             instance._abstract = null;
             instance._concrete = null;
             instance._current = null;
+            instance._isInitialized = false;
 
-            instance._currentLine = $.createDiv({ class: 'body' });
-            instance._body = instance._currentLine;
-            instance._note = $.createElement('aside', 'note', 'note');
+            instance._body = $.createDiv({ class: 'body' });
+            instance._note = $.createAside({ class: 'note' });
             instance._autocomplete = Autocomplete.create();
-            instance.btnUndo = $.getElement('#btnUndo');
-            instance.btnRedo = $.getElement('#btnRedo');
+            instance._mode = false;
 
-            instance.save();
+            // add currentLine and aside note to container
 
             return {
-                init: function (model) { instance.init(model); },
-                // render: instance.render,
+                init(model) { instance.init(model); },
                 save: instance.save,
+                get state() { return instance.state; },
+                undo() {
+                    instance.state.undo();
+                    instance.setState(_.cloneObject(instance.state.current));
+                    events.emit('editor.undo', instance.state.hasUndo);
+                },
+                redo() {
+                    instance.state.redo();
+                    instance.setState(_.cloneObject(instance.state.current));
+                    events.emit('editor.redo', instance.state.hasRedo);
+                },
+                get mode() { return instance._mode; },
+                set mode(val) {
+                    instance._mode = val;
+                    var list;
+                    const READ_MODE = 'read-mode';
+                    switch (val) {
+                        case EditorMode.EDIT:
+                            list = $.getElements(dot(READ_MODE), instance.body);
+                            for (let i = list.length - 1; i >= 0; i--) {
+                                let item = list.item(i);
+                                $.show(item);
+                                $.removeClass(item, READ_MODE);
+                            }
+                            break;
+                        case EditorMode.READ:
+                            // hide empty attributes
+                            list = $.getElements(dot(UI.EMPTY), instance.body);
+                            for (let i = 0, len = list.length; i < len; i++) {
+                                let item = list.item(i);
+                                $.hide(item);
+                                $.addClass(item, READ_MODE);
+                            }
+                            // hide buttons
+                            list = $.getElements(dot(EL.BUTTON.class), instance.body);
+                            for (let i = 0, len = list.length; i < len; i++) {
+                                let item = list.item(i);
+                                $.hide(item);
+                                $.addClass(item, READ_MODE);
+                            }
+
+                            break;
+                    }
+                },
+                get language() { return instance.language; },
+                get model() { return instance.concrete; },
+                copy() {
+                    var el = $.createTextArea({ value: instance.abstract.toString(), readonly: true });
+                    fakeHide(el);
+                    container.appendChild(el);
+                    el.select();
+                    DOC.execCommand('copy');
+                    el.remove();
+                }
             };
         },
+        /** @type {MetaModel} */
         get abstract() { return this._abstract; }, // abstract (static) model
         get concrete() { return this._concrete; }, // concrete (dynamic) mode
         get language() { return this._language; },
         getProjection(index) { return this.projections[index]; },
         get autocomplete() { return this._autocomplete; }, // autocomplete element
-        get projections() { return this._abstract.projections; },
+        get projections() { return this.abstract.projections; },
         get options() { return this._abstract.options; },
         get current() { return this._current; }, // current position in model
         set current(val) { this._current = val; },
@@ -120,65 +420,72 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
         set currentLine(val) { this._currentLine = val; },
         get body() { return this._body; },
         get note() { return this._note; },
-        /** @type {HTMLButtonElement} */
-        btnUndo: undefined,
-        /** @type {HTMLButtonElement} */
-        btnRedo: undefined,
+        get isInitialized() { return this._isInitialized; },
+
         resize() {
             var self = this;
 
             // TODO: adapt UI to smaller screen
         },
+        setState(s) {
+            var self = this;
+
+            self._concrete = s;
+            self._current = self._abstract.createModelElement(self._concrete.root);
+
+            // render
+            $.removeChildren(self._body);
+            self._currentLine = self._body;
+            self.render();
+        },
         save() {
             var self = this;
             self.state.set(self.concrete);
-            self.btnUndo.disabled = false;
+            events.emit('editor.save');
+        },
+        clear() {
+            var self = this;
+            $.removeChildren(self.body);
+            $.removeChildren(self.note);
         },
         init(model) {
             const KEY_ROOT = '@root';
-            // get the root element
-            var rootFound = false;
+
             if (model) {
                 this._concrete = model;
-                rootFound = true;
             } else {
                 var root = this.MM[KEY_ROOT];
                 if (root) {
                     this._concrete = { root: JSON.parse(JSON.stringify(this.MM[root])) };
-                    rootFound = true;
+                }
+                // throw an error if the root was not found.
+                else {
+                    container.appendChild($.createP({
+                        class: 'body',
+                        text: "Error - Root not found: The model does not contain an element with the attribute root"
+                    }));
+                    this._hasError = true;
+                    return;
                 }
             }
 
             // initialize the model
             this._abstract = _MODEL.create(this.MM, this._concrete);
 
-            // throw an error if the root was not found.
-            if (!rootFound) {
-                container.appendChild($.createP({
-                    class: 'body',
-                    text: "Error - Root not found: The model does not contain an element with the attribute root"
-                }));
-                this._hasError = true;
-                return;
-            }
-
-            // check if there are errors and continue otherwise.
-            if (this.hasError) return;
-
             this._current = this._abstract.createModelElement(this._concrete.root, true);
-
-            // add the event handlers
-            this.bindEvents();
 
             // set the initial state
             this.state.init(this.concrete);
 
-            // add currentLine to container
-            container.appendChild(this.currentLine);
-            // add aside note to container
-            container.appendChild(this.note);
+            // add the event handlers
+            this.bindEvents();
 
-            // // draw the editor
+            // clear the body
+            this.clear();
+            this._currentLine = this.body;
+            $.hide($.getElement('#splashscreen'));
+
+            // draw the editor
             this.render();
 
             // Get next element
@@ -189,9 +496,18 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
             }
 
             next.focus();
+
+            if (!this.isInitialized) {
+                events.emit('editor.initialized');
+                this._isInitialized = true;
+            }
         },
         render: function () {
             var self = this;
+
+            if (!this.isInitialized) {
+                appendChildren(container, [this.body, this.note]);
+            }
 
             self.currentLine.appendChild(self.current.render());
             self.currentLine = self.currentLine.firstChild;
@@ -204,115 +520,11 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                 lastKey,
                 preval;
             var flag = false;
-            var menu = $.getElement('#menu');
-            var btnRead = $.getElement('#btnRead');
-            var btnEdit = $.getElement('#btnEdit');
-            var btnPrint = $.getElement('#btnPrint');
-            var btnSave = $.getElement('#btnSave');
-            /** @type {HTMLButtonElement} */
-            var btnCopy = $.getElement('#btnCopy');
 
-            const MIME_TYPE = 'application/json';
-
-            menu.addEventListener(EventType.CLICK, function (event) {
-                var target = event.target;
-
-                switch (target) {
-                    case btnRead:
-                        $.unhighlight(btnEdit);
-                        // hide empty attributes
-                        var emptyList = $.getElements('.empty', self.body);
-                        for (let i = 0, len = emptyList.length; i < len; i++) {
-                            let item = emptyList.item(i);
-                            $.hide(item);
-                            $.addClass(item, "read-mode");
-                        }
-                        // hide buttons
-                        emptyList = $.getElements('.btn', self.body);
-                        for (let i = 0, len = emptyList.length; i < len; i++) {
-                            let item = emptyList.item(i);
-                            $.hide(item);
-                            $.addClass(item, "read-mode");
-                        }
-                        $.highlight(btnRead);
-
-                        break;
-                    case btnEdit:
-                        $.unhighlight(btnRead);
-                        var readList = $.getElements('.read-mode', self.body);
-                        for (let i = readList.length - 1; i >= 0; i--) {
-                            let item = readList.item(i);
-                            $.show(item);
-                            $.removeClass(item, "read-mode");
-                        }
-                        $.highlight(btnEdit);
-
-                        break;
-                    case btnPrint:
-                        if (btnPrint.dataset.disabled) {
-                            return false;
-                        }
-                        window.URL = window.webkitURL || window.URL;
-                        if (!_.isNullOrWhiteSpace(btnPrint.href)) {
-                            window.URL.revokeObjectURL(btnPrint.href);
-                        }
-
-                        var bb = new Blob([JSON.stringify(self.concrete)], { type: MIME_TYPE });
-                        btnPrint.download = 'model_' + self.language + '_' + Date.now() + '.json';
-                        btnPrint.href = window.URL.createObjectURL(bb);
-                        btnPrint.dataset.downloadurl = [MIME_TYPE, btnPrint.download, btnPrint.href].join(':');
-
-                        btnPrint.dataset.disabled = true;
-                        // Need a small delay for the revokeObjectURL to work properly.
-                        setTimeout(function () {
-                            window.URL.revokeObjectURL(btnPrint.href);
-                            btnPrint.dataset.disabled = false;
-                        }, 1500);
-                        break;
-                    case btnCopy:
-                        var el = $.createTextArea({ class: HIDDEN, value: self.abstract.toString(), readonly: true });
-                        // el.style.position = 'absolute';
-                        // el.style.left = '-9999px';
-                        container.appendChild(el);
-                        el.select();
-                        DOC.execCommand('copy');
-                        el.remove();
-                        break;
-                    case btnSave:
-                        self.save();
-                        break;
-                    case self.btnUndo:
-                        self.state.undo();
-                        self.btnUndo.disabled = !self.state.hasUndo;
-                        self.btnRedo.disabled = false;
-
-                        self._concrete = self.state.current;
-                        self._abstract = _MODEL.create(self.MM, self._concrete);
-                        self._current = self._abstract.createModelElement(self._concrete.root, true);
-
-                        $.removeChildren(self._body);
-                        self._currentLine = self._body;
-                        self.render();
-                        break;
-                    case self.btnRedo:
-                        self.state.redo();
-                        self.btnRedo.disabled = !self.state.hasRedo;
-                        self.btnUndo.disabled = false;
-                        self._concrete = self.state.current;
-                        self._current = self._abstract.createModelElement(self._concrete.root);
-                        $.removeChildren(self._body);
-                        self._currentLine = self._body;
-                        self.render();
-                        break;
-                    default:
-                        break;
-                }
-            });
-
-            container.addEventListener(EventType.CLICK, function (event) {
+            self.body.addEventListener(EventType.CLICK, function (event) {
                 var target = event.target;
                 var action = target.dataset.action;
-                if (action && target.tagName == 'BUTTON') {
+                if (action && target.tagName == EL.BUTTON.name) {
                     switch (action) {
                         case 'add':
                             self.save();
@@ -326,7 +538,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                 }
             }, false);
 
-            container.addEventListener(EventType.KEYUP, function (event) {
+            self.body.addEventListener(EventType.KEYUP, function (event) {
                 var target = event.target;
                 var projection = self.getProjection(target.id);
 
@@ -359,7 +571,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                 }
             }, false);
 
-            container.addEventListener(EventType.KEYDOWN, function (event) {
+            self.body.addEventListener(EventType.KEYDOWN, function (event) {
                 var target = event.target;
                 var parent = target.parentElement;
                 var projection = self.getProjection(target.id);
@@ -397,12 +609,12 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                 }
 
                 if (event.key.length === 1) {
-                    $.removeClass(target, EMPTY);
-                    $.removeClass(parent, EMPTY);
+                    $.removeClass(target, UI.EMPTY);
+                    $.removeClass(parent, UI.EMPTY);
                 }
             }, false);
 
-            container.addEventListener(EventType.FOCUSIN, function (event) {
+            self.body.addEventListener(EventType.FOCUSIN, function (event) {
                 self.autocomplete.hide();
                 $.removeChildren(self.note);
 
@@ -423,9 +635,10 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                     var min = position[0];
                     var max = position[1];
 
-                    self.current = self.abstract.findModelElement(path);
+                    var index = target.dataset['index'];
+                    var parentMElement = self.options[+index];
 
-                    data = self.current.options.filter(function (x) {
+                    data = parentMElement.options.filter(function (x) {
                         return x.position >= min && x.position <= max;
                     });
                     data = data.map(function (el) { return { val: el.name, element: el }; });
@@ -461,7 +674,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                 }
             }, false);
 
-            container.addEventListener(EventType.FOCUSOUT, function (event) {
+            self.body.addEventListener(EventType.FOCUSOUT, function (event) {
                 if (flag) {
                     flag = false;
                     return;
@@ -480,9 +693,8 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                     if (projection) {
                         projection.focusOut();
                         projection.update();
-
                         if (preval !== projection.value) {
-                            self.state.set(self.concrete);
+                            self.save();
                         }
                     }
 
@@ -527,19 +739,27 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                 const COMPOSITION = 'composition';
 
                 var path = eHTML.dataset['path'];
-                var parentMElement = self.options[+eHTML.dataset['index']];
-                var dir = _.getDir(path);
+                var index = eHTML.dataset['index'];
+                var parentMElement = self.options[+index];
+                var compo = parentMElement.composition;
                 var element = _.cloneObject(val.element);
                 element.flag = true;
 
-                self.current.push(element);
+
+                for (let i = 0, len = compo.length; i < len; i++) {
+                    if (compo[i].position > element.position) {
+                        $.insert(compo, i, element);
+                        break;
+                    }
+                }
 
                 // render element
                 var mElement = self.abstract.createModelElement(element);
+                mElement.parent = parentMElement;
                 parentMElement.elements.push(mElement);
 
-                mElement.path = path + '[' + (self.current.length - 1) + ']';
-                var line = mElement.render(path + '[' + (self.current.length - 1) + ']');
+                mElement.path = path + '[' + (compo.length - 1) + ']';
+                var line = mElement.render(path + '[' + (compo.length - 1) + ']');
                 Object.assign(line.dataset, { prop: COMPOSITION, position: element.position });
 
                 $.insertBeforeElement(eHTML, line);
@@ -547,7 +767,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                 // update options
                 if (!element.multiple) {
                     eHTML.remove();
-                    self.current.options = self.current.options.filter(function (x) {
+                    parentMElement.options = parentMElement.options.filter(function (x) {
                         return x.name !== element.name;
                     });
                     // add options
@@ -557,13 +777,15 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
 
                     if (left.length > 0) {
                         left.sort(function (a, b) { return a.position - b.position; });
-                        line.insertAdjacentElement('beforebegin',
-                            $.createOptionSelect(left[0].position, left[left.length - 1].position, path));
+                        let input = $.createOptionSelect(left[0].position, left[left.length - 1].position, path);
+                        input.dataset.index = index;
+                        $.insertBeforeElement(line, input);
                     }
                     if (right.length > 0) {
                         right.sort(function (a, b) { return a.position - b.position; });
-                        line.insertAdjacentElement('afterend',
-                            $.createOptionSelect(right[0].position, right[right.length - 1].position, path));
+                        let input = $.createOptionSelect(right[0].position, right[right.length - 1].position, path);
+                        input.dataset.index = index;
+                        $.insertAfterElement(line, input);
                     }
                 }
 
@@ -676,23 +898,6 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
     };
 
     /**
-     * Creates a menu item
-     * @param {HTMLElement} el 
-     * @returns {HTMLLIElement} menu item
-     */
-    function createMenuItem(el, attr) {
-        attr = _.valOrDefault(attr, { class: 'menu-item' });
-        var item = $.createLi(attr);
-        if (Array.isArray(el)) {
-            appendChildren(item, el);
-        }
-        else if (el) {
-            item.appendChild(el);
-        }
-        return item;
-    }
-
-    /**
      * Append a list of elements to a node.
      * @param {HTMLElement} parent
      * @param {HTMLElement[]} children
@@ -712,14 +917,9 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
      * It removes all contents and stylesheets applied by previous models.
      */
     function clear() {
-        // clear body section
-        var body = $.getElement('.body', container);
-        if (body) {
-            $.removeChildren(body);
-            body.remove();
-        }
+        clearBody();
         // clear aside section
-        var aside = $.getElement('#note', container);
+        var aside = $.getElement('.note', container);
         if (aside) {
             $.removeChildren(aside);
             aside.remove();
@@ -730,11 +930,15 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
             links.item(i).remove();
         }
     }
+    function clearBody() {
+        // clear body section
+        var body = $.getElement('.body', container);
+        if (body) {
+            $.removeChildren(body);
+            body.remove();
+        }
+    }
 
-
-    /**
-     * Start the editor
-     */
     (function init() {
         var modelTest = {
             "project": {
@@ -1129,12 +1333,23 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
             },
             "@resources": ["../assets/css/relis.css"]
         };
-        var editor;
 
-        var header = $.createElement("header", "header");
-        var headerContent = $.createDiv({ class: "content-wrapper" });
+        var header = $.createHeader({ id: 'header', class: 'editor-header' });
+        var headerContent = $.createDiv({ class: "content-wrapper editor-header-content" });
 
-        var lblSelector = $.createLabel({ class: 'btn btn-loader hidden', text: "Load a Metamodel" });
+        // var editor = core.create(modelTest);
+        // headerContent.appendChild($.createSpan({ id: 'language', class: 'model-language', text: editor.language }));
+        // Menu.create().init(editor, headerContent);
+
+        // header.appendChild(headerContent);
+
+        var splashscreen = $.createDiv({ id: 'splashscreen', class: 'splashscreen' });
+        var instruction = $.createP({ class: 'instruction-container font-gentleman' });
+        // var exportContainer = $.createDiv({ class: 'export-container' });
+        // var output = $.createElement('output');
+        // appendChildren(exportContainer, [output]);
+
+        var lblSelector = $.createLabel({ class: 'btn btn-loader', text: "Load a Metamodel" });
         var inputSelector = $.createFileInput({ id: 'fileInput', accept: '.json' });
         inputSelector.addEventListener('change', function (e) {
             var file = this.files[0];
@@ -1143,7 +1358,16 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                 reader.onload = function (e) {
                     // empty container
                     clear();
+                    $.hide(lblSelector);
                     editor = core.create(JSON.parse(reader.result));
+                    headerContent.appendChild($.createSpan({ id: 'language', class: 'model-language', text: editor.language }));
+                    Menu.create().init(editor, headerContent);
+                    header.appendChild(headerContent);
+                    SmartType(instruction, [
+                        { type: 0, val: "Good news! Your Metamodel is valid and has been successfully loaded." },
+                        { type: 0, val: "\nTo continue, open a saved model or create a new one." }
+                    ], function () { });
+                    // $.hide(splashscreen);
                 };
                 reader.readAsText(file);
             } else {
@@ -1151,56 +1375,6 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
             }
         });
         lblSelector.appendChild(inputSelector);
-
-
-        var lblOpenModel = $.createLabel({ class: 'load-model', text: "Open a Model" });
-        var modelSelector = $.createFileInput({ id: 'fileInput', accept: '.json' });
-        modelSelector.addEventListener('change', function (e) {
-            var file = this.files[0];
-            var reader = new FileReader();
-            if (file.name.endsWith('.json')) {
-                reader.onload = function (e) {
-                    clear();
-                    $.hide(splashscreen);
-                    editor.init(JSON.parse(reader.result));
-                };
-                reader.readAsText(file);
-            } else {
-                alert("File not supported!");
-            }
-        });
-        lblOpenModel.appendChild(modelSelector);
-        var instruction = $.createP({ class: 'instruction-container font-gentleman' });
-        var exportContainer = $.createDiv({ class: 'export-container' });
-        var output = $.createElement('output');
-        appendChildren(exportContainer, [output]);
-
-        var btnInit = $.createButton({ class: ['btn', 'btn-menu'], text: "Create a model" });
-        btnInit.addEventListener(EventType.CLICK, function (e) {
-            $.hide(splashscreen);
-            editor.init();
-        });
-
-        var menu = $.createUl({ id: "menu", class: "bare-list menu" });
-
-        appendChildren(menu, [
-            createMenuItem($.createAnchor(null, { id: 'btnPrint', class: "btn btn-menu", text: "Download" })),
-            createMenuItem([
-                $.createButton({ id: "btnEdit", name: "btnEdit", class: "btn btn-menu selected", text: "Edit" }),
-                $.createButton({ id: "btnRead", name: "btnRead", class: "btn btn-menu", text: "Read" })
-            ]),
-            createMenuItem([
-                $.createButton({ id: "btnUndo", name: "btnUndo", class: "btn btn-menu", text: "Undo" }),
-                $.createButton({ id: "btnRedo", name: "btnRedo", class: "btn btn-menu", text: "Redo" })
-            ]),
-            createMenuItem($.createButton({ id: "btnSave", name: "btnSave", class: "btn btn-menu", text: "Save" })),
-            createMenuItem($.createButton({ id: "btnCopy", name: "btnCopy", class: "btn btn-menu", text: "Copy" }))
-        ]);
-
-        appendChildren(headerContent, [$.createSpan({ id: 'language' }), lblOpenModel, menu]);
-        header.appendChild(headerContent);
-
-        var splashscreen = $.createDiv({ class: 'splashscreen' });
         appendChildren(splashscreen, [instruction, lblSelector]);
         appendChildren(container, [header, splashscreen]);
 
@@ -1210,23 +1384,25 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
             { type: 0, val: ".\nTo begin, please load a " },
             { type: 2, val: "Metamodel.", tooltip: "A metamodel is ..." }
         ], function () {
-            if (!modelTest) {
+            if (modelTest) {
                 editor = core.create(JSON.parse(JSON.stringify(modelTest)));
-                SmartType(instruction, [
-                    { type: 1, val: "\n......." },
-                ]);
-                setTimeout(() => {
-                    SmartType(instruction, [
-                        { type: 0, val: "\nGood news! Your Metamodel is valid and has been successfully loaded." },
-                        { type: 0, val: "\nTo continue, open a saved model or create a new one." }
-                    ], function () { instruction.appendChild(btnInit); });
-                }, 1000);
+                instruction.appendChild($.createLineBreak());
+                // instruction.appendChild(btnInit);
             } else {
                 $.show(lblSelector);
             }
         });
 
     })();
+
+    /**
+     * Move element out of screen
+     * @param {HTMLElement} el Element
+     */
+    function fakeHide(el) {
+        Object.assign(el, { position: 'absolute', top: '-9999px', left: '-9999px' });
+        return el;
+    }
 
     /**
      * This function simulates the typing

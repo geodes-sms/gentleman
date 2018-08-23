@@ -3,5 +3,17 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Version 0.7.0 (2018-08-05)
+## Version 0 (2018-08-05)
+
+### Version 0.8.0 (2018-08-13)
+#### Added
+- Metamodel and Model loader
+- Homescreen design
+#### Fixed
+- Undo/redo behaviour
+- Demo page navigation links
+
+### Version 0.7.0 (2018-08-05)
 Hello world.
+
+### Added
