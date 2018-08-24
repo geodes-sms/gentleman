@@ -7,6 +7,8 @@
 /// <reference path="model/modelElement.js" />
 /// <reference path="projection.js" />
 
+const __ENV = Environment.TEST;
+
 var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
     "use strict";
 
@@ -1331,67 +1333,65 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                     "autosave": true
                 }
             },
-            "@resources": ["../assets/css/relis.css"]
+            "@resources": ["relis.css"]
         };
 
         var header = $.createHeader({ id: 'header', class: 'editor-header' });
         var headerContent = $.createDiv({ class: "content-wrapper editor-header-content" });
 
-        // var editor = core.create(modelTest);
-        // headerContent.appendChild($.createSpan({ id: 'language', class: 'model-language', text: editor.language }));
-        // Menu.create().init(editor, headerContent);
-
-        // header.appendChild(headerContent);
-
         var splashscreen = $.createDiv({ id: 'splashscreen', class: 'splashscreen' });
         var instruction = $.createP({ class: 'instruction-container font-gentleman' });
-        // var exportContainer = $.createDiv({ class: 'export-container' });
-        // var output = $.createElement('output');
-        // appendChildren(exportContainer, [output]);
 
-        var lblSelector = $.createLabel({ class: 'btn btn-loader', text: "Load a Metamodel" });
-        var inputSelector = $.createFileInput({ id: 'fileInput', accept: '.json' });
-        inputSelector.addEventListener('change', function (e) {
-            var file = this.files[0];
-            var reader = new FileReader();
-            if (file.name.endsWith('.json')) {
-                reader.onload = function (e) {
-                    // empty container
-                    clear();
-                    $.hide(lblSelector);
-                    editor = core.create(JSON.parse(reader.result));
-                    headerContent.appendChild($.createSpan({ id: 'language', class: 'model-language', text: editor.language }));
-                    Menu.create().init(editor, headerContent);
-                    header.appendChild(headerContent);
-                    SmartType(instruction, [
-                        { type: 0, val: "Good news! Your Metamodel is valid and has been successfully loaded." },
-                        { type: 0, val: "\nTo continue, open a saved model or create a new one." }
-                    ], function () { });
-                    // $.hide(splashscreen);
-                };
-                reader.readAsText(file);
-            } else {
-                alert("File not supported!");
-            }
-        });
-        lblSelector.appendChild(inputSelector);
-        appendChildren(splashscreen, [instruction, lblSelector]);
-        appendChildren(container, [header, splashscreen]);
+        switch (__ENV) {
+            case Environment.TEST:
+                var editor = core.create(modelTest);
+                headerContent.appendChild($.createSpan({ id: 'language', class: 'model-language', text: editor.language }));
+                Menu.create().init(editor, headerContent);
+                header.appendChild(headerContent);
+                appendChildren(container, [header, splashscreen]);
+                editor.init();
 
-        SmartType(instruction, [
-            { type: 0, val: "Hello friend, welcome to " },
-            { type: 1, val: "Gentleman" },
-            { type: 0, val: ".\nTo begin, please load a " },
-            { type: 2, val: "Metamodel.", tooltip: "A metamodel is ..." }
-        ], function () {
-            if (modelTest) {
-                editor = core.create(JSON.parse(JSON.stringify(modelTest)));
-                instruction.appendChild($.createLineBreak());
-                // instruction.appendChild(btnInit);
-            } else {
-                $.show(lblSelector);
-            }
-        });
+                break;
+            case Environment.PROD:
+                var lblSelector = $.createLabel({ class: [EL.BUTTON, 'btn-loader', UI.HIDDEN], text: "Load a Metamodel" });
+                var inputSelector = $.createFileInput({ id: 'fileInput', accept: '.json' });
+                inputSelector.addEventListener('change', function (e) {
+                    var file = this.files[0];
+                    var reader = new FileReader();
+                    if (file.name.endsWith('.json')) {
+                        reader.onload = function (e) {
+                            // empty container
+                            clear();
+                            $.hide(lblSelector);
+                            editor = core.create(JSON.parse(reader.result));
+                            headerContent.appendChild($.createSpan({ id: 'language', class: 'model-language', text: editor.language }));
+                            Menu.create().init(editor, headerContent);
+                            header.appendChild(headerContent);
+                            SmartType(instruction, [
+                                { type: 0, val: "Good news! Your Metamodel is valid and has been successfully loaded." },
+                                { type: 0, val: "\nTo continue, open a saved model or create a new one." }
+                            ], function () { });
+                        };
+                        reader.readAsText(file);
+                    } else {
+                        alert("File not supported!");
+                    }
+                });
+                lblSelector.appendChild(inputSelector);
+                appendChildren(splashscreen, [instruction, lblSelector]);
+                appendChildren(container, [header, splashscreen]);
+                SmartType(instruction, [
+                    { type: 0, val: "Hello friend, welcome to " },
+                    { type: 1, val: "Gentleman" },
+                    { type: 0, val: ".\nTo begin, please load a " },
+                    { type: 2, val: "Metamodel.", tooltip: "A metamodel is ..." }
+                ], function () {
+                    $.show(lblSelector);
+                });
+
+                break;
+        }
+
 
     })();
 

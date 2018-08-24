@@ -1,3 +1,8 @@
+const Environment = {
+    PROD: 'prod',
+    TEST: 'test'
+};
+
 /**
  * Enum for datatype values.
  * @readonly

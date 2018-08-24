@@ -32,6 +32,7 @@
         "Autocomplete": false,
         "DataType": false,
         "DOC": false,
+        "Environment": false,
         "EventType": false,
         "Exception": false,
         "HELPER": true,

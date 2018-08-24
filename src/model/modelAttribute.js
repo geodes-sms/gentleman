@@ -358,7 +358,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
         remove(index) {
             var self = this;
 
-            if (index !== -1) {
+            if (index > -1) {
                 if (self.projections[index]) self.projections.splice(index, 1)[0].remove();
                 if (self.elements[index]) self.elements.splice(index, 1)[0].remove();
                 self._source.val.splice(index, 1);
@@ -368,10 +368,12 @@ const ModelAttribute = (function ($, _, PN, ERR) {
 
         },
         removeAll() {
-            self.projections.forEach(function (projection) {
+            var self = this;
+
+            self.projections.slice(0).forEach(function (projection) {
                 projection.remove();
             });
-            self.elements.forEach(function (el) {
+            self.elements.slice(0).forEach(function (el) {
                 el.remove();
             });
 
