@@ -1,5 +1,7 @@
 # Gentleman 
 
+[![Build Status](https://travis-ci.org/geodes-sms/gentleman.svg?branch=master)](https://travis-ci.org/geodes-sms/gentleman)
+
 Gentleman is a web-based projectionnal editor generator. It allows you to express and interact with your DSL.
 
 ## Features

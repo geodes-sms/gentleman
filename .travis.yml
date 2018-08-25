@@ -1,3 +1,17 @@
 language: node_js
 node_js:
-  - "8"
+- '8'
+cache:
+  directories:
+  - node_modules
+notifications:
+  email: false
+  slack:
+    rooms:
+      - secure: dhR89qYU3rV8b/Zncp4Nm0sEJ5FfytgemzawPogmFiRV0Zub9IuatoWJgtbCHrmb7XlLJI+I36X9e5kV2NjxafaC9jHG/EnCC9Umjn5Ay62pVJhzxOW2DiUzNN5Cp8lPoBlhPYnO+waDuBiu/8CIuCnSDGtILv794vM/ryNGY4wZPtKXgNGp6A7/wI4AOYwVqKtB9q0CIqryDQ2MZBF+x+kklINRv86oqES9VAE1HSrZs+9Iq6WfTce2W8hDvYILcd0zHvyNxJSHTS0i2udNd56OMhBa6+f8pPAQ+AQUGuC9nQvH04y5lc6QR/Dwcxf5NHY0SHJPug83GfrikTleKpgbux6XYaeU1mWm1OuLZXfTExqz4AoVuDsbT/3epXEM/+VGmTvKzr7T5h9K1miFPeFwFE5mslKfuE1BuzMrK0AKbVH2/yMBw0T7aYpfLuECc+jKouVkqML2KCA8wsMH+RR6onwakUD8gBY/gCudPAi55XURK963R/7p+L4llEeluOC93iOwL7c4zaKf/fkGNdkIxB3rX3dqgyKzk5HU3/Zlwqx2ymCHzxV3EFx22W2MY4k1mDd+tzCWsuuU6wqui12OOYP4uiikwbh+WvB0OyANaPDtEvOLb8+XrobRns4nwQbGX5LUuWpaDQw1WHahZ1dm/olba6xwWpZV05FOjWM=
+    on_success: always  # change: send a notification when the build status changes.
+    on_failure: always  # always: always send a notification.
+    template:
+      - "Repo `%{repository_slug}` *%{result}* build (<%{build_url}|#%{build_number}>) for commit (<%{compare_url}|%{commit}>) on branch `%{branch}`."
+      - "Execution time: *%{duration}*"
+      - "Message: %{message}"
