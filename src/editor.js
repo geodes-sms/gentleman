@@ -8,6 +8,7 @@
 /// <reference path="projection.js" />
 
 const __ENV = Environment.TEST;
+const __VERSION = '0.10';
 
 var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
     "use strict";
@@ -515,6 +516,71 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
             self.currentLine = self.currentLine.firstChild;
             self.currentLine.contentEditable = false;
         },
+        openConv() {
+            var self = this;
+            
+            $.removeChildren(self.note);
+            var container = $.createDiv({ class: 'convo-container' });
+            var convo = $.createDiv({ class: ['convo-wrapper'] });
+            var a = $.createP({ class: ['convo', 'convo--gentleman', 'font-gentleman'] });
+            convo.appendChild(a);
+            var qq = $.createTextArea({ class: ['question'], placeholder: 'Ask a question' });
+            qq.addEventListener('keydown', function (event) {
+                switch (event.key) {
+                    case Key.enter:
+                        var val = qq.value;
+                        var q = $.createP({ class: ['convo', 'convo--user'], text: val });
+                        convo.appendChild(q);
+                        qq.value = "";
+
+                        // delay answer
+                        setTimeout(function () {
+                            var a = $.createP({ class: ['convo', 'convo--gentleman', 'font-gentleman'] });
+                            convo.appendChild(a);
+                            SmartType(a, ask(val), function () { });
+                        }, 200);
+
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        break;
+                    case Key.backspace:
+                        event.stopPropagation();
+
+                        break;
+                    default:
+                        break;
+                }
+
+            });
+            appendChildren(container, [convo, qq]);
+            self.note.appendChild(container);
+            SmartType(a, [{ type: 0, val: "Hello, how may I help you?" }], function () { });
+            qq.focus();
+
+            /**
+             * Process question
+             * @param {string} qq question
+             * @returns {string} answer
+             */
+            function ask(qq) {
+                const THANK_YOU = ['thx', 'ty', 'thanks', 'thank'];
+                const POLITE = ["You're welcome", "I'm happy to help", "Glad I could help", "Anytime", "It was nothing", "No problem", "Don't mention it", "It was my pleasure"];
+
+                // remove accents and keep words
+                var words = removeAccents(qq).replace(/[^a-zA-Z0-9 _-]/gi, '').split(' ');
+                if (words.findIndex(function (val) { return val.toLowerCase() === 'version'; }) !== -1) {
+                    return [
+                        { type: 0, val: "You are currently using Gentleman " },
+                        { type: 1, val: "version " + __VERSION }
+                    ];
+                } else if (words.findIndex(function (val) { return THANK_YOU.indexOf(val.toLowerCase()) !== -1; }) !== -1) {
+                    return [{ type: 0, val: POLITE[_.random(POLITE.length - 1)] }];
+                } else {
+                    return [{ type: 0, val: "Sorry, I cannot answer this question at the moment. Ask me again later." }];
+                }
+            }
+        },
         bindEvents: function () {
             var self = this;
 
@@ -540,7 +606,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                 }
             }, false);
 
-            self.body.addEventListener(EventType.KEYUP, function (event) {
+            container.addEventListener(EventType.KEYUP, function (event) {
                 var target = event.target;
                 var projection = self.getProjection(target.id);
 
@@ -549,6 +615,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                 }
 
                 if (lastKey == event.key) lastKey = -1;
+
                 switch (event.key) {
                     case Key.spacebar:
                         if (lastKey == Key.ctrl)
@@ -568,12 +635,18 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                             flag = false;
                         }
                         break;
+                    case 'g':
+                        if (lastKey === Key.ctrl) {
+                            self.openConv();
+                            event.preventDefault();
+                        }
+                        break;
                     default:
                         break;
                 }
             }, false);
 
-            self.body.addEventListener(EventType.KEYDOWN, function (event) {
+            container.addEventListener(EventType.KEYDOWN, function (event) {
                 var target = event.target;
                 var parent = target.parentElement;
                 var projection = self.getProjection(target.id);
@@ -601,10 +674,18 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                         target.blur(); // remove focus
 
                         event.preventDefault();
-                        break;
 
+                        break;
                     case Key.tab:
                         self.autocomplete.hasFocus = false;
+
+                        break;
+                    case "z":
+                    case 'g':
+                        if (lastKey == Key.ctrl) {
+                            event.preventDefault();
+                        }
+
                         break;
                     default:
                         break;
@@ -939,6 +1020,18 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
             $.removeChildren(body);
             body.remove();
         }
+    }
+
+    function removeAccents(str) {
+        if (String.prototype.normalize) {
+            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+        }
+        return str.replace(/[àâäæ]/gi, 'a')
+            .replace(/[ç]/gi, 'c')
+            .replace(/[éèê]/gi, 'e')
+            .replace(/[îï]/gi, 'i')
+            .replace(/[ôœ]/gi, 'o')
+            .replace(/[ùûü]/gi, 'u');
     }
 
     (function init() {

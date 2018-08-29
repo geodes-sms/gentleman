@@ -257,14 +257,14 @@ var UTIL = (function (_) {
 
             return p;
         },
-        createHeader(attr){
+        createHeader(attr) {
             var header = this.createElement('header');
 
             if (attr) {
                 this.addAttributes(header, attr);
             }
 
-            return header;   
+            return header;
         },
         /**
          * Create a <input.checkbox> element with some attributes
@@ -437,6 +437,7 @@ var UTIL = (function (_) {
          */
         addFormAttributes(el, attr) {
             if (attr.value) el.value = attr.value;
+            if (attr.placeholder) el.placeholder = attr.placeholder;
             if (attr.disabled) el.disabled = attr.disabled;
             if (attr.readonly) el.readOnly = attr.readonly;
         },

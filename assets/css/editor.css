@@ -173,9 +173,10 @@ li, td, th { font-size: 1.2em; }
     position: fixed;
     top: 60px; right: 0; bottom: 0;
     z-index: -3;
-    padding-bottom: 20px;
+    /* padding-bottom: 20px; */
     width: 30%; min-width: 320px;
     background-color: #e5e4e2;
+    z-index: 5;
 }
 
 .note-attr {
@@ -205,6 +206,41 @@ li, td, th { font-size: 1.2em; }
 
 .note-info {
     background-color: #f2f1ef;
+}
+
+.convo-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+}
+
+.convo-wrapper { padding: 0 10px; }
+
+.convo { 
+    margin-top: 0; margin-bottom: 0;
+    padding: 5px 10px; 
+    color: #fff;
+}
+
+.convo--gentleman { 
+    margin-right: 20px;
+    background-color: #36454F;
+}
+
+.convo--user { 
+    margin-left: 20px;
+    text-align: right;
+    background-color: royalblue;
+}
+
+.question { 
+    width: 100%; 
+    padding: 5px 10px;
+    font-size: 1.5em;
+    color: #fff;
+    border: 0 none;
+    background-color: #555;
 }
 
 .line { position: relative; }

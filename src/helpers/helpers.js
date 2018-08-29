@@ -9,8 +9,6 @@ const HELPER = (function () {
                     obj['isActiveClone'] = null;
                     temp[key] = this.cloneObject(obj[key]);
                     delete obj['isActiveClone'];
-                }else{
-                    console.log(key);
                 }
             }
             return temp;
@@ -152,6 +150,19 @@ const HELPER = (function () {
                 }
             }
             return undefined;
+        },
+        /**
+         * Return a random integer between min and max (inclusive).
+         * @param {number} min 
+         * @param {number} max 
+         */
+        random(min, max) {
+            if (max == null) {
+                max = min;
+                min = 0;
+            }
+
+            return min + Math.floor(Math.random() * (max - min + 1));
         }
     };
 
@@ -198,6 +209,6 @@ const HELPER = (function () {
     return pub;
 }());
 
-if(typeof module !== 'undefined'){
+if (typeof module !== 'undefined') {
     module.exports = HELPER;
 }
