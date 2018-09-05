@@ -83,6 +83,21 @@ var UTIL = (function (_) {
          */
         insertAfterElement(target, el) { target.insertAdjacentElement('afterend', el); },
         /**
+         * Inserts a givern element as the first children of the targetted element
+         * @param {HTMLElement} target 
+         * @param {HTMLElement} el 
+         */
+        preprendChild(target, el) { target.insertAdjacentElement('afterbegin', el); },
+        appendChildren(parent, children) {
+            var fragment = this.createDocFragment();
+            children.forEach(element => {
+                fragment.appendChild(element);
+            });
+            parent.appendChild(fragment);
+            fragment = null;
+            return parent;
+        },
+        /**
          * Verifies that an element has a class
          * @param {HTMLElement} e element
          * @param {string} c class
@@ -217,6 +232,15 @@ var UTIL = (function (_) {
             }
 
             return div;
+        },
+        createHeading(lvl, attr) {
+            var h = this.createElement(lvl);
+
+            if (attr) {
+                this.addAttributes(h, attr);
+            }
+
+            return h;
         },
         /**
          * Creates a <div> element with some attributes

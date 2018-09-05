@@ -93,4 +93,8 @@ th { text-align: center; }
     list-style: none;
 }
 
+.bare-link {
+    text-decoration: none;
+}
+
 .block { display: block!important; }

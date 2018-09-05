@@ -38,7 +38,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
     function dot(str) { return '.' + str; }
 
     // Allow responsive design
-    var mql = window.matchMedia("(max-width: 800px)");
+    var mql = window.matchMedia('(max-width: 800px)');
 
     // Pub-Sub pattern implementation
     const events = {
@@ -107,7 +107,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
         current: undefined
     };
 
-    var Menu = {
+    const Menu = {
         /** @type {core} */
         editor: undefined,
         /** @type {HTMLElement} */
@@ -177,7 +177,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
             self.btnCopy = createButton('btnCopy', "Copy", true);
             self.btnPrint = createButton('btnPrint', "Download", true, false, EL.ANCHOR.name);
 
-            appendChildren(self.container, [
+            $.appendChildren(self.container, [
                 createMenuItem(self.btnNew),
                 createMenuItem(self.btnOpen),
                 createMenuItem(self.btnSave),
@@ -218,7 +218,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                 attr = _.valOrDefault(attr, { class: 'menu-item' });
                 var item = $.createLi(attr);
                 if (Array.isArray(el)) {
-                    appendChildren(item, el);
+                    $.appendChildren(item, el);
                 }
                 else if (el) {
                     item.appendChild(el);
@@ -309,10 +309,123 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
         }
     };
 
+    const Note = {
+        /** @type {core} */
+        editor: undefined,
+        /** @type {HTMLElement} */
+        container: undefined,
+
+        create() {
+            var instance = Object.create(this);
+
+            return instance;
+        },
+        init(editor, container) {
+            var self = this;
+
+            self.editor = editor;
+            container.appendChild(this.render());
+            this.bindEvents();
+        },
+        render() {
+            var self = this;
+
+            self.container = $.createAside({ class: 'note' });
+
+            return self.container;
+        },
+        bindEvents() {
+            var self = this;
+
+            var editor = self.editor;
+
+            // events.on('editor.undo', function (hasUndo) {
+            //     self.btnUndo.disabled = !hasUndo;
+            //     self.btnRedo.disabled = false;
+            // });
+            // events.on('editor.redo', function (hasRedo) {
+            //     self.btnRedo.disabled = !hasRedo;
+            //     self.btnUndo.disabled = false;
+            // });
+            // events.on('editor.save', function () {
+            //     self.btnUndo.disabled = false;
+            // });
+
+            events.on('editor.change', function (projection) {
+                self.update(projection);
+            });
+        },
+        clear() {
+            var self = this;
+
+            $.removeChildren(self.container);
+        },
+        update(projection) {
+            var self = this;
+
+            self.clear();
+
+            var fragment = $.createDocFragment();
+            const NOTE_SECTION = 'note-section';
+            const BR = function () { return $.createLineBreak(); };
+
+            var noteTitle = $.createHeading('h3', { class: ['note-attr', 'font-code'] });
+            noteTitle.textContent = projection.name;
+            fragment.appendChild(noteTitle);
+
+            if (projection.hasError) {
+                let error = $.createP({ class: [NOTE_SECTION, 'note-error'] });
+                error.appendChild($.createSpan({ html: "You seem to have an error on that attribute:<br>" }));
+                error.appendChild($.createSpan({ html: projection.error }));
+                fragment.appendChild(error);
+            } else {
+                let error = $.createP({ class: [NOTE_SECTION, 'note-error--valid'] });
+                error.appendChild($.createSpan({ html: "Everything is good here." }));
+                fragment.appendChild(error);
+            }
+
+            var info = $.createP({ class: [NOTE_SECTION, 'note-info', 'font-code'] });
+            var attrName = $.createSpan({
+                html: "<strong>Type</strong>: " + projection.type + " (" + (projection.isOptional ? 'optional' : 'required') + ")"
+            });
+            var attrValue = $.createSpan({
+                html: "<strong>Value</strong>: " + (_.isNullOrWhiteSpace(projection.value) ? '&mdash;' : projection.value)
+            });
+
+            $.appendChildren(info, [attrName, BR(), attrValue]);
+            fragment.appendChild(info);
+
+            if (projection.type == 'ID') {
+                var dependency = $.createP({ class: [NOTE_SECTION, 'note-dependency'] });
+                let idref = projection.refs;
+                let idrefCount = idref.length;
+                if (idrefCount === 0) {
+                    dependency.textContent = "This attribute has no dependency";
+                } else {
+                    dependency.textContent = "This attribute has: " + idrefCount + " " + _.pluralize(idrefCount == 1, "dependency", "y|ies");
+                    let ul = $.createUl({ class: 'ref-list' });
+                    for (var i = 0; i < idrefCount; i++) {
+                        let el = $.getElement('#' + idref[i], container);
+                        let li = $.createLi({ class: 'ref-list-item' });
+                        let a = $.createAnchor("#" + idref[i], { text: projection.name });
+                        li.appendChild(a);
+                        ul.appendChild(li);
+                    }
+                    dependency.appendChild(ul);
+                }
+
+                fragment.appendChild(dependency);
+            }
+
+            self.container.appendChild(fragment);
+        }
+    };
+
     var core = {
         /** @type {state} */
         state: state.create(),
         menu: null,
+        note: null,
         MM: null,
         create(model) {
             const KEY_CONFIG = '@config';
@@ -344,7 +457,6 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
             instance._isInitialized = false;
 
             instance._body = $.createDiv({ class: 'body' });
-            instance._note = $.createAside({ class: 'note' });
             instance._autocomplete = Autocomplete.create();
             instance._mode = false;
 
@@ -422,7 +534,6 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
         get currentLine() { return this._currentLine; }, // current line in representation
         set currentLine(val) { this._currentLine = val; },
         get body() { return this._body; },
-        get note() { return this._note; },
         get isInitialized() { return this._isInitialized; },
 
         resize() {
@@ -449,7 +560,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
         clear() {
             var self = this;
             $.removeChildren(self.body);
-            $.removeChildren(self.note);
+            // self.note.clear();
         },
         init(model) {
             const KEY_ROOT = '@root';
@@ -509,7 +620,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
             var self = this;
 
             if (!this.isInitialized) {
-                appendChildren(container, [this.body, this.note]);
+                $.preprendChild(container, self.body);
             }
 
             self.currentLine.appendChild(self.current.render());
@@ -518,44 +629,66 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
         },
         openConv() {
             var self = this;
-            
-            $.removeChildren(self.note);
-            var container = $.createDiv({ class: 'convo-container' });
-            var convo = $.createDiv({ class: ['convo-wrapper'] });
-            var a = $.createP({ class: ['convo', 'convo--gentleman', 'font-gentleman'] });
-            convo.appendChild(a);
-            var qq = $.createTextArea({ class: ['question'], placeholder: 'Ask a question' });
-            qq.addEventListener('keydown', function (event) {
-                switch (event.key) {
-                    case Key.enter:
-                        var val = qq.value;
-                        var q = $.createP({ class: ['convo', 'convo--user'], text: val });
-                        convo.appendChild(q);
-                        qq.value = "";
 
-                        // delay answer
-                        setTimeout(function () {
-                            var a = $.createP({ class: ['convo', 'convo--gentleman', 'font-gentleman'] });
-                            convo.appendChild(a);
-                            SmartType(a, ask(val), function () { });
-                        }, 200);
+            const CONVO = 'convo';
+            const CONVO_USER = [CONVO, 'convo--user'];
+            const CONVO_GENTLEMAN = [CONVO, 'convo--gentleman', 'font-gentleman'];
 
-                        event.preventDefault();
-                        event.stopPropagation();
+            var container = $.getElement(dot('convo-container'));
+            var greeting = $.createP({ class: CONVO_GENTLEMAN });
+            var qq, convo;
+            if (container) {
+                $.show(container);
+                convo = $.getElement(dot('convo-wrapper'));
+                convo.appendChild(greeting);
+                qq = $.getElement(dot('question'));
+            } else {
+                container = $.createDiv({ class: 'convo-container' });
+                convo = $.createDiv({ class: ['convo-wrapper'] });
+                convo.appendChild(greeting);
+                qq = $.createTextArea({ class: ['question'], placeholder: "Ask a question" });
+                qq.addEventListener(EventType.KEYDOWN, function (event) {
+                    switch (event.key) {
+                        case Key.enter:
+                            var val = qq.value;
+                            var q = $.createP({ class: CONVO_USER, text: val });
+                            convo.appendChild(q);
+                            qq.value = "";
 
-                        break;
-                    case Key.backspace:
-                        event.stopPropagation();
+                            // delay answer => conv feeling (UX)
+                            setTimeout(function () {
+                                var a = $.createP({ class: CONVO_GENTLEMAN });
+                                convo.appendChild(a);
+                                var ask_response = ask(val);
+                                SmartType(a, ask_response, function () {
+                                    if (ask_response.close) {
+                                        setTimeout(function () { $.hide(container); }, 200);
+                                    }
+                                });
+                            }, 200);
 
-                        break;
-                    default:
-                        break;
-                }
+                            event.preventDefault();
+                            event.stopPropagation();
 
-            });
-            appendChildren(container, [convo, qq]);
-            self.note.appendChild(container);
-            SmartType(a, [{ type: 0, val: "Hello, how may I help you?" }], function () { });
+                            break;
+                        case Key.backspace:
+                            event.stopPropagation();
+
+                            break;
+                        case Key.escape:
+                            $.hide(container);
+                            event.stopPropagation();
+
+                            break;
+                        default:
+                            break;
+                    }
+
+                });
+                $.appendChildren(container, [convo, qq]);
+                self.body.appendChild(container);
+            }
+            SmartType(greeting, [{ type: 0, val: "Hello, how may I help you?" }]);
             qq.focus();
 
             /**
@@ -566,6 +699,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
             function ask(qq) {
                 const THANK_YOU = ['thx', 'ty', 'thanks', 'thank'];
                 const POLITE = ["You're welcome", "I'm happy to help", "Glad I could help", "Anytime", "It was nothing", "No problem", "Don't mention it", "It was my pleasure"];
+                const BYE = ['bye', 'close', 'exit', 'done'];
 
                 // remove accents and keep words
                 var words = removeAccents(qq).replace(/[^a-zA-Z0-9 _-]/gi, '').split(' ');
@@ -576,6 +710,10 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                     ];
                 } else if (words.findIndex(function (val) { return THANK_YOU.indexOf(val.toLowerCase()) !== -1; }) !== -1) {
                     return [{ type: 0, val: POLITE[_.random(POLITE.length - 1)] }];
+                } else if (words.findIndex(function (val) { return BYE.indexOf(val.toLowerCase()) !== -1; }) !== -1) {
+                    let result = [{ type: 0, val: "Good bye, happy coding :)" }];
+                    result.close = true;
+                    return result;
                 } else {
                     return [{ type: 0, val: "Sorry, I cannot answer this question at the moment. Ask me again later." }];
                 }
@@ -699,7 +837,6 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
 
             self.body.addEventListener(EventType.FOCUSIN, function (event) {
                 self.autocomplete.hide();
-                $.removeChildren(self.note);
 
                 var target = event.target;
                 var projection = self.getProjection(target.id);
@@ -733,7 +870,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                     };
                 } else if (projection) {
                     projection.focusIn();
-                    update_sidenote(projection);
+                    events.emit('editor.change', projection);
                     preval = projection.value;
 
                     if ($.hasClass(target, 'attr--extension')) {
@@ -909,63 +1046,6 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                 return findLine(parent);
             }
 
-            function update_sidenote(projection) {
-                var fragment = $.createDocFragment();
-                const NOTE_SECTION = 'note-section';
-                const BR = function () {
-                    return $.createElement('br');
-                };
-
-                var noteTitle = $.createElement('h3', null, ['note-attr', 'font-code']);
-                noteTitle.textContent = projection.name;
-                fragment.appendChild(noteTitle);
-                if (projection.hasError) {
-                    let error = $.createP({ class: [NOTE_SECTION, 'note-error'] });
-                    error.appendChild($.createSpan({ html: "You seem to have an error on that attribute:<br>" }));
-                    error.appendChild($.createSpan({ html: projection.error }));
-                    fragment.appendChild(error);
-                } else {
-                    let error = $.createP({ class: [NOTE_SECTION, 'note-error--valid'] });
-                    error.appendChild($.createSpan({ html: "Everything is good here." }));
-                    fragment.appendChild(error);
-                }
-
-                var info = $.createP({ class: [NOTE_SECTION, 'note-info', 'font-code'] });
-                var attrName = $.createSpan({
-                    html: "<strong>Type</strong>: " + projection.type + " (" + (projection.isOptional ? 'optional' : 'required') + ")"
-                });
-                var attrValue = $.createSpan({
-                    html: "<strong>Value</strong>: " + (_.isNullOrWhiteSpace(projection.value) ? '&mdash;' : projection.value)
-                });
-
-                appendChildren(info, [attrName, BR(), attrValue]);
-                fragment.appendChild(info);
-
-                if (projection.type == 'ID') {
-                    var dependency = $.createP({ class: [NOTE_SECTION, 'note-dependency'] });
-                    let idref = projection.refs;
-                    let idrefCount = idref.length;
-                    if (idrefCount === 0) {
-                        dependency.textContent = "This attribute has no dependency";
-                    } else {
-                        dependency.textContent = "This attribute " + attrName + " has: " + idrefCount + _.pluralize(idrefCount == 1, "dependency", "y|ies");
-                        let ul = $.createUl({ class: 'ref-list' });
-                        for (var i = 0; i < idrefCount; i++) {
-                            let el = $.getElement('#' + idref[i], container);
-                            let li = $.createLi({ class: 'ref-list-item' });
-                            let a = $.createAnchor("#" + idref[i], { text: projection.name });
-                            li.appendChild(a);
-                            ul.appendChild(li);
-                        }
-                        dependency.appendChild(ul);
-                    }
-
-                    fragment.appendChild(dependency);
-                }
-
-                self.note.appendChild(fragment);
-            }
-
             /**
              * Returns a value indicating whether the projection is an Enum
              * @param {Object} projection 
@@ -985,15 +1065,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
      * @param {HTMLElement} parent
      * @param {HTMLElement[]} children
      */
-    function appendChildren(parent, children) {
-        var fragment = $.createDocFragment();
-        children.forEach(element => {
-            fragment.appendChild(element);
-        });
-        parent.appendChild(fragment);
-        fragment = null;
-        return parent;
-    }
+
 
     /**
      * This functions clears the container.
@@ -1101,7 +1173,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                         "attr": {
                             "reporting": {
                                 "name": "reporting", "type": "report",
-                                "multiple": { "type": "array" }
+                                "multiple": { "type": "list" }, "inline": false
                             }
                         },
                         "representation": {
@@ -1405,8 +1477,8 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                 "name": "conflictResolution",
                 "type": "enum",
                 "values": {
-                    "majority": { "val": "majority", "representation": { "type": "text", "val": "$val" } },
-                    "unanimity": { "val": "unanimity", "representation": { "type": "text", "val": "$val" } }
+                    "majority": { "val": "Majority", "representation": { "type": "text", "val": "$val" } },
+                    "unanimity": { "val": "Unanimity", "representation": { "type": "text", "val": "$val" } }
                 }
             },
             "graphType": {
@@ -1441,7 +1513,8 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                 headerContent.appendChild($.createSpan({ id: 'language', class: 'model-language', text: editor.language }));
                 Menu.create().init(editor, headerContent);
                 header.appendChild(headerContent);
-                appendChildren(container, [header, splashscreen]);
+                $.appendChildren(container, [header, splashscreen]);
+                Note.create().init(editor, container);
                 editor.init();
 
                 break;
@@ -1471,8 +1544,8 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                     }
                 });
                 lblSelector.appendChild(inputSelector);
-                appendChildren(splashscreen, [instruction, lblSelector]);
-                appendChildren(container, [header, splashscreen]);
+                $.appendChildren(splashscreen, [instruction, lblSelector]);
+                $.appendChildren(container, [header, splashscreen]);
                 SmartType(instruction, [
                     { type: 0, val: "Hello friend, welcome to " },
                     { type: 1, val: "Gentleman" },
@@ -1484,8 +1557,6 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
 
                 break;
         }
-
-
     })();
 
     /**

@@ -209,13 +209,18 @@ li, td, th { font-size: 1.2em; }
 }
 
 .convo-container {
+    position: absolute;
+    bottom: 0; right: calc(30% + 10px);
     display: flex;
     flex-direction: column;
+    border-top: 1px solid #d9d9d9; border-left: 1px solid #d9d9d9; border-top-left-radius: 2px;
+    box-shadow: 0 -1px 2px #999;
+    background: #f9f9f9;
+    font-size: 1rem;
     justify-content: flex-end;
-    height: 100%;
 }
 
-.convo-wrapper { padding: 0 10px; }
+.convo-wrapper { padding: 5px 10px 0; box-sizing: border-box;}
 
 .convo { 
     margin-top: 0; margin-bottom: 0;
@@ -236,8 +241,10 @@ li, td, th { font-size: 1.2em; }
 
 .question { 
     width: 100%; 
+    resize: none; 
     padding: 5px 10px;
     font-size: 1.5em;
+    box-sizing: border-box;
     color: #fff;
     border: 0 none;
     background-color: #555;

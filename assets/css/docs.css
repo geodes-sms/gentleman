@@ -70,7 +70,20 @@ h1, h2, h3, p { margin-top: 0; }
     }
         .action-call:hover:after { background-color: #FFD300; transition: background-color .3s .2s; }
 
-.main-nav {   
+.docs__main {
+    display: flex;
+}
+
+.main-nav {
+    width: 30%; max-width: 200px;
+    padding-top: 20px; padding-left: 5%;
+    background: #f0f0f0;
+}
+
+.main-content {
+    flex-grow: 2;
+    padding-left: 10px;
+    background-color: #fefefe;
 }
 
 .body { 
@@ -178,6 +191,7 @@ article[data-page="docs"] {
 
 .box-title {
     position: relative;
+    display: block;
     margin-top: 0; margin-bottom: 3px;
     color: #2D68C4;
     font-size: 1.7em; font-weight: 500;
@@ -219,6 +233,11 @@ article[data-page="docs"] {
     z-index: 2;
     transition: .2s;
     z-index: 2;
+}
+
+.box-link {
+    display: block;
+    color: #2D68C4;
 }
 
 .box-content li:last-child {

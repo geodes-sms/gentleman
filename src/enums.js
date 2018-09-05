@@ -55,7 +55,7 @@ const Key = {
     enter: "Enter",
     ctrl: "Control",
     alt: "Alt",
-    escape: "Esc",
+    escape: "Escape",
     spacebar: " ",
     page_up: "PageUp",
     page_down: "PageDown",
