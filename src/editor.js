@@ -10,10 +10,12 @@
 const __ENV = Environment.TEST;
 const __VERSION = '0.10';
 
-var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
+var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
     "use strict";
 
     const container = $.getElement("[data-gentleman-editor]");
+    container.tabIndex = -1;
+
     const EL = UI.Element;
     const EditorMode = {
         READ: 'read',
@@ -421,7 +423,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
         }
     };
 
-    var core = {
+    var Editor = {
         /** @type {state} */
         state: state.create(),
         menu: null,
@@ -1509,7 +1511,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
 
         switch (__ENV) {
             case Environment.TEST:
-                var editor = core.create(modelTest);
+                var editor = Editor.create(modelTest);
                 headerContent.appendChild($.createSpan({ id: 'language', class: 'model-language', text: editor.language }));
                 Menu.create().init(editor, headerContent);
                 header.appendChild(headerContent);
@@ -1529,7 +1531,7 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
                             // empty container
                             clear();
                             $.hide(lblSelector);
-                            editor = core.create(JSON.parse(reader.result));
+                            editor = Editor.create(JSON.parse(reader.result));
                             headerContent.appendChild($.createSpan({ id: 'language', class: 'model-language', text: editor.language }));
                             Menu.create().init(editor, headerContent);
                             header.appendChild(headerContent);
@@ -1630,5 +1632,5 @@ var editor = (function ($, _, Autocomplete, _MODEL, PROJ) {
         }, timeout);
     }
 
-    return core;
+    return Editor;
 })(UTIL, HELPER, Autocomplete, MetaModel, Projection);

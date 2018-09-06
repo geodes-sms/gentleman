@@ -25,16 +25,13 @@ var ModelElement = (function ($, _, ATTR, ERR) {
 
             return instance;
         },
-        /**
-         * @returns {MetaModel}
-         */
+        /** @returns {MetaModel} */
         get model() { return this._model; },
-        /**
-         * @type {ModelAttribute[]}
-         */
+        /** @type {ModelAttribute[]} */
         get attributes() { return this._attributes; },
-        set path(val) { this._path = val; },
+        /** @type {string} */
         get path() { return this._path; },
+        set path(val) { this._path = val; },
         /** @type {boolean} */
         get isOptional() { return _.toBoolean(this._source.optional); },
         /** @type {boolean} */
@@ -67,7 +64,6 @@ var ModelElement = (function ($, _, ATTR, ERR) {
             // add the element's attributes to the container
             container.appendChild(this.getAttribute());
             if (this.isOptional) {
-
                 container.appendChild($.createButtonDelete(container, function () {
                     self.remove();
                 }));
@@ -307,13 +303,9 @@ var ModelElement = (function ($, _, ATTR, ERR) {
         },
         remove() {
             var self = this;
-            
-            self.attributes.splice(0).forEach(function (attr) {
-                attr.remove();
-            });
-            self.elements.splice(0).forEach(function (el) {
-                el.remove();
-            });
+
+            self.attributes.splice(0).forEach(function (attr) { attr.remove(); });
+            self.elements.splice(0).forEach(function (el) { el.remove(); });
 
             if (self.parent && self.parent.composition) {
                 let compo = self.parent.composition;
@@ -391,34 +383,33 @@ var ModelElement = (function ($, _, ATTR, ERR) {
     };
 
     function optionHandler() {
-        var path = _.addPath(_.getDir(this.path), COMPOSITION);
+        var self = this;
 
+        var path = _.addPath(_.getDir(this.path), COMPOSITION);
         var prev = $.getPreviousElementSibling(this.eHTML);
         var next = $.getNextElementSibling(this.eHTML);
-
         var min = self.position;
         var max = min;
         var minmax;
 
         if (prev && $.hasClass(prev, OPTION)) {
             let position = prev.dataset[HTMLAttribute.Position];
-            minmax = position.split("..");
+            minmax = position.split('..');
             if (minmax[0] < min) min = minmax[0];
             prev.remove();
         }
         if (next && $.hasClass(next, OPTION)) {
             let position = next.dataset[HTMLAttribute.Position];
-            minmax = position.split("..");
+            minmax = position.split('..');
             if (minmax[1] > max) max = minmax[1];
             next.remove();
         }
 
         var input = $.createOptionSelect(min, max, path);
-        input.dataset.index = this.model.options.length;
-        this.model.options.push(this.parent);
-        $.insertAfterElement(this.eHTML, input);
+        input.dataset.index = self.model.options.length;
+        self.model.options.push(self.parent);
+        $.insertAfterElement(self.eHTML, input);
     }
-
 
     function parser(representation, attr, fnCreateModelAttribute) {
         var arr = representation ? representation.val.replace(/ /g, " space ")
