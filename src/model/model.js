@@ -21,6 +21,17 @@ var MetaModel = (function ($, _, ELEM, ERR) {
 
             return instance;
         },
+        init(model) {
+            var self = this;
+            
+            // private members
+            self._model = model;
+            self.ID = [];      // list of IDs declared in the concrete model
+            self.path = [];    // list of paths,
+            self.options = [];
+            self.projections = [];
+            self.root = undefined;
+        },
 
         get concrete() { return this._model; },
         get MM() { return this._metamodel; },

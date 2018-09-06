@@ -370,12 +370,8 @@ const ModelAttribute = (function ($, _, PN, ERR) {
         removeAll() {
             var self = this;
 
-            self.projections.slice(0).forEach(function (projection) {
-                projection.remove();
-            });
-            self.elements.slice(0).forEach(function (el) {
-                el.remove();
-            });
+            self.projections.slice(0).forEach(function (projection) { projection.remove(); });
+            self.elements.slice(0).forEach(function (el) { el.remove(); });
 
             // restore the source value to its initial state
             if (self._val !== undefined) {

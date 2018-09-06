@@ -68,6 +68,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
         }
     };
 
+    // State management
     const state = {
         create: function () {
             var instance = Object.create(this);
@@ -423,7 +424,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
         }
     };
 
-    var Editor = {
+    const Editor = {
         /** @type {state} */
         state: state.create(),
         menu: null,
@@ -546,12 +547,14 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
         setState(s) {
             var self = this;
 
+            
             self._concrete = s;
-            self._current = self._abstract.createModelElement(self._concrete.root);
+            self._abstract.init(self._concrete);
+            self._current = self._abstract.createModelElement(self._concrete.root, true);
 
             // render
-            $.removeChildren(self._body);
-            self._currentLine = self._body;
+            self.clear();
+            self.currentLine = self.body;
             self.render();
         },
         save() {
