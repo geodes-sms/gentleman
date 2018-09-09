@@ -152,6 +152,13 @@ const HELPER = (function () {
             return undefined;
         },
         /**
+         * Inserts an item in an array at the specified index
+         * @param {Object[]} arr array
+         * @param {number} index 
+         * @param {object} item 
+         */
+        insert (arr, index, item) { arr.splice(index, 0, item); },
+        /**
          * Return a random integer between min and max (inclusive).
          * @param {number} min 
          * @param {number} max 

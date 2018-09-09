@@ -88,6 +88,11 @@ var UTIL = (function (_) {
          * @param {HTMLElement} el 
          */
         preprendChild(target, el) { target.insertAdjacentElement('afterbegin', el); },
+        /**
+         * Append a list of elements to a node.
+         * @param {HTMLElement} parent
+         * @param {HTMLElement[]} children
+         */
         appendChildren(parent, children) {
             var fragment = this.createDocFragment();
             children.forEach(element => {
@@ -464,17 +469,8 @@ var UTIL = (function (_) {
             if (attr.placeholder) el.placeholder = attr.placeholder;
             if (attr.disabled) el.disabled = attr.disabled;
             if (attr.readonly) el.readOnly = attr.readonly;
-        },
-
-        /**
-         * Inserts an item in an array at the specified index
-         * @param {Object[]} arr array
-         * @param {number} index 
-         * @param {object} item 
-         */
-        insert: function (arr, index, item) { arr.splice(index, 0, item); },
+        }
     };
-
 
     /**
      * Simulates typing
@@ -496,7 +492,6 @@ var UTIL = (function (_) {
             }, timeout);
         }
     }
-
 
     return pub;
 }(HELPER));

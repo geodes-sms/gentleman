@@ -10,7 +10,7 @@
 const __ENV = Environment.TEST;
 const __VERSION = '0.10';
 
-var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
+var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
     "use strict";
 
     const container = $.getElement("[data-gentleman-editor]");
@@ -38,6 +38,15 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
      * @returns {string}
      */
     function dot(str) { return '.' + str; }
+
+    /**
+     * Preprend a string with a hashtag
+     * @param {string} str 
+     * @returns {string}
+     */
+    function hash(str) { return '#' + str; }
+
+    function f_class(el) { return dot(el.class); }
 
     // Allow responsive design
     var mql = window.matchMedia('(max-width: 800px)');
@@ -111,7 +120,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
     };
 
     const Menu = {
-        /** @type {core} */
+        /** @type {Editor} */
         editor: undefined,
         /** @type {HTMLElement} */
         container: undefined,
@@ -313,7 +322,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
     };
 
     const Note = {
-        /** @type {core} */
+        /** @type {Editor} */
         editor: undefined,
         /** @type {HTMLElement} */
         container: undefined,
@@ -408,9 +417,9 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
                     dependency.textContent = "This attribute has: " + idrefCount + " " + _.pluralize(idrefCount == 1, "dependency", "y|ies");
                     let ul = $.createUl({ class: 'ref-list' });
                     for (var i = 0; i < idrefCount; i++) {
-                        let el = $.getElement('#' + idref[i], container);
+                        let el = $.getElement(hash(idref[i]), container);
                         let li = $.createLi({ class: 'ref-list-item' });
-                        let a = $.createAnchor("#" + idref[i], { text: projection.name });
+                        let a = $.createAnchor(hash(idref[i]), { text: projection.name });
                         li.appendChild(a);
                         ul.appendChild(li);
                     }
@@ -435,7 +444,6 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
             const KEY_RESOURCE = '@resources';
 
             var instance = Object.create(this);
-
             instance.MM = model;
 
             // display language
@@ -526,18 +534,27 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
         },
         /** @type {MetaModel} */
         get abstract() { return this._abstract; }, // abstract (static) model
+        set abstract(val) { this._abstract = val; },
         get concrete() { return this._concrete; }, // concrete (dynamic) mode
-        get language() { return this._language; },
-        getProjection(index) { return this.projections[index]; },
-        get autocomplete() { return this._autocomplete; }, // autocomplete element
-        get projections() { return this.abstract.projections; },
-        get options() { return this._abstract.options; },
+        set concrete(val) { this._concrete = val; },
         get current() { return this._current; }, // current position in model
         set current(val) { this._current = val; },
+        get language() { return this._language; },
+
+        get autocomplete() { return this._autocomplete; }, // autocomplete element
+        get projections() { return this.abstract.projections; },
+        get options() { return this.abstract.options; },
+
+        /** @returns {HTMLElement} */
         get currentLine() { return this._currentLine; }, // current line in representation
         set currentLine(val) { this._currentLine = val; },
+        /** @returns {HTMLElement} */
         get body() { return this._body; },
+
         get isInitialized() { return this._isInitialized; },
+        get hasError() { return this._hasError; },
+
+        getProjection(index) { return this.projections[index]; },
 
         resize() {
             var self = this;
@@ -546,20 +563,24 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
         },
         setState(s) {
             var self = this;
-
-            
+            console.log(s);
+            // set concrete to new state
             self._concrete = s;
+            // reinitialize abstract
             self._abstract.init(self._concrete);
+            // set current to newly create element
             self._current = self._abstract.createModelElement(self._concrete.root, true);
 
-            // render
+            // clear and render
             self.clear();
             self.currentLine = self.body;
             self.render();
         },
         save() {
             var self = this;
+            // console.log(self.concrete);
             self.state.set(self.concrete);
+
             events.emit('editor.save');
         },
         clear() {
@@ -571,27 +592,21 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
             const KEY_ROOT = '@root';
 
             if (model) {
-                this._concrete = model;
+                this.concrete = model;
             } else {
-                var root = this.MM[KEY_ROOT];
+                let root = this.MM[KEY_ROOT];
                 if (root) {
-                    this._concrete = { root: JSON.parse(JSON.stringify(this.MM[root])) };
-                }
-                // throw an error if the root was not found.
-                else {
-                    container.appendChild($.createP({
-                        class: 'body',
-                        text: "Error - Root not found: The model does not contain an element with the attribute root"
-                    }));
-                    this._hasError = true;
-                    return;
+                    this.concrete = { root: JSON.parse(JSON.stringify(this.MM[root])) };
+                } else { // throw an error if the root was not found.
+                    let error = ERR.InvalidModelError.create("Root not found: The model does not contain an element with the attribute root");
+                    container.appendChild($.createP({ class: 'body', text: error.toString() }));
+                    throw error;
                 }
             }
 
             // initialize the model
-            this._abstract = _MODEL.create(this.MM, this._concrete);
-
-            this._current = this._abstract.createModelElement(this._concrete.root, true);
+            this.abstract = _MODEL.create(this.MM, this._concrete);
+            this.current = this.abstract.createModelElement(this.concrete.root, true);
 
             // set the initial state
             this.state.init(this.concrete);
@@ -601,17 +616,17 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
 
             // clear the body
             this.clear();
-            this._currentLine = this.body;
-            $.hide($.getElement('#splashscreen'));
+            this.currentLine = this.body;
+            $.hide($.getElement(hash('splashscreen')));
 
             // draw the editor
             this.render();
 
             // Get next element
-            var next = $.getElement('.attr', self.currentLine) || $.getElement('.option', container);
+            var next = $.getElement(f_class(EL.ATTRIBUTE), this.currentLine) || $.getElement(f_class(EL.OPTION), container);
             var parent = next.parentElement;
-            if (parent !== self.currentLine) {
-                self.currentLine = parent;
+            if (parent !== this.currentLine) {
+                this.currentLine = parent;
             }
 
             next.focus();
@@ -622,15 +637,13 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
             }
         },
         render: function () {
-            var self = this;
-
             if (!this.isInitialized) {
-                $.preprendChild(container, self.body);
+                $.preprendChild(container, this.body);
             }
 
-            self.currentLine.appendChild(self.current.render());
-            self.currentLine = self.currentLine.firstChild;
-            self.currentLine.contentEditable = false;
+            this.currentLine.appendChild(this.current.render());
+            this.currentLine = this.currentLine.firstChild;
+            this.currentLine.contentEditable = false;
         },
         openConv() {
             var self = this;
@@ -812,7 +825,6 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
                         }
                         break;
                     case Key.enter:
-
                         self.autocomplete.hasFocus = false;
                         target.blur(); // remove focus
 
@@ -878,11 +890,11 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
                     events.emit('editor.change', projection);
                     preval = projection.value;
 
-                    if ($.hasClass(target, 'attr--extension')) {
+                    if (isExtension(projection)) {
                         data = projection.valuesKV();
                         self.autocomplete.onSelect = function (attr) {
                             let line = projection.implement(attr.key);
-                            $.getElement('.attr', line).focus();
+                            $.getElement(f_class(EL.ATTRIBUTE), line).focus();
                         };
 
                         self.autocomplete.init(target, data);
@@ -936,7 +948,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
 
                 var parent = target.parentElement;
                 var projection = self.getProjection(target.id);
-                var lblError = $.getElement('#' + target.id + 'error', parent);
+                var lblError = $.getElement(hash(target.id + 'error'), parent);
 
                 if (projection.validate()) {
                     if (lblError) {
@@ -970,13 +982,8 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
                 var element = _.cloneObject(val.element);
                 element.flag = true;
 
-
-                for (let i = 0, len = compo.length; i < len; i++) {
-                    if (compo[i].position > element.position) {
-                        $.insert(compo, i, element);
-                        break;
-                    }
-                }
+                compo.push(element);
+                compo.sort(function (a, b) { return a.position - b.position; });
 
                 // render element
                 var mElement = self.abstract.createModelElement(element);
@@ -1014,7 +1021,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
                     }
                 }
 
-                var firstAttribute = $.getElement('.attr', line);
+                var firstAttribute = $.getElement(f_class(EL.ATTRIBUTE), line);
                 if (firstAttribute) firstAttribute.focus();
             }
 
@@ -1032,7 +1039,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
             function findParent(keyword) {
                 var parent = self.currentLine.parentElement;
                 while (parent.parentElement.id != 'container') {
-                    if ($.getElement('.keyword', parent).innerHTML == keyword)
+                    if ($.getElement(dot('keyword'), parent).innerHTML == keyword)
                         return parent;
                     parent = parent.parentElement;
                 }
@@ -1058,6 +1065,12 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
             function isEnum(projection) { return PROJ.Enum.isPrototypeOf(projection); }
 
             /**
+             * Returns a value indicating whether the projection is an Extension
+             * @param {Object} projection 
+             */
+            function isExtension(projection) { return PROJ.Abstract.isPrototypeOf(projection); }
+
+            /**
              * Returns a value indicating whether the projection is a Pointer
              * @param {Object} projection 
              */
@@ -1066,20 +1079,13 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
     };
 
     /**
-     * Append a list of elements to a node.
-     * @param {HTMLElement} parent
-     * @param {HTMLElement[]} children
-     */
-
-
-    /**
      * This functions clears the container.
      * It removes all contents and stylesheets applied by previous models.
      */
     function clear() {
         clearBody();
         // clear aside section
-        var aside = $.getElement('.note', container);
+        var aside = $.getElement(dot('note'), container);
         if (aside) {
             $.removeChildren(aside);
             aside.remove();
@@ -1092,7 +1098,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
     }
     function clearBody() {
         // clear body section
-        var body = $.getElement('.body', container);
+        var body = $.getElement(dot('body'), container);
         if (body) {
             $.removeChildren(body);
             body.remove();
@@ -1218,6 +1224,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
                     "attr": {
                         "exclusion_criteria": {
                             "name": "exclusion_criteria", "type": "string",
+                            "val": ["ok"],
                             "multiple": { "type": "array", "min": 1 }
                         }
                     },
@@ -1556,9 +1563,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
                     { type: 1, val: "Gentleman" },
                     { type: 0, val: ".\nTo begin, please load a " },
                     { type: 2, val: "Metamodel.", tooltip: "A metamodel is ..." }
-                ], function () {
-                    $.show(lblSelector);
-                });
+                ], function () { $.show(lblSelector); });
 
                 break;
         }
@@ -1636,4 +1641,4 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ) {
     }
 
     return Editor;
-})(UTIL, HELPER, Autocomplete, MetaModel, Projection);
+})(UTIL, HELPER, Autocomplete, MetaModel, Projection, Exception);

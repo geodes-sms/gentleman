@@ -23,6 +23,7 @@ const DataType = {
  * @enum {string}
  */
 const EventType = {
+    CHANGE: 'change',
     CLICK: 'click',
     FOCUSIN: 'focusin',
     FOCUSOUT: 'focusout',
@@ -72,15 +73,31 @@ const Key = {
 const UI = (function () {
     const BUTTON = 'BUTTON';
     const ANCHOR = 'ANCHOR';
+    const ATTRIBUTE = 'ATTRIBUTE';
+    const OPTION = 'OPTION';
 
     var pub = {
-        HIDDEN: 'hidden',
-        EMPTY: 'empty',
-        SELECTED: 'selected',
+        ATTR_WRAPPER: 'attr-wrapper',
+        COLLAPSE: 'collapse',
+        CHECKED: 'checked',
         DISABLED: 'disabled',
+        EMPTY: 'empty',
+        HIDDEN: 'hidden',
+        SELECTED: 'selected',
+
         Element: {
             ANCHOR: {
                 name: ANCHOR
+            },
+            ATTRIBUTE: {
+                name: ATTRIBUTE,
+                class: 'attr',
+                toString() { return 'ATTRIBUTE'; }
+            },
+            ATTRIBUTE_ABSTRACT: {
+                name: ATTRIBUTE,
+                class: 'attr attr--extension',
+                toString() { return 'ABSTRACT ATTRIBUTE'; }
             },
             BUTTON: {
                 name: BUTTON,
@@ -91,6 +108,11 @@ const UI = (function () {
                 name: BUTTON,
                 class: 'btn btn-menu',
                 toString() { return 'MENU BUTTON'; }
+            },
+            OPTION: {
+                name: OPTION,
+                class: 'option',
+                toString() { return 'OPTION'; }
             }
         }
     };

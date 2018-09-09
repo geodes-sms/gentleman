@@ -5,8 +5,10 @@
 var Projection = (function ($, _, ERR) {
 
     // State
-    const DISABLED = 'disabled';
-    const COLLAPSE = 'collapse';
+    const EL = UI.Element;
+
+    // ClassName
+    const ATTR_WRAPPER = 'attr-wrapper';
 
     var BaseProjection = {
         /**
@@ -56,7 +58,10 @@ var Projection = (function ($, _, ERR) {
         get value() { return this._input.textContent; },
         set value(val) {
             this._input.textContent = val;
-            if (val) {
+            if (_.isNullOrWhiteSpace(val)) {
+                $.addClass(this._input, UI.EMPTY);
+            }
+            else {
                 $.removeClass(this._input, UI.EMPTY);
             }
             for (let i = 0, len = this.refs.length; i < len; i++) {
@@ -94,14 +99,14 @@ var Projection = (function ($, _, ERR) {
         focusIn() {
             var self = this;
             if (self.isOptional) {
-                $.removeClass(this._input, COLLAPSE);
+                $.removeClass(this._input, UI.COLLAPSE);
             }
         },
         focusOut() {
             var self = this;
             if (self.isOptional) {
                 if (_.isNullOrWhiteSpace(this.value)) {
-                    $.addClass(this._input, COLLAPSE);
+                    $.addClass(this._input, UI.COLLAPSE);
                 }
             }
         },
@@ -112,7 +117,7 @@ var Projection = (function ($, _, ERR) {
 
             if (val === "") {
                 $.addClass(self._input, UI.EMPTY);
-                if ($.hasClass(self._input.parentElement, "attr-wrapper"))
+                if ($.hasClass(self._input.parentElement, ATTR_WRAPPER))
                     $.addClass(self._input.parentElement, UI.EMPTY);
             }
             this.value = val;
@@ -136,22 +141,23 @@ var Projection = (function ($, _, ERR) {
         },
         createInput(editable) {
             var self = this;
-            var mAttr = this._mAttribute;
-            var mElement = this._mAttribute.Element;
+            var mAttr = self._mAttribute;
+            var mElement = self._mAttribute.Element;
+            var inputProjection;
 
             if (mAttr.type === DataType.boolean) {
                 var chk = $.createCheckbox({ id: this._id, class: "attr--bool", data: { name: mAttr.name } });
                 chk.setAttribute('data-representation', mAttr.representation.val);
-                chk.addEventListener('change', function (event) {
-                    var checkbox = $.getElement("input", this);
-                    if (checkbox.checked) $.addClass(this, 'checked');
-                    else $.removeClass(this, 'checked');
+                chk.addEventListener(EventType.CHANGE, function (e) {
+                    var checkbox = $.getElement('input', this);
+                    if (checkbox.checked) $.addClass(this, UI.CHECKED);
+                    else $.removeClass(this, UI.CHECKED);
                 });
                 return chk;
             }
-            var input = $.createSpan({
-                id: this._id,
-                class: "attr",
+
+            self._input = $.createSpan({
+                id: self._id, class: [EL.ATTRIBUTE],
                 html: "",
                 data: {
                     name: mAttr.name,
@@ -159,61 +165,31 @@ var Projection = (function ($, _, ERR) {
                     placeholder: mAttr.name
                 }
             });
-
-            if (self._options) $.addAttributes(input, self._options);
-            input.contentEditable = _.valOrDefault(editable, true);
-            input.tabIndex = 0;
-            if (_.isNullOrWhiteSpace(this._val)) $.addClass(input, UI.EMPTY);
-            this._input = input;
-
-            if (mAttr.isMultiple && mElement.representation.type == "text") {
-                var li = $.createLi({ class: "array-item", data: { prop: "val" } });
-                li.appendChild(input);
-
-                var valIndex = mAttr.value.indexOf(this._val);
-                var isLast = valIndex == mAttr.value.length - 1;
-                // if (isLast) {
-                //     var btnAdd = $.createButton({ class: "btn btn-add", text: "Add" });
-                //     btnAdd.tabIndex = -1;
-                //     btnAdd.addEventListener('click', function () {
-                //         //var path = attr.MODEL.path[input.id];
-                //         //var dir = _.getDir(path);
-                //         mAttr.value.push("");
-                //         mAttr.MODEL.path.push(_.addPath(mAttr.path, 'val[' + mAttr.value.length - 1 + ']'));
-                //         let packet = BaseProjection.prepare(mAttr.MODEL.path.length - 1, null, mAttr, self.type);
-                //         let projection = BaseProjection.create(packet);
-                //         mAttr.MODEL.projections.push(projection);
-                //         let input = projection.createInput();
-                //         $.insertBeforeElement(this, input);
-
-                //         $.getElement(".attr", input).focus();
-                //     });
-                //     //li.appendChild(btnAdd);
-                //     var fragment = $.createDocFragment();
-                //     fragment.appendChild(li);
-                //     fragment.appendChild(btnAdd);
-                //     return fragment;
-                // }
-                return li;
-            } else {
-                if (mAttr.isOptional) {
-                    Object.assign(input.dataset, { optional: true });
-                }
-
-                if (this._val) {
-                    this.value = this._val;
-                }
-
-                if (mAttr.representation) {
-                    var wrapper = $.createDiv({ class: ['attr-wrapper', UI.EMPTY] });
-                    var surround = mAttr.representation.val.split("$val");
-                    Object.assign(wrapper.dataset, { before: surround[0], after: surround[1] });
-                    wrapper.appendChild(input);
-                    return wrapper;
-                }
-
-                return input;
+            self._input.contentEditable = _.valOrDefault(editable, true);
+            self._input.tabIndex = 0;
+            if (self._options) {
+                $.addAttributes(self._input, self._options);
             }
+            if (mAttr.isOptional) {
+                Object.assign(self._input.dataset, { optional: true });
+            }
+            self.value = self._val;
+
+            inputProjection = self._input;
+            if (mAttr.representation) {
+                var wrapper = $.createDiv({ class: [ATTR_WRAPPER, UI.EMPTY] });
+                var surround = mAttr.representation.val.split("$val");
+                Object.assign(wrapper.dataset, { before: surround[0], after: surround[1] });
+                wrapper.appendChild(inputProjection);
+                inputProjection = wrapper;
+            }
+            if (mAttr.isMultiple && mElement.representation.type == 'text') {
+                var li = $.createLi({ class: 'array-item', data: { prop: 'val' } });
+                li.appendChild(inputProjection);
+                inputProjection = li;
+            }
+
+            return inputProjection;
         },
 
         validate() {
@@ -231,7 +207,7 @@ var Projection = (function ($, _, ERR) {
                 self.error = "";
                 return true;
             }
-            
+
             return false;
         },
         remove() {
@@ -292,28 +268,13 @@ var Projection = (function ($, _, ERR) {
         get position() { return this._position; },
 
         update: function () {
-            // var self = this;
-            // var attr = this._mAttribute;
-            // if (attr.value !== this.value) {
-            //     attr.value = this.value;
-            // }
-            // if (attr.type === DATATYPE.ID) {
-            //     let src = attr.MODEL.ID.find(function (x) { return x.id == self.id; });
-            //     let arr = src.ref;
-            //     for (let i = 0, len = arr.length; i < len; i++) {
-            //         let el = $.getElement('#' + arr[i]);
-            //         el.textContent = src.attr.val;
-            //         if (_.isNullOrWhiteSpace(src.attr.val)) $.addClass(el, UI.EMPTY);
-            //         else $.removeClass(el, UI.EMPTY);
-            //     }
-            // }
         },
         createInput: function (editable) {
             var self = this;
-            var mAttr = this._mAttribute;
+            var mAttr = self._mAttribute;
 
             var input = $.createSpan({
-                class: ['attr', 'attr--extension', UI.EMPTY],
+                class: [EL.ATTRIBUTE_ABSTRACT, UI.EMPTY],
                 id: self._id,
                 data: {
                     name: mAttr.name,
@@ -370,19 +331,19 @@ var Projection = (function ($, _, ERR) {
                 get() { return this._value; },
                 set(val) {
                     this._value = val;
+                    var elEnum = this.values[val];
                     if (Array.isArray(this.values)) {
-                        this._input.textContent = this.values[val];
-                    } else {
-                        let e = this.values[val];
-                        this._input.textContent = e.val;
-                        if (e.representation) {
-                            var wrapper = $.createDiv({ class: "attr-wrapper" });
-                            var surround = e.representation.val.split("$val");
+                        this._input.textContent = elEnum;
+                    } else if (!_.isNullOrWhiteSpace(elEnum)) {
+                        this._input.textContent = elEnum.val;
+                        if (elEnum.representation) {
+                            var wrapper = $.createDiv({ class: ATTR_WRAPPER });
+                            var surround = elEnum.representation.val.split("$val");
                             Object.assign(wrapper.dataset, { before: surround[0], after: surround[1] });
                             $.insertBeforeElement(this._input, wrapper);
                             wrapper.appendChild(this._input);
                         } else {
-                            if ($.hasClass(this._input.parentElement, 'attr-wrapper')) {
+                            if ($.hasClass(this._input.parentElement, ATTR_WRAPPER)) {
                                 $.addClass(this._input.parentElement, UI.EMPTY);
                             }
                         }
@@ -414,7 +375,7 @@ var Projection = (function ($, _, ERR) {
 
             if (val === "") {
                 $.addClass(self._input, UI.EMPTY);
-                if ($.hasClass(self._input.parentElement, "attr-wrapper"))
+                if ($.hasClass(self._input.parentElement, ATTR_WRAPPER))
                     $.addClass(self._input.parentElement, UI.EMPTY);
             }
 
@@ -564,13 +525,13 @@ var Projection = (function ($, _, ERR) {
                     this.error = "This value is not valid reference.<br>Valid values: " + validValues;
                 }
                 break;
-            case "char":
+            case 'char':
                 isValid = this.value.length === 1;
                 if (!isValid) {
                     this.error = "Please enter a valid character";
                 }
                 break;
-            case "date":
+            case 'date':
                 // TODO
                 break;
             case DataType.integer:
@@ -583,12 +544,6 @@ var Projection = (function ($, _, ERR) {
                 isValid = /^(-|\+)?[0-9]+((,|\.)?[0-9]+)?$/.test(self.value);
                 if (!isValid) {
                     this.error = "Please enter a valid number.";
-                }
-                break;
-            case "word":
-                isValid = /^[A-Za-z-]$/.test(self.value);
-                if (!isValid) {
-                    this.error = "Please enter a valid word.";
                 }
                 break;
             default:

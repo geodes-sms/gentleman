@@ -341,12 +341,8 @@ var ModelElement = (function ($, _, ATTR, ERR) {
                         if (key === COMPOSITION) {
                             result += "\n";
                             let compos = self.elements.slice();
-                            compos.sort(function (a, b) {
-                                return a.position - b.position;
-                            });
-                            compos.forEach(el => {
-                                result += "\n" + el.toString();
-                            });
+                            compos.sort(function (a, b) { return a.position - b.position; });
+                            compos.forEach(function(el) { result += "\n" + el.toString(); });
                         } else if (this.representation[key]) {
                             let block = this.representation[key];
                             if (block.type === 'keyword') {
@@ -385,9 +381,9 @@ var ModelElement = (function ($, _, ATTR, ERR) {
     function optionHandler() {
         var self = this;
 
-        var path = _.addPath(_.getDir(this.path), COMPOSITION);
-        var prev = $.getPreviousElementSibling(this.eHTML);
-        var next = $.getNextElementSibling(this.eHTML);
+        var path = _.addPath(_.getDir(self.path), COMPOSITION);
+        var prev = $.getPreviousElementSibling(self.eHTML);
+        var next = $.getNextElementSibling(self.eHTML);
         var min = self.position;
         var max = min;
         var minmax;
