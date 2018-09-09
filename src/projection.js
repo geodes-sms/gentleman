@@ -331,25 +331,31 @@ var Projection = (function ($, _, ERR) {
                 get() { return this._value; },
                 set(val) {
                     this._value = val;
-                    var elEnum = this.values[val];
-                    if (Array.isArray(this.values)) {
-                        this._input.textContent = elEnum;
-                    } else if (!_.isNullOrWhiteSpace(elEnum)) {
-                        this._input.textContent = elEnum.val;
-                        if (elEnum.representation) {
-                            var wrapper = $.createDiv({ class: ATTR_WRAPPER });
-                            var surround = elEnum.representation.val.split("$val");
-                            Object.assign(wrapper.dataset, { before: surround[0], after: surround[1] });
-                            $.insertBeforeElement(this._input, wrapper);
-                            wrapper.appendChild(this._input);
+                    if (_.isNullOrWhiteSpace(val)) {
+                        $.addClass(this._input, UI.EMPTY);
+                    }
+                    else {
+                        let elEnum = this.values[val];
+                        if (Array.isArray(this.values)) {
+                            this._input.textContent = elEnum;
                         } else {
-                            if ($.hasClass(this._input.parentElement, ATTR_WRAPPER)) {
-                                $.addClass(this._input.parentElement, UI.EMPTY);
+                            this._input.textContent = elEnum.val;
+                            if (elEnum.representation) {
+                                var wrapper = $.createDiv({ class: ATTR_WRAPPER });
+                                var surround = elEnum.representation.val.split("$val");
+                                Object.assign(wrapper.dataset, { before: surround[0], after: surround[1] });
+                                $.insertBeforeElement(this._input, wrapper);
+                                wrapper.appendChild(this._input);
+                            } else {
+                                if ($.hasClass(this._input.parentElement, ATTR_WRAPPER)) {
+                                    $.addClass(this._input.parentElement, UI.EMPTY);
+                                }
                             }
                         }
+
+                        $.removeClass(this._input, UI.EMPTY);
                     }
 
-                    $.removeClass(this._input, UI.EMPTY);
                 }
             });
 
@@ -413,12 +419,14 @@ var Projection = (function ($, _, ERR) {
                         this.pointsTo = null;
                     }
                     this._value = val;
-                    if (!_.isNullOrWhiteSpace(val) && _.isInt(val)) {
+                    if (_.isNullOrWhiteSpace(val)) {
+                        $.addClass(this._input, UI.EMPTY);
+                    } else if (_.isInt(val)) {
                         var refProjection = MODEL.projections[val];
-                        self.pointsTo = +val;
+                        this.pointsTo = +val;
                         this._input.textContent = refProjection.value;
                         refProjection.addReference(self.id);
-                        $.removeClass(self._input, UI.EMPTY);
+                        $.removeClass(this._input, UI.EMPTY);
                     }
                 }
             });

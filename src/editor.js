@@ -417,9 +417,13 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     dependency.textContent = "This attribute has: " + idrefCount + " " + _.pluralize(idrefCount == 1, "dependency", "y|ies");
                     let ul = $.createUl({ class: 'ref-list' });
                     for (var i = 0; i < idrefCount; i++) {
-                        let el = $.getElement(hash(idref[i]), container);
+                        let id = idref[i];
                         let li = $.createLi({ class: 'ref-list-item' });
-                        let a = $.createAnchor(hash(idref[i]), { text: projection.name });
+                        let a = $.createAnchor(hash(id), { text: projection.name });
+                        a.addEventListener(EventType.CLICK, function(){
+                            var el = $.getElement(hash(id), container);
+                            el.focus();
+                        });
                         li.appendChild(a);
                         ul.appendChild(li);
                     }
@@ -563,7 +567,6 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
         },
         setState(s) {
             var self = this;
-            console.log(s);
             // set concrete to new state
             self._concrete = s;
             // reinitialize abstract
@@ -1224,7 +1227,6 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     "attr": {
                         "exclusion_criteria": {
                             "name": "exclusion_criteria", "type": "string",
-                            "val": ["ok"],
                             "multiple": { "type": "array", "min": 1 }
                         }
                     },
