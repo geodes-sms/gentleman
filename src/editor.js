@@ -372,6 +372,10 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
 
             $.removeChildren(self.container);
         },
+        /**
+         * Updates the note section content
+         * @param {Projection} projection 
+         */
         update(projection) {
             var self = this;
 
@@ -379,33 +383,37 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
 
             var fragment = $.createDocFragment();
             const NOTE_SECTION = 'note-section';
+            const NOTE_INFO_LABEL = 'note-info-label';
+            const NOTE_INFO_VALUE = 'note-info-value';
             const BR = function () { return $.createLineBreak(); };
 
             var noteTitle = $.createHeading('h3', { class: ['note-attr', 'font-code'] });
             noteTitle.textContent = projection.name;
             fragment.appendChild(noteTitle);
 
+            // display error
+            var error = $.createP({ class: NOTE_SECTION });
             if (projection.hasError) {
-                let error = $.createP({ class: [NOTE_SECTION, 'note-error'] });
-                error.appendChild($.createSpan({ html: "You seem to have an error on that attribute:<br>" }));
-                error.appendChild($.createSpan({ html: projection.error }));
+                $.addClass(error, 'note-error');
+                $.appendChildren(error, [
+                    $.createSpan({ html: "You seem to have an error on that attribute:" }), BR(),
+                    $.createSpan({ html: projection.error })
+                ]);
                 fragment.appendChild(error);
             } else {
-                let error = $.createP({ class: [NOTE_SECTION, 'note-error--valid'] });
+                $.addClass(error, 'note-error--valid');
                 error.appendChild($.createSpan({ html: "Everything is good here." }));
                 fragment.appendChild(error);
             }
 
-            var info = $.createP({ class: [NOTE_SECTION, 'note-info', 'font-code'] });
-            var attrName = $.createSpan({
-                html: "<strong>Type</strong>: " + projection.type + " (" + (projection.isOptional ? 'optional' : 'required') + ")"
-            });
-            var attrValue = $.createSpan({
-                html: "<strong>Value</strong>: " + (_.isNullOrWhiteSpace(projection.value) ? '&mdash;' : projection.value)
-            });
+            var infoTitle = $.createHeading('h4', { class: 'note-section-title', text: "Properties" });
+            var info = $.createUl({ class: ['bare-list', 'note-info'] });
+            var iName = createInfoItem("Type", projection.type + " (" + (projection.isOptional ? 'optional' : 'required') + ")");
+            var iValue = createInfoItem("Value", _.isNullOrWhiteSpace(projection.value) ? '&mdash;' : projection.value);
+            var iPath = createInfoItem("Path", projection.modelAttribute.path);
 
-            $.appendChildren(info, [attrName, BR(), attrValue]);
-            fragment.appendChild(info);
+            $.appendChildren(info, [iName, iValue, iPath]);
+            $.appendChildren(fragment, [infoTitle, info]);
 
             if (projection.type == 'ID') {
                 var dependency = $.createP({ class: [NOTE_SECTION, 'note-dependency'] });
@@ -420,7 +428,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                         let id = idref[i];
                         let li = $.createLi({ class: 'ref-list-item' });
                         let a = $.createAnchor(hash(id), { text: projection.name });
-                        a.addEventListener(EventType.CLICK, function(){
+                        a.addEventListener(EventType.CLICK, function () {
                             var el = $.getElement(hash(id), container);
                             el.focus();
                         });
@@ -434,6 +442,22 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
             }
 
             self.container.appendChild(fragment);
+
+            /**
+             * Helper: Creates an info item
+             * @param {string} lbl label
+             * @param {string} val value
+             * @returns {HTMLLIElement} Info item
+             */
+            function createInfoItem(lbl, val) {
+                return $.createLi(
+                    { class: 'note-info-item' },
+                    [
+                        $.createSpan({ class: [NOTE_INFO_LABEL], text: lbl }),
+                        $.createSpan({ class: [NOTE_INFO_VALUE, 'font-code'], html: val })
+                    ]
+                );
+            }
         }
     };
 
@@ -1094,7 +1118,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
             aside.remove();
         }
         // remove stylesheets
-        var links = $.getElements('.gentleman-css');
+        var links = $.getElements(dot('gentleman-css'));
         for (let i = 0, len = links.length; i < len; i++) {
             links.item(i).remove();
         }

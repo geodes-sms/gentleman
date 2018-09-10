@@ -311,10 +311,11 @@ var Projection = (function ($, _, ERR) {
             var mAttr = self.modelAttribute;
             const MODEL = mAttr.MODEL;
             var instance = MODEL.createInstance(type);
-
+            
             var mElem = MODEL.createModelElement(instance);
-            mAttr._source = instance;
-            $.insertBeforeElement(self._input, mElem.render());
+            mAttr.set(instance, self.index);
+            //mAttr._source = instance;
+            $.insertBeforeElement(self._input, mElem.render(_.addPath(mAttr.path, 'val[' + self.index + ']')));
         },
         focus() {
 

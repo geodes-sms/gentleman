@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Gentleman dialog interface
 #### Fixed
 - Delete behaviour
+- Undo/redo behaviour
 - Block rule representation
 
 ### Version 0.9.0 (2018-08-23)

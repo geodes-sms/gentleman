@@ -31,48 +31,29 @@ const ModelAttribute = (function ($, _, PN, ERR) {
             return instance;
         },
 
-        /**
-         * @type {ModelElement}
-         */
+        /** @type {ModelElement} */
         get Element() { return this._parent; },
-        /**
-         * @returns {MetaModel}
-         */
+        /** @returns {MetaModel} */
         get MODEL() { return this.Element.model; },
-        /**
-         * @type {string}
-         */
+        /** @type {string} */
         get name() { return this._name; },
-        /**
-         * @type {string}
-         */
+        /** @type {string} */
         get type() { return this._type; },
-        /**
-         * @type {boolean}
-         */
+        /** @type {boolean} */
         get isMultiple() { return this._isMultiple; },
-        /**
-         * @type {boolean}
-         */
+        /** @type {boolean} */
         get isOptional() { return this._isOptional; },
-        get fnUpdate() { return this._fnUpdate; },
-        /**
-         * @function createProjection
-         */
-        get fnCreateProjection() { return this._fnCreateProjection; },
-        /**
-         * @type {string}
-         */
+        /** @type {string} */
         get path() { return this._path; },
+        /** @type {string} */
         get representation() { return this._representation; },
-        /**
-         * @type {Projection[]}
-         */
+        /** @type {Projection[]} */
         get projections() { return this._projections; },
-        /**
-         * @type {ModelElement[]}
-         */
+        /** @type {ModelElement[]} */
         get elements() { return this._elements; },
+
+        get fnUpdate() { return this._fnUpdate; },
+        get fnCreateProjection() { return this._fnCreateProjection; },
 
         render_attr: function () {
             if (Object.getPrototypeOf(this) !== ModelAttribute && ModelAttribute.isPrototypeOf(this))
@@ -100,14 +81,14 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                 }
 
                 return projection.createInput();
-            } else if (this.MODEL.isElement(type)) {
+            } else if (self.MODEL.isElement(type)) {
                 newpath = _.addPath(path, isMultiple ? 'val[' + valIndex + ']' : "val");
-                let mElement = this.MODEL.createModelElement(val);
+                let mElement = self.MODEL.createModelElement(val);
                 self.elements.push(mElement);
 
                 // abstract element
                 if (val.hasOwnProperty(ABSTRACT)) {
-                    this.MODEL.path.push(isMultiple ? _.addPath(path, 'val[' + valIndex + ']') : path);
+                    self.MODEL.path.push(isMultiple ? _.addPath(path, 'val[' + valIndex + ']') : path);
                     projection = self.createProjection(val);
 
                     return projection.createInput();

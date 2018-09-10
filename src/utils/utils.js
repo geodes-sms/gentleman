@@ -355,11 +355,17 @@ var UTIL = (function (_) {
          * Creates a <li> element with some attributes
          * @param {Object} [attr] attributes
          */
-        createLi(attr) {
-            var li = this.createElement("li");
+        createLi(attr, el) {
+            var li = this.createElement('li');
 
             if (attr) {
                 this.addAttributes(li, attr);
+            }
+
+            if (Array.isArray(el)) {
+                this.appendChildren(li, el);
+            } else if (el) {
+                li.appendChild(el);
             }
 
             return li;

@@ -186,6 +186,14 @@ li, td, th { font-size: 1.2em; }
 
 .note-section { margin: 0; padding: 5px 10px; }
 
+.note-section-title { 
+    margin-top: 10px; margin-bottom: 0;
+    padding: 3px 10px 4px;
+    font-size: 1.6em; font-weight: 500;
+    color: #fff;
+    background-color: #5f4b8b;
+}
+
 .note-error {
     color: #fff;
     background-color: #BF1932;
@@ -198,7 +206,27 @@ li, td, th { font-size: 1.2em; }
     line-height: 1.5;
 }
 
-.note-info { background-color: #f2f1ef; }
+.note-info { background-color: #B2B2B0; }
+
+    .note-info-item {
+        display: flex;    
+        height: 25px;
+        line-height: 25px;
+        font-size: 1.5em;
+    }
+        .note-info-item:not(:last-child) { margin-bottom: 2px; }
+
+        .note-info-label {
+            width: 40px;
+            padding-left: 10px;
+            color: #333;
+            background-color: #d8d8d6;
+        }
+        .note-info-value {
+            flex-grow: 2;
+            padding-left: 5px;
+            background-color: #f2f1ef
+        }
 
 .convo-container {
     position: absolute;
@@ -298,7 +326,7 @@ li, td, th { font-size: 1.2em; }
         text-align: center;
         color: transparent;
         border-radius: 10px 0 0 10px;
-        background-color: #5F4B8B;
+        background-color: #5f4b8b;
     }
     .option:hover,
     .option:focus {
@@ -332,7 +360,7 @@ li, td, th { font-size: 1.2em; }
         content: "";
         position: absolute;
         top: 0; right: 0; bottom: 0; left: 0;
-        border-top: 2px solid #5F4B8B; border-radius: 2px;
+        border-top: 2px solid #5f4b8b; border-radius: 2px;
     }
     .extension:hover:after,
     .extension:focus:after {
@@ -393,7 +421,7 @@ li, td, th { font-size: 1.2em; }
             top: 0; bottom: 0; right: 0;
             font: 300 0.9em 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
             color: #fff;
-            background-color: #5F4B8B;
+            background-color: #5f4b8b;
         }
         .attr[data-optional=true].empty:not(:focus) { padding-right: 57px; overflow: hidden; }
         .attr[data-optional=true]:focus:after { 
@@ -432,31 +460,31 @@ li, td, th { font-size: 1.2em; }
     padding: 0 5px;
     border-radius: 2px;
 }
-.attr--bool:not(.checked) { 
-    color: #fff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #404040;
-    font-size: 1em; 
-}
-.attr--bool.checked:hover { 
-    font-size: 0.9em; 
-    color: #222;
-    background-color: #FFD300;
-}
-.attr--bool.checked {
-    background-color: #fffff0;
-    box-shadow: 0 1px 1px #d9d9d9;
-}
+    .attr--bool:not(.checked) { 
+        color: #fff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #404040;
+        font-size: 1em; 
+    }
+    .attr--bool.checked:hover { 
+        font-size: 0.9em; 
+        color: #222;
+        background-color: #FFD300;
+    }
+    .attr--bool.checked {
+        background-color: #fffff0;
+        box-shadow: 0 1px 1px #d9d9d9;
+    }
 
-.attr--bool input { display: none; }
+    .attr--bool input { display: none; }
 
-.attr--bool:after {
-    content: attr(data-name)'?';
-}
+    .attr--bool:after {
+        content: attr(data-name)'?';
+    }
 
-.attr--bool.checked:not(:hover):after {
-    content: attr(data-representation);
-}
+    .attr--bool.checked:not(:hover):after {
+        content: attr(data-representation);
+    }
 
 .attr.error{
     border: 0 none;

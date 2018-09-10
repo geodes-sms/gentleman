@@ -47,7 +47,7 @@
             <ul class="bare-list">
                 <li><a href="#getting-started">Getting started</a>
                     <ul>
-                        <li><a href="#model">The Metamodel</a></li>
+                        <li><a href="#metamodel">The Metamodel</a></li>
                         <li><a href="#generator">The Generator</a></li>
                         <li><a href="#editor">The Editor</a></li>
                         <li><a href="#style">The Style</a></li>
@@ -57,12 +57,55 @@
         </nav>
         <article id="getting-started" class="main-content side">
             <header class="article-header">
-                    <h1 class="page-title">Getting started</h1>
-                    <p class="gentleman-quote">Let's get you up and running as fast as possible.</p>
+                <h1 class="page-title">Getting started</h1>
+                <p class="gentleman-quote">Let's get you up and running as fast as possible.</p>
             </header>
             <section>
                 <h2>Requirement</h2>
-                <p>Gentleman requires a JSON file describing the model</p>
+                <p>Gentleman requires a meta-model: a model that defines a language. The format used for the grammar is
+                    JSON.</p>
+            </section>
+            <section id="metamodel">
+                <h2>Metamodel</h2>
+                <p>
+                    The metamodel is where every Gentleman project begin. Given one, you will then be able to
+                    load or create any instance (model) of it and in the editor. A metamodel is defined as a <strong>Grammar</strong>.
+                    The Grammar is made of an aggregation of POS and additional properties. Those can be one of the
+                    following: Rule, Enum, Datatype.
+                </p>
+                <h3>Rule</h3>
+                <p>
+                    Rules are the main components found in a Grammar. They represent a chunk of your grammar that can be
+                    reused, repeated or extended. As such, there are three types: Abstract, Concrete and Nested.
+                </p>
+                <h4>Abstract</h4>
+                <p>
+                    An Abstract Rule 
+                </p>
+                <h4>Concrete</h4>
+                <p>
+                    An Concrete Rule 
+                </p>
+                <h4>Nested</h4>
+                <p>
+                    An Nested Rule 
+                </p>
+                <h3>Attribute</h3>
+                <p>
+                    TODO
+                </p>
+                <h3>Enum</h3>
+                <p>
+                    TODO
+                </p>
+                <h3>Datatype</h3>
+                <p>
+                    TODO
+                </p>
+                <h3>Representation</h3>
+                <p>
+                    TODO
+                </p>
             </section>
         </article>
     </main>
