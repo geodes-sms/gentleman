@@ -1351,7 +1351,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 }],
                 "representation": { "type": "text", "val": "$composition" }
             },
-            "response": {
+            "response": {   
                 "name": "response",
                 "attr": {
                     "title": { "name": "title", "type": "string" },
@@ -1460,7 +1460,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 "keyword": "DynamicList",
                 "base": "category",
                 "attr": {
-                    "reference_name": { "name": "reference_name", "type": "string" },
+                    "reference_name": { "name": "reference_name", "type": "string", "optional": true },
                     "initial_values": {
                         "name": "initial_values", "type": "string",
                         "multiple": { "type": "array", "min": 1 },
@@ -1486,12 +1486,12 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 "name": "simpleType",
                 "type": "enum",
                 "values": {
-                    "bool": { "representation": { "type": "text", "val": "bool" } },
-                    "date": { "representation": { "type": "text", "val": "date #max" } },
-                    "int": { "representation": { "type": "text", "val": "int #max" } },
-                    "real": { "representation": { "type": "text", "val": "real #max" } },
-                    "string": { "representation": { "type": "text", "val": "string #max" } },
-                    "text": { "representation": { "type": "text", "val": "text #max" } }
+                    "bool": { "val": "bool" },
+                    "date": { "val": "date" },
+                    "int": { "val": "int" },
+                    "real": { "val": "real" },
+                    "string": { "val": "string" },
+                    "text": { "val": "text" }
                 }
             },
             "assignmentMode": {

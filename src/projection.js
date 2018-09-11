@@ -92,6 +92,8 @@ var Projection = (function ($, _, ERR) {
         get validators() { return this._validators; },
         get refs() { return this._refs; },
         index: 0,
+        /** @type {HTMLElement} */
+        element: null,
 
         focus() {
             this._input.focus();
@@ -188,6 +190,7 @@ var Projection = (function ($, _, ERR) {
                 li.appendChild(inputProjection);
                 inputProjection = li;
             }
+            self.element = inputProjection;
 
             return inputProjection;
         },
@@ -213,6 +216,8 @@ var Projection = (function ($, _, ERR) {
         remove() {
             var self = this;
             $.removeChildren(self._input);
+            $.removeChildren(self.element);
+            self.element.remove();
             self._input.remove();
         },
         delete() {
@@ -274,8 +279,7 @@ var Projection = (function ($, _, ERR) {
             var mAttr = self._mAttribute;
 
             var input = $.createSpan({
-                class: [EL.ATTRIBUTE_ABSTRACT, UI.EMPTY],
-                id: self._id,
+                id: self._id, class: [EL.ATTRIBUTE_ABSTRACT, UI.EMPTY],
                 data: {
                     name: mAttr.name,
                     type: mAttr.type,
@@ -288,9 +292,10 @@ var Projection = (function ($, _, ERR) {
             self._input = input;
 
             if (mAttr.isMultiple) {
-                // let li = $.createLi({ class: "extension-container" });
-                // li.appendChild(input);
-                return input;
+                let li = $.createLi({ class: 'section' });
+                li.appendChild(input);
+                self.element = li;
+                return li;
             }
 
             return input;
@@ -311,18 +316,40 @@ var Projection = (function ($, _, ERR) {
             var mAttr = self.modelAttribute;
             const MODEL = mAttr.MODEL;
             var instance = MODEL.createInstance(type);
-            
             var mElem = MODEL.createModelElement(instance);
-            mAttr.set(instance, self.index);
-            //mAttr._source = instance;
-            $.insertBeforeElement(self._input, mElem.render(_.addPath(mAttr.path, 'val[' + self.index + ']')));
+            var currIndex = self.index;
+            var el = self.element;
+            mAttr.set(instance, currIndex);
+            self.element.appendChild(mElem.render(_.addPath(mAttr.path, 'val[' + currIndex + ']'), true));
+            var btnDelete = $.createButtonDelete(self.element, function () {
+                // self.delete(currIndex);
+                $.removeChildren(el);
+                el.remove();
+            });
+            self.element.appendChild(btnDelete);
+
+            var li = $.createLi({ class: 'section' });
+            li.appendChild(self._input);
+            $.insertAfterElement(self.element, li);
+            self.element = li;
+            self.index++;
         },
         focus() {
 
         },
         focusIn() { },
         focusOut() { },
-        validate() { return true; }
+        validate() { return true; },
+        remove() {
+            var self = this;
+            $.removeChildren(self.element);
+            self.element.remove();
+        },
+        delete(index) {
+            var self = this;
+            index = _.valOrDefault(index, self.index);
+            self.modelAttribute.remove(index);
+        }
     };
 
     var EnumProjection = BaseProjection.create({
@@ -332,7 +359,8 @@ var Projection = (function ($, _, ERR) {
                 get() { return this._value; },
                 set(val) {
                     this._value = val;
-                    if (_.isNullOrWhiteSpace(val)) {
+
+                    if (_.isNullOrWhiteSpace(val) && !Number.isInteger(val)) {
                         $.addClass(this._input, UI.EMPTY);
                     }
                     else {
@@ -348,8 +376,9 @@ var Projection = (function ($, _, ERR) {
                                 $.insertBeforeElement(this._input, wrapper);
                                 wrapper.appendChild(this._input);
                             } else {
-                                if ($.hasClass(this._input.parentElement, ATTR_WRAPPER)) {
-                                    $.addClass(this._input.parentElement, UI.EMPTY);
+                                let parent = this._input.parentElement;
+                                if (parent && $.hasClass(parent, ATTR_WRAPPER)) {
+                                    $.addClass(parent, UI.EMPTY);
                                 }
                             }
                         }

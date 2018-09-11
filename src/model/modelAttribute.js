@@ -97,6 +97,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                 if (isMultiple) {
                     let item;
                     let isLast = valIndex == attr.val.length - 1;
+
                     let isInline = _.toBoolean(attr.inline);
                     if (!this.MODEL.getModelElement(type).hasOwnProperty(COMPOSITION)) {
                         item = $.createLi({ class: "array-item", prop: "val" });
@@ -310,9 +311,14 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                             self.add(instance);
 
                             // render instance
-                            var li = $.createLi({ class: "array-item", prop: "val" });
-                            li.appendChild(self.handler(self._source, instance, self.path));
+                            // var li = $.createLi({ class: "array-item", prop: "val" });
+                            var li = (self.handler(self._source, instance, self.path));
                             $.insertBeforeElement(this, li);
+
+                            var btnDelete = $.createButtonDelete(li, function () {
+                                self.remove(self.count - 1);
+                            });
+                            li.appendChild(btnDelete);
 
                             // focus on first element newly created
                             $.getElement(".attr", li).focus();
@@ -334,6 +340,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
             }
         },
         get(index) { return this._source.val[index]; },
+        getIndex(val) { return this._source.val.indexOf(val); },
         set(val, index) { this._source.val[index] = val; },
         add(val) { this._source.val.push(val); },
         remove(index) {
