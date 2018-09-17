@@ -7,7 +7,7 @@ var MetaModel = (function ($, _, ELEM, ERR) {
     "use strict";
 
     var pub = {
-        create: function (metamodel, model) {
+        create (metamodel, model) {
             var instance = Object.create(this);
 
             // private members
@@ -23,7 +23,7 @@ var MetaModel = (function ($, _, ELEM, ERR) {
         },
         init(model) {
             var self = this;
-            
+
             // private members
             self._model = model;
             self.ID = [];      // list of IDs declared in the concrete model
@@ -42,15 +42,16 @@ var MetaModel = (function ($, _, ELEM, ERR) {
          * @param {boolean} origin
          * @returns {ModelElement}
          */
-        createModelElement: function (el, origin) {
+        createModelElement(el, origin) {
             origin = _.valOrDefault(origin, false);
             var mElement = ELEM.create(this, el);
             if (origin) {
                 this.root = mElement;
             }
+            
             return mElement;
         },
-        addModelElement: function (attr) {
+        addModelElement(attr) {
             var instance = this.createInstance(attr.type);
             attr.val.push(instance);
 
@@ -62,7 +63,7 @@ var MetaModel = (function ($, _, ELEM, ERR) {
          * @param {Object} el element
          * @param {HTMLElement} eHTML HTML element
          */
-        removeElement: function (parent, el, prop) {
+        removeElement(parent, el, prop) {
             var arr = parent[prop];
             arr.splice(arr.indexOf(el), 1);
 
@@ -74,12 +75,12 @@ var MetaModel = (function ($, _, ELEM, ERR) {
          * Gets a model element by type
          * @param {string} type 
          */
-        getModelElement: function (type) { return this.isElement(type) ? JSON.parse(JSON.stringify(this.MM[type])) : undefined; },
+        getModelElement(type) { return this.isElement(type) ? JSON.parse(JSON.stringify(this.MM[type])) : undefined; },
         /**
          * Returns an element in a model using its path
          * @param {string} path  
          */
-        findModelElement: function (path) {
+        findModelElement(path) {
             var components = path.split('.');
             var me = this.concrete;
 
@@ -112,7 +113,7 @@ var MetaModel = (function ($, _, ELEM, ERR) {
          * Create an instance of the model element
          * @param {string} type 
          */
-        createInstance: function (type) {
+        createInstance(type) {
             var element = this.getModelElement(type);
             return element && !(this.isEnum(type) || this.isDataType(type)) ? _.cloneObject(element) : "";
         },
@@ -122,39 +123,37 @@ var MetaModel = (function ($, _, ELEM, ERR) {
          * @param {string} type 
          * @returns {boolean}
          */
-        isElement: function (type) { return this.MM[type] !== undefined; },
+        isElement(type) { return this.MM[type] !== undefined; },
         /**
          * Gets a value indicating whether the element is of type "ENUM"
          * @param {string} type 
          * @returns {boolean}
          */
-        isEnum: function (type) { return this.isElement(type) && this.MM[type].type == ModelType.ENUM; },
+        isEnum(type) { return this.isElement(type) && this.MM[type].type == ModelType.ENUM; },
         /**
          * Gets a value indicating whether the element is of type "PRIMITIVE" or "DATATYPE"
          * @param {string} type 
          * @returns {boolean}
          */
-        isDataType: function (type) { return DataType.hasOwnProperty(type.split(':')[0]) || this.isModelDataType(type); },
+        isDataType(type) { return DataType.hasOwnProperty(type.split(':')[0]) || this.isModelDataType(type); },
         /**
          * Gets a value indicating whether the element is of type "DATATYPE"
          * @param {string} type 
          * @returns {boolean}
          */
-        isModelDataType: function (type) { return this.isElement(type) && this.MM[type].type === ModelType.DATATYPE; },
+        isModelDataType(type) { return this.isElement(type) && this.MM[type].type === ModelType.DATATYPE; },
 
         /**
          * Gets a model element type
          * @param {Object} el element
          */
-        getModelElementType: function (el) {
+        getModelElementType (el) {
             if (!el.hasOwnProperty('base')) return el.name;
 
             return this.getModelElementType(this.getModelElement(el.base)) + "." + el.name;
         },
 
-        toString() {
-            return this.root.toString();
-        }
+        toString() { return this.root.toString(); }
     };
 
     return pub;

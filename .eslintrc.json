@@ -34,6 +34,7 @@
         "DOC": false,
         "Environment": false,
         "EventType": false,
+        "events": false,
         "Exception": false,
         "HELPER": true,
         "HTMLAttribute": false,

@@ -5,7 +5,7 @@ var UTIL = (function (_) {
         /**
          * Gets the window's width
          */
-        getWindowWidth() { return window.innerWidth || DOC.documentElement.clientWidth || DOC.body.clientWidth; },
+        get windowWidth() { return window.innerWidth || DOC.documentElement.clientWidth || DOC.body.clientWidth; },
 
         /**
          * Returns the first element that matches the query selector.

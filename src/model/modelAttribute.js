@@ -84,15 +84,22 @@ const ModelAttribute = (function ($, _, PN, ERR) {
             } else if (self.MODEL.isElement(type)) {
                 newpath = _.addPath(path, isMultiple ? 'val[' + valIndex + ']' : "val");
                 let mElement = self.MODEL.createModelElement(val);
+                mElement.parent = self;
                 self.elements.push(mElement);
 
                 // abstract element
-                if (val.hasOwnProperty(ABSTRACT)) {
-                    self.MODEL.path.push(isMultiple ? _.addPath(path, 'val[' + valIndex + ']') : path);
-                    projection = self.createProjection(val);
 
-                    return projection.createInput();
-                }
+                // if (val.hasOwnProperty(ABSTRACT)) {
+                //     projection = self.createProjection(val);
+                //     let input = projection.createInput();
+                //     if (isMultiple) {
+                //         self.MODEL.path.push(_.addPath(path, 'val[' + valIndex + ']'));
+                //         self.getElement(-1).eHTML = input;
+                //     } else {
+                //         self.MODEL.path.push(path);
+                //     }
+                //     return input;
+                // }
 
                 if (isMultiple) {
                     let item;
@@ -100,12 +107,14 @@ const ModelAttribute = (function ($, _, PN, ERR) {
 
                     let isInline = _.toBoolean(attr.inline);
                     if (!this.MODEL.getModelElement(type).hasOwnProperty(COMPOSITION)) {
-                        item = $.createLi({ class: "array-item", prop: "val" });
+                        item = $.createLi({ class: 'array-item', prop: "val" });
                         // create an attribute wrapper and put the attributes in it
-                        var wrapper = $.createDiv({ class: "attr-wrapper multiple" });
+                        item.dataset.separator = _.valOrDefault(attr.separator, ',');
+                        var wrapper = $.createDiv({ class: ['attr-wrapper', 'multiple'] });
                         wrapper.appendChild(mElement.render(newpath, true));
                         item.appendChild(wrapper);
                         mElement.eHTML = item;
+                        mElement.index = valIndex;
 
                         if (!isInline) {
                             $.addClass(item, "block");
@@ -114,7 +123,6 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                             if (isLast) return renderButton(item, ButtonType.Add);
                         }
                     } else {
-                        // create an attribute wrapper and put the attributes in it
                         item = mElement.render(newpath);
 
                         if (isLast) return renderButton(item, ButtonType.New);
@@ -211,16 +219,17 @@ const ModelAttribute = (function ($, _, PN, ERR) {
             }
             return this.value.toString();
         }
-
     };
 
-    var ModelAttributeSinglevalue = ModelAttribute.create({
+    const ModelAttributeSinglevalue = ModelAttribute.create({
         init() {
             var self = this;
-            if (!this._source.hasOwnProperty(VAL))
-                this._source.val = this.MODEL.createInstance(this._type);
+            if (!self._source.hasOwnProperty(VAL))
+                self._source.val = self.MODEL.createInstance(self._type);
 
-            this._fnUpdate = function (val) { self.value = val; };
+            self._fnUpdate = function (val) {
+                self.value = val;
+            };
         },
         render_attr() {
             var self = this;
@@ -233,7 +242,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
         createProjection: createProjection
     });
 
-    var ModelAttributeMultivalue = ModelAttribute.create({
+    const ModelAttributeMultivalue = ModelAttribute.create({
         init() {
             var self = this;
             if (!self._source.hasOwnProperty(VAL)) {
@@ -249,12 +258,10 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                 }
             }
 
-            this._isMultiple = true;
-            this._represent = "";
+            self._isMultiple = true;
+            self._represent = "";
 
-            this._fnUpdate = function (val, index) {
-                self.set(val, index);
-            };
+            self._fnUpdate = function (val, index) { self.set(val, index); };
         },
         createProjection: function (val) {
             var self = this;
@@ -278,13 +285,13 @@ const ModelAttribute = (function ($, _, PN, ERR) {
 
             if (self.fnMultiple) {
                 return self.fnMultiple();
-            }
-            else {
+            } else {
                 if (!M.isElement(self.type) || !M.getModelElement(self.type).hasOwnProperty(COMPOSITION)) {
                     var ul = $.createUl({
                         class: "bare-list " + (M.isElement(self.type) && M.getModelElement(self.type).extension ?
                             "list empty" : "array")
                     });
+
                     if (self._source.inline === false) $.addClass(ul, "block");
                     Object.assign(ul.dataset, { multiple: true });
                     if (self.representation) {
@@ -327,6 +334,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                     }
                 }
 
+                self.eHTML = container;
                 return container;
             }
 
@@ -341,7 +349,22 @@ const ModelAttribute = (function ($, _, PN, ERR) {
         },
         get(index) { return this._source.val[index]; },
         getIndex(val) { return this._source.val.indexOf(val); },
-        set(val, index) { this._source.val[index] = val; },
+        getElement(index) {
+            var self = this;
+            return index < 0 ? self.elements[self.elements.length + index] : self.elements[index];
+        },
+        set(val, index, el) {
+            var self = this;
+
+            if (self._source.val[index] !== val) {
+                self._source.val[index] = val;
+                events.emit('model.change');
+            }
+
+            if (el) {
+                self.elements[index] = el;
+            }
+        },
         add(val) { this._source.val.push(val); },
         remove(index) {
             var self = this;
@@ -353,7 +376,13 @@ const ModelAttribute = (function ($, _, PN, ERR) {
             } else {
                 self.removeAll();
             }
-
+            var isLast = self._source.val ? self.count === 0 : false;
+            if (self.name === 'category' && self.multiplicity.min > 0 && isLast) {
+                var instance = self.MODEL.createInstance(self.type);
+                var mElem = self.MODEL.createModelElement(instance);
+                self.eHTML.appendChild(self.handler(self._source, instance, self.path, true));
+                self.set(instance, index, mElem);
+            }
         },
         removeAll() {
             var self = this;
@@ -379,7 +408,12 @@ const ModelAttribute = (function ($, _, PN, ERR) {
     );
     _.defProp(ModelAttribute, 'value', {
         get() { return this._source.val; },
-        set(val) { this._source.val = val; }
+        set(val) {
+            if (this._source.val !== val) {
+                this._source.val = val;
+                events.emit('model.change');
+            }
+        }
     });
 
     function prepare(el, attr, path) {
@@ -415,7 +449,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                 projection.values = element.values;
             } else if (M.isDataType(elementType)) {
                 projection = PN.DataType.create(packet);
-                projection.element = element;
+                projection.struct = element;
             } else {
                 projection = PN.Base.create(packet);
             }

@@ -1,3 +1,4 @@
+/// <reference path="pubsub.js" />
 /// <reference path="enums.js" />
 /// <reference path="helpers/helpers.js" />
 /// <reference path="utils/utils.js" />
@@ -23,7 +24,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
     };
 
     // Indicates whether the display is mobile mode
-    var MOBILE = $.getWindowWidth() <= 700;
+    var MOBILE = $.windowWidth <= 700;
 
     /**
      * Gets the name of the object if available
@@ -50,32 +51,6 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
 
     // Allow responsive design
     var mql = window.matchMedia('(max-width: 800px)');
-
-    // Pub-Sub pattern implementation
-    const events = {
-        events: {},
-        on: function (eventName, fn) {
-            this.events[eventName] = this.events[eventName] || [];
-            this.events[eventName].push(fn);
-        },
-        off: function (eventName, fn) {
-            if (this.events[eventName]) {
-                for (var i = 0; i < this.events[eventName].length; i++) {
-                    if (this.events[eventName][i] === fn) {
-                        this.events[eventName].splice(i, 1);
-                        break;
-                    }
-                }
-            }
-        },
-        emit: function (eventName, data) {
-            if (this.events[eventName]) {
-                this.events[eventName].forEach(function (fn) {
-                    fn(data);
-                });
-            }
-        }
-    };
 
     // State management
     const state = {
@@ -350,18 +325,6 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
             var self = this;
 
             var editor = self.editor;
-
-            // events.on('editor.undo', function (hasUndo) {
-            //     self.btnUndo.disabled = !hasUndo;
-            //     self.btnRedo.disabled = false;
-            // });
-            // events.on('editor.redo', function (hasRedo) {
-            //     self.btnRedo.disabled = !hasRedo;
-            //     self.btnUndo.disabled = false;
-            // });
-            // events.on('editor.save', function () {
-            //     self.btnUndo.disabled = false;
-            // });
 
             events.on('editor.change', function (projection) {
                 self.update(projection);
@@ -768,8 +731,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
             var self = this;
 
             var currentContainer,
-                lastKey,
-                preval;
+                lastKey;
             var flag = false;
 
             self.body.addEventListener(EventType.CLICK, function (event) {
@@ -914,8 +876,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     };
                 } else if (projection) {
                     projection.focusIn();
-                    events.emit('editor.change', projection);
-                    preval = projection.value;
+                    //events.emit('editor.change', projection);
 
                     if (isExtension(projection)) {
                         data = projection.valuesKV();
@@ -957,18 +918,17 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     if (projection) {
                         projection.focusOut();
                         projection.update();
-                        if (preval !== projection.value) {
-                            self.save();
-                        }
                     }
 
                     if (self.autocomplete.hasFocus) {
                         setTimeout(function () { validation_handler(target); }, 100);
                     } else {
-                        validation_handler(target);
+                        //validation_handler(target);
                     }
                 }
             }, false);
+
+            events.on('model.change', function () { self.save(); });
 
             function validation_handler(target) {
                 const ERROR = 'error';
@@ -1194,7 +1154,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                             "class_action": { "name": "class_action", "type": "ID", "optional": true },
                             "category": {
                                 "name": "category", "type": "category",
-                                "multiple": { "type": "array", "min": 1 }, "inline": false
+                                "multiple": { "type": "array", "min": 1 }, "inline": false, "separator": ""
                             }
                         },
                         "representation": {
@@ -1251,7 +1211,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     "attr": {
                         "exclusion_criteria": {
                             "name": "exclusion_criteria", "type": "string",
-                            "multiple": { "type": "array", "min": 1 }
+                            "multiple": { "type": "list", "min": 1 }
                         }
                     },
                     "representation": { "type": "text", "val": "$keyword = [#exclusion_criteria]" }
@@ -1263,7 +1223,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     "attr": {
                         "source_papers": {
                             "name": "source_papers", "type": "string",
-                            "multiple": { "type": "array" }
+                            "multiple": { "type": "list" }
                         }
                     },
                     "representation": { "type": "text", "val": "$keyword = [#source_papers]" }
@@ -1275,7 +1235,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     "attr": {
                         "search_strategy": {
                             "name": "search_strategy", "type": "string",
-                            "multiple": { "type": "array", "min": 0 }
+                            "multiple": { "type": "list" }
                         }
                     },
                     "representation": { "type": "text", "val": "$keyword = [#search_strategy]" }
@@ -1297,7 +1257,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     "attr": {
                         "phases": {
                             "name": "phases", "type": "phase",
-                            "multiple": { "type": "array", "min": 0 },
+                            "multiple": { "type": "list" },
                             "inline": false
                         }
                     },
@@ -1312,7 +1272,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     "description": { "name": "description", "type": "string", "optional": true },
                     "fields": {
                         "name": "fields", "type": "field",
-                        "multiple": { "type": "array" }
+                        "multiple": { "type": "list", "separator":',' }
                     }
                 },
                 "representation": { "type": "text", "val": "#title #description Fields (#fields)" }
@@ -1351,7 +1311,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 }],
                 "representation": { "type": "text", "val": "$composition" }
             },
-            "response": {   
+            "response": {
                 "name": "response",
                 "attr": {
                     "title": { "name": "title", "type": "string" },
@@ -1408,7 +1368,8 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     },
                     "subCategory": {
                         "name": "subCategory", "type": "category",
-                        "multiple": { "type": "array", "min": 1 },
+                        "multiple": { "type": "list", "min": 1 },
+                        "inline": false,
                         "representation": { "type": "text", "val": "{$val}" }
                     }
                 },

@@ -1,6 +1,6 @@
 /// <reference path="../model/model.js" />
 
-var ModelElement = (function ($, _, ATTR, ERR) {
+var ModelElement = (function ($, _, ATTR, ERR, PN) {
     "use strict";
 
     const OPTION = 'option';
@@ -18,7 +18,6 @@ var ModelElement = (function ($, _, ATTR, ERR) {
             instance._source = el;
             instance._path = '';
             instance._model = model;
-            instance._representation = el.representation;
             instance._position = _.valOrDefault(el.position, 0);
             instance._attributes = [];
             instance._elements = [];
@@ -35,16 +34,16 @@ var ModelElement = (function ($, _, ATTR, ERR) {
         /** @type {boolean} */
         get isOptional() { return _.toBoolean(this._source.optional); },
         /** @type {boolean} */
+        get isAbstract() { return _.toBoolean(this._source.abstract); },
+        /** @type {boolean} */
         get isMultiple() { return _.toBoolean(this._source.multiple); },
         get composition() { return this._source.composition; },
         /** @type {ModelElement[]} */
         get elements() { return this._elements; },
         get position() { return this._position; },
         get name() { return this._source.name; },
-        get representation() { return this._representation; },
-        /**
-         * @type {HTMLElement}
-         */
+        get representation() { return this._source.representation; },
+        /** @type {HTMLElement} */
         eHTML: undefined,
         options: [],
         parent: null,
@@ -60,6 +59,14 @@ var ModelElement = (function ($, _, ATTR, ERR) {
             });
 
             // self.current.multiple ? $.createLi({ class: 'list-item', prop: 'val' }) : $.createDiv({ class: "group section" });
+            if (self._source.abstract) {
+                var packet = PN.Abstract.prepare(self.model.generateID(), self.parent, self.parent.type);
+                let projection = PN.Abstract.create(packet);
+                projection.extensions = self._source.extensions;
+                projection.modelElement = self;
+                self.model.projections.push(projection);
+                return projection.createInput();
+            }
 
             // add the element's attributes to the container
             container.appendChild(this.getAttribute());
@@ -318,11 +325,19 @@ var ModelElement = (function ($, _, ATTR, ERR) {
 
             self.eHTML.remove();
 
-
             function listHandler() {
                 // if (arr.length < 2)
                 //     $.addClass(self.eHTML.parentElement, EMPTY);
             }
+        },
+        implement(type) {
+            var self = this;
+
+            var instance = self.model.createInstance(type);
+            self._source = instance;
+            self.parent.set(instance, self.index);
+
+            return self.render(self.path, true);
         },
         toString() {
             var self = this;
@@ -342,7 +357,7 @@ var ModelElement = (function ($, _, ATTR, ERR) {
                             result += "\n";
                             let compos = self.elements.slice();
                             compos.sort(function (a, b) { return a.position - b.position; });
-                            compos.forEach(function(el) { result += "\n" + el.toString(); });
+                            compos.forEach(function (el) { result += "\n" + el.toString(); });
                         } else if (this.representation[key]) {
                             let block = this.representation[key];
                             if (block.type === 'keyword') {
@@ -377,6 +392,25 @@ var ModelElement = (function ($, _, ATTR, ERR) {
             return result;
         }
     };
+
+    const AbstractElement = Object.create({
+        init() {
+        },
+        render() {
+            // TODO
+        },
+        implement() {
+            var self = this;
+
+            var packet = PN.Abstract.prepare(self.model.generateID(), self.parent, self.parent.type);
+            let projection = PN.Abstract.create(packet);
+            projection.extensions = self._source.extensions;
+            projection.modelElement = self;
+            self.model.projections.push(projection);
+
+            return projection.createInput();
+        }
+    });
 
     function optionHandler() {
         var self = this;
@@ -475,4 +509,4 @@ var ModelElement = (function ($, _, ATTR, ERR) {
 
     return pub;
 
-})(UTIL, HELPER, ModelAttribute, Exception);
+})(UTIL, HELPER, ModelAttribute, Exception, Projection);

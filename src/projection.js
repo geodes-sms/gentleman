@@ -1,3 +1,4 @@
+/// <reference path="pubsub.js" />
 /// <reference path="enums.js" />
 /// <reference path="model/model.js" />
 /// <reference path="helpers/helpers.js" />
@@ -25,8 +26,6 @@ var Projection = (function ($, _, ERR) {
             // private members
             instance._validators = [];
             instance._refs = [];
-            // instance._prop = el.getAttribute(Attribute.Prop);
-            // instance._position = el.getAttribute(Attribute.Position);
 
             if (!instance.isOptional) {
                 instance.validators.push(validateRequired);
@@ -64,6 +63,7 @@ var Projection = (function ($, _, ERR) {
             else {
                 $.removeClass(this._input, UI.EMPTY);
             }
+
             for (let i = 0, len = this.refs.length; i < len; i++) {
                 this.modelAttribute.MODEL.projections[this.refs[i]].update();
             }
@@ -94,6 +94,7 @@ var Projection = (function ($, _, ERR) {
         index: 0,
         /** @type {HTMLElement} */
         element: null,
+        hasWrapper: false,
 
         focus() {
             this._input.focus();
@@ -114,17 +115,20 @@ var Projection = (function ($, _, ERR) {
         },
         update() {
             var self = this;
-            var attr = this._mAttribute;
+            var attr = self._mAttribute;
             var val = self._input.textContent;
 
             if (val === "") {
                 $.addClass(self._input, UI.EMPTY);
-                if ($.hasClass(self._input.parentElement, ATTR_WRAPPER))
+                if (self.hasWrapper) {
                     $.addClass(self._input.parentElement, UI.EMPTY);
+                }
             }
+            
             this.value = val;
+            // update attribute
             this._update(self.value, self.index);
-
+            
             if (attr.type === DataType.ID) {
                 let src = attr.MODEL.ID.find(function (x) { return x.id == self.id; });
                 if (src) {
@@ -155,6 +159,8 @@ var Projection = (function ($, _, ERR) {
                     if (checkbox.checked) $.addClass(this, UI.CHECKED);
                     else $.removeClass(this, UI.CHECKED);
                 });
+                self._input = chk;
+                self.element = chk;
                 return chk;
             }
 
@@ -180,6 +186,7 @@ var Projection = (function ($, _, ERR) {
             inputProjection = self._input;
             if (mAttr.representation) {
                 var wrapper = $.createDiv({ class: [ATTR_WRAPPER, UI.EMPTY] });
+                self.hasWrapper = true;
                 var surround = mAttr.representation.val.split("$val");
                 Object.assign(wrapper.dataset, { before: surround[0], after: surround[1] });
                 wrapper.appendChild(inputProjection);
@@ -216,9 +223,9 @@ var Projection = (function ($, _, ERR) {
         remove() {
             var self = this;
             $.removeChildren(self._input);
+            self._input.remove();
             $.removeChildren(self.element);
             self.element.remove();
-            self._input.remove();
         },
         delete() {
             var self = this;
@@ -230,7 +237,7 @@ var Projection = (function ($, _, ERR) {
         /**
          * Constructor
          * @param {Object} values values  
-         * @returns {BaseProjection}
+         * @returns {AbstractProjection}
          */
         create(values) {
             var instance = Object.create(this);
@@ -240,40 +247,25 @@ var Projection = (function ($, _, ERR) {
             return instance;
         },
 
-        prepare(id, val, mAttr, type) {
+        prepare(id, mAttr, type) {
             return Object.freeze({
                 _id: id,
-                _val: val,
                 _mAttribute: mAttr,
                 _type: type
             });
         },
-        /**
-         * Gets the associated model-attribute
-         * @returns {ModelAttribute}
-         */
-        get modelAttribute() { return this._mAttribute; },
 
         get value() { return this._input.textContent; },
         get id() { return this._id; },
-        /**
-         * Returns an element's data-type
-         * @param {Element} el element
-         */
+        get modelAttribute() { return this._mAttribute; },
+        /** @returns {string} an element's data-type */
         get type() { return this._type; },
-        /**
-         * Returns an element's data error message
-         * @param {Element} el element
-         */
+        /** @returns {string} an element's data error message */
         get error() { return this._error; },
-        /**
-         * Returns an element's data position
-         * @param {Element} el element
-         */
+        /** @returns {int} an element's data position */
         get position() { return this._position; },
 
-        update: function () {
-        },
+        update: function () { },
         createInput: function (editable) {
             var self = this;
             var mAttr = self._mAttribute;
@@ -291,13 +283,6 @@ var Projection = (function ($, _, ERR) {
 
             self._input = input;
 
-            if (mAttr.isMultiple) {
-                let li = $.createLi({ class: 'section' });
-                li.appendChild(input);
-                self.element = li;
-                return li;
-            }
-
             return input;
 
         },
@@ -313,37 +298,22 @@ var Projection = (function ($, _, ERR) {
         },
         implement(type) {
             var self = this;
-            var mAttr = self.modelAttribute;
-            const MODEL = mAttr.MODEL;
-            var instance = MODEL.createInstance(type);
-            var mElem = MODEL.createModelElement(instance);
-            var currIndex = self.index;
-            var el = self.element;
-            mAttr.set(instance, currIndex);
-            self.element.appendChild(mElem.render(_.addPath(mAttr.path, 'val[' + currIndex + ']'), true));
-            var btnDelete = $.createButtonDelete(self.element, function () {
-                // self.delete(currIndex);
-                $.removeChildren(el);
-                el.remove();
-            });
-            self.element.appendChild(btnDelete);
 
-            var li = $.createLi({ class: 'section' });
-            li.appendChild(self._input);
-            $.insertAfterElement(self.element, li);
-            self.element = li;
-            self.index++;
-        },
-        focus() {
+            var output = self.modelElement.implement(type);
+            var parent = self._input.parentElement;
+            self._input.parentNode.insertBefore(output, self._input);
+            self._input.remove();
 
+            return parent;
         },
+        focus() { },
         focusIn() { },
         focusOut() { },
         validate() { return true; },
         remove() {
             var self = this;
-            $.removeChildren(self.element);
-            self.element.remove();
+            $.removeChildren(self._input);
+            self._input.remove();
         },
         delete(index) {
             var self = this;
@@ -371,6 +341,7 @@ var Projection = (function ($, _, ERR) {
                             this._input.textContent = elEnum.val;
                             if (elEnum.representation) {
                                 var wrapper = $.createDiv({ class: ATTR_WRAPPER });
+                                this.hasWrapper = true;
                                 var surround = elEnum.representation.val.split("$val");
                                 Object.assign(wrapper.dataset, { before: surround[0], after: surround[1] });
                                 $.insertBeforeElement(this._input, wrapper);
@@ -411,8 +382,9 @@ var Projection = (function ($, _, ERR) {
 
             if (val === "") {
                 $.addClass(self._input, UI.EMPTY);
-                if ($.hasClass(self._input.parentElement, ATTR_WRAPPER))
+                if (self.hasWrapper) {
                     $.addClass(self._input.parentElement, UI.EMPTY);
+                }
             }
 
             self._value = _.valOrDefault(_.find(self.values, val), val);
@@ -497,7 +469,7 @@ var Projection = (function ($, _, ERR) {
             var self = this;
 
             var validator = function () {
-                var format = self.element.format;
+                var format = self.struct.format;
                 var isValid = RegExp('^' + format + '$').test(self.value);
                 if (!isValid) {
                     var friendlyFormat = format.replace(/\[0-9\]\+/gi, "INT")
@@ -510,7 +482,7 @@ var Projection = (function ($, _, ERR) {
 
             this.validators.push(validator);
         },
-        element: undefined
+        struct: undefined
     });
 
     /**
