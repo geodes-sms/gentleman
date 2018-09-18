@@ -193,7 +193,7 @@ var Projection = (function ($, _, ERR) {
                 inputProjection = wrapper;
             }
             if (mAttr.isMultiple && mElement.representation.type == 'text') {
-                var li = $.createLi({ class: 'array-item', data: { prop: 'val' } });
+                var li = $.createLi({ class: 'array-item', data: { prop: 'val', separator: mAttr.separator } });
                 li.appendChild(inputProjection);
                 inputProjection = li;
             }

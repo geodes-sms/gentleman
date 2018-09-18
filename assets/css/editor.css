@@ -2,7 +2,7 @@ li, td, th { font-size: 1.2em; }
 
 .content-wrapper--header { height: 28px; box-sizing: border-box; font-size: 0.9em; }
 
-.editor-header-content { display: flex;}
+.editor-header-content { display: flex; }
 
 [data-gentleman-editor] {
     position: relative;
@@ -18,7 +18,7 @@ li, td, th { font-size: 1.2em; }
     font: normal 1rem 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
     color: #333;
     background-color: #f5f5f5;
-    z-index: 5;
+    z-index: 10;
 }
 
 #language {
@@ -155,8 +155,8 @@ li, td, th { font-size: 1.2em; }
 
 .body {
     position: absolute;
-    top: 35px; bottom: 0; left: 0; right: 0;
-    padding: 10px 30% 20px 1%;
+    top: 35px; bottom: 0; left: 0; right: 30%;
+    padding: 10px 1% 0;
     /* width: calc(70% - 5px); max-width: 940px; */
     box-sizing: border-box;
     overflow-y: auto;
@@ -165,7 +165,7 @@ li, td, th { font-size: 1.2em; }
     .body:after {
         display: block;
         content: " ";
-        height: 20px;
+        height: calc(100% - 100px);
     }
 
 .note {
@@ -230,6 +230,13 @@ li, td, th { font-size: 1.2em; }
             padding-left: 5px;
             background-color: #f2f1ef
         }
+
+.read-mode .attr.empty,
+.read-mode .btn,
+.read-mode .section.removable:before,
+.read-mode .attr--bool:not(.checked) { 
+    display: none; 
+}
 
 .convo-container {
     position: absolute;
@@ -469,22 +476,22 @@ li, td, th { font-size: 1.2em; }
         background: #404040;
     }
 
-    .attr--bool.checked { background-color: #fffff0; box-shadow: 0 1px 1px #d9d9d9; }
-        .attr--bool.checked:hover { 
+    .attr--bool.checked { background-color: rgba(220, 220, 220, 0.4); }
+        .attr--bool.checked:not(.read-mode):hover { 
             color: #222;
             font-size: 0.9em; 
             background-color: #FFD300;
         }
     .attr--bool.checked input { display: none; }
-    .attr--bool.checked:hover input { display: inline-block; }
+    .attr--bool.checked:not(.read-mode):hover input { display: inline-block; }
 
-    .attr--bool:after { content: attr(data-name); }
+    .attr--bool:not(.checked):after { content: attr(data-name); }
 
     .attr--bool.checked:not(:hover):after {
         content: attr(data-representation);
     }
 
-.attr.error{
+.attr.error {
     border: 0 none;
     border-top-right-radius: 2px;
     background: none;

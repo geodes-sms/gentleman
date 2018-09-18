@@ -87,20 +87,6 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                 mElement.parent = self;
                 self.elements.push(mElement);
 
-                // abstract element
-
-                // if (val.hasOwnProperty(ABSTRACT)) {
-                //     projection = self.createProjection(val);
-                //     let input = projection.createInput();
-                //     if (isMultiple) {
-                //         self.MODEL.path.push(_.addPath(path, 'val[' + valIndex + ']'));
-                //         self.getElement(-1).eHTML = input;
-                //     } else {
-                //         self.MODEL.path.push(path);
-                //     }
-                //     return input;
-                // }
-
                 if (isMultiple) {
                     let item;
                     let isLast = valIndex == attr.val.length - 1;
@@ -247,7 +233,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
             var self = this;
             if (!self._source.hasOwnProperty(VAL)) {
                 let min = _.valOrDefault(self._source.multiple.min, 1);
-                if (min == 0) {
+                if (min == 0 || self.isOptional) {
                     self._source.val = [];
                 } else if (min > 0) {
                     self._source.val = [];
@@ -288,7 +274,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
             } else {
                 if (!M.isElement(self.type) || !M.getModelElement(self.type).hasOwnProperty(COMPOSITION)) {
                     var ul = $.createUl({
-                        class: "bare-list " + (M.isElement(self.type) && M.getModelElement(self.type).extension ?
+                        class: "bare-list " + (M.isElement(self.type) && M.getModelElement(self.type).extensions ?
                             "list empty" : "array")
                     });
 
@@ -305,7 +291,6 @@ const ModelAttribute = (function ($, _, PN, ERR) {
 
                 if (self.value.length === 0) {
                     // create add button to add more item
-
                     let btnCreate = $.createButtonNew(self.name, btnCreate_Click);
                     container.appendChild(btnCreate);
                 } else {
@@ -344,6 +329,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                 var lastIndex = self.count - 1;
                 var children = self.handler(self._source, self.value[lastIndex], self.path);
                 this.parentElement.appendChild(children);
+                $.removeClass(this.parentElement, UI.EMPTY);
                 this.remove();
             }
         },
@@ -404,8 +390,10 @@ const ModelAttribute = (function ($, _, PN, ERR) {
     });
     _.defProp(ModelAttributeMultivalue, 'multiplicity', {
         get() { return this._source.multiple; }
-    }
-    );
+    });
+    _.defProp(ModelAttributeMultivalue, 'separator', {
+        get() { return _.valOrDefault(this._source.separator, ','); }
+    });
     _.defProp(ModelAttribute, 'value', {
         get() { return this._source.val; },
         set(val) {

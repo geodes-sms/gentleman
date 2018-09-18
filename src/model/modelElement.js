@@ -50,7 +50,7 @@ var ModelElement = (function ($, _, ATTR, ERR, PN) {
         render: function (path, containerless) {
             var self = this;
             // set element's concrete path
-            this.path = _.valOrDefault(path, 'root');
+            self.path = _.valOrDefault(path, 'root');
 
             // creates the element container
             var container = _.valOrDefault(containerless, false) ? $.createDocFragment() : $.createDiv({
@@ -60,7 +60,7 @@ var ModelElement = (function ($, _, ATTR, ERR, PN) {
 
             // self.current.multiple ? $.createLi({ class: 'list-item', prop: 'val' }) : $.createDiv({ class: "group section" });
             if (self._source.abstract) {
-                var packet = PN.Abstract.prepare(self.model.generateID(), self.parent, self.parent.type);
+                let packet = PN.Abstract.prepare(self.model.generateID(), self.parent, self.parent.type);
                 let projection = PN.Abstract.create(packet);
                 projection.extensions = self._source.extensions;
                 projection.modelElement = self;
@@ -69,8 +69,8 @@ var ModelElement = (function ($, _, ATTR, ERR, PN) {
             }
 
             // add the element's attributes to the container
-            container.appendChild(this.getAttribute());
-            if (this.isOptional) {
+            container.appendChild(self.getAttribute());
+            if (self.isOptional) {
                 container.appendChild($.createButtonDelete(container, function () {
                     self.remove();
                 }));
@@ -83,11 +83,14 @@ var ModelElement = (function ($, _, ATTR, ERR, PN) {
         getAttribute: function () {
             var self = this;
             // Add attr property to the element if missing
-            if (!this._source.hasOwnProperty('attr')) this._source.attr = {};
+            if (!self._source.hasOwnProperty('attr')) self._source.attr = {};
 
             // Get parent attributes
-            if (self._source.base)
-                Object.assign(self._source.attr, this.model.getModelElement(self._source.base).attr, self._source.attr);
+            if (self._source.base) {
+                let temp = {};
+                Object.assign(temp, self.model.getModelElement(self._source.base).attr, self._source.attr);
+                self._source.attr = _.cloneObject(temp);
+            }
 
             if (self._source.representation.type === RepresentationType.TEXT) {
                 return self.representation_handler();

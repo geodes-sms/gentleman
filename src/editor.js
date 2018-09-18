@@ -485,27 +485,27 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     const READ_MODE = 'read-mode';
                     switch (val) {
                         case EditorMode.EDIT:
-                            list = $.getElements(dot(READ_MODE), instance.body);
-                            for (let i = list.length - 1; i >= 0; i--) {
+                            // remove read mode styles from the body
+                            $.removeClass(instance.body, READ_MODE);
+
+                            // restore attributes editable state
+                            list = $.getElements(dot(EL.ATTRIBUTE.class), instance.body);
+                            for (let i = 0, len = list.length; i < len; i++) {
                                 let item = list.item(i);
-                                $.show(item);
-                                $.removeClass(item, READ_MODE);
+                                item.contentEditable = item.dataset.contentEditable;
                             }
+
                             break;
                         case EditorMode.READ:
-                            // hide empty attributes
-                            list = $.getElements(dot(UI.EMPTY), instance.body);
+                            // apply read mode styles to the body 
+                            $.addClass(instance.body, READ_MODE);
+
+                            // disable all attributes => readonly
+                            list = $.getElements(dot(EL.ATTRIBUTE.class), instance.body);
                             for (let i = 0, len = list.length; i < len; i++) {
                                 let item = list.item(i);
-                                $.hide(item);
-                                $.addClass(item, READ_MODE);
-                            }
-                            // hide buttons
-                            list = $.getElements(dot(EL.BUTTON.class), instance.body);
-                            for (let i = 0, len = list.length; i < len; i++) {
-                                let item = list.item(i);
-                                $.hide(item);
-                                $.addClass(item, READ_MODE);
+                                item.dataset.contentEditable = item.contentEditable;
+                                item.contentEditable = false;
                             }
 
                             break;
@@ -763,8 +763,9 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
 
                 switch (event.key) {
                     case Key.spacebar:
-                        if (lastKey == Key.ctrl)
-                            self.autocomplete.show();
+                        if (lastKey == Key.ctrl) {
+                            if (projection) showAutoComplete(projection);
+                        }
                         break;
                     case Key.delete:
                         if (lastKey == Key.ctrl) {
@@ -818,6 +819,10 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                         target.blur(); // remove focus
 
                         event.preventDefault();
+
+                        break;
+                    case Key.escape:
+                        self.autocomplete.hide();
 
                         break;
                     case Key.tab:
@@ -876,7 +881,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     };
                 } else if (projection) {
                     projection.focusIn();
-                    //events.emit('editor.change', projection);
+                    events.emit('editor.change', projection);
 
                     if (isExtension(projection)) {
                         data = projection.valuesKV();
@@ -886,8 +891,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                         };
 
                         self.autocomplete.init(target, data);
-                    }
-                    else if (isPointer(projection) || isEnum(projection)) {
+                    } else if (isPointer(projection) || isEnum(projection)) {
                         data = projection.valuesKV();
                         self.autocomplete.onSelect = function (attr) {
                             projection.value = attr.key;
@@ -956,6 +960,30 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     lblError.parentElement.className = 'attr-validation-error';
                     $.addClass(target, ERROR);
                     $.show(lblError);
+                }
+            }
+
+            function showAutoComplete(projection) {
+                var data = [];
+
+                // ignore if autocomplete is open
+                if (self.autocomplete.isOpen) return;
+
+                if (isExtension(projection)) {
+                    data = projection.valuesKV();
+                    self.autocomplete.onSelect = function (attr) {
+                        let line = projection.implement(attr.key);
+                        $.getElement(f_class(EL.ATTRIBUTE), line).focus();
+                    };
+
+                    self.autocomplete.init(projection._input, data);
+                } else if (isPointer(projection) || isEnum(projection)) {
+                    data = projection.valuesKV();
+                    self.autocomplete.onSelect = function (attr) {
+                        projection.value = attr.key;
+                        projection.focus();
+                    };
+                    self.autocomplete.init(projection._input, data);
                 }
             }
 
@@ -1272,7 +1300,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     "description": { "name": "description", "type": "string", "optional": true },
                     "fields": {
                         "name": "fields", "type": "field",
-                        "multiple": { "type": "list", "separator":',' }
+                        "multiple": { "type": "list", "separator": ',' }
                     }
                 },
                 "representation": { "type": "text", "val": "#title #description Fields (#fields)" }
@@ -1368,7 +1396,8 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     },
                     "subCategory": {
                         "name": "subCategory", "type": "category",
-                        "multiple": { "type": "list", "min": 1 },
+                        "multiple": { "type": "list" },
+                        "optional": true,
                         "inline": false,
                         "representation": { "type": "text", "val": "{$val}" }
                     }

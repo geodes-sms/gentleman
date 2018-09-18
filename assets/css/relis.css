@@ -8,22 +8,10 @@
     padding-left: 11px;
 }
 
-.keyword {
-    font-weight: bold;
-}
+.keyword { font-weight: bold; }
 
-.attr[data-type="ID"] {
-    color: #222;
-}
+.attr[data-type="ID"] { color: #222; }
 
-.attr[data-type="string"] {
-    color: blue;
-}
-
-.attr[data-type="string"]:not(.empty):not(:focus):before {
-    content: '"';
-}
-
-.attr[data-type="string"]:not(.empty):not(:focus):after {
-    content: '"';
-}
+.attr[data-type="string"] { color: blue; }
+    .attr[data-type="string"]:not(.empty):not(:focus):before { content: '"'; }
+    .attr[data-type="string"]:not(.empty):not(:focus):after { content: '"'; }
