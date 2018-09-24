@@ -3,13 +3,17 @@
 const ModelAttribute = (function ($, _, PN, ERR) {
     "use strict";
 
-    const COMPOSITION = 'composition';
     const ButtonType = {
         Add: 'Add',
         New: 'New'
     };
     const ABSTRACT = 'abstract';
+
+    // ClassName
+    const ATTR_WRAPPER = 'attr-wrapper';
+
     const VAL = 'val';
+    const EL = UI.Element;
 
     var ModelAttribute = {
         /**
@@ -17,7 +21,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
          * @param {Object} values
          * @returns {ModelAttribute}
          */
-        create: function (values) {
+        create(values) {
             var instance = Object.create(this);
 
             Object.assign(instance, values, createProjection);
@@ -55,11 +59,11 @@ const ModelAttribute = (function ($, _, PN, ERR) {
         get fnUpdate() { return this._fnUpdate; },
         get fnCreateProjection() { return this._fnCreateProjection; },
 
-        render_attr: function () {
+        render_attr() {
             if (Object.getPrototypeOf(this) !== ModelAttribute && ModelAttribute.isPrototypeOf(this))
                 throw String(ERR.UnimplementedError.create('Unimplemented abstract method'));
         },
-        handler: function (attr, val, path) {
+        handler(attr, val, path) {
             var self = this;
             var isMultiple = attr.hasOwnProperty('multiple');
             var type = attr.type;
@@ -82,7 +86,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
 
                 return projection.createInput();
             } else if (self.MODEL.isElement(type)) {
-                newpath = _.addPath(path, isMultiple ? 'val[' + valIndex + ']' : "val");
+                newpath = _.addPath(path, isMultiple ? 'val[' + valIndex + ']' : 'val');
                 let mElement = self.MODEL.createModelElement(val);
                 mElement.parent = self;
                 self.elements.push(mElement);
@@ -92,7 +96,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                     let isLast = valIndex == attr.val.length - 1;
 
                     let isInline = _.toBoolean(attr.inline);
-                    if (!this.MODEL.getModelElement(type).hasOwnProperty(COMPOSITION)) {
+                    if (!self.MODEL.hasComposition(type)) {
                         item = $.createLi({ class: 'array-item', prop: "val" });
                         // create an attribute wrapper and put the attributes in it
                         item.dataset.separator = _.valOrDefault(attr.separator, ',');
@@ -104,9 +108,9 @@ const ModelAttribute = (function ($, _, PN, ERR) {
 
                         if (!isInline) {
                             $.addClass(item, "block");
-                            if (isLast) return renderButton(item, ButtonType.New);
+                            if (isLast) return renderButton(item, ButtonType.New, mElement);
                         } else {
-                            if (isLast) return renderButton(item, ButtonType.Add);
+                            if (isLast) return renderButton(item, ButtonType.Add, mElement);
                         }
                     } else {
                         item = mElement.render(newpath);
@@ -122,19 +126,19 @@ const ModelAttribute = (function ($, _, PN, ERR) {
 
             return null;
 
-            function renderButton(item, btnType) {
+            function renderButton(item, btnType, mElement) {
                 var fragment = $.createDocFragment();
                 fragment.appendChild(item);
 
                 switch (btnType) {
                     case ButtonType.New:
                         fragment.appendChild($.createButtonNew(attr.name, function () {
-                            buttonClickHandler(this);
+                            buttonClickHandler(this, mElement);
                         }));
                         break;
                     case ButtonType.Add:
                         fragment.appendChild($.createButtonAdd(function () {
-                            buttonClickHandler(this);
+                            buttonClickHandler(this, mElement);
                         }));
                         break;
                     default:
@@ -144,17 +148,17 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                 return fragment;
             }
 
-            function buttonClickHandler(btn) {
+            function buttonClickHandler(btn, mElem) {
                 if (self.isMultiple)
                     self.add(self.MODEL.createInstance(self.type));
                 else
                     self.value = self.MODEL.createInstance(self.type);
 
-                var lastIndex = self.count - 1;
-                var children = self.handler(self._source, self.value[lastIndex], self.path);
+                var children = self.handler(self._source, self.value[self.count - 1], self.path);
+                var newElem = self.getElement(-1);
                 var container = children.children[0];
                 var btnDelete = $.createButtonDelete(container, function () {
-                    self.remove(lastIndex);
+                    self.remove(self.elements.indexOf(newElem));
                 });
                 container.appendChild(btnDelete);
                 btn.parentElement.appendChild(children);
@@ -196,14 +200,30 @@ const ModelAttribute = (function ($, _, PN, ERR) {
             }
         },
         toString() {
+            var self = this;
+
             if (this.elements.length) {
                 let output = "";
                 this.elements.forEach(function (el) {
-                    output += el.toString();
+                    output += _.toBoolean(self._source.inline) ? el.toString() : '\n' + el.toString();
                 });
                 return output;
             }
-            return this.value.toString();
+            
+            if (this.projections.length) {
+                let arr = this.projections.filter(function (p) { return !_.isNullOrWhiteSpace(p._input.textContent); });
+                let output = arr.map(function (p) {
+                    var val = p._input.textContent;
+                    return self.type === DataType.string ? '"' + val + '"' : val;
+                }).join(_.valOrDefault(self.separator, ''));
+                if (arr.length) {
+                    if (self.representation)
+                        output = self.representation.val.replace('$val', output);
+                }
+                return output;
+            }
+
+            return "";
         }
     };
 
@@ -219,7 +239,16 @@ const ModelAttribute = (function ($, _, PN, ERR) {
         },
         render_attr() {
             var self = this;
-            var container = $.createDocFragment();
+
+            var container;
+
+            if (self.representation) {
+                container = $.createDiv({ class: [ATTR_WRAPPER, UI.EMPTY] });
+                let surround = self.representation.val.split('$val');
+                Object.assign(container.dataset, { before: surround[0], after: surround[1] });
+            } else {
+                container = $.createDocFragment();
+            }
 
             container.appendChild(self.handler(self._source, self.value, self.path));
 
@@ -246,6 +275,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
 
             self._isMultiple = true;
             self._represent = "";
+            self.indexer = {};
 
             self._fnUpdate = function (val, index) { self.set(val, index); };
         },
@@ -272,66 +302,90 @@ const ModelAttribute = (function ($, _, PN, ERR) {
             if (self.fnMultiple) {
                 return self.fnMultiple();
             } else {
-                if (!M.isElement(self.type) || !M.getModelElement(self.type).hasOwnProperty(COMPOSITION)) {
-                    var ul = $.createUl({
-                        class: "bare-list " + (M.isElement(self.type) && M.getModelElement(self.type).extensions ?
-                            "list empty" : "array")
-                    });
-
-                    if (self._source.inline === false) $.addClass(ul, "block");
-                    Object.assign(ul.dataset, { multiple: true });
-                    if (self.representation) {
-                        var surround = self.representation.val.split("$val");
-                        Object.assign(ul.dataset, { before: surround[0], after: surround[1] });
-                    }
-
-                    container.appendChild(ul);
-                    container = ul;
-                }
-
-                if (self.value.length === 0) {
-                    // create add button to add more item
-                    let btnCreate = $.createButtonNew(self.name, btnCreate_Click);
-                    container.appendChild(btnCreate);
-                } else {
-                    for (let j = 0, len = self.value.length, last = len - 1; j < len; j++) {
-                        container.appendChild(self.handler(self._source, self.value[j], self.path, j === len - 1));
-                    }
-                    if (M.isDataType(self.type) || M.isEnum(self.type)) {
-                        var btnadd = $.createButtonAdd(function () {
-                            var instance = M.createInstance(self.type);
-                            self.add(instance);
-
-                            // render instance
-                            // var li = $.createLi({ class: "array-item", prop: "val" });
-                            var li = (self.handler(self._source, instance, self.path));
-                            $.insertBeforeElement(this, li);
-
-                            var btnDelete = $.createButtonDelete(li, function () {
-                                self.remove(self.count - 1);
-                            });
-                            li.appendChild(btnDelete);
-
-                            // focus on first element newly created
-                            $.getElement(".attr", li).focus();
+                if (!M.isElement(self.type) || !M.hasComposition(self.type)) {
+                    if (self.isOptional) {
+                        // create add button to add more item
+                        let btnCreate = $.createButtonNew(self.name, function () {
+                            self.eHTML = self.createContainer();
+                            $.insertBeforeElement(btnCreate, self.eHTML);
+                            self.initValueHandler();
+                            this.remove();
                         });
-                        container.appendChild(btnadd);
+                        $.addClass(btnCreate, 'inline');
+                        container.appendChild(btnCreate);
+                    } else {
+                        self.eHTML = self.createContainer();
+                        container.appendChild(self.eHTML);
+                        self.initValueHandler();
                     }
+                } else {
+                    self.eHTML = container;
+                    self.initValueHandler();
                 }
 
-                self.eHTML = container;
                 return container;
+            }
+        },
+        initValueHandler() {
+            var self = this;
+
+            var M = self.MODEL;
+            var len = self.value.length;
+
+            if (len === 0) {
+                // create add button to add more item
+                let btnCreate = $.createButtonNew(self.name, btnCreate_Click);
+                self.eHTML.appendChild(btnCreate);
+            } else {
+                for (let i = 0, last = len - 1; i < len; i++) {
+                    self.eHTML.appendChild(self.handler(self._source, self.value[i], self.path, i === last));
+                }
+                if (M.isDataType(self.type) || M.isEnum(self.type)) {
+                    let btnadd = $.createButtonAdd(function () {
+                        var instance = M.createInstance(self.type);
+                        self.add(instance);
+
+                        // render
+                        let li = (self.handler(self._source, instance, self.path));
+                        $.insertBeforeElement(this, li);
+                        let btnDelete = $.createButtonDelete(li, function () { self.remove(self.count - 1); });
+                        li.appendChild(btnDelete);
+
+                        // focus on first element newly created
+                        $.getElement(EL.ATTRIBUTE.toClass(), li).focus();
+                    });
+                    self.eHTML.appendChild(btnadd);
+                }
             }
 
             function btnCreate_Click() {
-                self.add(self.MODEL.createInstance(self.type));
+                self.add(M.createInstance(self.type));
 
                 var lastIndex = self.count - 1;
                 var children = self.handler(self._source, self.value[lastIndex], self.path);
-                this.parentElement.appendChild(children);
-                $.removeClass(this.parentElement, UI.EMPTY);
+                var parent = this.parentElement;
+                parent.appendChild(children);
+                $.removeClass(parent, UI.EMPTY);
                 this.remove();
             }
+        },
+        createContainer() {
+            var self = this;
+            var M = self.MODEL;
+
+            var ul = $.createUl({
+                class: "bare-list " + (M.isElement(self.type) && M.getModelElement(self.type).extensions ?
+                    "list empty" : "array")
+            });
+
+            if (self._source.inline === false) $.addClass(ul, "block");
+            Object.assign(ul.dataset, { multiple: true });
+            if (self.representation) {
+                var surround = self.representation.val.split("$val");
+                Object.assign(ul.dataset, { before: surround[0], after: surround[1] });
+            }
+
+            return ul;
         },
         get(index) { return this._source.val[index]; },
         getIndex(val) { return this._source.val.indexOf(val); },
@@ -351,7 +405,11 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                 self.elements[index] = el;
             }
         },
-        add(val) { this._source.val.push(val); },
+        add(val) {
+            var self = this;
+
+            self._source.val.push(val);
+        },
         remove(index) {
             var self = this;
 
@@ -362,6 +420,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
             } else {
                 self.removeAll();
             }
+
             var isLast = self._source.val ? self.count === 0 : false;
             if (self.name === 'category' && self.multiplicity.min > 0 && isLast) {
                 var instance = self.MODEL.createInstance(self.type);
@@ -382,6 +441,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
             } else {
                 delete self._source.val;
             }
+            self.indexer = {};
         }
     });
 

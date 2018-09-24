@@ -67,7 +67,7 @@ const HELPER = (function () {
             return d == 0 ? 6 : d - 1;
         },
 
-        valOrDefault: function (arg, val) {
+        valOrDefault (arg, val) {
             return typeof arg !== 'undefined' ? arg : val;
         },
 
@@ -77,11 +77,22 @@ const HELPER = (function () {
          * @param {string} singular 
          * @param {string} plural 
          */
-        pluralize: function (predicate, singular, plural) {
+        pluralize (predicate, singular, plural) {
             if (predicate)
                 return singular;
             plural = plural.split("|");
             return singular.substring(0, singular.lastIndexOf(plural[0])) + plural[1];
+        },
+        removeAccents(str) {
+            if (String.prototype.normalize) {
+                return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+            }
+            return str.replace(/[àâäæ]/gi, 'a')
+                .replace(/[ç]/gi, 'c')
+                .replace(/[éèê]/gi, 'e')
+                .replace(/[îï]/gi, 'i')
+                .replace(/[ôœ]/gi, 'o')
+                .replace(/[ùûü]/gi, 'u');
         },
 
         XHR: function (file, callback) {

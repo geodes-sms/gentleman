@@ -53,10 +53,13 @@ var ModelElement = (function ($, _, ATTR, ERR, PN) {
             self.path = _.valOrDefault(path, 'root');
 
             // creates the element container
-            var container = _.valOrDefault(containerless, false) ? $.createDocFragment() : $.createDiv({
-                class: ['section', 'line'],
-                index: "0"
-            });
+            var container;
+            if (containerless) {
+                container = $.createDocFragment();
+            } else {
+                container = $.createDiv({ class: ['section', 'line'], index: "0" });
+                self.eHTML = container;
+            }
 
             // self.current.multiple ? $.createLi({ class: 'list-item', prop: 'val' }) : $.createDiv({ class: "group section" });
             if (self._source.abstract) {
@@ -75,8 +78,6 @@ var ModelElement = (function ($, _, ATTR, ERR, PN) {
                     self.remove();
                 }));
             }
-
-            self.eHTML = container;
 
             return container;
         },
@@ -206,8 +207,10 @@ var ModelElement = (function ($, _, ATTR, ERR, PN) {
             }
         },
         representation_handler: function () {
+            var self = this;
+
             var fragment = $.createDocFragment();
-            var arr = this.representation ? this.representation.val.replace(/ /g, " space ")
+            var arr = self.representation ? self.representation.val.replace(/ /g, " space ")
                 .replace(/(#[A-Za-z0-9_]+)/g, " $1 ")
                 .split(" ")
                 .filter(function (x) { return !_.isNullOrWhiteSpace(x); }) : [];
@@ -219,9 +222,9 @@ var ModelElement = (function ($, _, ATTR, ERR, PN) {
                 switch (mode) {
                     case '$':
                         if (key === COMPOSITION) {
-                            fragment.appendChild(this.composition_handler());
-                        } else if (this.representation[key]) {
-                            let block = this.representation[key];
+                            fragment.appendChild(self.composition_handler());
+                        } else if (self.representation[key]) {
+                            let block = self.representation[key];
                             if (block.type === "group") {
                                 var group = $.createDiv({ class: "attr-group" });
                                 if (block.align == "right") $.addClass(group, 'right');
@@ -238,15 +241,15 @@ var ModelElement = (function ($, _, ATTR, ERR, PN) {
                                 fragment.appendChild(keyword);
                                 fragment.appendChild(DOC.createTextNode(" "));
                             }
-                        } else if (this._source[key]) {
-                            let keyword = $.createSpan({ class: 'keyword', text: this._source[key] });
+                        } else if (self._source[key]) {
+                            let keyword = $.createSpan({ class: 'keyword', text: self._source[key] });
                             fragment.appendChild(keyword);
                             fragment.appendChild(DOC.createTextNode(" "));
                         }
                         break;
                     case '#':
-                        if (this._source.attr[key]) {
-                            let mAttr = this.createModelAttribute(this._source.attr[key]);
+                        if (self._source.attr[key]) {
+                            let mAttr = self.createModelAttribute(self._source.attr[key]);
                             fragment.appendChild(mAttr.render_attr());
                         } else {
                             throw ERR.InvalidModelError.create("The attribute " + key + " was not found.");
@@ -328,6 +331,7 @@ var ModelElement = (function ($, _, ATTR, ERR, PN) {
 
             self.eHTML.remove();
 
+
             function listHandler() {
                 // if (arr.length < 2)
                 //     $.addClass(self.eHTML.parentElement, EMPTY);
@@ -357,7 +361,6 @@ var ModelElement = (function ($, _, ATTR, ERR, PN) {
                 switch (mode) {
                     case '$':
                         if (key === COMPOSITION) {
-                            result += "\n";
                             let compos = self.elements.slice();
                             compos.sort(function (a, b) { return a.position - b.position; });
                             compos.forEach(function (el) { result += "\n" + el.toString(); });

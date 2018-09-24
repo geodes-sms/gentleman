@@ -92,6 +92,7 @@ const UI = (function () {
             ATTRIBUTE: {
                 name: ATTRIBUTE,
                 class: 'attr',
+                toClass() { return '.attr'; },
                 toString() { return 'ATTRIBUTE'; }
             },
             ATTRIBUTE_ABSTRACT: {

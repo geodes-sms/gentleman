@@ -2,6 +2,8 @@
 /// <reference path="utils/utils.js" />
 
 var Autocomplete = (function ($, _) {
+    const AUTOCOMPLETE_HANDLER = 'autocompleteHandler';
+
     /**
      * @class Autocomplete
      */
@@ -33,7 +35,7 @@ var Autocomplete = (function ($, _) {
             this._data = _.valOrDefault(data, []);
             this.position = 0;
             this._items = [];
-            if (!target.getAttribute('data-autocomplete-handler')) this.bindEvents();
+            if (!target.dataset[AUTOCOMPLETE_HANDLER]) this.bindEvents();
 
             this.render();
         },
@@ -102,24 +104,14 @@ var Autocomplete = (function ($, _) {
         bindEvents: function () {
             var self = this;
 
-            self._target.addEventListener('keyup', function (event) {
-                switch (event.key) {
-                    case Key.down_arrow:
-                        self.down();
-                        break;
-                    case Key.up_arrow:
-                        self.up();
-                        break;
-                    default:
-                        self.filter(self._target.textContent);
-                        break;
-                }
-            });
-
-            self._target.addEventListener('keydown', function (event) {
+            self._target.addEventListener(EventType.KEYDOWN, function (event) {
                 if (self.isOpen) {
                     switch (event.key) {
-                        case "Enter":
+                        case Key.down_arrow:
+                        case Key.up_arrow:
+                            event.preventDefault();
+                            break;
+                        case Key.enter:
                             self.select(self.onSelect);
                             break;
                         default:
@@ -128,7 +120,22 @@ var Autocomplete = (function ($, _) {
                 }
             }, false);
 
-            self._target.setAttribute('data-autocomplete-handler', true);
+            self._target.addEventListener(EventType.KEYUP, function (event) {
+                switch (event.key) {
+                    case Key.down_arrow:
+                        self.down();
+                        break;
+                    case Key.up_arrow:
+                        self.up();
+                        break;
+                    default:
+                        if ([Key.tab, Key.ctrl].indexOf(event.key) === -1)
+                            self.filter(self._target.textContent);
+                        break;
+                }
+            });
+
+            self._target.dataset[AUTOCOMPLETE_HANDLER] = true;
         },
         render: function () {
             var self = this;
@@ -142,9 +149,10 @@ var Autocomplete = (function ($, _) {
                     text: self.data[i].val,
                     class: "autocomplete-item"
                 });
-                item.addEventListener('click', function (event) {
+                item.addEventListener(EventType.CLICK, function (event) {
                     self.position = i;
                     self.select(self.onSelect);
+                    event.stopPropagation();
                 });
                 fragment.appendChild(item);
             }
@@ -153,10 +161,10 @@ var Autocomplete = (function ($, _) {
             $.removeChildren(self._input);
             // add newly created data
             self._input.appendChild(fragment);
-            self._input.addEventListener('mouseenter', function(){
+            self._input.addEventListener('mouseenter', function () {
                 self.hasFocus = true;
             });
-            self._input.addEventListener('mouseleave', function(){
+            self._input.addEventListener('mouseleave', function () {
                 self.hasFocus = false;
             });
 

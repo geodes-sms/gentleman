@@ -98,3 +98,5 @@ th { text-align: center; }
 }
 
 .block { display: block!important; }
+
+.inline { display: inline-block!important; }

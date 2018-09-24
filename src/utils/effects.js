@@ -16,6 +16,12 @@ var UTIL = (function (me) {
     me.hide = function (el) { me.addClass(el, UI.HIDDEN); };
 
     /**
+     * Moves an element out of screen
+     * @param {HTMLElement} el Element
+     */
+    me.fakeHide = function (el) { return Object.assign(el, { position: 'absolute', top: '-9999px', left: '-9999px' }); };
+
+    /**
      * Applies highlighting style to an element
      * @param {HTMLElement} el Element
      */

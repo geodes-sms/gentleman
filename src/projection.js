@@ -48,10 +48,7 @@ var Projection = (function ($, _, ERR) {
                 _name: mAttr.name
             });
         },
-        /**
-         * Gets the associated model-attribute
-         * @returns {ModelAttribute}
-         */
+        /** @returns {ModelAttribute} */
         get modelAttribute() { return this._mAttribute; },
 
         get value() { return this._input.textContent; },
@@ -94,11 +91,9 @@ var Projection = (function ($, _, ERR) {
         index: 0,
         /** @type {HTMLElement} */
         element: null,
-        hasWrapper: false,
+        isDisabled: false,
 
-        focus() {
-            this._input.focus();
-        },
+        focus() { this._input.focus(); },
         focusIn() {
             var self = this;
             if (self.isOptional) {
@@ -120,15 +115,12 @@ var Projection = (function ($, _, ERR) {
 
             if (val === "") {
                 $.addClass(self._input, UI.EMPTY);
-                if (self.hasWrapper) {
-                    $.addClass(self._input.parentElement, UI.EMPTY);
-                }
             }
-            
+
             this.value = val;
             // update attribute
             this._update(self.value, self.index);
-            
+
             if (attr.type === DataType.ID) {
                 let src = attr.MODEL.ID.find(function (x) { return x.id == self.id; });
                 if (src) {
@@ -142,9 +134,7 @@ var Projection = (function ($, _, ERR) {
                 }
             }
         },
-        addReference(projectionId) {
-            this.refs.push(projectionId);
-        },
+        addReference(projectionId) { this.refs.push(projectionId); },
         createInput(editable) {
             var self = this;
             var mAttr = self._mAttribute;
@@ -184,14 +174,7 @@ var Projection = (function ($, _, ERR) {
             self.value = self._val;
 
             inputProjection = self._input;
-            if (mAttr.representation) {
-                var wrapper = $.createDiv({ class: [ATTR_WRAPPER, UI.EMPTY] });
-                self.hasWrapper = true;
-                var surround = mAttr.representation.val.split("$val");
-                Object.assign(wrapper.dataset, { before: surround[0], after: surround[1] });
-                wrapper.appendChild(inputProjection);
-                inputProjection = wrapper;
-            }
+
             if (mAttr.isMultiple && mElement.representation.type == 'text') {
                 var li = $.createLi({ class: 'array-item', data: { prop: 'val', separator: mAttr.separator } });
                 li.appendChild(inputProjection);
@@ -230,6 +213,18 @@ var Projection = (function ($, _, ERR) {
         delete() {
             var self = this;
             self.modelAttribute.remove(self.index);
+        },
+        disable() {
+            var self = this;
+            self._input.contentEditable = false;
+            self._input.tabIndex = -1;
+            self.isDisabled = true;
+        },
+        enable() {
+            var self = this;
+            self._input.contentEditable = true;
+            self._input.tabIndex = 0;
+            self.isDisabled = false;
         }
     };
 
@@ -319,6 +314,16 @@ var Projection = (function ($, _, ERR) {
             var self = this;
             index = _.valOrDefault(index, self.index);
             self.modelAttribute.remove(index);
+        },
+        disable() {
+            var self = this;
+            self._input.contentEditable = false;
+            self.isDisabled = true;
+        },
+        enable() {
+            var self = this;
+            self._input.contentEditable = true;
+            self.isDisabled = false;
         }
     };
 
@@ -331,32 +336,14 @@ var Projection = (function ($, _, ERR) {
                     this._value = val;
 
                     if (_.isNullOrWhiteSpace(val) && !Number.isInteger(val)) {
+                        this._input.textContent = "";
                         $.addClass(this._input, UI.EMPTY);
                     }
                     else {
                         let elEnum = this.values[val];
-                        if (Array.isArray(this.values)) {
-                            this._input.textContent = elEnum;
-                        } else {
-                            this._input.textContent = elEnum.val;
-                            if (elEnum.representation) {
-                                var wrapper = $.createDiv({ class: ATTR_WRAPPER });
-                                this.hasWrapper = true;
-                                var surround = elEnum.representation.val.split("$val");
-                                Object.assign(wrapper.dataset, { before: surround[0], after: surround[1] });
-                                $.insertBeforeElement(this._input, wrapper);
-                                wrapper.appendChild(this._input);
-                            } else {
-                                let parent = this._input.parentElement;
-                                if (parent && $.hasClass(parent, ATTR_WRAPPER)) {
-                                    $.addClass(parent, UI.EMPTY);
-                                }
-                            }
-                        }
-
+                        this._input.textContent = Array.isArray(this.values) ? elEnum : _.valOrDefault(elEnum.val, elEnum);
                         $.removeClass(this._input, UI.EMPTY);
                     }
-
                 }
             });
 
@@ -380,11 +367,8 @@ var Projection = (function ($, _, ERR) {
             var self = this;
             var val = self._input.textContent;
 
-            if (val === "") {
+            if (_.isNullOrWhiteSpace(val)) {
                 $.addClass(self._input, UI.EMPTY);
-                if (self.hasWrapper) {
-                    $.addClass(self._input.parentElement, UI.EMPTY);
-                }
             }
 
             self._value = _.valOrDefault(_.find(self.values, val), val);
@@ -400,7 +384,7 @@ var Projection = (function ($, _, ERR) {
                 });
             } else {
                 for (const [key, value] of Object.entries(self.values)) {
-                    KV.push({ key: key, val: value.val });
+                    KV.push({ key: key, val: _.valOrDefault(value.val, value) });
                 }
             }
 

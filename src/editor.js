@@ -329,6 +329,9 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
             events.on('editor.change', function (projection) {
                 self.update(projection);
             });
+            events.on('editor.clear', function () {
+                self.clear();
+            });
         },
         clear() {
             var self = this;
@@ -373,7 +376,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
             var info = $.createUl({ class: ['bare-list', 'note-info'] });
             var iName = createInfoItem("Type", projection.type + " (" + (projection.isOptional ? 'optional' : 'required') + ")");
             var iValue = createInfoItem("Value", _.isNullOrWhiteSpace(projection.value) ? '&mdash;' : projection.value);
-            var iPath = createInfoItem("Path", projection.modelAttribute.path);
+            var iPath = createInfoItem("Path", friendlyPath(projection.modelAttribute.path));
 
             $.appendChildren(info, [iName, iValue, iPath]);
             $.appendChildren(fragment, [infoTitle, info]);
@@ -421,6 +424,14 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     ]
                 );
             }
+
+            /**
+             * Creates a friendly readable path to the attribute
+             * @param {string} path 
+             */
+            function friendlyPath(path) {
+                return path.replace(/.val|.attr/g, '').replace(/.composition/g, '->').replace(/\.+/g, '.');
+            }
         }
     };
 
@@ -430,25 +441,30 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
         menu: null,
         note: null,
         MM: null,
-        create(model) {
+        create(metamodel) {
             const KEY_CONFIG = '@config';
             const KEY_RESOURCE = '@resources';
 
             var instance = Object.create(this);
-            instance.MM = model;
+            instance.MM = metamodel;
 
             // display language
-            if (model[KEY_CONFIG]) {
-                let config = model[KEY_CONFIG];
+            if (metamodel[KEY_CONFIG]) {
+                let config = metamodel[KEY_CONFIG];
                 if (config.language) {
                     instance._language = config.language;
                 }
             }
 
             // add stylesheets
-            if (model[KEY_RESOURCE]) {
+            if (metamodel[KEY_RESOURCE]) {
                 let dir = '../assets/css/';
-                model[KEY_RESOURCE].forEach(function (name) {
+                // remove stylesheets applied by previous meta-models
+                var links = $.getElements(dot('gentleman-css'));
+                for (let i = 0, len = links.length; i < len; i++) {
+                    links.item(i).remove();
+                }
+                metamodel[KEY_RESOURCE].forEach(function (name) {
                     DOC.head.appendChild($.createLink('stylesheet', dir + name, { class: 'gentleman-css' }));
                 });
             }
@@ -462,12 +478,34 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
             instance._autocomplete = Autocomplete.create();
             instance._mode = false;
 
-            // add currentLine and aside note to container
-
             return {
                 init(model) { instance.init(model); },
-                save: instance.save,
+                get language() { return instance.language; },
+                get model() { return instance.concrete; },
                 get state() { return instance.state; },
+                get mode() { return instance._mode; },
+                set mode(val) {
+                    instance._mode = val;
+                    const READ_MODE = 'read-mode';
+                    switch (val) {
+                        case EditorMode.EDIT:
+                            // remove read mode styles from the body
+                            $.removeClass(instance.body, READ_MODE);
+
+                            // restore attributes editable state
+                            instance.projections.forEach(function (p) { p.enable(); });
+
+                            break;
+                        case EditorMode.READ:
+                            // apply read mode styles to the body 
+                            $.addClass(instance.body, READ_MODE);
+
+                            // disable all attributes => readonly
+                            instance.projections.forEach(function (p) { p.disable(); });
+
+                            break;
+                    }
+                },
                 undo() {
                     instance.state.undo();
                     instance.setState(_.cloneObject(instance.state.current));
@@ -478,44 +516,10 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     instance.setState(_.cloneObject(instance.state.current));
                     events.emit('editor.redo', instance.state.hasRedo);
                 },
-                get mode() { return instance._mode; },
-                set mode(val) {
-                    instance._mode = val;
-                    var list;
-                    const READ_MODE = 'read-mode';
-                    switch (val) {
-                        case EditorMode.EDIT:
-                            // remove read mode styles from the body
-                            $.removeClass(instance.body, READ_MODE);
-
-                            // restore attributes editable state
-                            list = $.getElements(dot(EL.ATTRIBUTE.class), instance.body);
-                            for (let i = 0, len = list.length; i < len; i++) {
-                                let item = list.item(i);
-                                item.contentEditable = item.dataset.contentEditable;
-                            }
-
-                            break;
-                        case EditorMode.READ:
-                            // apply read mode styles to the body 
-                            $.addClass(instance.body, READ_MODE);
-
-                            // disable all attributes => readonly
-                            list = $.getElements(dot(EL.ATTRIBUTE.class), instance.body);
-                            for (let i = 0, len = list.length; i < len; i++) {
-                                let item = list.item(i);
-                                item.dataset.contentEditable = item.contentEditable;
-                                item.contentEditable = false;
-                            }
-
-                            break;
-                    }
-                },
-                get language() { return instance.language; },
-                get model() { return instance.concrete; },
+                save() { instance.save(); },
                 copy() {
                     var el = $.createTextArea({ value: instance.abstract.toString(), readonly: true });
-                    fakeHide(el);
+                    $.fakeHide(el);
                     container.appendChild(el);
                     el.select();
                     DOC.execCommand('copy');
@@ -530,9 +534,12 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
         set concrete(val) { this._concrete = val; },
         get current() { return this._current; }, // current position in model
         set current(val) { this._current = val; },
+        /** @type {string} */
         get language() { return this._language; },
 
+        /** @type {Autocomplete} */
         get autocomplete() { return this._autocomplete; }, // autocomplete element
+        /** @type {Projection[]} */
         get projections() { return this.abstract.projections; },
         get options() { return this.abstract.options; },
 
@@ -542,7 +549,9 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
         /** @returns {HTMLElement} */
         get body() { return this._body; },
 
+        /** @type {boolean} */
         get isInitialized() { return this._isInitialized; },
+        /** @type {boolean} */
         get hasError() { return this._hasError; },
 
         getProjection(index) { return this.projections[index]; },
@@ -576,7 +585,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
         clear() {
             var self = this;
             $.removeChildren(self.body);
-            // self.note.clear();
+            events.emit('editor.clear');
         },
         init(model) {
             const KEY_ROOT = '@root';
@@ -626,7 +635,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 this._isInitialized = true;
             }
         },
-        render: function () {
+        render() {
             if (!this.isInitialized) {
                 $.preprendChild(container, this.body);
             }
@@ -670,7 +679,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                                 var ask_response = ask(val);
                                 SmartType(a, ask_response, function () {
                                     if (ask_response.close) {
-                                        setTimeout(function () { $.hide(container); }, 200);
+                                        setTimeout(function () { $.hide(container); }, 500);
                                     }
                                 });
                             }, 200);
@@ -706,11 +715,11 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
              */
             function ask(qq) {
                 const THANK_YOU = ['thx', 'ty', 'thanks', 'thank'];
-                const POLITE = ["You're welcome", "I'm happy to help", "Glad I could help", "Anytime", "It was nothing", "No problem", "Don't mention it", "It was my pleasure"];
+                const POLITE = ["You're welcome.", "I'm happy to help.", "Glad I could help.", "Anytime.", "It was nothing.", "No problem.", "Don't mention it.", "It was my pleasure."];
                 const BYE = ['bye', 'close', 'exit', 'done'];
 
                 // remove accents and keep words
-                var words = removeAccents(qq).replace(/[^a-zA-Z0-9 _-]/gi, '').split(' ');
+                var words = _.removeAccents(qq).replace(/[^a-zA-Z0-9 _-]/gi, '').split(' ');
                 if (words.findIndex(function (val) { return val.toLowerCase() === 'version'; }) !== -1) {
                     return [
                         { type: 0, val: "You are currently using Gentleman " },
@@ -733,10 +742,17 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
             var currentContainer,
                 lastKey;
             var flag = false;
+            var handled = false;
 
             self.body.addEventListener(EventType.CLICK, function (event) {
                 var target = event.target;
                 var action = target.dataset.action;
+                if (!handled) {
+                    self.autocomplete.hide();
+                } else {
+                    handled = false;
+                }
+
                 if (action && target.tagName == EL.BUTTON.name) {
                     switch (action) {
                         case 'add':
@@ -764,7 +780,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 switch (event.key) {
                     case Key.spacebar:
                         if (lastKey == Key.ctrl) {
-                            if (projection) showAutoComplete(projection);
+                            if (projection && !projection.isDisabled) showAutoComplete(projection);
                         }
                         break;
                     case Key.delete:
@@ -848,6 +864,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
 
             self.body.addEventListener(EventType.FOCUSIN, function (event) {
                 self.autocomplete.hide();
+                handled = true;
 
                 var target = event.target;
                 var projection = self.getProjection(target.id);
@@ -880,6 +897,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                         self.save();
                     };
                 } else if (projection) {
+                    if (projection.isDisabled) return;
                     projection.focusIn();
                     events.emit('editor.change', projection);
 
@@ -918,6 +936,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
 
                 if ($.hasClass(target, 'attr')) {
                     let projection = self.getProjection(target.id);
+                    if (projection.isDisabled) return;
 
                     if (projection) {
                         projection.focusOut();
@@ -927,7 +946,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     if (self.autocomplete.hasFocus) {
                         setTimeout(function () { validation_handler(target); }, 100);
                     } else {
-                        //validation_handler(target);
+                        validation_handler(target);
                     }
                 }
             }, false);
@@ -1093,45 +1112,6 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
         }
     };
 
-    /**
-     * This functions clears the container.
-     * It removes all contents and stylesheets applied by previous models.
-     */
-    function clear() {
-        clearBody();
-        // clear aside section
-        var aside = $.getElement(dot('note'), container);
-        if (aside) {
-            $.removeChildren(aside);
-            aside.remove();
-        }
-        // remove stylesheets
-        var links = $.getElements(dot('gentleman-css'));
-        for (let i = 0, len = links.length; i < len; i++) {
-            links.item(i).remove();
-        }
-    }
-    function clearBody() {
-        // clear body section
-        var body = $.getElement(dot('body'), container);
-        if (body) {
-            $.removeChildren(body);
-            body.remove();
-        }
-    }
-
-    function removeAccents(str) {
-        if (String.prototype.normalize) {
-            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-        }
-        return str.replace(/[àâäæ]/gi, 'a')
-            .replace(/[ç]/gi, 'c')
-            .replace(/[éèê]/gi, 'e')
-            .replace(/[îï]/gi, 'i')
-            .replace(/[ôœ]/gi, 'o')
-            .replace(/[ùûü]/gi, 'u');
-    }
-
     (function init() {
         var modelTest = {
             "project": {
@@ -1149,7 +1129,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                             "screen_action": { "name": "screen_action", "type": "ID", "optional": true },
                             "screening": {
                                 "name": "screening", "type": "screening",
-                                "multiple": { "type": "array", "min": 1 }
+                                "multiple": { "type": "list" }
                             }
                         },
                         "representation": {
@@ -1166,7 +1146,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                             "qa_action": { "name": "qa_action", "type": "ID", "optional": true },
                             "quality_assess": {
                                 "name": "quality_assess", "type": "qa",
-                                "multiple": { "type": "array", "min": 0 }
+                                "multiple": { "type": "list", "min": 0 }
                             }
                         },
                         "representation": {
@@ -1389,16 +1369,12 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     "title": { "name": "title", "type": "string", "optional": true },
                     "mandatory": { "name": "mandatory", "type": "boolean", "representation": { "val": "*" }, "val": true },
                     "numberOfValues": {
-                        "name": "numberOfValues", "type": "integer", "val": "1",
-                        "rule": { "greaterThan": -1, "equalTo": -1 },
-                        "ruleset": [{ "greaterThan": -1, "equalTo": -1 }],
+                        "name": "numberOfValues", "type": "integer", "optional": true, "val": "1",
                         "representation": { "type": "text", "val": "[$val]" }
                     },
                     "subCategory": {
-                        "name": "subCategory", "type": "category",
-                        "multiple": { "type": "list" },
-                        "optional": true,
-                        "inline": false,
+                        "name": "subCategory", "type": "category", "optional": true,
+                        "multiple": { "type": "list" }, "inline": false,
                         "representation": { "type": "text", "val": "{$val}" }
                     }
                 },
@@ -1437,7 +1413,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 "attr": {
                     "values": {
                         "name": "values", "type": "string",
-                        "multiple": { "type": "array", "min": 1 }
+                        "multiple": { "type": "list" }
                     }
                 },
                 "representation": {
@@ -1453,7 +1429,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     "reference_name": { "name": "reference_name", "type": "string", "optional": true },
                     "initial_values": {
                         "name": "initial_values", "type": "string",
-                        "multiple": { "type": "array", "min": 1 },
+                        "multiple": { "type": "list" }, "optional": true,
                         "representation": { "type": "text", "val": "= [$val]" }
                     }
                 },
@@ -1476,12 +1452,12 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 "name": "simpleType",
                 "type": "enum",
                 "values": {
-                    "bool": { "val": "bool" },
-                    "date": { "val": "date" },
-                    "int": { "val": "int" },
-                    "real": { "val": "real" },
-                    "string": { "val": "string" },
-                    "text": { "val": "text" }
+                    "bool": "bool",
+                    "date": "date",
+                    "int": "int",
+                    "real": "real",
+                    "string": "string",
+                    "text": "text"
                 }
             },
             "assignmentMode": {
@@ -1497,16 +1473,16 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 "name": "conflictType",
                 "type": "enum",
                 "values": {
-                    "exclusionCriteria": { "val": "Criteria" },
-                    "includeExclude": { "val": "Decision" }
+                    "exclusionCriteria": "Criteria",
+                    "includeExclude": "Decision"
                 }
             },
             "conflictResolution": {
                 "name": "conflictResolution",
                 "type": "enum",
                 "values": {
-                    "majority": { "val": "Majority", "representation": { "type": "text", "val": "$val" } },
-                    "unanimity": { "val": "Unanimity", "representation": { "type": "text", "val": "$val" } }
+                    "majority": "Majority",
+                    "unanimity": "Unanimity"
                 }
             },
             "graphType": {
@@ -1554,8 +1530,6 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     var reader = new FileReader();
                     if (file.name.endsWith('.json')) {
                         reader.onload = function (e) {
-                            // empty container
-                            clear();
                             $.hide(lblSelector);
                             editor = Editor.create(JSON.parse(reader.result));
                             headerContent.appendChild($.createSpan({ id: 'language', class: 'model-language', text: editor.language }));
@@ -1584,15 +1558,6 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 break;
         }
     })();
-
-    /**
-     * Move element out of screen
-     * @param {HTMLElement} el Element
-     */
-    function fakeHide(el) {
-        Object.assign(el, { position: 'absolute', top: '-9999px', left: '-9999px' });
-        return el;
-    }
 
     /**
      * This function simulates the typing

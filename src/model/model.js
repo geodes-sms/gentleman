@@ -6,8 +6,10 @@
 var MetaModel = (function ($, _, ELEM, ERR) {
     "use strict";
 
+    const COMPOSITION = 'composition';
+
     var pub = {
-        create (metamodel, model) {
+        create(metamodel, model) {
             var instance = Object.create(this);
 
             // private members
@@ -48,7 +50,7 @@ var MetaModel = (function ($, _, ELEM, ERR) {
             if (origin) {
                 this.root = mElement;
             }
-            
+
             return mElement;
         },
         addModelElement(attr) {
@@ -142,12 +144,18 @@ var MetaModel = (function ($, _, ELEM, ERR) {
          * @returns {boolean}
          */
         isModelDataType(type) { return this.isElement(type) && this.MM[type].type === ModelType.DATATYPE; },
+        /**
+         * Gets a value indicating whether the element has a composition
+         * @param {string} type 
+         * @returns {boolean}
+         */
+        hasComposition(type) { return this.isElement(type) && this.MM[type].hasOwnProperty(COMPOSITION); },
 
         /**
          * Gets a model element type
          * @param {Object} el element
          */
-        getModelElementType (el) {
+        getModelElementType(el) {
             if (!el.hasOwnProperty('base')) return el.name;
 
             return this.getModelElementType(this.getModelElement(el.base)) + "." + el.name;
