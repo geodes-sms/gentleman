@@ -59,6 +59,10 @@ const ModelAttribute = (function ($, _, PN, ERR) {
         get fnUpdate() { return this._fnUpdate; },
         get fnCreateProjection() { return this._fnCreateProjection; },
 
+        /**
+         * Renders the HTML representation of the attribute
+         * @abstract
+         */
         render_attr() {
             if (Object.getPrototypeOf(this) !== ModelAttribute && ModelAttribute.isPrototypeOf(this))
                 throw String(ERR.UnimplementedError.create('Unimplemented abstract method'));
@@ -159,6 +163,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                 var container = children.children[0];
                 var btnDelete = $.createButtonDelete(container, function () {
                     self.remove(self.elements.indexOf(newElem));
+                    events.emit('model.change', 'ModelAttribute[l.162]:delete');
                 });
                 container.appendChild(btnDelete);
                 btn.parentElement.appendChild(children);
@@ -209,7 +214,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                 });
                 return output;
             }
-            
+
             if (this.projections.length) {
                 let arr = this.projections.filter(function (p) { return !_.isNullOrWhiteSpace(p._input.textContent); });
                 let output = arr.map(function (p) {
@@ -348,7 +353,10 @@ const ModelAttribute = (function ($, _, PN, ERR) {
                         // render
                         let li = (self.handler(self._source, instance, self.path));
                         $.insertBeforeElement(this, li);
-                        let btnDelete = $.createButtonDelete(li, function () { self.remove(self.count - 1); });
+                        let btnDelete = $.createButtonDelete(li, function () {
+                            self.remove(self.count - 1);
+                            events.emit('model.change', 'attribute:delete_clicked');
+                        });
                         li.appendChild(btnDelete);
 
                         // focus on first element newly created
@@ -398,7 +406,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
 
             if (self._source.val[index] !== val) {
                 self._source.val[index] = val;
-                events.emit('model.change');
+                events.emit('model.change', 'ModelAttributeMultivalue[l.405]:set');
             }
 
             if (el) {
@@ -409,6 +417,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
             var self = this;
 
             self._source.val.push(val);
+            events.emit('model.change', 'ModelAttributeMultivalue[l.416]:add');
         },
         remove(index) {
             var self = this;
@@ -459,7 +468,7 @@ const ModelAttribute = (function ($, _, PN, ERR) {
         set(val) {
             if (this._source.val !== val) {
                 this._source.val = val;
-                events.emit('model.change');
+                events.emit('model.change', 'ModelAttribute[l.467]:set');
             }
         }
     });

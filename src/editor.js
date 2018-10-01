@@ -11,6 +11,9 @@
 const __ENV = Environment.TEST;
 const __VERSION = '0.10';
 
+/** 
+ * @namespace
+ */
 var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
     "use strict";
 
@@ -52,14 +55,24 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
     // Allow responsive design
     var mql = window.matchMedia('(max-width: 800px)');
 
-    // State management
+    /**
+     * State management
+     * @lends state#
+     */
     const state = {
+        /**
+         * Creates a `state` instance
+         * @returns {state} state instance
+         */
         create: function () {
             var instance = Object.create(this);
 
             var past = [];
             var future = [];
 
+            /**
+             * @memberof state#
+             */
             var undo = function () {
                 future = [instance.current, ...future];
                 instance.current = past.pop();
@@ -77,6 +90,11 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 future = [];
             };
 
+            var clear = function () {
+                past = [];
+                future = [];
+            };
+
             _.defProp(instance, 'hasUndo', {
                 get() { return past.length > 0; },
             });
@@ -84,11 +102,12 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 get() { return future.length > 0; },
             });
 
-            Object.assign(instance, { undo, redo, set });
+            Object.assign(instance, { undo, redo, set, clear });
 
             return instance;
         },
         init(val) {
+            this.clear();
             this.current = _.cloneObject(val);
         },
         current: undefined
@@ -145,7 +164,6 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 var reader = new FileReader();
                 if (file.name.endsWith('.json')) {
                     reader.onload = function (e) {
-                        // clearBody();
                         self.editor.init(JSON.parse(reader.result));
                     };
                     reader.readAsText(file);
@@ -290,6 +308,10 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 self.btnRedo.disabled = !hasRedo;
                 self.btnUndo.disabled = false;
             });
+            events.on('editor.state.initialized', function () {
+                self.btnUndo.disabled = true;
+                self.btnRedo.disabled = true;
+            });
             events.on('editor.save', function () {
                 self.btnUndo.disabled = false;
             });
@@ -430,11 +452,14 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
              * @param {string} path 
              */
             function friendlyPath(path) {
-                return path.replace(/.val|.attr/g, '').replace(/.composition/g, '->').replace(/\.+/g, '.');
+                return path.replace(/.val|.attr/g, '').replace(/.composition\[\d+\]./g, '>').replace(/\.+/g, '.');
             }
         }
     };
 
+    /**
+     * @lends Editor
+     */
     const Editor = {
         /** @type {state} */
         state: state.create(),
@@ -577,9 +602,8 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
         },
         save() {
             var self = this;
-            // console.log(self.concrete);
             self.state.set(self.concrete);
-
+            console.log('editor.save called');
             events.emit('editor.save');
         },
         clear() {
@@ -609,9 +633,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
 
             // set the initial state
             this.state.init(this.concrete);
-
-            // add the event handlers
-            this.bindEvents();
+            events.emit('editor.state.initialized');
 
             // clear the body
             this.clear();
@@ -632,6 +654,8 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
 
             if (!this.isInitialized) {
                 events.emit('editor.initialized');
+                // add the event handlers
+                this.bindEvents();
                 this._isInitialized = true;
             }
         },
@@ -745,25 +769,10 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
             var handled = false;
 
             self.body.addEventListener(EventType.CLICK, function (event) {
-                var target = event.target;
-                var action = target.dataset.action;
                 if (!handled) {
                     self.autocomplete.hide();
                 } else {
                     handled = false;
-                }
-
-                if (action && target.tagName == EL.BUTTON.name) {
-                    switch (action) {
-                        case 'add':
-                            self.save();
-                            break;
-                        case 'remove':
-                            self.save();
-                            break;
-                        default:
-                            break;
-                    }
                 }
             }, false);
 
@@ -893,8 +902,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
 
                     self.autocomplete.init(target, data);
                     self.autocomplete.onSelect = function (val) {
-                        autocomplete_option_handler(val, target, data);
-                        self.save();
+                        optionHandler(val, target, data);
                     };
                 } else if (projection) {
                     if (projection.isDisabled) return;
@@ -951,7 +959,10 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 }
             }, false);
 
-            events.on('model.change', function () { self.save(); });
+            events.on('model.change', function (from) {
+                console.log(from);
+                self.save();
+            });
 
             function validation_handler(target) {
                 const ERROR = 'error';
@@ -1006,7 +1017,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 }
             }
 
-            function autocomplete_option_handler(val, eHTML, data) {
+            function optionHandler(val, eHTML, data) {
                 const COMPOSITION = 'composition';
 
                 var path = eHTML.dataset['path'];
@@ -1018,6 +1029,7 @@ var Gentleman = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
 
                 compo.push(element);
                 compo.sort(function (a, b) { return a.position - b.position; });
+                events.emit('model.change', 'Editor[l.1008]:option');
 
                 // render element
                 var mElement = self.abstract.createModelElement(element);

@@ -119,7 +119,7 @@ var Projection = (function ($, _, ERR) {
 
             this.value = val;
             // update attribute
-            this._update(self.value, self.index);
+            self._update(self.value, self.index);
 
             if (attr.type === DataType.ID) {
                 let src = attr.MODEL.ID.find(function (x) { return x.id == self.id; });

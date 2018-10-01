@@ -3,12 +3,22 @@
 /// <reference path="../exception.js" />
 /// <reference path="../projection.js" />
 
+/** 
+ * @namespace
+ */
 var MetaModel = (function ($, _, ELEM, ERR) {
     "use strict";
 
     const COMPOSITION = 'composition';
 
+
+    /**
+     * @lends MetaModel#
+     */
     var pub = {
+        /** 
+         * Creates a `MetaModel` instance.
+         */
         create(metamodel, model) {
             var instance = Object.create(this);
 
@@ -23,6 +33,10 @@ var MetaModel = (function ($, _, ELEM, ERR) {
 
             return instance;
         },
+        /**
+         * Initialize the metamodel.
+         * @param {Object} model 
+         */
         init(model) {
             var self = this;
 
@@ -31,11 +45,21 @@ var MetaModel = (function ($, _, ELEM, ERR) {
             self.ID = [];      // list of IDs declared in the concrete model
             self.path = [];    // list of paths,
             self.options = [];
+            /** 
+             * @memberof MetaModel
+             */
             self.projections = [];
             self.root = undefined;
         },
-
+        
+        /**
+         * Gets the model
+         */
         get concrete() { return this._model; },
+        /**
+         * Gets the metamodel
+         * @readonly
+         */
         get MM() { return this._metamodel; },
 
         /**

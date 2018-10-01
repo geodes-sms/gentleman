@@ -76,6 +76,7 @@ var ModelElement = (function ($, _, ATTR, ERR, PN) {
             if (self.isOptional) {
                 container.appendChild($.createButtonDelete(container, function () {
                     self.remove();
+                    events.emit('model.change', 'ModelElement[l.79]:delete');
                 }));
             }
 
@@ -173,6 +174,7 @@ var ModelElement = (function ($, _, ATTR, ERR, PN) {
                     if (current.optional) {
                         children.appendChild($.createButtonDelete(children, function () {
                             self.remove();
+                            events.emit('model.change', 'ModelElement[l.177]:delete');
                         }));
                     }
 
