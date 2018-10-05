@@ -1,7 +1,11 @@
 /// <reference path="enums.js" />
 /// <reference path="utils/utils.js" />
 
-var Autocomplete = (function ($, _) {
+import { Key, EventType, UI } from './enums.js';
+import { HELPER } from './helpers/index.js';
+import { UTILS } from './utils/index.js';
+
+export const Autocomplete = (function ($, _) {
     const AUTOCOMPLETE_HANDLER = 'autocompleteHandler';
 
     /**
@@ -180,4 +184,4 @@ var Autocomplete = (function ($, _) {
     };
 
     return pub;
-})(UTIL, HELPER);
+})(UTILS, HELPER);

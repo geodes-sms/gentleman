@@ -1,6 +1,11 @@
-/// <reference path="../enums.js" />
+import { DataType, UI } from './../enums.js';
+import { HELPER } from './../helpers/index.js';
+import { UTILS } from './../utils/index.js';
+import { Projection } from './../projection.js';
+import { Exception } from './../exception.js';
+import { events } from './../pubsub.js';
 
-const ModelAttribute = (function ($, _, PN, ERR) {
+export const ModelAttribute = (function ($, _, PN, ERR) {
     "use strict";
 
     const ButtonType = {
@@ -530,4 +535,4 @@ const ModelAttribute = (function ($, _, PN, ERR) {
         SingleValueAttribute: ModelAttributeSinglevalue,
         MultiValueAttribute: ModelAttributeMultivalue
     };
-})(UTIL, HELPER, Projection, Exception);
+})(UTILS, HELPER, Projection, Exception);

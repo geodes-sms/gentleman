@@ -1,6 +1,6 @@
 const { Given, When, Then } = require('cucumber');
 const { expect } = require('chai');
-const { HELPER: _ } = require('../../src/helpers');
+const { HELPER: _ } = require('../../build/helpers');
 
 function validateRequired() {
     var isValid = true;

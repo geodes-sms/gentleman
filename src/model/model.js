@@ -3,14 +3,19 @@
 /// <reference path="../exception.js" />
 /// <reference path="../projection.js" />
 
+import { HELPER } from './../helpers/index.js';
+import { UTILS } from './../utils/index.js';
+import { ModelElement } from './modelElement.js';
+import { Exception } from './../exception.js';
+import { DataType, ModelType } from './../enums.js';
+
 /** 
  * @namespace
  */
-var MetaModel = (function ($, _, ELEM, ERR) {
+export const MetaModel = (function ($, _, ELEM, ERR) {
     "use strict";
 
     const COMPOSITION = 'composition';
-
 
     /**
      * @lends MetaModel#
@@ -51,7 +56,7 @@ var MetaModel = (function ($, _, ELEM, ERR) {
             self.projections = [];
             self.root = undefined;
         },
-        
+
         /**
          * Gets the model
          */
@@ -189,4 +194,4 @@ var MetaModel = (function ($, _, ELEM, ERR) {
     };
 
     return pub;
-})(UTIL, HELPER, ModelElement, Exception);
+})(UTILS, HELPER, ModelElement, Exception);

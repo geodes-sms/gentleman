@@ -1,6 +1,13 @@
 /// <reference path="../model/model.js" />
 
-var ModelElement = (function ($, _, ATTR, ERR, PN) {
+import { HELPER } from './../helpers/index.js';
+import { UTILS } from './../utils/index.js';
+import { ModelAttribute } from './model-attribute.js';
+import { Projection } from './../projection.js';
+import { Exception } from './../exception.js';
+import { DOC } from './../global.js';
+
+export const ModelElement = (function ($, _, ATTR, ERR, PN) {
     "use strict";
 
     const OPTION = 'option';
@@ -517,4 +524,4 @@ var ModelElement = (function ($, _, ATTR, ERR, PN) {
 
     return pub;
 
-})(UTIL, HELPER, ModelAttribute, Exception, Projection);
+})(UTILS, HELPER, ModelAttribute, Exception, Projection);

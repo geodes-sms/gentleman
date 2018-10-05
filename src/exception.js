@@ -1,4 +1,4 @@
-var Exception = (function () {
+export const Exception = (function () {
     var Unimplemented = {
         create: function (message) {
             var instance = Object.create(this);

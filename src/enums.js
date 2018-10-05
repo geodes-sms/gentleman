@@ -1,4 +1,4 @@
-const Environment = {
+export const Environment = {
     PROD: 'prod',
     TEST: 'test'
 };
@@ -8,7 +8,7 @@ const Environment = {
  * @readonly
  * @enum {string}
  */
-const DataType = {
+export const DataType = {
     ID: "ID",
     IDREF: "IDREF",
     boolean: "boolean",
@@ -22,7 +22,7 @@ const DataType = {
  * @readonly
  * @enum {string}
  */
-const EventType = {
+export const EventType = {
     CHANGE: 'change',
     CLICK: 'click',
     FOCUSIN: 'focusin',
@@ -31,7 +31,7 @@ const EventType = {
     KEYUP: 'keyup'
 };
 
-const HTMLAttribute = {
+export const HTMLAttribute = {
     Optional: 'optional',
     Type: 'type',
     Name: 'name',
@@ -41,7 +41,7 @@ const HTMLAttribute = {
     Position: 'position'
 };
 
-const ModelType = {
+export const ModelType = {
     ABSTRACT: 'abstract',
     DATATYPE: 'data-type',
     ENUM: 'enum',
@@ -50,7 +50,7 @@ const ModelType = {
     PRIMITIVE: DataType
 };
 
-const Key = {
+export const Key = {
     backspace: "Backspace",
     tab: "Tab",
     enter: "Enter",
@@ -70,7 +70,7 @@ const Key = {
     period: "."
 };
 
-const UI = (function () {
+export const UI = (function () {
     const BUTTON = 'BUTTON';
     const ANCHOR = 'ANCHOR';
     const ATTRIBUTE = 'ATTRIBUTE';

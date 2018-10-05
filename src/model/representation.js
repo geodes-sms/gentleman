@@ -1,3 +1,6 @@
+import {Exception} from './../exception';
+import {UTILS} from './../utils';
+
 var Representation = (function ($, ERR) {
 
     var BaseRepresentation = {
@@ -5,7 +8,6 @@ var Representation = (function ($, ERR) {
             var instance = Object.create(this);
 
             Object.assign(instance, values);
-
 
             // private members
 
@@ -66,4 +68,4 @@ var Representation = (function ($, ERR) {
         Text: TextRepresentation,
         Table: TableRepresentation
     };
-})(UTIL, Exception);
+})(UTILS, Exception);

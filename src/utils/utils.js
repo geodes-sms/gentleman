@@ -1,6 +1,8 @@
-﻿const DOC = document;
+﻿import { HELPER } from './../helpers/index.js';
+import { DOC } from './../global.js';
 
-var UTIL = (function (_) {
+export const UTIL = (function (_) {
+
     var pub = {
         /**
          * Gets the window's width
@@ -8,42 +10,34 @@ var UTIL = (function (_) {
         get windowWidth() { return window.innerWidth || DOC.documentElement.clientWidth || DOC.body.clientWidth; },
 
         /**
-         * Returns the first element that matches the query selector.
-         * @param {string} e query
-         * @param {HTMLElement} p container
-         * @returns {HTMLElement}
+         * Returns the first Element within the specified container that matches the specified selector, group or selectors.
+         * @param {string} selector A DOMString containing one or more selectors to match
+         * @param {HTMLElement} [el] Container queried
+         * @returns {HTMLElement|null} The first Element matches that matches the specified set of CSS selectors.
          */
-        getElement(e, p) {
-            p = _.valOrDefault(p, DOC);
+        getElement(selector, el) {
+            el = _.valOrDefault(el, DOC);
 
-            switch (e.charAt(0)) {
-                case "#":
-                    return DOC.getElementById(e.substring(1));
-                case ".":
-                    return p.getElementsByClassName(e.substring(1))[0];
-                case "[":
-                    return p.querySelector(e);
-                default:
-                    return p.getElementsByTagName(e)[0];
+            if (/^#[a-zA-Z0-9_-]+$/.test(selector)) {
+                return DOC.getElementById(selector.substring(1));
             }
+            if (/^\.[a-zA-Z0-9_-]+$/.test(selector)) {
+                return el.getElementsByClassName(selector.substring(1))[0];
+            }
+            return el.querySelector(selector);
         },
         /**
          * Returns all elements that match the selector query.
-         * @param {string} e query
-         * @param {HTMLElement} p containter
-         * @returns {HTMLElement[]}
+         * @param {string} selector A DOMString containing one or more selectors to match
+         * @param {HTMLElement} [el] Container queried
+         * @returns {HTMLCollection|NodeList} A live or *static* (not live) collection of the `container`'s children Element that match the `selector`.
          */
-        getElements(e, p) {
-            p = _.valOrDefault(p, DOC);
+        getElements(selector, el) {
+            el = _.valOrDefault(el, DOC);
 
-            switch (e.charAt(0)) {
-                case ".":
-                    return p.getElementsByClassName(e.substring(1));
-                case "[":
-                    return p.querySelectorAll(e);
-                default:
-                    return p.getElementsByTagName(e);
-            }
+            return /^\.[a-zA-Z0-9_-]+$/.test(selector) ?
+                el.getElementsByClassName(selector.substring(1)) :
+                el.querySelectorAll(selector);
         },
         /**
          * Gets the previous or next element of the specified element

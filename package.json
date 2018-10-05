@@ -1,13 +1,16 @@
 {
   "name": "gentleman",
-  "version": "0.7.0",
+  "version": "0.10.0",
   "description": "Gentleman is a web-based projectionnal editor generator. It allows you to express and interact with your DSL.",
-  "main": "index.js",
+  "private": true,
   "directories": {
     "doc": "docs"
   },
   "scripts": {
-    "test": "cucumber-js"
+    "pretest": "babel src -d build",
+    "test": "cucumber-js",
+    "posttest": "rimraf ./build",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -27,6 +30,14 @@
   "homepage": "https://github.com/geodes-sms/gentleman#readme",
   "dependencies": {
     "chai": "^4.1.2",
-    "cucumber": "^4.2.1"
+    "cucumber": "^4.2.1",
+    "rimraf": "^2.6.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2"
   }
 }

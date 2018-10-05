@@ -1,5 +1,5 @@
 // Pub-Sub pattern implementation
-const events = {
+export const events = {
     events: {},
     on: function (eventName, fn) {
         this.events[eventName] = this.events[eventName] || [];

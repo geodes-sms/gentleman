@@ -1,4 +1,4 @@
-const HELPER = (function () {
+export const HELPER = (function () {
     var pub = {
         cloneObject: function (obj) {
             if (obj === null || typeof (obj) !== 'object')
@@ -67,9 +67,21 @@ const HELPER = (function () {
             return d == 0 ? 6 : d - 1;
         },
 
-        valOrDefault (arg, val) {
+        valOrDefault(arg, val) {
             return typeof arg !== 'undefined' ? arg : val;
         },
+        /**
+         * Capitalizes all words in a sequence
+         * @param {string} str Sequence
+         * @returns {string} Capitalized sequence
+         */
+        capitalize(str) { return str.replace(/\b\w/, function (s) { return s.toUpperCase(); }); },
+        /**
+         * Capitalizes the first letter of a sequence
+         * @param {string} str Sequence
+         * @returns {string} Sequence with its first letter capitalized
+         */
+        capitalizeFirstLetter(str) { return str.charAt(0).toUpperCase() + str.slice(1); },
 
         /**
          * Return the singular or plural form of a word based on a predicate
@@ -77,7 +89,7 @@ const HELPER = (function () {
          * @param {string} singular 
          * @param {string} plural 
          */
-        pluralize (predicate, singular, plural) {
+        pluralize(predicate, singular, plural) {
             if (predicate)
                 return singular;
             plural = plural.split("|");
@@ -118,12 +130,8 @@ const HELPER = (function () {
          * @param {boolean} val 
          * @returns {int} 1 or 0
          */
-        boolToInt(val) {
-            return val ? 1 : 0;
-        },
-        isString(str) {
-            return typeof myVar === 'string' || str instanceof String;
-        },
+        boolToInt(val) { return val ? 1 : 0; },
+        isString(str) { return typeof myVar === 'string' || str instanceof String; },
 
         /**
          * Append the path to the current path
@@ -168,7 +176,7 @@ const HELPER = (function () {
          * @param {number} index 
          * @param {object} item 
          */
-        insert (arr, index, item) { arr.splice(index, 0, item); },
+        insert(arr, index, item) { arr.splice(index, 0, item); },
         /**
          * Return a random integer between min and max (inclusive).
          * @param {number} min 
@@ -226,7 +234,3 @@ const HELPER = (function () {
 
     return pub;
 }());
-
-if (typeof module !== 'undefined') {
-    module.exports = HELPER;
-}

@@ -1,9 +1,9 @@
-/// <reference path="pubsub.js" />
-/// <reference path="enums.js" />
-/// <reference path="model/model.js" />
-/// <reference path="helpers/helpers.js" />
+import { DataType, EventType, UI } from './enums.js';
+import { HELPER } from './helpers/index.js';
+import { UTILS } from './utils/index.js';
+import { Exception } from './exception.js';
 
-var Projection = (function ($, _, ERR) {
+export const Projection = (function ($, _, ERR) {
 
     // State
     const EL = UI.Element;
@@ -554,4 +554,4 @@ var Projection = (function ($, _, ERR) {
         DataType: DataTypeProjection,
         Pointer: PointerProjection
     };
-})(UTIL, HELPER, Exception);
+})(UTILS, HELPER, Exception);
