@@ -6,7 +6,6 @@ import * as Projection from '../projection/fn.js';
 import { __ENV, __VERSION } from './../global.js';
 import { Key, EventType, UI } from './../enums.js';
 import { events } from './../pubsub.js';
-import { DOC } from './../global.js';
 
 /** 
  * @namespace
@@ -17,6 +16,7 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, ERR) {
     const container = $.getElement("[data-gentleman-editor]");
     container.tabIndex = -1;
 
+    const DOC = document;
     const EL = UI.Element;
     const EditorMode = {
         READ: 'read',

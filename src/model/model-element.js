@@ -2,13 +2,13 @@ import { UTILS, HELPER } from './../utils/index.js';
 import { ModelAttribute } from './model-attribute.js';
 import { AbstractProjection } from './../projection/index.js';
 import { Exception } from './../exception.js';
-import { DOC } from './../global.js';
 import { HTMLAttribute } from './../enums.js';
 import { events } from './../pubsub.js';
 
 export const ModelElement = (function ($, _, ATTR, ERR) {
     "use strict";
-
+    
+    const DOC = document;
     const OPTION = 'option';
     const COMPOSITION = 'composition';
     const RepresentationType = {

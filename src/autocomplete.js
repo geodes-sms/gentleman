@@ -1,10 +1,10 @@
 import { Key, EventType, UI } from './enums.js';
 import { UTILS, HELPER } from './utils/index.js';
-import { DOC } from './global.js';
 
 export const Autocomplete = (function ($, _) {
     const AUTOCOMPLETE_HANDLER = 'autocompleteHandler';
-
+    const DOC = document;
+    
     /**
      * @class Autocomplete
      */

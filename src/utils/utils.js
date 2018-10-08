@@ -1,7 +1,7 @@
 ﻿import { HELPER } from './helpers.js';
-import { DOC } from './../global.js';
 
 export const UTIL = (function (_) {
+    const DOC = typeof module !== 'undefined' ? {} : document;
 
     var pub = {
         /**
