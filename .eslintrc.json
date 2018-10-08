@@ -33,22 +33,6 @@
     },
     "globals": {
         "Autocomplete": false,
-        "DataType": false,
-        "DOC": false,
-        "Environment": false,
-        "EventType": false,
-        "events": false,
-        "Exception": false,
-        "HELPER": true,
-        "HTMLAttribute": false,
-        "Key": false,
-        "MetaModel": false,
-        "ModelAttribute": false,
-        "ModelElement": false,
-        "ModelType": false,
-        "Projection": false,
-        "Representation": false,
-        "UI": true,
-        "UTIL": true
+        "Gentleman": false
     }
 }

@@ -1,11 +1,10 @@
 import { DataType, UI } from './../enums.js';
-import { HELPER } from './../helpers/index.js';
-import { UTILS } from './../utils/index.js';
-import { Projection } from './../projection.js';
+import { UTILS, HELPER } from './../utils/index.js';
+import { BaseProjection, AbstractProjection, EnumProjection, PointerProjection, DataTypeProjection } from '../projection/index.js';
 import { Exception } from './../exception.js';
 import { events } from './../pubsub.js';
 
-export const ModelAttribute = (function ($, _, PN, ERR) {
+export const ModelAttribute = (function ($, _, ERR) {
     "use strict";
 
     const ButtonType = {
@@ -496,30 +495,30 @@ export const ModelAttribute = (function ($, _, PN, ERR) {
         var M = self.MODEL;
 
         var element = self.MODEL.getModelElement(self.type);
-        var packet = PN.Base.prepare(self.MODEL.generateID(), val, self, self.type, self.fnUpdate);
+        var packet = BaseProjection.prepare(self.MODEL.generateID(), val, self, self.type, self.fnUpdate);
         var projection;
 
         // abstract element
         if (val && val.hasOwnProperty(ABSTRACT)) {
-            projection = PN.Abstract.create(packet);
+            projection = AbstractProjection.create(packet);
             projection.extensions = element.extensions;
         }
         else if (element) {
             let elementType = M.getModelElementType(element);
             if (M.isEnum(elementType)) {
-                projection = PN.Enum.create(packet);
+                projection = EnumProjection.create(packet);
                 projection.values = element.values;
             } else if (M.isDataType(elementType)) {
-                projection = PN.DataType.create(packet);
+                projection = DataTypeProjection.create(packet);
                 projection.struct = element;
             } else {
-                projection = PN.Base.create(packet);
+                projection = BaseProjection.create(packet);
             }
         } else if (self.type === DataType.IDREF) {
-            projection = PN.Pointer.create(packet);
+            projection = PointerProjection.create(packet);
             projection.reference = self._source.ref;
         } else {
-            projection = PN.Base.create(packet);
+            projection = BaseProjection.create(packet);
         }
 
         // if (self.fnCreateProjection) self.fnCreateProjection(projection);
@@ -535,4 +534,4 @@ export const ModelAttribute = (function ($, _, PN, ERR) {
         SingleValueAttribute: ModelAttributeSinglevalue,
         MultiValueAttribute: ModelAttributeMultivalue
     };
-})(UTILS, HELPER, Projection, Exception);
+})(UTILS, HELPER, Exception);

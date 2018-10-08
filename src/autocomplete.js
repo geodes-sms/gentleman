@@ -1,9 +1,6 @@
-/// <reference path="enums.js" />
-/// <reference path="utils/utils.js" />
-
 import { Key, EventType, UI } from './enums.js';
-import { HELPER } from './helpers/index.js';
-import { UTILS } from './utils/index.js';
+import { UTILS, HELPER } from './utils/index.js';
+import { DOC } from './global.js';
 
 export const Autocomplete = (function ($, _) {
     const AUTOCOMPLETE_HANDLER = 'autocompleteHandler';

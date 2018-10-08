@@ -1,5 +1,4 @@
-import { HELPER } from './../helpers/index.js';
-import { UTILS } from './../utils/index.js';
+import { UTILS, HELPER } from './../utils/index.js';
 import { __ENV, __VERSION } from './../global.js';
 import { EventType } from './../enums.js';
 import { events } from './../pubsub.js';
@@ -7,26 +6,11 @@ import { events } from './../pubsub.js';
 export const Note = (function ($, _) {
 
     /**
-     * Gets the name of the object if available
-     * @param {Object} obj 
-     * @returns {string|null} name
-     */
-    function nameof(obj) { return _.valOrDefault(obj.name, null); }
-
-    /**
-     * Preprend a string with a dot
-     * @param {string} str 
-     * @returns {string}
-     */
-    function dot(str) { return '.' + str; }
-
-    /**
      * Preprend a string with a hashtag
      * @param {string} str 
      * @returns {string}
      */
     function hash(str) { return '#' + str; }
-
 
     var pub = {
         /** @type {Editor} */

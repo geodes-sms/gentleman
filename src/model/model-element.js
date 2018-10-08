@@ -1,13 +1,12 @@
-/// <reference path="../model/model.js" />
-
-import { HELPER } from './../helpers/index.js';
-import { UTILS } from './../utils/index.js';
+import { UTILS, HELPER } from './../utils/index.js';
 import { ModelAttribute } from './model-attribute.js';
-import { Projection } from './../projection.js';
+import { AbstractProjection } from './../projection/index.js';
 import { Exception } from './../exception.js';
 import { DOC } from './../global.js';
+import { HTMLAttribute } from './../enums.js';
+import { events } from './../pubsub.js';
 
-export const ModelElement = (function ($, _, ATTR, ERR, PN) {
+export const ModelElement = (function ($, _, ATTR, ERR) {
     "use strict";
 
     const OPTION = 'option';
@@ -70,8 +69,8 @@ export const ModelElement = (function ($, _, ATTR, ERR, PN) {
 
             // self.current.multiple ? $.createLi({ class: 'list-item', prop: 'val' }) : $.createDiv({ class: "group section" });
             if (self._source.abstract) {
-                let packet = PN.Abstract.prepare(self.model.generateID(), self.parent, self.parent.type);
-                let projection = PN.Abstract.create(packet);
+                let packet = AbstractProjection.prepare(self.model.generateID(), self.parent, self.parent.type);
+                let projection = AbstractProjection.create(packet);
                 projection.extensions = self._source.extensions;
                 projection.modelElement = self;
                 self.model.projections.push(projection);
@@ -417,8 +416,8 @@ export const ModelElement = (function ($, _, ATTR, ERR, PN) {
         implement() {
             var self = this;
 
-            var packet = PN.Abstract.prepare(self.model.generateID(), self.parent, self.parent.type);
-            let projection = PN.Abstract.create(packet);
+            var packet = AbstractProjection.prepare(self.model.generateID(), self.parent, self.parent.type);
+            let projection = AbstractProjection.create(packet);
             projection.extensions = self._source.extensions;
             projection.modelElement = self;
             self.model.projections.push(projection);
@@ -524,4 +523,4 @@ export const ModelElement = (function ($, _, ATTR, ERR, PN) {
 
     return pub;
 
-})(UTILS, HELPER, ModelAttribute, Exception, Projection);
+})(UTILS, HELPER, ModelAttribute, Exception);

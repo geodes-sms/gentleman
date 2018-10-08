@@ -1,19 +1,8 @@
-/// <reference path="../pubsub.js" />
-/// <reference path="../enums.js" />
-/// <reference path="../helpers/helpers.js" />
-/// <reference path="../utils/utils.js" />
-/// <reference path="../utils/interactive.js" />
-/// <reference path="../autocomplete.js" />
-/// <reference path="../model/model.js" />
-/// <reference path="../model/modelElement.js" />
-/// <reference path="../projection.js" />
-
-import { HELPER } from './../helpers/index.js';
-import { UTILS } from './../utils/index.js';
+import { UTILS, HELPER } from './../utils/index.js';
 import { Autocomplete } from './../autocomplete.js';
 import { Exception } from './../exception.js';
 import { MetaModel } from './../model/index.js';
-import { Projection } from './../projection.js';
+import * as Projection from '../projection/fn.js';
 import { __ENV, __VERSION } from './../global.js';
 import { Key, EventType, UI } from './../enums.js';
 import { events } from './../pubsub.js';
@@ -22,10 +11,8 @@ import { DOC } from './../global.js';
 /** 
  * @namespace
  */
-export const Editor = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
+export const Editor = (function ($, _, Autocomplete, _MODEL, ERR) {
     "use strict";
-
-    console.log($);
 
     const container = $.getElement("[data-gentleman-editor]");
     container.tabIndex = -1;
@@ -38,13 +25,6 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
 
     // Indicates whether the display is mobile mode
     var MOBILE = $.windowWidth <= 700;
-
-    /**
-     * Gets the name of the object if available
-     * @param {Object} obj 
-     * @returns {string|null} name
-     */
-    function nameof(obj) { return _.valOrDefault(obj.name, null); }
 
     /**
      * Preprend a string with a dot
@@ -574,7 +554,7 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     projection.focusIn();
                     events.emit('editor.change', projection);
 
-                    if (isExtension(projection)) {
+                    if (Projection.isExtension(projection)) {
                         data = projection.valuesKV();
                         self.autocomplete.onSelect = function (attr) {
                             let line = projection.implement(attr.key);
@@ -582,7 +562,7 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                         };
 
                         self.autocomplete.init(target, data);
-                    } else if (isPointer(projection) || isEnum(projection)) {
+                    } else if (Projection.isPointer(projection) || Projection.isEnum(projection)) {
                         data = projection.valuesKV();
                         self.autocomplete.onSelect = function (attr) {
                             projection.value = attr.key;
@@ -625,7 +605,6 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
             }, false);
 
             events.on('model.change', function (from) {
-                console.log(from);
                 self.save();
             });
 
@@ -664,7 +643,7 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 // ignore if autocomplete is open
                 if (self.autocomplete.isOpen) return;
 
-                if (isExtension(projection)) {
+                if (Projection.isExtension(projection)) {
                     data = projection.valuesKV();
                     self.autocomplete.onSelect = function (attr) {
                         let line = projection.implement(attr.key);
@@ -672,7 +651,7 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                     };
 
                     self.autocomplete.init(projection._input, data);
-                } else if (isPointer(projection) || isEnum(projection)) {
+                } else if (Projection.isPointer(projection) || Projection.isEnum(projection)) {
                     data = projection.valuesKV();
                     self.autocomplete.onSelect = function (attr) {
                         projection.value = attr.key;
@@ -736,11 +715,6 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 if (firstAttribute) firstAttribute.focus();
             }
 
-            function getParent(eHTML, className) {
-                var parent = eHTML.parentElement;
-                return $.hasClass(parent, className) ? parent : parent.parentElement;
-            }
-
             mql.addListener(handleWidthChange);
 
             function handleWidthChange(mql) {
@@ -758,7 +732,6 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
             }
 
             /**
-             * Returns the
              * @param {HTMLElement} el 
              * @returns {null|HTMLElement}
              */
@@ -768,26 +741,8 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, PROJ, ERR) {
                 if (parent.isSameNode(container)) return null;
                 return findLine(parent);
             }
-
-            /**
-             * Returns a value indicating whether the projection is an Enum
-             * @param {Object} projection 
-             */
-            function isEnum(projection) { return PROJ.Enum.isPrototypeOf(projection); }
-
-            /**
-             * Returns a value indicating whether the projection is an Extension
-             * @param {Object} projection 
-             */
-            function isExtension(projection) { return PROJ.Abstract.isPrototypeOf(projection); }
-
-            /**
-             * Returns a value indicating whether the projection is a Pointer
-             * @param {Object} projection 
-             */
-            function isPointer(projection) { return PROJ.Pointer.isPrototypeOf(projection); }
         }
     };
 
     return pub;
-})(UTILS, HELPER, Autocomplete, MetaModel, Projection, Exception);
+})(UTILS, HELPER, Autocomplete, MetaModel, Exception);

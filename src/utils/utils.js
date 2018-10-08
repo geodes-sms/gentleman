@@ -1,4 +1,4 @@
-﻿import { HELPER } from './../helpers/index.js';
+﻿import { HELPER } from './helpers.js';
 import { DOC } from './../global.js';
 
 export const UTIL = (function (_) {

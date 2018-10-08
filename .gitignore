@@ -1,4 +1,5 @@
 node_modules
-_insider
+build
+.internal
 .DS_STORE
 .vscode

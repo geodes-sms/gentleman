@@ -1,5 +1,4 @@
-import { HELPER } from './../helpers/index.js';
-import { UTILS } from './../utils/index.js';
+import { UTILS, HELPER } from './../utils/index.js';
 import { __ENV, __VERSION } from './../global.js';
 import { EventType, UI } from './../enums.js';
 import { events } from './../pubsub.js';
@@ -92,7 +91,6 @@ export const Menu = (function ($, _) {
             ]);
 
             return self.container;
-
 
             /**
              * Creates a menu item button

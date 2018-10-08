@@ -1,6 +1,7 @@
-import { UTIL } from './utils.js';
-import { Effect } from './effects.js';
-import { Interactive } from './interactive.js';
+import { HELPER } from './helpers.js';
+import { UTIL as UTILS } from './utils.js';
+import './effects.js';
+import './interactive.js';
 import { TypeWriter } from './typewriter.js';
 
-export const UTILS = Object.assign({}, UTIL, Effect, Interactive, { TypeWriter: TypeWriter });
+export { UTILS, HELPER, TypeWriter };

@@ -1,6 +1,5 @@
 import { Gentleman } from './core/index.js';
-import { UTILS } from './utils/index.js';
-import { HELPER } from './helpers/index.js';
+import { UTILS, HELPER } from './utils/index.js';
 import { __ENV } from './global.js';
 import { UI, Environment } from './enums.js';
 

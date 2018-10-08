@@ -1,11 +1,5 @@
-/// <reference path="../enums.js" />
-/// <reference path="../utils/utils.js" />
-/// <reference path="../exception.js" />
-/// <reference path="../projection.js" />
-
-import { HELPER } from './../helpers/index.js';
-import { UTILS } from './../utils/index.js';
-import { ModelElement } from './modelElement.js';
+import { UTILS, HELPER } from '../utils/index.js';
+import { ModelElement } from './model-element.js';
 import { Exception } from './../exception.js';
 import { DataType, ModelType } from './../enums.js';
 
