@@ -16,7 +16,7 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, ERR) {
     const container = $.getElement("[data-gentleman-editor]");
     container.tabIndex = -1;
 
-    const DOC = document;
+    const DOC = typeof module !== 'undefined' && module.exports ? {} : document;
     const EL = UI.Element;
     const EditorMode = {
         READ: 'read',

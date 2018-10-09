@@ -1,7 +1,7 @@
 ﻿import { HELPER } from './helpers.js';
 
 export const UTIL = (function (_) {
-    const DOC = typeof module !== 'undefined' ? {} : document;
+    const DOC = typeof module !== 'undefined' && module.exports ? {} : document;
 
     var pub = {
         /**
@@ -24,6 +24,7 @@ export const UTIL = (function (_) {
             if (/^\.[a-zA-Z0-9_-]+$/.test(selector)) {
                 return el.getElementsByClassName(selector.substring(1))[0];
             }
+
             return el.querySelector(selector);
         },
         /**

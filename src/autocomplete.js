@@ -3,7 +3,7 @@ import { UTILS, HELPER } from './utils/index.js';
 
 export const Autocomplete = (function ($, _) {
     const AUTOCOMPLETE_HANDLER = 'autocompleteHandler';
-    const DOC = document;
+    const DOC = typeof module !== 'undefined' && module.exports ? {} : document;
     
     /**
      * @class Autocomplete

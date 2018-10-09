@@ -8,7 +8,7 @@ import { events } from './../pubsub.js';
 export const ModelElement = (function ($, _, ATTR, ERR) {
     "use strict";
 
-    const DOC = document;
+    const DOC = typeof module !== 'undefined' && module.exports ? {} : document;
     const OPTION = 'option';
     const COMPOSITION = 'composition';
     const RepresentationType = {
