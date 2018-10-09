@@ -7,7 +7,7 @@ import { events } from './../pubsub.js';
 
 export const ModelElement = (function ($, _, ATTR, ERR) {
     "use strict";
-    
+
     const DOC = document;
     const OPTION = 'option';
     const COMPOSITION = 'composition';
@@ -17,6 +17,9 @@ export const ModelElement = (function ($, _, ATTR, ERR) {
     };
 
     var pub = {
+        /**
+         * @returns {pub}
+         */
         create: function (model, el) {
             var instance = Object.create(this);
 
@@ -82,6 +85,11 @@ export const ModelElement = (function ($, _, ATTR, ERR) {
             if (self.isOptional) {
                 container.appendChild($.createButtonDelete(container, function () {
                     self.remove();
+                    var compo = self.parent.composition;
+                    var el = self.model.getModelElement(self.parent.name);
+                    var instance = el.composition.find(function (c) { return c.position == self.position; });
+                    compo.splice(compo.indexOf(self._source), 1);
+                    if (!self.isMultiple) self.parent.options.push(_.cloneObject(instance));
                     events.emit('model.change', 'ModelElement[l.79]:delete');
                 }));
             }
@@ -179,7 +187,12 @@ export const ModelElement = (function ($, _, ATTR, ERR) {
 
                     if (current.optional) {
                         children.appendChild($.createButtonDelete(children, function () {
-                            self.remove();
+                            mElement.remove();
+                            var compo = self.composition;
+                            var el = self.model.getModelElement(self.name);
+                            var instance = el.composition.find(function (c) { return c.position == mElement.position; });
+                            compo.splice(compo.indexOf(mElement._source), 1);
+                            if (!mElement.isMultiple) self.options.push(_.cloneObject(instance));
                             events.emit('model.change', 'ModelElement[l.177]:delete');
                         }));
                     }
@@ -327,12 +340,6 @@ export const ModelElement = (function ($, _, ATTR, ERR) {
 
             self.attributes.splice(0).forEach(function (attr) { attr.remove(); });
             self.elements.splice(0).forEach(function (el) { el.remove(); });
-
-            if (self.parent && self.parent.composition) {
-                let compo = self.parent.composition;
-                compo.splice(compo.indexOf(self._source), 1);
-                if (self.isOptional && !self.isMultiple) self.parent.options.push(self._source);
-            }
 
             if (self.isOptional) optionHandler.call(self);
             else listHandler();
