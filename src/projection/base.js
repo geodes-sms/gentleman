@@ -23,7 +23,7 @@ export const BaseProjection = (function ($, _) {
             if (!instance.isOptional) {
                 instance.validators.push(validateRequired);
             }
-            if (Object.getPrototypeOf(instance) !== BaseProjection && BaseProjection.isPrototypeOf(instance)) {
+            if (_.isDerivedOf(instance, BaseProjection)) {
                 instance.init();
             }
 
@@ -44,7 +44,20 @@ export const BaseProjection = (function ($, _) {
         /** @returns {ModelAttribute} */
         get modelAttribute() { return this._mAttribute; },
 
-        get value() { return this._input.textContent; },
+        get text() { 
+            if (this.modelAttribute.type === DataType.boolean) {
+                let chk = this._input.firstChild;
+                return chk.checked ? this._input.dataset.representation : '';
+            }
+            return this._input.textContent;
+        },
+        get value() {
+            if (this.modelAttribute.type === DataType.boolean) {
+                let chk = this._input.firstChild;
+                return chk.checked ? '' : this._input.dataset.representation;
+            }
+            return this._input.textContent;
+        },
         set value(val) {
             this._input.textContent = val;
             if (_.isNullOrWhiteSpace(val)) {
@@ -80,6 +93,9 @@ export const BaseProjection = (function ($, _) {
          */
         get position() { return this._position; },
         get validators() { return this._validators; },
+        /**
+         * @returns {string[]}
+         */
         get refs() { return this._refs; },
         index: 0,
         /** @type {HTMLElement} */
@@ -128,6 +144,10 @@ export const BaseProjection = (function ($, _) {
             }
         },
         addReference(projectionId) { this.refs.push(projectionId); },
+        removeReference(projectionId) {
+            var index = this.refs.findIndex(function (val) { return val === projectionId; });
+            this.refs.splice(index, 1);
+        },
         createInput(editable) {
             var self = this;
             var mAttr = self._mAttribute;

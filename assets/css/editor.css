@@ -4,9 +4,14 @@ li, td, th { font-size: 1.2em; }
 
 .editor-header-content { display: flex; }
 
-[data-gentleman-editor] {
+main {
     position: relative;
     height: calc(100% - 30px);
+}
+
+[data-gentleman-editor] {
+    position: relative;
+    height: 100%;
     background-color: #fefefe;
     z-index: 2;
 } 
@@ -329,8 +334,10 @@ li, td, th { font-size: 1.2em; }
         padding-right: 20px;
         background: url(../arrow_down.svg) right/contain no-repeat;
     }
+    
 
-/* Attributes */
+/* Attributes 
+---------------------------------------------------------------------------- */
 
 .attr-wrapper { position: relative; display: inline-block; font-size: 1em; }
     .attr-wrapper:not(.empty):before { content: attr(data-before); }
@@ -466,10 +473,11 @@ li, td, th { font-size: 1.2em; }
     color: #fff;
     border-radius: 1px;
     background-color: #C40233;
-    opacity: 0.1;
+    opacity: 0.2;
     transition: opacity 0.2s;
 }
-    .btn-delete:hover { opacity: 1; }
+    .btn-delete:not(:disabled):hover { opacity: 1; }
+    .btn-delete:disabled { background-color: #999; opacity: 0.1; }
 
 .removable {
     position: relative;

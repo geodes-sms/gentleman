@@ -1,11 +1,11 @@
 import { UTILS, HELPER } from './../utils/index.js';
-import { ModelAttribute } from './model-attribute.js';
+import { MultiValueAttribute, SingleValueAttribute, PrepareModelAttribute } from './model-attribute/index.js';
 import { AbstractProjection } from './../projection/index.js';
 import { Exception } from './../exception.js';
 import { HTMLAttribute } from './../enums.js';
 import { events } from './../pubsub.js';
 
-export const ModelElement = (function ($, _, ATTR, ERR) {
+export const ModelElement = (function ($, _, ERR) {
     "use strict";
 
     const DOC = typeof module !== 'undefined' && module.exports ? {} : document;
@@ -85,11 +85,7 @@ export const ModelElement = (function ($, _, ATTR, ERR) {
             if (self.isOptional) {
                 container.appendChild($.createButtonDelete(container, function () {
                     self.remove();
-                    var compo = self.parent.composition;
-                    var el = self.model.getModelElement(self.parent.name);
-                    var instance = el.composition.find(function (c) { return c.position == self.position; });
-                    compo.splice(compo.indexOf(self._source), 1);
-                    if (!self.isMultiple) self.parent.options.push(_.cloneObject(instance));
+                    compositionRestore.call(self);
                     events.emit('model.change', 'ModelElement[l.79]:delete');
                 }));
             }
@@ -99,7 +95,7 @@ export const ModelElement = (function ($, _, ATTR, ERR) {
         getAttribute: function () {
             var self = this;
             // Add attr property to the element if missing
-            if (!self._source.hasOwnProperty('attr')) self._source.attr = {};
+            if (!_.hasOwn(self._source, 'attr')) self._source.attr = {};
 
             // Get parent attributes
             if (self._source.base) {
@@ -188,11 +184,7 @@ export const ModelElement = (function ($, _, ATTR, ERR) {
                     if (current.optional) {
                         children.appendChild($.createButtonDelete(children, function () {
                             mElement.remove();
-                            var compo = self.composition;
-                            var el = self.model.getModelElement(self.name);
-                            var instance = el.composition.find(function (c) { return c.position == mElement.position; });
-                            compo.splice(compo.indexOf(mElement._source), 1);
-                            if (!mElement.isMultiple) self.options.push(_.cloneObject(instance));
+                            compositionRestore.call(mElement);
                             events.emit('model.change', 'ModelElement[l.177]:delete');
                         }));
                     }
@@ -297,14 +289,14 @@ export const ModelElement = (function ($, _, ATTR, ERR) {
         },
         createModelAttribute(attr, type) {
             var self = this;
-            let args = ATTR.prepare(self, attr, self.path);
+            let args = PrepareModelAttribute(self, attr, self.path);
             var mAttr;
 
-            if (!attr.hasOwnProperty('multiple')) {
-                mAttr = ATTR.SingleValueAttribute.create(args);
+            if (!_.hasOwn(attr, 'multiple')) {
+                mAttr = SingleValueAttribute.create(args);
             }
             else {
-                mAttr = ATTR.MultiValueAttribute.create(args);
+                mAttr = MultiValueAttribute.create(args);
                 if (self.representation.type == "table") {
                     if (type == 'col') {
                         mAttr.represent = "column";
@@ -462,6 +454,22 @@ export const ModelElement = (function ($, _, ATTR, ERR) {
         $.insertAfterElement(self.eHTML, input);
     }
 
+    function compositionRestore() {
+        var self = this;
+
+        var parent = self.parent;
+        var compo = parent.composition;
+        var el = parent.model.getModelElement(parent.name);
+        var instance = el.composition.find(function (c) { return c.position == self.position; });
+        compo.splice(compo.indexOf(self._source), 1);
+
+        if (!self.isMultiple) {
+            parent.options.push(_.cloneObject(instance));
+        }
+
+        return self;
+    }
+
     function parser(representation, attr, fnCreateModelAttribute) {
         var arr = representation ? representation.val.replace(/ /g, " space ")
             .replace(/(#[A-Za-z0-9_]+)/g, " $1 ")
@@ -530,4 +538,4 @@ export const ModelElement = (function ($, _, ATTR, ERR) {
 
     return pub;
 
-})(UTILS, HELPER, ModelAttribute, Exception);
+})(UTILS, HELPER, Exception);

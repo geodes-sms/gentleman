@@ -26,6 +26,7 @@ export const AbstractProjection = (function ($, _) {
             });
         },
 
+        get text() { return this._input.textContent; },
         get value() { return this._input.textContent; },
         get id() { return this._id; },
         get modelAttribute() { return this._mAttribute; },

@@ -160,7 +160,7 @@ export const MetaModel = (function ($, _, ELEM, ERR) {
          * @param {string} type 
          * @returns {boolean}
          */
-        isDataType(type) { return DataType.hasOwnProperty(type.split(':')[0]) || this.isModelDataType(type); },
+        isDataType(type) { return _.hasOwn(DataType, type.split(':')[0]) || this.isModelDataType(type); },
         /**
          * Gets a value indicating whether the element is of type "DATATYPE"
          * @param {string} type 
@@ -172,14 +172,14 @@ export const MetaModel = (function ($, _, ELEM, ERR) {
          * @param {string} type 
          * @returns {boolean}
          */
-        hasComposition(type) { return this.isElement(type) && this.MM[type].hasOwnProperty(COMPOSITION); },
+        hasComposition(type) { return this.isElement(type) && _.hasOwn(this.MM[type], COMPOSITION); },
 
         /**
          * Gets a model element type
          * @param {Object} el element
          */
         getModelElementType(el) {
-            if (!el.hasOwnProperty('base')) return el.name;
+            if (!_.hasOwn(el, 'base')) return el.name;
 
             return this.getModelElementType(this.getModelElement(el.base)) + "." + el.name;
         },

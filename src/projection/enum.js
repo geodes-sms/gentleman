@@ -24,7 +24,7 @@ export const EnumProjection = (function ($, _) {
             });
 
             var validator = function () {
-                var isValid = Array.isArray(self.values) ? +self.value < self.values.length : self.values.hasOwnProperty(self.value);
+                var isValid = Array.isArray(self.values) ? +self.value < self.values.length : _.hasOwn(self.values, self.value);
 
                 if (!isValid) {
                     let validValues = [];

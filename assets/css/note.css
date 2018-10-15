@@ -1,6 +1,6 @@
 .note {
-    position: fixed;
-    top: 60px; right: 0; bottom: 0;
+    position: absolute;
+    top: 35px; right: 0; bottom: 0;
     width: 30%; min-width: 320px;
     background-color: #e5e4e2;
     z-index: 5;

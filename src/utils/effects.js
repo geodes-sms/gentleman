@@ -1,7 +1,8 @@
 import { UTIL } from './utils.js';
+import { HELPER } from './helpers.js';
 import { UI } from './../enums.js';
 
-export const Effect = (function (me) {
+export const Effect = (function (me, _) {
 
     /**
      * Shows an element
@@ -44,7 +45,8 @@ export const Effect = (function (me) {
      * @param {HTMLElement} el 
      */
     me.disable = function (el) {
-        if (el.hasAttribute(UI.DISABLED)) {
+        const Elements = ['BUTTON', 'COMMAND', 'FIELDSET', 'INPUT', 'KEYGEN', 'OPTGROUP', 'OPTION', 'SELECT', 'TEXTAREA'];
+        if (Elements.indexOf(el.tagName) !== -1) {
             el.disabled = true;
         }
 
@@ -52,4 +54,4 @@ export const Effect = (function (me) {
     };
 
     return me;
-})(UTIL);
+})(UTIL, HELPER);

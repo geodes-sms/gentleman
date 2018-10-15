@@ -12,7 +12,7 @@ export const PointerProjection = (function ($, _) {
                 get() { return this._value; },
                 set(val) {
                     if (this.pointsTo) {
-                        MODEL.projections[+this.pointsTo].unreference(this.id);
+                        MODEL.projections[+this.pointsTo].removeReference(+this.id);
                         this.pointsTo = null;
                     }
                     this._value = val;
@@ -22,7 +22,7 @@ export const PointerProjection = (function ($, _) {
                         var refProjection = MODEL.projections[val];
                         this.pointsTo = +val;
                         this._input.textContent = refProjection.value;
-                        refProjection.addReference(self.id);
+                        refProjection.addReference(+this.id);
                         $.removeClass(this._input, UI.EMPTY);
                     }
                 }

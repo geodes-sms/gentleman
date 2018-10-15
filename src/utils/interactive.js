@@ -51,7 +51,8 @@ export const Interactive = (function (me) {
 
         btnDelete.addEventListener('click', clickHandler);
         btnDelete.addEventListener('mouseenter', function (event) {
-            me.addClass(container, "delete");
+            if (!btnDelete.disabled)
+                me.addClass(container, "delete");
             // var emptyList = me.getElements('.empty', container);
             // for (let i = 0, len = emptyList.length; i < len; i++) {
             //     let item = emptyList.item(i);
@@ -67,7 +68,8 @@ export const Interactive = (function (me) {
             // }
         });
         btnDelete.addEventListener('mouseleave', function (event) {
-            me.removeClass(container, "delete");
+            if (!btnDelete.disabled)
+                me.removeClass(container, "delete");
             // var readList = me.getElements('.ignore', container);
             // for (let i = readList.length - 1; i >= 0; i--) {
             //     let item = readList.item(i);

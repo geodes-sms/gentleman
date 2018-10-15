@@ -50,6 +50,15 @@ export const ModelType = {
     PRIMITIVE: DataType
 };
 
+export const ModelAttributeProperty = {
+    NAME: 'name',    
+    TYPE: 'type',
+    VAL: 'val',
+    OPTIONAL: 'optional',
+    MULTIPLE: 'multiple',
+    REPRESENTATION: 'representation'
+};
+
 export const Key = {
     backspace: "Backspace",
     tab: "Tab",
