@@ -1,4 +1,4 @@
-import { DataType, EventType, UI } from '../enums.js';
+import { DataType, EventType, UI, RepresentationType, ModelAttributeProperty as MAttrProp } from '../enums.js';
 import { UTILS, HELPER } from '../utils/index.js';
 
 export const BaseProjection = (function ($, _) {
@@ -44,7 +44,7 @@ export const BaseProjection = (function ($, _) {
         /** @returns {ModelAttribute} */
         get modelAttribute() { return this._mAttribute; },
 
-        get text() { 
+        get text() {
             if (this.modelAttribute.type === DataType.boolean) {
                 let chk = this._input.firstChild;
                 return chk.checked ? this._input.dataset.representation : '';
@@ -52,10 +52,6 @@ export const BaseProjection = (function ($, _) {
             return this._input.textContent;
         },
         get value() {
-            if (this.modelAttribute.type === DataType.boolean) {
-                let chk = this._input.firstChild;
-                return chk.checked ? '' : this._input.dataset.representation;
-            }
             return this._input.textContent;
         },
         set value(val) {
@@ -155,8 +151,8 @@ export const BaseProjection = (function ($, _) {
             var inputProjection;
 
             if (mAttr.type === DataType.boolean) {
-                var chk = $.createCheckbox({ id: this._id, class: "attr--bool", data: { name: mAttr.name } });
-                chk.setAttribute('data-representation', mAttr.representation.val);
+                var chk = $.createCheckbox({ id: this._id, class: EL.ATTRIBUTE_BOOLEAN, data: { name: mAttr.name } });
+                chk.dataset[MAttrProp.REPRESENTATION] = mAttr.representation.val;
                 chk.addEventListener(EventType.CHANGE, function (e) {
                     var checkbox = $.getElement('input', this);
                     if (checkbox.checked) $.addClass(this, UI.CHECKED);
@@ -188,8 +184,8 @@ export const BaseProjection = (function ($, _) {
 
             inputProjection = self._input;
 
-            if (mAttr.isMultiple && mElement.representation.type == 'text') {
-                var li = $.createLi({ class: 'array-item', data: { prop: 'val', separator: mAttr.separator } });
+            if (mAttr.isMultiple && mElement.representation.type == RepresentationType.TEXT) {
+                var li = $.createLi({ class: 'array-item array-item--single', data: { prop: MAttrProp.VAL, separator: mAttr.separator } });
                 li.appendChild(inputProjection);
                 inputProjection = li;
             }

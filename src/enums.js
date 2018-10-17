@@ -51,12 +51,17 @@ export const ModelType = {
 };
 
 export const ModelAttributeProperty = {
-    NAME: 'name',    
+    NAME: 'name',
     TYPE: 'type',
     VAL: 'val',
     OPTIONAL: 'optional',
     MULTIPLE: 'multiple',
     REPRESENTATION: 'representation'
+};
+
+export const RepresentationType = {
+    TEXT: 'text',
+    TABLE: 'table'
 };
 
 export const Key = {
@@ -77,6 +82,11 @@ export const Key = {
     down_arrow: "ArrowDown",
     delete: "Delete",
     period: "."
+};
+
+export const ClassName = {
+    BTN: 'btn',
+    BTN_DELETE: 'btn-delete',
 };
 
 export const UI = (function () {
@@ -109,10 +119,25 @@ export const UI = (function () {
                 class: 'attr attr--extension',
                 toString() { return 'ABSTRACT ATTRIBUTE'; }
             },
+            ATTRIBUTE_BOOLEAN: {
+                name: ATTRIBUTE,
+                class: 'attr--bool',
+                toString() { return 'BOOLEAN ATTRIBUTE'; }
+            },
             BUTTON: {
                 name: BUTTON,
                 class: 'btn',
                 toString() { return 'BUTTON'; }
+            },
+            BUTTON_ADD: {
+                name: BUTTON,
+                class: 'btn btn-add',
+                toString() { return 'ADD BUTTON'; }
+            },
+            BUTTON_DELETE: {
+                name: BUTTON,
+                class: 'btn btn-delete',
+                toString() { return 'DELETE BUTTON'; }
             },
             BUTTON_MENU: {
                 name: BUTTON,

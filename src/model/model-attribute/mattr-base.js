@@ -86,7 +86,14 @@ export const ModelAttributeBase = (function ($, _, ERR) {
                     });
                 }
 
-                return projection.createInput();
+                let result = projection.createInput();
+                if (isMultiple) {
+                    result.appendChild($.createButtonDelete(result, function () {
+                        self.remove(self.projections.indexOf(projection));
+                        events.emit('model.change', 'ModelElement[l.79]:delete');
+                    }));
+                }
+                return result;
             } else if (self.MODEL.isElement(type)) {
                 newpath = _.addPath(path, isMultiple ? 'val[' + valIndex + ']' : 'val');
                 let mElement = self.MODEL.createModelElement(val);
@@ -118,6 +125,7 @@ export const ModelAttributeBase = (function ($, _, ERR) {
                             $.addClass(item, "block");
                             if (isLast) return renderButton(item, ButtonType.New, mElement);
                         } else {
+                            $.addClass(item, "array-item--inline");
                             if (isLast) return renderButton(item, ButtonType.Add, mElement);
                         }
                     } else {
@@ -212,16 +220,15 @@ export const ModelAttributeBase = (function ($, _, ERR) {
             var self = this;
 
             if (this.elements.length) {
-                let output = "";
-                this.elements.forEach(function (el) {
-                    output += _.toBoolean(self._source.inline) ? el.toString() : '\n' + el.toString();
-                });
+                let output = this.elements.map(function (el) {
+                    return _.toBoolean(self._source.inline) ? el.toString() : '\n' + el.toString();
+                }).join(_.valOrDefault(self.separator, ''));
                 return output;
             }
 
             if (this.projections.length) {
                 let arr = this.projections.filter(function (p) { return !_.isNullOrWhiteSpace(p.text); });
-                
+
                 let output = arr.map(function (p) {
                     var val = p.text;
                     return self.type === DataType.string ? '"' + val + '"' : val;
@@ -237,7 +244,7 @@ export const ModelAttributeBase = (function ($, _, ERR) {
             return "";
         }
     };
- 
+
     _.defProp(pub, 'value', {
         get() { return this._source.val; },
         set(val) {

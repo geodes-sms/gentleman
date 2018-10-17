@@ -2,19 +2,14 @@ import { UTILS, HELPER } from './../utils/index.js';
 import { MultiValueAttribute, SingleValueAttribute, PrepareModelAttribute } from './model-attribute/index.js';
 import { AbstractProjection } from './../projection/index.js';
 import { Exception } from './../exception.js';
-import { HTMLAttribute } from './../enums.js';
+import { HTMLAttribute, RepresentationType } from './../enums.js';
 import { events } from './../pubsub.js';
 
 export const ModelElement = (function ($, _, ERR) {
     "use strict";
 
-    const DOC = typeof module !== 'undefined' && module.exports ? {} : document;
     const OPTION = 'option';
     const COMPOSITION = 'composition';
-    const RepresentationType = {
-        TEXT: 'text',
-        TABLE: 'table'
-    };
 
     var pub = {
         /**
@@ -107,7 +102,7 @@ export const ModelElement = (function ($, _, ERR) {
             if (self._source.representation.type === RepresentationType.TEXT) {
                 return self.representation_handler();
             } else if (self._source.representation.type === RepresentationType.TABLE) {
-                var fragment = DOC.createDocumentFragment();
+                var fragment = $.createDocFragment();
 
                 var col = self._source.representation.col;
                 var cell = self._source.representation.cell;
@@ -145,13 +140,13 @@ export const ModelElement = (function ($, _, ERR) {
 
                 return fragment;
             } else {
-                return DOC.createTextNode("");
+                return $.createTextNode("");
             }
         },
         composition_handler() {
             var self = this;
             var compo = this.composition;
-            var container = DOC.createDocumentFragment();
+            var container = $.createDocFragment();
 
             // get options (unused composition elements)
             var modelComposition = self.model.getModelElement(self.name)[COMPOSITION];
@@ -248,16 +243,16 @@ export const ModelElement = (function ($, _, ERR) {
                                 let keyword = $.createSpan({ class: 'keyword', text: block.val });
                                 if (block.color) keyword.style.color = block.color;
                                 fragment.appendChild(keyword);
-                                fragment.appendChild(DOC.createTextNode(" "));
+                                fragment.appendChild($.createTextNode(" "));
                             } else if (block.type === "text") {
                                 let keyword = $.createSpan({ text: block.val });
                                 fragment.appendChild(keyword);
-                                fragment.appendChild(DOC.createTextNode(" "));
+                                fragment.appendChild($.createTextNode(" "));
                             }
                         } else if (self._source[key]) {
                             let keyword = $.createSpan({ class: 'keyword', text: self._source[key] });
                             fragment.appendChild(keyword);
-                            fragment.appendChild(DOC.createTextNode(" "));
+                            fragment.appendChild($.createTextNode(" "));
                         }
                         break;
                     case '#':
@@ -280,7 +275,7 @@ export const ModelElement = (function ($, _, ERR) {
 
                         break;
                     default:
-                        fragment.appendChild(DOC.createTextNode(arr[i] == 'space' ? " " : arr[i]));
+                        fragment.appendChild($.createTextNode(arr[i] == 'space' ? " " : arr[i]));
                         break;
                 }
             }
@@ -496,16 +491,16 @@ export const ModelElement = (function ($, _, ERR) {
                             let keyword = $.createSpan({ class: 'keyword', text: block.val });
                             if (block.color) keyword.style.color = block.color;
                             fragment.appendChild(keyword);
-                            fragment.appendChild(DOC.createTextNode(" "));
+                            fragment.appendChild($.createTextNode(" "));
                         } else if (block.type === "text") {
                             let keyword = $.createSpan({ text: block.val });
                             fragment.appendChild(keyword);
-                            fragment.appendChild(DOC.createTextNode(" "));
+                            fragment.appendChild($.createTextNode(" "));
                         }
                     } else if (this._source[key]) {
                         let keyword = $.createSpan({ class: 'keyword', text: this._source[key] });
                         fragment.appendChild(keyword);
-                        fragment.appendChild(DOC.createTextNode(" "));
+                        fragment.appendChild($.createTextNode(" "));
                     }
                     break;
                 case '#':
@@ -528,7 +523,7 @@ export const ModelElement = (function ($, _, ERR) {
 
                     break;
                 default:
-                    fragment.appendChild(DOC.createTextNode(arr[i] == 'space' ? " " : arr[i]));
+                    fragment.appendChild($.createTextNode(arr[i] == 'space' ? " " : arr[i]));
                     break;
             }
         }

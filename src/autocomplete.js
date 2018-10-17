@@ -3,7 +3,6 @@ import { UTILS, HELPER } from './utils/index.js';
 
 export const Autocomplete = (function ($, _) {
     const AUTOCOMPLETE_HANDLER = 'autocompleteHandler';
-    const DOC = typeof module !== 'undefined' && module.exports ? {} : document;
     
     /**
      * @class Autocomplete
@@ -142,7 +141,7 @@ export const Autocomplete = (function ($, _) {
             var self = this;
 
             // initialize autocomplete data
-            var fragment = DOC.createDocumentFragment();
+            var fragment = $.createDocFragment();
 
             for (let i = 0, len = self.data.length; i < len; i++) {
                 self._items.push(i);

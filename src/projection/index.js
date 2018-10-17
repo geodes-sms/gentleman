@@ -1,4 +1,4 @@
-import { BaseProjection } from './base.js';
+import { BaseProjection } from './projection-base.js';
 import { AbstractProjection } from './abstract.js';
 import { EnumProjection } from './enum.js';
 import { DataTypeProjection } from './datatype.js';

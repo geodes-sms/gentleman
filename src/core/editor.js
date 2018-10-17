@@ -1,3 +1,5 @@
+import { openConv } from './convo.js';
+import { State } from './state.js';
 import { UTILS, HELPER } from './../utils/index.js';
 import { Autocomplete } from './../autocomplete.js';
 import { Exception } from './../exception.js';
@@ -46,69 +48,11 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, ERR) {
     var mql = window.matchMedia('(max-width: 800px)');
 
     /**
-     * State management
-     * @lends state#
-     */
-    const state = {
-        /**
-         * Creates a `state` instance
-         * @returns {state} state instance
-         */
-        create: function () {
-            var instance = Object.create(this);
-
-            var past = [];
-            var future = [];
-
-            /**
-             * @memberof state#
-             */
-            var undo = function () {
-                future = [instance.current, ...future];
-                instance.current = past.pop();
-            };
-
-            var redo = function () {
-                past = [...past, instance.current];
-                instance.current = future[0];
-                future = future.slice(1);
-            };
-
-            var set = function (val) {
-                past = [...past, instance.current];
-                instance.current = _.cloneObject(val);
-                future = [];
-            };
-
-            var clear = function () {
-                past = [];
-                future = [];
-            };
-
-            _.defProp(instance, 'hasUndo', {
-                get() { return past.length > 0; },
-            });
-            _.defProp(instance, 'hasRedo', {
-                get() { return future.length > 0; },
-            });
-
-            Object.assign(instance, { undo, redo, set, clear });
-
-            return instance;
-        },
-        init(val) {
-            this.clear();
-            this.current = _.cloneObject(val);
-        },
-        current: undefined
-    };
-
-    /**
      * @lends Editor
      */
     var pub = {
         /** @type {state} */
-        state: state.create(),
+        state: State.create(),
         menu: null,
         note: null,
         MM: null,
@@ -313,98 +257,6 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, ERR) {
             this.currentLine = this.currentLine.firstChild;
             this.currentLine.contentEditable = false;
         },
-        openConv() {
-            var self = this;
-
-            const CONVO = 'convo';
-            const CONVO_USER = [CONVO, 'convo--user'];
-            const CONVO_GENTLEMAN = [CONVO, 'convo--gentleman', 'font-gentleman'];
-
-            var container = $.getElement(dot('convo-container'));
-            var greeting = $.createP({ class: CONVO_GENTLEMAN });
-            var qq, convo;
-            if (container) {
-                $.show(container);
-                convo = $.getElement(dot('convo-wrapper'));
-                convo.appendChild(greeting);
-                qq = $.getElement(dot('question'));
-            } else {
-                container = $.createDiv({ class: 'convo-container' });
-                convo = $.createDiv({ class: ['convo-wrapper'] });
-                convo.appendChild(greeting);
-                qq = $.createTextArea({ class: ['question'], placeholder: "Ask a question" });
-                qq.addEventListener(EventType.KEYDOWN, function (event) {
-                    switch (event.key) {
-                        case Key.enter:
-                            var val = qq.value;
-                            var q = $.createP({ class: CONVO_USER, text: val });
-                            convo.appendChild(q);
-                            qq.value = "";
-
-                            // delay answer => conv feeling (UX)
-                            setTimeout(function () {
-                                var a = $.createP({ class: CONVO_GENTLEMAN });
-                                convo.appendChild(a);
-                                var ask_response = ask(val);
-                                $.TypeWriter(a, ask_response, function () {
-                                    if (ask_response.close) {
-                                        setTimeout(function () { $.hide(container); }, 500);
-                                    }
-                                });
-                            }, 200);
-
-                            event.preventDefault();
-                            event.stopPropagation();
-
-                            break;
-                        case Key.backspace:
-                            event.stopPropagation();
-
-                            break;
-                        case Key.escape:
-                            $.hide(container);
-                            event.stopPropagation();
-
-                            break;
-                        default:
-                            break;
-                    }
-
-                });
-                $.appendChildren(container, [convo, qq]);
-                self.body.appendChild(container);
-            }
-            $.TypeWriter(greeting, [{ type: 0, val: "Hello, how may I help you?" }]);
-            qq.focus();
-
-            /**
-             * Process question
-             * @param {string} qq question
-             * @returns {string} answer
-             */
-            function ask(qq) {
-                const THANK_YOU = ['thx', 'ty', 'thanks', 'thank'];
-                const POLITE = ["You're welcome.", "I'm happy to help.", "Glad I could help.", "Anytime.", "It was nothing.", "No problem.", "Don't mention it.", "It was my pleasure."];
-                const BYE = ['bye', 'close', 'exit', 'done'];
-
-                // remove accents and keep words
-                var words = _.removeAccents(qq).replace(/[^a-zA-Z0-9 _-]/gi, '').split(' ');
-                if (words.findIndex(function (val) { return val.toLowerCase() === 'version'; }) !== -1) {
-                    return [
-                        { type: 0, val: "You are currently using Gentleman " },
-                        { type: 1, val: "version " + __VERSION }
-                    ];
-                } else if (words.findIndex(function (val) { return THANK_YOU.indexOf(val.toLowerCase()) !== -1; }) !== -1) {
-                    return [{ type: 0, val: POLITE[_.random(POLITE.length - 1)] }];
-                } else if (words.findIndex(function (val) { return BYE.indexOf(val.toLowerCase()) !== -1; }) !== -1) {
-                    let result = [{ type: 0, val: "Good bye, happy coding :)" }];
-                    result.close = true;
-                    return result;
-                } else {
-                    return [{ type: 0, val: "Sorry, I cannot answer this question at the moment. Ask me again later." }];
-                }
-            }
-        },
         bindEvents: function () {
             var self = this;
 
@@ -453,7 +305,7 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, ERR) {
                         break;
                     case 'g':
                         if (lastKey === Key.ctrl) {
-                            self.openConv();
+                            openConv.call(self);
                             event.preventDefault();
                         }
                         break;
@@ -531,7 +383,6 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, ERR) {
                 var data = [];
 
                 if ($.hasClass(target, 'option')) {
-                    let path = target.getAttribute('data-path');
                     let position = target.getAttribute('data-position');
                     position = position.split('..');
                     var min = position[0];
@@ -587,7 +438,7 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, ERR) {
                 var target = event.target;
                 if (currentContainer) $.removeClass(currentContainer, 'current');
 
-                if ($.hasClass(target, 'attr')) {
+                if ($.hasClass(target, EL.ATTRIBUTE.class)) {
                     let projection = self.getProjection(target.id);
                     if (projection.isDisabled) return;
 
@@ -613,7 +464,7 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, ERR) {
 
                 var parent = target.parentElement;
                 var projection = self.getProjection(target.id);
-                var lblError = $.getElement(hash(target.id + 'error'), parent);
+                var lblError = $.getElement(hash(target.id + ERROR), parent);
 
                 if (projection.validate()) {
                     if (lblError) {
@@ -624,7 +475,7 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, ERR) {
                     $.removeClass(target, ERROR);
                 } else {
                     if (!lblError) {
-                        lblError = $.createSpan({ id: target.id + 'error', class: 'error-marker' });
+                        lblError = $.createSpan({ id: target.id + ERROR, class: 'error-marker' });
                         let container = $.createSpan();
                         target.insertAdjacentElement('beforebegin', container);
                         container.appendChild(target);

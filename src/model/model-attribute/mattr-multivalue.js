@@ -1,6 +1,6 @@
 import { ModelAttributeBase } from './mattr-base.js';
 import { createProjection } from './fn.js';
-import { UI, ModelAttributeProperty as Prop } from '../../enums.js';
+import { UI, ModelAttributeProperty as Prop, ClassName as CN } from '../../enums.js';
 import { UTILS, HELPER } from '../../utils/index.js';
 import { Exception } from '../../exception.js';
 import { events } from '../../pubsub.js';
@@ -233,14 +233,16 @@ export const MultiValueAttribute = (function ($, _, ERR) {
         postChange() {
             var self = this;
 
+            const CLASS_BTN_DELETE = '.' + CN.BTN_DELETE;
+
             // Disable all delete buttons if the number of elements is 
             // lower or equal to the minimum required (specified in the model)
-            var buttons = $.getElements('.btn-delete', self.eHTML);
+            var buttons = [];
+            self.projections.forEach(function (p) { buttons.push($.getElement(CLASS_BTN_DELETE, p.element)); });
+            self.elements.forEach(function (el) { buttons.push($.getElement(CLASS_BTN_DELETE, el.eHTML)); });
             var fn = self.min < self.count ? $.enable : $.disable;
             // Change the state (enabled|disabled) of the buttons found.
-            for (let i = 0, len = buttons.length; i < len; i++) {
-                fn(buttons[i]);
-            }
+            buttons.filter(function (btn) { return btn !== undefined; }).forEach(function (btn) { fn(btn); });
         }
     });
 

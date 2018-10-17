@@ -7,6 +7,13 @@ cache:
   directories:
   - node_modules
 
+env:
+  - CODECOV_TOKEN="dc4d0145-94b4-4401-b887-7c22d2460208"
+
+script:
+  - npm run test
+  - npm run report-coverage
+
 notifications:
   email: false
   slack:

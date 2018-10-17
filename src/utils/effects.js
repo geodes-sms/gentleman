@@ -4,6 +4,8 @@ import { UI } from './../enums.js';
 
 export const Effect = (function (me, _) {
 
+    const Elements = ['BUTTON', 'COMMAND', 'FIELDSET', 'INPUT', 'KEYGEN', 'OPTGROUP', 'OPTION', 'SELECT', 'TEXTAREA'];
+
     /**
      * Shows an element
      * @param {Element} el Element
@@ -34,8 +36,8 @@ export const Effect = (function (me, _) {
      * @param {HTMLElement} el Element
      */
     me.enable = function (el) {
-        if (el.hasAttribute(UI.DISABLED)) {
-            el.disabled = false;
+        if (Elements.indexOf(el.tagName) !== -1) {
+            el.disabled = true;
         }
 
         el.dataset.disabled = false;
@@ -45,7 +47,6 @@ export const Effect = (function (me, _) {
      * @param {HTMLElement} el 
      */
     me.disable = function (el) {
-        const Elements = ['BUTTON', 'COMMAND', 'FIELDSET', 'INPUT', 'KEYGEN', 'OPTGROUP', 'OPTION', 'SELECT', 'TEXTAREA'];
         if (Elements.indexOf(el.tagName) !== -1) {
             el.disabled = true;
         }

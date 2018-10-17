@@ -3,6 +3,8 @@ import { UI } from './../enums.js';
 
 export const Interactive = (function (me) {
 
+    const EL = UI.Element;
+
     me.createOptionSelect = function (min, max, path) {
         var input = me.createSpan({
             class: ['option', UI.EMPTY],
@@ -27,7 +29,7 @@ export const Interactive = (function (me) {
     };
     me.createButtonAdd = function (clickHandler) {
         var btnAdd = me.createButton({
-            class: ['btn', 'btn-add'],
+            class: EL.BUTTON_ADD,
             text: "Add",
             data: { action: 'add' }
         });
@@ -44,7 +46,7 @@ export const Interactive = (function (me) {
      */
     me.createButtonDelete = function (container, clickHandler) {
         var btnDelete = me.createButton({
-            class: ['btn', 'btn-delete'],
+            class: EL.BUTTON_DELETE,
             text: "✖",
             data: { action: 'remove' }
         });

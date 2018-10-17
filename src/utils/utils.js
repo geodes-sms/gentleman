@@ -1,4 +1,5 @@
 ﻿import { HELPER } from './helpers.js';
+import { __VERSION } from '../global.js';
 
 export const UTIL = (function (_) {
     const DOC = typeof module !== 'undefined' && module.exports ? {} : document;
@@ -128,35 +129,40 @@ export const UTIL = (function (_) {
         },
         /**
          * Adds one or many classes to an element if it doesn't exist
-         * @param {HTMLElement} e element
+         * @param {HTMLElement} el Element
          * @param {string} c classes
          */
-        addClass(e, c) {
+        addClass(el, c) {
             // If c is an Array => Format c as a space-separated string
             if (Array.isArray(c)) {
                 c = c.map(function (c) { return _.valOrDefault(c.class, c); }).join(' ');
             }
+            var strClass = _.valOrDefault(c.class, c);
 
-            if (_.isNullOrWhiteSpace(e.className))
-                e.className = c;
-            else if (!pub.hasClass(e, c))
-                e.className += " " + c;
+            if (_.isNullOrWhiteSpace(el.className))
+                el.className = strClass;
+            else if (!pub.hasClass(el, c))
+                el.className += " " + strClass;
         },
-        // Toggle a class for an element
-        toggleClass(e, c) {
-            if (this.hasClass(e, c))
-                this.removeClass(e, c);
+        /**
+         * Adds or removes a class from an element depending on the class's presence.
+         * @param {HTMLElement} el 
+         * @param {string} c ClassName
+         */
+        toggleClass(el, c) {
+            if (this.hasClass(el, c))
+                this.removeClass(el, c);
             else
-                this.addClass(e, c);
+                this.addClass(el, c);
         },
         // Replace a class with another for an element
-        replaceClass(c1, c2, e) {
-            if (this.hasClass(e, c1))
-                e.className = e.className.replace(c1, c2);
-            else if (pub.hasClass(e, c2))
-                e.className = e.className.replace(c2, c1);
+        replaceClass(el, c1, c2) {
+            if (this.hasClass(el, c1))
+                el.className = el.className.replace(c1, c2);
+            else if (pub.hasClass(el, c2))
+                el.className = el.className.replace(c2, c1);
             else
-                this.addClass(c2, e);
+                this.addClass(el, c2);
         },
 
         /**
@@ -166,310 +172,6 @@ export const UTIL = (function (_) {
         removeChildren(node) {
             while (node.hasChildNodes())
                 node.removeChild(node.lastChild);
-        },
-
-        /**
-         * Creates the element for the specified tagName
-         * @param {string} tagName element
-         * @returns {HTMLElement}
-         */
-        createElement(tagName, eId, eClass) {
-            var el = DOC.createElement(tagName);
-            if (eId) el.id = eId;
-            if (eClass) this.addClass(el, eClass);
-            return el;
-        },
-        /**
-         * Creates a document fragment
-         */
-        createDocFragment() {
-            return DOC.createDocumentFragment();
-        },
-        createLineBreak() { return this.createElement('br'); },
-        /**
-         * Creates a <link> element with some attributes
-         * @param {*} rel 
-         * @param {*} href 
-         * @param {*} attr 
-         */
-        createLink(rel, href, attr) {
-            var link = this.createElement("link");
-            link.rel = rel;
-            link.href = href;
-
-            if (attr) {
-                this.addAttributes(link, attr);
-            }
-
-            return link;
-        },
-        /**
-         * Creates a <a> element with some attributes
-         * @param {string} href 
-         * @param {Object} [attr] attributes
-         * @returns {HTMLAnchorElement}
-         */
-        createAnchor(href, attr) {
-            var a = this.createElement('a');
-            if (href) {
-                a.href = href;
-            }
-            if (attr) {
-                this.addAttributes(a, attr);
-            }
-
-            return a;
-        },
-        /**
-         * Creates a <div> element with some attributes
-         * @param {Object} [attr] attributes
-         */
-        createDiv(attr) {
-            var div = this.createElement("div");
-
-            if (attr) {
-                this.addAttributes(div, attr);
-            }
-
-            return div;
-        },
-        createHeading(lvl, attr) {
-            var h = this.createElement(lvl);
-
-            if (attr) {
-                this.addAttributes(h, attr);
-            }
-
-            return h;
-        },
-        /**
-         * Creates a <div> element with some attributes
-         * @param {Object} [attr] attributes
-         */
-        createAside(attr) {
-            var aside = this.createElement('aside');
-
-            if (attr) {
-                this.addAttributes(aside, attr);
-            }
-
-            return aside;
-        },
-        /**
-         * Creates a <ul> element with some attributes
-         * @param {Object} [attr] attributes
-         */
-        createUl(attr) {
-            var ul = this.createElement("ul");
-
-            if (attr) {
-                this.addAttributes(ul, attr);
-            }
-
-            return ul;
-        },
-        /**
-         * Creates a <p> element with some attributes
-         * @param {Object} [attr] attributes
-         */
-        createP(attr) {
-            var p = this.createElement("p");
-
-            if (attr) {
-                this.addAttributes(p, attr);
-            }
-
-            return p;
-        },
-        createHeader(attr) {
-            var header = this.createElement('header');
-
-            if (attr) {
-                this.addAttributes(header, attr);
-            }
-
-            return header;
-        },
-        /**
-         * Create a <input.checkbox> element with some attributes
-         * @param {Object} [attr] attributes
-         */
-        createCheckbox(attr) {
-            var chk = this.createElement("input");
-            chk.type = "checkbox";
-            var lbl = this.createElement("label");
-            lbl.appendChild(chk);
-            if (attr) {
-                this.addAttributes(lbl, attr);
-            }
-
-            return lbl;
-        },
-        /**
-         * Create a <input.file> element with some attributes
-         * @param {Object} [attr] attributes
-         */
-        createFileInput(attr) {
-            var fileInput = this.createElement('input');
-            fileInput.type = "file";
-
-            if (attr) {
-                if (attr.accept) fileInput.accept = attr.accept;
-                this.addAttributes(fileInput, attr);
-            }
-
-            return fileInput;
-        },
-        /**
-         * Create a <label> element with some attributes
-         * @param {Object} [attr] attributes
-         */
-        createLabel(attr) {
-            var label = this.createElement('label');
-
-            if (attr) {
-                this.addAttributes(label, attr);
-            }
-
-            return label;
-        },
-        createTextArea(attr) {
-            /**
-             * @type {HTMLTextAreaElement}
-             */
-            var textArea = this.createElement('textarea');
-
-            if (attr) {
-                this.addFormAttributes(textArea, attr);
-                this.addAttributes(textArea, attr);
-            }
-
-            return textArea;
-        },
-        /**
-         * Creates a <li> element with some attributes
-         * @param {Object} [attr] attributes
-         */
-        createLi(attr, el) {
-            var li = this.createElement('li');
-
-            if (attr) {
-                this.addAttributes(li, attr);
-            }
-
-            if (Array.isArray(el)) {
-                this.appendChildren(li, el);
-            } else if (el) {
-                li.appendChild(el);
-            }
-
-            return li;
-        },
-        /**
-         * Creates a <span> element with some attributes
-         * @param {Object} [attr] attributes
-         */
-        createSpan(attr) {
-            var span = this.createElement("span");
-
-            if (attr) {
-                this.addAttributes(span, attr);
-            }
-
-            return span;
-        },
-        /**
-         * Creates a <strong> element with some attributes
-         * @param {Object} [attr] attributes
-         */
-        createStrong(attr) {
-            var strong = this.createElement("strong");
-
-            if (attr) {
-                this.addAttributes(strong, attr);
-            }
-
-            return strong;
-        },
-        /**
-         * Creates a <em> element with some attributes
-         * @param {Object} [attr] attributes
-         */
-        createEm(attr) {
-            var em = this.createElement("em");
-
-            if (attr) {
-                this.addAttributes(em, attr);
-            }
-
-            return em;
-        },
-        /**
-         * Creates a <button> element with some attributes
-         * @param {Object} [attr] attributes
-         */
-        createButton(attr) {
-            var btn = this.createElement("button");
-            btn.type = "button";
-
-            if (attr) {
-                this.addFormAttributes(btn, attr);
-                this.addAttributes(btn, attr);
-            }
-
-            return btn;
-        },
-        /**
-         * Creates a <tr> element with some attributes
-         * @param {Object} [attr] attributes
-         */
-        createTableRow(attr) {
-            var tr = this.createElement("tr");
-
-            if (attr) {
-                this.addAttributes(tr, attr);
-            }
-
-            return tr;
-        },
-        /**
-         * Creates a <td> element with some attributes
-         * @param {Object} [attr] attributes
-         */
-        createTableCell(attr) {
-            var td = this.createElement("td");
-
-            if (attr) {
-                this.addAttributes(td, attr);
-            }
-
-            return td;
-        },
-        /**
-         * Sets the attributes of an element
-         * @param {HTMLElement} el element
-         * @param {Object} attr attribute
-         */
-        addAttributes(el, attr) {
-            // HTML attributes
-            if (attr.id) el.id = attr.id;
-            if (attr.class) this.addClass(el, attr.class);
-            if (attr.text) el.textContent = attr.text;
-            if (attr.html) el.innerHTML = attr.html;
-
-            // Custom attributes
-            if (attr.data) Object.assign(el.dataset, attr.data);
-        },
-        /**
-         * Sets the attributes of a form element
-         * @param {HTMLInputElement|HTMLTextAreaElement} el element
-         * @param {Object} attr attribute
-         */
-        addFormAttributes(el, attr) {
-            if (attr.value) el.value = attr.value;
-            if (attr.placeholder) el.placeholder = attr.placeholder;
-            if (attr.disabled) el.disabled = attr.disabled;
-            if (attr.readonly) el.readOnly = attr.readonly;
         }
     };
 

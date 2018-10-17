@@ -3,3 +3,6 @@ build
 .internal
 .DS_STORE
 .vscode
+.nyc_output
+coverage
+*.lcov
