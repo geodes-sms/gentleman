@@ -1,6 +1,6 @@
-import { DataType, UI } from '../../enums.js';
-import { HELPER as _ } from '../../utils/index.js';
-import { BaseProjection, AbstractProjection, EnumProjection, PointerProjection, DataTypeProjection } from '../../projection/index.js';
+import { DataType, UI } from '@src/enums';
+import { HELPER as _ } from '@utils';
+import { BaseProjection, AbstractProjection, EnumProjection, PointerProjection, DataTypeProjection } from '@src/projection';
 
 export function createProjection(val) {
     const ABSTRACT = 'abstract';

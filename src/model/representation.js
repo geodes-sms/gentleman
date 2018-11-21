@@ -1,5 +1,5 @@
-import { Exception } from './../exception';
-import { UTILS } from './../utils';
+import { Exception } from '@src/exception';
+import { UTILS } from '@utils';
 
 var Representation = (function ($, ERR) {
 

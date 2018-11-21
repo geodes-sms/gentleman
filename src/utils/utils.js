@@ -1,5 +1,5 @@
-﻿import { HELPER } from './helpers.js';
-import { __VERSION } from '../global.js';
+﻿import { HELPER } from './helpers';
+import { __VERSION } from '@src/global';
 
 export const UTIL = (function (_) {
     const DOC = typeof module !== 'undefined' && module.exports ? {} : document;

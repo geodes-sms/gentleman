@@ -1,6 +1,6 @@
-import { UTIL } from './utils.js';
-import { HELPER } from './helpers.js';
-import { UI } from './../enums.js';
+import { UTIL } from './utils';
+import { HELPER } from './helpers';
+import { UI } from '@src/enums';
 
 export const Effect = (function (me, _) {
 

@@ -1,7 +1,7 @@
-import { UTILS, HELPER } from './../utils/index.js';
-import { __ENV, __VERSION } from './../global.js';
-import { EventType } from './../enums.js';
-import { events } from './../pubsub.js';
+import { UTILS, HELPER } from '@utils';
+import { __ENV, __VERSION } from '@src/global';
+import { EventType } from '@src/enums';
+import { events } from '@src/pubsub';
 
 export const Note = (function ($, _) {
 

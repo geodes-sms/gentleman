@@ -1,5 +1,5 @@
-import { Key, EventType, UI } from './enums.js';
-import { UTILS, HELPER } from './utils/index.js';
+import { Key, EventType, UI } from './enums';
+import { UTILS, HELPER } from './utils';
 
 export const Autocomplete = (function ($, _) {
     const AUTOCOMPLETE_HANDLER = 'autocompleteHandler';

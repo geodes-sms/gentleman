@@ -1,5 +1,5 @@
-import { UTILS, HELPER } from './../utils/index.js';
-import { UI } from './../enums.js';
+import { UTILS, HELPER } from '@utils';
+import { UI } from '@src/enums';
 import { BaseProjection } from './projection-base.js';
 
 export const PointerProjection = (function ($, _) {

@@ -1,9 +1,9 @@
-import { ModelAttributeBase } from './mattr-base.js';
-import { createProjection } from './fn.js';
-import { UI, ModelAttributeProperty as Prop, ClassName as CN } from '../../enums.js';
-import { UTILS, HELPER } from '../../utils/index.js';
-import { Exception } from '../../exception.js';
-import { events } from '../../pubsub.js';
+import { ModelAttributeBase } from './mattr-base';
+import { createProjection } from './fn';
+import { UI, ModelAttributeProperty as Prop, ClassName as CN } from '@src/enums';
+import { UTILS, HELPER } from '@utils';
+import { Exception } from '@src/exception';
+import { events } from '@src/pubsub';
 
 export const MultiValueAttribute = (function ($, _, ERR) {
     "use strict";

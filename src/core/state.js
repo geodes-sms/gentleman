@@ -1,4 +1,4 @@
-import { HELPER as _ } from './../utils/index.js';
+import { HELPER as _ } from '@utils';
 
 /**
  * State management

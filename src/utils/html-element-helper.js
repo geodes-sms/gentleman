@@ -1,5 +1,5 @@
-import { UTIL } from './utils.js';
-import { HELPER } from './helpers.js';
+import { UTIL } from './utils';
+import { HELPER } from './helpers';
 
 export const HTMLElementHelper = (function (me, _) {
     /** @type {document} */
@@ -300,7 +300,7 @@ export const HTMLElementHelper = (function (me, _) {
          */
         addAttributes(el, attr) {
             const ATTR_MAP = {
-                id: [assign, 'id'],
+                id: [assign],
                 text: [assign, 'textContent'],
                 html: [assign, 'innerHTML'],
                 accept: [assign],

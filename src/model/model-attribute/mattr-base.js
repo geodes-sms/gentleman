@@ -1,8 +1,8 @@
-import { DataType, UI } from '../../enums.js';
-import { UTILS, HELPER } from '../../utils/index.js';
-import { BaseProjection, AbstractProjection, EnumProjection, PointerProjection, DataTypeProjection } from '../../projection/index.js';
-import { Exception } from '../../exception.js';
-import { events } from '../../pubsub.js';
+import { DataType, UI } from '@src/enums';
+import { UTILS, HELPER } from '@utils';
+import { BaseProjection, AbstractProjection, EnumProjection, PointerProjection, DataTypeProjection } from '@src/projection';
+import { Exception } from '@src/exception';
+import { events } from '@src/pubsub';
 
 export const ModelAttributeBase = (function ($, _, ERR) {
     "use strict";

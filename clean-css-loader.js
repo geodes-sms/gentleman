@@ -1,5 +1,3 @@
-/*eslint no-console: ["error", { allow: ["warn", "error"] }] */
-
 const NativeModule = require('module');
 const getOptions = require("loader-utils/lib/getOptions");
 const sources = require('./clean-css-plugin').sources;
@@ -16,4 +14,3 @@ module.exports = function cleanCssLoader(css, map) {
 
     return callback(null, css, map);
 };
-

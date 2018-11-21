@@ -1,9 +1,9 @@
-import { UTILS as $, HELPER as _ } from './../utils/index.js';
-import { MultiValueAttribute, SingleValueAttribute, PrepareModelAttribute } from './model-attribute/index.js';
-import { AbstractProjection } from './../projection/index.js';
-import { Exception as ERR } from './../exception.js';
-import { HTMLAttribute, RepresentationType } from './../enums.js';
-import { events } from './../pubsub.js';
+import { UTILS as $, HELPER as _ } from '@utils';
+import { MultiValueAttribute, SingleValueAttribute, PrepareModelAttribute } from './model-attribute';
+import { AbstractProjection } from '@src/projection';
+import { Exception as ERR } from '@src/exception';
+import { HTMLAttribute, RepresentationType } from '@src/enums';
+import { events } from '@src/pubsub.js';
 
 const OPTION = 'option';
 const COMPOSITION = 'composition';

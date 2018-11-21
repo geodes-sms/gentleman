@@ -1,5 +1,5 @@
-import { DataType, EventType, UI, RepresentationType, ModelAttributeProperty as MAttrProp } from '../enums.js';
-import { UTILS, HELPER } from '../utils/index.js';
+import { DataType, EventType, UI, RepresentationType, ModelAttributeProperty as MAttrProp } from '@src/enums';
+import { UTILS, HELPER } from '@utils';
 
 export const BaseProjection = (function ($, _) {
     const EL = UI.Element;

@@ -1,5 +1,5 @@
-import { UTIL } from './utils.js';
-import { UI } from './../enums.js';
+import { UTIL } from './utils';
+import { UI } from '@src/enums';
 
 export const Interactive = (function (me) {
 

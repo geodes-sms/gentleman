@@ -1,13 +1,13 @@
-import { openConv } from './convo.js';
-import { State } from './state.js';
-import { UTILS, HELPER } from './../utils/index.js';
-import { Autocomplete } from './../autocomplete.js';
-import { Exception } from './../exception.js';
-import { MetaModel } from './../model/index.js';
-import * as Projection from '../projection/fn.js';
-import { __ENV, __VERSION } from './../global.js';
-import { Key, EventType, UI } from './../enums.js';
-import { events } from './../pubsub.js';
+import { openConv } from './convo';
+import { State } from './state';
+import { UTILS, HELPER } from '@utils';
+import { Autocomplete } from '@src/autocomplete';
+import { Exception } from '@src/exception';
+import { MetaModel } from '@src/model';
+import * as Projection from '@src/projection/fn';
+import { __ENV, __VERSION } from '@src/global';
+import { Key, EventType, UI } from '@src/enums';
+import { events } from '@src/pubsub';
 
 /** 
  * @namespace

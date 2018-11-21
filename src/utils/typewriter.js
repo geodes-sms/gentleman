@@ -1,4 +1,4 @@
-import { UTIL as $ } from './utils.js';
+import { UTIL as $ } from './utils';
 
 /**
  * This function simulates the typing

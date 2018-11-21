@@ -1,14 +1,14 @@
-import { Gentleman } from './core/index.js';
-import { UTILS, HELPER, TypeWriter } from './utils/index.js';
-import { __ENV } from './global.js';
-import { UI, Environment } from './enums.js';
+import { Gentleman } from './core/index';
+import { UTILS, HELPER, TypeWriter } from '@utils';
+import { __ENV } from './global';
+import { UI, Environment } from './enums';
 
-import './../assets/css/normalize.css';
-import './../assets/css/base.css';
-import './../assets/css/site.css';
-import './../assets/css/editor.css';
-import './../assets/css/note.css';
-import './../assets/css/state.css';
+import '@css/normalize.css';
+import '@css/base.css';
+import '@css/site.css';
+import '@css/editor.css';
+import '@css/note.css';
+import '@css/state.css';
 
 (function (GE, $, _) {
     var modelTest = {

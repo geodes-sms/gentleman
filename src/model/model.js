@@ -1,7 +1,7 @@
-import { UTILS as $, HELPER as _ } from '../utils/index.js';
-import { ModelElement } from './model-element.js';
-import { Exception as ERR } from './../exception.js';
-import { DataType, ModelType } from './../enums.js';
+import { UTILS as $, HELPER as _ } from '@utils';
+import { ModelElement } from './model-element';
+import { Exception as ERR } from '@src/exception';
+import { DataType, ModelType } from '@src/enums';
 
 const COMPOSITION = 'composition';
 const KEY_ROOT = '@root';

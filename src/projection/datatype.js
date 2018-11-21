@@ -1,6 +1,6 @@
-import { UTILS, HELPER } from '../utils/index.js';
-import { BaseProjection } from './projection-base.js';
-import { DataType } from './../enums.js';
+import { UTILS, HELPER } from '@utils';
+import { BaseProjection } from './projection-base';
+import { DataType } from '@src/enums';
 
 export const DataTypeProjection = (function ($, _) {
     return BaseProjection.create({

@@ -8,6 +8,14 @@ module.exports = {
         filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'dist')
     },
+    resolve: {
+        alias: {
+            '@': '.',
+            '@src': path.resolve(__dirname, 'src'),
+            '@utils': path.resolve(__dirname, 'src/utils'),
+            '@css': path.resolve(__dirname, 'assets/css')
+        }
+    },
     module: {
         rules: [
             {

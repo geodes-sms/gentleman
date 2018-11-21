@@ -1,7 +1,7 @@
-import { ModelAttributeBase } from './mattr-base.js';
-import { createProjection } from './fn.js';
-import { UI, ModelAttributeProperty as Prop } from '../../enums.js';
-import { UTILS, HELPER } from '../../utils/index.js';
+import { ModelAttributeBase } from './mattr-base';
+import { createProjection } from './fn';
+import { UI, ModelAttributeProperty as Prop } from '@src/enums';
+import { UTILS, HELPER } from '@utils';
 
 export const SingleValueAttribute = (function ($, _) {
 

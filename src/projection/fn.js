@@ -1,6 +1,6 @@
-import { EnumProjection } from './enum.js';
-import { AbstractProjection } from './abstract.js';
-import { PointerProjection } from './pointer.js';
+import { EnumProjection } from './enum';
+import { AbstractProjection } from './abstract';
+import { PointerProjection } from './pointer';
 
 /**
  * Returns a value indicating whether the projection is an Enum

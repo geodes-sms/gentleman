@@ -1,6 +1,6 @@
-import { __VERSION } from './../global.js';
-import { Key, EventType } from './../enums.js';
-import { UTILS as $, HELPER as _ } from './../utils/index.js';
+import { __VERSION } from '@src/global';
+import { Key, EventType } from '@src/enums';
+import { UTILS as $, HELPER as _ } from '@utils';
 
 /**
  * Preprend a string with a dot
