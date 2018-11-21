@@ -198,19 +198,19 @@ export const Menu = (function ($, _) {
                 }
             });
             events.on('editor.undo', function (hasUndo) {
-                self.btnUndo.disabled = !hasUndo;
-                self.btnRedo.disabled = false;
+                $.disable(self.btnUndo, !hasUndo);
+                $.enable(self.btnRedo);
             });
             events.on('editor.redo', function (hasRedo) {
-                self.btnRedo.disabled = !hasRedo;
+                $.disable(self.btnRedo, !hasRedo);
                 self.btnUndo.disabled = false;
             });
             events.on('editor.state.initialized', function () {
-                self.btnUndo.disabled = true;
-                self.btnRedo.disabled = true;
+                $.disable(self.btnUndo);
+                $.disable(self.btnRedo);
             });
             events.on('editor.save', function () {
-                self.btnUndo.disabled = false;
+                $.enable(self.btnUndo);
             });
         }
     };

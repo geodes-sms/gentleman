@@ -201,23 +201,14 @@ export const Editor = (function ($, _, Autocomplete, _MODEL, ERR) {
             events.emit('editor.clear');
         },
         init(model) {
-            const KEY_ROOT = '@root';
-
-            if (model) {
-                this.concrete = model;
-            } else {
-                let root = this.MM[KEY_ROOT];
-                if (root) {
-                    this.concrete = { root: JSON.parse(JSON.stringify(this.MM[root])) };
-                } else { // throw an error if the root was not found.
-                    let error = ERR.InvalidModelError.create("Root not found: The model does not contain an element with the attribute root");
-                    container.appendChild($.createP({ class: 'body', text: error.toString() }));
-                    throw error;
-                }
+            this.abstract = _MODEL.create(this.MM);
+            try {
+                this.concrete = model ? model : this.abstract.createModel();    
+            } catch (error) {
+                container.appendChild($.createP({ class: 'body', text: error.toString() }));
+                return;
             }
-
-            // initialize the model
-            this.abstract = _MODEL.create(this.MM, this._concrete);
+            this.abstract.init(this._concrete);
             this.current = this.abstract.createModelElement(this.concrete.root, true);
 
             // set the initial state

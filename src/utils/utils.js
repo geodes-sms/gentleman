@@ -155,15 +155,6 @@ export const UTIL = (function (_) {
             else
                 this.addClass(el, c);
         },
-        // Replace a class with another for an element
-        replaceClass(el, c1, c2) {
-            if (this.hasClass(el, c1))
-                el.className = el.className.replace(c1, c2);
-            else if (pub.hasClass(el, c2))
-                el.className = el.className.replace(c2, c1);
-            else
-                this.addClass(el, c2);
-        },
 
         /**
          * Removes all children of a node from the DOM
@@ -174,27 +165,6 @@ export const UTIL = (function (_) {
                 node.removeChild(node.lastChild);
         }
     };
-
-    /**
-     * Simulates typing
-     * @param {HTMLElement} element 
-     * @param {string} text 
-     */
-    function typeWrite(element, text, callback) {
-        var i = 0;
-        var len = text.length;
-        var timeout = Math.ceil(20 + Math.log(len) * (200 / len));
-        element.innerHTML += text[i++];
-        if (i < len) {
-            var a = setInterval(function () {
-                element.innerHTML += text[i++];
-                if (i == len) {
-                    clearInterval(a);
-                    if (callback) callback();
-                }
-            }, timeout);
-        }
-    }
 
     return pub;
 }(HELPER));

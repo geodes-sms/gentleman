@@ -1,7 +1,14 @@
 import { Gentleman } from './core/index.js';
-import { UTILS, HELPER } from './utils/index.js';
+import { UTILS, HELPER, TypeWriter } from './utils/index.js';
 import { __ENV } from './global.js';
 import { UI, Environment } from './enums.js';
+
+import './../assets/css/normalize.css';
+import './../assets/css/base.css';
+import './../assets/css/site.css';
+import './../assets/css/editor.css';
+import './../assets/css/note.css';
+import './../assets/css/state.css';
 
 (function (GE, $, _) {
     var modelTest = {
@@ -396,6 +403,7 @@ import { UI, Environment } from './enums.js';
         "@resources": ["relis.css"]
     };
 
+
     const container = $.getElement("[data-gentleman-editor]");
     const EL = UI.Element;
 
@@ -405,8 +413,8 @@ import { UI, Environment } from './enums.js';
     var splashscreen = $.createDiv({ id: 'splashscreen', class: 'splashscreen' });
     var instruction = $.createP({ class: 'instruction-container font-gentleman' });
 
-    switch (__ENV) {
-        case Environment.TEST:
+    switch (process.env.NODE_ENV) {
+        case Environment.DEV:  
             var editor = GE.Editor.create(modelTest);
             headerContent.appendChild($.createSpan({ id: 'language', class: 'model-language', text: editor.language }));
             GE.Menu.create().init(editor, headerContent);
@@ -429,7 +437,8 @@ import { UI, Environment } from './enums.js';
                         headerContent.appendChild($.createSpan({ id: 'language', class: 'model-language', text: editor.language }));
                         GE.Menu.create().init(editor, headerContent);
                         header.appendChild(headerContent);
-                        $.TypeWriter(instruction, [
+                        GE.Note.create().init(editor, container);
+                        TypeWriter(instruction, [
                             { type: 0, val: "Good news! Your Metamodel is valid and has been successfully loaded." },
                             { type: 0, val: "\nTo continue, open a saved model or create a new one." }
                         ], function () { });
@@ -442,11 +451,11 @@ import { UI, Environment } from './enums.js';
             lblSelector.appendChild(inputSelector);
             $.appendChildren(splashscreen, [instruction, lblSelector]);
             $.appendChildren(container, [header, splashscreen]);
-            $.TypeWriter(instruction, [
+            TypeWriter(instruction, [
                 { type: 0, val: "Hello friend, welcome to " },
                 { type: 1, val: "Gentleman" },
                 { type: 0, val: ".\nTo begin, please load a " },
-                { type: 2, val: "Metamodel.", tooltip: "A metamodel is ..." }
+                { type: 2, val: "Metamodel.\n", tooltip: "A metamodel is ..." }
             ], function () { $.show(lblSelector); });
 
             break;

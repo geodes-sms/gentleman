@@ -5,8 +5,6 @@ export const HTMLElementHelper = (function (me, _) {
     /** @type {document} */
     const DOC = typeof module !== 'undefined' && module.exports ? {} : document;
 
-    function echo(o) { o; }
-
     return Object.assign(me, {
         /**
          * Creates the element for the specified tagName
@@ -325,4 +323,6 @@ export const HTMLElementHelper = (function (me, _) {
             }
         }
     });
+    
+    function echo(o) { o; }
 })(UTIL, HELPER);

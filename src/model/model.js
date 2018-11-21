@@ -1,191 +1,138 @@
-import { UTILS, HELPER } from '../utils/index.js';
+import { UTILS as $, HELPER as _ } from '../utils/index.js';
 import { ModelElement } from './model-element.js';
-import { Exception } from './../exception.js';
+import { Exception as ERR } from './../exception.js';
 import { DataType, ModelType } from './../enums.js';
 
-/** 
- * @namespace
- */
-export const MetaModel = (function ($, _, ELEM, ERR) {
-    "use strict";
+const COMPOSITION = 'composition';
+const KEY_ROOT = '@root';
 
-    const COMPOSITION = 'composition';
+export const MetaModel = {
+    /** 
+     * Creates a `MetaModel` instance.
+     * @returns {MetaModel}
+     */
+    create(metamodel) {
+        var instance = Object.create(this);
+
+        instance._metamodel = metamodel;
+        instance.ID = [];      // list of IDs declared in the concrete model
+        instance.path = [];    // list of paths,
+        instance.options = [];
+        instance.projections = [];
+        instance.root = undefined;
+
+        return instance;
+    },
 
     /**
-     * @lends MetaModel#
+     * Gets the model
      */
-    var pub = {
-        /** 
-         * Creates a `MetaModel` instance.
-         */
-        create(metamodel, model) {
-            var instance = Object.create(this);
+    get concrete() { return this._model; },
+    /**
+     * Gets the metamodel
+     * @readonly
+     */
+    get MM() { return this._metamodel; },
 
-            // private members
-            instance._model = model;
-            instance._metamodel = metamodel;
-            instance.ID = [];      // list of IDs declared in the concrete model
-            instance.path = [];    // list of paths,
-            instance.options = [];
-            instance.projections = [];
-            instance.root = undefined;
+    /**
+     * Initialize the metamodel.
+     * @param {Object} model 
+     */
+    init(model) {
+        this._model = model;
+        this.ID = [];
+        this.path = [];
+        this.options = [];
+        this.projections = [];
 
-            return instance;
-        },
-        /**
-         * Initialize the metamodel.
-         * @param {Object} model 
-         */
-        init(model) {
-            var self = this;
+        return this;
+    },
 
-            // private members
-            self._model = model;
-            self.ID = [];      // list of IDs declared in the concrete model
-            self.path = [];    // list of paths,
-            self.options = [];
-            /** 
-             * @memberof MetaModel
-             */
-            self.projections = [];
-            self.root = undefined;
-        },
+    createModel() {
+        var root = this.MM[KEY_ROOT];
+        if (root) {
+            return { root: JSON.parse(JSON.stringify(this.MM[root])) };
+        }
+        // throw an error if the root was not found.
+        var error = ERR.InvalidModelError.create("Root not found: The metamodel does not contain an element with the attribute root");
+        throw error;
+    },
+    /**
+     * Creates and returns a model element
+     * @param {Object} el
+     * @param {boolean} asRoot
+     * @returns {ModelElement}
+     */
+    createModelElement(el, asRoot) {
+        asRoot = _.valOrDefault(asRoot, false);
+        var mElement = ModelElement.create(this, el);
+        if (asRoot) {
+            this.root = mElement;
+        }
 
-        /**
-         * Gets the model
-         */
-        get concrete() { return this._model; },
-        /**
-         * Gets the metamodel
-         * @readonly
-         */
-        get MM() { return this._metamodel; },
+        return mElement;
+    },
+    /**
+     * Gets a model element by type
+     * @param {string} type 
+     */
+    getModelElement(type) { return this.isElement(type) ? JSON.parse(JSON.stringify(this.MM[type])) : undefined; },
 
-        /**
-         * Creates and returns a model element
-         * @param {Object} el
-         * @param {boolean} origin
-         * @returns {ModelElement}
-         */
-        createModelElement(el, origin) {
-            origin = _.valOrDefault(origin, false);
-            var mElement = ELEM.create(this, el);
-            if (origin) {
-                this.root = mElement;
-            }
+    generateID() { return this.projections.length.toString(); },
 
-            return mElement;
-        },
-        addModelElement(attr) {
-            var instance = this.createInstance(attr.type);
-            attr.val.push(instance);
+    /**
+     * Create an instance of the model element
+     * @param {string} type 
+     */
+    createInstance(type) {
+        var element = this.getModelElement(type);
+        return element && !(this.isEnum(type) || this.isDataType(type)) ? _.cloneObject(element) : "";
+    },
 
-            return instance;
-        },
-        /**
-         * Remove an element from the model
-         * @param {Object} parent element's parent
-         * @param {Object} el element
-         * @param {HTMLElement} eHTML HTML element
-         */
-        removeElement(parent, el, prop) {
-            var arr = parent[prop];
-            arr.splice(arr.indexOf(el), 1);
+    /**
+     * Gets a value indicating whether this type is declared in the model
+     * @param {string} type 
+     * @returns {boolean}
+     */
+    isElement(type) { return this.MM[type] !== undefined; },
+    /**
+     * Gets a value indicating whether the element is of type "ENUM"
+     * @param {string} type 
+     * @returns {boolean}
+     */
+    isEnum(type) { return this.isElement(type) && this.MM[type].type == ModelType.ENUM; },
+    /**
+     * Gets a value indicating whether the element is of type "PRIMITIVE" or "DATATYPE"
+     * @param {string} type 
+     * @returns {boolean}
+     */
+    isDataType(type) { return _.hasOwn(DataType, type.split(':')[0]) || this.isModelDataType(type); },
+    /**
+     * Gets a value indicating whether the element is of type "DATATYPE"
+     * @param {string} type 
+     * @returns {boolean}
+     */
+    isModelDataType(type) { return this.isElement(type) && this.MM[type].type === ModelType.DATATYPE; },
+    /**
+     * Gets a value indicating whether the element has a composition
+     * @param {string} type 
+     * @returns {boolean}
+     */
+    hasComposition(type) { return this.isElement(type) && _.hasOwn(this.MM[type], COMPOSITION); },
 
-            if (el.optional && !el.multiple) arr.options.push(el);
+    /**
+     * Gets a model element type
+     * @param {Object} el element
+     */
+    getModelElementType(el) {
+        return this.isElement(el.name) ? getModelElementType.call(this, el) : undefined;
+    },
 
-            return arr;
-        },
-        /**
-         * Gets a model element by type
-         * @param {string} type 
-         */
-        getModelElement(type) { return this.isElement(type) ? JSON.parse(JSON.stringify(this.MM[type])) : undefined; },
-        /**
-         * Returns an element in a model using its path
-         * @param {string} path  
-         */
-        findModelElement(path) {
-            var components = path.split('.');
-            var me = this.concrete;
+    toString() { return this.root.toString(); }
+};
 
-            var dir, match, index, prop, name;
-            for (var i = 0; i < components.length; i++) {
-                dir = components[i];
-                if (/\[\d+\]/.test(dir)) {
-                    match = dir.match(/\[\d+\]/g);
-                    index = +match[0].match(/\d+/g);
-                    prop = dir.substring(0, dir.indexOf('['));
-                    me = me[prop][index];
-                } else if (/\[\w+\]/.test(dir)) {
-                    match = dir.match(/\[\w+\]/g);
-                    name = match[0].match(/\w+/g);
-                    prop = dir.substring(0, dir.indexOf('['));
-                    me = me[prop].find(function (x) {
-                        return x.name == name;
-                    });
-                } else {
-                    me = me[dir];
-                }
-            }
+function getModelElementType(el) {
+    if (!_.hasOwn(el, 'base')) return el.name;
 
-            return me;
-        },
-
-        generateID() { return this.projections.length.toString(); },
-
-        /**
-         * Create an instance of the model element
-         * @param {string} type 
-         */
-        createInstance(type) {
-            var element = this.getModelElement(type);
-            return element && !(this.isEnum(type) || this.isDataType(type)) ? _.cloneObject(element) : "";
-        },
-
-        /**
-         * Gets a value indicating whether this type is declared in the model
-         * @param {string} type 
-         * @returns {boolean}
-         */
-        isElement(type) { return this.MM[type] !== undefined; },
-        /**
-         * Gets a value indicating whether the element is of type "ENUM"
-         * @param {string} type 
-         * @returns {boolean}
-         */
-        isEnum(type) { return this.isElement(type) && this.MM[type].type == ModelType.ENUM; },
-        /**
-         * Gets a value indicating whether the element is of type "PRIMITIVE" or "DATATYPE"
-         * @param {string} type 
-         * @returns {boolean}
-         */
-        isDataType(type) { return _.hasOwn(DataType, type.split(':')[0]) || this.isModelDataType(type); },
-        /**
-         * Gets a value indicating whether the element is of type "DATATYPE"
-         * @param {string} type 
-         * @returns {boolean}
-         */
-        isModelDataType(type) { return this.isElement(type) && this.MM[type].type === ModelType.DATATYPE; },
-        /**
-         * Gets a value indicating whether the element has a composition
-         * @param {string} type 
-         * @returns {boolean}
-         */
-        hasComposition(type) { return this.isElement(type) && _.hasOwn(this.MM[type], COMPOSITION); },
-
-        /**
-         * Gets a model element type
-         * @param {Object} el element
-         */
-        getModelElementType(el) {
-            if (!_.hasOwn(el, 'base')) return el.name;
-
-            return this.getModelElementType(this.getModelElement(el.base)) + "." + el.name;
-        },
-
-        toString() { return this.root.toString(); }
-    };
-
-    return pub;
-})(UTILS, HELPER, ModelElement, Exception);
+    return getModelElementType(this.getModelElement(el.base)) + "." + el.name;
+}

@@ -35,23 +35,23 @@ export const Effect = (function (me, _) {
      * Enable an element
      * @param {HTMLElement} el Element
      */
-    me.enable = function (el) {
+    me.enable = function (el, val) {
         if (Elements.indexOf(el.tagName) !== -1) {
-            el.disabled = true;
+            el.disabled = val === false;
         }
 
-        el.dataset.disabled = false;
+        el.dataset.disabled = val === false;
     };
     /**
      * Disable an element
      * @param {HTMLElement} el 
      */
-    me.disable = function (el) {
+    me.disable = function (el, val) {
         if (Elements.indexOf(el.tagName) !== -1) {
-            el.disabled = true;
+            el.disabled = val !== false;
         }
 
-        el.dataset.disabled = true;
+        el.dataset.disabled = val !== false;
     };
 
     return me;
