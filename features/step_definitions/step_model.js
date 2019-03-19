@@ -1,8 +1,8 @@
 const { Given, When, Then } = require('cucumber');
 const { expect } = require('chai');
-const { HELPER: _ } = require('../../build/utils');
-const { MetaModel: MM } = require('../../build/model');
-const { Exception } = require('../../build/exception');
+const { HELPER: _ } = require('@utils');
+const { MetaModel: MM } = require('@src/model');
+const { Exception } = require('@src/exception');
 
 var metamodel = {
     "project": {

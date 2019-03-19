@@ -1,6 +1,6 @@
 const { Given, When, Then, Before } = require('cucumber');
 const { expect } = require('chai');
-const { ModelElement } = require('../../build/model');
+const { ModelElement } = require('@src/model');
 
 var metamodel = {
     "project": {

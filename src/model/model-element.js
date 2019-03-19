@@ -290,28 +290,7 @@ export const ModelElement = {
         else {
             mAttr = MultiValueAttribute.create(args);
             if (self.representation.type == "table") {
-                if (type == 'col') {
-                    mAttr.represent = "column";
-                    mAttr.fnMultiple = function () {
-                        var container = $.createDocFragment();
-
-                        if (mAttr.value.length === 0) {
-                            // create add button to add more item
-                            let btnCreate = $.createButton({ class: "btn btn-new" });
-                            btnCreate.appendChild($.createSpan({ class: "btn-new-content", html: "<strong>New</strong> " + mAttr.name }));
-                            // btnCreate.addEventListener('click', btnCreate_Click, false);
-                            container.appendChild(btnCreate);
-                        }
-
-                        for (var j = 0; j < mAttr.value.length; j++) {
-                            container.appendChild(mAttr.handler(mAttr._source, mAttr.value[j], mAttr.path));
-                        }
-
-                        return container;
-                    };
-                } else if (type == 'cell') {
-                    mAttr.represent = "cell";
-                }
+                tableHandler(mAttr, type);
             }
         }
 
@@ -397,6 +376,31 @@ export const ModelElement = {
         return result;
     }
 };
+
+function tableHandler(mAttr, type) {
+    if (type === 'col') {
+        mAttr.represent = "column";
+        mAttr.fnMultiple = function () {
+            var container = $.createDocFragment();
+
+            if (mAttr.value.length === 0) {
+                // create add button to add more item
+                let btnCreate = $.createButton({ class: "btn btn-new" });
+                btnCreate.appendChild($.createSpan({ class: "btn-new-content", html: "<strong>New</strong> " + mAttr.name }));
+                // btnCreate.addEventListener('click', btnCreate_Click, false);
+                container.appendChild(btnCreate);
+            }
+
+            for (var j = 0; j < mAttr.value.length; j++) {
+                container.appendChild(mAttr.handler(mAttr._source, mAttr.value[j], mAttr.path));
+            }
+
+            return container;
+        };
+    } else if (type == 'cell') {
+        mAttr.represent = "cell";
+    }
+}
 
 function optionHandler() {
     var self = this;

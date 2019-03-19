@@ -1,7 +1,7 @@
-import { ModelAttributeBase } from './mattr-base';
-import { createProjection } from './fn';
-import { UI, ModelAttributeProperty as Prop } from '@src/enums';
-import { UTILS, HELPER } from '@utils';
+import { ModelAttributeBase } from './mattr-base.js';
+import { createProjection } from './fn.js';
+import { UI, ModelAttributeProperty as Prop } from '@src/enums.js';
+import { UTILS, HELPER } from '@utils/index.js';
 
 export const SingleValueAttribute = (function ($, _) {
 
@@ -11,27 +11,25 @@ export const SingleValueAttribute = (function ($, _) {
     var pub = ModelAttributeBase.create({
         init() {
             var self = this;
-            if (!_.hasOwn(self._source, Prop.VAL))
-                self._source.val = self.MODEL.createInstance(self._type);
+            if (!_.hasOwn(this._source, Prop.VAL))
+                this._source.val = this.MODEL.createInstance(this._type);
 
-            self._fnUpdate = function (val) {
+            this._fnUpdate = function (val) {
                 self.value = val;
             };
         },
         render_attr() {
-            var self = this;
-
             var container;
 
-            if (self.representation) {
+            if (this.representation) {
                 container = $.createDiv({ class: [ATTR_WRAPPER, UI.EMPTY] });
-                let surround = self.representation.val.split('$val');
+                let surround = this.representation.val.split('$val');
                 Object.assign(container.dataset, { before: surround[0], after: surround[1] });
             } else {
                 container = $.createDocFragment();
             }
 
-            container.appendChild(self.handler(self._source, self.value, self.path));
+            container.appendChild(this.handler(this._source, this.value, this.path));
 
             return container;
         },

@@ -5,20 +5,6 @@ export const Environment = {
 };
 
 /**
- * Enum for datatype values.
- * @readonly
- * @enum {string}
- */
-export const DataType = {
-    ID: "ID",
-    IDREF: "IDREF",
-    boolean: "boolean",
-    integer: "integer",
-    real: "real",
-    string: "string"
-};
-
-/**
  * Enum for event type values.
  * @readonly
  * @enum {string}
@@ -29,40 +15,7 @@ export const EventType = {
     FOCUSIN: 'focusin',
     FOCUSOUT: 'focusout',
     KEYDOWN: 'keydown',
-    KEYUP: 'keyup'
-};
-
-export const HTMLAttribute = {
-    Optional: 'optional',
-    Type: 'type',
-    Name: 'name',
-    Path: 'path',
-    Error: 'error',
-    Prop: 'prop',
-    Position: 'position'
-};
-
-export const ModelType = {
-    ABSTRACT: 'abstract',
-    DATATYPE: 'data-type',
-    ENUM: 'enum',
-    ELEMENT: 'element',
-    RULE: 'rule',
-    PRIMITIVE: DataType
-};
-
-export const ModelAttributeProperty = {
-    NAME: 'name',
-    TYPE: 'type',
-    VAL: 'val',
-    OPTIONAL: 'optional',
-    MULTIPLE: 'multiple',
-    REPRESENTATION: 'representation'
-};
-
-export const RepresentationType = {
-    TEXT: 'text',
-    TABLE: 'table'
+    KEYUP: 'keyup',
 };
 
 export const Key = {
@@ -82,7 +35,56 @@ export const Key = {
     right_arrow: "ArrowRight",
     down_arrow: "ArrowDown",
     delete: "Delete",
-    period: "."
+    period: ".",
+};
+
+export const HTMLAttribute = {
+    Optional: 'optional',
+    Type: 'type',
+    Name: 'name',
+    Path: 'path',
+    Error: 'error',
+    Prop: 'prop',
+    Position: 'position',
+};
+
+/**
+ * Enum for datatype values.
+ * @readonly
+ * @enum {string}
+ */
+export const DataType = {
+    ID: "ID",
+    IDREF: "IDREF",
+    boolean: "boolean",
+    integer: "integer",
+    real: "real",
+    raw: "raw",
+    string: "string",
+};
+
+export const ModelType = {
+    ABSTRACT: 'abstract',
+    DATATYPE: 'data-type',
+    ENUM: 'enum',
+    ELEMENT: 'element',
+    RULE: 'rule',
+    PRIMITIVE: DataType,
+};
+
+export const ModelAttributeProperty = {
+    NAME: 'name',
+    TYPE: 'type',
+    VAL: 'val',
+    OPTIONAL: 'optional',
+    MULTIPLE: 'multiple',
+    REPRESENTATION: 'representation'
+};
+
+export const RepresentationType = {
+    TEXT: 'text',
+    TABLE: 'table',
+    GRAPHIC: 'graphic',
 };
 
 export const ClassName = {

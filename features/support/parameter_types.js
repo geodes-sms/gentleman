@@ -1,5 +1,5 @@
 const { defineParameterType } = require('cucumber');
-const { HELPER: _ } = require('../../build/utils');
+const { HELPER: _ } = require('@utils');
 
 defineParameterType({
     name: "boolean",

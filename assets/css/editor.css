@@ -505,7 +505,7 @@ main {
 
 .section.removable > .btn-delete,
 .array-item.block > .btn-delete {
-    top: 0; right: 0;
+    top: 0; right: -30px;
     color: rgba(85, 85, 85, 0.5);
     opacity: 1;
     background-color: #fff;

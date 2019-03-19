@@ -1,7 +1,8 @@
 import { DataType, UI } from '@src/enums';
 import { UTILS, HELPER } from '@utils';
-import { BaseProjection, AbstractProjection, EnumProjection, PointerProjection, DataTypeProjection } from '@src/projection';
+import { BaseProjection, AbstractProjection, EnumProjection, PointerProjection, DataTypeProjection, RawProjection } from '@src/projection';
 import { Exception } from '@src/exception';
+import { ModelElement } from './../model-element.js';
 import { events } from '@src/pubsub';
 
 export const ModelAttributeBase = (function ($, _, ERR) {
@@ -41,6 +42,8 @@ export const ModelAttributeBase = (function ($, _, ERR) {
         get name() { return this._name; },
         /** @type {string} */
         get type() { return this._type; },
+        /** @type {string} */
+        get description() { return this._description; },
         /** @type {boolean} */
         get isMultiple() { return this._isMultiple; },
         /** @type {boolean} */
@@ -79,10 +82,11 @@ export const ModelAttributeBase = (function ($, _, ERR) {
                 self.MODEL.path.push(isMultiple ? _.addPath(path, 'val[' + valIndex + ']') : path);
                 projection = self.createProjection(val);
 
+                let IDElement = ModelElement.isPrototypeOf(self.Element.parent) ? self.Element.parent : self.Element;
                 if (attr.type === DataType.ID) {
                     self.MODEL.ID.push({
                         projection: projection,
-                        type: self.MODEL.getModelElementType(self.Element._source)
+                        type: self.MODEL.getModelElementType(IDElement._source)
                     });
                 }
 
@@ -108,7 +112,7 @@ export const ModelAttributeBase = (function ($, _, ERR) {
                     if (!self.MODEL.hasComposition(type)) {
                         item = $.createLi({ class: 'array-item', prop: "val" });
                         // create an attribute wrapper and put the attributes in it
-                        item.dataset.separator = _.valOrDefault(attr.separator, ',');
+                        item.dataset.separator = _.valOrDefault(this.separator, ',');
                         var wrapper = $.createDiv({ class: ['attr-wrapper', 'multiple'] });
                         wrapper.appendChild(mElement.render(newpath, true));
                         item.appendChild(wrapper);
@@ -116,17 +120,22 @@ export const ModelAttributeBase = (function ($, _, ERR) {
                         mElement.index = valIndex;
 
                         // add delete button
-                        item.appendChild($.createButtonDelete(item, function () {
+                        let btnDelete = $.createButtonDelete(item, function () {
                             self.remove(self.elements.indexOf(mElement));
                             events.emit('model.change', 'ModelElement[l.79]:delete');
-                        }));
+                        });
+                        item.appendChild(btnDelete);
 
                         if (!isInline) {
                             $.addClass(item, "block");
-                            if (isLast) return renderButton(item, ButtonType.New, mElement);
+                            if (isLast) {
+                                return renderButton(item, ButtonType.New, mElement);
+                            }
                         } else {
                             $.addClass(item, "array-item--inline");
-                            if (isLast) return renderButton(item, ButtonType.Add, mElement);
+                            if (isLast) {
+                                return renderButton(item, ButtonType.Add, mElement);
+                            }
                         }
                     } else {
                         item = mElement.render(newpath);
@@ -173,6 +182,7 @@ export const ModelAttributeBase = (function ($, _, ERR) {
                 var children = self.handler(self._source, self.value[self.count - 1], self.path);
                 var newElem = self.getElement(-1);
                 var container = children.children[0];
+                
                 var btnDelete = $.createButtonDelete(container, function () {
                     self.remove(self.elements.indexOf(newElem));
                     events.emit('model.change', 'ModelAttribute[l.162]:delete');
@@ -274,7 +284,12 @@ export const ModelAttributeBase = (function ($, _, ERR) {
                 projection = EnumProjection.create(packet);
                 projection.values = element.values;
             } else if (M.isDataType(elementType)) {
-                projection = DataTypeProjection.create(packet);
+                if (elementType === 'raw') {
+                    projection = RawProjection.create(packet);
+                    projection.struct = element;
+                } else {
+                    projection = DataTypeProjection.create(packet);
+                }
                 projection.struct = element;
             } else {
                 projection = BaseProjection.create(packet);

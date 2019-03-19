@@ -1,6 +1,6 @@
 {
   "name": "gentleman",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Gentleman is a web-based projectionnal editor generator. It allows you to express and interact with your DSL.",
   "private": true,
   "directories": {
@@ -9,9 +9,7 @@
     "test": "./features"
   },
   "scripts": {
-    "pretest": "babel src -d build",
-    "test": "nyc cucumber-js",
-    "posttest": "rimraf ./build",
+    "test": "nyc cucumber-js --require-module @babel/register",
     "start": "cross-env NODE_ENV=development webpack-dev-server --open --config webpack.dev.js",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "build": "cross-env NODE_ENV=production webpack --config webpack.prod.js"
@@ -33,15 +31,19 @@
   },
   "homepage": "https://github.com/geodes-sms/gentleman#readme",
   "dependencies": {
-    "chai": "^4.1.2",
-    "cucumber": "^5.0.2",
+    "chai": "^4.2.0",
+    "cucumber": "^5.1.0",
     "jsdom": "^13.0.0",
     "rimraf": "^2.6.2"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.6",
+    "@babel/preset-env": "^7.1.6",
+    "@babel/register": "^7.0.0",
     "babel-core": "^6.26.3",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "babel-loader": "^8.0.4",
+    "babel-plugin-module-resolver": "^3.1.1",
     "clean-css": "^4.2.1",
     "codecov": "^3.1.0",
     "cross-env": "^5.2.0",
@@ -50,9 +52,9 @@
     "nyc": "^13.1.0",
     "style-loader": "^0.23.1",
     "url-loader": "^1.1.2",
-    "webpack": "^4.20.2",
-    "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.10",
-    "webpack-merge": "^4.1.4"
+    "webpack": "^4.28.3",
+    "webpack-cli": "^3.2.0",
+    "webpack-dev-server": "^3.1.14",
+    "webpack-merge": "^4.2.1"
   }
 }

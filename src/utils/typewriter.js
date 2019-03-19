@@ -1,4 +1,11 @@
-import { UTIL as $ } from './utils';
+import { HTMLElementHelper as $ } from './html-element-helper';
+
+export const TypeWriterType = {
+    NORMAL: 0,
+    BOLD: 1,
+    ITALIC: 2,
+    UNDERLINE: 3
+};
 
 /**
  * This function simulates the typing
@@ -17,30 +24,26 @@ export function TypeWriter(container, content, callback) {
 
     var a = setInterval(function () {
         var part = content[index];
-        var char = part.val[i];
+        var val = part.val;
+        var char = val[i];
 
         if (char === '\n') {
             current.appendChild($.createLineBreak());
         } else {
-            switch (+part.type) {
-                case 0: // normal
+            switch (part.type) {
+                case TypeWriterType.NORMAL:
                     break;
-                case 1: // bold
+                case TypeWriterType.BOLD:
                     if (i === 0) {
-                        let strong = $.createStrong();
-                        current.appendChild(strong);
-                        current = strong;
+                        current = createElement($.createStrong(), part.tooltip);
                     }
                     break;
-                case 2: // italic
+                case TypeWriterType.ITALIC:
                     if (i === 0) {
-                        let em = $.createEm();
-                        if (part.tooltip) em.dataset.tooltip = part.tooltip;
-                        current.appendChild(em);
-                        current = em;
+                        current = createElement($.createEm(), part.tooltip);
                     }
                     break;
-                case 3: // underline
+                case TypeWriterType.UNDERLINE:
                     break;
                 default:
                     break;
@@ -49,7 +52,7 @@ export function TypeWriter(container, content, callback) {
         }
         i++;
 
-        if (i === part.val.length) {
+        if (i === val.length) {
             current = container;
             i = 0;
             index++;
@@ -60,4 +63,11 @@ export function TypeWriter(container, content, callback) {
             if (callback) callback();
         }
     }, timeout);
+
+    function createElement(el, tooltip) {
+        if (tooltip) el.dataset.tooltip = tooltip;
+        current.appendChild(el);
+        
+        return el;
+    }
 }

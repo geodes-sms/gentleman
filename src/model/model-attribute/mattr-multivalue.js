@@ -13,32 +13,31 @@ export const MultiValueAttribute = (function ($, _, ERR) {
 
     var pub = ModelAttributeBase.create({
         init() {
-            var self = this;
+            const self = this;
 
-            var min = _.valOrDefault(self._source.multiple.min, 1);
-            self._min = min;
-            if (!_.hasOwn(self._source, Prop.VAL)) {
-                if (min == 0 || self.isOptional) {
-                    self._source.val = [];
+            var min = _.valOrDefault(this._source.multiple.min, 1);
+            this._min = min;
+            if (!_.hasOwn(this._source, Prop.VAL)) {
+                if (min == 0 || this.isOptional) {
+                    this._source.val = [];
                 } else if (min > 0) {
-                    self._source.val = [];
+                    this._source.val = [];
                     for (let i = 0; i < min; i++)
-                        self._source.val.push(self.MODEL.createInstance(self._type));
+                        this._source.val.push(this.MODEL.createInstance(this._type));
                 } else {
                     ERR.InvalidModelError.create("Unexpected value for the min property");
                 }
             }
 
-            self._isMultiple = true;
-            self._represent = "";
-            self.indexer = {};
+            this._isMultiple = true;
+            this._represent = "";
+            this.indexer = {};
 
-            self._fnUpdate = function (val, index) { self.set(val, index); };
+            this._fnUpdate = function (val, index) { self.set(val, index); };
         },
         createProjection: function (val) {
-            var self = this;
-            var projection = createProjection.call(self, val);
-            projection.index = self.count - 1;
+            var projection = createProjection.call(this, val);
+            projection.index = this.count - 1;
             return projection;
         },
 
@@ -51,18 +50,19 @@ export const MultiValueAttribute = (function ($, _, ERR) {
         multiple_handler() { this.fnMultiple(); },
 
         render_attr() {
-            var self = this;
-            var M = self.MODEL;
+            const self = this;
+
+            var M = this.MODEL;
             var container = $.createDocFragment();
 
-            if (self.fnMultiple) {
-                return self.fnMultiple();
+            if (this.fnMultiple) {
+                return this.fnMultiple();
             } else {
-                let isComposedElement = M.hasComposition(self.type);
+                let isComposedElement = M.hasComposition(this.type);
                 if (!isComposedElement) {
-                    if (self.isOptional) {
+                    if (this.isOptional) {
                         // create add button to add more item
-                        let btnCreate = $.createButtonNew(self.name, function () {
+                        let btnCreate = $.createButtonNew(this.name, function () {
                             self.eHTML = self.createContainer(isComposedElement);
                             $.insertBeforeElement(btnCreate, self.eHTML);
                             self.initValueHandler();
@@ -106,6 +106,7 @@ export const MultiValueAttribute = (function ($, _, ERR) {
                         // render
                         let li = (self.handler(self._source, instance, self.path));
                         $.insertBeforeElement(this, li);
+
                         let btnDelete = $.createButtonDelete(li, function () {
                             self.remove(self.count - 1);
                             events.emit('model.change', 'attribute:delete_clicked');
@@ -133,18 +134,17 @@ export const MultiValueAttribute = (function ($, _, ERR) {
         createContainer(isComposedElement) {
             if (isComposedElement) return $.createDiv({ class: 'attr-container' });
 
-            var self = this;
-            var M = self.MODEL;
+            var M = this.MODEL;
 
             var ul = $.createUl({
-                class: "bare-list " + (M.isElement(self.type) && M.getModelElement(self.type).extensions ?
+                class: 'bare-list ' + (M.isElement(this.type) && M.getModelElement(this.type).extensions ?
                     "list empty" : "array")
             });
 
-            if (self._source.inline === false) $.addClass(ul, "block");
+            if (this._source.inline === false) $.addClass(ul, "block");
             Object.assign(ul.dataset, { multiple: true });
-            if (self.representation) {
-                var surround = self.representation.val.split("$val");
+            if (this.representation) {
+                var surround = this.representation.val.split("$val");
                 Object.assign(ul.dataset, { before: surround[0], after: surround[1] });
             }
 
@@ -152,20 +152,16 @@ export const MultiValueAttribute = (function ($, _, ERR) {
         },
         get(index) { return this._source.val[index]; },
         getIndex(val) { return this._source.val.indexOf(val); },
-        getElement(index) {
-            var self = this;
-            return index < 0 ? self.elements[self.elements.length + index] : self.elements[index];
-        },
+        getElement(index) { return index < 0 ? this.elements[this.elements.length + index] : this.elements[index]; },
         set(val, index, el) {
-            var self = this;
 
-            if (self._source.val[index] !== val) {
-                self._source.val[index] = val;
+            if (this._source.val[index] !== val) {
+                this._source.val[index] = val;
                 events.emit('model.change', 'ModelAttributeMultivalue[l.405]:set');
             }
 
             if (el) {
-                self.elements[index] = el;
+                this.elements[index] = el;
             }
         },
         /**
@@ -173,74 +169,66 @@ export const MultiValueAttribute = (function ($, _, ERR) {
          * @param {object} val 
          */
         add(val) {
-            var self = this;
-
-            self._source.val.push(val);
+            this._source.val.push(val);
             events.emit('model.change', 'ModelAttributeMultivalue[l.416]:add');
-            self.postChange();
+            this.postChange();
 
-            return self.count;
+            return this.count;
         },
         /**
          * Removes an element from the value of the attribute at the specified index.
          * @param {number} index 
          */
         remove(index) {
-            var self = this;
-
             if (index > -1) {
-                if (self.projections[index]) self.projections.splice(index, 1)[0].remove();
-                if (self.elements[index]) self.elements.splice(index, 1)[0].remove();
-                self._source.val.splice(index, 1);
+                if (this.projections[index]) this.projections.splice(index, 1)[0].remove();
+                if (this.elements[index]) this.elements.splice(index, 1)[0].remove();
+                this._source.val.splice(index, 1);
             } else {
-                self.removeAll();
+                this.removeAll();
             }
 
-            self.postChange();
-            var isLast = self._source.val ? self.count === 0 : false;
-            if (self.name === 'category' && self.multiplicity.min > 0 && isLast) {
-                var instance = self.MODEL.createInstance(self.type);
-                var mElem = self.MODEL.createModelElement(instance);
-                self.eHTML.appendChild(self.handler(self._source, instance, self.path, true));
-                self.set(instance, index, mElem);
+            this.postChange();
+            var isLast = this._source.val ? this.count === 0 : false;
+            if (this.name === 'category' && this.multiplicity.min > 0 && isLast) {
+                var instance = this.MODEL.createInstance(this.type);
+                var mElem = this.MODEL.createModelElement(instance);
+                this.eHTML.appendChild(this.handler(this._source, instance, this.path, true));
+                this.set(instance, index, mElem);
             }
 
-            return self;
+            return this;
         },
         /**
          * Removes every child elements and projections attached to this attribute.
          * @returns {ModelAttributeMultivalue}
          */
         removeAll() {
-            var self = this;
-
-            self.projections.slice(0).forEach(function (projection) { projection.remove(); });
-            self.elements.slice(0).forEach(function (el) { el.remove(); });
+            this.projections.slice(0).forEach(function (projection) { projection.remove(); });
+            this.elements.slice(0).forEach(function (el) { el.remove(); });
 
             // restore the source value to its initial state
-            if (self._val !== undefined) {
-                self.value = self._val;
+            if (this._val !== undefined) {
+                this.value = this._val;
             } else {
-                delete self._source.val;
+                delete this._source.val;
             }
-            self.indexer = {};
+            this.indexer = {};
 
-            return self;
+            return this;
         },
         /**
          * This function is executed on every change made to the attribute value.
          */
         postChange() {
-            var self = this;
-
             const CLASS_BTN_DELETE = '.' + CN.BTN_DELETE;
 
             // Disable all delete buttons if the number of elements is 
             // lower or equal to the minimum required (specified in the model)
             var buttons = [];
-            self.projections.forEach(function (p) { buttons.push($.getElement(CLASS_BTN_DELETE, p.element)); });
-            self.elements.forEach(function (el) { buttons.push($.getElement(CLASS_BTN_DELETE, el.eHTML)); });
-            var fn = self.min < self.count ? $.enable : $.disable;
+            this.projections.forEach(function (p) { buttons.push($.getElement(CLASS_BTN_DELETE, p.element)); });
+            this.elements.forEach(function (el) { buttons.push($.getElement(CLASS_BTN_DELETE, el.eHTML)); });
+            var fn = this.min < this.count ? $.enable : $.disable;
             // Change the state (enabled|disabled) of the buttons found.
             buttons.filter(function (btn) { return btn !== undefined; }).forEach(function (btn) { fn(btn); });
         }
@@ -253,7 +241,7 @@ export const MultiValueAttribute = (function ($, _, ERR) {
         get() { return this._source.multiple; }
     });
     _.defProp(pub, 'separator', {
-        get() { return _.valOrDefault(this._source.separator, SEPARATOR); }
+        get() { return _.valOrDefault(this.multiplicity.separator, SEPARATOR); }
     });
     _.defProp(pub, 'min', {
         get() { return this._min; }

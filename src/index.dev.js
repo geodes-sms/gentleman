@@ -1,8 +1,15 @@
-const { Given, When, Then, Before } = require('cucumber');
-const { expect } = require('chai');
-const { MetaModel, ModelElement } = require('@src/model');
+import { Gentleman } from './core/index';
+import { UTILS, HELPER } from '@utils';
+import { __ENV } from './global';
+// CSS imports
+import '@css/normalize.css';
+import '@css/base.css';
+import '@css/site.css';
+import '@css/editor.css';
+import '@css/note.css';
+import '@css/state.css';
 
-var metamodel = {
+const METAMODEL_RELIS = {
     "project": {
         "name": "project",
         "attr": {
@@ -391,88 +398,26 @@ var metamodel = {
             "autosave": true
         }
     },
-    "@resources": ["relis.css"]
 };
 
-Given('a metamodel', function () {
-    const KEY_ROOT = '@root';
-    let root = metamodel[KEY_ROOT];
-    this.metamodel = MetaModel.create(metamodel).init({
-        root: JSON.parse(JSON.stringify(metamodel[root]))
-    });
-});
+const MODE = 'create';
 
-Given('a source', function () {
-    this.source = metamodel.project;
-});
-When('I try to create a model element', function () {
-    this.mElement = this.metamodel.createModelElement(this.source);
-});
-Then('I should get an instance of ModelElement', function () {
-    expect(ModelElement.isPrototypeOf(this.mElement)).to.be.true;
-});
-When('I try to create a model element as root', function () {
-    this.mElement = this.metamodel.createModelElement(this.source, true);
-});
-Then('the model its root set to the newly created model element', function () {
-    expect(this.metamodel).to.have.property('root', this.mElement);
-});
+(function (GE, $, _) {
+    const editor = GE.Editor.create(METAMODEL_RELIS);
+    const container = $.getElement("[data-gentleman-editor]");
 
-Given('a type', function () {
-    this.type = metamodel.project.name;
-});
-When('I try to get a model element', function () {
-    this._mElement = this.metamodel.getModelElement(this.type);
-});
-Then('I should get the structure of the model element', function () {
-    expect(this._mElement).to.deep.equal(metamodel.project);
-});
-When('I try to get a model missing element', function () {
-    this._mElement = this.metamodel.getModelElement('missing');
-});
-Then('I should get undefined', function () {
-    expect(this._mElement).to.be.undefined;
-});
+    var header = $.createHeader({ id: 'header', class: 'editor-header' });
+    var headerContent = $.createDiv({ class: "content-wrapper editor-header-content" });
+    var splashscreen = $.createDiv({ id: 'splashscreen', class: 'splashscreen' });
+    headerContent.appendChild($.createSpan({ id: 'language', class: 'model-language', text: editor.language }));
+    header.appendChild(headerContent);
+    $.appendChildren(container, [header, splashscreen]);
 
-Given('that we have {int} projection(s)', function (number) {
-    for (let i = 0; i < number; i++)
-        this.metamodel.projections.push({});
-});
-When('I try to generate a new identifier', function () {
-    this.id = this.metamodel.generateID();
-});
-Then('I should get the following identifier {string}', function (identifier) {
-    expect(this.id).to.equal(identifier);
-});
+    GE.Menu.create().init(editor, headerContent);
+    GE.Note.create().init(editor, container);
 
-Given('a {string}', function (type) {
-    this.type = type;
-});
-When('I check if it is an element', function () {
-    this.isElement = this.metamodel.isElement(this.type);
-});
-When('I check if it is an enum', function () {
-    this.isElement = this.metamodel.isEnum(this.type);
-});
-When(' check if it is a datatype', function () {
-    this.isElement = this.metamodel.isModelDataType(this.type);
-});
-When('I check if it is a datatype or primitive', function () {
-    this.isElement = this.metamodel.isDataType(this.type);
-});
-When('I check if it is has nested elements', function () {
-    this.isElement = this.metamodel.hasComposition(this.type);
-});
-Then('I should get the following {boolean}', function (isElement) {
-    expect(this.isElement).to.equal(isElement);
-});
-
-Given('an {string}', function (element) {
-    this.element = metamodel[element];
-});
-When('I try to get the type', function () {
-    this.type = this.metamodel.getModelElementType(this.element);
-});
-Then('I should the following type {string}', function (type) {
-    expect(this.type).to.equal(type);
-});
+    editor.init();
+    if (MODE === 'create') {
+        editor.code();
+    } 
+})(Gentleman, UTILS, HELPER);

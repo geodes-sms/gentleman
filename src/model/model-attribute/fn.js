@@ -1,15 +1,14 @@
 import { DataType, UI } from '@src/enums';
 import { HELPER as _ } from '@utils';
-import { BaseProjection, AbstractProjection, EnumProjection, PointerProjection, DataTypeProjection } from '@src/projection';
+import { BaseProjection, AbstractProjection, EnumProjection, PointerProjection, DataTypeProjection, RawProjection } from '@src/projection';
 
 export function createProjection(val) {
     const ABSTRACT = 'abstract';
 
-    var self = this;
-    var M = self.MODEL;
+    var M = this.MODEL;
 
-    var element = self.MODEL.getModelElement(self.type);
-    var packet = BaseProjection.prepare(self.MODEL.generateID(), val, self, self.type, self.fnUpdate);
+    var element = this.MODEL.getModelElement(this.type);
+    var packet = BaseProjection.prepare(this.MODEL.generateID(), val, this, this.type, this.fnUpdate);
     var projection;
 
     // abstract element
@@ -28,17 +27,20 @@ export function createProjection(val) {
         } else {
             projection = BaseProjection.create(packet);
         }
-    } else if (self.type === DataType.IDREF) {
+    } else if (this.type === DataType.IDREF) {
         projection = PointerProjection.create(packet);
-        projection.reference = self._source.ref;
+        projection.reference = this._source.ref;
+    } else if (this.type === 'raw') {
+        projection = RawProjection.create(packet);
+        projection.struct = element;
     } else {
         projection = BaseProjection.create(packet);
     }
 
-    // if (self.fnCreateProjection) self.fnCreateProjection(projection);
+    // if (this.fnCreateProjection) this.fnCreateProjection(projection);
 
-    self.projections.push(projection);
-    self.MODEL.projections.push(projection);
+    this.projections.push(projection);
+    this.MODEL.projections.push(projection);
 
     return projection;
 }
@@ -50,6 +52,7 @@ export function prepare(el, attr, path) {
         _source: attr,
         _val: attr.val,
         _name: attr.name,
+        _description: attr.description,
         _path: attrPath,
         _type: attr.type,
         _isOptional: _.toBoolean(attr.optional),

@@ -1,3 +1,14 @@
 {
-    "plugins": ["transform-es2015-modules-commonjs"]
+    "presets": ["@babel/preset-env"],
+    "plugins": [
+        ["module-resolver", {
+            "root": ["./src"],
+            "alias": {
+                "@": ".",
+                "@src": "./src",
+                "@utils": "./src/utils",
+                "@css": "./assets/css"
+            }
+        }]
+      ]
 }
