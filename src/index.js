@@ -1,4 +1,4 @@
-import { Gentleman } from './core/index';
+import { Gentleman } from './editor/index.js';
 import { UTILS, HELPER, TypeWriter, TypeWriterType } from '@utils';
 import { UI } from './enums';
 // CSS imports
@@ -12,6 +12,7 @@ import '@css/state.css';
 const EL = UI.Element;
 
 (function (GE, $, _) {
+    alert("Hello");
     const container = $.getElement("[data-gentleman-editor]");
     var header = $.createHeader({ id: 'header', class: 'editor-header' });
     var splashscreen = $.createDiv({ id: 'splashscreen', class: 'splashscreen' });

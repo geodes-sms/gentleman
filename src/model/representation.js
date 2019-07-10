@@ -1,7 +1,4 @@
-import { Exception } from '@src/exception';
-import { UTILS } from '@utils';
-
-var Representation = (function ($, ERR) {
+const Representation = (function () {
 
     var BaseRepresentation = {
         create: function (values) {
@@ -68,4 +65,4 @@ var Representation = (function ($, ERR) {
         Text: TextRepresentation,
         Table: TableRepresentation
     };
-})(UTILS, Exception);
+})();

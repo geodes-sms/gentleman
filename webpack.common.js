@@ -12,8 +12,11 @@ module.exports = {
         alias: {
             '@': '.',
             '@src': path.resolve(__dirname, 'src'),
+            '@global': path.resolve(__dirname, 'src/global'),
+            '@model': path.resolve(__dirname, 'src/model'),
             '@utils': path.resolve(__dirname, 'src/utils'),
-            '@css': path.resolve(__dirname, 'assets/css')
+            '@css': path.resolve(__dirname, 'assets/css'),
+            '@zenkai': path.resolve(__dirname, 'lib/zenkai'),
         }
     },
     module: {

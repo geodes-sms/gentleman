@@ -1,5 +1,4 @@
-import { MetaModel } from './model.js';
-import { ModelElement } from './model-element.js';
-import { MultiValueAttribute, SingleValueAttribute } from './model-attribute/index.js';
-
-export { MetaModel, ModelElement, MultiValueAttribute, SingleValueAttribute };
+export * from './model.js';
+export * from './metamodel.js';
+export * from './concept/model-element.js';
+export * from './attribute/index.js';

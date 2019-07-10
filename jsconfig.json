@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "./src/*"
+      ],
+      "@zenkai/*": [
+        "./lib/zenkai/*"
+      ],
+      "@src/*": [
+        "./src/*"
+      ],
+      "@global/*": [
+        "./src/global/*"
+      ],
+      "@model/*": [
+        "./src/model/*"
+      ],
+      "@utils/*": [
+        "./src/utils/*"
+      ],
+    }
+  },
+  "include": [
+    "src/**/*",
+    "lib/**/*"
+  ]
+}

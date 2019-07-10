@@ -6,8 +6,11 @@
             "alias": {
                 "@": ".",
                 "@src": "./src",
+                "@global": "./src/global",
+                "@model": "./src/model",
                 "@utils": "./src/utils",
-                "@css": "./assets/css"
+                "@css": "./assets/css",
+                "@zenkai": "./lib/zenkai"
             }
         }]
       ]

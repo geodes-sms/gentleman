@@ -1,4 +1,4 @@
-import { HTMLElementHelper as $ } from './html-element-helper';
+import { createStrong, createLineBreak, createEm } from '@zenkai/utils/dom/index.js';
 
 export const TypeWriterType = {
     NORMAL: 0,
@@ -28,19 +28,19 @@ export function TypeWriter(container, content, callback) {
         var char = val[i];
 
         if (char === '\n') {
-            current.appendChild($.createLineBreak());
+            current.appendChild(createLineBreak());
         } else {
             switch (part.type) {
                 case TypeWriterType.NORMAL:
                     break;
                 case TypeWriterType.BOLD:
                     if (i === 0) {
-                        current = createElement($.createStrong(), part.tooltip);
+                        current = createElement(createStrong(), part.tooltip);
                     }
                     break;
                 case TypeWriterType.ITALIC:
                     if (i === 0) {
-                        current = createElement($.createEm(), part.tooltip);
+                        current = createElement(createEm(), part.tooltip);
                     }
                     break;
                 case TypeWriterType.UNDERLINE:
@@ -67,7 +67,7 @@ export function TypeWriter(container, content, callback) {
     function createElement(el, tooltip) {
         if (tooltip) el.dataset.tooltip = tooltip;
         current.appendChild(el);
-        
+
         return el;
     }
 }
