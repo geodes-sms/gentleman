@@ -7,7 +7,9 @@
                 "@": ".",
                 "@src": "./src",
                 "@global": "./src/global",
+                "@editor": "./src/editor",
                 "@model": "./src/model",
+                "@projection": "./src/projection",
                 "@utils": "./src/utils",
                 "@css": "./assets/css",
                 "@zenkai": "./lib/zenkai"

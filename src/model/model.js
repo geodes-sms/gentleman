@@ -1,11 +1,7 @@
 import { cloneObject, hasOwn, valOrDefault, isNullOrUndefined } from "@zenkai/utils/datatype/index.js";
-import { ModelElement } from './concept/model-element.js';
 import { InvalidModelError } from '@src/exception/index.js';
-import { DataType, ModelType } from '@src/global/enums.js';
-import { BaseConcept } from "./concept/base-concept.js";
-
-const COMPOSITION = 'composition';
-const KEY_ROOT = '@root';
+import { DataType, ModelType } from '@global/enums.js';
+import { ConceptFactory } from "./concept/factory.js";
 
 export const Model = {
     /** 
@@ -17,31 +13,26 @@ export const Model = {
 
         instance.metamodel = metamodel;
 
-        instance.ID = [];      // list of IDs declared in the concrete model
-        instance.path = [];    // list of paths,
-        instance.options = [];
-        instance.projections = [];
-
         return instance;
     },
     schema: null,
+    /** @type {MetaModel} */
+    metamodel: null,
+    /** @type {BaseConcept} */
     root: null,
-    ID: null,
-    path: null,
-    options: null,
     editor: null,
 
     /**
-     * Initialize the metamodel.
+     * Initialize the model.
      * @param {Object} model 
+     * @param {Editor} editor 
+     * @param {Object} args 
      */
     init(model, editor, args) {
-        const MM = this.metamodel;
-        this.schema = !isNullOrUndefined(model) ? model : { "root": MM.getModelElement(MM.root) };
+        this.schema = !isNullOrUndefined(model) ? model : initSchema(this.metamodel);
         this.editor = editor;
-        this.root =  BaseConcept.create(this, this.schema.root);
+        this.root = ConceptFactory.createConcept(this, 'root', this.schema.root);
         Object.assign(this, args);
-    
 
         return this;
     },
@@ -54,12 +45,9 @@ export const Model = {
      */
     createConcept(name) {
         var schema = this.metamodel.getModelElement(name);
-        var concept = BaseConcept.create(schema);
 
-        return concept;
+        return ConceptFactory.createConcept(this, name, schema);
     },
-
-    generateID() { return this.projections.length.toString(); },
 
     /**
      * Create an instance of the model element
@@ -99,7 +87,7 @@ export const Model = {
      * @param {string} type 
      * @returns {boolean}
      */
-    hasComposition(type) { return this.isElement(type) && hasOwn(this.MM[type], COMPOSITION); },
+    hasComposition(type) { return this.isElement(type) && hasOwn(this.MM[type], 'composition'); },
 
     /**
      * Gets a model element type
@@ -112,8 +100,20 @@ export const Model = {
     toString() { return this.root.toString(); }
 };
 
+function initSchema(metamodel) {
+    var schema = { "root": metamodel.getModelElement(metamodel.root) };
+    if (!hasOwn(schema.root, 'name')) {
+        schema.root['name'] = metamodel.root;
+    }
+    return schema;
+}
+
 function getModelElementType(el) {
     if (!hasOwn(el, 'base')) return el.name;
 
     return getModelElementType(this.getModelElement(el.base)) + "." + el.name;
+}
+
+function isPrimitive(type) {
+    return hasOwn(DataType, type);
 }

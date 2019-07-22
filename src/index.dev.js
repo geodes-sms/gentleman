@@ -32,7 +32,7 @@ appendChildren(container, [header, splashscreen, note.container]);
 editor.init(null, METAMODEL_RELIS);
 
 if (MODE === 'create') {
-    editor.code();
+    editor.init(null, METAMODEL_GENTLEMAN);
 }
 
 language.textContent = editor.language;

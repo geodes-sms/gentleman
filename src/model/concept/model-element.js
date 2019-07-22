@@ -3,7 +3,7 @@ import { createTextNode, createDocFragment, createDiv, createElement, createSpan
 import { addPath, getDir } from "@zenkai/utils/path-utils.js";
 import { createButtonDelete, createOptionSelect } from "@utils/interactive.js";
 import { MultiValueAttribute, SingleValueAttribute, PrepareModelAttribute } from './../attribute';
-import { AbstractProjection } from '@src/field';
+import { AbstractProjection } from '@projection/field';
 import { InvalidModelError } from '@src/exception/index.js';
 import { HTMLAttribute, RepresentationType } from '@src/global/enums.js';
 import { events } from '@utils/pubsub.js';

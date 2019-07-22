@@ -4,8 +4,10 @@ export const ConcreteConcept = BaseConcept.create({
     create: function (schema) {
         var instance = Object.create(this);
 
+        instance.abstract = [];
+
         return instance;
     },
-    type: "ConcreteConcept",
+    abstract: null;
     representation: null
 });

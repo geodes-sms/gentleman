@@ -1,7 +1,7 @@
-import { DataType, UI } from '@src/global/enums';
+import { DataType, UI } from '@global/enums';
 import { hasOwn, toBoolean } from '@zenkai/utils/datatype/index.js';
 import { addPath } from '@zenkai/utils/path-utils.js';
-import { Field, AbstractProjection, EnumProjection, PointerProjection, DataTypeProjection, RawProjection } from '@src/field';
+import { Field, AbstractProjection, EnumProjection, PointerProjection, DataTypeProjection, RawProjection } from '@projection/field';
 
 export function createProjection(val) {
     const ABSTRACT = 'abstract';

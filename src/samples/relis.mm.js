@@ -1,8 +1,7 @@
 export const METAMODEL_RELIS = {
     "project": {
-        "name": "project",
         "attribute": {
-            "short_name": { "name": "short name", "type": "ID" },
+            "short_name": { "name": "short name", "type": "string", "id": true },
             "name": { "name": "name", "type": "string" }
         },
         "property": {
@@ -11,16 +10,21 @@ export const METAMODEL_RELIS = {
         },
         "component": [
             {
-                "id": "screening_section",
-                "name": "Screening section",
+                "name": "screening_section",
                 "optional": true,
                 "attribute": {
-                    "screen_action": { "name": "screen_action", "type": "ID", "optional": true },
+                    "screen_action": { "name": "screen_action", "type": "string", "id": true, "optional": true },
                     "screening": {
                         "name": "screening", "type": "screening",
                         "multiple": { "type": "list" }
                     }
                 },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "SCREENING #screen_action #screening"
+                    }
+                ],
                 "representation": {
                     "type": "text",
                     "k1": { "type": "keyword", "value": "SCREENING" },
@@ -81,7 +85,7 @@ export const METAMODEL_RELIS = {
             {
                 "type": "text",
                 "k1": { "type": "keyword", "value": "PROJECT" },
-                "layout": "PROJECT #short_name #name"
+                "layout": "PROJECT #short_name #name #_component[screening_section]"
             }
         ],
         "representation": {
@@ -101,20 +105,32 @@ export const METAMODEL_RELIS = {
     },
     "screening": {
         "name": "screening",
-        "composition": [{
+        "component": [{
+
+            "id": "reviews",
             "name": "reviews",
             "keyword": "Reviews",
-            "position": 1,
             "attribute": { "review_per_paper": { "name": "review_per_paper", "type": "integer", "value": "2" } },
+            "projection": [
+                {
+                    "type": "text",
+                    "layout": "screening #review_per_paper"
+                }
+            ],
             "representation": { "type": "text", "value": "$keyword #review_per_paper" }
         }, {
             "name": "conflict",
             "keyword": "Conflict",
-            "position": 2,
             "attribute": {
                 "conflict_type": { "name": "conflict_type", "type": "conflictType" },
                 "conflict_resolution": { "name": "conflict_resolution", "type": "conflictResolution", "value": "unanimity" }
             },
+            "projection": [
+                {
+                    "type": "text",
+                    "layout": "Conflict on #conflict_type resolved by #conflict_resolution"
+                }
+            ],
             "representation": { "type": "text", "value": "$keyword on #conflict_type resolved by #conflict_resolution" }
         }, {
             "name": "criteria",
@@ -175,6 +191,12 @@ export const METAMODEL_RELIS = {
             },
             "representation": { "type": "text", "value": "$keyword #phases" }
         }],
+        "projection": [
+            {
+                "type": "text",
+                "layout": "#_component[reviews] #_component[conflict]"
+            }
+        ],
         "representation": { "type": "text", "value": "$composition" }
     },
     "phase": {
@@ -273,7 +295,7 @@ export const METAMODEL_RELIS = {
         "attribute": {
             "name": { "name": "name", "type": "ID" },
             "title": { "name": "title", "type": "string", "optional": true },
-            "value": { "name": "value", "type": "IDREF", "ref": "category" },
+            "value": { "name": "value", "type": "reference", "ref": "category" },
             "chart": {
                 "name": "chart", "type": "graphType",
                 "multiple": { "type": "array" }
@@ -407,19 +429,18 @@ export const METAMODEL_RELIS = {
     },
     "conflictType": {
         "name": "conflictType",
-        "type": "enum",
+        "base": "string",
         "values": {
-            "exclusionCriteria": "Criteria",
+            "exclusionCriteria": {
+                "projection": { "type": "text", "layout": "Criteria" }
+            },
             "includeExclude": "Decision"
         }
     },
     "conflictResolution": {
         "name": "conflictResolution",
-        "type": "enum",
-        "values": {
-            "majority": "Majority",
-            "unanimity": "Unanimity"
-        }
+        "base": "string",
+        "values": ["majority", "unanimity"]
     },
     "graphType": {
         "name": "graphType",

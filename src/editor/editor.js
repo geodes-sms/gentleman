@@ -1,14 +1,14 @@
-import { cloneObject } from '@zenkai/utils/datatype/index.js';
+import { cloneObject, isEmpty } from '@zenkai/utils/datatype/index.js';
 import { getElement, getElements, createLink, createDiv, createSpan, createTextArea, createP, insertAfterElement, insertBeforeElement, preprendChild, removeChildren, conceal, addClass, removeClass, hasClass, windowWidth } from '@zenkai/utils/dom/index.js';
 import { Key, EventType, UI } from '@global/enums.js';
 import { MetaModel, Model } from '@model/index.js';
 import { hide, show } from '@utils/effects.js';
 import { createOptionSelect } from '@utils/interactive.js';
 import { Autocomplete } from './autocomplete';
-import { State } from './state';
-import * as Projection from '@src/field/fn';
+import { State } from './state.js';
+import * as Projection from '@projection/field/fn';
 import { events } from '@utils/pubsub.js';
-import { METAMODEL_GENTLEMAN } from '@src/samples/create.mm.js';
+
 
 const container = getElement("[data-gentleman-editor]");
 container.tabIndex = -1;
@@ -19,10 +19,6 @@ const EditorMode = {
     READ: 'read',
     EDIT: 'edit'
 };
-
-
-// Indicates whether the display is mobile mode
-var MOBILE = windowWidth() <= 700;
 
 /**
  * Preprend a string with a dot symbol
@@ -231,8 +227,7 @@ export const Editor = {
 
         var resources = this.metamodel.resources;
         // add stylesheets
-        if (resources) {
-            console.log("adding resources");
+        if (!isEmpty(resources)) {
             let dir = '../assets/css/';
 
             // remove stylesheets applied by previous meta-models
@@ -245,27 +240,6 @@ export const Editor = {
             });
         }
 
-    },
-    code() {
-        this.metamodel = METAMODEL_GENTLEMAN;
-        this.abstract = MetaModel.create(METAMODEL_GENTLEMAN);
-
-        this._language = this.metamodel.language;
-
-        this.concrete = this.abstract.createModel();
-        this.abstract.init(this._concrete);
-        this.current = this.abstract.createModelElement(this.concrete.root, true);
-
-        // set the initial state
-        this.state.init(this.concrete);
-
-        // clear the body
-        this.clear();
-        this.currentLine = this.body;
-        hide(getElement(hash('splashscreen')));
-
-        // draw the editor
-        this.render();
     },
     render() {
         if (!this.isInitialized) {
@@ -284,78 +258,32 @@ export const Editor = {
         var flag = false;
         var handled = false;
 
-        this.body.addEventListener(EventType.CLICK, function (event) {
-            if (!handled) {
-                self.autocomplete.hide();
-            } else {
-                handled = false;
-            }
-        }, false);
-
-        container.addEventListener(EventType.KEYUP, function (event) {
-            var target = event.target;
-            var projection = self.getProjection(target.id);
-
-            if (projection && target.textContent === "") {
-                projection.update();
-            }
-
-            if (lastKey == event.key) lastKey = -1;
-
-            switch (event.key) {
-                case Key.spacebar:
-                    if (lastKey == Key.ctrl) {
-                        if (projection && !projection.isDisabled) showAutoComplete(projection);
-                    }
-                    break;
-                case Key.delete:
-                    if (lastKey == Key.ctrl) {
-                        flag = true;
-                        projection.delete();
-                        flag = false;
-                    }
-                    break;
-                case "z":
-                    if (lastKey == Key.ctrl) {
-                        flag = true;
-                        self.state.undo();
-                        flag = false;
-                    }
-                    break;
-                case 'g':
-                    // chat terminal
-                    break;
-                default:
-                    break;
-            }
-        }, false);
+        // this.body.addEventListener(EventType.CLICK, function (event) {
+        //     if (!handled) {
+        //         self.autocomplete.hide();
+        //     } else {
+        //         handled = false;
+        //     }
+        // }, false);
 
         container.addEventListener(EventType.KEYDOWN, function (event) {
             var target = event.target;
             var parent = target.parentElement;
-            var projection = self.getProjection(target.id);
+            var field = self.fields[target.id - 1];
 
             switch (event.key) {
                 case Key.backspace:
-                    if (self.metamodel.isEnum(projection.type)) {
-                        projection.value = "";
-                    }
                     break;
                 case Key.ctrl:
-                    lastKey = Key.ctrl;
                     event.preventDefault();
                     break;
                 case Key.delete:
-                    if (self.metamodel.isEnum(projection.type)) {
-                        projection.value = "";
-                        // remove text content only
-                        // target.firstChild.nodeValue = "";
-                    }
+                    // remove text content only
+                    // target.firstChild.nodeValue = "";
                     break;
                 case Key.enter:
                     self.autocomplete.hasFocus = false;
                     target.blur(); // remove focus
-
                     event.preventDefault();
 
                     break;
@@ -367,8 +295,9 @@ export const Editor = {
                     self.autocomplete.hasFocus = false;
 
                     break;
-                case "z":
                 case 'g':
+                case "y":
+                case "z":
                     if (lastKey == Key.ctrl) {
                         event.preventDefault();
                     }
@@ -377,10 +306,52 @@ export const Editor = {
                 default:
                     break;
             }
+            lastKey = event.key;
 
             if (event.key.length === 1) {
                 removeClass(target, UI.EMPTY);
                 removeClass(parent, UI.EMPTY);
+            }
+        }, false);
+
+        container.addEventListener(EventType.KEYUP, function (event) {
+            var target = event.target;
+            var parent = target.parentElement;
+            var field = self.fields[target.id - 1];
+
+            // if (field && target.textContent === "") {
+            //     field.update();
+            // }
+
+            if (lastKey == event.key) lastKey = -1;
+
+            switch (event.key) {
+                case Key.spacebar:
+                    if (lastKey == Key.ctrl) {
+                        if (field && !field.isDisabled) {
+                            showAutoComplete(field);
+                        }
+                    }
+                    break;
+                case Key.delete:
+                    if (lastKey == Key.ctrl) {
+                        flag = true;
+                        field.delete();
+                        flag = false;
+                    }
+                    break;
+                case "z":
+                    if (lastKey == Key.ctrl) {
+                        flag = true;
+                        self.state.undo();
+                        flag = false;
+                    }
+                    break;
+                case 'g':
+                    // show actions
+                    break;
+                default:
+                    break;
             }
         }, false);
 
@@ -389,7 +360,7 @@ export const Editor = {
             handled = true;
 
             var target = event.target;
-            var projection = self.fields[target.id - 1];
+            var field = self.fields[target.id - 1];
 
             currentContainer = findLine(target);
             if (currentContainer) {
@@ -416,24 +387,24 @@ export const Editor = {
                 self.autocomplete.onSelect = function (val) {
                     optionHandler(val, target, data);
                 };
-            } else if (projection) {
+            } else if (field) {
                 //if (projection.isDisabled) return;
-                projection.focusIn();
-                events.emit('editor.change', projection);
+                field.focusIn();
+                events.emit('editor.change', field);
 
-                if (Projection.isExtension(projection)) {
-                    data = projection.valuesKV();
+                if (Projection.isExtension(field)) {
+                    data = field.valuesKV();
                     self.autocomplete.onSelect = function (attr) {
-                        let line = projection.implement(attr.key);
+                        let line = field.implement(attr.key);
                         getElement(f_class(EL.ATTRIBUTE), line).focus();
                     };
 
                     self.autocomplete.init(target, data);
-                } else if (Projection.isPointer(projection) || Projection.isEnum(projection)) {
-                    data = projection.valuesKV();
+                } else if (Projection.isPointer(field) || Projection.isEnum(field)) {
+                    data = field.valuesKV();
                     self.autocomplete.onSelect = function (attr) {
-                        projection.value = attr.key;
-                        projection.focus();
+                        field.value = attr.key;
+                        field.focus();
                     };
                     self.autocomplete.init(target, data);
                 } else
@@ -454,21 +425,21 @@ export const Editor = {
             var target = event.target;
             if (currentContainer) removeClass(currentContainer, 'current');
 
-            if (hasClass(target, EL.ATTRIBUTE.class)) {
-                let projection = self.getProjection(target.id);
-                if (projection.isDisabled) return;
+            // if (hasClass(target, EL.ATTRIBUTE.class)) {
+            //     let projection = self.getProjection(target.id);
+            //     if (projection.isDisabled) return;
 
-                if (projection) {
-                    projection.focusOut();
-                    projection.update();
-                }
+            //     if (projection) {
+            //         projection.focusOut();
+            //         projection.update();
+            //     }
 
-                if (self.autocomplete.hasFocus) {
-                    setTimeout(function () { validation_handler(target); }, 100);
-                } else {
-                    validation_handler(target);
-                }
-            }
+            //     if (self.autocomplete.hasFocus) {
+            //         setTimeout(function () { validation_handler(target); }, 100);
+            //     } else {
+            //         validation_handler(target);
+            //     }
+            // }
         }, false);
 
         events.on('model.change', function (from) {

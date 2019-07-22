@@ -26,13 +26,12 @@ main {
     z-index: 10;
 }
 
-#language {
+.model-language {
     align-self: center;
     margin-right: 5px;
     font-size: 1.5em; font-weight: 600;
     color: #36454F;
 }
-    #language:before{ content:"@"; font-weight: 700; }
 
 .lblSelector { 
     margin-right: 5px;
@@ -202,6 +201,29 @@ main {
     justify-content: flex-end;
 }
 
+.container {
+    position: relative;
+    margin-top: 10px;
+}
+
+.container-action {
+    position: absolute;
+    top: 0; right: 0;
+    display: flex;
+    font-size: 1rem;
+}
+
+.container-action .btn {
+    margin-right: 5px;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 1.3em; font-weight: 800;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px #555;
+}
+
 .convo-wrapper { padding: 5px 10px 0; box-sizing: border-box; }
 
 .convo { 
@@ -357,11 +379,11 @@ main {
 
     .attr.empty {
         margin-top: -1px;
-        padding: 1px 2px;
+        padding: 1px 3px 2px;
         max-width: 150px;
         border-top: 1px solid #FFD300;
         background-color: #fffff0;
-        box-shadow: 0 1px 1px #d9d9d9;
+        box-shadow: 0 1px 1px -1px #c0c0c0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

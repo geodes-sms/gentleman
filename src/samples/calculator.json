@@ -1,0 +1,48 @@
+{
+    "calculator": {
+        "attribute": {
+            "buffer": {
+                "name": "buffer",
+                "type": "number"
+            },
+            "total": {
+                "name": "total",
+                "type": "number"
+            }
+        },
+        "component": [
+            {
+                "id": "numbers",
+                "type": "button"
+            },
+            {
+                "id": "screen",
+                "name": "screen",
+                "attribute": {
+                    "screen_action": { "name": "screen_action", "type": "ID", "optional": true },
+                    "screening": {
+                        "name": "screening", "type": "screening",
+                        "multiple": { "type": "list" }
+                    }
+                }
+            }
+        ]
+    },
+    "button": {
+        "attribute": {
+            "calculator": {
+                "name": "calculator",
+                "type": "reference",
+                "reference": "calculator",
+                "refscope": "scope"
+            },
+            "label": {
+                "name": "label",
+                "type": "number"
+            }
+        },
+        "behavior": {
+            "click": "$calculator.buffer <= $label"
+        }
+    }
+}

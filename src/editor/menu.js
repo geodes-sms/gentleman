@@ -88,8 +88,8 @@ export const Menu = {
         this.btnCreate = createMenuButton('btnCreate', 'Create');
         this.btnEdit = createMenuButton("btnEdit", "Edit", true, true);
         this.btnRead = createMenuButton('btnRead', "Read", true);
-        this.btnUndo = createMenuButton('btnUndo', "Undo", true);
-        this.btnRedo = createMenuButton('btnRedo', "Redo", true);
+        // this.btnUndo = createMenuButton('btnUndo', "Undo", true);
+        // this.btnRedo = createMenuButton('btnRedo', "Redo", true);
         this.btnSave = createMenuButton('btnSave', "Save", true);
         this.btnCopy = createMenuButton('btnCopy', "Copy", true);
         this.btnPrint = createMenuButton('btnPrint', "Download", true, false, EL.ANCHOR.name);
@@ -101,7 +101,7 @@ export const Menu = {
             createMenuItem(this.btnSave),
             createMenuItem(this.btnCopy),
             createMenuItem(this.btnPrint),
-            createMenuItem([this.btnUndo, this.btnRedo]),
+            // createMenuItem([this.btnUndo, this.btnRedo]),
             createMenuItem([this.btnEdit, this.btnRead])
         ]);
 
@@ -204,32 +204,32 @@ export const Menu = {
                     editor.save();
 
                     break;
-                case self.btnUndo:
-                    editor.undo();
+                // case self.btnUndo:
+                //     editor.undo();
 
-                    break;
-                case self.btnRedo:
-                    editor.redo();
+                //     break;
+                // case self.btnRedo:
+                //     editor.redo();
 
-                    break;
+                //     break;
                 default:
                     break;
             }
         });
-        events.on('editor.undo', function (hasUndo) {
-            disable(self.btnUndo, !hasUndo);
-            enable(self.btnRedo);
-        });
-        events.on('editor.redo', function (hasRedo) {
-            disable(self.btnRedo, !hasRedo);
-            self.btnUndo.disabled = false;
-        });
-        events.on('editor.state.initialized', function () {
-            disable(self.btnUndo);
-            disable(self.btnRedo);
-        });
-        events.on('editor.save', function () {
-            enable(self.btnUndo);
-        });
+        // events.on('editor.undo', function (hasUndo) {
+        //     disable(self.btnUndo, !hasUndo);
+        //     enable(self.btnRedo);
+        // });
+        // events.on('editor.redo', function (hasRedo) {
+        //     disable(self.btnRedo, !hasRedo);
+        //     self.btnUndo.disabled = false;
+        // });
+        // events.on('editor.state.initialized', function () {
+        //     disable(self.btnUndo);
+        //     disable(self.btnRedo);
+        // });
+        // events.on('editor.save', function () {
+        //     enable(self.btnUndo);
+        // });
     }
 };

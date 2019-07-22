@@ -3,7 +3,7 @@ import { valOrDefault, isDerivedOf, toBoolean, defProp, cloneObject, hasOwn, isN
 import { createTextNode, createDocFragment, createDiv,  createLi, addClass, hasClass, } from "@zenkai/utils/dom/index.js";
 import { addPath, getDir } from "@zenkai/utils/path-utils.js";
 import { createButtonDelete, createButtonAdd, createButtonNew } from "@utils/interactive.js";
-import { Field, AbstractProjection, EnumProjection, PointerProjection, DataTypeProjection, RawProjection } from '@src/field';
+import { Field, AbstractProjection, EnumProjection, PointerProjection, DataTypeProjection, RawProjection } from '@projection/field';
 import { UnimplementedError } from '@src/exception/index.js';
 import { ModelElement } from './../concept/model-element.js';
 import { events } from '@utils/pubsub.js';
