@@ -1,4 +1,4 @@
-import { createButton, createSpan, addClass, removeClass } from '@zenkai/utils/dom/index.js';
+import { createButton, createSpan, addClass, removeClass } from '@zenkai';
 import { UI } from '@src/global/enums.js';
 
 const EL = UI.Element;

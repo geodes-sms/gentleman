@@ -1,5 +1,5 @@
 
-import { getElement, createDiv, createHeader, createP, createSpan, appendChildren, createInput, createLabel } from "@zenkai/utils/dom/index.js";
+import { getElement, createDiv, createHeader, createP, createSpan, appendChildren, createInput, createLabel } from "@zenkai";
 import { Gentleman as GE } from './editor/index.js';
 import { __ENV } from './global/global.js';
 import { UI } from './global/enums.js';

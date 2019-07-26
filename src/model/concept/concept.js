@@ -1,4 +1,4 @@
-import { isInt, isString, valOrDefault, hasOwn, isNullOrUndefined } from "@zenkai/utils/datatype/index.js";
+import { isInt, isString, valOrDefault, hasOwn, isNullOrUndefined } from "@zenkai";
 import { AttributeFactory } from "@model/attribute/factory.js";
 
 const COMPONENT_NOT_FOUND = -1;

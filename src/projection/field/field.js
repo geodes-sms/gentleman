@@ -1,6 +1,5 @@
 import { DataType, EventType, UI, RepresentationType, ModelAttributeProperty as MAttrProp } from '@src/global/enums.js';
-import { isDerivedOf, isNullOrWhitespace, valOrDefault } from '@zenkai/utils/datatype/index.js';
-import { addClass, removeClass, getElement, createLi, createSpan, addAttributes, removeChildren } from '@zenkai/utils/dom/index.js';
+import { addClass, removeClass, getElement, createLi, createSpan, addAttributes, removeChildren, isDerivedOf, isNullOrWhitespace, valOrDefault } from '@zenkai';
 
 const EL = UI.Element;
 
@@ -21,13 +20,14 @@ export const Field = {
         if (!instance.isOptional) {
             instance.validators.push(validateRequired);
         }
+
         if (isDerivedOf(instance, Field)) {
             instance.init();
         }
 
         return instance;
     },
-    id:null,
+    id: null,
     object: "BASE",
     prepare: function (id, val, mAttr, type, fnUpdate) {
         return Object.freeze({

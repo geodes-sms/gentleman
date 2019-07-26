@@ -1,8 +1,8 @@
 import { ModelAttributeBase } from './mattr-base.js';
 import { createProjection } from './fn.js';
 import { UI, ModelAttributeProperty as Prop } from '@src/global/enums.js';
-import { hasOwn } from '@zenkai/utils/datatype/index.js';
-import { createDocFragment, createDiv } from '@zenkai/utils/dom/index.js';
+import { hasOwn } from '@zenkai';
+import { createDocFragment, createDiv } from '@zenkai';
 
 export const SingleValueAttribute = (function () {
 

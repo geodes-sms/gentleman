@@ -1,6 +1,6 @@
-import { isInt, isString, valOrDefault } from "@zenkai/utils/datatype/index.js";
+import { isInt, isString, valOrDefault } from "@zenkai";
 import { ConceptFactory } from "./factory.js";
-import { createSpan, createDiv } from "@zenkai/utils/dom/index.js";
+import { createSpan, createDiv } from "@zenkai";
 
 const COMPONENT_NOT_FOUND = -1;
 

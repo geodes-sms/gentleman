@@ -1,9 +1,7 @@
-import { createDocFragment, createSpan, createTextNode, createLineBreak, addClass } from "@zenkai/utils/dom/index.js";
-import { isNullOrWhitespace, isNullOrUndefined } from "@zenkai/utils/datatype/index.js";
+import { createDocFragment, createSpan, createTextNode, createLineBreak, addClass, isNullOrWhitespace, isNullOrUndefined } from "@zenkai";
 import { InvalidModelError } from '@src/exception/index.js';
 import { Field } from "@projection/field/field.js";
 import { Projection } from "./projection.js";
-
 
 const tryResolve = (obj, prop, fallback) => isNullOrUndefined(obj) ? fallback : obj[prop];
 
@@ -24,7 +22,7 @@ export const TextualProjection = Projection.create({
     render() {
         var fragment = createDocFragment();
         var arr = this.schema.layout.replace(/ /g, " space ")
-            .replace(/(#(_component(\[\w+\])?|[A-Za-z0-9_])+)/g, " $1 ")
+            .replace(/(#((\[\w+\])?|[A-Za-z0-9_])+)/g, " $1 ")
             .split(" ")
             .filter(function (x) { return !isNullOrWhitespace(x); });
 
@@ -61,7 +59,7 @@ export const TextualProjection = Projection.create({
                     if (this.concept.hasAttribute(key)) {
                         let attribute = this.concept.getAttribute(key);
                         fragment.appendChild(attribute.render());
-                    } else if (key.startsWith('_component')) {
+                    } else if (key.startsWith('[')) {
                         let componentId = key.substring(key.indexOf('[') + 1, key.indexOf(']'));
                         let component = this.concept.getComponent(componentId);
                         fragment.appendChild(component.render());

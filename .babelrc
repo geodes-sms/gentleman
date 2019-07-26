@@ -1,19 +1,31 @@
 {
-    "presets": ["@babel/preset-env"],
-    "plugins": [
-        ["module-resolver", {
-            "root": ["./src"],
-            "alias": {
-                "@": ".",
-                "@src": "./src",
-                "@global": "./src/global",
-                "@editor": "./src/editor",
-                "@model": "./src/model",
-                "@projection": "./src/projection",
-                "@utils": "./src/utils",
-                "@css": "./assets/css",
-                "@zenkai": "./lib/zenkai"
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "modules": false
             }
-        }]
-      ]
+        ]
+    ],
+    "plugins": [
+        [
+            "module-resolver",
+            {
+                "root": [
+                    "./src"
+                ],
+                "alias": {
+                    "@": ".",
+                    "@src": "./src",
+                    "@global": "./src/global",
+                    "@editor": "./src/editor",
+                    "@model": "./src/model",
+                    "@projection": "./src/projection",
+                    "@utils": "./src/utils",
+                    "@css": "./assets/css",
+                    "@zenkai": "./node_modules/protolabo-zenkai/dist/zenkai.esm"
+                }
+            }
+        ]
+    ]
 }

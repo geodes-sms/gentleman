@@ -1,7 +1,7 @@
 import { 
-    createAside, createAnchor, getElement, createDocFragment, createHeading, createLineBreak, removeChildren, createP, createSpan, addClass, appendChildren, createLi, createUl } from '@zenkai/utils/dom/index.js';
+    createAside, createAnchor, getElement, createDocFragment, createHeading, createLineBreak, removeChildren, createP, createSpan, addClass, appendChildren, createLi, createUl } from '@zenkai';
 import { 
-    isNullOrWhitespace } from '@zenkai/utils/datatype/index.js';
+    isNullOrWhitespace } from '@zenkai';
 import { EventType } from '@src/global/enums.js';
 import { events } from '@utils/pubsub.js';
 

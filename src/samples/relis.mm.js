@@ -14,10 +14,7 @@ export const METAMODEL_RELIS = {
                 "optional": true,
                 "attribute": {
                     "screen_action": { "name": "screen_action", "type": "string", "id": true, "optional": true },
-                    "screening": {
-                        "name": "screening", "type": "screening",
-                        "multiple": { "type": "list" }
-                    }
+                    "screening": { "name": "screening", "type": "set:screening" }
                 },
                 "projection": [
                     {
@@ -84,8 +81,7 @@ export const METAMODEL_RELIS = {
         "projection": [
             {
                 "type": "text",
-                "k1": { "type": "keyword", "value": "PROJECT" },
-                "layout": "PROJECT #short_name #name #_component[screening_section]"
+                "layout": "PROJECT #short_name #name #[screening_section]"
             }
         ],
         "representation": {
@@ -105,96 +101,162 @@ export const METAMODEL_RELIS = {
     },
     "screening": {
         "name": "screening",
-        "component": [{
+        "component": [
+            {
 
-            "id": "reviews",
-            "name": "reviews",
-            "keyword": "Reviews",
-            "attribute": { "review_per_paper": { "name": "review_per_paper", "type": "integer", "value": "2" } },
-            "projection": [
-                {
-                    "type": "text",
-                    "layout": "screening #review_per_paper"
-                }
-            ],
-            "representation": { "type": "text", "value": "$keyword #review_per_paper" }
-        }, {
-            "name": "conflict",
-            "keyword": "Conflict",
-            "attribute": {
-                "conflict_type": { "name": "conflict_type", "type": "conflictType" },
-                "conflict_resolution": { "name": "conflict_resolution", "type": "conflictResolution", "value": "unanimity" }
+                "id": "reviews",
+                "name": "reviews",
+                "keyword": "Reviews",
+                "attribute": {
+                    "review_per_paper": { "name": "review_per_paper", "type": "integer", "value": "2" }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "screening #review_per_paper"
+                    }
+                ],
+                "representation": { "type": "text", "value": "$keyword #review_per_paper" }
             },
-            "projection": [
-                {
-                    "type": "text",
-                    "layout": "Conflict on #conflict_type resolved by #conflict_resolution"
-                }
-            ],
-            "representation": { "type": "text", "value": "$keyword on #conflict_type resolved by #conflict_resolution" }
-        }, {
-            "name": "criteria",
-            "keyword": "Criteria",
-            "position": 3,
-            "attribute": {
-                "exclusion_criteria": {
-                    "name": "exclusion_criteria", "type": "string",
-                    "multiple": { "type": "list", "min": 1 }
-                }
+            {
+                "name": "conflict",
+                "keyword": "Conflict",
+                "attribute": {
+                    "conflict_type": { "name": "conflict_type", "type": "conflictType" },
+                    "conflict_resolution": { "name": "conflict_resolution", "type": "conflictResolution", "value": "unanimity" }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "Conflict on #conflict_type resolved by #conflict_resolution"
+                    }
+                ],
+                "representation": { "type": "text", "value": "$keyword on #conflict_type resolved by #conflict_resolution" }
             },
-            "representation": { "type": "text", "value": "$keyword = [#exclusion_criteria]" }
-        }, {
-            "name": "sources",
-            "keyword": "Sources",
-            "position": 4,
-            "optional": true,
-            "attribute": {
-                "source_papers": {
-                    "name": "source_papers", "type": "string",
-                    "multiple": { "type": "list" }
-                }
+            {
+                "name": "criteria",
+                "keyword": "Criteria",
+                "attribute": {
+                    "exclusion_criteria": {
+                        "name": "exclusion_criteria", "type": "set:string", "min": 1,
+                        "projection": [
+                            {
+                                "type": "text",
+                                "layout": "Criteria = [#exclusion_criteria]"
+                            },
+                            {
+                                "type": "table",
+                                "disposition": "column",
+                                "layout": {
+                                    "header": "Title|List of fields|Description",
+                                    "cell": "title|fields|description",
+                                    "multiple": true
+                                }
+                            },
+                            {
+                                "type": "table",
+                                "disposition": "column",
+                                "layout": {
+                                    "cell": [
+                                        { "header": "Title", "value": "#title" },
+                                        { "header": "List of fields", "value": "#fields" },
+                                        { "header": "Description", "value": "#description" },
+                                    ],
+                                    "multiple": true
+                                }
+                            }
+                        ]
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "Criteria = [#exclusion_criteria]"
+                    },
+                    {
+                        "type": "table",
+                        "disposition": "column",
+                        "layout": {
+                            "header": "Title|List of fields|Description",
+                            "cell": "title|fields|description",
+                            "multiple": true
+                        }
+                    },
+                    {
+                        "type": "table",
+                        "disposition": "column",
+                        "layout": {
+                            "cell": [
+                                { "header": "Title", "value": "#title" },
+                                { "header": "List of fields", "value": "#fields" },
+                                { "header": "Description", "value": "#description" },
+                            ],
+                            "multiple": true
+                        }
+                    }
+                ],
+                "representation": { "type": "text", "value": "$keyword = [#exclusion_criteria]" }
             },
-            "representation": { "type": "text", "value": "$keyword = [#source_papers]" }
-        }, {
-            "name": "strategies",
-            "keyword": "Strategies",
-            "position": 5,
-            "optional": true,
-            "attribute": {
-                "search_strategy": {
-                    "name": "search_strategy", "type": "string",
-                    "multiple": { "type": "list" }
-                }
+            {
+                "name": "sources",
+                "keyword": "Sources",
+                "optional": true,
+                "attribute": {
+                    "source_papers": {
+                        "name": "source_papers", "type": "set:string",
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "Sources = [#source_papers]"
+                    }
+                ],
+                "representation": { "type": "text", "value": "$keyword = [#source_papers]" }
             },
-            "representation": { "type": "text", "value": "$keyword = [#search_strategy]" }
-        }, {
-            "name": "validation",
-            "keyword": "Validation",
-            "position": 6,
-            "optional": true,
-            "attribute": {
-                "validation_percentage": { "name": "validation_percentage", "type": "integer", "value": "20", "min": 0, "max": 100 },
-                "validation_assignment_mode": { "name": "validation_assignment_mode", "type": "assignmentMode", "value": "normal", "optional": true }
+            {
+                "name": "strategies",
+                "keyword": "Strategies",
+                "optional": true,
+                "attribute": {
+                    "search_strategy": {
+                        "name": "search_strategy", "type": "set:string",
+                    }
+                },
+                "representation": { "type": "text", "value": "$keyword = [#search_strategy]" }
             },
-            "representation": { "type": "text", "value": "$keyword #validation_percentage% #validation_assignment_mode" }
-        }, {
-            "name": "phases",
-            "keyword": "Phases",
-            "position": 7,
-            "optional": true,
-            "attribute": {
-                "phases": {
-                    "name": "phases", "type": "phase",
-                    "multiple": { "type": "list" },
-                    "inline": false
-                }
+            {
+                "name": "validation",
+                "keyword": "Validation",
+                "optional": true,
+                "attribute": {
+                    "validation_percentage": { "name": "validation_percentage", "type": "integer", "value": "20", "min": 0, "max": 100 },
+                    "validation_assignment_mode": { "name": "validation_assignment_mode", "type": "assignmentMode", "value": "normal", "optional": true }
+                },
+                "representation": { "type": "text", "value": "$keyword #validation_percentage% #validation_assignment_mode" }
             },
-            "representation": { "type": "text", "value": "$keyword #phases" }
-        }],
+            {
+                "name": "phases",
+                "keyword": "Phases",
+                "optional": true,
+                "attribute": {
+                    "phases": {
+                        "name": "phases", "type": "set:phase",
+                        "inline": false
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "Phases #phases"
+                    }
+                ],
+                "representation": { "type": "text", "value": "$keyword #phases" }
+            }],
         "projection": [
             {
                 "type": "text",
-                "layout": "#_component[reviews] #_component[conflict]"
+                "layout": "#[reviews] #[conflict] #[criteria] #[sources] #[phases]"
             }
         ],
         "representation": { "type": "text", "value": "$composition" }
@@ -230,15 +292,6 @@ export const METAMODEL_RELIS = {
                     ],
                     "multiple": true
                 }
-            },
-            {
-                "type": "mixed",
-                "table": {
-                    "type": "table",
-                    "col_header": "title|list of fields",
-                    "col": "title|fields",
-                },
-                "value": "$table #description"
             }
         ],
         "representation": { "type": "text", "value": "#title #description Fields (#fields)" }
@@ -420,7 +473,7 @@ export const METAMODEL_RELIS = {
     },
     "assignmentMode": {
         "name": "assignmentMode",
-        "type": "enum",
+        "base": "string",
         "values": {
             "info": "Info",
             "normal": "Normal",

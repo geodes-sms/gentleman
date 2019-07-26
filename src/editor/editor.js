@@ -1,5 +1,4 @@
-import { cloneObject, isEmpty } from '@zenkai/utils/datatype/index.js';
-import { getElement, getElements, createLink, createDiv, createSpan, createTextArea, createP, insertAfterElement, insertBeforeElement, preprendChild, removeChildren, conceal, addClass, removeClass, hasClass, windowWidth } from '@zenkai/utils/dom/index.js';
+import { cloneObject, isEmpty, getElement, getElements, createLink, createDiv, createSpan, createTextArea, createP, insertAfterElement, insertBeforeElement, preprendChild, removeChildren, conceal, addClass, removeClass, hasClass } from '@zenkai';
 import { Key, EventType, UI } from '@global/enums.js';
 import { MetaModel, Model } from '@model/index.js';
 import { hide, show } from '@utils/effects.js';

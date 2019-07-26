@@ -1,4 +1,4 @@
-import { cloneObject, defProp } from '@zenkai/utils/datatype/index.js';
+import { cloneObject, defProp } from '@zenkai';
 
 /**
  * State management

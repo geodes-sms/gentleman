@@ -1,4 +1,4 @@
-import { createDiv, createSpan } from "@zenkai/utils/dom/index.js";
+import { createDiv, createSpan } from "@zenkai";
 import { Concept } from "./../concept.js";
 import { TextualProjection } from "@projection/text-projection.js";
 import { Field } from "@projection/field/field.js";

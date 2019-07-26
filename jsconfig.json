@@ -6,9 +6,6 @@
       "*": [
         "./src/*"
       ],
-      "@zenkai/*": [
-        "./lib/zenkai/*"
-      ],
       "@src/*": [
         "./src/*"
       ],
@@ -27,10 +24,13 @@
       "@utils/*": [
         "./src/utils/*"
       ],
+      "@zenkai": [
+        "./node_modules/protolabo-zenkai/dist/zenkai.esm"
+      ],
     }
   },
   "include": [
     "src/**/*",
-    "lib/**/*"
+    "node_modules/protolabo-zenkai/**/*"
   ]
 }

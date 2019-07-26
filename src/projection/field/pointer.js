@@ -1,5 +1,5 @@
-import { defProp, isNullOrWhitespace, isInt } from '@zenkai/utils/datatype/index.js';
-import { addClass, removeClass } from '@zenkai/utils/dom/index.js';
+import { defProp, isNullOrWhitespace, isInt } from '@zenkai';
+import { addClass, removeClass } from '@zenkai';
 import { UI } from '@src/global/enums.js';
 import { Field } from './field.js';
 

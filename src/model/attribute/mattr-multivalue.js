@@ -1,8 +1,8 @@
 import { ModelAttributeBase } from './mattr-base';
 import { createProjection } from './fn';
 import { UI, ModelAttributeProperty as Prop, ClassName as CN } from '@src/global/enums.js';
-import { valOrDefault, hasOwn, defProp } from '@zenkai/utils/datatype/index.js';
-import { createDocFragment, insertBeforeElement, addClass, removeClass, createUl, createDiv, getElement } from '@zenkai/utils/dom/index.js';
+import { valOrDefault, hasOwn, defProp } from '@zenkai';
+import { createDocFragment, insertBeforeElement, addClass, removeClass, createUl, createDiv, getElement } from '@zenkai';
 import { createButtonNew, createButtonAdd, createButtonDelete } from '@utils/interactive.js';
 import { enable, disable } from '@utils/effects.js';
 import { InvalidModelError } from '@src/exception/index.js';

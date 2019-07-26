@@ -1,4 +1,4 @@
-import { valOrDefault, isNullOrWhitespace, isInt } from "@zenkai/utils/datatype/index.js";
+import { valOrDefault, isNullOrWhitespace, isInt } from "@zenkai";
 import { Field } from './field';
 import { DataType } from '@src/global/enums.js';
 

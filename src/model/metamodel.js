@@ -1,4 +1,4 @@
-import { cloneObject, isNullOrUndefined, hasOwn, valOrDefault, isString, isNullOrWhitespace, isUndefined } from "@zenkai/utils/datatype/index.js";
+import { cloneObject, isNullOrUndefined, hasOwn, valOrDefault, isString, isNullOrWhitespace, isUndefined } from "@zenkai";
 import { InvalidMetaModelError } from '@src/exception/index.js';
 import { DataType, ModelType } from '@src/global/enums.js';
 import { Model } from "./model.js";

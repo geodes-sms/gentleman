@@ -1,6 +1,5 @@
 import { Key, EventType, UI } from '@src/global/enums.js';
-import { valOrDefault } from '@zenkai/utils/datatype/index.js';
-import { createDocFragment, createUl, createLi, removeChildren, addClass, removeClass } from '@zenkai/utils/dom/index.js';
+import { valOrDefault, createDocFragment, createUl, createLi, removeChildren, addClass, removeClass } from '@zenkai';
 import { hide, show, highlight, unhighlight } from '@utils/effects.js';
 import { createOptionSelect } from '@utils/interactive.js';
 

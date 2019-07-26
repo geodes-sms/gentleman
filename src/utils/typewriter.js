@@ -1,4 +1,4 @@
-import { createStrong, createLineBreak, createEm } from '@zenkai/utils/dom/index.js';
+import { createStrong, createLineBreak, createEm } from '@zenkai';
 
 export const TypeWriterType = {
     NORMAL: 0,

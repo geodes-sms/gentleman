@@ -1,4 +1,4 @@
-import { createDiv } from "@zenkai/utils/dom/index.js";
+import { createDiv } from "@zenkai";
 import { Concept } from "./concept.js";
 import { TextualProjection } from "@projection/text-projection.js";
 

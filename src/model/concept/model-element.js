@@ -1,6 +1,4 @@
-import { valOrDefault, toBoolean, cloneObject, hasOwn, isNullOrWhitespace } from "@zenkai/utils/datatype/index.js";
-import { createTextNode, createDocFragment, createDiv, createElement, createSpan, createButton, createTableCell, createTableRow, addClass, getPreviousElementSibling, getNextElementSibling, hasClass, insertAfterElement } from "@zenkai/utils/dom/index.js";
-import { addPath, getDir } from "@zenkai/utils/path-utils.js";
+import { createTextNode, createDocFragment, createDiv, createElement, createSpan, createButton, createTableCell, createTableRow, addClass, getPreviousElementSibling, getNextElementSibling, hasClass, insertAfterElement, valOrDefault, toBoolean, cloneObject, hasOwn, isNullOrWhitespace, addPath, getDir } from "@zenkai";
 import { createButtonDelete, createOptionSelect } from "@utils/interactive.js";
 import { MultiValueAttribute, SingleValueAttribute, PrepareModelAttribute } from './../attribute';
 import { AbstractProjection } from '@projection/field';
@@ -115,7 +113,7 @@ export const ModelElement = {
             table.appendChild(tr);
 
             tr = createTableRow();
-            var td =createTableCell();
+            var td = createTableCell();
             td.appendChild(parser(cell, self._source.attr, function (attr) { return self.createModelAttribute(attr, 'cell'); }));
 
             tr.appendChild(td);

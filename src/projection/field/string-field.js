@@ -1,5 +1,5 @@
 import { Field } from "./field.js";
-import { valOrDefault } from "@zenkai/utils/datatype/index.js";
+import { valOrDefault } from "@zenkai";
 
 export const StringField = Field.create({
     init() {

@@ -1,4 +1,4 @@
-import { getElement, createDiv, createHeader, createSpan, appendChildren } from "@zenkai/utils/dom/index.js";
+import { getElement, createDiv, createHeader, createSpan, appendChildren } from "@zenkai";
 import { Gentleman as GE } from './editor/index.js';
 import { __ENV } from './global/global.js';
 import { METAMODEL_GENTLEMAN } from './samples/create.mm.js';

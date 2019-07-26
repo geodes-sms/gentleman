@@ -10,8 +10,7 @@ module.exports = merge(common, {
     devtool: 'inline-source-map',
     devServer: {
         contentBase: './.internal',
-        hot: true,
-        open: 'Chrome'
+        hot: true
     },
     module: {
         rules: [

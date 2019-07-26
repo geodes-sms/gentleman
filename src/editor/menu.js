@@ -1,8 +1,8 @@
 import { EventType, UI } from '@global/enums.js';
 import { events } from '@utils/pubsub.js';
-import { isNullOrWhitespace, valOrDefault, toBoolean } from '@zenkai/utils/datatype/index.js';
+import { isNullOrWhitespace, valOrDefault, toBoolean } from '@zenkai';
 import { unhighlight, highlight, disable, enable } from '@utils/effects.js';
-import { createLabel, createUl, createAnchor, createLi, appendChildren, createInput, createButton } from '@zenkai/utils/dom/index.js';
+import { createLabel, createUl, createAnchor, createLi, appendChildren, createInput, createButton } from '@zenkai';
 
 const EL = UI.Element;
 const EditorMode = {

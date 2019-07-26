@@ -1,4 +1,4 @@
-import { createDiv, createButton, appendChildren } from "@zenkai/utils/dom/index.js";
+import { createDiv, createButton, appendChildren } from "@zenkai";
 import { Concept } from "./concept.js";
 import { TextualProjection } from "@projection/text-projection.js";
 
