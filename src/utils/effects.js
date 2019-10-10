@@ -1,4 +1,4 @@
-import { addClass, removeClass, } from "@zenkai";
+import { addClass, removeClass, } from "zenkai";
 import { UI } from '@src/global/enums.js';
 
 const Elements = ['BUTTON', 'COMMAND', 'FIELDSET', 'INPUT', 'KEYGEN', 'OPTGROUP', 'OPTION', 'SELECT', 'TEXTAREA'];

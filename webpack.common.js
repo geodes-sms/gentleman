@@ -18,7 +18,6 @@ module.exports = {
             '@projection': path.resolve(__dirname, 'src/projection'),
             '@utils': path.resolve(__dirname, 'src/utils'),
             '@css': path.resolve(__dirname, 'assets/css'),
-            '@zenkai': path.resolve('node_modules/protolabo-zenkai/dist/zenkai.esm'),
         }
     },
     module: {

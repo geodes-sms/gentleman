@@ -159,7 +159,11 @@ main {
 
 .body {
     position: absolute;
-    top: 35px; bottom: 0; left: 0; right: 30%;
+    top: 35px; /* with header */
+    top: 0;
+    bottom: 0; 
+    left: 0; 
+    right: 30%;
     padding: 10px 1% 0;
     /* width: calc(70% - 5px); max-width: 940px; */
     box-sizing: border-box;
@@ -356,7 +360,42 @@ main {
         padding-right: 20px;
         background: url(../images/arrow_down.svg) right/contain no-repeat;
     }
+
+.action-container {
+    position: absolute;
+    width: 150px; height: 80px;
+    border-radius: 5px;
+    box-shadow: inset 2px 1px 5px #a9a9a9;
+    background: #fff;
+    transform: translate(-80px, -20px);
+    opacity: 1;
+    z-index: 10;
+}
     
+.info-container {
+    position: absolute;
+    padding: 10px;
+    border-radius: 1px 1px 3px 3px;
+    font-size: 1rem;
+    box-shadow: 2px 1px 5px #999;
+    color: #444;
+    background: rgba(255, 255, 255, 0.85);
+    opacity: 0;
+    transform: scale(0);
+    transition: .5s;
+    transition-property: opacity, transform;
+    z-index: 10;
+}
+
+.attr:hover + .info-container {
+    display: block;
+    opacity: 0.9;
+    transform: scale(1);
+}
+
+.info-container.hidden {
+
+}
 
 /* Attributes 
 ---------------------------------------------------------------------------- */
@@ -381,9 +420,8 @@ main {
         margin-top: -1px;
         padding: 1px 3px 2px;
         max-width: 150px;
-        border-top: 1px solid #FFD300;
+        border-bottom: 2px solid #FFD300;
         background-color: #fffff0;
-        box-shadow: 0 1px 1px -1px #c0c0c0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

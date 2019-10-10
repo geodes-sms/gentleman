@@ -1,8 +1,7 @@
 import { ModelAttributeBase } from './mattr-base';
 import { createProjection } from './fn';
 import { UI, ModelAttributeProperty as Prop, ClassName as CN } from '@src/global/enums.js';
-import { valOrDefault, hasOwn, defProp } from '@zenkai';
-import { createDocFragment, insertBeforeElement, addClass, removeClass, createUl, createDiv, getElement } from '@zenkai';
+import { createDocFragment, insertBeforeElement, addClass, removeClass, createDiv, getElement, valOrDefault, hasOwn, defProp, createUnorderedList } from 'zenkai';
 import { createButtonNew, createButtonAdd, createButtonDelete } from '@utils/interactive.js';
 import { enable, disable } from '@utils/effects.js';
 import { InvalidModelError } from '@src/exception/index.js';
@@ -139,7 +138,7 @@ export const MultiValueAttribute = (function () {
 
             var M = this.MODEL;
 
-            var ul = createUl({
+            var ul = createUnorderedList({
                 class: 'bare-list ' + (M.isElement(this.type) && M.getModelElement(this.type).extensions ?
                     "list empty" : "array")
             });

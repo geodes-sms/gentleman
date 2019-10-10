@@ -1,5 +1,5 @@
 
-import { getElement, createDiv, createHeader, createP, createSpan, appendChildren, createInput, createLabel } from "@zenkai";
+import { getElement, createDiv, createHeader, createParagraph, createSpan, appendChildren, createInput, createLabel } from "zenkai";
 import { Gentleman as GE } from './editor/index.js';
 import { __ENV } from './global/global.js';
 import { UI } from './global/enums.js';
@@ -17,7 +17,7 @@ const EL = UI.Element;
 const container = getElement("[data-gentleman-editor]");
 var header = createHeader({ id: 'header', class: 'editor-header' });
 var splashscreen = createDiv({ id: 'splashscreen', class: 'splashscreen' });
-var instruction = createP({ class: 'instruction-container font-gentleman' });
+var instruction = createParagraph({ class: 'instruction-container font-gentleman' });
 
 var lblSelector = createLabel({ class: [EL.BUTTON, 'btn-loader', UI.HIDDEN], text: "Load a Metamodel" });
 var inputSelector = createInput.file({ id: 'fileInput', accept: '.json' });

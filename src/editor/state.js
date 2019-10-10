@@ -1,4 +1,4 @@
-import { cloneObject, defProp } from '@zenkai';
+import { cloneObject, defProp } from 'zenkai';
 
 /**
  * State management

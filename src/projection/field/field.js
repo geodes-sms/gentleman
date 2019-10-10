@@ -1,5 +1,5 @@
 import { DataType, EventType, UI, RepresentationType, ModelAttributeProperty as MAttrProp } from '@src/global/enums.js';
-import { addClass, removeClass, getElement, createLi, createSpan, addAttributes, removeChildren, isDerivedOf, isNullOrWhitespace, valOrDefault } from '@zenkai';
+import { createDiv, createUnorderedList, createListItem, appendChildren, insertAfterElement, addClass, removeClass, getElement, createSpan, addAttributes, removeChildren, isDerivedOf, isNullOrWhitespace, valOrDefault } from 'zenkai';
 
 const EL = UI.Element;
 
@@ -29,6 +29,12 @@ export const Field = {
     },
     id: null,
     object: "BASE",
+    getInfo() {
+        return {
+            type: this._mAttribute.type,
+            value: this._mAttribute.value
+        };
+    },
     prepare: function (id, val, mAttr, type, fnUpdate) {
         return Object.freeze({
             _id: id,
@@ -92,39 +98,24 @@ export const Field = {
     isDisabled: false,
 
     createInput(editable) {
-        var self = this;
-        var mAttr = self._mAttribute;
-        var mElement = self._mAttribute.Element;
         var inputProjection;
-
-        // if (mAttr.type === DataType.boolean) {
-        //     var chk = createCheckbox({ id: this._id, class: EL.ATTRIBUTE_BOOLEAN, data: { name: mAttr.name } });
-        //     chk.dataset[MAttrProp.REPRESENTATION] = mAttr.representation.val;
-        //     chk.addEventListener(EventType.CHANGE, function (e) {
-        //         var checkbox = getElement('input', this);
-        //         if (checkbox.checked) addClass(this, UI.CHECKED);
-        //         else removeClass(this, UI.CHECKED);
-        //     });
-        //     this._input = chk;
-        //     this.element = chk;
-        //     return chk;
-        // }
 
         this._input = createSpan({
             id: this.id,
             class: ['attr', 'empty'],
             html: "",
             data: {
-                name: mAttr.name,
-                type: mAttr.type,
-                placeholder: mAttr.name
+                nature: "attribute",
+                type: this.object,
+                placeholder: editable
             }
         });
-        this._input.contentEditable = valOrDefault(editable, true);
+        this._input.contentEditable = true;
         this._input.tabIndex = 0;
         if (this._options) {
             addAttributes(this._input, this._options);
         }
+
         // if (mAttr.isOptional) {
         //     Object.assign(self._input.dataset, { optional: true });
         // }
@@ -137,6 +128,7 @@ export const Field = {
         //     li.appendChild(inputProjection);
         //     inputProjection = li;
         // }
+
         this.element = inputProjection;
 
         return inputProjection;

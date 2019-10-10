@@ -1,19 +1,20 @@
 import './concept.js';
 import { BaseConcept } from "./base-concept.js";
-import { StringConcept, SetConcept } from "./primitive/index.js";
-import { valOrDefault } from '@zenkai';
+import { StringConcept, SetConcept, NumberConcept } from "./primitive/index.js";
+import { valOrDefault } from 'zenkai';
 
 export const ConceptFactory = {
     createConcept(model, type, schema) {
-        if(['boolean', 'integer', 'number', 'string'].includes(type)){
-            return StringConcept.create(model);
+        switch (type) {
+            case 'string':
+                return StringConcept.create(model);
+            case 'number':
+                return NumberConcept.create(model);
+            case 'set':
+                return SetConcept.create(model);
+            default:
+                return createBaseConcept(model, schema);
         }
-        
-        if (type.startsWith('set:')) {
-            return SetConcept.create(model, type.substring(type.indexOf(':') + 1));
-        }
-
-        return createBaseConcept(model, schema);
     }
 };
 

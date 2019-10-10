@@ -1,14 +1,29 @@
 import { EventType, UI } from '@global/enums.js';
 import { events } from '@utils/pubsub.js';
-import { isNullOrWhitespace, valOrDefault, toBoolean } from '@zenkai';
+import { isNullOrWhitespace, valOrDefault, toBoolean, createListItem, createLabel, createUnorderedList, createAnchor, appendChildren, createInput, createButton, EL } from 'zenkai';
 import { unhighlight, highlight, disable, enable } from '@utils/effects.js';
-import { createLabel, createUl, createAnchor, createLi, appendChildren, createInput, createButton } from '@zenkai';
 
-const EL = UI.Element;
 const EditorMode = {
     READ: 'read',
     EDIT: 'edit'
 };
+
+/**
+ * Creates a menu item
+ * @param {HTMLElement} el 
+ * @returns {HTMLLIElement} menu item
+*/
+function createMenuItem(el, attr) {
+    attr = valOrDefault(attr, { class: 'menu-item' });
+    var item = createListItem(attr);
+    if (Array.isArray(el)) {
+        appendChildren(item, el);
+    }
+    else if (el) {
+        item.appendChild(el);
+    }
+    return item;
+}
 
 export const Menu = {
     /** @type {Editor} */
@@ -51,7 +66,7 @@ export const Menu = {
             enable(this.btnEdit);
             enable(this.btnSave);
         });
-        
+
         if (parentContainer) {
             this.parentContainer = parentContainer;
             this.parentContainer.appendChild(this.render());
@@ -66,9 +81,8 @@ export const Menu = {
     render() {
         var self = this;
 
-        this.container = createUl({ id: 'menu', class: ['bare-list', 'menu'] });
+        this.container = createUnorderedList({ id: 'menu', class: ['bare-list', 'menu'] });
 
-        this.btnOpen = createLabel({ class: 'btn btn-menu', text: "Open" });
         var modelSelector = createInput.file({ id: 'fileInput', accept: '.json' });
         modelSelector.addEventListener('change', function (e) {
             var file = this.files[0];
@@ -82,17 +96,16 @@ export const Menu = {
                 alert("File not supported!");
             }
         });
-        this.btnOpen.appendChild(modelSelector);
-
-        this.btnNew = createMenuButton('btnNew', "New");
-        this.btnCreate = createMenuButton('btnCreate', 'Create');
-        this.btnEdit = createMenuButton("btnEdit", "Edit", true, true);
-        this.btnRead = createMenuButton('btnRead', "Read", true);
+        this.btnCreate = createButton({ id: 'btnCreate', class: 'btn btn-menu' }, "Create");
+        this.btnNew = createButton({ id: 'btnNew', class: 'btn btn-menu' }, "New");
+        this.btnOpen = createLabel({ class: 'btn btn-menu' }, ["Open", modelSelector]);
+        this.btnSave = createButton({ id: 'btnSave', class: 'btn btn-menu', disabled: true }, "Save");
+        this.btnCopy = createButton({ id: 'btnCopy', class: 'btn btn-menu', disabled: true }, "Copy");
+        this.btnEdit = createButton({ id: 'btnEdit', class: 'btn btn-menu selected' }, "Edit");
+        this.btnRead = createButton({ id: 'btnRead', class: 'btn btn-menu', disabled: true }, "Read");
+        this.btnPrint = createAnchor(null, { id: 'btnPrint', class: 'btn btn-menu', disabled: true }, "Download");
         // this.btnUndo = createMenuButton('btnUndo', "Undo", true);
         // this.btnRedo = createMenuButton('btnRedo', "Redo", true);
-        this.btnSave = createMenuButton('btnSave', "Save", true);
-        this.btnCopy = createMenuButton('btnCopy', "Copy", true);
-        this.btnPrint = createMenuButton('btnPrint', "Download", true, false, EL.ANCHOR.name);
 
         appendChildren(this.container, [
             createMenuItem(this.btnCreate),
@@ -100,48 +113,12 @@ export const Menu = {
             createMenuItem(this.btnOpen),
             createMenuItem(this.btnSave),
             createMenuItem(this.btnCopy),
+            createMenuItem([this.btnEdit, this.btnRead]),
             createMenuItem(this.btnPrint),
             // createMenuItem([this.btnUndo, this.btnRedo]),
-            createMenuItem([this.btnEdit, this.btnRead])
         ]);
 
         return this.container;
-
-        /**
-         * Creates a menu item button
-         * @param {string} name 
-         * @param {string} text 
-         * @param {boolean} disabled 
-         * @param {boolean} selected 
-         * @param {string} el 
-         */
-        function createMenuButton(name, text, disabled, selected, el) {
-            disabled = valOrDefault(disabled, false);
-            var btnClass = valOrDefault(selected, false) ? [EL.BUTTON_MENU.class, UI.SELECTED] : [EL.BUTTON_MENU.class];
-            switch (valOrDefault(el, EL.BUTTON.name)) {
-                case EL.ANCHOR.name:
-                    return createAnchor(null, { id: name, class: btnClass, text: text, data: { disabled: disabled } });
-                case EL.BUTTON.name:
-                    return createButton({ id: name, class: btnClass, disabled: disabled, text: text });
-            }
-        }
-
-        /**
-         * Creates a menu item
-         * @param {HTMLElement} el 
-         * @returns {HTMLLIElement} menu item
-         */
-        function createMenuItem(el, attr) {
-            attr = valOrDefault(attr, { class: 'menu-item' });
-            var item = createLi(attr);
-            if (Array.isArray(el)) {
-                appendChildren(item, el);
-            }
-            else if (el) {
-                item.appendChild(el);
-            }
-            return item;
-        }
     },
     bindEvents() {
         var self = this;
@@ -149,7 +126,7 @@ export const Menu = {
         const MIME_TYPE = 'application/json';
         var editor = self.editor;
 
-        self.container.addEventListener(EventType.CLICK, function (event) {
+        this.container.addEventListener(EventType.CLICK, function (event) {
             var target = event.target;
             switch (target) {
                 case self.btnCreate:

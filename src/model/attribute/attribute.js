@@ -1,6 +1,6 @@
-import { isInt, isString, valOrDefault } from "@zenkai";
+import { isInt, isString, valOrDefault } from "zenkai";
 import { ConceptFactory } from "./factory.js";
-import { createSpan, createDiv } from "@zenkai";
+import { createSpan, createDiv } from "zenkai";
 
 const COMPONENT_NOT_FOUND = -1;
 
@@ -11,6 +11,7 @@ export const Attribute = {
         this.model = concept.model;
         this.schema = schema;
         this.type = schema.type;
+        this.accept = schema.accept;
         this.name = schema.name;
         this._use = valOrDefault(this.schema.use, 'required');
         Object.assign(instance, args);
@@ -40,6 +41,8 @@ export const Attribute = {
     name: null,
     /** @type {string} */
     type: null,
+    /** @type {string} */
+    accept: null,
     /** @type {*} */
     value: null,
     /** @type {string} */

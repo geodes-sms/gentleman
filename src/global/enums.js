@@ -16,6 +16,9 @@ export const EventType = {
     FOCUSOUT: 'focusout',
     KEYDOWN: 'keydown',
     KEYUP: 'keyup',
+    MOUSEENTER: 'mouseenter',
+    MOUSEOVER: 'mouseover',
+    MOUSELEAVE: 'mouseleave'
 };
 
 export const Key = {

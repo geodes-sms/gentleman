@@ -1,5 +1,5 @@
-import { hasOwn, isNullOrWhitespace, valOrDefault, defProp, find } from '@zenkai';
-import { addClass, removeClass } from '@zenkai';
+import { hasOwn, isNullOrWhitespace, valOrDefault, defProp, find } from 'zenkai';
+import { addClass, removeClass } from 'zenkai';
 import { UI } from '@src/global/enums.js';
 import { Field } from './field.js';
 

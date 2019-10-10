@@ -1,5 +1,5 @@
-import { valOrDefault } from '@zenkai';
-import { createSpan, removeChildren } from '@zenkai';
+import { valOrDefault } from 'zenkai';
+import { createSpan, removeChildren } from 'zenkai';
 import { UI } from '@src/global/enums.js';
 
 const EL = UI.Element;

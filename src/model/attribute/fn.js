@@ -1,6 +1,6 @@
 import { DataType, UI } from '@global/enums';
-import { hasOwn, toBoolean } from '@zenkai';
-import { addPath } from '@zenkai';
+import { hasOwn, toBoolean } from 'zenkai';
+import { addPath } from 'zenkai';
 import { Field, AbstractProjection, EnumProjection, PointerProjection, DataTypeProjection, RawProjection } from '@projection/field';
 
 export function createProjection(val) {

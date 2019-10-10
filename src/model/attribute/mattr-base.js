@@ -1,5 +1,5 @@
 import { DataType, UI } from '@src/global/enums.js';
-import { createDocFragment, createDiv, createLi, addClass, addPath, valOrDefault, isDerivedOf, toBoolean, defProp, hasOwn, isNullOrWhitespace } from "@zenkai";
+import { createDocFragment, createDiv, addClass, addPath, valOrDefault, isDerivedOf, toBoolean, defProp, hasOwn, isNullOrWhitespace, createListItem } from "zenkai";
 import { createButtonDelete, createButtonAdd, createButtonNew } from "@utils/interactive.js";
 import { Field, AbstractProjection, EnumProjection, PointerProjection, DataTypeProjection, RawProjection } from '@projection/field';
 import { UnimplementedError } from '@src/exception/index.js';
@@ -111,7 +111,7 @@ export const ModelAttributeBase = (function () {
 
                     let isInline = toBoolean(attr.inline);
                     if (!self.MODEL.hasComposition(type)) {
-                        item = createLi({ class: 'array-item', prop: "val" });
+                        item = createListItem({ class: 'array-item', prop: "val" });
                         // create an attribute wrapper and put the attributes in it
                         item.dataset.separator = valOrDefault(this.separator, ',');
                         var wrapper = createDiv({ class: ['attr-wrapper', 'multiple'] });

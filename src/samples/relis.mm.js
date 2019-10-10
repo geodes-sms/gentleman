@@ -14,7 +14,7 @@ export const METAMODEL_RELIS = {
                 "optional": true,
                 "attribute": {
                     "screen_action": { "name": "screen_action", "type": "string", "id": true, "optional": true },
-                    "screening": { "name": "screening", "type": "set:screening" }
+                    "screening": { "name": "screening", "type": "screening" }
                 },
                 "projection": [
                     {
@@ -22,7 +22,7 @@ export const METAMODEL_RELIS = {
                         "layout": "SCREENING #screen_action #screening"
                     }
                 ],
-                "representation": {
+                "encoding": {
                     "type": "text",
                     "k1": { "type": "keyword", "value": "SCREENING" },
                     "value": "$k1 #screen_action #screening"
@@ -38,7 +38,7 @@ export const METAMODEL_RELIS = {
                         "multiple": { "type": "list", "min": 0 }
                     }
                 },
-                "representation": {
+                "encoding": {
                     "type": "text",
                     "k1": { "type": "keyword", "value": "QA" },
                     "value": "$k1 #qa_action #quality_assess"
@@ -53,7 +53,7 @@ export const METAMODEL_RELIS = {
                         "multiple": { "type": "array", "min": 1 }, "inline": false, "separator": ""
                     }
                 },
-                "representation": {
+                "encoding": {
                     "type": "text",
                     "k1": { "type": "keyword", "value": "DATA EXTRACTION" },
                     "value": "$k1 #class_action #category"
@@ -68,7 +68,7 @@ export const METAMODEL_RELIS = {
                         "multiple": { "type": "list" }, "inline": false
                     }
                 },
-                "representation": {
+                "encoding": {
                     "type": "text",
                     "k1": { "type": "keyword", "value": "SYNTHESIS" },
                     "value": "$k1 #reporting"
@@ -78,13 +78,16 @@ export const METAMODEL_RELIS = {
         "constraint": {
             "PRESENCE": "C[2]=>C[3]"
         },
+        "operation": {
+            "ADD": "operation description"
+        },
         "projection": [
             {
                 "type": "text",
                 "layout": "PROJECT #short_name #name #[screening_section]"
             }
         ],
-        "representation": {
+        "encoding": {
             "default": {
                 "format": "relis",
                 "value": "$k1 #short_name #name ##compo ##compo[screening_section] ##compo[1|..|2|4..6]"
@@ -108,7 +111,7 @@ export const METAMODEL_RELIS = {
                 "name": "reviews",
                 "keyword": "Reviews",
                 "attribute": {
-                    "review_per_paper": { "name": "review_per_paper", "type": "integer", "value": "2" }
+                    "review_per_paper": { "name": "review_per_paper", "type": "number", "value": "2" }
                 },
                 "projection": [
                     {
@@ -116,7 +119,7 @@ export const METAMODEL_RELIS = {
                         "layout": "screening #review_per_paper"
                     }
                 ],
-                "representation": { "type": "text", "value": "$keyword #review_per_paper" }
+                "encoding": { "type": "text", "value": "$keyword #review_per_paper" }
             },
             {
                 "name": "conflict",
@@ -131,14 +134,14 @@ export const METAMODEL_RELIS = {
                         "layout": "Conflict on #conflict_type resolved by #conflict_resolution"
                     }
                 ],
-                "representation": { "type": "text", "value": "$keyword on #conflict_type resolved by #conflict_resolution" }
+                "encoding": { "type": "text", "value": "$keyword on #conflict_type resolved by #conflict_resolution" }
             },
             {
                 "name": "criteria",
                 "keyword": "Criteria",
                 "attribute": {
                     "exclusion_criteria": {
-                        "name": "exclusion_criteria", "type": "set:string", "min": 1,
+                        "name": "exclusion_criteria", "type": "set", "accept": "string", "min": 1,
                         "projection": [
                             {
                                 "type": "text",
@@ -195,7 +198,7 @@ export const METAMODEL_RELIS = {
                         }
                     }
                 ],
-                "representation": { "type": "text", "value": "$keyword = [#exclusion_criteria]" }
+                "encoding": { "type": "text", "value": "$keyword = [#exclusion_criteria]" }
             },
             {
                 "name": "sources",
@@ -203,7 +206,7 @@ export const METAMODEL_RELIS = {
                 "optional": true,
                 "attribute": {
                     "source_papers": {
-                        "name": "source_papers", "type": "set:string",
+                        "name": "source_papers", "type": "set", "accept": "string"
                     }
                 },
                 "projection": [
@@ -212,7 +215,7 @@ export const METAMODEL_RELIS = {
                         "layout": "Sources = [#source_papers]"
                     }
                 ],
-                "representation": { "type": "text", "value": "$keyword = [#source_papers]" }
+                "encoding": { "type": "text", "value": "$keyword = [#source_papers]" }
             },
             {
                 "name": "strategies",
@@ -220,10 +223,10 @@ export const METAMODEL_RELIS = {
                 "optional": true,
                 "attribute": {
                     "search_strategy": {
-                        "name": "search_strategy", "type": "set:string",
+                        "name": "search_strategy", "type": "set", "accept": "string"
                     }
                 },
-                "representation": { "type": "text", "value": "$keyword = [#search_strategy]" }
+                "encoding": { "type": "text", "value": "$keyword = [#search_strategy]" }
             },
             {
                 "name": "validation",
@@ -233,7 +236,7 @@ export const METAMODEL_RELIS = {
                     "validation_percentage": { "name": "validation_percentage", "type": "integer", "value": "20", "min": 0, "max": 100 },
                     "validation_assignment_mode": { "name": "validation_assignment_mode", "type": "assignmentMode", "value": "normal", "optional": true }
                 },
-                "representation": { "type": "text", "value": "$keyword #validation_percentage% #validation_assignment_mode" }
+                "encoding": { "type": "text", "value": "$keyword #validation_percentage% #validation_assignment_mode" }
             },
             {
                 "name": "phases",
@@ -241,7 +244,7 @@ export const METAMODEL_RELIS = {
                 "optional": true,
                 "attribute": {
                     "phases": {
-                        "name": "phases", "type": "set:phase",
+                        "name": "phases", "type": "set", "accept": "phase",
                         "inline": false
                     }
                 },
@@ -251,15 +254,16 @@ export const METAMODEL_RELIS = {
                         "layout": "Phases #phases"
                     }
                 ],
-                "representation": { "type": "text", "value": "$keyword #phases" }
-            }],
+                "encoding": { "type": "text", "value": "$keyword #phases" }
+            }
+        ],
         "projection": [
             {
                 "type": "text",
-                "layout": "#[reviews] #[conflict] #[criteria] #[sources] #[phases]"
+                "layout": "#[reviews] #[conflict] #[criteria] #[sources]"
             }
         ],
-        "representation": { "type": "text", "value": "$composition" }
+        "encoding": { "type": "text", "value": "$composition" }
     },
     "phase": {
         "name": "phase",
@@ -510,6 +514,19 @@ export const METAMODEL_RELIS = {
         "language": "ReLiS",
         "settings": {
             "autosave": true
+        },
+        "style": {
+            "attribute": {
+                "inline": true,
+                "spacing": { "before": "2px", "after": "2px" }
+            },
+            "component": {
+                "inline": false,
+                "size": { "width": "FIT_CONTENT", },
+                "spacing": { "before": "5px", "after": "5px" },
+                "corner": {  },
+                "background": "#f0f0f0",
+            },
         }
     },
 };

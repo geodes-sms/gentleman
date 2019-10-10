@@ -1,4 +1,4 @@
-import { cloneObject, isNullOrUndefined, hasOwn, valOrDefault, isString, isNullOrWhitespace, isUndefined } from "@zenkai";
+import { cloneObject, isNullOrUndefined, hasOwn, valOrDefault, isString, isNullOrWhitespace, isUndefined } from "zenkai";
 import { InvalidMetaModelError } from '@src/exception/index.js';
 import { DataType, ModelType } from '@src/global/enums.js';
 import { Model } from "./model.js";
@@ -8,6 +8,7 @@ const KEY_ROOT = '@root';
 const KEY_CONFIG = '@config';
 const KEY_RESOURCES = '@resources';
 const PROP_LANGUAGE = 'language';
+const PROP_STYLE = 'style';
 
 const deepCopy = (obj) => JSON.parse(JSON.stringify(obj));
 const tryResolve = (obj, prop, fallback) => isNullOrUndefined(obj) ? fallback : obj[prop];
@@ -32,6 +33,7 @@ export const MetaModel = {
     get root() { return this._root; },
     /** @type {string} */
     get language() { return valOrDefault(tryResolve(this._config, PROP_LANGUAGE, ""), ""); },
+    get style() { return valOrDefault(tryResolve(this._config, PROP_STYLE, ""), ""); },
     /** @type {string[]} */
     get resources() { return this._resources; },
 

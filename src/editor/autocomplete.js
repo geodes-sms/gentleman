@@ -1,5 +1,5 @@
 import { Key, EventType, UI } from '@src/global/enums.js';
-import { valOrDefault, createDocFragment, createUl, createLi, removeChildren, addClass, removeClass } from '@zenkai';
+import { valOrDefault, createDocFragment, removeChildren, addClass, removeClass, createListItem, createUnorderedList } from 'zenkai';
 import { hide, show, highlight, unhighlight } from '@utils/effects.js';
 import { createOptionSelect } from '@utils/interactive.js';
 
@@ -14,7 +14,7 @@ export const Autocomplete = {
             });
         }
         // private members
-        instance._input = createUl({ class: "bare-list autocomplete" });
+        instance._input = createUnorderedList({ class: "bare-list autocomplete" });
         instance._target = undefined;
         instance._id = "";
         instance._data = [];
@@ -141,7 +141,7 @@ export const Autocomplete = {
 
         for (let i = 0, len = self.data.length; i < len; i++) {
             self._items.push(i);
-            var item = createLi({
+            var item = createListItem({
                 text: self.data[i].val,
                 class: "autocomplete-item"
             });

@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es6",
     "baseUrl": ".",
+    "module": "commonjs",
     "paths": {
       "*": [
         "./src/*"
@@ -24,13 +25,9 @@
       "@utils/*": [
         "./src/utils/*"
       ],
-      "@zenkai": [
-        "./node_modules/protolabo-zenkai/dist/zenkai.esm"
-      ],
     }
   },
   "include": [
     "src/**/*",
-    "node_modules/protolabo-zenkai/**/*"
   ]
 }

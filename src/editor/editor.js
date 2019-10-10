@@ -1,4 +1,8 @@
-import { cloneObject, isEmpty, getElement, getElements, createLink, createDiv, createSpan, createTextArea, createP, insertAfterElement, insertBeforeElement, preprendChild, removeChildren, conceal, addClass, removeClass, hasClass } from '@zenkai';
+import {
+    cloneObject, isEmpty, getElement, getElements, createLink, createDiv, createSpan,
+    appendChildren, EL, createTextArea, createParagraph, insertAfterElement, insertBeforeElement,
+    preprendChild, removeChildren, conceal, addClass, removeClass, hasClass
+} from 'zenkai';
 import { Key, EventType, UI } from '@global/enums.js';
 import { MetaModel, Model } from '@model/index.js';
 import { hide, show } from '@utils/effects.js';
@@ -13,7 +17,7 @@ const container = getElement("[data-gentleman-editor]");
 container.tabIndex = -1;
 
 const DOC = typeof module !== 'undefined' && module.exports ? {} : document;
-const EL = UI.Element;
+const ELEMENT = UI.Element;
 const EditorMode = {
     READ: 'read',
     EDIT: 'edit'
@@ -51,6 +55,7 @@ export const Editor = {
     metamodel: null,
     /** @type {Model} */
     model: null,
+    currentContext: null,
     create() {
         var instance = Object.create(this);
 
@@ -188,7 +193,7 @@ export const Editor = {
         try {
             this.model = this.metamodel.createModel();// model ? model : this.abstract.createModel();
         } catch (error) {
-            container.appendChild(createP({ class: 'body', text: error.toString() }));
+            container.appendChild(createParagraph({ class: 'body', text: error.toString() }));
             return;
         }
         this.current = this.model.init(model, this).root;
@@ -203,15 +208,6 @@ export const Editor = {
 
         // draw the editor
         this.render();
-
-        // Get next element
-        var next = getElement(f_class(EL.ATTRIBUTE), this.currentLine) || getElement(f_class(EL.OPTION), container);
-        var parent = next.parentElement;
-        if (parent !== this.currentLine) {
-            this.currentLine = parent;
-        }
-
-        next.focus();
 
         if (!this.isInitialized) {
             events.emit('editor.initialized');
@@ -248,6 +244,10 @@ export const Editor = {
         this.currentLine.appendChild(this.current.render());
         this.currentLine = this.currentLine.firstChild;
         this.currentLine.contentEditable = false;
+
+        this.infoContainer = createDiv({ class: 'info-container font-ui hidden' });
+        this.actionContainer = createDiv({ class: 'action-container hidden' });
+        appendChildren(container, [this.infoContainer, this.actionContainer]);
     },
     bindEvents() {
         var self = this;
@@ -257,13 +257,29 @@ export const Editor = {
         var flag = false;
         var handled = false;
 
-        // this.body.addEventListener(EventType.CLICK, function (event) {
-        //     if (!handled) {
-        //         self.autocomplete.hide();
-        //     } else {
-        //         handled = false;
-        //     }
-        // }, false);
+        this.body.addEventListener(EventType.CLICK, (event) => {
+            var target = event.target;
+            var nature = target.dataset['nature'];
+
+            if (nature === 'attribute') {
+                console.log("clicked on attribute");
+                this.context = target;
+            } else {
+                if (this.context === this.body) {
+                    Object.assign(this.actionContainer.style, {
+                        top: `${event.clientY - self.body.offsetTop}px`,
+                        left: `${event.clientX - self.body.offsetLeft}px`
+                    });
+
+                    show(this.actionContainer);
+                    this.context = this.actionContainer;
+                } else {
+                    hide(this.actionContainer);
+                    this.context = target;
+                }
+            }
+
+        }, false);
 
         container.addEventListener(EventType.KEYDOWN, function (event) {
             var target = event.target;
@@ -354,17 +370,22 @@ export const Editor = {
             }
         }, false);
 
-        self.body.addEventListener(EventType.FOCUSIN, function (event) {
+        this.body.addEventListener(EventType.MOUSEOVER, (e) => {
+            var target = e.target;
+            var nature = target.dataset['nature'];
+            if (nature === 'attribute') {
+                var field = this.fields[target.id - 1];
+                // infoHandler.call(this, field, target);
+            }
+        });
+
+        this.body.addEventListener(EventType.FOCUSIN, function (event) {
             self.autocomplete.hide();
             handled = true;
 
             var target = event.target;
             var field = self.fields[target.id - 1];
-
-            currentContainer = findLine(target);
-            if (currentContainer) {
-                addClass(currentContainer, 'current');
-            }
+            field.focus();
 
             var data = [];
 
@@ -395,7 +416,7 @@ export const Editor = {
                     data = field.valuesKV();
                     self.autocomplete.onSelect = function (attr) {
                         let line = field.implement(attr.key);
-                        getElement(f_class(EL.ATTRIBUTE), line).focus();
+                        getElement(f_class(ELEMENT.ATTRIBUTE), line).focus();
                     };
 
                     self.autocomplete.init(target, data);
@@ -411,7 +432,7 @@ export const Editor = {
             }
         }, false);
 
-        self.body.addEventListener(EventType.FOCUSOUT, function (event) {
+        this.body.addEventListener(EventType.FOCUSOUT, function (event) {
             if (flag) {
                 flag = false;
                 return;
@@ -484,7 +505,7 @@ export const Editor = {
                 data = projection.valuesKV();
                 self.autocomplete.onSelect = function (attr) {
                     let line = projection.implement(attr.key);
-                    getElement(f_class(EL.ATTRIBUTE), line).focus();
+                    getElement(f_class(ELEMENT.ATTRIBUTE), line).focus();
                 };
 
                 self.autocomplete.init(projection._input, data);
@@ -496,6 +517,23 @@ export const Editor = {
                 };
                 self.autocomplete.init(projection._input, data);
             }
+        }
+
+        function infoHandler(field, target) {
+            var info = field.getInfo();
+            removeChildren(this.infoContainer);
+            this.infoContainer.appendChild(
+                EL.ul({ class: 'bare-list' }, [
+                    EL.li({ class: 'info-type' }, [
+                        EL.strong(null, "type"), `: ${info.type}`]),
+                    EL.li({ class: 'info-value' }, [
+                        EL.strong(null, "length"), `: ${info.value}`])
+                ]));
+            insertAfterElement(target, this.infoContainer);
+            Object.assign(this.infoContainer.style, {
+                left: `${target.offsetLeft}px`
+            });
+            show(this.infoContainer);
         }
 
         function optionHandler(val, eHTML, data) {
@@ -549,7 +587,7 @@ export const Editor = {
                 }
             }
 
-            var firstAttribute = getElement(f_class(EL.ATTRIBUTE), line);
+            var firstAttribute = getElement(f_class(ELEMENT.ATTRIBUTE), line);
             if (firstAttribute) firstAttribute.focus();
         }
 
@@ -557,16 +595,6 @@ export const Editor = {
 
         function handleWidthChange(mql) {
             self.resize();
-        }
-
-        function findParent(keyword) {
-            var parent = self.currentLine.parentElement;
-            while (parent.parentElement.id != 'container') {
-                if (getElement(dot('keyword'), parent).innerHTML == keyword)
-                    return parent;
-                parent = parent.parentElement;
-            }
-            return parent;
         }
 
         /**

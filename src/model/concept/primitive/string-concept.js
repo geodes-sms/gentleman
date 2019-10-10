@@ -1,7 +1,5 @@
-import { createDiv, createSpan } from "@zenkai";
 import { Concept } from "./../concept.js";
 import { TextualProjection } from "@projection/text-projection.js";
-import { Field } from "@projection/field/field.js";
 
 export const StringConcept = Concept.create({
     create: function (model) {
@@ -9,11 +7,11 @@ export const StringConcept = Concept.create({
 
         instance.model = model;
         instance.projection = TextualProjection.create(createProjection(), instance, model.editor);
-
         return instance;
     },
     projection: null,
     representation: null,
+    name: 'string',
 
     render() {
         return this.projection.render();

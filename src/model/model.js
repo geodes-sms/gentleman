@@ -1,4 +1,4 @@
-import { cloneObject, hasOwn, valOrDefault, isNullOrUndefined } from "@zenkai";
+import { cloneObject, hasOwn, valOrDefault, isNullOrUndefined } from "zenkai";
 import { InvalidModelError } from '@src/exception/index.js';
 import { DataType, ModelType } from '@global/enums.js';
 import { ConceptFactory } from "./concept/factory.js";
