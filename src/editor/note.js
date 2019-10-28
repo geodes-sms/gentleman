@@ -1,6 +1,7 @@
 import {
     createAside, createAnchor, getElement, createDocFragment, createLineBreak, removeChildren,
-    createParagraph, createSpan, addClass, appendChildren, createH3, createH4, createListItem, createUnorderedList, EL, hasOwn, isString
+    createParagraph, createSpan, addClass, appendChildren, createH3, createH4, createListItem, 
+    createUnorderedList, EL, hasOwn, isString
 } from 'zenkai';
 import {
     isNullOrWhitespace

@@ -1,28 +1,29 @@
 import { isInt, isString, valOrDefault, hasOwn, isNullOrUndefined } from "zenkai";
 import { AttributeFactory } from "@model/attribute/factory.js";
-import { ComponentFactory } from "@model/component/factory";
+import { TextualProjection } from "@projection/text-projection";
 
-const COMPONENT_NOT_FOUND = -1;
 const ATTRIBUTE_NOT_FOUND = -1;
 
 const tryResolve = (obj, prop, fallback) => isNullOrUndefined(obj) ? fallback : obj[prop];
 
 /**
- * @memberof Concept
+ * @memberof Component
  */
-export const Concept = {
-    create: function (args) {
+export const Component = {
+    create: function (concept, schema, args) {
         var instance = Object.create(this);
 
-        Object.assign(instance, args);
+        instance.concept = concept;
+        instance.model = concept.model;
+        instance.schema = schema;
+        instance.name = schema.name;
+        instance.projection = TextualProjection.create(schema.projection[0], instance, concept.model.editor);
         instance.attributes = [];
-        instance.components = [];
+        Object.assign(instance, args);
 
         return instance;
     },
-    /** Reference to parent model */
-    model: null,
-    /** Cache of the schema describing the concept */
+    /** Cache of the schema describing the component */
     schema: null,
     /** Link to the concept data source */
     source: null,
@@ -30,21 +31,18 @@ export const Concept = {
     id: null,
     /** @type {string} */
     name: null,
-    /** @type {string[]} */
-    operations: null,
     /** @type {string} */
     path: null,
     /** @type {Concept} */
     parent: null,
     /** @type {Attribute[]} */
     attributes: null,
-    /** @type {Concept[]} */
-    components: null,
-    value: null,
     /** possible values for the concept */
     values: null,
-    /** concept actions configuration */
-    action: null,
+    /** @type {TextualProjection} */
+    projection: null,
+    representation: null,
+    container: null,
 
     hasAttribute(id) { return this.schema.attribute && hasOwn(this.schema.attribute, id); },
 
@@ -62,20 +60,6 @@ export const Concept = {
 
         return attribute;
     },
-    /** @returns {Concept} */
-    getComponent(id) {
-        // console.log(`Get component: ${id}`);
-        var component = null;
-        if (isInt(id)) {
-            component = valOrDefault(this.components[id], this.createComponent(id));
-        } else if (isString(id)) {
-            component = valOrDefault(this.components.find((c) => c.id === id), this.createComponent(id));
-        } else {
-            return COMPONENT_NOT_FOUND;
-        }
-
-        return component;
-    },
     /**
      * Creates an attribute
      * @param {string} id 
@@ -89,20 +73,7 @@ export const Concept = {
 
         return attribute;
     },
-    /**
-     * Creates a component
-     * @param {string} id 
-     * @returns {Concept}
-     */
-    createComponent(id) {
-        // console.log(`Create component: ${id}`);
-        var componentSchema = this.schema.component.find((c) => c.name === id);
-        var component = ComponentFactory.createComponent(this, componentSchema);
-        component.parent = this;
-        this.components.push(component);
-
-        return component;
-    },
-    /** @returns {boolean} */
-    isRoot() { return this.parent === null; }
+    render() {
+        return this.projection.render();
+    }
 };

@@ -1,19 +1,20 @@
 import { isInt, isString, valOrDefault } from "zenkai";
 import { ConceptFactory } from "./factory.js";
 import { createSpan, createDiv } from "zenkai";
-
-const COMPONENT_NOT_FOUND = -1;
+import { isFunction } from "util";
 
 export const Attribute = {
     create: function (concept, schema, args) {
         var instance = Object.create(this);
-        this.concept = concept;
-        this.model = concept.model;
-        this.schema = schema;
-        this.type = schema.type;
-        this.accept = schema.accept;
-        this.name = schema.name;
-        this._use = valOrDefault(this.schema.use, 'required');
+        instance.concept = concept;
+        instance.model = concept.model;
+        instance.schema = schema;
+        instance.type = schema.type;
+        instance.accept = schema.accept;
+        instance.action = valOrDefault(schema.action, {});
+        instance.min = valOrDefault(schema.min, 1);
+        instance.name = schema.name;
+        instance._use = valOrDefault(instance.schema.use, 'required');
         Object.assign(instance, args);
 
         return instance;
@@ -25,8 +26,15 @@ export const Attribute = {
     },
     initValue() {
         if (this.isRequired()) {
-            this.value = this.model.createConcept(this.type);
-            this.value.parent = this;
+            let concept = this.model.createConcept(this.type);
+            concept.parent = this;
+            concept.accept = this.accept;
+            concept.action  = this.action;
+            concept.min = this.min;
+            if (isFunction(concept.init)) {
+                concept.init();
+            }
+            this.value = concept;
         }
     },
     /** Reference to parent model */

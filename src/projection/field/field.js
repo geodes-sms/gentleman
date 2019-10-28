@@ -57,18 +57,18 @@ export const Field = {
         }
         return this._input.textContent;
     },
-    get value() {
-        return this._input.textContent;
-    },
-    set value(val) {
-        this._input.textContent = val;
-        if (isNullOrWhitespace(val)) {
-            addClass(this._input, UI.EMPTY);
-        }
-        else {
-            removeClass(this._input, UI.EMPTY);
-        }
-    },
+    // get value() {
+    //     return this._input.textContent;
+    // },
+    // set value(val) {
+    //     this._input.textContent = val;
+    //     if (isNullOrWhitespace(val)) {
+    //         addClass(this._input, UI.EMPTY);
+    //     }
+    //     else {
+    //         removeClass(this._input, UI.EMPTY);
+    //     }
+    // },
     get name() { return this._name; },
     get description() { return this._description; },
     get isOptional() { return this._isOptional; },

@@ -2,9 +2,12 @@ import { createDiv, createButton, appendChildren } from "zenkai";
 import { Concept } from "./concept.js";
 import { TextualProjection } from "@projection/text-projection.js";
 
+/**
+ * @memberof Concept
+ */
 export const BaseConcept = Concept.create({
     create: function (model, schema) {
-        var instance = Object.create(this);
+        const instance = Object.create(this);
 
         instance.model = model;
         instance.schema = schema;

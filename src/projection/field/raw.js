@@ -71,7 +71,7 @@ export const RawProjection = Field.create({
                 case '#':
                     if (this.terminals.indexOf(key) === -1) {
                         parent.add(model.createInstance(parent.type));
-                        var mmElement = model.getModelElement('attribute');
+                        var mmElement = model.getModelConcept('attribute');
                         mmElement['attr']['name'].val = key;
                         var children = parent.handler(parent._source, mmElement, parent.path);
                         parent.eHTML.appendChild(children);

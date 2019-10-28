@@ -1,7 +1,6 @@
-import './concept.js';
 import { BaseConcept } from "./base-concept.js";
 import { StringConcept, SetConcept, NumberConcept } from "./primitive/index.js";
-import { valOrDefault } from 'zenkai';
+import { valOrDefault, isNullOrUndefined } from 'zenkai';
 
 export const ConceptFactory = {
     createConcept(model, type, schema) {
@@ -13,7 +12,7 @@ export const ConceptFactory = {
             case 'set':
                 return SetConcept.create(model);
             default:
-                return createBaseConcept(model, schema);
+                return BaseConcept.create(model, schema);
         }
     }
 };
@@ -24,6 +23,7 @@ function createBaseConcept(model, schema) {
     if (base === 'string') {
         let stringConcept = StringConcept.create(model);
         stringConcept.values = schema.values;
+
         return stringConcept;
     }
 

@@ -1,9 +1,7 @@
 import { cloneObject, isNullOrUndefined, hasOwn, valOrDefault, isString, isNullOrWhitespace, isUndefined } from "zenkai";
 import { InvalidMetaModelError } from '@src/exception/index.js';
-import { DataType, ModelType } from '@src/global/enums.js';
 import { Model } from "./model.js";
 
-const COMPOSITION = 'composition';
 const KEY_ROOT = '@root';
 const KEY_CONFIG = '@config';
 const KEY_RESOURCES = '@resources';
@@ -57,25 +55,39 @@ export const MetaModel = {
         throw InvalidMetaModelError.create("Root not found: The metamodel does not contain a concept with the property `root`");
     },
 
-
     /**
-     * Gets a model element by type
+     * Gets a model concept by type
      * @param {string} type 
      */
-    getModelElement(type) { 
-        var [concept, prop] = type.split('.');
+    getModelConcept(type) {
+        const [conceptName, prop] = type.split('.');
 
-        if(!this.isElement(concept)) {
+        if (!this.isConcept(conceptName)) {
             return undefined;
         }
 
-        var conceptTarget =  deepCopy(this.schema[concept]);
+        var concept = deepCopy(this.schema[conceptName]);
         if (isString(prop) && prop.startsWith('component')) {
             let componentName = prop.substring(prop.indexOf('[') + 1, prop.indexOf(']'));
-            conceptTarget = conceptTarget.component.find((c) => c.name === componentName);
+            concept = concept.component.find((c) => c.name === componentName);
         }
 
-        return conceptTarget; 
+        return concept;
+    },
+
+    getCompleteModelConcept(type) {
+        if (!this.isConcept(type)) {
+            return undefined;
+        }
+        const conceptSchema = this.getModelConcept(type);
+        const baseSchema = getConceptBaseSchema.call(this, conceptSchema.base);
+        if (!hasOwn(conceptSchema, 'attribute')) {
+            conceptSchema.attribute = {};
+        }
+
+        Object.assign(conceptSchema.attribute, baseSchema);
+
+        return conceptSchema;
     },
 
     /**
@@ -83,8 +95,8 @@ export const MetaModel = {
      * @param {string} type 
      */
     createInstance(type) {
-        var element = this.getModelElement(type);
-        return element && !(this.isEnum(type) || this.isDataType(type)) ? cloneObject(element) : "";
+        const element = this.getModelConcept(type);
+        return cloneObject(element);
     },
 
     /**
@@ -92,42 +104,7 @@ export const MetaModel = {
      * @param {string} type 
      * @returns {boolean}
      */
-    isElement(type) { return !isUndefined(this.schema[type]); },
-
-    /**
-     * Gets a value indicating whether this type is declared in the model
-     * @param {string} type 
-     * @returns {boolean}
-     */
     isConcept(type) { return !isUndefined(this.schema[type]); },
-
-    /**
-     * Gets a value indicating whether the element is of type "ENUM"
-     * @param {string} type 
-     * @returns {boolean}
-     */
-    isEnum(type) { return this.isElement(type) && this.schema[type].type == ModelType.ENUM; },
-
-    /**
-     * Gets a value indicating whether the element is of type "PRIMITIVE" or "DATATYPE"
-     * @param {string} type 
-     * @returns {boolean}
-     */
-    isDataType(type) { return hasOwn(DataType, type.split(':')[0]) || this.isModelDataType(type); },
-
-    /**
-     * Gets a value indicating whether the element is of type "DATATYPE"
-     * @param {string} type 
-     * @returns {boolean}
-     */
-    isModelDataType(type) { return this.isElement(type) && this.schema[type].type === ModelType.DATATYPE; },
-
-    /**
-     * Gets a value indicating whether the element has a composition
-     * @param {string} type 
-     * @returns {boolean}
-     */
-    hasComposition(type) { return this.isElement(type) && hasOwn(this.schema[type], COMPOSITION); },
 
     /**
      * Gets a model element type
@@ -143,5 +120,21 @@ export const MetaModel = {
 function getModelElementType(el) {
     if (!hasOwn(el, 'base')) return el.name;
 
-    return getModelElementType(this.getModelElement(el.base)) + "." + el.name;
+    return getModelElementType(this.getModelConcept(el.base)) + "." + el.name;
+}
+
+function getConceptBaseSchema(baseConceptName) {
+    var base = baseConceptName;
+    var baseSchema = {};
+    while (!isNullOrUndefined(base)) {
+        let schema = this.schema[base];
+        if (schema) {
+            Object.assign(baseSchema, schema.attribute);
+            base = schema.base;
+        } else {
+            base = null;
+        }
+    }
+
+    return baseSchema;
 }

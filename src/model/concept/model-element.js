@@ -1,7 +1,8 @@
 import {
-    createTextNode, createDocFragment, createDiv, createElement, createSpan, createButton, createTableCell,
-    createTableRow, addClass, getPreviousElementSibling, getNextElementSibling, hasClass, insertAfterElement,
-    valOrDefault, toBoolean, cloneObject, hasOwn, isNullOrWhitespace, addPath, getDir
+    createTextNode, createDocFragment, createDiv, createSpan, createButton, createTableCell,
+    createTableRow, addClass, getPreviousElementSibling, getNextElementSibling, hasClass, 
+    insertAfterElement, valOrDefault, toBoolean, cloneObject, hasOwn, isNullOrWhitespace, 
+    addPath, getDir, createTable, createTableHeaderCell, createLineBreak
 } from "zenkai";
 import { createButtonDelete, createOptionSelect } from "@utils/interactive.js";
 import { MultiValueAttribute, SingleValueAttribute, PrepareModelAttribute } from './../attribute';
@@ -108,9 +109,9 @@ export const ModelElement = {
 
             var col = self._source.representation.col;
             var cell = self._source.representation.cell;
-            var table = createElement('table');
+            var table = createTable();
             var tr = createTableRow();
-            var th = createElement('th');
+            var th = createTableHeaderCell();
 
             th.appendChild(parser(col, self._source.attr, function (attr) { return self.createModelAttribute(attr, 'col'); }));
             tr.appendChild(th);
@@ -127,7 +128,7 @@ export const ModelElement = {
             btnAddCol.addEventListener('click', function (e) {
 
                 for (let i = 0, rows = table.children; i < table.childElementCount; i++) {
-                    let cell = createElement(i === 0 ? 'th' : 'td');
+                    let cell = i === 0 ? createTableHeaderCell() : createTableCell();
                     let mAttr = self.attributes[i];
                     mAttr.add(self.model.createInstance(mAttr.type));
                     let children = mAttr.handler(mAttr._source, mAttr.value[mAttr.count - 1], mAttr.path);
@@ -268,9 +269,9 @@ export const ModelElement = {
                     break;
                 case '&':
                     if (key === 'NL')
-                        fragment.appendChild(createElement('br'));
+                        fragment.appendChild(createLineBreak());
                     if (key === 'CL') {
-                        var clear = createElement('br');
+                        var clear = createLineBreak();
                         addClass(clear, 'clear');
                         fragment.appendChild(clear);
                     }
@@ -501,9 +502,9 @@ function parser(representation, attr, fnCreateModelAttribute) {
                 break;
             case '&':
                 if (key === 'NL')
-                    fragment.appendChild(createElement('br'));
+                    fragment.appendChild(createLineBreak());
                 if (key === 'CL') {
-                    var clear = createElement('br');
+                    var clear = createLineBreak();
                     addClass(clear, 'clear');
                     fragment.appendChild(clear);
                 }

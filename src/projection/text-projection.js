@@ -1,4 +1,7 @@
-import { createDocFragment, createSpan, createTextNode, createLineBreak, addClass, isNullOrWhitespace, isNullOrUndefined, createDiv } from "zenkai";
+import {
+    createDocFragment, createSpan, createDiv, createListItem, createTextNode, createLineBreak,
+    addClass, isNullOrWhitespace, isNullOrUndefined, valOrDefault, insertBeforeElement
+} from "zenkai";
 import { InvalidModelError } from '@src/exception/index.js';
 import { Field } from "@projection/field/field.js";
 import { Projection } from "./projection.js";
@@ -27,6 +30,7 @@ export const TextualProjection = Projection.create({
     editor: null,
 
     render() {
+        var concept = this.concept;
         var fragment = createDocFragment();
         var arr = this.schema.layout.replace(/ /g, " space ")
             .replace(/(#((\[\w+\])?|[A-Za-z0-9_])+)/g, " $1 ")
@@ -45,6 +49,33 @@ export const TextualProjection = Projection.create({
             }
         }
 
+        if (concept.value) {
+            let value = concept.value;
+            let parent = fragment.firstChild;
+            if (Array.isArray(value)) {
+                value.forEach(val => {
+                    let container = createListItem({ class: "field--set-item", draggable: true });
+                    container.tabIndex = 0;
+                    container.appendChild(val.render());
+                    parent.appendChild(container);
+                });
+            }
+            if (concept.canAddValue) {
+                let addAction = concept.getAddAction();
+                let container = createListItem({ class: "field--set__add font-ui" }, addAction.text);
+                container.addEventListener('click', function () {
+                    var container = createListItem({ class: "field--set-item", draggable: true });
+                    container.tabIndex = 0;
+                    var instance = concept.createElement();
+                    container.appendChild(instance.render());
+                    insertBeforeElement(this, container);
+
+                });
+                parent.appendChild(container);
+            }
+        }
+
+
         return fragment;
     }
 });
@@ -55,6 +86,7 @@ const styleMapper = {
 };
 
 function attributeHandler(key) {
+    // console.log(this.concept.name, key);
     var style = this.concept.model.metamodel.style;
     if (this.concept.hasAttribute(key)) {
         let attribute = this.concept.getAttribute(key);
@@ -63,8 +95,8 @@ function attributeHandler(key) {
         let defaultStyle = style['component'];
         let componentId = key.substring(key.indexOf('[') + 1, key.indexOf(']'));
         let component = this.concept.getComponent(componentId);
-        let container = createDiv({ class: 'component' }, [component.render()]);
-        
+        let container = createDiv({ class: 'component', data: { object: "component" } }, [component.render()]);
+
         if (defaultStyle.spacing) {
             let spacing = defaultStyle.spacing;
             for (const key in spacing) {
@@ -74,7 +106,7 @@ function attributeHandler(key) {
 
         return container;
     } else {
-        throw InvalidModelError.create("The attribute " + key + " was not found.");
+        throw InvalidModelError.create(`The attribute "${key}" was not found.`);
     }
 }
 
@@ -86,7 +118,7 @@ function referenceHandler(key) {
         if (element.color) keyword.style.color = element.color;
         return keyword;
     } else if (element.type === "text") {
-        let keyword = createSpan({ text: element.val });
+        let keyword = createSpan({ class: valOrDefault(element.class, `${this.concept.name}-${key}`) }, element.val);
         return keyword;
     } else if (element.type === 'field') {
         let field = FieldFactory.createField(this.concept, this.concept.name, element);

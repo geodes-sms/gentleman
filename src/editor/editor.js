@@ -257,7 +257,7 @@ export const Editor = {
         var flag = false;
         var handled = false;
 
-        this.body.addEventListener(EventType.CLICK, (event) => {
+        this.body.addEventListener('click', (event) => {
             var target = event.target;
             var nature = target.dataset['nature'];
 
@@ -266,13 +266,13 @@ export const Editor = {
                 this.context = target;
             } else {
                 if (this.context === this.body) {
-                    Object.assign(this.actionContainer.style, {
-                        top: `${event.clientY - self.body.offsetTop}px`,
-                        left: `${event.clientX - self.body.offsetLeft}px`
-                    });
+                    // Object.assign(this.actionContainer.style, {
+                    //     top: `${event.clientY - self.body.offsetTop}px`,
+                    //     left: `${event.clientX - self.body.offsetLeft}px`
+                    // });
 
-                    show(this.actionContainer);
-                    this.context = this.actionContainer;
+                    // show(this.actionContainer);
+                    // this.context = this.actionContainer;
                 } else {
                     hide(this.actionContainer);
                     this.context = target;
@@ -281,7 +281,7 @@ export const Editor = {
 
         }, false);
 
-        container.addEventListener(EventType.KEYDOWN, function (event) {
+        container.addEventListener('keydown', function (event) {
             var target = event.target;
             var parent = target.parentElement;
             var field = self.fields[target.id - 1];
@@ -329,7 +329,7 @@ export const Editor = {
             }
         }, false);
 
-        container.addEventListener(EventType.KEYUP, function (event) {
+        container.addEventListener('keyup', function (event) {
             var target = event.target;
             var parent = target.parentElement;
             var field = self.fields[target.id - 1];
@@ -370,97 +370,108 @@ export const Editor = {
             }
         }, false);
 
-        this.body.addEventListener(EventType.MOUSEOVER, (e) => {
+        this.body.addEventListener('mouseover', (e) => {
             var target = e.target;
             var nature = target.dataset['nature'];
             if (nature === 'attribute') {
                 var field = this.fields[target.id - 1];
                 // infoHandler.call(this, field, target);
             }
+            if (hasClass(target, 'component')) {
+                addClass(target, 'component--on_mouseover');
+            }
         });
 
-        this.body.addEventListener(EventType.FOCUSIN, function (event) {
-            self.autocomplete.hide();
-            handled = true;
-
-            var target = event.target;
-            var field = self.fields[target.id - 1];
-            field.focus();
-
-            var data = [];
-
-            if (hasClass(target, 'option')) {
-                let position = target.getAttribute('data-position');
-                position = position.split('..');
-                var min = position[0];
-                var max = position[1];
-
-                var index = target.dataset['index'];
-                var parentMElement = self.options[+index];
-
-                data = parentMElement.options.filter(function (x) {
-                    return x.position >= min && x.position <= max;
-                });
-                data = data.map(function (el) { return { val: el.name, element: el }; });
-
-                self.autocomplete.init(target, data);
-                self.autocomplete.onSelect = function (val) {
-                    optionHandler(val, target, data);
-                };
-            } else if (field) {
-                //if (projection.isDisabled) return;
-                field.focusIn();
-                events.emit('editor.change', field);
-
-                if (Projection.isExtension(field)) {
-                    data = field.valuesKV();
-                    self.autocomplete.onSelect = function (attr) {
-                        let line = field.implement(attr.key);
-                        getElement(f_class(ELEMENT.ATTRIBUTE), line).focus();
-                    };
-
-                    self.autocomplete.init(target, data);
-                } else if (Projection.isPointer(field) || Projection.isEnum(field)) {
-                    data = field.valuesKV();
-                    self.autocomplete.onSelect = function (attr) {
-                        field.value = attr.key;
-                        field.focus();
-                    };
-                    self.autocomplete.init(target, data);
-                } else
-                    return;
+        this.body.addEventListener('mouseout', (e) => {
+            var target = e.target;
+            
+            if (hasClass(target, 'component')) {
+                removeClass(target, 'component--on_mouseover');
             }
-        }, false);
+        });
 
-        this.body.addEventListener(EventType.FOCUSOUT, function (event) {
-            if (flag) {
-                flag = false;
-                return;
-            }
+        // this.body.addEventListener(EventType.FOCUSIN, function (event) {
+        //     self.autocomplete.hide();
+        //     handled = true;
 
-            if (self.autocomplete.hasFocus && self.autocomplete.input == target) {
-                return;
-            }
+        //     var target = event.target;
+        //     var field = self.fields[target.id - 1];
+        //     field.focus();
 
-            var target = event.target;
-            if (currentContainer) removeClass(currentContainer, 'current');
+        //     var data = [];
 
-            // if (hasClass(target, EL.ATTRIBUTE.class)) {
-            //     let projection = self.getProjection(target.id);
-            //     if (projection.isDisabled) return;
+        //     if (hasClass(target, 'option')) {
+        //         let position = target.getAttribute('data-position');
+        //         position = position.split('..');
+        //         var min = position[0];
+        //         var max = position[1];
 
-            //     if (projection) {
-            //         projection.focusOut();
-            //         projection.update();
-            //     }
+        //         var index = target.dataset['index'];
+        //         var parentMElement = self.options[+index];
 
-            //     if (self.autocomplete.hasFocus) {
-            //         setTimeout(function () { validation_handler(target); }, 100);
-            //     } else {
-            //         validation_handler(target);
-            //     }
-            // }
-        }, false);
+        //         data = parentMElement.options.filter(function (x) {
+        //             return x.position >= min && x.position <= max;
+        //         });
+        //         data = data.map(function (el) { return { val: el.name, element: el }; });
+
+        //         self.autocomplete.init(target, data);
+        //         self.autocomplete.onSelect = function (val) {
+        //             optionHandler(val, target, data);
+        //         };
+        //     } else if (field) {
+        //         //if (projection.isDisabled) return;
+        //         field.focusIn();
+        //         events.emit('editor.change', field);
+
+        //         if (Projection.isExtension(field)) {
+        //             data = field.valuesKV();
+        //             self.autocomplete.onSelect = function (attr) {
+        //                 let line = field.implement(attr.key);
+        //                 getElement(f_class(ELEMENT.ATTRIBUTE), line).focus();
+        //             };
+
+        //             self.autocomplete.init(target, data);
+        //         } else if (Projection.isPointer(field) || Projection.isEnum(field)) {
+        //             data = field.valuesKV();
+        //             self.autocomplete.onSelect = function (attr) {
+        //                 field.value = attr.key;
+        //                 field.focus();
+        //             };
+        //             self.autocomplete.init(target, data);
+        //         } else
+        //             return;
+        //     }
+        // }, false);
+
+        // this.body.addEventListener(EventType.FOCUSOUT, function (event) {
+        //     if (flag) {
+        //         flag = false;
+        //         return;
+        //     }
+
+        //     if (self.autocomplete.hasFocus && self.autocomplete.input == target) {
+        //         return;
+        //     }
+
+        //     var target = event.target;
+        //     if (currentContainer) removeClass(currentContainer, 'current');
+
+        //     // if (hasClass(target, EL.ATTRIBUTE.class)) {
+        //     //     let projection = self.getProjection(target.id);
+        //     //     if (projection.isDisabled) return;
+
+        //     //     if (projection) {
+        //     //         projection.focusOut();
+        //     //         projection.update();
+        //     //     }
+
+        //     //     if (self.autocomplete.hasFocus) {
+        //     //         setTimeout(function () { validation_handler(target); }, 100);
+        //     //     } else {
+        //     //         validation_handler(target);
+        //     //     }
+        //     // }
+        // }, false);
 
         events.on('model.change', function (from) {
             self.save();
