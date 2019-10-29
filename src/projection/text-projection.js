@@ -49,33 +49,6 @@ export const TextualProjection = Projection.create({
             }
         }
 
-        if (concept.value) {
-            let value = concept.value;
-            let parent = fragment.firstChild;
-            if (Array.isArray(value)) {
-                value.forEach(val => {
-                    let container = createListItem({ class: "field--set-item", draggable: true });
-                    container.tabIndex = 0;
-                    container.appendChild(val.render());
-                    parent.appendChild(container);
-                });
-            }
-            if (concept.canAddValue) {
-                let addAction = concept.getAddAction();
-                let container = createListItem({ class: "field--set__add font-ui" }, addAction.text);
-                container.addEventListener('click', function () {
-                    var container = createListItem({ class: "field--set-item", draggable: true });
-                    container.tabIndex = 0;
-                    var instance = concept.createElement();
-                    container.appendChild(instance.render());
-                    insertBeforeElement(this, container);
-
-                });
-                parent.appendChild(container);
-            }
-        }
-
-
         return fragment;
     }
 });

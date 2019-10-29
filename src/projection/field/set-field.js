@@ -1,8 +1,15 @@
 import { Field } from "./field.js";
-import { createUnorderedList, valOrDefault, addAttributes, hasOwn, hasClass, removeChildren, isHTMLElement, addClass } from "zenkai";
+import { createUnorderedList, insertBeforeElement, createDocFragment, createListItem, hasClass, removeChildren, isHTMLElement, addClass } from "zenkai";
 import { Key } from "@global/enums.js";
 
 export const SetField = Field.create({
+    create(concept) {
+        var instance = Object.create(this);
+
+        instance.concept = concept;
+
+        return instance;
+    },
     init() {
         var self = this;
 
@@ -12,6 +19,7 @@ export const SetField = Field.create({
 
         this.validators.push(validator);
     },
+    concept: null,
     object: "SET",
     struct: undefined,
     /** @type {HTMLElement} */
@@ -25,7 +33,7 @@ export const SetField = Field.create({
                 type: "set",
                 nature: "field",
             }
-        });
+        }, [valueHandler.call(this, this.concept.value)]);
         this.element.contentEditable = false;
 
         this.bindEvents();
@@ -42,7 +50,7 @@ export const SetField = Field.create({
             console.log('click');
         });
 
-        this.element.addEventListener('keydown', function (e) {
+        this.element.addEventListener('keydown', (e) => {
             var activeElement = document.activeElement;
             switch (e.key) {
                 case Key.backspace:
@@ -67,15 +75,17 @@ export const SetField = Field.create({
                     e.preventDefault();
                     break;
                 case Key.delete:
-                    if (hasClass(activeElement, 'field--set-item')) {
+                    if (this.concept.canDelete() && hasClass(activeElement, 'field--set-item')) {
                         addClass(activeElement, 'delete');
+                    } else {
+                        console.log("cannot delete");
                     }
             }
 
             lastKey = event.key;
         }, false);
 
-        this.element.addEventListener('keyup', function (e) {
+        this.element.addEventListener('keyup', (e) => {
             var activeElement = document.activeElement;
             switch (e.key) {
                 case Key.backspace:
@@ -84,21 +94,53 @@ export const SetField = Field.create({
                     e.preventDefault();
                     break;
                 case Key.delete:
-                    if (lastKey === Key.delete && isChild(activeElement)) {
-                        removeChildren(activeElement);
-                        let nextElement = activeElement.nextElementSibling;
-                        let previousElement = activeElement.previousElementSibling;
-                        if (isChild(nextElement)) {
-                            nextElement.focus();
+                    if (lastKey === Key.delete && isChild(activeElement) && hasClass(activeElement, 'delete')) {
+                        if (this.concept.removeElementAt(Array.from(this.element.children).indexOf(activeElement))) {
+                            removeChildren(activeElement);
+                            let nextElement = activeElement.nextElementSibling;
+                            let previousElement = activeElement.previousElementSibling;
+                            if (isChild(nextElement)) {
+                                nextElement.focus();
+                            }
+                            else if (isChild(previousElement)) {
+                                previousElement.focus();
+                            }
+                            activeElement.remove();
                         }
-                        else if (isChild(previousElement)) {
-                            previousElement.focus();
-                        }
-                        activeElement.remove();
                     }
             }
         }, false);
-
-
     }
 });
+
+function valueHandler(value) {
+    var fragment = createDocFragment();
+    var concept = this.concept;
+
+    if (Array.isArray(value)) {
+        value.forEach(val => {
+            let container = createListItem({ class: "field--set-item", draggable: true });
+            container.tabIndex = 0;
+            container.appendChild(val.render());
+            fragment.appendChild(container);
+        });
+    }
+
+    if (concept.canAddValue) {
+        let addAction = concept.getAddAction();
+        let container = createListItem({ class: "field--set__add font-ui" }, addAction.text);
+        container.addEventListener('click', function () {
+            if (concept.addElement()) {
+                var container = createListItem({ class: "field--set-item", draggable: true });
+                container.tabIndex = 0;
+                var instance = concept.createElement();
+                container.appendChild(instance.render());
+                insertBeforeElement(this, container);
+            }
+
+        });
+        fragment.appendChild(container);
+    }
+
+    return fragment;
+}

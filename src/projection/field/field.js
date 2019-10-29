@@ -9,7 +9,7 @@ export const Field = {
      * @param {Object} values values
      * @returns {BaseProjection}
      */
-    create: function (args) {
+    create(args) {
         var instance = Object.create(this);
 
         Object.assign(instance, args);

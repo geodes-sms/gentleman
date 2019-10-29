@@ -1,12 +1,12 @@
 import { Concept } from "./../concept.js";
 import { TextualProjection } from "@projection/text-projection.js";
-import { hasOwn } from "zenkai";
+import { hasOwn, valOrDefault } from "zenkai";
 
 /**
  * @memberof Concept
  */
 export const SetConcept = Concept.create({
-    create: function (model) {
+    create(model) {
         var instance = Object.create(this);
 
         instance.model = model;
@@ -22,7 +22,7 @@ export const SetConcept = Concept.create({
     get canAddValue() { return true; },
     init() {
         for (let i = 0; i < this.min; i++) {
-            this.addElement(this.createElement());
+            this.addElement();
         }
     },
     render() {
@@ -38,12 +38,26 @@ export const SetConcept = Concept.create({
             text: `Add ${this.accept}`
         };
     },
-    addElement(element){
-        this.value.push(element);
+    addElement(element) {
+        this.value.push(valOrDefault(element, this.createElement()));
         return true;
     },
-    createElement(){
+    removeElement(element) {
+        if (this.value.includes(element)) {
+            this.value = this.value.splice(this.value.indexOf(element), 1);
+            return true;
+        }
+        return false;
+    },
+    removeElementAt(index) {
+        this.value = this.value.splice(index, 1);
+        return true;
+    },
+    createElement() {
         return this.model.createConcept(this.accept);
+    },
+    canDelete() {
+        return this.value.length > this.min;
     }
 });
 
