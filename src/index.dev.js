@@ -9,6 +9,8 @@ import { METAMODEL_MINDMAP } from './samples/mindmap.mm.js';
 import '@css/normalize.css';
 import '@css/base.css';
 import '@css/site.css';
+import '@css/field.css';
+import '@css/autocomplete.css';
 import '@css/editor.css';
 import '@css/note.css';
 import '@css/state.css';

@@ -17,7 +17,7 @@ export const Component = {
         instance.model = concept.model;
         instance.schema = schema;
         instance.name = schema.name;
-        instance.projection = TextualProjection.create(schema.projection[0], instance, concept.model.editor);
+        instance.projection = TextualProjection.create(schema.projection[instance.projectionIndex], instance, concept.model.editor);
         instance.attributes = [];
         Object.assign(instance, args);
 
@@ -41,6 +41,7 @@ export const Component = {
     values: null,
     /** @type {TextualProjection} */
     projection: null,
+    projectionIndex: 0,
     representation: null,
     container: null,
 
@@ -74,6 +75,12 @@ export const Component = {
         return attribute;
     },
     render() {
+        return this.projection.render();
+    },
+    changeProjection() {
+        this.projectionIndex++;
+        var nextIndex = this.projectionIndex % this.schema.projection.length;
+        this.projection.schema = this.schema.projection[nextIndex];
         return this.projection.render();
     }
 };

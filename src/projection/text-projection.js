@@ -1,6 +1,6 @@
 import {
     createDocFragment, createSpan, createDiv, createListItem, createTextNode, createLineBreak,
-    addClass, isNullOrWhitespace, isNullOrUndefined, valOrDefault, insertBeforeElement
+    addClass, isNullOrWhitespace, isNullOrUndefined, valOrDefault, insertBeforeElement, createButton, removeChildren
 } from "zenkai";
 import { InvalidModelError } from '@src/exception/index.js';
 import { Field } from "@projection/field/field.js";
@@ -28,6 +28,7 @@ export const TextualProjection = Projection.create({
     schema: null,
     concept: null,
     editor: null,
+    container: null,
 
     render() {
         var concept = this.concept;
@@ -58,6 +59,11 @@ const styleMapper = {
     "after": 'marginBottom',
 };
 
+/**
+ * 
+ * @param {string} key 
+ * @this {TextualProjection}
+ */
 function attributeHandler(key) {
     // console.log(this.concept.name, key);
     var style = this.concept.model.metamodel.style;
@@ -68,7 +74,11 @@ function attributeHandler(key) {
         let defaultStyle = style['component'];
         let componentId = key.substring(key.indexOf('[') + 1, key.indexOf(']'));
         let component = this.concept.getComponent(componentId);
-        let container = createDiv({ class: 'component', data: { object: "component" } }, [component.render()]);
+        let btnProjection = createButton({ class: "btn btn-projection" }, "Projection");
+        let container = createDiv({ class: 'component', data: { object: "component" } }, [
+            btnProjection,
+            component.render()
+        ]);
 
         if (defaultStyle.spacing) {
             let spacing = defaultStyle.spacing;
@@ -77,9 +87,36 @@ function attributeHandler(key) {
             }
         }
 
+        btnProjection.addEventListener('click', function () {
+            var view = component.changeProjection();
+            removeChildrenX(container, (node) => node !== this);
+            container.appendChild(view);
+        });
+
+        this.container = container;
+
         return container;
     } else {
         throw InvalidModelError.create(`The attribute "${key}" was not found.`);
+    }
+
+    /**
+     * 
+     * @param {Node} node 
+     * @param {*} cb 
+     */
+    function removeChildrenX(node, cb) {
+        if (isNullOrUndefined(cb)) {
+            removeChildren(node);
+        } else {
+            Array.from(node.childNodes).forEach(n => {
+                if (cb(n)) {
+                    node.removeChild(n);
+                }
+            });
+        }
+
+        return node;
     }
 }
 

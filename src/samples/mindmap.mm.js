@@ -69,6 +69,16 @@ export const METAMODEL_MINDMAP = {
                                 "spacing": { "before": "2px", "after": "2px" }
                             },
                         }
+                    },
+                    {
+                        "type": "text",
+                        "layout": "Central topics: #topics",
+                        "style": {
+                            "topics": {
+                                "inline": false,
+                                "spacing": { "before": "5px", "after": "5px" }
+                            },
+                        }
                     }
                 ],
             }
