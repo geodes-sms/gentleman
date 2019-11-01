@@ -44,9 +44,18 @@ export const Component = {
     projectionIndex: 0,
     representation: null,
     container: null,
+    object: "component",
 
+    getStyle(){
+        return this.model.metamodel.style['component'];
+    },
+
+    /**
+     * Returns a value indicating whether the component has an attribute
+     * @param {*} id 
+     * @returns {boolean}
+     */
     hasAttribute(id) { return this.schema.attribute && hasOwn(this.schema.attribute, id); },
-
     /** @returns {Attribute} */
     getAttribute(id) {
         // console.log(`Get attribute: ${id}`);
@@ -54,7 +63,10 @@ export const Component = {
         if (isInt(id)) {
             attribute = this.attributes[id];
         } else if (isString(id)) {
-            attribute = valOrDefault(this.attributes.find((c) => c.id === id), this.createAttribute(id));
+            attribute = this.attributes.find((c) => c.name === id);
+            if (isNullOrUndefined(attribute)) {
+                attribute = this.createAttribute(id);
+            }
         } else {
             return ATTRIBUTE_NOT_FOUND;
         }

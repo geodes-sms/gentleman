@@ -45,6 +45,7 @@ export const Concept = {
     values: null,
     /** concept actions configuration */
     action: null,
+    object: "concept",
 
     hasAttribute(id) { return this.schema.attribute && hasOwn(this.schema.attribute, id); },
 

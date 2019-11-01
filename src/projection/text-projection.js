@@ -50,6 +50,32 @@ export const TextualProjection = Projection.create({
             }
         }
 
+        if (concept.object === "component") {
+            let btnProjection = createButton({ class: "btn btn-projection" }, "Projection");
+            let container = createDiv({ class: 'component', data: { object: "component" } }, [
+                btnProjection,
+                fragment
+            ]);
+
+            let style = this.concept.getStyle();
+            if (style.spacing) {
+                let spacing = style.spacing;
+                for (const key in spacing) {
+                    container.style[styleMapper[key]] = spacing[key];
+                }
+            }
+
+            btnProjection.addEventListener('click', function () {
+                var view = concept.changeProjection();
+                removeChildrenX(container, (node) => node !== this);
+                container.appendChild(view);
+            });
+
+            this.container = container;
+
+            return this.container;
+        }
+
         return fragment;
     }
 });
@@ -65,58 +91,15 @@ const styleMapper = {
  * @this {TextualProjection}
  */
 function attributeHandler(key) {
-    // console.log(this.concept.name, key);
-    var style = this.concept.model.metamodel.style;
     if (this.concept.hasAttribute(key)) {
         let attribute = this.concept.getAttribute(key);
         return attribute.render();
     } else if (key.startsWith('[')) {
-        let defaultStyle = style['component'];
         let componentId = key.substring(key.indexOf('[') + 1, key.indexOf(']'));
         let component = this.concept.getComponent(componentId);
-        let btnProjection = createButton({ class: "btn btn-projection" }, "Projection");
-        let container = createDiv({ class: 'component', data: { object: "component" } }, [
-            btnProjection,
-            component.render()
-        ]);
-
-        if (defaultStyle.spacing) {
-            let spacing = defaultStyle.spacing;
-            for (const key in spacing) {
-                container.style[styleMapper[key]] = spacing[key];
-            }
-        }
-
-        btnProjection.addEventListener('click', function () {
-            var view = component.changeProjection();
-            removeChildrenX(container, (node) => node !== this);
-            container.appendChild(view);
-        });
-
-        this.container = container;
-
-        return container;
+        return component.render();
     } else {
         throw InvalidModelError.create(`The attribute "${key}" was not found.`);
-    }
-
-    /**
-     * 
-     * @param {Node} node 
-     * @param {*} cb 
-     */
-    function removeChildrenX(node, cb) {
-        if (isNullOrUndefined(cb)) {
-            removeChildren(node);
-        } else {
-            Array.from(node.childNodes).forEach(n => {
-                if (cb(n)) {
-                    node.removeChild(n);
-                }
-            });
-        }
-
-        return node;
     }
 }
 
@@ -149,4 +132,19 @@ function specialCharacterHandler(char) {
         addClass(clear, 'clear');
         return clear;
     }
+}
+
+// TODO: DELETE AFTER ZENKAI UPDATE
+function removeChildrenX(node, cb) {
+    if (isNullOrUndefined(cb)) {
+        removeChildren(node);
+    } else {
+        Array.from(node.childNodes).forEach(n => {
+            if (cb(n)) {
+                node.removeChild(n);
+            }
+        });
+    }
+
+    return node;
 }

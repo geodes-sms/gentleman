@@ -58,6 +58,7 @@ export const Attribute = {
     projection: null,
     representation: null,
     container: null,
+    object: "attribute",
 
     isRequired() { return this._use === 'required'; },
     isOptional() { return this._use === 'optional'; },
