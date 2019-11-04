@@ -1,7 +1,7 @@
 import {
     cloneObject, isEmpty, getElement, getElements, createLink, createDiv, createSpan,
     appendChildren, EL, createTextArea, createParagraph, insertAfterElement, insertBeforeElement,
-    preprendChild, removeChildren, conceal, addClass, removeClass, hasClass
+    preprendChild, removeChildren, conceal, addClass, removeClass, hasClass, findAncestor, isHTMLElement
 } from 'zenkai';
 import { Key, EventType, UI } from '@global/enums.js';
 import { MetaModel, Model } from '@model/index.js';
@@ -135,6 +135,7 @@ export const Editor = {
     get projections() { return this.model.projections; },
     registerField(field) {
         field.id = this.fields.length + 1;
+        field.editor = this;
         this.fields.push(field);
     },
     get options() { return this.model.options; },
@@ -265,6 +266,7 @@ export const Editor = {
                 console.log("clicked on attribute");
                 this.context = target;
             } else {
+                console.log(this.model.toString());
                 if (this.context === this.body) {
                     // Object.assign(this.actionContainer.style, {
                     //     top: `${event.clientY - self.body.offsetTop}px`,
@@ -285,6 +287,7 @@ export const Editor = {
             var target = event.target;
             var parent = target.parentElement;
             var field = self.fields[target.id - 1];
+            var rememberKey = true;
 
             switch (event.key) {
                 case Key.backspace:
@@ -293,12 +296,11 @@ export const Editor = {
                     event.preventDefault();
                     break;
                 case Key.delete:
-                    // remove text content only
-                    // target.firstChild.nodeValue = "";
+                    rememberKey = false;
                     break;
                 case Key.enter:
-                    self.autocomplete.hasFocus = false;
-                    target.blur(); // remove focus
+                    // self.autocomplete.hasFocus = false;
+                    // target.blur(); // remove focus
                     event.preventDefault();
 
                     break;
@@ -312,21 +314,20 @@ export const Editor = {
                     break;
                 case 'g':
                 case "y":
+                case "q":
                 case "z":
                     if (lastKey == Key.ctrl) {
                         event.preventDefault();
                     }
-
+                    rememberKey = false;
                     break;
                 default:
                     break;
             }
-            lastKey = event.key;
-
-            if (event.key.length === 1) {
-                removeClass(target, UI.EMPTY);
-                removeClass(parent, UI.EMPTY);
+            if (rememberKey) {
+                lastKey = event.key;
             }
+
         }, false);
 
         container.addEventListener('keyup', function (event) {
@@ -337,33 +338,89 @@ export const Editor = {
             // if (field && target.textContent === "") {
             //     field.update();
             // }
-
             if (lastKey == event.key) lastKey = -1;
 
             switch (event.key) {
                 case Key.spacebar:
+                    // if (lastKey == Key.ctrl) {
+                    //     if (field && !field.isDisabled) {
+                    //         showAutoComplete(field);
+                    //     }
+                    // }
+                    break;
+                case Key.delete: // delete the field->attribute
                     if (lastKey == Key.ctrl) {
-                        if (field && !field.isDisabled) {
-                            showAutoComplete(field);
+                        if (field) {
+                            field.delete();
                         }
                     }
                     break;
-                case Key.delete:
+                case 'q': // query the parent concept/component
                     if (lastKey == Key.ctrl) {
-                        flag = true;
-                        field.delete();
-                        flag = false;
+                        if (field) {
+                            let parentConcept = field.getParentConcept();
+                            let optionalAttributes = parentConcept.getOptionalAttributes();
+                            let parentContainer = null;
+                            if (parentConcept.object === 'component') {
+                                parentContainer = findAncestor(target, (el) => hasClass(el, 'component'), 5);
+                            }
+                            else {
+                                parentContainer = findAncestor(target, (el) => hasClass(el, 'concept-container'), 5);
+                            }
+                            addClass(parentContainer, 'query');
+
+                            // create query container
+                            let queryContainer = getElement('.query-container', parentContainer);
+                            if (!isHTMLElement(queryContainer)) {
+                                queryContainer = EL.div({ class: 'query-container' });
+                            }
+                            // create query content
+                            let queryContent = null;
+                            if (isEmpty(optionalAttributes)) {
+                                queryContent = EL.p({ class: 'query-content' }, `No suggestion for this ${parentConcept.object}`);
+                            } else {
+                                queryContent = EL.ul({ class: 'bare-list suggestion-list' }, optionalAttributes.map(item => EL.li({ class: "suggestion", data: { attr: item } }, item)));
+                            }
+                            queryContainer.appendChild(queryContent);
+                            // bind events
+                            queryContainer.addEventListener('click', function (event) {
+                                target = event.target;
+                                if (hasClass(target, 'suggestion')) {
+                                    parentConcept.createAttribute(target.dataset['attr']);
+                                    parentConcept.rerender();
+                                }
+                                hide(this);
+                                removeClass(parentContainer, 'query');
+                                field.focus();
+                            });
+                            queryContainer.addEventListener('keydown', function (event) {
+                                target = event.target;
+                                switch (event.key) {
+                                    case Key.escape:
+                                        hide(this);
+                                        removeClass(parentContainer, 'query');
+                                        field.focus();
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            });
+                            parentContainer.appendChild(queryContainer);
+                            queryContainer.tabIndex = 0;
+                            queryContainer.focus();
+                        }
                     }
-                    break;
-                case "z":
-                    if (lastKey == Key.ctrl) {
-                        flag = true;
-                        self.state.undo();
-                        flag = false;
-                    }
+
                     break;
                 case 'g':
                     // show actions
+                    break;
+                case "z":
+                    // if (lastKey == Key.ctrl) {
+                    //     flag = true;
+                    //     self.state.undo();
+                    //     flag = false;
+                    // }
                     break;
                 default:
                     break;
@@ -384,7 +441,7 @@ export const Editor = {
 
         this.body.addEventListener('mouseout', (e) => {
             var target = e.target;
-            
+
             if (hasClass(target, 'component')) {
                 removeClass(target, 'component--on_mouseover');
             }

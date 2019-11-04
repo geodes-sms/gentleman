@@ -1,4 +1,4 @@
-import { DataType, EventType, UI, RepresentationType, ModelAttributeProperty as MAttrProp } from '@src/global/enums.js';
+import { DataType, UI, ModelAttributeProperty as MAttrProp } from '@src/global/enums.js';
 import { createDiv, createUnorderedList, createListItem, appendChildren, insertAfterElement, addClass, removeClass, getElement, createSpan, addAttributes, removeChildren, isDerivedOf, isNullOrWhitespace, valOrDefault } from 'zenkai';
 
 const EL = UI.Element;
@@ -28,7 +28,9 @@ export const Field = {
         return instance;
     },
     id: null,
+    editor: null,
     object: "BASE",
+    struct: undefined,
     getInfo() {
         return {
             type: this._mAttribute.type,
@@ -97,6 +99,10 @@ export const Field = {
     element: null,
     isDisabled: false,
 
+    getParentConcept() {
+        return this.concept.parent.concept;
+    },
+
     createInput(editable) {
         var inputProjection;
 
@@ -133,7 +139,7 @@ export const Field = {
 
         return inputProjection;
     },
-    focus() { this._input.focus(); },
+    focus() { this.element.focus(); },
     focusIn() {
         var self = this;
         if (self.isOptional) {
@@ -201,8 +207,14 @@ export const Field = {
         self.element.remove();
     },
     delete() {
-        var self = this;
-        self.modelAttribute.remove(self.index);
+        console.log("delete called");
+        if (this.concept.parent.canDelete()) {
+            console.log('deleting attribute...');
+            this.concept.parent.delete();
+            console.log('attribute deleted...');
+            removeChildren(this.element);
+            this.element.remove();
+        }
     },
     enable() {
         var self = this;

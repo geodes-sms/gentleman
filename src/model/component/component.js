@@ -19,6 +19,7 @@ export const Component = {
         instance.name = schema.name;
         instance.projection = TextualProjection.create(schema.projection[instance.projectionIndex], instance, concept.model.editor);
         instance.attributes = [];
+        instance._attributes = [];
         Object.assign(instance, args);
 
         return instance;
@@ -51,14 +52,37 @@ export const Component = {
     },
 
     /**
-     * Returns a value indicating whether the component has an attribute
-     * @param {*} id 
+     * Returns a value indicating whether the concept has an attribute
+     * @param {string} id Attribute's id
      * @returns {boolean}
      */
     hasAttribute(id) { return this.schema.attribute && hasOwn(this.schema.attribute, id); },
+    /**
+     * Returns a value indicating whether the attribute is required
+     * @param {string} id Attribute's id
+     * @returns {boolean}
+     */
+    isAttributeRequired(id) { return valOrDefault(this.schema.attribute[id].required, true); },
+    /**
+     * Returns a value indicating whether the attribute has been created
+     * @param {string} id Attribute's id
+     * @returns {boolean}
+     */
+    isAttributeCreated(id) { return this._attributes.includes(id); },
+    getOptionalAttributes() {
+        var attributes = [];
+
+        for (const attr in this.schema['attribute']) {
+            if (!this.isAttributeRequired(attr) && !this._attributes.includes(attr)) {
+                attributes.push(attr);
+            }
+        }
+
+        return attributes;
+    },
+
     /** @returns {Attribute} */
     getAttribute(id) {
-        // console.log(`Get attribute: ${id}`);
         var attribute = null;
         if (isInt(id)) {
             attribute = this.attributes[id];
@@ -79,10 +103,10 @@ export const Component = {
      * @returns {Attribute}
      */
     createAttribute(id) {
-        // console.log(`Create attribute: ${id}`);
         var attributeSchema = this.schema.attribute[id];
-        var attribute = AttributeFactory.createAttribute(this, attributeSchema).init();
+        var attribute = AttributeFactory.createAttribute(this, id, attributeSchema).init();
         this.attributes.push(attribute);
+        this._attributes.push(id);
 
         return attribute;
     },
@@ -94,5 +118,14 @@ export const Component = {
         var nextIndex = this.projectionIndex % this.schema.projection.length;
         this.projection.schema = this.schema.projection[nextIndex];
         return this.projection.render();
+    },
+    toString() {
+        var output = {};
+
+        this.attributes.forEach(attr => {
+            Object.assign(output, attr.toString());
+        });
+
+        return output;
     }
 };

@@ -14,6 +14,7 @@ export const Attribute = {
         instance.action = valOrDefault(schema.action, {});
         instance.min = valOrDefault(schema.min, 1);
         instance.name = schema.name;
+        instance.required = valOrDefault(instance.schema.required, true);
         instance._use = valOrDefault(instance.schema.use, 'required');
         Object.assign(instance, args);
 
@@ -29,7 +30,7 @@ export const Attribute = {
             let concept = this.model.createConcept(this.type);
             concept.parent = this;
             concept.accept = this.accept;
-            concept.action  = this.action;
+            concept.action = this.action;
             concept.min = this.min;
             if (isFunction(concept.init)) {
                 concept.init();
@@ -82,4 +83,15 @@ export const Attribute = {
         // }
         //this.container.appendChild(this.projection.render());
     },
+    canDelete() {
+        return !this.required;
+    },
+    delete() {
+        return this.concept.removeAttribute(this.name);
+    },
+    toString() {
+        return {
+            [`${this.concept.name}@${this.name}`]: this.value.toString()
+        };
+    }
 };

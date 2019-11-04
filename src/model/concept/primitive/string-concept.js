@@ -9,12 +9,23 @@ export const StringConcept = Concept.create({
         instance.projection = TextualProjection.create(createProjection(), instance, model.editor);
         return instance;
     },
+    init() {
+        this.placeholder = this.parent.name;
+    },
+    placeholder: null,
     projection: null,
     representation: null,
     name: 'string',
 
     render() {
         return this.projection.render();
+    },
+    update(value) {
+        this.value = value;
+        return true;
+    },
+    toString() {
+        return this.value;
     }
 });
 

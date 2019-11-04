@@ -1,6 +1,6 @@
 import {
     createDocFragment, createSpan, createDiv, createListItem, createTextNode, createLineBreak,
-    addClass, isNullOrWhitespace, isNullOrUndefined, valOrDefault, insertBeforeElement, createButton, removeChildren
+    addClass, isNullOrWhitespace, isNullOrUndefined, valOrDefault, insertBeforeElement, createButton, removeChildren, createI
 } from "zenkai";
 import { InvalidModelError } from '@src/exception/index.js';
 import { Field } from "@projection/field/field.js";
@@ -52,6 +52,7 @@ export const TextualProjection = Projection.create({
 
         if (concept.object === "component") {
             let btnProjection = createButton({ class: "btn btn-projection" }, "Projection");
+            btnProjection.tabIndex = -1;
             let container = createDiv({ class: 'component', data: { object: "component" } }, [
                 btnProjection,
                 fragment
@@ -92,8 +93,11 @@ const styleMapper = {
  */
 function attributeHandler(key) {
     if (this.concept.hasAttribute(key)) {
-        let attribute = this.concept.getAttribute(key);
-        return attribute.render();
+        if (this.concept.isAttributeCreated(key) || this.concept.isAttributeRequired(key)) {
+            let attribute = this.concept.getAttribute(key);
+            return attribute.render();
+        }
+        return createI({ class: "attribute--optional", data: { id: key } });
     } else if (key.startsWith('[')) {
         let componentId = key.substring(key.indexOf('[') + 1, key.indexOf(']'));
         let component = this.concept.getComponent(componentId);
@@ -114,7 +118,7 @@ function referenceHandler(key) {
         let keyword = createSpan({ class: valOrDefault(element.class, `${this.concept.name}-${key}`) }, element.val);
         return keyword;
     } else if (element.type === 'field') {
-        let field = FieldFactory.createField(this.concept, this.concept.name, element);
+        let field = FieldFactory.createField(this.concept.name, this.concept, element);
         this.editor.registerField(field);
         return field.createInput(this.concept.parent.name);
     } else if (element.type === 'group') {

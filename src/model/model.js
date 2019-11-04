@@ -33,7 +33,7 @@ export const Model = {
         this.schema = !isNullOrUndefined(model) ? model : initSchema(this.metamodel);
         this.editor = editor;
         this.root = ConceptFactory.createConcept(this, 'root', this.schema.root);
-        
+
         // (?) Uncomment to add optional argument parameters
         // Object.assign(this, args);
 
@@ -59,9 +59,42 @@ export const Model = {
 
         return element && !(this.isEnum(type) || this.isDataType(type)) ? cloneObject(element) : "";
     },
-
-    toString() { return this.root.toString(); }
+    generateId() {
+        return UUID.generate();
+    },
+    toString() { return JSON.stringify(this.root.toString()); }
 };
+
+/**
+ * Fast UUID generator, RFC4122 version 4 compliant.
+ * @author Jeff Ward (jcward.com).
+ * @license MIT license
+ * @link http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
+ **/
+const UUID = (function () {
+    var self = {};
+
+    var lut = [];
+    for (let i = 0; i < 256; i++) {
+        lut[i] = i < 16 ? '0' + i.toString(16) : i.toString(16);
+    }
+
+    self.generate = function () {
+        var d0 = Math.random() * 0x100000000 >>> 0;
+        var d1 = Math.random() * 0x100000000 >>> 0;
+        var d2 = Math.random() * 0x100000000 >>> 0;
+        var d3 = Math.random() * 0x100000000 >>> 0;
+
+        return lut[d0 & 0xff] + lut[d0 >> 8 & 0xff] + lut[d0 >> 16 & 0xff] + lut[d0 >> 24 & 0xff] + '-' +
+            lut[d1 & 0xff] + lut[d1 >> 8 & 0xff] + '-' + lut[d1 >> 16 & 0x0f | 0x40] + lut[d1 >> 24 & 0xff] + '-' +
+            lut[d2 & 0x3f | 0x80] + lut[d2 >> 8 & 0xff] + '-' + lut[d2 >> 16 & 0xff] + lut[d2 >> 24 & 0xff] +
+            lut[d3 & 0xff] + lut[d3 >> 8 & 0xff] + lut[d3 >> 16 & 0xff] + lut[d3 >> 24 & 0xff];
+    }
+
+    return self;
+})();
+
+
 
 function initSchema(metamodel) {
     const schema = { "root": metamodel.getCompleteModelConcept(metamodel.root) };

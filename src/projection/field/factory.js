@@ -4,7 +4,7 @@ import { StringField } from './string-field.js';
 import { Field } from './field.js';
 
 export const FieldFactory = {
-    createField(model, type, schema) {
+    createField(type, model, schema) {
         switch (type) {
             case 'string':
             case 'number':
@@ -17,6 +17,11 @@ export const FieldFactory = {
     }
 };
 
+/**
+ * 
+ * @param {*} model 
+ * @param {*} schema 
+ */
 function createBaseField(model, schema) {
     var base = valOrDefault(schema.base, 'concept');
 

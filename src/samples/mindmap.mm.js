@@ -1,19 +1,20 @@
 export const METAMODEL_MINDMAP = {
     "mindmap": {
-        "name": "mindmap",
         "attribute": {
-            "title": { "name": "title", "type": "string" }
+            "title": { "type": "string" },
+            "short_description": { "type": "string", "required": false }
         },
         "component": [
             {
                 "name": "central_topic",
                 "attribute": {
-                    "topic": { "name": "topic", "type": "central_topic" }
+                    "id": { "type": "string" },
+                    "topic": { "type": "central_topic" }
                 },
                 "projection": [
                     {
                         "type": "text",
-                        "layout": "Subject of discussion: #topic"
+                        "layout": "Subject of discussion: #id #topic"
                     }
                 ],
             }
@@ -21,16 +22,16 @@ export const METAMODEL_MINDMAP = {
         "projection": [
             {
                 "type": "text",
-                "layout": "Mind map #title #[central_topic]"
+                "layout": "Mind map #title #short_description #[central_topic]"
             }
         ]
     },
     "topic": {
         "abstract": true,
         "attribute": {
-            "name": { "name": "name", "type": "string" },
+            "name": { "type": "string" },
             "details": {
-                "name": "details", "type": "string", "projection": {
+                "type": "string", "projection": {
                     type: "text",
                     field: { type: 'field', view: 'textarea' },
                     layout: '$field'
@@ -42,16 +43,14 @@ export const METAMODEL_MINDMAP = {
     },
     "central_topic": {
         "base": "topic",
-        "name": "central_topic",
         "component": [
             {
                 "name": "main_topics",
                 "attribute": {
-                    "topics": { 
-                        "name": "topics", 
-                        "type": "set", 
-                        "accept": "main_topic", 
-                        "min": 1 ,
+                    "topics": {
+                        "type": "set",
+                        "accept": "main_topic",
+                        "min": 1,
                         "action": {
                             "add": {
                                 "text": "Add a main topic"
@@ -92,17 +91,11 @@ export const METAMODEL_MINDMAP = {
     },
     "main_topic": {
         "base": "topic",
-        "name": "main_topic",
         "component": [
             {
                 "name": "sub_topics",
                 "attribute": {
-                    "topics": { 
-                        "name": "topics", 
-                        "type": "set", 
-                        "accept": "sub_topic",
-                        "min": 5,
-                    }
+                    "topics": { "type": "set", "accept": "sub_topic", "min": 5, }
                 },
                 "projection": [
                     {
@@ -128,12 +121,11 @@ export const METAMODEL_MINDMAP = {
     },
     "sub_topic": {
         "base": "topic",
-        "name": "sub_topic",
         "component": [
             {
                 "name": "sub_topics",
                 "attribute": {
-                    "topics": { "name": "topics", "type": "set", "accept": "sub_topic" }
+                    "topics": { "type": "set", "accept": "sub_topic" }
                 },
                 "projection": [
                     {

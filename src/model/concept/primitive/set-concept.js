@@ -1,6 +1,6 @@
 import { Concept } from "./../concept.js";
 import { TextualProjection } from "@projection/text-projection.js";
-import { hasOwn, valOrDefault } from "zenkai";
+import { hasOwn, isNullOrUndefined, isInt, isEmpty, last, insert } from "zenkai";
 
 /**
  * @memberof Concept
@@ -27,6 +27,7 @@ export const SetConcept = Concept.create({
     },
     render() {
         var view = this.projection.render();
+
         return view;
     },
     getAddAction() {
@@ -38,19 +39,69 @@ export const SetConcept = Concept.create({
             text: `Add ${this.accept}`
         };
     },
+    getElement(id) {
+        var element = this.value.find((el) => el.id === id);
+        if (isNullOrUndefined(element)) {
+            return undefined;
+        }
+
+        return element;
+    },
+    getElementAt(index) {
+        if (index < this.value.length) {
+            return this.value[index];
+        }
+
+        return undefined;
+    },
+    getFirstElement() {
+        if (isEmpty(this.value)) {
+            return undefined;
+        }
+
+        return this.value[0];
+    },
+    getLastElement() {
+        if (isEmpty(this.value)) {
+            return undefined;
+        }
+
+        return last(this.value);
+    },
     addElement(element) {
-        this.value.push(valOrDefault(element, this.createElement()));
-        return true;
+        if (isNullOrUndefined(element)) {
+            element = this.createElement();
+        }
+
+        this.value.push(element);
+
+        return this;
+    },
+    addElementAt(element, index) {
+        if (isNullOrUndefined(element)) {
+            element = this.createElement();
+        }
+
+        insert(this.value, index, element);
+
+        return this;
     },
     removeElement(element) {
+        var index = null;
+
         if (this.value.includes(element)) {
-            this.value = this.value.splice(this.value.indexOf(element), 1);
-            return true;
+            index = this.value.indexOf(element);
+        } else {
+            return false;
         }
-        return false;
+
+        return this.removeElementAt(index);
     },
     removeElementAt(index) {
-        this.value = this.value.splice(index, 1);
+        if (!isInt(index) || index < 0) {
+            return false;
+        }
+        this.value.splice(index, 1);
         return true;
     },
     createElement() {
@@ -58,6 +109,13 @@ export const SetConcept = Concept.create({
     },
     canDelete() {
         return this.value.length > this.min;
+    },
+    toString() {
+        var output = [];
+        this.value.forEach(val => {
+            output.push(val.toString());
+        });
+        return output;
     }
 });
 

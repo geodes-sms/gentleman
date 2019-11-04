@@ -3,17 +3,39 @@ import { StringConcept, SetConcept, NumberConcept } from "./primitive/index.js";
 import { valOrDefault, isNullOrUndefined } from 'zenkai';
 
 export const ConceptFactory = {
-    createConcept(model, type, schema) {
-        switch (type) {
+    createConcept(model, name, schema) {
+        var concept = null;
+        
+        switch (name) {
             case 'string':
-                return StringConcept.create(model);
+                concept = StringConcept.create(model);
+                break;
             case 'number':
-                return NumberConcept.create(model);
+                concept = NumberConcept.create(model);
+                break;
             case 'set':
-                return SetConcept.create(model);
+                concept = SetConcept.create(model);
+                break;
             default:
-                return BaseConcept.create(model, schema);
+                concept = BaseConcept.create(model, schema);
+                break;
         }
+
+        if (isNullOrUndefined(concept)) {
+            // error handler
+            console.error(`The '${name}' concept could not be created`);
+            
+            return null;
+        }
+
+        concept.id = model.generateId(); 
+        concept.name = name;
+        concept.attributes = [];
+        concept._attributes = [];
+        concept.components = [];
+        concept._components = [];
+
+        return concept;
     }
 };
 

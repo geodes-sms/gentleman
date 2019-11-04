@@ -1,5 +1,5 @@
 import { Field } from "./field.js";
-import { createUnorderedList, insertBeforeElement, createDocFragment, createListItem, hasClass, removeChildren, isHTMLElement, addClass } from "zenkai";
+import { createUnorderedList, insertBeforeElement, createDocFragment, createListItem, hasClass, removeChildren, isHTMLElement, addClass, insertAfterElement } from "zenkai";
 import { Key } from "@global/enums.js";
 
 export const SetField = Field.create({
@@ -25,7 +25,7 @@ export const SetField = Field.create({
     /** @type {HTMLElement} */
     element: null,
 
-    createInput(editable) {
+    createInput() {
         this.element = createUnorderedList({
             id: this.id,
             class: ['empty', 'bare-list', 'field', 'field--set'],
@@ -45,6 +45,7 @@ export const SetField = Field.create({
 
         const isChild = (element) => element.parentElement === this.element && isItem;
         const isItem = (element) => isHTMLElement(element) && hasClass(element, 'field--set-item');
+        const concept = this.concept;
 
         this.element.addEventListener('click', function () {
             console.log('click');
@@ -82,10 +83,10 @@ export const SetField = Field.create({
                     }
             }
 
-            lastKey = event.key;
+            lastKey = e.key;
         }, false);
 
-        this.element.addEventListener('keyup', (e) => {
+        this.element.addEventListener('keyup', function(e) {
             var activeElement = document.activeElement;
             switch (e.key) {
                 case Key.backspace:
@@ -93,9 +94,22 @@ export const SetField = Field.create({
                 case Key.ctrl:
                     e.preventDefault();
                     break;
+                case Key.spacebar:
+                    if (lastKey === Key.spacebar && isChild(activeElement)) {
+                        if (concept.addElement()) {
+                            let instance = concept.getLastElement();
+                            var container = createListItem({ class: "field--set-item", draggable: true }, [instance.render()]);
+                            container.tabIndex = 0;
+                            insertAfterElement(activeElement, container);
+                            container.focus();
+                            e.preventDefault();
+                        }
+                    }
+
+                    break;
                 case Key.delete:
                     if (lastKey === Key.delete && isChild(activeElement) && hasClass(activeElement, 'delete')) {
-                        if (this.concept.removeElementAt(Array.from(this.element.children).indexOf(activeElement))) {
+                        if (concept.removeElementAt(Array.from(this.children).indexOf(activeElement))) {
                             removeChildren(activeElement);
                             let nextElement = activeElement.nextElementSibling;
                             let previousElement = activeElement.previousElementSibling;
@@ -108,6 +122,8 @@ export const SetField = Field.create({
                             activeElement.remove();
                         }
                     }
+
+                    break;
             }
         }, false);
     }
@@ -131,13 +147,11 @@ function valueHandler(value) {
         let container = createListItem({ class: "field--set__add font-ui" }, addAction.text);
         container.addEventListener('click', function () {
             if (concept.addElement()) {
-                var container = createListItem({ class: "field--set-item", draggable: true });
+                let instance = concept.getLastElement();
+                var container = createListItem({ class: "field--set-item", draggable: true }, [instance.render()]);
                 container.tabIndex = 0;
-                var instance = concept.createElement();
-                container.appendChild(instance.render());
                 insertBeforeElement(this, container);
             }
-
         });
         fragment.appendChild(container);
     }

@@ -7,16 +7,11 @@ const ATTRIBUTE_NOT_FOUND = -1;
 
 const tryResolve = (obj, prop, fallback) => isNullOrUndefined(obj) ? fallback : obj[prop];
 
-/**
- * @memberof Concept
- */
 export const Concept = {
     create: function (args) {
         var instance = Object.create(this);
 
         Object.assign(instance, args);
-        instance.attributes = [];
-        instance.components = [];
 
         return instance;
     },
@@ -47,7 +42,38 @@ export const Concept = {
     action: null,
     object: "concept",
 
+
+    /**
+     * Returns a value indicating whether the concept has an attribute
+     * @param {string} id Attribute's id
+     * @returns {boolean}
+     */
     hasAttribute(id) { return this.schema.attribute && hasOwn(this.schema.attribute, id); },
+    /**
+     * Returns a value indicating whether the attribute is required
+     * @param {string} id Attribute's id
+     * @returns {boolean}
+     */
+    isAttributeRequired(id) { return valOrDefault(this.schema.attribute[id].required, true); },
+    /**
+     * Returns a value indicating whether the attribute has been created
+     * @param {string} id Attribute's id
+     * @returns {boolean}
+     */
+    isAttributeCreated(id) { return this._attributes.includes(id); },
+
+    getOptionalAttributes() {
+        var attributes = [];
+        console.log(this._attributes);
+
+        for (const attr in this.schema['attribute']) {
+            if (!this.isAttributeRequired(attr) && !this._attributes.includes(attr)) {
+                attributes.push(attr);
+            }
+        }
+
+        return attributes;
+    },
 
     /** @returns {Attribute} */
     getAttribute(id) {
@@ -56,13 +82,40 @@ export const Concept = {
         if (isInt(id)) {
             attribute = this.attributes[id];
         } else if (isString(id)) {
-            attribute = valOrDefault(this.attributes.find((c) => c.id === id), this.createAttribute(id));
+            attribute = this.attributes.find((c) => c.name === id);
+            if (isNullOrUndefined(attribute)) {
+                attribute = this.createAttribute(id);
+            }
         } else {
             return ATTRIBUTE_NOT_FOUND;
         }
 
         return attribute;
     },
+    removeAttribute(attr) {
+        var index = null;
+
+        if (isString(attr) && this._attributes.includes(attr)) {
+            index = this._attributes.indexOf(attr);
+        } else if (attr.object === "attribute" && this.attributes.includes(attr)) {
+            index = this.attributes.indexOf(attr);
+        } else {
+            return false;
+        }
+
+        return this.removeAttributeAt(index);
+    },
+    removeAttributeAt(index) {
+        if (!isInt(index) || index < 0) {
+            return false;
+        }
+
+        this.attributes.splice(index, 1);
+        this._attributes.splice(index, 1);
+
+        return true;
+    },
+
     /** @returns {Concept} */
     getComponent(id) {
         // console.log(`Get component: ${id}`);
@@ -83,10 +136,10 @@ export const Concept = {
      * @returns {Attribute}
      */
     createAttribute(id) {
-        // console.log(`Create attribute: ${id}`);
         var attributeSchema = this.schema.attribute[id];
-        var attribute = AttributeFactory.createAttribute(this, attributeSchema).init();
+        var attribute = AttributeFactory.createAttribute(this, id, attributeSchema).init();
         this.attributes.push(attribute);
+        this._attributes.push(id);
 
         return attribute;
     },
@@ -101,9 +154,24 @@ export const Concept = {
         var component = ComponentFactory.createComponent(this, componentSchema);
         component.parent = this;
         this.components.push(component);
+        this._components.push(id);
 
         return component;
     },
     /** @returns {boolean} */
-    isRoot() { return this.parent === null; }
+    isRoot() { return this.parent === null; },
+    toString() {
+        var output = {};
+
+        this.attributes.forEach(attr => {
+            Object.assign(output, attr.toString());
+        });
+        this.components.forEach(comp => {
+            Object.assign(output, {
+                [`[${comp.name}]`]: comp.toString()
+            });
+        });
+
+        return output;
+    }
 };
