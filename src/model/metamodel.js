@@ -80,7 +80,7 @@ export const MetaModel = {
             return undefined;
         }
         const conceptSchema = this.getModelConcept(type);
-        const baseSchema = getConceptBaseSchema.call(this, conceptSchema.base);
+        const baseSchema = getConceptBaseSchema.call(this, conceptSchema.prototype);
         if (!hasOwn(conceptSchema, 'attribute')) {
             conceptSchema.attribute = {};
         }
@@ -118,21 +118,21 @@ export const MetaModel = {
 };
 
 function getModelElementType(el) {
-    if (!hasOwn(el, 'base')) return el.name;
+    if (!hasOwn(el, 'prototype')) return el.name;
 
-    return getModelElementType(this.getModelConcept(el.base)) + "." + el.name;
+    return getModelElementType(this.getModelConcept(el.prototype)) + "." + el.name;
 }
 
 function getConceptBaseSchema(baseConceptName) {
-    var base = baseConceptName;
+    var prototype = baseConceptName;
     var baseSchema = {};
-    while (!isNullOrUndefined(base)) {
-        let schema = this.schema[base];
+    while (!isNullOrUndefined(prototype)) {
+        let schema = this.schema[prototype];
         if (schema) {
             Object.assign(baseSchema, schema.attribute);
-            base = schema.base;
+            prototype = schema['prototype'];
         } else {
-            base = null;
+            prototype = null;
         }
     }
 

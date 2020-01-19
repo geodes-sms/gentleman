@@ -11,14 +11,18 @@ export const BaseConcept = Concept.create({
 
         instance.model = model;
         instance.schema = schema;
-        instance.projection = TextualProjection.create(schema.projection[0], instance, model.editor);
+        instance.projection = TextualProjection.create(schema.projection[instance.projectionIndex], instance, model.editor);
 
         return instance;
     },
     /** @type {TextualProjection} */
     projection: null,
+    projectionIndex: 0,
     representation: null,
     container: null,
+    hasManyProjection() {
+        return this.schema.projection.length > 1;
+    },
 
     render() {
         // return this.projection.render();

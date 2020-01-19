@@ -1,7 +1,8 @@
 import {
     cloneObject, isEmpty, getElement, getElements, createLink, createDiv, createSpan,
-    appendChildren, EL, createTextArea, createParagraph, insertAfterElement, insertBeforeElement,
-    preprendChild, removeChildren, conceal, addClass, removeClass, hasClass, findAncestor, isHTMLElement
+    appendChildren, createTextArea, createParagraph, insertAfterElement, insertBeforeElement,
+    preprendChild, removeChildren, conceal, addClass, removeClass, hasClass, findAncestor, isHTMLElement, 
+    createUnorderedList, createListItem, createStrong
 } from 'zenkai';
 import { Key, EventType, UI } from '@global/enums.js';
 import { MetaModel, Model } from '@model/index.js';
@@ -266,7 +267,7 @@ export const Editor = {
                 console.log("clicked on attribute");
                 this.context = target;
             } else {
-                console.log(this.model.toString());
+                
                 if (this.context === this.body) {
                     // Object.assign(this.actionContainer.style, {
                     //     top: `${event.clientY - self.body.offsetTop}px`,
@@ -348,14 +349,14 @@ export const Editor = {
                     //     }
                     // }
                     break;
-                case Key.delete: // delete the field->attribute
+                case Key.delete: // Delete the field->attribute
                     if (lastKey == Key.ctrl) {
                         if (field) {
                             field.delete();
                         }
                     }
                     break;
-                case 'q': // query the parent concept/component
+                case 'q': // Query the parent concept/component
                     if (lastKey == Key.ctrl) {
                         if (field) {
                             let parentConcept = field.getParentConcept();
@@ -363,26 +364,30 @@ export const Editor = {
                             let parentContainer = null;
                             if (parentConcept.object === 'component') {
                                 parentContainer = findAncestor(target, (el) => hasClass(el, 'component'), 5);
-                            }
-                            else {
+                            } else {
                                 parentContainer = findAncestor(target, (el) => hasClass(el, 'concept-container'), 5);
                             }
                             addClass(parentContainer, 'query');
 
-                            // create query container
+                            // Create query container
                             let queryContainer = getElement('.query-container', parentContainer);
                             if (!isHTMLElement(queryContainer)) {
-                                queryContainer = EL.div({ class: 'query-container' });
+                                queryContainer = createDiv({ class: 'query-container' });
                             }
-                            // create query content
+                            
+                            // Create query content
                             let queryContent = null;
                             if (isEmpty(optionalAttributes)) {
-                                queryContent = EL.p({ class: 'query-content' }, `No suggestion for this ${parentConcept.object}`);
+                                queryContent = createParagraph({ class: 'query-content' }, `No suggestion for this ${parentConcept.object}`);
                             } else {
-                                queryContent = EL.ul({ class: 'bare-list suggestion-list' }, optionalAttributes.map(item => EL.li({ class: "suggestion", data: { attr: item } }, item)));
+                                queryContent = createUnorderedList(
+                                    { class: 'bare-list suggestion-list' }, 
+                                    optionalAttributes.map(item => createListItem({ class: "suggestion", data: { attr: item } }, item))
+                                );
                             }
                             queryContainer.appendChild(queryContent);
-                            // bind events
+
+                            // Bind events
                             queryContainer.addEventListener('click', function (event) {
                                 target = event.target;
                                 if (hasClass(target, 'suggestion')) {
@@ -414,13 +419,6 @@ export const Editor = {
                     break;
                 case 'g':
                     // show actions
-                    break;
-                case "z":
-                    // if (lastKey == Key.ctrl) {
-                    //     flag = true;
-                    //     self.state.undo();
-                    //     flag = false;
-                    // }
                     break;
                 default:
                     break;
@@ -591,11 +589,11 @@ export const Editor = {
             var info = field.getInfo();
             removeChildren(this.infoContainer);
             this.infoContainer.appendChild(
-                EL.ul({ class: 'bare-list' }, [
-                    EL.li({ class: 'info-type' }, [
-                        EL.strong(null, "type"), `: ${info.type}`]),
-                    EL.li({ class: 'info-value' }, [
-                        EL.strong(null, "length"), `: ${info.value}`])
+                createUnorderedList({ class: 'bare-list' }, [
+                    createListItem({ class: 'info-type' }, [
+                        createStrong(null, "type"), `: ${info.type}`]),
+                    createListItem({ class: 'info-value' }, [
+                        createStrong(null, "length"), `: ${info.value}`])
                 ]));
             insertAfterElement(target, this.infoContainer);
             Object.assign(this.infoContainer.style, {

@@ -1,4 +1,4 @@
-import { isInt, isString, valOrDefault, hasOwn, isNullOrUndefined } from "zenkai";
+import { isString, valOrDefault, hasOwn, isNullOrUndefined } from "zenkai";
 import { AttributeFactory } from "@model/attribute/factory.js";
 import { ComponentFactory } from "@model/component/factory";
 
@@ -62,6 +62,11 @@ export const Concept = {
      */
     isAttributeCreated(id) { return this._attributes.includes(id); },
 
+    
+    getStyle(){
+        return this.model.metamodel.style['concept'];
+    },
+
     getOptionalAttributes() {
         var attributes = [];
         console.log(this._attributes);
@@ -79,7 +84,7 @@ export const Concept = {
     getAttribute(id) {
         // console.log(`Get attribute: ${id}`);
         var attribute = null;
-        if (isInt(id)) {
+        if (Number.isInteger(id)) {
             attribute = this.attributes[id];
         } else if (isString(id)) {
             attribute = this.attributes.find((c) => c.name === id);
@@ -106,7 +111,7 @@ export const Concept = {
         return this.removeAttributeAt(index);
     },
     removeAttributeAt(index) {
-        if (!isInt(index) || index < 0) {
+        if (!Number.isInteger(index) || index < 0) {
             return false;
         }
 
@@ -120,7 +125,7 @@ export const Concept = {
     getComponent(id) {
         // console.log(`Get component: ${id}`);
         var component = null;
-        if (isInt(id)) {
+        if (Number.isInteger(id)) {
             component = valOrDefault(this.components[id], this.createComponent(id));
         } else if (isString(id)) {
             component = valOrDefault(this.components.find((c) => c.id === id), this.createComponent(id));
@@ -173,5 +178,11 @@ export const Concept = {
         });
 
         return output;
-    }
+    },
+    changeProjection() {
+        this.projectionIndex++;
+        var nextIndex = this.projectionIndex % this.schema.projection.length;
+        this.projection.schema = this.schema.projection[nextIndex];
+        return this.projection.render();
+    },
 };

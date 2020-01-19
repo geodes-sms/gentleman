@@ -1,4 +1,4 @@
-import { isInt, isString, valOrDefault, hasOwn, isNullOrUndefined } from "zenkai";
+import { isString, valOrDefault, hasOwn, isNullOrUndefined } from "zenkai";
 import { AttributeFactory } from "@model/attribute/factory.js";
 import { TextualProjection } from "@projection/text-projection";
 
@@ -50,6 +50,9 @@ export const Component = {
     getStyle(){
         return this.model.metamodel.style['component'];
     },
+    hasManyProjection() {
+        return this.schema.projection.length > 1;
+    },
 
     /**
      * Returns a value indicating whether the concept has an attribute
@@ -84,7 +87,7 @@ export const Component = {
     /** @returns {Attribute} */
     getAttribute(id) {
         var attribute = null;
-        if (isInt(id)) {
+        if (Number.isInteger(id)) {
             attribute = this.attributes[id];
         } else if (isString(id)) {
             attribute = this.attributes.find((c) => c.name === id);

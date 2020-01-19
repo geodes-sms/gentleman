@@ -1,7 +1,7 @@
 import {
     createAside, createAnchor, getElement, createDocFragment, createLineBreak, removeChildren,
     createParagraph, createSpan, addClass, appendChildren, createH3, createH4, createListItem, 
-    createUnorderedList, EL, hasOwn, isString
+    createUnorderedList, hasOwn, isString
 } from 'zenkai';
 import {
     isNullOrWhitespace
@@ -83,23 +83,23 @@ export const Note = {
 
 function printSchema(schema) {
     console.log(schema);
-    var container = EL.ul();
+    var container = createUnorderedList();
     for (const key in schema) {
         if (hasOwn(schema, key)) {
             const element = schema[key];
             console.log(element);
             if (key === 'attribute') {
-                container.appendChild(EL.li({ class: 'schema-attribute' }, [printSchema(element)]));
+                container.appendChild(createListItem({ class: 'schema-attribute' }, [printSchema(element)]));
             } else if (key === 'component') {
                 element.forEach(el => {
-                    container.appendChild(EL.li({ class: 'schema-attribute' }, [printSchema(el)]));
+                    container.appendChild(createListItem({ class: 'schema-attribute' }, [printSchema(el)]));
                 });
             } else if (isString(element)) {
-                container.appendChild(EL.li({ class: 'schema-item' }, element));
+                container.appendChild(createListItem({ class: 'schema-item' }, element));
             } else {
-                container.appendChild(EL.li({ class: 'schema-item' }, [
-                    EL.span({ class: 'schema-item-key' }, key),
-                    EL.span({ class: 'schema-item-value' }, element.n)
+                container.appendChild(createListItem({ class: 'schema-item' }, [
+                    createSpan({ class: 'schema-item-key' }, key),
+                    createSpan({ class: 'schema-item-value' }, element.n)
                 ]));
             }
         }

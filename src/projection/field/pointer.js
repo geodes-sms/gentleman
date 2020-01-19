@@ -1,4 +1,4 @@
-import { defProp, isNullOrWhitespace, isInt } from 'zenkai';
+import { defProp, isNullOrWhitespace } from 'zenkai';
 import { addClass, removeClass } from 'zenkai';
 import { UI } from '@src/global/enums.js';
 import { Field } from './field.js';
@@ -18,7 +18,7 @@ export const PointerProjection = Field.create({
                 this._value = val;
                 if (isNullOrWhitespace(val)) {
                     addClass(this._input, UI.EMPTY);
-                } else if (isInt(val)) {
+                } else if (Number.isInteger(val)) {
                     var refProjection = MODEL.projections[val];
                     this.pointsTo = +val;
                     this._input.textContent = refProjection.value;

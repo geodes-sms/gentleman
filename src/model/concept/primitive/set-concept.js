@@ -1,6 +1,6 @@
+import { hasOwn, isNullOrUndefined, isEmpty, last, insert } from "zenkai";
 import { Concept } from "./../concept.js";
 import { TextualProjection } from "@projection/text-projection.js";
-import { hasOwn, isNullOrUndefined, isInt, isEmpty, last, insert } from "zenkai";
 
 /**
  * @memberof Concept
@@ -16,6 +16,7 @@ export const SetConcept = Concept.create({
         return instance;
     },
     projection: null,
+    projectionIndex: 0,
     representation: null,
     name: 'set',
     accept: null,
@@ -25,6 +26,7 @@ export const SetConcept = Concept.create({
             this.addElement();
         }
     },
+    hasManyProjection() { return true;},
     render() {
         var view = this.projection.render();
 
@@ -98,7 +100,7 @@ export const SetConcept = Concept.create({
         return this.removeElementAt(index);
     },
     removeElementAt(index) {
-        if (!isInt(index) || index < 0) {
+        if (!Number.isInteger(index) || index < 0) {
             return false;
         }
         this.value.splice(index, 1);
@@ -116,7 +118,13 @@ export const SetConcept = Concept.create({
             output.push(val.toString());
         });
         return output;
-    }
+    },
+    changeProjection() {
+        this.projectionIndex++;
+        var nextIndex = this.projectionIndex % this.schema.projection.length;
+        this.projection.schema = this.schema.projection[nextIndex];
+        return this.projection.render();
+    },
 });
 
 function createProjection() {

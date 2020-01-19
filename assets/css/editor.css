@@ -716,8 +716,8 @@ table { display: inline-table; }
     position: absolute;
     top: 5px; right: 5px;
     display: inline-block;
-    padding: 2px 5px 3px;
-    font-size: 1.3rem;
+    padding: 2px 7px 4px;
+    font-size: 1.3rem; font-weight: 600;;
     color: #fff;
     border-radius: 2px;
     background-color: royalblue;

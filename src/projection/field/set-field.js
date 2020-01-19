@@ -1,5 +1,5 @@
 import { Field } from "./field.js";
-import { createUnorderedList, insertBeforeElement, createDocFragment, createListItem, hasClass, removeChildren, isHTMLElement, addClass, insertAfterElement } from "zenkai";
+import { createUnorderedList, insertBeforeElement, createDocFragment, createListItem, hasClass, removeChildren, isHTMLElement, addClass, insertAfterElement, createTable, EL, createTableRow, createTableCell } from "zenkai";
 import { Key } from "@global/enums.js";
 
 export const SetField = Field.create({
@@ -25,16 +25,33 @@ export const SetField = Field.create({
     /** @type {HTMLElement} */
     element: null,
 
-    createInput() {
-        this.element = createUnorderedList({
-            id: this.id,
-            class: ['empty', 'bare-list', 'field', 'field--set'],
-            data: {
-                type: "set",
-                nature: "field",
-            }
-        }, [valueHandler.call(this, this.concept.value)]);
-        this.element.contentEditable = false;
+    createInput(view = 'text') {
+        switch (view) {
+            case 'text':
+                this.element = createUnorderedList({
+                    id: this.id,
+                    class: ['empty', 'bare-list', 'field', 'field--set'],
+                    data: {
+                        type: "set",
+                        nature: "field",
+                    }
+                }, [valueHandler.call(this, this.concept.value)]);
+                this.element.contentEditable = false;
+                break;
+
+            case 'table':
+                this.element = createTable({
+                    id: this.id,
+                    class: ['empty', 'bare-list', 'field', 'field--set'],
+                    data: {
+                        type: "set",
+                        nature: "field",
+                    }
+                }, [valueHandler.call(this, this.concept.value, view)]);
+                this.element.contentEditable = false;
+                break;
+        }
+
 
         this.bindEvents();
 
@@ -48,7 +65,6 @@ export const SetField = Field.create({
         const concept = this.concept;
 
         this.element.addEventListener('click', function () {
-            console.log('click');
         });
 
         this.element.addEventListener('keydown', (e) => {
@@ -86,7 +102,7 @@ export const SetField = Field.create({
             lastKey = e.key;
         }, false);
 
-        this.element.addEventListener('keyup', function(e) {
+        this.element.addEventListener('keyup', function (e) {
             var activeElement = document.activeElement;
             switch (e.key) {
                 case Key.backspace:
@@ -129,15 +145,22 @@ export const SetField = Field.create({
     }
 });
 
-function valueHandler(value) {
+function valueHandler(value, view = 'text') {
     var fragment = createDocFragment();
     var concept = this.concept;
 
     if (Array.isArray(value)) {
         value.forEach(val => {
-            let container = createListItem({ class: "field--set-item", draggable: true });
-            container.tabIndex = 0;
-            container.appendChild(val.render());
+            var container = null;
+            if (view === 'text') {
+                container = createListItem({ class: "field--set-item", draggable: true });
+                container.tabIndex = 0;
+                container.appendChild(val.render());
+            } else if (view === 'table') {
+                container = createTableRow({ class: 'field--set-row' }, [
+                    createTableCell({ class: 'field--set-cell' }, [val.render()])
+                ]);
+            }
             fragment.appendChild(container);
         });
     }

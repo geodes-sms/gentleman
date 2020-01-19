@@ -1,5 +1,6 @@
 export const METAMODEL_MINDMAP = {
     "mindmap": {
+        "nature": "concrete",
         "attribute": {
             "title": { "type": "string" },
             "short_description": { "type": "string", "required": false }
@@ -27,7 +28,7 @@ export const METAMODEL_MINDMAP = {
         ]
     },
     "topic": {
-        "abstract": true,
+        "nature": "prototype",
         "attribute": {
             "name": { "type": "string" },
             "details": {
@@ -42,7 +43,8 @@ export const METAMODEL_MINDMAP = {
         }
     },
     "central_topic": {
-        "base": "topic",
+        "prototype": "topic",
+        "nature": "concrete",
         "component": [
             {
                 "name": "main_topics",
@@ -61,7 +63,7 @@ export const METAMODEL_MINDMAP = {
                 "projection": [
                     {
                         "type": "text",
-                        "layout": "List of central topics: #topics",
+                        "layout": "List of main topics: #topics",
                         "style": {
                             "topics": {
                                 "inline": false,
@@ -71,7 +73,7 @@ export const METAMODEL_MINDMAP = {
                     },
                     {
                         "type": "text",
-                        "layout": "Central topics: #topics",
+                        "layout": "Main topics: #topics",
                         "style": {
                             "topics": {
                                 "inline": false,
@@ -90,12 +92,13 @@ export const METAMODEL_MINDMAP = {
         ]
     },
     "main_topic": {
-        "base": "topic",
+        "prototype": "topic",
+        "nature": "concrete",
         "component": [
             {
                 "name": "sub_topics",
                 "attribute": {
-                    "topics": { "type": "set", "accept": "sub_topic", "min": 5, }
+                    "topics": { "type": "set", "accept": "sub_topic", "min": 5, "projection": ["text", "table"] }
                 },
                 "projection": [
                     {
@@ -120,7 +123,8 @@ export const METAMODEL_MINDMAP = {
         ]
     },
     "sub_topic": {
-        "base": "topic",
+        "prototype": "topic",
+        "nature": "concrete",
         "component": [
             {
                 "name": "sub_topics",
@@ -139,12 +143,25 @@ export const METAMODEL_MINDMAP = {
             {
                 "type": "text",
                 "layout": "#name"
+            },
+            {
+                "type": "table",
+                "disposition": "column",
+                "layout": {
+                    "header": {
+                        "subtopics": { "value": "Subtopics" }
+                    },
+                    "cell": [
+                        { "header": "subtopics", "value": "#name" },
+                    ],
+                    "multiple": true
+                }
             }
         ]
     },
     "@root": "mindmap",
     "@config": {
-        "language": "MindMap",
+        "language": "Mind map demo",
         "settings": {
             "autosave": true
         },

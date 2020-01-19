@@ -1,6 +1,6 @@
-import { hasOwn, isNullOrWhitespace, valOrDefault, defProp, find } from 'zenkai';
-import { addClass, removeClass } from 'zenkai';
+import { hasOwn, isNullOrWhitespace, valOrDefault, defProp, addClass, removeClass } from 'zenkai';
 import { UI } from '@src/global/enums.js';
+import { find } from '@utils/find.js';
 import { Field } from './field.js';
 
 export const EnumProjection = Field.create({

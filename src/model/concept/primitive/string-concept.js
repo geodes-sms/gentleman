@@ -14,8 +14,11 @@ export const StringConcept = Concept.create({
     },
     placeholder: null,
     projection: null,
+    projectionIndex: 0,
     representation: null,
     name: 'string',
+
+    hasManyProjection() { return false; },
 
     render() {
         return this.projection.render();

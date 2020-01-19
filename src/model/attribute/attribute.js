@@ -1,7 +1,4 @@
-import { isInt, isString, valOrDefault } from "zenkai";
-import { ConceptFactory } from "./factory.js";
-import { createSpan, createDiv } from "zenkai";
-import { isFunction } from "util";
+import { valOrDefault, isFunction } from "zenkai";
 
 export const Attribute = {
     create: function (concept, schema, args) {
@@ -14,6 +11,7 @@ export const Attribute = {
         instance.action = valOrDefault(schema.action, {});
         instance.min = valOrDefault(schema.min, 1);
         instance.name = schema.name;
+        instance.projection = schema.projection;
         instance.required = valOrDefault(instance.schema.required, true);
         instance._use = valOrDefault(instance.schema.use, 'required');
         Object.assign(instance, args);
@@ -31,6 +29,7 @@ export const Attribute = {
             concept.parent = this;
             concept.accept = this.accept;
             concept.action = this.action;
+            concept.validProjections  =  this.projection;
             concept.min = this.min;
             if (isFunction(concept.init)) {
                 concept.init();

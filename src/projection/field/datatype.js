@@ -1,4 +1,4 @@
-import { valOrDefault, isNullOrWhitespace, isInt } from "zenkai";
+import { valOrDefault, isNullOrWhitespace } from "zenkai";
 import { Field } from './field';
 import { DataType } from '@src/global/enums.js';
 
@@ -55,7 +55,7 @@ function validateDataType(type) {
             // TODO
             break;
         case DataType.integer:
-            isValid = /^(-|\+)?[0-9]+$/.test(self.value) && isInt(self.value);
+            isValid = /^(-|\+)?[0-9]+$/.test(self.value) && Number.isInteger(self.value);
             if (!isValid) {
                 this.error = "Please enter a valid number.";
             }

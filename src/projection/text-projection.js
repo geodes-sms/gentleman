@@ -50,8 +50,8 @@ export const TextualProjection = Projection.create({
             }
         }
 
-        if (concept.object === "component") {
-            let btnProjection = createButton({ class: "btn btn-projection" }, "Projection");
+        if (["component"].includes(concept.object) && concept.hasManyProjection()) {
+            let btnProjection = createButton({ class: "btn btn-projection", title: "Projection" }, "P");
             btnProjection.tabIndex = -1;
             let container = createDiv({ class: 'component', data: { object: "component" } }, [
                 btnProjection,
@@ -59,10 +59,12 @@ export const TextualProjection = Projection.create({
             ]);
 
             let style = this.concept.getStyle();
-            if (style.spacing) {
-                let spacing = style.spacing;
-                for (const key in spacing) {
-                    container.style[styleMapper[key]] = spacing[key];
+            if(style) {
+                if (style.spacing) {
+                    let spacing = style.spacing;
+                    for (const key in spacing) {
+                        container.style[styleMapper[key]] = spacing[key];
+                    }
                 }
             }
 
@@ -107,6 +109,11 @@ function attributeHandler(key) {
     }
 }
 
+/**
+ * 
+ * @param {string} key 
+ * @this {TextualProjection}
+ */
 function referenceHandler(key) {
     let element = this.schema[key];
 
@@ -120,7 +127,7 @@ function referenceHandler(key) {
     } else if (element.type === 'field') {
         let field = FieldFactory.createField(this.concept.name, this.concept, element);
         this.editor.registerField(field);
-        return field.createInput(this.concept.parent.name);
+        return field.createInput();
     } else if (element.type === 'group') {
         var field = Field.create({ _mAttribute: this.concept.parent.schema });
         this.editor.registerField(field);
@@ -128,6 +135,11 @@ function referenceHandler(key) {
     }
 }
 
+/**
+ * 
+ * @param {string} char 
+ * @this {TextualProjection}
+ */
 function specialCharacterHandler(char) {
     if (char === 'NL')
         return createLineBreak();
