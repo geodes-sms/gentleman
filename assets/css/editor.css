@@ -725,6 +725,21 @@ table { display: inline-table; }
     transition: opacity .2s;
 }
 
+.btn-export {
+    position: fixed;
+    bottom: 5%; right: 5%;
+    height: 80px; width: 80px;
+    padding: 0;
+    font-size: 1.3em; font-weight: 500;
+    z-index: 5;
+    color: #fff;
+    background: radial-gradient(#333444, #323133);
+    box-shadow: 0 1px 5px -1px #1b1b1b;
+    border-radius: 50%;
+    /* mix-blend-mode: multiply; */
+    text-transform: uppercase;
+}
+
 .concept-container {
     position: relative;
 }

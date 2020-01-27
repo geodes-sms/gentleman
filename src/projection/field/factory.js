@@ -6,8 +6,9 @@ import { Field } from './field.js';
 export const FieldFactory = {
     createField(type, model, schema) {
         switch (type) {
-            case 'string':
             case 'number':
+            case 'reference':
+            case 'string':
                 return StringField.create(model);
             case 'set':
                 return SetField.create(model);

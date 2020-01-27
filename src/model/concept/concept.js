@@ -33,13 +33,15 @@ export const Concept = {
     parent: null,
     /** @type {Attribute[]} */
     attributes: null,
-    /** @type {Concept[]} */
+    /** @type {Component[]} */
     components: null,
     value: null,
     /** possible values for the concept */
     values: null,
     /** concept actions configuration */
     action: null,
+    /** concept shadow list */
+    shadows: null,
     object: "concept",
 
 
@@ -69,7 +71,6 @@ export const Concept = {
 
     getOptionalAttributes() {
         var attributes = [];
-        console.log(this._attributes);
 
         for (const attr in this.schema['attribute']) {
             if (!this.isAttributeRequired(attr) && !this._attributes.includes(attr)) {
@@ -155,6 +156,7 @@ export const Concept = {
      */
     createComponent(id) {
         // console.log(`Create component: ${id}`);
+        
         var componentSchema = this.schema.component.find((c) => c.name === id);
         var component = ComponentFactory.createComponent(this, componentSchema);
         component.parent = this;
@@ -176,6 +178,23 @@ export const Concept = {
                 [`[${comp.name}]`]: comp.toString()
             });
         });
+
+        return output;
+    },
+    export() {
+        var output = { };
+
+        var attributes = {};
+        this.attributes.forEach(attr => {
+            Object.assign(attributes, attr.export());
+        });
+
+        var components = [];
+        this.components.forEach(comp => {
+            components.push(comp.export());
+        });
+        
+        Object.assign(output, attributes);
 
         return output;
     },

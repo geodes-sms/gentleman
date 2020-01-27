@@ -1,5 +1,6 @@
 import { BaseConcept } from "./base-concept.js";
-import { StringConcept, SetConcept, NumberConcept } from "./primitive/index.js";
+import { StringConcept, SetConcept, NumberConcept, ReferenceConcept } from "./primitive/index.js";
+import { ConcreteConcept, ModelConcept } from "./meta/index.js";
 import { valOrDefault, isNullOrUndefined } from 'zenkai';
 
 export const ConceptFactory = {
@@ -15,6 +16,16 @@ export const ConceptFactory = {
                 break;
             case 'set':
                 concept = SetConcept.create(model);
+                break;
+            case 'reference':
+                concept = ReferenceConcept.create(model);
+                break;
+            case 'concrete':
+            case 'prototype':
+                concept = ConcreteConcept.create(model, schema);
+                break;
+            case 'model':
+                concept = ModelConcept.create(model, schema);
                 break;
             default:
                 concept = BaseConcept.create(model, schema);

@@ -1,9 +1,10 @@
-import { getElement, createDiv, createHeader, createSpan, appendChildren } from "zenkai";
+import { getElement, appendChildren } from "zenkai";
 import { Gentleman as GE } from './editor/index.js';
 import { __ENV } from './global/global.js';
 import { METAMODEL_GENTLEMAN } from './samples/create.mm.js';
 import { METAMODEL_RELIS } from './samples/relis.mm.js';
 import { METAMODEL_MINDMAP } from './samples/mindmap.mm.js';
+import { METAMODEL_PROTO } from './samples/gentleman.mm.js';
 
 // CSS imports
 import '@css/normalize.css';
@@ -33,7 +34,7 @@ const note = GE.Note.create().init(editor);
 // appendChildren(container, [header, splashscreen, note.container]);
 appendChildren(container, [note.container]);
 
-editor.init(null, METAMODEL_MINDMAP);
+editor.init(null, METAMODEL_PROTO);
 
 if (MODE === 'create') {
     editor.init(null, METAMODEL_GENTLEMAN);

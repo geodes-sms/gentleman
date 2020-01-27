@@ -84,8 +84,12 @@ export const MetaModel = {
         if (!hasOwn(conceptSchema, 'attribute')) {
             conceptSchema.attribute = {};
         }
+        if (!hasOwn(conceptSchema, 'component')) {
+            conceptSchema.component = [];
+        }
 
-        Object.assign(conceptSchema.attribute, baseSchema);
+        Object.assign(conceptSchema.attribute, baseSchema.attribute);
+        conceptSchema.component = conceptSchema.component.concat(baseSchema.component);
 
         return conceptSchema;
     },
@@ -125,11 +129,15 @@ function getModelElementType(el) {
 
 function getConceptBaseSchema(baseConceptName) {
     var prototype = baseConceptName;
-    var baseSchema = {};
+    var baseSchema = {
+        attribute: {},
+        component: []
+    };
     while (!isNullOrUndefined(prototype)) {
         let schema = this.schema[prototype];
         if (schema) {
-            Object.assign(baseSchema, schema.attribute);
+            Object.assign(baseSchema.attribute, schema.attribute);
+            baseSchema.component = baseSchema.component.concat(valOrDefault(schema.component, []));
             prototype = schema['prototype'];
         } else {
             prototype = null;

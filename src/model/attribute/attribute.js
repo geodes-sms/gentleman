@@ -88,6 +88,11 @@ export const Attribute = {
     delete() {
         return this.concept.removeAttribute(this.name);
     },
+    export() {
+        return {
+            [`${this.name}`]: this.value.export()
+        };
+    },
     toString() {
         return {
             [`${this.concept.name}@${this.name}`]: this.value.toString()

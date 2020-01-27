@@ -112,6 +112,13 @@ export const SetConcept = Concept.create({
     canDelete() {
         return this.value.length > this.min;
     },
+    export() {
+        var output = [];
+        this.value.forEach(val => {
+            output.push(val.export());
+        });
+        return output;
+    },
     toString() {
         var output = [];
         this.value.forEach(val => {

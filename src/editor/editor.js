@@ -1,8 +1,8 @@
 import {
     cloneObject, isEmpty, getElement, getElements, createLink, createDiv, createSpan,
     appendChildren, createTextArea, createParagraph, insertAfterElement, insertBeforeElement,
-    preprendChild, removeChildren, conceal, addClass, removeClass, hasClass, findAncestor, isHTMLElement, 
-    createUnorderedList, createListItem, createStrong
+    preprendChild, removeChildren, conceal, addClass, removeClass, hasClass, findAncestor, isHTMLElement,
+    createUnorderedList, createListItem, createStrong, createButton, copytoClipboard
 } from 'zenkai';
 import { Key, EventType, UI } from '@global/enums.js';
 import { MetaModel, Model } from '@model/index.js';
@@ -52,6 +52,8 @@ export const Editor = {
     menu: null,
     note: null,
     fields: null,
+    /** @type {HTMLButtonElement} */
+    btnExport: null,
     /** @type {MetaModel} */
     metamodel: null,
     /** @type {Model} */
@@ -240,6 +242,8 @@ export const Editor = {
     },
     render() {
         if (!this.isInitialized) {
+            this.btnExport = createButton({ class: "btn btn-export" }, "Export");
+            container.appendChild(this.btnExport);
             preprendChild(container, this.body);
         }
 
@@ -267,7 +271,7 @@ export const Editor = {
                 console.log("clicked on attribute");
                 this.context = target;
             } else {
-                
+
                 if (this.context === this.body) {
                     // Object.assign(this.actionContainer.style, {
                     //     top: `${event.clientY - self.body.offsetTop}px`,
@@ -374,14 +378,14 @@ export const Editor = {
                             if (!isHTMLElement(queryContainer)) {
                                 queryContainer = createDiv({ class: 'query-container' });
                             }
-                            
+
                             // Create query content
                             let queryContent = null;
                             if (isEmpty(optionalAttributes)) {
                                 queryContent = createParagraph({ class: 'query-content' }, `No suggestion for this ${parentConcept.object}`);
                             } else {
                                 queryContent = createUnorderedList(
-                                    { class: 'bare-list suggestion-list' }, 
+                                    { class: 'bare-list suggestion-list' },
                                     optionalAttributes.map(item => createListItem({ class: "suggestion", data: { attr: item } }, item))
                                 );
                             }
@@ -445,6 +449,9 @@ export const Editor = {
             }
         });
 
+        this.btnExport.addEventListener('click', (e) => {
+            copytoClipboard(this.model.export());
+        });
         // this.body.addEventListener(EventType.FOCUSIN, function (event) {
         //     self.autocomplete.hide();
         //     handled = true;

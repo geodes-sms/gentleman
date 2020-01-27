@@ -1,0 +1,54 @@
+{
+    "person": {
+        "attribute": {
+            "firstname": {
+                "name": "firstname",
+                "type": "string",
+                "min": null,
+                "max": null
+            }
+        },
+        "component": [
+            {
+                "name": "education",
+                "attribute": {
+                    "firstschool": {
+                        "name": "firstschool",
+                        "type": "education",
+                        "min": null,
+                        "max": null
+                    }
+                }
+            }
+        ]
+    },
+    "education": {
+        "attribute": {
+            "description": {
+                "name": "description",
+                "type": "string",
+                "min": null,
+                "max": null
+            },
+            "age": {
+                "name": "age",
+                "type": "number",
+                "min": null,
+                "max": null
+            }
+        },
+        "component": [
+            {
+                "name": null,
+                "attribute": {
+                    "null": {
+                        "name": null,
+                        "type": [],
+                        "min": null,
+                        "max": null
+                    }
+                }
+            }
+        ]
+    }
+}

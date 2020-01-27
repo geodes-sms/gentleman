@@ -1,0 +1,1 @@
+export const extend = (base, extension) => Object.assign(Object.create(base), extension);

@@ -4,8 +4,6 @@ import { TextualProjection } from "@projection/text-projection";
 
 const ATTRIBUTE_NOT_FOUND = -1;
 
-const tryResolve = (obj, prop, fallback) => isNullOrUndefined(obj) ? fallback : obj[prop];
-
 /**
  * @memberof Component
  */
@@ -47,7 +45,7 @@ export const Component = {
     container: null,
     object: "component",
 
-    getStyle(){
+    getStyle() {
         return this.model.metamodel.style['component'];
     },
     hasManyProjection() {
@@ -121,6 +119,19 @@ export const Component = {
         var nextIndex = this.projectionIndex % this.schema.projection.length;
         this.projection.schema = this.schema.projection[nextIndex];
         return this.projection.render();
+    },
+    export() {
+        var output = {
+            name: valOrDefault(this.name, this.id)
+        };
+
+        var attributes = {};
+        this.attributes.forEach(attr => {
+            Object.assign(attributes, attr.export());
+        });
+        Object.assign(output, attributes);
+
+        return output;
     },
     toString() {
         var output = {};

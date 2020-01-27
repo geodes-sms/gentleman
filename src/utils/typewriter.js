@@ -1,4 +1,4 @@
-import { createStrong, createLineBreak, createEm } from 'zenkai';
+import { createStrong, createLineBreak, createEmphasis } from 'zenkai';
 
 export const TypeWriterType = {
     NORMAL: 0,
@@ -40,7 +40,7 @@ export function TypeWriter(container, content, callback) {
                     break;
                 case TypeWriterType.ITALIC:
                     if (i === 0) {
-                        current = createElement(createEm(), part.tooltip);
+                        current = createElement(createEmphasis(), part.tooltip);
                     }
                     break;
                 case TypeWriterType.UNDERLINE:

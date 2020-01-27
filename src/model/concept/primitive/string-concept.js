@@ -7,6 +7,7 @@ export const StringConcept = Concept.create({
 
         instance.model = model;
         instance.projection = TextualProjection.create(createProjection(), instance, model.editor);
+
         return instance;
     },
     init() {
@@ -21,11 +22,17 @@ export const StringConcept = Concept.create({
     hasManyProjection() { return false; },
 
     render() {
-        return this.projection.render();
+        var view = this.projection.render();
+
+        return view;
     },
     update(value) {
         this.value = value;
+        
         return true;
+    },
+    export() {
+        return this.value;
     },
     toString() {
         return this.value;

@@ -15,7 +15,10 @@ export const NumberConcept = Concept.create({
 
     render() {
         return this.projection.render();
-    }
+    },
+    export() {
+        return this.value;
+    },
 });
 
 function createProjection() {

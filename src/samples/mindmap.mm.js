@@ -32,7 +32,8 @@ export const METAMODEL_MINDMAP = {
         "attribute": {
             "name": { "type": "string" },
             "details": {
-                "type": "string", "projection": {
+                "type": "string", 
+                "projection": {
                     type: "text",
                     field: { type: 'field', view: 'textarea' },
                     layout: '$field'

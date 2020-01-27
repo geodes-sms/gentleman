@@ -32,7 +32,7 @@ export const Model = {
     init(model, editor) {
         this.schema = !isNullOrUndefined(model) ? model : initSchema(this.metamodel);
         this.editor = editor;
-        this.root = ConceptFactory.createConcept(this, 'root', this.schema.root);
+        this.root = ConceptFactory.createConcept(this, this.schema.root['name'], this.schema.root);
 
         // (?) Uncomment to add optional argument parameters
         // Object.assign(this, args);
@@ -62,7 +62,12 @@ export const Model = {
     generateId() {
         return UUID.generate();
     },
-    toString() { return JSON.stringify(this.root.toString()); }
+    export() {
+        var model = {};
+        Object.assign(model, this.root.export());
+        return JSON.stringify(model);
+    },
+    toString() { return JSON.stringify(this.root.toString()); },
 };
 
 /**
