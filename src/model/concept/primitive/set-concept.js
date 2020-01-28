@@ -1,11 +1,12 @@
 import { hasOwn, isNullOrUndefined, isEmpty, last, insert } from "zenkai";
-import { Concept } from "./../concept.js";
+import { extend } from "@utils/index.js";
 import { TextualProjection } from "@projection/text-projection.js";
+import { Concept } from "./../concept.js";
 
 /**
  * @memberof Concept
  */
-export const SetConcept = Concept.create({
+export const SetConcept = extend(Concept, {
     create(model) {
         var instance = Object.create(this);
 
@@ -26,7 +27,7 @@ export const SetConcept = Concept.create({
             this.addElement();
         }
     },
-    hasManyProjection() { return true;},
+    hasManyProjection() { return true; },
     render() {
         var view = this.projection.render();
 

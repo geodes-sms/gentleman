@@ -1,11 +1,12 @@
 import { Field } from "./field.js";
 import { createSpan, addAttributes, valOrDefault, isEmpty, isNullOrWhitespace, removeClass, addClass } from "zenkai";
 import { Key } from "@global/enums.js";
+import { extend } from "@utils/index.js";
 
 
-export const StringField = Field.create({
+export const ReferenceField = extend(Field, {
     /**
-     * Creates a string field
+     * Creates a reference field
      * @param {Concept} concept
      * @returns {StringField} 
      */
@@ -25,7 +26,7 @@ export const StringField = Field.create({
         this.validators.push(validator);
     },
     placeholder: null,
-    object: "STRING",
+    object: "REFERENCE",
 
     createInput() {
         this.element = createSpan({
@@ -62,7 +63,9 @@ export const StringField = Field.create({
         });
 
         this.element.addEventListener('focusin', function (event) {
-         
+            var candidates = concept.getRefCandidates();
+
+            console.log(`Select the concept that will begin your model: ${candidates}`);
         });
 
         this.element.addEventListener('focusout', function (event) {

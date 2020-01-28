@@ -1,13 +1,13 @@
 import {
-    createDocFragment, createSpan, createDiv, createListItem, createTextNode, createLineBreak,
-    addClass, isNullOrWhitespace, isNullOrUndefined, valOrDefault, insertBeforeElement, createButton, removeChildren, createI
+    createDocFragment, createSpan, createDiv, createTextNode, createLineBreak,
+    addClass, isNullOrWhitespace, isNullOrUndefined, valOrDefault, createButton, 
+    removeChildren, createI
 } from "zenkai";
 import { InvalidModelError } from '@src/exception/index.js';
 import { Field } from "@projection/field/field.js";
 import { Projection } from "./projection.js";
 import { FieldFactory } from "./field/factory.js";
-
-const tryResolve = (obj, prop, fallback) => isNullOrUndefined(obj) ? fallback : obj[prop];
+import { extend } from "@utils/index.js";
 
 const Handlers = {
     '#': attributeHandler,
@@ -15,7 +15,7 @@ const Handlers = {
     '&': specialCharacterHandler,
 };
 
-export const TextualProjection = Projection.create({
+export const TextualProjection = extend(Projection, {
     create: function (schema, concept, editor) {
         var instance = Object.create(this);
 

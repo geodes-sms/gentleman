@@ -1,6 +1,5 @@
 import { BaseConcept } from "../base-concept.js";
 import { extend } from "@utils/index.js";
-import { valOrDefault, createAbbreviation } from "zenkai";
 
 export const ConcreteConcept = extend(BaseConcept, {
     export() {

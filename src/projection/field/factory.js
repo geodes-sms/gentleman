@@ -2,14 +2,16 @@ import { valOrDefault } from 'zenkai';
 import { SetField } from './set-field.js';
 import { StringField } from './string-field.js';
 import { Field } from './field.js';
+import { ReferenceField } from './reference-field.js';
 
 export const FieldFactory = {
     createField(type, model, schema) {
         switch (type) {
             case 'number':
-            case 'reference':
             case 'string':
                 return StringField.create(model);
+            case 'reference':
+                return ReferenceField.create(model);
             case 'set':
                 return SetField.create(model);
             default:

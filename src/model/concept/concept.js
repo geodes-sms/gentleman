@@ -5,8 +5,6 @@ import { ComponentFactory } from "@model/component/factory";
 const COMPONENT_NOT_FOUND = -1;
 const ATTRIBUTE_NOT_FOUND = -1;
 
-const tryResolve = (obj, prop, fallback) => isNullOrUndefined(obj) ? fallback : obj[prop];
-
 export const Concept = {
     create: function (args) {
         var instance = Object.create(this);
@@ -63,10 +61,12 @@ export const Concept = {
      * @returns {boolean}
      */
     isAttributeCreated(id) { return this._attributes.includes(id); },
-
-    
+ 
     getStyle(){
         return this.model.metamodel.style['concept'];
+    },
+    getIdRef(){
+        return this.schema['idref'];
     },
 
     getOptionalAttributes() {
@@ -122,7 +122,7 @@ export const Concept = {
         return true;
     },
 
-    /** @returns {Concept} */
+    /** @returns {Component} */
     getComponent(id) {
         // console.log(`Get component: ${id}`);
         var component = null;
@@ -166,20 +166,15 @@ export const Concept = {
         return component;
     },
     /** @returns {boolean} */
-    isRoot() { return this.parent === null; },
-    toString() {
-        var output = {};
+    isRoot() { 
+        return this.parent === null; 
+    },
+    changeProjection() {
+        this.projectionIndex++;
+        var nextIndex = this.projectionIndex % this.schema.projection.length;
+        this.projection.schema = this.schema.projection[nextIndex];
 
-        this.attributes.forEach(attr => {
-            Object.assign(output, attr.toString());
-        });
-        this.components.forEach(comp => {
-            Object.assign(output, {
-                [`[${comp.name}]`]: comp.toString()
-            });
-        });
-
-        return output;
+        return this.projection.render();
     },
     export() {
         var output = { };
@@ -198,10 +193,18 @@ export const Concept = {
 
         return output;
     },
-    changeProjection() {
-        this.projectionIndex++;
-        var nextIndex = this.projectionIndex % this.schema.projection.length;
-        this.projection.schema = this.schema.projection[nextIndex];
-        return this.projection.render();
+    toString() {
+        var output = {};
+
+        this.attributes.forEach(attr => {
+            Object.assign(output, attr.toString());
+        });
+        this.components.forEach(comp => {
+            Object.assign(output, {
+                [`[${comp.name}]`]: comp.toString()
+            });
+        });
+
+        return output;
     },
 };

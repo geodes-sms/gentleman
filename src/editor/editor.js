@@ -4,7 +4,7 @@ import {
     preprendChild, removeChildren, conceal, addClass, removeClass, hasClass, findAncestor, isHTMLElement,
     createUnorderedList, createListItem, createStrong, createButton, copytoClipboard
 } from 'zenkai';
-import { Key, EventType, UI } from '@global/enums.js';
+import { Key, UI } from '@global/enums.js';
 import { MetaModel, Model } from '@model/index.js';
 import { hide, show } from '@utils/effects.js';
 import { createOptionSelect } from '@utils/interactive.js';
@@ -18,6 +18,10 @@ const container = getElement("[data-gentleman-editor]");
 container.tabIndex = -1;
 
 const DOC = typeof module !== 'undefined' && module.exports ? {} : document;
+
+const windowheight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+
 const ELEMENT = UI.Element;
 const EditorMode = {
     READ: 'read',
@@ -242,7 +246,7 @@ export const Editor = {
     },
     render() {
         if (!this.isInitialized) {
-            this.btnExport = createButton({ class: "btn btn-export" }, "Export");
+            this.btnExport = createButton({ id: "btnExportModel", class: "btn btn-export", draggable: true }, "Export");
             container.appendChild(this.btnExport);
             preprendChild(container, this.body);
         }
@@ -268,22 +272,18 @@ export const Editor = {
             var nature = target.dataset['nature'];
 
             if (nature === 'attribute') {
-                console.log("clicked on attribute");
                 this.context = target;
+            } else if (this.context === this.body) {
+                // Object.assign(this.actionContainer.style, {
+                //     top: `${event.clientY - self.body.offsetTop}px`,
+                //     left: `${event.clientX - self.body.offsetLeft}px`
+                // });
+
+                // show(this.actionContainer);
+                // this.context = this.actionContainer;
             } else {
-
-                if (this.context === this.body) {
-                    // Object.assign(this.actionContainer.style, {
-                    //     top: `${event.clientY - self.body.offsetTop}px`,
-                    //     left: `${event.clientX - self.body.offsetLeft}px`
-                    // });
-
-                    // show(this.actionContainer);
-                    // this.context = this.actionContainer;
-                } else {
-                    hide(this.actionContainer);
-                    this.context = target;
-                }
+                hide(this.actionContainer);
+                this.context = target;
             }
 
         }, false);
@@ -452,6 +452,19 @@ export const Editor = {
         this.btnExport.addEventListener('click', (e) => {
             copytoClipboard(this.model.export());
         });
+
+        this.btnExport.addEventListener('dragstart', function (e) {
+            e.dataTransfer.setData("text/plain", e.target.innerText);
+            e.dataTransfer.setData("text/html", e.target.outerHTML);
+            e.dataTransfer.setData("text/uri-list", e.target.ownerDocument.location.href);
+        });
+
+
+        this.btnExport.addEventListener('dragend', function (e) {
+            this.style.right = `${windowWidth - e.clientX}px`;
+            this.style.bottom = `${windowheight - e.clientY}px`;
+        });
+
         // this.body.addEventListener(EventType.FOCUSIN, function (event) {
         //     self.autocomplete.hide();
         //     handled = true;

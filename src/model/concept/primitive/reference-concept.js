@@ -37,6 +37,11 @@ export const ReferenceConcept = Concept.create({
         this.value = value;
         return true;
     },
+    getRefCandidates() {
+        var candidates = this.model.concepts.filter((concept) => concept.name === this.accept);
+        var values = candidates.map((candidate) => candidate.getAttribute(candidate.getIdRef()).value.toString());
+        return values;
+    },
     export() {
         return this.value;
     },

@@ -3,7 +3,7 @@ export const METAMODEL_PROTO = {
         "nature": "concrete",
         "attribute": {
             "name": { "type": "string" },
-            "root": { "type": "reference", "accept": "concept" }
+            "root": { "type": "reference", "accept": "concrete" }
         },
         "component": [
             {
@@ -72,6 +72,7 @@ export const METAMODEL_PROTO = {
     },
     "concrete": {
         "nature": "concrete",
+        "idref": "name",
         "prototype": "concept",
         "projection": [
             {
