@@ -2,16 +2,15 @@ import {
     cloneObject, isEmpty, getElement, getElements, createLink, createDiv, createSpan,
     appendChildren, createTextArea, createParagraph, insertAfterElement, insertBeforeElement,
     preprendChild, removeChildren, conceal, addClass, removeClass, hasClass, findAncestor, isHTMLElement,
-    createUnorderedList, createListItem, createStrong, createButton, copytoClipboard
+    createUnorderedList, createListItem, createStrong, createButton, copytoClipboard, createInput
 } from 'zenkai';
 import { Key, UI } from '@global/enums.js';
+import { events, TypeWriter, createOptionSelect, hide, show } from '@utils/index.js';
 import { MetaModel, Model } from '@model/index.js';
-import { hide, show } from '@utils/effects.js';
-import { createOptionSelect } from '@utils/interactive.js';
-import { Autocomplete } from './autocomplete';
+import { Autocomplete } from './autocomplete.js';
+import { Convo } from './convo.js';
 import { State } from './state.js';
 import * as Projection from '@projection/field/fn';
-import { events } from '@utils/pubsub.js';
 
 
 const container = getElement("[data-gentleman-editor]");
@@ -56,6 +55,7 @@ export const Editor = {
     menu: null,
     note: null,
     fields: null,
+    workflow: null,
     /** @type {HTMLButtonElement} */
     btnExport: null,
     /** @type {MetaModel} */
@@ -213,6 +213,7 @@ export const Editor = {
         // clear the body
         this.clear();
         this.currentLine = this.body;
+        this.context = this.body;
 
         // draw the editor
         this.render();
@@ -251,9 +252,13 @@ export const Editor = {
             preprendChild(container, this.body);
         }
 
-        this.currentLine.appendChild(this.current.render());
-        this.currentLine = this.currentLine.firstChild;
-        this.currentLine.contentEditable = false;
+        if (this.workflow === 'manipulation') {
+            this.currentLine.appendChild(this.current.render());
+            this.currentLine = this.currentLine.firstChild;
+            this.currentLine.contentEditable = false;
+        } else {
+            this.currentLine.appendChild(this.current.project());
+        }
 
         this.infoContainer = createDiv({ class: 'info-container font-ui hidden' });
         this.actionContainer = createDiv({ class: 'action-container hidden' });
@@ -267,6 +272,12 @@ export const Editor = {
         var flag = false;
         var handled = false;
 
+        this.body.addEventListener('dblclick', (event) => {
+            var convo = Object.create(Convo).init(this);
+            this.body.appendChild(convo.render());
+            convo.start();
+        });
+
         this.body.addEventListener('click', (event) => {
             var target = event.target;
             var nature = target.dataset['nature'];
@@ -274,6 +285,8 @@ export const Editor = {
             if (nature === 'attribute') {
                 this.context = target;
             } else if (this.context === this.body) {
+
+
                 // Object.assign(this.actionContainer.style, {
                 //     top: `${event.clientY - self.body.offsetTop}px`,
                 //     left: `${event.clientX - self.body.offsetLeft}px`
@@ -287,6 +300,7 @@ export const Editor = {
             }
 
         }, false);
+      
 
         container.addEventListener('keydown', function (event) {
             var target = event.target;

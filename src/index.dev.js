@@ -13,10 +13,9 @@ import '@css/site.css';
 import '@css/field.css';
 import '@css/autocomplete.css';
 import '@css/editor.css';
-import '@css/note.css';
 import '@css/state.css';
 
-const MODE = 'edit';
+const MODE = 'create';
 
 const editor = GE.Editor.create();
 
@@ -33,11 +32,11 @@ const note = GE.Note.create().init(editor);
 
 // appendChildren(container, [header, splashscreen, note.container]);
 appendChildren(container, [note.container]);
-
-editor.init(null, METAMODEL_PROTO);
-
-if (MODE === 'create') {
-    editor.init(null, METAMODEL_GENTLEMAN);
+if (MODE === 'edit') {
+    editor.init(null, METAMODEL_RELIS);
+} else if (MODE === 'create') {
+    editor.workflow = 'creation';
+    editor.init(null, METAMODEL_PROTO);
 }
 
 // language.textContent = editor.language;

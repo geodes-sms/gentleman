@@ -9,7 +9,15 @@ export const METAMODEL_PROTO = {
             {
                 "name": "model_concept",
                 "attribute": {
-                    "concepts": { "type": "set", "accept": "concrete" }
+                    "concepts": {
+                        "type": "set",
+                        "accept": "concrete",
+                        "action": {
+                            "add": {
+                                "text": "Add a concept"
+                            }
+                        }
+                    }
                 },
                 "projection": [
                     {
@@ -36,25 +44,29 @@ export const METAMODEL_PROTO = {
             {
                 "name": "concept_structure",
                 "attribute": {
-                    "attributes": { "type": "set", "accept": "attribute" },
-                    "components": { "type": "set", "accept": "component" }
+                    "attributes": {
+                        "type": "set",
+                        "accept": "attribute",
+                        "action": {
+                            "add": {
+                                "text": "Add an attribute"
+                            }
+                        }
+                    },
+                    "components": {
+                        "type": "set",
+                        "accept": "component",
+                        "action": {
+                            "add": {
+                                "text": "Add a component"
+                            }
+                        }
+                    }
                 },
                 "projection": [
                     {
                         "type": "text",
                         "layout": "#attributes #components"
-                    }
-                ]
-            },
-            {
-                "name": "concept_projection",
-                "attribute": {
-                    "projections": { "type": "set", "accept": "projection" }
-                },
-                "projection": [
-                    {
-                        "type": "text",
-                        "layout": "#projections"
                     }
                 ]
             }
@@ -66,7 +78,7 @@ export const METAMODEL_PROTO = {
         "projection": [
             {
                 "type": "text",
-                "layout": "DEFINE Prototype #name #[concept_structure] #[concept_projection]"
+                "layout": "DEFINE Prototype #name #[concept_structure]"
             }
         ]
     },
@@ -77,7 +89,7 @@ export const METAMODEL_PROTO = {
         "projection": [
             {
                 "type": "text",
-                "layout": "DEFINE Concept #name #[concept_structure] #[concept_projection]"
+                "layout": "DEFINE Concept #name #[concept_structure]"
             }
         ]
     },
@@ -107,73 +119,20 @@ export const METAMODEL_PROTO = {
         "nature": "concrete",
         "prototype": "structure",
         "attribute": {
-            "attributes": { "type": "set", "accept": "attribute" }
+            "attributes": {
+                "type": "set",
+                "accept": "attribute",
+                "action": {
+                    "add": {
+                        "text": "Add an attribute"
+                    }
+                }
+            }
         },
         "projection": [
             {
                 "type": "text",
                 "layout": "DEFINE Component #name &NL List of attributes: #attributes"
-            }
-        ],
-    },
-    "projection": {
-        "nature": "concrete",
-        "attribute": {
-            "type": { "type": "string" },
-            "elements": { "type": "set", "accept": "element" }
-        },
-        "projection": [
-            {
-                "type": "text",
-                "layout": "LAYOUT #type with elements"
-            }
-        ],
-    },
-    "element": {
-        "nature": "prototype",
-        "attribute": {
-            "position": { "type": "number" },
-            "before": { "type": "reference", "accept": "element" },
-            "after": { "type": "reference", "accept": "element" }
-        }
-    },
-    "render": {
-        "nature": "concrete",
-        "prototype": "element",
-        "attribute": {
-            "struct": { "type": "reference", "accept": "structure", "scope": "parent" }
-        },
-        "projection": [
-            {
-                "type": "text",
-                "layout": "Render #struct | before(#before) after(#after)"
-            }
-        ],
-    },
-    "group": {
-        "nature": "concrete",
-        "prototype": "element",
-        "attribute": {
-            "name": { "type": "string" },
-            "elements": { "type": "set", "accept": "element", "scope": "parent" }
-        },
-        "projection": [
-            {
-                "type": "text",
-                "layout": "Group #name elements | before(#before) after(#after) : #elements"
-            }
-        ],
-    },
-    "word": {
-        "nature": "concrete",
-        "prototype": "element",
-        "attribute": {
-            "value": { "type": "string" }
-        },
-        "projection": [
-            {
-                "type": "text",
-                "layout": "#value | before(#before) after(#after)"
             }
         ],
     },
