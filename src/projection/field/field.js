@@ -1,5 +1,5 @@
 import { DataType, UI, ModelAttributeProperty as MAttrProp } from '@src/global/enums.js';
-import { createDiv, createUnorderedList, createListItem, appendChildren, insertAfterElement, addClass, removeClass, getElement, createSpan, addAttributes, removeChildren, isDerivedOf, isNullOrWhitespace, valOrDefault } from 'zenkai';
+import { createDiv, createUnorderedList, createListItem, appendChildren, insertAfterElement, addClass, removeClass, getElement, createSpan, addAttributes, removeChildren, isDerivedOf, isNullOrWhitespace, valOrDefault, createI } from 'zenkai';
 
 const EL = UI.Element;
 
@@ -29,6 +29,7 @@ export const Field = {
     },
     id: null,
     editor: null,
+    parentProjection: null,
     object: "BASE",
     struct: undefined,
     getInfo() {
@@ -104,6 +105,7 @@ export const Field = {
     },
 
     createInput(editable) {
+        console.log(editable);
         var inputProjection;
 
         this._input = createSpan({
@@ -122,53 +124,49 @@ export const Field = {
             addAttributes(this._input, this._options);
         }
 
-        // if (mAttr.isOptional) {
-        //     Object.assign(self._input.dataset, { optional: true });
-        // }
-        // this.value = this._val;
-
         inputProjection = this._input;
-
-        // if (mAttr.isMultiple && mElement.representation.type == RepresentationType.TEXT) {
-        //     var li = createLi({ class: 'array-item array-item--single', data: { prop: MAttrProp.VAL, separator: mAttr.separator } });
-        //     li.appendChild(inputProjection);
-        //     inputProjection = li;
-        // }
 
         this.element = inputProjection;
 
         return inputProjection;
     },
-    focus() { this.element.focus(); },
+    hasElementFocus: false,
+    focus() {
+        this.element.contentEditable = false;
+        this.element.focus();
+        this.hasElementFocus = true;
+    },
     focusIn() {
-        var self = this;
-        if (self.isOptional) {
+        this.hasElementFocus = false;
+        if (this.isOptional) {
             removeClass(this._input, UI.COLLAPSE);
         }
     },
     focusOut() {
-        var self = this;
-        if (self.isOptional) {
+        this.element.contentEditable = true;
+        if (this.isOptional) {
             if (isNullOrWhitespace(this.value)) {
                 addClass(this._input, UI.COLLAPSE);
             }
         }
     },
+    next() {
+
+    },
     update() {
-        var self = this;
-        var attr = self._mAttribute;
-        var val = self._input.textContent;
+        var attr = this._mAttribute;
+        var val = this._input.textContent;
 
         if (val === "") {
-            addClass(self._input, UI.EMPTY);
+            addClass(this._input, UI.EMPTY);
         }
 
         this.value = val;
         // update attribute
-        self._update(self.value, self.index);
+        this._update(this.value, this.index);
 
         if (attr.type === DataType.ID) {
-            let src = attr.MODEL.ID.find(function (x) { return x.id == self.id; });
+            let src = attr.MODEL.ID.find((x) => x.id == this.id);
             if (src) {
                 let arr = src.ref;
                 for (let i = 0, len = arr.length; i < len; i++) {
@@ -182,51 +180,52 @@ export const Field = {
     },
 
     validate() {
-        var self = this;
-
         var isValid = true;
         var validator;
-        for (validator of self.validators) {
-            if (!validator.call(self)) {
+        for (validator of this.validators) {
+            if (!validator.call(this)) {
                 return false;
             }
         }
 
-        if (self.modelAttribute.validate(self)) {
-            self.error = "";
+        if (this.modelAttribute.validate(this)) {
+            this.error = "";
             return true;
         }
 
         return false;
     },
     remove() {
-        var self = this;
-        removeChildren(self._input);
-        self._input.remove();
-        removeChildren(self.element);
-        self.element.remove();
+        removeChildren(this._input);
+        this._input.remove();
+        removeChildren(this.element);
+        this.element.remove();
     },
     delete() {
-        console.log("delete called");
         if (this.concept.parent.canDelete()) {
-            console.log('deleting attribute...');
             this.concept.parent.delete();
-            console.log('attribute deleted...');
             removeChildren(this.element);
-            this.element.remove();
+            this.element.replaceWith(createI({ class: "attribute--optional", data: { object: "attribute", id: this.concept.parent.name } }));
+            // this.element.remove();
+        } else {
+            if (!this.element.classList.contains('shake')) {
+                this.editor.notify("This element cannot be deleted");
+                this.element.classList.add('shake');
+                setTimeout(() => {
+                    this.element.classList.remove('shake');
+                }, 1000);
+            }
         }
     },
     enable() {
-        var self = this;
-        self._input.contentEditable = true;
-        self._input.tabIndex = 0;
-        self.isDisabled = false;
+        this._input.contentEditable = true;
+        this._input.tabIndex = 0;
+        this.isDisabled = false;
     },
     disable() {
-        var self = this;
-        self._input.contentEditable = false;
-        self._input.tabIndex = -1;
-        self.isDisabled = true;
+        this._input.contentEditable = false;
+        this._input.tabIndex = -1;
+        this.isDisabled = true;
     },
 };
 

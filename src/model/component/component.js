@@ -1,23 +1,24 @@
 import { isString, valOrDefault, hasOwn, isNullOrUndefined } from "zenkai";
 import { AttributeFactory } from "@model/attribute/factory.js";
-import { TextualProjection } from "@projection/text-projection";
+import { TextualProjection } from "@projection/text-projection.js";
+
 
 const ATTRIBUTE_NOT_FOUND = -1;
 
-/**
- * @memberof Component
- */
 export const Component = {
     create: function (concept, schema, args) {
-        var instance = Object.create(this);
+        const instance = Object.create(this);
 
         instance.concept = concept;
         instance.model = concept.model;
         instance.schema = schema;
         instance.name = schema.name;
+        instance.fullName = `${concept.name}:${schema.name}`;
         instance.projection = TextualProjection.create(schema.projection[instance.projectionIndex], instance, concept.model.editor);
+        instance.required = valOrDefault(instance.schema.required, true);
         instance.attributes = [];
         instance._attributes = [];
+
         Object.assign(instance, args);
 
         return instance;
@@ -30,6 +31,8 @@ export const Component = {
     id: null,
     /** @type {string} */
     name: null,
+    /** @type {string} */
+    fullName: null,
     /** @type {string} */
     path: null,
     /** @type {Concept} */
@@ -44,13 +47,29 @@ export const Component = {
     representation: null,
     container: null,
     object: "component",
+    init(data) {
+        if(isNullOrUndefined(data)) {
+            return this;
+        }
+        
+        for (const key in data) {
+            const element = data[key];
+            const [type, name] = key.split(".");
+            // console.log(type, name, element);
+            switch (type) {
+                case "attribute":
+                    this.createAttribute(name, element);
+                    break;
+                default:
+                    break;
+            }
+        }
 
-    getStyle() {
-        return this.model.metamodel.style['component'];
+        return this;
     },
-    hasManyProjection() {
-        return this.schema.projection.length > 1;
-    },
+
+    getStyle() { return this.model.metamodel.style['component']; },
+    hasManyProjection() { return this.schema.projection.length > 1; },
 
     /**
      * Returns a value indicating whether the concept has an attribute
@@ -69,22 +88,27 @@ export const Component = {
      * @param {string} id Attribute's id
      * @returns {boolean}
      */
-    isAttributeCreated(id) { return this._attributes.includes(id); },
+    isAttributeCreated(id) { return this._attributes.includes(id); },    
     getOptionalAttributes() {
-        var attributes = [];
+        if (isNullOrUndefined(this.schema['attribute'])) {
+            return [];
+        }
 
-        for (const attr in this.schema['attribute']) {
-            if (!this.isAttributeRequired(attr) && !this._attributes.includes(attr)) {
-                attributes.push(attr);
+        var optionalAttributes = [];
+
+        for (const attrName in this.schema['attribute']) {
+            if (!this.isAttributeRequired(attrName) && !this.isAttributeCreated(attrName)) {
+                optionalAttributes.push(attrName);
             }
         }
 
-        return attributes;
+        return optionalAttributes;
     },
 
     /** @returns {Attribute} */
     getAttribute(id) {
         var attribute = null;
+        
         if (Number.isInteger(id)) {
             attribute = this.attributes[id];
         } else if (isString(id)) {
@@ -103,13 +127,16 @@ export const Component = {
      * @param {string} id 
      * @returns {Attribute}
      */
-    createAttribute(id) {
+    createAttribute(id, value) {
         var attributeSchema = this.schema.attribute[id];
-        var attribute = AttributeFactory.createAttribute(this, id, attributeSchema).init();
+        var attribute = AttributeFactory.createAttribute(this, id, attributeSchema).init(value);
         this.attributes.push(attribute);
         this._attributes.push(id);
 
         return attribute;
+    },
+    canDelete() {
+        return !this.required;
     },
     render() {
         return this.projection.render();

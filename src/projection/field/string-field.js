@@ -1,7 +1,5 @@
 import { Field } from "./field.js";
-import { createSpan, addAttributes, valOrDefault, isEmpty, isNullOrWhitespace, removeClass, addClass } from "zenkai";
-import { Key } from "@global/enums.js";
-
+import { createSpan, addAttributes, valOrDefault, isEmpty, isNullOrWhitespace } from "zenkai";
 
 export const StringField = Field.create({
     /**
@@ -9,20 +7,33 @@ export const StringField = Field.create({
      * @param {Concept} concept
      * @returns {StringField} 
      */
-    create(concept) {
+    create(concept, schema) {
         var instance = Object.create(this);
 
         instance.concept = concept;
-        instance.placeholder = valOrDefault(concept.placeholder, "Enter data");
+        instance.schema = schema;
 
         return instance;
+    },
+    resolvePlaceholder() {
+        if (this.schema.placeholder) {
+            return this.schema.placeholder;
+        }
+        if (this.concept) {
+            return this.concept.getName();
+        }
+
+        return "Enter data";
     },
     init() {
         var validator = function () {
             return true;
         };
 
+        this.placeholder = this.resolvePlaceholder();
         this.validators.push(validator);
+
+        return this;
     },
     placeholder: null,
     object: "STRING",
@@ -30,7 +41,7 @@ export const StringField = Field.create({
     createInput() {
         this.element = createSpan({
             id: this.id,
-            class: ['attr', 'empty'],
+            class: "field field--textbox",
             html: "",
             data: {
                 nature: "attribute",
@@ -41,33 +52,29 @@ export const StringField = Field.create({
         this.element.contentEditable = true;
         this.element.tabIndex = 0;
 
+        if (this.concept.value) {
+            this.element.textContent = this.concept.value;
+        } else {
+            this.element.classList.add("empty");
+        }
+
         this.bindEvents();
 
         return this.element;
     },
+    focusOut() {
+        this.element.contentEditable = true;
+
+        if (!this.concept.update(this.element.textContent)) {
+            this.editor.notify("String concept could not be updated");
+        }
+    },
     bindEvents() {
-        var lastKey = -1;
-
-        const concept = this.concept;
-
-        this.element.addEventListener('click', function (event) {
-        });
-
         this.element.addEventListener('input', function (event) {
             if (this.textContent.length > 0) {
-                removeClass(this, 'empty');
+                this.classList.remove("empty");
             } else {
-                addClass(this, 'empty');
-            }
-        });
-
-        this.element.addEventListener('focusin', function (event) {
-         
-        });
-
-        this.element.addEventListener('focusout', function (event) {
-            if (!concept.update(this.textContent)){
-                console.error("String concept could not be updated");
+                this.classList.add("empty");
             }
         });
     }

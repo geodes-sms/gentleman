@@ -1,5 +1,5 @@
 import { Field } from "./field.js";
-import { createSpan, addAttributes, valOrDefault, isEmpty, isNullOrWhitespace, removeClass, addClass } from "zenkai";
+import { createSpan, addAttributes, valOrDefault, isEmpty, isNullOrWhitespace } from "zenkai";
 import { Key } from "@global/enums.js";
 import { extend } from "@utils/index.js";
 
@@ -56,9 +56,9 @@ export const ReferenceField = extend(Field, {
 
         this.element.addEventListener('input', function (event) {
             if (this.textContent.length > 0) {
-                removeClass(this, 'empty');
+                this.classList.remove('empty');
             } else {
-                addClass(this, 'empty');
+                this.classList.add('empty');
             }
         });
 

@@ -1,11 +1,14 @@
 import { valOrDefault, isFunction } from "zenkai";
 
+
 export const Attribute = {
-    create: function (concept, schema, args) {
-        var instance = Object.create(this);
+    create(concept, schema, args) {
+        const instance = Object.create(this);
+
         instance.concept = concept;
         instance.model = concept.model;
         instance.schema = schema;
+        instance.alias = schema.alias;
         instance.type = schema.type;
         instance.accept = schema.accept;
         instance.action = valOrDefault(schema.action, {});
@@ -13,29 +16,10 @@ export const Attribute = {
         instance.name = schema.name;
         instance.projection = schema.projection;
         instance.required = valOrDefault(instance.schema.required, true);
-        instance._use = valOrDefault(instance.schema.use, 'required');
+
         Object.assign(instance, args);
 
         return instance;
-    },
-    init() {
-        this.initValue();
-
-        return this;
-    },
-    initValue() {
-        if (this.isRequired()) {
-            let concept = this.model.createConcept(this.type);
-            concept.parent = this;
-            concept.accept = this.accept;
-            concept.action = this.action;
-            concept.validProjections  =  this.projection;
-            concept.min = this.min;
-            if (isFunction(concept.init)) {
-                concept.init();
-            }
-            this.value = concept;
-        }
     },
     /** Reference to parent model */
     model: null,
@@ -48,6 +32,8 @@ export const Attribute = {
     /** @type {string} */
     name: null,
     /** @type {string} */
+    alias: null,
+    /** @type {string} */
     type: null,
     /** @type {string} */
     accept: null,
@@ -56,13 +42,23 @@ export const Attribute = {
     /** @type {string} */
     path: null,
     projection: null,
-    representation: null,
-    container: null,
     object: "attribute",
 
-    isRequired() { return this._use === 'required'; },
-    isOptional() { return this._use === 'optional'; },
+    init(value) {
+        var concept = this.model.createConcept(this.type, {
+            value: value,
+            parent: this,
+            accept: this.accept,
+            action: this.action,
+            alias: this.alias,
+            customProjection: this.projection,
+            min: this.min,
+        });
 
+        this.value = concept;
+
+        return this;
+    },
     render() {
         this.container = null;
         if (Array.isArray(this.value)) {
@@ -70,24 +66,21 @@ export const Attribute = {
         } else {
             return this.value.render();
         }
-        // if (this.model.metamodel.isElement(this.type)) {
-        //     this.container = createDiv({ class: 'wrapper' });
-        //     let inherentConcept = this.model.createConcept(this.type);
-        //     this.container.appendChild(inherentConcept.render());
-        // } else {
-        //     this.container = createSpan({ class: 'wrapper' });
-        //     let field = Field.create({ _mAttribute: this.schema });
-        //     // this.editor.registerField(field);
-        //     this.container.appendChild(field.createInput());
-        // }
-        //this.container.appendChild(this.projection.render());
     },
+
     canDelete() {
         return !this.required;
     },
     delete() {
+        if (Array.isArray(this.value)) {
+            this.value.forEach((item) => item.delete());
+        } else {
+            this.value.delete();
+        }
+
         return this.concept.removeAttribute(this.name);
     },
+
     export() {
         return {
             [`${this.name}`]: this.value.export()
@@ -95,7 +88,10 @@ export const Attribute = {
     },
     toString() {
         return {
-            [`${this.concept.name}@${this.name}`]: this.value.toString()
+            [`attribute.${this.name}`]: this.value.toString()
         };
+        // return {
+        //     [`${this.name}@attribute`]: this.value.toString()
+        // };
     }
 };

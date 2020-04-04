@@ -1,0 +1,755 @@
+{
+    "project": {
+        "nature": "concrete",
+        "attribute": {
+            "short_name": {
+                "alias": "short name",
+                "type": "string",
+                "id": true
+            },
+            "name": {
+                "type": "string"
+            }
+        },
+        "component": [
+            {
+                "name": "screening_section",
+                "attribute": {
+                    "screen_action": {
+                        "type": "string",
+                        "id": true,
+                        "required": false
+                    },
+                    "screening": {
+                        "type": "screening"
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "SCREENING #screen_action #screening"
+                    }
+                ]
+            },
+            {
+                "name": "qa_section",
+                "alias": "Question/Answer section",
+                "required": false,
+                "attribute": {
+                    "qa_action": {
+                        "name": "qa_action",
+                        "type": "ID",
+                        "required": false
+                    },
+                    "quality_assess": {
+                        "name": "quality_assess",
+                        "type": "set",
+                        "accept": "qa",
+                        "min": 0
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "QA #qa_action #quality_assess"
+                    }
+                ]
+            },
+            {
+                "name": "data_section",
+                "alias": "Data extraction section",
+                "attribute": {
+                    "class_action": {
+                        "name": "class_action",
+                        "type": "ID",
+                        "required": false
+                    },
+                    "category": {
+                        "name": "category",
+                        "type": "set",
+                        "accept": "category"
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "DATA EXTRACTION #class_action #category"
+                    }
+                ]
+            },
+            {
+                "name": "report_section",
+                "alias": "Report section",
+                "required": false,
+                "attribute": {
+                    "reporting": {
+                        "name": "reporting",
+                        "type": "set",
+                        "accept": "report"
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "SYNTHESIS #reporting"
+                    }
+                ]
+            }
+        ],
+        "constraint": {
+            "PRESENCE": "C[2] => C[3]"
+        },
+        "projection": [
+            {
+                "type": "text",
+                "flow": "vertical",
+                "header": [
+                    "PROJECT #short_name #name"
+                ],
+                "layout": [
+                    "$header:horizontal",
+                    "#[screening_section]"
+                ]
+            }
+        ],
+        "encoding": {
+            "default": {
+                "format": "relis",
+                "value": "$k1 #short_name #name ##compo ##compo[screening_section] ##compo[1|..|2|4..6]"
+            },
+            "alternative": {
+                "format": "relis",
+                "value": "$k1 #short_name #name #!EACH:listing"
+            },
+            "XML": {
+                "format": "xml",
+                "value": "<#short_name name='#name'>$composition</$short_name>"
+            }
+        }
+    },
+    "screening": {
+        "nature": "concrete",
+        "component": [
+            {
+                "name": "reviews",
+                "attribute": {
+                    "review_per_paper": {
+                        "type": "number",
+                        "value": "2"
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": [
+                            "screening #review_per_paper"
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "conflict",
+                "attribute": {
+                    "conflict_type": {
+                        "type": "conflictType"
+                    },
+                    "conflict_resolution": {
+                        "type": "conflictResolution",
+                        "value": "unanimity"
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "Conflict on #conflict_type resolved by #conflict_resolution"
+                    }
+                ]
+            },
+            {
+                "name": "criteria",
+                "keyword": "Criteria",
+                "attribute": {
+                    "exclusion_criteria": {
+                        "type": "set",
+                        "accept": "string",
+                        "min": 1,
+                        "projection": [
+                            {
+                                "type": "text",
+                                "layout": "Criteria = [#exclusion_criteria]"
+                            },
+                            {
+                                "type": "table",
+                                "disposition": "column",
+                                "layout": {
+                                    "header": "Title|List of fields|Description",
+                                    "cell": "title|fields|description",
+                                    "multiple": true
+                                }
+                            },
+                            {
+                                "type": "table",
+                                "disposition": "column",
+                                "layout": {
+                                    "cell": [
+                                        {
+                                            "header": "Title",
+                                            "value": "#title"
+                                        },
+                                        {
+                                            "header": "List of fields",
+                                            "value": "#fields"
+                                        },
+                                        {
+                                            "header": "Description",
+                                            "value": "#description"
+                                        }
+                                    ],
+                                    "multiple": true
+                                }
+                            }
+                        ]
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "Criteria = [#exclusion_criteria]"
+                    },
+                    {
+                        "type": "table",
+                        "disposition": "column",
+                        "layout": {
+                            "header": "Title|List of fields|Description",
+                            "cell": "title|fields|description",
+                            "multiple": true
+                        }
+                    },
+                    {
+                        "type": "table",
+                        "disposition": "column",
+                        "layout": {
+                            "cell": [
+                                {
+                                    "header": "Title",
+                                    "value": "#title"
+                                },
+                                {
+                                    "header": "List of fields",
+                                    "value": "#fields"
+                                },
+                                {
+                                    "header": "Description",
+                                    "value": "#description"
+                                }
+                            ],
+                            "multiple": true
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "sources",
+                "keyword": "Sources",
+                "required": true,
+                "attribute": {
+                    "source_papers": {
+                        "type": "set",
+                        "accept": [
+                            {
+                                "type": "string",
+                                "alias": "source"
+                            },
+                            {
+                                "type": "string",
+                                "alias": "source"
+                            }
+                        ]
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "Sources = [#source_papers]"
+                    }
+                ]
+            },
+            {
+                "name": "strategies",
+                "keyword": "Strategies",
+                "required": false,
+                "attribute": {
+                    "search_strategy": {
+                        "type": "set",
+                        "accept": "string"
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "$keyword = [#search_strategy]"
+                    }
+                ]
+            },
+            {
+                "name": "validation",
+                "required": false,
+                "attribute": {
+                    "validation_percentage": {
+                        "type": "number",
+                        "value": "20",
+                        "min": 0,
+                        "max": 100
+                    },
+                    "validation_assignment_mode": {
+                        "type": "assignmentMode",
+                        "value": "normal",
+                        "required": false
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "Validation #validation_percentage% #validation_assignment_mode"
+                    }
+                ]
+            },
+            {
+                "name": "phases",
+                "keyword": "Phases",
+                "required": false,
+                "attribute": {
+                    "phases": {
+                        "type": "set",
+                        "accept": "phase"
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "Phases #phases"
+                    }
+                ]
+            }
+        ],
+        "projection": [
+            {
+                "type": "text",
+                "layout": "#[reviews] #[sources]"
+            }
+        ]
+    },
+    "phase": {
+        "nature": "concrete",
+        "attribute": {
+            "title": {
+                "type": "string"
+            },
+            "description": {
+                "type": "string",
+                "required": false
+            },
+            "fields": {
+                "type": "set",
+                "accept": "field"
+            }
+        },
+        "projection": [
+            {
+                "type": "text",
+                "layout": "#title #description Fields (#fields)"
+            },
+            {
+                "type": "table",
+                "disposition": "column",
+                "layout": {
+                    "header": "Title|List of fields|Description",
+                    "cell": "title|fields|description",
+                    "multiple": true
+                }
+            },
+            {
+                "type": "table",
+                "disposition": "column",
+                "layout": {
+                    "cell": [
+                        {
+                            "header": "Title",
+                            "value": "#title"
+                        },
+                        {
+                            "header": "List of fields",
+                            "value": "#fields"
+                        },
+                        {
+                            "header": "Description",
+                            "value": "#description"
+                        }
+                    ],
+                    "multiple": true
+                }
+            }
+        ]
+    },
+    "qa": {
+        "nature": "concrete",
+        "component": [
+            {
+                "name": "questions",
+                "attribute": {
+                    "question": {
+                        "type": "set",
+                        "accept": "string"
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "Questions [#question]"
+                    }
+                ]
+            },
+            {
+                "name": "response",
+                "attribute": {
+                    "response": {
+                        "name": "response",
+                        "type": "set",
+                        "accept": "response"
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "Response [#response]"
+                    }
+                ]
+            },
+            {
+                "name": "min_score",
+                "attribute": {
+                    "min_score": {
+                        "type": "number"
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "Minimum score #min_score"
+                    }
+                ]
+            }
+        ],
+        "projection": [
+            {
+                "type": "text",
+                "layout": "#[questions] #[response] #[min_score]"
+            }
+        ]
+    },
+    "response": {
+        "nature": "concrete",
+        "attribute": {
+            "title": {
+                "type": "string"
+            },
+            "score": {
+                "type": "number"
+            }
+        },
+        "projection": [
+            {
+                "type": "text",
+                "layout": "#title:#score"
+            }
+        ]
+    },
+    "double": {
+        "prototype": "number",
+        "format": "[0-9]+([.][0-9]+)?"
+    },
+    "report": {
+        "nature": "prototype",
+        "attribute": {
+            "name": {
+                "type": "string",
+                "id": true
+            },
+            "title": {
+                "type": "string",
+                "required": false
+            },
+            "value": {
+                "type": "reference",
+                "ref": "category"
+            },
+            "chart": {
+                "type": "set",
+                "accept": "graphType"
+            }
+        }
+    },
+    "simple_graph": {
+        "nature": "concrete",
+        "prototype": "report",
+        "projection": [
+            {
+                "type": "text",
+                "layout": "Simple #name #title on #value charts(#chart)"
+            }
+        ]
+    },
+    "compare_graph": {
+        "nature": "concrete",
+        "prototype": "report",
+        "attribute": {
+            "reference": {
+                "name": "reference",
+                "type": "IDREF",
+                "ref": "category"
+            }
+        },
+        "projection": [
+            {
+                "type": "text",
+                "layout": "Compare #name #title on #value with #reference charts(#chart)"
+            }
+        ]
+    },
+    "category": {
+        "nature": "prototype",
+        "attribute": {
+            "name": {
+                "type": "string",
+                "id": true
+            },
+            "title": {
+                "type": "string",
+                "required": false
+            },
+            "mandatory": {
+                "type": "boolean",
+                "projection": {
+                    "condition": "$value = true",
+                    "layout": "*"
+                },
+                "value": true
+            },
+            "numberOfValues": {
+                "type": "number",
+                "required": false,
+                "value": 1,
+                "projection": {
+                    "type": "text",
+                    "layout": "[$value]"
+                }
+            },
+            "subCategory": {
+                "name": "subCategory",
+                "type": "set",
+                "accept": "category",
+                "required": false,
+                "inline": false,
+                "projection": {
+                    "type": "text",
+                    "layout": "{$value}"
+                }
+            }
+        }
+    },
+    "freeCategory": {
+        "nature": "concrete",
+        "prototype": "category",
+        "attribute": {
+            "type": {
+                "type": "simpleType",
+                "value": "string"
+            },
+            "max_char": {
+                "type": "integer",
+                "required": false,
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "($value)"
+                    }
+                ]
+            },
+            "pattern": {
+                "type": "string",
+                "required": false,
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "style($value)"
+                    }
+                ]
+            },
+            "initial_value": {
+                "type": "string",
+                "required": false,
+                "projection": [
+                    {
+                        "type": "text",
+                        "projection": "= [$value]"
+                    }
+                ]
+            }
+        },
+        "projection": [
+            {
+                "type": "text",
+                "layout": "Simple #name #title #mandatory #numberOfValues : #type #max_char #pattern #initial_value #subCategory"
+            }
+        ]
+    },
+    "staticCategory": {
+        "nature": "concrete",
+        "prototype": "category",
+        "attribute": {
+            "values": {
+                "type": "set",
+                "accept": "string"
+            }
+        },
+        "projection": [
+            {
+                "type": "text",
+                "layout": "List #name #title #mandatory #numberOfValues = [#values] #subCategory"
+            }
+        ]
+    },
+    "independantDynamicCategory": {
+        "nature": "concrete",
+        "prototype": "category",
+        "attribute": {
+            "reference_name": {
+                "type": "string",
+                "required": false
+            },
+            "initial_values": {
+                "type": "string",
+                "accept": "string",
+                "required": false,
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "= [$val]"
+                    }
+                ]
+            }
+        },
+        "projection": [
+            {
+                "type": "text",
+                "layout": "DynamicList #name #title #mandatory #numberOfValues #reference_name #initial_values #subCategory"
+            }
+        ]
+    },
+    "dependantDynamicCategory": {
+        "nature": "concrete",
+        "prototype": "category",
+        "attribute": {
+            "depends_on": {
+                "type": "reference",
+                "accept": "category"
+            }
+        },
+        "projection": [
+            {
+                "type": "text",
+                "layout": "DynamicList #name #title #mandatory #numberOfValues depends on #depends_on #subCategory"
+            }
+        ]
+    },
+    "simpleType": {
+        "name": "simpleType",
+        "type": "enum",
+        "values": {
+            "bool": "bool",
+            "date": "date",
+            "int": "int",
+            "real": "real",
+            "string": "string",
+            "text": "text"
+        }
+    },
+    "assignmentMode": {
+        "name": "assignmentMode",
+        "base": "string",
+        "values": {
+            "info": "Info",
+            "normal": "Normal",
+            "veto": "Veto"
+        }
+    },
+    "conflictType": {
+        "name": "conflictType",
+        "base": "string",
+        "values": {
+            "exclusionCriteria": {
+                "projection": {
+                    "type": "text",
+                    "layout": "Criteria"
+                }
+            },
+            "includeExclude": "Decision"
+        }
+    },
+    "conflictResolution": {
+        "name": "conflictResolution",
+        "base": "string",
+        "values": [
+            "majority",
+            "unanimity"
+        ]
+    },
+    "graphType": {
+        "name": "graphType",
+        "type": "enum",
+        "values": [
+            "bar",
+            "line",
+            "pie"
+        ]
+    },
+    "field": {
+        "name": "field",
+        "type": "enum",
+        "values": [
+            "abstract",
+            "bibtex",
+            "link",
+            "preview",
+            "title"
+        ]
+    },
+    "@root": "project",
+    "@config": {
+        "language": "ReLiS",
+        "settings": {
+            "autosave": true
+        },
+        "style": {
+            "attribute": {
+                "inline": true,
+                "spacing": {
+                    "before": "2px",
+                    "after": "2px"
+                }
+            },
+            "component": {
+                "inline": false,
+                "size": {
+                    "width": "FIT_CONTENT"
+                },
+                "spacing": {
+                    "before": "5px",
+                    "after": "5px"
+                },
+                "corner": {},
+                "background": "#f0f0f0"
+            }
+        }
+    }
+}

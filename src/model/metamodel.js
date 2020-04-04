@@ -1,5 +1,6 @@
-import { cloneObject, isNullOrUndefined, hasOwn, valOrDefault, isString, isNullOrWhitespace, isUndefined } from "zenkai";
-import { InvalidMetaModelError } from '@src/exception/index.js';
+import { isNullOrUndefined, hasOwn, valOrDefault, isString, isNullOrWhitespace, isUndefined } from "zenkai";
+import { deepCopy, tryResolve } from "@utils/index.js";
+import { InvalidMetaModelError } from '@exception/index.js';
 import { Model } from "./model.js";
 
 const KEY_ROOT = '@root';
@@ -8,13 +9,10 @@ const KEY_RESOURCES = '@resources';
 const PROP_LANGUAGE = 'language';
 const PROP_STYLE = 'style';
 
-const deepCopy = (obj) => JSON.parse(JSON.stringify(obj));
-const tryResolve = (obj, prop, fallback) => isNullOrUndefined(obj) ? fallback : obj[prop];
-
 export const MetaModel = {
     /** @returns {MetaModel} */
     create(metamodel) {
-        var instance = Object.create(this);
+        const instance = Object.create(this);
 
         instance.schema = metamodel;
         instance._root = metamodel[KEY_ROOT];
@@ -35,25 +33,26 @@ export const MetaModel = {
     /** @type {string[]} */
     get resources() { return this._resources; },
 
-    init(metamodel, args) {
-        this.schema = metamodel;
-
-        return this;
-    },
-
     getModel(id) { return isString(id) ? this.models.find((m) => m.id === id) : this.models[id]; },
 
     createModel() {
-        if (!isNullOrWhitespace(this.root)) {
-            let model = Model.create(this);
-            this.models.push(model);
-
-            return model;
+        if (isNullOrWhitespace(this.root)) {
+            // throw an error if the root was not found.
+            throw InvalidMetaModelError.create("Root not found: The metamodel does not contain a concept with the property `root`");
         }
+        
+        var model = Model.create(this);
+        this.models.push(model);
 
-        // throw an error if the root was not found.
-        throw InvalidMetaModelError.create("Root not found: The metamodel does not contain a concept with the property `root`");
+        return model;
     },
+
+    /**
+     * Gets a value indicating whether this type is declared in the model
+     * @param {string} type 
+     * @returns {boolean}
+     */
+    isConcept(type) { return !isUndefined(this.schema[type]); },
 
     /**
      * Gets a model concept by type
@@ -79,6 +78,7 @@ export const MetaModel = {
         if (!this.isConcept(type)) {
             return undefined;
         }
+
         const conceptSchema = this.getModelConcept(type);
         const baseSchema = getConceptBaseSchema.call(this, conceptSchema.prototype);
         if (!hasOwn(conceptSchema, 'attribute')) {
@@ -95,30 +95,10 @@ export const MetaModel = {
     },
 
     /**
-     * Create an instance of the model element
-     * @param {string} type 
-     */
-    createInstance(type) {
-        const element = this.getModelConcept(type);
-        return cloneObject(element);
-    },
-
-    /**
-     * Gets a value indicating whether this type is declared in the model
-     * @param {string} type 
-     * @returns {boolean}
-     */
-    isConcept(type) { return !isUndefined(this.schema[type]); },
-
-    /**
      * Gets a model element type
      * @param {Object} el element
      */
     getModelElementType(el) { return this.isElement(el.name) ? getModelElementType.call(this, el) : undefined; },
-
-    toString() {
-        return this.root.toString();
-    }
 };
 
 function getModelElementType(el) {

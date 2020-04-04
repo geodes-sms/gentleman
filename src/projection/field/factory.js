@@ -9,11 +9,11 @@ export const FieldFactory = {
         switch (type) {
             case 'number':
             case 'string':
-                return StringField.create(model);
+                return StringField.create(model, schema);
             case 'reference':
-                return ReferenceField.create(model);
+                return ReferenceField.create(model, schema);
             case 'set':
-                return SetField.create(model);
+                return SetField.create(model, schema);
             default:
                 return createBaseField(model, schema);
         }

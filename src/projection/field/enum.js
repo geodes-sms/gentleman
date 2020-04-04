@@ -1,4 +1,4 @@
-import { hasOwn, isNullOrWhitespace, valOrDefault, defProp, addClass, removeClass } from 'zenkai';
+import { hasOwn, isNullOrWhitespace, valOrDefault, defProp } from 'zenkai';
 import { UI } from '@src/global/enums.js';
 import { find } from '@utils/find.js';
 import { Field } from './field.js';
@@ -13,11 +13,11 @@ export const EnumProjection = Field.create({
 
                 if (isNullOrWhitespace(val) && !Number.isInteger(val)) {
                     this._input.textContent = "";
-                    addClass(this._input, UI.EMPTY);
+                    this._input.classList.add(UI.EMPTY);
                 } else {
                     let elEnum = this.values[val];
                     this._input.textContent = Array.isArray(this.values) ? elEnum : valOrDefault(elEnum.val, elEnum);
-                    removeClass(this._input, UI.EMPTY);
+                    this._input.classList.remove(UI.EMPTY);
                 }
             }
         });
@@ -40,15 +40,14 @@ export const EnumProjection = Field.create({
     },
     object: "ENUM",
     update() {
-        var self = this;
-        var val = self._input.textContent;
+        var val = this._input.textContent;
 
         if (isNullOrWhitespace(val)) {
-            addClass(self._input, UI.EMPTY);
+            this._input.classList.add(UI.EMPTY);
         }
 
-        self._value = valOrDefault(find(self.values, val), val);
-        self._update(self.value, self.index);
+        this._value = valOrDefault(find(this.values, val), val);
+        this._update(this.value, this.index);
     },
     values: undefined,
     valuesKV() {

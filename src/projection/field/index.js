@@ -1,8 +1,5 @@
-import { Field } from './field.js';
-import { AbstractProjection } from './abstract.js';
-import { EnumProjection } from './enum.js';
-import { DataTypeProjection } from './datatype.js';
-import { PointerProjection } from './pointer.js';
-import { RawProjection } from './raw.js';
-
-export { Field, AbstractProjection, EnumProjection, DataTypeProjection, PointerProjection, RawProjection };
+export * from './factory.js';
+export * from './field.js';
+export * from './string-field.js';
+export * from './set-field.js';
+export * from './reference-field-field.js';

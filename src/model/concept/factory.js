@@ -4,9 +4,9 @@ import { ConcreteConcept, ModelConcept } from "./meta/index.js";
 import { valOrDefault, isNullOrUndefined } from 'zenkai';
 
 export const ConceptFactory = {
-    createConcept(model, name, schema) {
+    createConcept(model, name, schema, options) {
         var concept = null;
-        
+
         switch (name) {
             case 'string':
                 concept = StringConcept.create(model);
@@ -41,10 +41,13 @@ export const ConceptFactory = {
 
         concept.id = model.generateId(); 
         concept.name = name;
+        concept.fullName = name;
         concept.attributes = [];
         concept._attributes = [];
         concept.components = [];
         concept._components = [];
+
+        concept.init(options);
 
         return concept;
     }

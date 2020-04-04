@@ -1,5 +1,3 @@
-import { Menu } from './menu.js';
-import { Editor } from './editor.js';
-import { Note } from './note.js';
-
-export const Gentleman = { Menu, Note, Editor };
+export * from './editor.js';
+export * from './menu.js';
+export * from './note.js';

@@ -1,19 +1,29 @@
 import { Concept } from "./../concept.js";
 import { TextualProjection } from "@projection/text-projection.js";
+import { valOrDefault } from "zenkai";
+
 
 export const StringConcept = Concept.create({
     create: function (model) {
-        var instance = Object.create(this);
+        const instance = Object.create(this);
 
         instance.model = model;
-        instance.projection = TextualProjection.create(createProjection(), instance, model.editor);
 
         return instance;
     },
-    init() {
-        this.placeholder = this.parent.name;
+    init(options) {
+        if (options) {
+            this.value = valOrDefault(options.value, "");
+            this.accept = options.accept;
+            this.action = options.action;
+            this.parent = options.parent;
+            this.min = valOrDefault(options.min, 1);
+        }
+
+        this.projection = TextualProjection.create(valOrDefault(options.customProjection, createProjection.call(this)), this, this.model.editor);
+
+        return this;
     },
-    placeholder: null,
     projection: null,
     projectionIndex: 0,
     representation: null,
@@ -28,8 +38,11 @@ export const StringConcept = Concept.create({
     },
     update(value) {
         this.value = value;
-        
+
         return true;
+    },
+    next() {
+        this.parent.next();
     },
     export() {
         return this.value;
@@ -42,7 +55,11 @@ export const StringConcept = Concept.create({
 function createProjection() {
     return {
         type: "text",
-        textbox: { type: 'field', view: 'textbox' },
+        textbox: {
+            type: 'field',
+            placeholder: `Enter ${this.name}`,
+            view: 'textbox'
+        },
         layout: '$textbox'
     };
 }

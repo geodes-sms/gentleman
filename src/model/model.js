@@ -1,4 +1,4 @@
-import { cloneObject, hasOwn, isNullOrUndefined } from "zenkai";
+import { hasOwn, isNullOrUndefined } from "zenkai";
 import { UUID } from "@utils/index.js";
 import { MetaModel } from './metamodel.js';
 import { ConceptFactory } from "./concept/factory.js";
@@ -18,12 +18,13 @@ export const Model = {
         return instance;
     },
     schema: null,
-    /** @type {MetaModel} */
     metamodel: null,
-    /** @type {Concept.BaseConcept} */
     root: null,
-    /** @type {Editor} */
     editor: null,
+    /**
+     * @type {Concept[]}
+     */
+    concepts: null,
 
     /**
      * Initialize the model.
@@ -32,12 +33,13 @@ export const Model = {
      * @param {Object} args 
      */
     init(model, editor) {
-        this.schema = !isNullOrUndefined(model) ? model : initSchema(this.metamodel);
-        this.editor = editor;
-        this.root = ConceptFactory.createConcept(this, this.schema.root['name'], this.schema.root);
+        this.schema = initSchema(this.metamodel);
+        this.root = ConceptFactory.createConcept(this, this.schema.root['name'], this.schema.root, { value: model });
+        this.concepts.push(this.root);
 
-        // (?) Uncomment to add optional argument parameters
-        // Object.assign(this, args);
+        if (editor) {
+            this.editor = editor;
+        }
 
         return this;
     },
@@ -46,32 +48,31 @@ export const Model = {
      * @param {string} name
      * @returns {Concept}
      */
-    createConcept(name) {
+    createConcept(name, args) {
         const schema = this.metamodel.getCompleteModelConcept(name);
 
-        var concept = ConceptFactory.createConcept(this, name, schema);
+        var concept = ConceptFactory.createConcept(this, name, schema, args);
         this.concepts.push(concept);
 
         return concept;
     },
-    /**
-     * Create an instance of the model element
-     * @param {string} type 
-     */
-    createInstance(type) {
-        const element = this.metamodel.getModelConcept(type);
-
-        return element && !(this.isEnum(type) || this.isDataType(type)) ? cloneObject(element) : "";
-    },
     generateId() {
         return UUID.generate();
     },
-    export() {
-        return JSON.stringify(this.root.export());
+    render() {
+        return this.root.render();
     },
-    toString() {
+    export() {
         return JSON.stringify(this.root.toString());
     },
+    toString() {
+        return JSON.stringify({
+            [this.root.name]: this.root.toString()
+        });
+    },
+    project() {
+        return this.root.project();
+    }
 };
 
 

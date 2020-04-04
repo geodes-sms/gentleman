@@ -1,9 +1,9 @@
-import { createDiv, createButton, appendChildren, removeChildren } from "zenkai";
-import { Concept } from "./concept.js";
+import { createDiv, removeChildren } from "zenkai";
 import { TextualProjection } from "@projection/text-projection.js";
+import { Concept } from "./concept.js";
 
 /**
- * @memberof Concept
+ * @type {Concept}
  */
 export const BaseConcept = Concept.create({
     create: function (model, schema) {
@@ -15,28 +15,15 @@ export const BaseConcept = Concept.create({
 
         return instance;
     },
-    /** @type {TextualProjection} */
-    projection: null,
     projectionIndex: 0,
-    representation: null,
-    container: null,
-    hasManyProjection() {
-        return this.schema.projection.length > 1;
-    },
 
     render() {
-        // return this.projection.render();
-        this.container = createDiv({ class: 'concept-container', data: { object: this.object, name: this.name } });
-        this.container.appendChild(this.projection.render());
-
-        return this.container;
-
+        return this.projection.render();
     },
     rerender() {
         removeChildren(this.container);
         this.container.appendChild(this.projection.render());
 
         return this.container;
-
     }
 });

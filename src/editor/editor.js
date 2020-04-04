@@ -1,334 +1,321 @@
 import {
-    cloneObject, isEmpty, getElement, getElements, createLink, createDiv, createSpan,
-    appendChildren, createTextArea, createParagraph, insertAfterElement, insertBeforeElement,
-    preprendChild, removeChildren, conceal, addClass, removeClass, hasClass, findAncestor, isHTMLElement,
-    createUnorderedList, createListItem, createStrong, createButton, copytoClipboard, createInput
+    cloneObject, isEmpty, getElement, getElements, createLink, createDiv,
+    appendChildren, createParagraph, insertAfterElement,
+    preprendChild, removeChildren, findAncestor, isHTMLElement,
+    createUnorderedList, createListItem, createStrong, createButton, copytoClipboard,
+    isNullOrWhitespace, createInput, createInputAs, createLabel, isNullOrUndefined
 } from 'zenkai';
-import { Key, UI } from '@global/enums.js';
-import { events, TypeWriter, createOptionSelect, hide, show } from '@utils/index.js';
+import { Key } from '@global/enums.js';
+import { events, hide, show } from '@utils/index.js';
 import { MetaModel, Model } from '@model/index.js';
-import { Autocomplete } from './autocomplete.js';
-import { Convo } from './convo.js';
 import { State } from './state.js';
-import * as Projection from '@projection/field/fn';
 
-
-const container = getElement("[data-gentleman-editor]");
-container.tabIndex = -1;
-
-const DOC = typeof module !== 'undefined' && module.exports ? {} : document;
 
 const windowheight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 
-const ELEMENT = UI.Element;
 const EditorMode = {
     READ: 'read',
     EDIT: 'edit'
 };
 
-/**
- * Preprend a string with a dot symbol
- * @param {string} str 
- * @returns {string}
- */
-function dot(str) { return '.' + str; }
+function getContainer(container) {
+    if (isHTMLElement(container)) {
+        return container;
+    } else if (!isNullOrWhitespace(container)) {
+        return getElement(container);
+    }
 
-/**
- * Preprend a string with a hash symbol
- * @param {string} str 
- * @returns {string}
- */
-function hash(str) { return '#' + str; }
-
-function f_class(el) { return dot(el.class); }
+    return getElement("[data-gentleman-editor]");
+}
 
 // Allow responsive design
 var mql = window.matchMedia('(max-width: 800px)');
 
-/**
-   * @lends Editor
-   */
 export const Editor = {
+    /**
+     * Creates an instance of Editor
+     * @param {HTMLElement|string} container 
+     * @returns {Editor}
+     */
+    create(container) {
+        const instance = Object.create(this);
+
+        instance.container = getContainer(container);
+        if (!isHTMLElement(instance.container)) {
+            throw new Error("Container not found. Gentleman editor could not be created.");
+        }
+
+        instance.container.tabIndex = -1;
+        instance.body = createDiv({ class: 'body' });
+        instance.body.tabIndex = 0;
+        instance.fields = [];
+        instance.state = State.create();
+
+        return instance;
+    },
+
     /** @type {state} */
-    state: State.create(),
-    menu: null,
-    note: null,
+    state: null,
+    /** @type {Field[]} */
     fields: null,
+    /** @type {string} */
     workflow: null,
-    /** @type {HTMLButtonElement} */
-    btnExport: null,
     /** @type {MetaModel} */
     metamodel: null,
     /** @type {Model} */
     model: null,
+    /** @type {HTMLElement} */
+    container: null,
+    /** @type {HTMLElement} */
+    body: null,
+    /** @type {HTMLElement} */
+    focusedElement: null,
+    /** @type {HTMLElement} */
+    activeElement: null,
+    /** @type {Concept} */
+    activeConcept: null,
+    /** @type {HTMLElement} */
+    activeConceptContainer: null,
+    /** @type {HTMLButtonElement} */
+    btnExport: null,
+    /** @type {HTMLButtonElement} */
+    btnImport: null,
     currentContext: null,
-    create() {
-        var instance = Object.create(this);
 
-        instance._abstract = null;
-        instance._concrete = null;
-        instance._current = null;
-        instance.fields = [];
-        instance._isInitialized = false;
-
-        instance._body = createDiv({ class: 'body' });
-        instance._autocomplete = Autocomplete.create();
-        instance._mode = false;
-
-        return {
-            init(model, metamodel) { instance.init(model, metamodel); },
-            code() { instance.code(); },
-            get language() { return instance.language; },
-            get model() { return instance.concrete; },
-            get state() { return instance.state; },
-            get mode() { return instance._mode; },
-            set mode(val) {
-                instance._mode = val;
-                const READ_MODE = 'read-mode';
-                switch (val) {
-                    case EditorMode.EDIT:
-                        // remove read mode styles from the body
-                        removeClass(instance.body, READ_MODE);
-
-                        // restore attributes editable state
-                        instance.projections.forEach(function (p) { p.enable(); });
-
-                        break;
-                    case EditorMode.READ:
-                        // apply read mode styles to the body 
-                        addClass(instance.body, READ_MODE);
-
-                        // disable all attributes => readonly
-                        instance.projections.forEach(function (p) { p.disable(); });
-
-                        break;
-                }
-            },
-            undo() {
-                instance.state.undo();
-                instance.setState(cloneObject(instance.state.current));
-                events.emit('editor.undo', instance.state.hasUndo);
-            },
-            redo() {
-                instance.state.redo();
-                instance.setState(cloneObject(instance.state.current));
-                events.emit('editor.redo', instance.state.hasRedo);
-            },
-            save() { instance.save(); },
-            copy() {
-                var el = createTextArea({ value: instance.abstract.toString(), readonly: true });
-                conceal(el);
-                container.appendChild(el);
-                el.select();
-                DOC.execCommand('copy');
-                el.remove();
-            }
-        };
-    },
-    /** @type {MetaModel} */
-    get abstract() { return this._abstract; }, // abstract (static) model
-    set abstract(val) { this._abstract = val; },
-    get concrete() { return this._concrete; }, // concrete (dynamic) mode
-    set concrete(val) { this._concrete = val; },
-    get current() { return this._current; }, // current position in model
-    set current(val) { this._current = val; },
-    /** @type {string} */
-    get language() { return this._language; },
-
-    /** @type {Autocomplete} */
-    get autocomplete() { return this._autocomplete; }, // autocomplete element
-    /** @type {Projection[]} */
-    get projections() { return this.model.projections; },
-    registerField(field) {
-        field.id = this.fields.length + 1;
-        field.editor = this;
-        this.fields.push(field);
-    },
-    get options() { return this.model.options; },
-
-    /** @returns {HTMLElement} */
-    get currentLine() { return this._currentLine; }, // current line in representation
-    set currentLine(val) { this._currentLine = val; },
-    /** @returns {HTMLElement} */
-    get body() { return this._body; },
-
-    /** @type {boolean} */
-    get isInitialized() { return this._isInitialized; },
-    /** @type {boolean} */
-    get hasError() { return this._hasError; },
-
-    getProjection(index) { return this.projections[index]; },
-
-    resize() {
-        var self = this;
-
-        // TODO: adapt UI to smaller screen
-    },
-    setState(s) {
-        var self = this;
-        // set concrete to new state
-        self._concrete = s;
-        // reinitialize abstract
-        self._abstract.init(self._concrete);
-        // set current to newly create element
-        self._current = self._abstract.createModelElement(self._concrete.root, true);
-
-        // clear and render
-        self.clear();
-        self.currentLine = self.body;
-        self.render();
-    },
-    save() {
-        var self = this;
-        self.state.set(self.concrete);
-        events.emit('editor.save');
-    },
-    clear() {
-        var self = this;
-        removeChildren(self.body);
-        events.emit('editor.clear');
-    },
-    init(model, metamodel) {
+    init(metamodel, model) {
         if (metamodel) {
-            this.initializeMetamodel(metamodel);
+            this.loadMetamodel(metamodel);
         } else {
             // TODO - Add the following functionnality:
             // Get Metamodel from Model
             //   else Prompt the user to give the corresponding metamodel
         }
 
-        try {
-            this.model = this.metamodel.createModel();// model ? model : this.abstract.createModel();
-        } catch (error) {
-            container.appendChild(createParagraph({ class: 'body', text: error.toString() }));
-            return;
+        if (model) {
+            this.loadModel(model);
+        } else {
+            try {
+                this.model = this.metamodel.createModel().init(model, this);
+            } catch (error) {
+                this.container.appendChild(createParagraph({ class: 'body', text: error.toString() }));
+                return;
+            }
         }
-        this.current = this.model.init(model, this).root;
+
 
         // set the initial state
         this.state.init(this.model.schema);
         events.emit('editor.state.initialized');
 
-        // clear the body
-        this.clear();
-        this.currentLine = this.body;
-        this.context = this.body;
+        this.btnExport = createButton({
+            id: "btnExportModel",
+            class: "btn btn-export",
+            draggable: true,
+            data: {
+                "context": "model",
+                "action": "export",
+            }
+        }, "Export");
 
-        // draw the editor
+        this.btnImport = createLabel({
+            id: "btnImportModel",
+            class: "btn btn-import",
+            draggable: true,
+            data: { "context": "model", "action": "import" }
+        }, ["Import", createInputAs("file", { class: "hidden", accept: '.json' })]);
+
+        this.activeConceptContainer = createDiv({ class: "active-concept-container hidden" });
+        appendChildren(this.container, [this.btnExport, this.btnImport, this.activeConceptContainer]);
+        preprendChild(this.container, this.body);
+
         this.render();
 
-        if (!this.isInitialized) {
-            events.emit('editor.initialized');
-            // add the event handlers
-            this.bindEvents();
-            this._isInitialized = true;
-        }
+        this.bindEvents();
     },
-    initializeMetamodel(metamodel) {
+    loadMetamodel(metamodel) {
         this.metamodel = MetaModel.create(metamodel);
-        this._language = this.metamodel.language;
 
         var resources = this.metamodel.resources;
+
         // add stylesheets
         if (!isEmpty(resources)) {
             let dir = '../assets/css/';
 
-            // remove stylesheets applied by previous meta-models
-            var links = getElements('.gentleman-css');
-            for (let i = 0, len = links.length; i < len; i++) {
+            // remove existing (previous) custom stylesheets
+            let links = getElements('.gentleman-css');
+            for (let i = 0; i < links.length; i++) {
                 links.item(i).remove();
             }
             resources.forEach(function (name) {
-                DOC.head.appendChild(createLink.stylesheet(dir + name, { class: 'gentleman-css' }));
+                document.head.appendChild(createLink.stylesheet(dir + name, { class: 'gentleman-css' }));
             });
         }
-
     },
-    render() {
-        if (!this.isInitialized) {
-            this.btnExport = createButton({ id: "btnExportModel", class: "btn btn-export", draggable: true }, "Export");
-            container.appendChild(this.btnExport);
-            preprendChild(container, this.body);
+    loadModel(model) {
+        if (isNullOrUndefined(this.metamodel)) {
+            this.display("The metamodel has not been created.");
+            return;
         }
 
-        if (this.workflow === 'manipulation') {
-            this.currentLine.appendChild(this.current.render());
-            this.currentLine = this.currentLine.firstChild;
-            this.currentLine.contentEditable = false;
-        } else {
-            this.currentLine.appendChild(this.current.project());
+        try {
+            this.model = this.metamodel.createModel().init(model, this);
+        } catch (error) {
+            this.display(error.toString());
+            return;
         }
 
-        this.infoContainer = createDiv({ class: 'info-container font-ui hidden' });
-        this.actionContainer = createDiv({ class: 'action-container hidden' });
-        appendChildren(container, [this.infoContainer, this.actionContainer]);
+        return this;
     },
-    bindEvents() {
+
+    registerField(field) {
+        field.id = this.fields.length + 1;
+        field.editor = this;
+        this.fields.push(field);
+    },
+    resize() {
         var self = this;
 
-        var currentContainer,
-            lastKey;
-        var flag = false;
-        var handled = false;
+        // TODO: adapt UI to smaller screen
+    },
+    undo() {
+        this.state.undo();
+        this.setState(cloneObject(this.state.current));
+        events.emit('editor.undo', this.state.hasUndo);
+    },
+    redo() {
+        this.state.redo();
+        this.setState(cloneObject(this.state.current));
+        events.emit('editor.redo', this.state.hasRedo);
+    },
+    save() {
+        this.state.set(this.concrete);
+        events.emit('editor.save');
+
+        return this;
+    },
+    clear() {
+        this.fields = [];
+        this.focusedElement = null;
+        this.activeElement = null;
+        this.activeConcept = null;
+        removeChildren(this.body);
+        
+        events.emit('editor.clear');
+
+        return this;
+    },
+    notify(message, type) {
+        var notify = getElement('.notify:not(.open)', this.container);
+        if (!isHTMLElement(notify)) {
+            notify = createParagraph({ class: "notify" });
+            this.container.appendChild(notify);
+        }
+        notify.textContent = message;
+        notify.classList.add('open');
+        setTimeout(() => {
+            notify.classList.remove('open');
+        }, 3000);
+    },
+    display(message, title) {
+        var dialog = getElement('.dialog:not(.open)', this.container);
+        if (!isHTMLElement(dialog)) {
+            dialog = createDiv({ class: "dialog-container" });
+            this.container.appendChild(dialog);
+        }
+        removeChildren(dialog);
+        dialog.appendChild(createParagraph({
+            class: "dialog-content"
+        }, message));
+        dialog.classList.add('open');
+    },
+
+    render(container) {
+        if (isHTMLElement(container)) {
+            container.appendChild(this.model.render());
+
+            return container;
+        }
+
+        this.clear();
+
+        this.body.appendChild(this.model.render());
+        this.activeElement = this.body;
+
+        if (!isHTMLElement(this.infoContainer)) {
+            this.infoContainer = createDiv({ class: 'info-container font-ui hidden' });
+            this.container.appendChild(this.infoContainer);
+        }
+
+        if (!isHTMLElement(this.actionContainer)) {
+            this.actionContainer = createDiv({ class: 'action-container hidden' });
+            this.container.appendChild(this.actionContainer);
+        }
+
+        return this;
+    },
+    bindEvents() {
+        var lastKey = null;
+        const self = this;
 
         this.body.addEventListener('dblclick', (event) => {
-            var convo = Object.create(Convo).init(this);
-            this.body.appendChild(convo.render());
-            convo.start();
+            console.log(`give this element (${event.target.name || event.target.id}) main focus`);
         });
 
         this.body.addEventListener('click', (event) => {
             var target = event.target;
             var nature = target.dataset['nature'];
-
-            if (nature === 'attribute') {
-                this.context = target;
-            } else if (this.context === this.body) {
-
-
-                // Object.assign(this.actionContainer.style, {
-                //     top: `${event.clientY - self.body.offsetTop}px`,
-                //     left: `${event.clientX - self.body.offsetLeft}px`
-                // });
-
-                // show(this.actionContainer);
-                // this.context = this.actionContainer;
-            } else {
-                hide(this.actionContainer);
-                this.context = target;
-            }
-
         }, false);
-      
 
-        container.addEventListener('keydown', function (event) {
+        this.container.addEventListener('keydown', (event) => {
             var target = event.target;
-            var parent = target.parentElement;
-            var field = self.fields[target.id - 1];
-            var rememberKey = true;
+            var field = this.fields[target.id - 1];
+            var rememberKey = false;
 
             switch (event.key) {
                 case Key.backspace:
                     break;
                 case Key.ctrl:
                     event.preventDefault();
+                    rememberKey = true;
                     break;
                 case Key.delete:
-                    rememberKey = false;
+                    break;
+                case Key.alt:
+                    rememberKey = true;
                     break;
                 case Key.enter:
-                    // self.autocomplete.hasFocus = false;
                     // target.blur(); // remove focus
                     event.preventDefault();
 
                     break;
+                case Key.right_arrow:
+                    if (this.focusedElement.hasElementFocus) {
+
+                        // // get field element
+                        // /** @type {HTMLElement} */
+                        // let element = this.focusedElement.element;
+                        // // lookup near brother
+                        // let nextElement = element.nextElementSibling;
+                        // console.log(nextElement);
+                        // while (nextElement && nextElement.dataset['nature'] !== "attribute") {
+                        //     nextElement = nextElement.nextElementSibling;
+                        // }
+                        // // focus on brother
+                        // if (nextElement.dataset['nature'] === "attribute") {
+                        //     let field = this.fields[nextElement.id - 1];
+                        //     this.focusedElement = field;
+                        //     field.focus();
+                        // }
+                    }
+                    break;
                 case Key.escape:
-                    self.autocomplete.hide();
+                    rememberKey = false;
+                    console.log("esc");
+                    this.focusedElement.focus();
 
                     break;
                 case Key.tab:
-                    self.autocomplete.hasFocus = false;
 
                     break;
                 case 'g':
@@ -349,23 +336,18 @@ export const Editor = {
 
         }, false);
 
-        container.addEventListener('keyup', function (event) {
+        this.container.addEventListener('keyup', (event) => {
             var target = event.target;
             var parent = target.parentElement;
-            var field = self.fields[target.id - 1];
+            var field = this.fields[target.id - 1];
 
-            // if (field && target.textContent === "") {
-            //     field.update();
-            // }
             if (lastKey == event.key) lastKey = -1;
 
             switch (event.key) {
                 case Key.spacebar:
-                    // if (lastKey == Key.ctrl) {
-                    //     if (field && !field.isDisabled) {
-                    //         showAutoComplete(field);
-                    //     }
-                    // }
+                    if (lastKey == Key.ctrl) {
+                        field.next();
+                    }
                     break;
                 case Key.delete: // Delete the field->attribute
                     if (lastKey == Key.ctrl) {
@@ -374,6 +356,9 @@ export const Editor = {
                         }
                     }
                     break;
+                case Key.alt:
+
+                    break;
                 case 'q': // Query the parent concept/component
                     if (lastKey == Key.ctrl) {
                         if (field) {
@@ -381,11 +366,11 @@ export const Editor = {
                             let optionalAttributes = parentConcept.getOptionalAttributes();
                             let parentContainer = null;
                             if (parentConcept.object === 'component') {
-                                parentContainer = findAncestor(target, (el) => hasClass(el, 'component'), 5);
+                                parentContainer = findAncestor(target, (el) => el.classList.contains('component'), 5);
                             } else {
-                                parentContainer = findAncestor(target, (el) => hasClass(el, 'concept-container'), 5);
+                                parentContainer = findAncestor(target, (el) => el.classList.contains('concept-container'), 5);
                             }
-                            addClass(parentContainer, 'query');
+                            parentContainer.classList.add('query');
 
                             // Create query container
                             let queryContainer = getElement('.query-container', parentContainer);
@@ -408,12 +393,12 @@ export const Editor = {
                             // Bind events
                             queryContainer.addEventListener('click', function (event) {
                                 target = event.target;
-                                if (hasClass(target, 'suggestion')) {
+                                if (target.classList.contains('suggestion')) {
                                     parentConcept.createAttribute(target.dataset['attr']);
                                     parentConcept.rerender();
                                 }
                                 hide(this);
-                                removeClass(parentContainer, 'query');
+                                parentContainer.classList.remove('query');
                                 field.focus();
                             });
                             queryContainer.addEventListener('keydown', function (event) {
@@ -421,7 +406,7 @@ export const Editor = {
                                 switch (event.key) {
                                     case Key.escape:
                                         hide(this);
-                                        removeClass(parentContainer, 'query');
+                                        parentContainer.classList.remove('query');
                                         field.focus();
                                         break;
                                     default:
@@ -443,28 +428,224 @@ export const Editor = {
             }
         }, false);
 
-        this.body.addEventListener('mouseover', (e) => {
-            var target = e.target;
+        this.body.addEventListener('mouseover', (event) => {
+            var target = event.target;
             var nature = target.dataset['nature'];
             if (nature === 'attribute') {
                 var field = this.fields[target.id - 1];
                 // infoHandler.call(this, field, target);
             }
-            if (hasClass(target, 'component')) {
-                addClass(target, 'component--on_mouseover');
+            if (target.classList.contains('component')) {
+                target.classList.add('component--on_mouseover');
             }
         });
 
-        this.body.addEventListener('mouseout', (e) => {
-            var target = e.target;
+        this.body.addEventListener('mouseout', (event) => {
+            var target = event.target;
 
-            if (hasClass(target, 'component')) {
-                removeClass(target, 'component--on_mouseover');
+            if (target.classList.contains('component')) {
+                target.classList.remove('component--on_mouseover');
             }
         });
 
-        this.btnExport.addEventListener('click', (e) => {
+        this.activeConceptContainer.addEventListener('click', function (e) {
+            const target = e.target;
+            const { id, object, name } = this.dataset;
+            var concept = null;
+            if (object === "concept") {
+                concept = self.model.concepts.find((concept) => concept.id === id);
+            } else if (object === "component") {
+                let parentConcept = concept = self.model.concepts.find((concept) => concept.id === id);
+                concept = parentConcept.getComponent(name);
+            } else {
+                return;
+            }
+
+            if (target.tagName === 'BUTTON') {
+                let { action } = target.dataset;
+                switch (action) {
+                    case "option":
+                        var data = concept.getOptionalAttributes();
+                        var input = getElement(".option-input", this);
+                        if (!isHTMLElement(input)) {
+                            input = createInput({ class: "option-input", placeholder: "Attribut recherché" });
+                            this.appendChild(input);
+                        }
+                        var results = getElement(".option-results", this);
+                        if (!isHTMLElement(results)) {
+                            results = createUnorderedList({ class: "bare-list option-results" });
+                            this.appendChild(results);
+                        }
+                        removeChildren(results);
+                        data.forEach(attr => {
+                            results.appendChild(createListItem({ class: "option-result", data: { value: attr } }, attr));
+                        });
+                        results.addEventListener('click', (e) => {
+                            let target = e.target;
+                            if (target.dataset.value) {
+                                let attr = concept.createAttribute(e.target.dataset.value);
+                                let temp = getElement(`[data-id=${attr.name}]`, concept.container);
+                                if (temp) {
+                                    temp.replaceWith(attr.render());
+                                    temp.remove();
+                                    target.remove();
+                                } else {
+                                    self.notify("This attribute cannot be rendered");
+                                }
+                            }
+                        });
+                        input.addEventListener('input', function (e) {
+                            if (isNullOrWhitespace(this.value)) {
+                                removeChildren(results);
+                                data.forEach(attr => {
+                                    results.appendChild(createListItem({ class: "option-result", data: { value: attr } }, attr));
+                                });
+                            } else {
+                                let query = this.value.trim().split(' ');
+                                let filteredData = data.filter(val => query.some(q => val.includes(q)));
+                                removeChildren(results);
+                                filteredData.forEach(attr => {
+                                    results.appendChild(createListItem({ class: "option-result", data: { value: attr } }, attr));
+                                });
+                            }
+                        });
+
+                        input.focus();
+                        break;
+                    case "compo":
+                        data = concept.getOptionalComponents();
+                        input = getElement(".option-input", this);
+                        if (!isHTMLElement(input)) {
+                            input = createInput({ class: "option-input", placeholder: "Component recherché" });
+                            this.appendChild(input);
+                        }
+                        results = getElement(".option-results", this);
+                        if (!isHTMLElement(results)) {
+                            results = createUnorderedList({ class: "bare-list option-results" });
+                            this.appendChild(results);
+                        }
+                        removeChildren(results);
+                        data.forEach(attr => {
+                            results.appendChild(createListItem({ class: "option-result", data: { value: attr } }, attr));
+                        });
+                        results.addEventListener('click', (e) => {
+                            let target = e.target;
+                            if (target.dataset.value) {
+                                let attr = concept.createComponent(e.target.dataset.value);
+                                let temp = getElement(`[data-id=${attr.name}]`, concept.container);
+                                if (temp) {
+                                    temp.replaceWith(attr.render());
+                                    temp.remove();
+                                    target.remove();
+                                } else {
+                                    self.notify("This attribute cannot be rendered");
+                                }
+                            }
+                        });
+                        input.addEventListener('input', function (e) {
+                            if (isNullOrWhitespace(this.value)) {
+                                removeChildren(results);
+                                data.forEach(attr => {
+                                    results.appendChild(createListItem({ class: "option-result", data: { value: attr } }, attr));
+                                });
+                            } else {
+                                let query = this.value.trim().split(' ');
+                                let filteredData = data.filter(val => query.some(q => val.includes(q)));
+                                removeChildren(results);
+                                filteredData.forEach(attr => {
+                                    results.appendChild(createListItem({ class: "option-result", data: { value: attr } }, attr));
+                                });
+                            }
+                        });
+
+                        input.focus();
+                        break;
+
+                    case "projection":
+
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+
+        this.body.addEventListener('focusin', (event) => {
+            var target = event.target;
+            var nature = target.dataset['nature'];
+
+            if (nature === 'attribute') {
+                let field = this.fields[target.id - 1];
+                this.focusedElement = field;
+                field.focusIn();
+
+                // update active element
+                let fieldParent = findAncestor(target, (el) => el.dataset['nature'] === 'field');
+                if (isHTMLElement(fieldParent) && fieldParent.dataset.type === "set") {
+                    this.activeElement = fieldParent;
+                    this.activeElement.classList.add('active');
+                }
+
+                // update active concept
+                let conceptParent = field.concept.getConceptParent();
+                if (conceptParent) {
+                    this.activeConcept = conceptParent;
+                    let { fullName } = this.activeConcept;
+                    removeChildren(this.activeConceptContainer);
+                    let conceptName = createParagraph({ class: "active-concept-name" }, `${fullName}`);
+                    this.activeConceptContainer.dataset['id'] = this.activeConcept.id || this.activeConcept.parentId;
+                    this.activeConceptContainer.dataset['object'] = this.activeConcept.object;
+                    this.activeConceptContainer.dataset['name'] = this.activeConcept.name;
+                    this.activeConceptContainer.appendChild(conceptName);
+                    this.activeConceptContainer.appendChild(createDiv({ class: "active-concept-action" }, [
+                        createButton({ class: "btn btn-concept btn-concept-options", data: { action: "option" } }, "Attributes"),
+                        // createButton({ class: "btn btn-concept btn-concept-options", data: { action: "compo" } }, "Components"),
+                        createButton({ class: "btn btn-concept btn-concept-projections", data: { action: "projection" } }, "Projections"),
+                    ]));
+                    show(this.activeConceptContainer);
+                }
+            } else if (target.parentElement.classList.contains('field--list')) {
+                this.activeElement = target.parentElement;
+                this.activeElement.classList.add('active');
+            }
+
+            // events.emit('editor.change', field);
+        }, false);
+
+        this.body.addEventListener('focusout', (event) => {
+            var target = event.target;
+            var nature = target.dataset['nature'];
+
+            if (nature === 'attribute') {
+                let field = this.fields[target.id - 1];
+                this.focusedElement = field;
+                field.focusOut();
+            }
+
+            this.focusedElement = null;
+
+
+            if (this.activeElement) {
+                this.activeElement.classList.remove('active');
+            }
+        }, false);
+
+        this.btnExport.addEventListener('click', (event) => {
             copytoClipboard(this.model.export());
+            this.notify("Model has been copied to clipboard");
+        });
+
+        this.btnImport.addEventListener('change', (event) => {
+            var uploadInput = event.target;
+            var file = uploadInput.files[0];
+            var reader = new FileReader();
+            if (!file.name.endsWith('.json')) {
+                this.notify("File not supported!");
+            }
+
+            reader.onload = (e) => this.loadModel(JSON.parse(reader.result)).render();
+            reader.readAsText(file);
         });
 
         this.btnExport.addEventListener('dragstart', function (e) {
@@ -473,151 +654,14 @@ export const Editor = {
             e.dataTransfer.setData("text/uri-list", e.target.ownerDocument.location.href);
         });
 
-
         this.btnExport.addEventListener('dragend', function (e) {
             this.style.right = `${windowWidth - e.clientX}px`;
             this.style.bottom = `${windowheight - e.clientY}px`;
         });
 
-        // this.body.addEventListener(EventType.FOCUSIN, function (event) {
-        //     self.autocomplete.hide();
-        //     handled = true;
-
-        //     var target = event.target;
-        //     var field = self.fields[target.id - 1];
-        //     field.focus();
-
-        //     var data = [];
-
-        //     if (hasClass(target, 'option')) {
-        //         let position = target.getAttribute('data-position');
-        //         position = position.split('..');
-        //         var min = position[0];
-        //         var max = position[1];
-
-        //         var index = target.dataset['index'];
-        //         var parentMElement = self.options[+index];
-
-        //         data = parentMElement.options.filter(function (x) {
-        //             return x.position >= min && x.position <= max;
-        //         });
-        //         data = data.map(function (el) { return { val: el.name, element: el }; });
-
-        //         self.autocomplete.init(target, data);
-        //         self.autocomplete.onSelect = function (val) {
-        //             optionHandler(val, target, data);
-        //         };
-        //     } else if (field) {
-        //         //if (projection.isDisabled) return;
-        //         field.focusIn();
-        //         events.emit('editor.change', field);
-
-        //         if (Projection.isExtension(field)) {
-        //             data = field.valuesKV();
-        //             self.autocomplete.onSelect = function (attr) {
-        //                 let line = field.implement(attr.key);
-        //                 getElement(f_class(ELEMENT.ATTRIBUTE), line).focus();
-        //             };
-
-        //             self.autocomplete.init(target, data);
-        //         } else if (Projection.isPointer(field) || Projection.isEnum(field)) {
-        //             data = field.valuesKV();
-        //             self.autocomplete.onSelect = function (attr) {
-        //                 field.value = attr.key;
-        //                 field.focus();
-        //             };
-        //             self.autocomplete.init(target, data);
-        //         } else
-        //             return;
-        //     }
-        // }, false);
-
-        // this.body.addEventListener(EventType.FOCUSOUT, function (event) {
-        //     if (flag) {
-        //         flag = false;
-        //         return;
-        //     }
-
-        //     if (self.autocomplete.hasFocus && self.autocomplete.input == target) {
-        //         return;
-        //     }
-
-        //     var target = event.target;
-        //     if (currentContainer) removeClass(currentContainer, 'current');
-
-        //     // if (hasClass(target, EL.ATTRIBUTE.class)) {
-        //     //     let projection = self.getProjection(target.id);
-        //     //     if (projection.isDisabled) return;
-
-        //     //     if (projection) {
-        //     //         projection.focusOut();
-        //     //         projection.update();
-        //     //     }
-
-        //     //     if (self.autocomplete.hasFocus) {
-        //     //         setTimeout(function () { validation_handler(target); }, 100);
-        //     //     } else {
-        //     //         validation_handler(target);
-        //     //     }
-        //     // }
-        // }, false);
-
-        events.on('model.change', function (from) {
-            self.save();
+        events.on('model.change', (from) => {
+            this.save();
         });
-
-        function validation_handler(target) {
-            const ERROR = 'error';
-
-            var parent = target.parentElement;
-            var projection = self.getProjection(target.id);
-            var lblError = getElement(hash(target.id + ERROR), parent);
-
-            if (projection.validate()) {
-                if (lblError) {
-                    lblError.parentElement.className = 'attr-validation-valid';
-                    removeChildren(lblError);
-                    hide(lblError);
-                }
-                removeClass(target, ERROR);
-            } else {
-                if (!lblError) {
-                    lblError = createSpan({ id: target.id + ERROR, class: 'error-marker' });
-                    let container = createSpan();
-                    target.insertAdjacentElement('beforebegin', container);
-                    container.appendChild(target);
-                    container.appendChild(lblError);
-                }
-                lblError.innerHTML = projection.error;
-                lblError.parentElement.className = 'attr-validation-error';
-                addClass(target, ERROR);
-                show(lblError);
-            }
-        }
-
-        function showAutoComplete(projection) {
-            var data = [];
-
-            // ignore if autocomplete is open
-            if (self.autocomplete.isOpen) return;
-
-            if (Projection.isExtension(projection)) {
-                data = projection.valuesKV();
-                self.autocomplete.onSelect = function (attr) {
-                    let line = projection.implement(attr.key);
-                    getElement(f_class(ELEMENT.ATTRIBUTE), line).focus();
-                };
-
-                self.autocomplete.init(projection._input, data);
-            } else if (Projection.isPointer(projection) || Projection.isEnum(projection)) {
-                data = projection.valuesKV();
-                self.autocomplete.onSelect = function (attr) {
-                    projection.value = attr.key;
-                    projection.focus();
-                };
-                self.autocomplete.init(projection._input, data);
-            }
-        }
 
         function infoHandler(field, target) {
             var info = field.getInfo();
@@ -636,76 +680,10 @@ export const Editor = {
             show(this.infoContainer);
         }
 
-        function optionHandler(val, eHTML, data) {
-            const COMPOSITION = 'composition';
-
-            var path = eHTML.dataset['path'];
-            var index = eHTML.dataset['index'];
-            var parentMElement = self.options[+index];
-            var compo = parentMElement.composition;
-            var element = cloneObject(val.element);
-            element.flag = true;
-
-            compo.push(element);
-            compo.sort(function (a, b) { return a.position - b.position; });
-            events.emit('model.change', 'Editor[l.1008]:option');
-
-            // render element
-            var mElement = self.abstract.createModelElement(element);
-            mElement.parent = parentMElement;
-            parentMElement.elements.push(mElement);
-
-            mElement.path = path + '[' + (compo.length - 1) + ']';
-            var line = mElement.render(path + '[' + (compo.length - 1) + ']');
-            Object.assign(line.dataset, { prop: COMPOSITION, position: element.position });
-
-            insertBeforeElement(eHTML, line);
-
-            // update options
-            if (!element.multiple) {
-                eHTML.remove();
-                parentMElement.options = parentMElement.options.filter(function (x) {
-                    return x.name !== element.name;
-                });
-
-                // add options
-                data = data.map(function (x) { return x.element; });
-                var left = data.filter(function (x) { return x.position < element.position; });
-                var right = data.filter(function (x) { return x.position > element.position; });
-
-                if (left.length > 0) {
-                    left.sort(function (a, b) { return a.position - b.position; });
-                    let input = createOptionSelect(left[0].position, left[left.length - 1].position, path);
-                    input.dataset.index = index;
-                    insertBeforeElement(line, input);
-                }
-                if (right.length > 0) {
-                    right.sort(function (a, b) { return a.position - b.position; });
-                    let input = createOptionSelect(right[0].position, right[right.length - 1].position, path);
-                    input.dataset.index = index;
-                    insertAfterElement(line, input);
-                }
-            }
-
-            var firstAttribute = getElement(f_class(ELEMENT.ATTRIBUTE), line);
-            if (firstAttribute) firstAttribute.focus();
-        }
-
         mql.addListener(handleWidthChange);
 
         function handleWidthChange(mql) {
             self.resize();
-        }
-
-        /**
-         * @param {HTMLElement} el 
-         * @returns {null|HTMLElement}
-         */
-        function findLine(el) {
-            var parent = el.parentElement;
-            if (hasClass(parent, 'removable')) return parent;
-            if (parent.isSameNode(container)) return null;
-            return findLine(parent);
         }
     }
 };

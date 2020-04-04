@@ -1,0 +1,293 @@
+{
+    "mindmap": {
+        "nature": "concrete",
+        "attribute": {
+            "title": {
+                "alias": "my title", 
+                "type": "string", 
+                "projection": {
+                    "type": "text",
+                    "textbox": {
+                        "type": "field",
+                        "view": "textbox"
+                    },
+                    "layout": "$textbox"
+                }
+            },
+            "short_description": { "type": "string", "required": false },
+            "long_description": { "type": "string", "required": false },
+            "author": { "type": "string", "required": false },
+            "participants": {
+                "type": "string",
+                "required": false,
+                "projection": {
+                    "type": "text",
+                    "textbox": {
+                        "type": "field",
+                        "view": "textbox"
+                    },
+                    "flow": "horizontal",
+                    "layout": "($textbox)"
+                }
+            }
+        },
+        "component": [
+            {
+                "name": "central_topic",
+                "attribute": {
+                    "id": { "type": "string" },
+                    "topic": { "type": "central_topic" }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "heading": [
+                            "Subject of discussion: #id"
+                        ],
+                        "flow": "vertical",
+                        "layout": [
+                            "$heading:horizontal",
+                            "#topic"
+                        ]
+                    }
+                ]
+            }
+        ],
+        "projection": [
+            {
+                "type": "text",
+                "content-explicit": {
+                    "flow": "vertical",
+                    "layout": [
+                        "Mind map #title #short_description",
+                        "#[central_topic]"
+                    ]
+                },
+                "intro": [
+                    "Mind map #title #short_description",
+                    "#long_description"
+                ],
+                "flow": "vertical",
+                "layout": [
+                    "#author #participants",
+                    "$intro:horizontal",
+                    "#[central_topic]"
+                ],
+                "style": {
+                    "position": {
+                        "relative": null
+                    },
+                    "background": null,
+                    "border": {
+                        "size": null,
+                        "radius": null
+                    },
+                    "size": {
+                        "width": "free",
+                        "height": "free"
+                    },
+                    "spacing": {
+                        "outside": null,
+                        "inside": null
+                    },
+                    "text": {
+                        "font": null,
+                        "color": null,
+                        "spacing": null,
+                        "align": null,
+                        "multiline": false
+                    }
+                }
+            }
+        ]
+    },
+    "topic": {
+        "nature": "prototype",
+        "attribute": {
+            "name": { "type": "string" },
+            "details": {
+                "type": "string",
+                "projection": {
+                    "type": "text",
+                    "field": { "type": "field", "view": "textarea" },
+                    "layout": "$field"
+                }
+            },
+            "related": { "name": "related", "type": "number" },
+            "marker": { "name": "marker", "type": "string", "optional": true }
+        }
+    },
+    "central_topic": {
+        "prototype": "topic",
+        "nature": "concrete",
+        "component": [
+            {
+                "name": "main_topics",
+                "attribute": {
+                    "topics": {
+                        "type": "set",
+                        "accept": "main_topic",
+                        "min": 1,
+                        "action": {
+                            "add": {
+                                "trigger": "click",
+                                "pre": "null",
+                                "post": "$count = $count@pre + 1",
+                                "projection": {
+                                    "type": "text",
+                                    "flow": "vertical",
+                                    "layout": [
+                                        "Main topic <name>",
+                                        "<details>",
+                                        "List of sub topics: <sub topics>"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "flow": "vertical",
+                        "layout": [
+                            "List of main topics:",
+                            "#topics"
+                        ],
+                        "style": {
+                            "topics": {
+                                "inline": false,
+                                "spacing": { "before": "2px", "after": "2px" }
+                            }
+                        }
+                    },
+                    {
+                        "type": "text",
+                        "layout": "Main topics: #topics",
+                        "style": {
+                            "topics": {
+                                "inline": false,
+                                "spacing": { "before": "5px", "after": "5px" }
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "projection": [
+            {
+                "type": "text",
+                "layout": "#name #[main_topics]"
+            }
+        ]
+    },
+    "main_topic": {
+        "prototype": "topic",
+        "nature": "concrete",
+        "component": [
+            {
+                "name": "sub_topics",
+                "attribute": {
+                    "topics": {
+                        "type": "set",
+                        "accept": "sub_topic",
+                        "min": 5,
+                        "projection": ["text", "table"],
+                        "action": {
+                            "add": {
+                                "projection": {
+                                    "type": "text",
+                                    "layout": "Add a sub topic"
+                                }
+                            }
+                        }
+                    }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "List of sub topics: #topics",
+                        "style": {
+                            "topics": {
+                                "inline": false,
+                                "spacing": { "before": "2px", "after": "2px" }
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "projection": [
+            {
+                "type": "text",
+                "heading": [
+                    "Main topic #name"
+                ],
+                "flow": "vertical",
+                "layout": [
+                    "$heading:horizontal",
+                    "#details",
+                    "#[sub_topics]"
+                ]
+            }
+        ]
+    },
+    "sub_topic": {
+        "prototype": "topic",
+        "nature": "concrete",
+        "component": [
+            {
+                "name": "sub_topics",
+                "required": false,
+                "attribute": {
+                    "topics": { "type": "set", "accept": "sub_topic" }
+                },
+                "projection": [
+                    {
+                        "type": "text",
+                        "layout": "#topics"
+                    }
+                ]
+            }
+        ],
+        "projection": [
+            {
+                "type": "text",
+                "layout": "#name #[sub_topics]"
+            },
+            {
+                "type": "table",
+                "disposition": "column",
+                "layout": {
+                    "header": {
+                        "subtopics": { "value": "Subtopics" }
+                    },
+                    "cell": [
+                        { "header": "subtopics", "value": "#name" }
+                    ],
+                    "multiple": true
+                }
+            }
+        ]
+    },
+    "@root": "mindmap",
+    "@config": {
+        "language": "Mind map demo",
+        "settings": {
+            "autosave": true
+        },
+        "style": {
+            "attribute": {
+                "inline": true,
+                "spacing": { "before": "2px", "after": "2px" }
+            },
+            "component": {
+                "inline": false,
+                "size": { "width": "FIT_CONTENT" },
+                "spacing": { "before": "5px", "after": "5px" },
+                "corner": {},
+                "background": "#f0f0f0"
+            }
+        }
+    }
+}

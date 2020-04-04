@@ -1,5 +1,5 @@
 import { Key, EventType, UI } from '@src/global/enums.js';
-import { valOrDefault, createDocFragment, removeChildren, addClass, removeClass, createListItem, createUnorderedList } from 'zenkai';
+import { valOrDefault, createDocFragment, removeChildren, createListItem, createUnorderedList } from 'zenkai';
 import { hide, show, highlight, unhighlight } from '@utils/effects.js';
 import { createOptionSelect } from '@utils/interactive.js';
 
@@ -50,49 +50,49 @@ export const Autocomplete = {
     get onSelect() { return this._onSelect; },
     set onSelect(fn) { this._onSelect = fn; },
     // methods
-    reset: function () {
+    reset() {
         this.id = "";
         this.data = [];
         this.position = 0;
     },
-    update: function () {
+    update() {
         if (this._items.length != this.data.length) this.position = 0;
         if (this._items.length > 0) highlight(this._input.children[this.itemPosition]);
     },
-    show: function () {
+    show() {
         show(this._input);
         this.isOpen = true;
     },
-    hide: function () {
+    hide() {
         hide(this._input);
         this.hasFocus = false;
         this.isOpen = false;
     },
-    filter: function (text) {
+    filter(text) {
         this._items = [];
         for (let i = 0, len = this.data.length; i < len; i++) {
             if (this.data[i].val.toLowerCase().indexOf(text.toLowerCase()) === -1) {
-                addClass(this._input.children[i], UI.HIDDEN);
+                this._input.children[i].classList.add(UI.HIDDEN);
             } else {
                 this._items.push(i);
-                removeClass(this._input.children[i], UI.HIDDEN);
+                this._input.children[i].classList.remove(UI.HIDDEN);
             }
             unhighlight(this._input.children[i]);
         }
         this.update();
     },
-    select: function (callback) {
+    select(callback) {
         this.hasFocus = false;
         callback(this.data[this.itemPosition]);
         this.hide();
         //this._target.focus();
     },
-    up: function () {
+    up() {
         unhighlight(this._input.children[this.itemPosition]);
         this.position = (this.position == 0 ? this._items.length : this.position) - 1;
         highlight(this._input.children[this.itemPosition]);
     },
-    down: function () {
+    down() {
         unhighlight(this._input.children[this.itemPosition]);
         this.position = (this.position + 1) % this._items.length;
         highlight(this._input.children[this.itemPosition]);

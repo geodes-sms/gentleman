@@ -1,9 +1,14 @@
-import { Field } from "./field.js";
-import { createUnorderedList, insertBeforeElement, createDocFragment, createListItem, hasClass, removeChildren, isHTMLElement, addClass, insertAfterElement, createTable, EL, createTableRow, createTableCell } from "zenkai";
+import {
+    createDocFragment, createUnorderedList, createListItem, 
+    createTable, createTableRow, createTableCell,
+    insertBeforeElement, insertAfterElement, removeChildren, isHTMLElement
+} from "zenkai";
 import { Key } from "@global/enums.js";
+import { TextualProjection } from "@projection/text-projection.js";
+import { Field } from "./field.js";
 
 export const SetField = Field.create({
-    create(concept) {
+    create(concept, schema) {
         var instance = Object.create(this);
 
         instance.concept = concept;
@@ -11,13 +16,13 @@ export const SetField = Field.create({
         return instance;
     },
     init() {
-        var self = this;
-
         var validator = function () {
             return true;
         };
 
         this.validators.push(validator);
+
+        return this;
     },
     concept: null,
     object: "SET",
@@ -30,7 +35,7 @@ export const SetField = Field.create({
             case 'text':
                 this.element = createUnorderedList({
                     id: this.id,
-                    class: ['empty', 'bare-list', 'field', 'field--set'],
+                    class: ['empty', 'bare-list', 'field', 'field--list'],
                     data: {
                         type: "set",
                         nature: "field",
@@ -42,7 +47,7 @@ export const SetField = Field.create({
             case 'table':
                 this.element = createTable({
                     id: this.id,
-                    class: ['empty', 'bare-list', 'field', 'field--set'],
+                    class: ['empty', 'bare-list', 'field', 'field--list'],
                     data: {
                         type: "set",
                         nature: "field",
@@ -61,7 +66,7 @@ export const SetField = Field.create({
         var lastKey = -1;
 
         const isChild = (element) => element.parentElement === this.element && isItem;
-        const isItem = (element) => isHTMLElement(element) && hasClass(element, 'field--set-item');
+        const isItem = (element) => isHTMLElement(element) && element.classList.contains('field--list-item');
         const concept = this.concept;
 
         this.element.addEventListener('click', function () {
@@ -92,10 +97,10 @@ export const SetField = Field.create({
                     e.preventDefault();
                     break;
                 case Key.delete:
-                    if (this.concept.canDelete() && hasClass(activeElement, 'field--set-item')) {
-                        addClass(activeElement, 'delete');
+                    if (this.concept.canDelete() && activeElement.classList.contains('field--list-item')) {
+                        activeElement.classList.add('delete');
                     } else {
-                        console.log("cannot delete");
+                        this.editor.notify("This element cannot be deleted");
                     }
             }
 
@@ -114,7 +119,7 @@ export const SetField = Field.create({
                     if (lastKey === Key.spacebar && isChild(activeElement)) {
                         if (concept.addElement()) {
                             let instance = concept.getLastElement();
-                            var container = createListItem({ class: "field--set-item", draggable: true }, [instance.render()]);
+                            var container = createListItem({ class: "field--list-item", draggable: true }, [instance.render()]);
                             container.tabIndex = 0;
                             insertAfterElement(activeElement, container);
                             container.focus();
@@ -124,7 +129,7 @@ export const SetField = Field.create({
 
                     break;
                 case Key.delete:
-                    if (lastKey === Key.delete && isChild(activeElement) && hasClass(activeElement, 'delete')) {
+                    if (lastKey === Key.delete && isChild(activeElement) && activeElement.classList.contains('delete')) {
                         if (concept.removeElementAt(Array.from(this.children).indexOf(activeElement))) {
                             removeChildren(activeElement);
                             let nextElement = activeElement.nextElementSibling;
@@ -153,12 +158,12 @@ function valueHandler(value, view = 'text') {
         value.forEach(val => {
             var container = null;
             if (view === 'text') {
-                container = createListItem({ class: "field--set-item", draggable: true });
+                container = createListItem({ class: "field--list-item", draggable: true });
                 container.tabIndex = 0;
                 container.appendChild(val.render());
             } else if (view === 'table') {
-                container = createTableRow({ class: 'field--set-row' }, [
-                    createTableCell({ class: 'field--set-cell' }, [val.render()])
+                container = createTableRow({ class: 'field--list-row' }, [
+                    createTableCell({ class: 'field--list-cell' }, [val.render()])
                 ]);
             }
             fragment.appendChild(container);
@@ -166,16 +171,23 @@ function valueHandler(value, view = 'text') {
     }
 
     if (concept.canAddValue) {
-        let addAction = concept.getAddAction();
-        let container = createListItem({ class: "field--set__add font-ui" }, addAction.text);
+        let { projection: projectionConfig, constaint } = concept.getAddAction();
+        let container = createListItem({ class: "field--list__add" });
+
+        if (projectionConfig) {
+            let projection = TextualProjection.create(projectionConfig, this.concept, this.concept.editor);
+            container.appendChild(projection.render());
+        }
+
         container.addEventListener('click', function () {
             if (concept.addElement()) {
                 let instance = concept.getLastElement();
-                var container = createListItem({ class: "field--set-item", draggable: true }, [instance.render()]);
+                var container = createListItem({ class: "field--list-item", draggable: true }, [instance.render()]);
                 container.tabIndex = 0;
                 insertBeforeElement(this, container);
             }
         });
+
         fragment.appendChild(container);
     }
 

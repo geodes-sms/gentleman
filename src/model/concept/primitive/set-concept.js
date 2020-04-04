@@ -1,18 +1,18 @@
-import { hasOwn, isNullOrUndefined, isEmpty, last, insert } from "zenkai";
+import { hasOwn, isNullOrUndefined, insert, valOrDefault, isString, defProp } from "zenkai";
 import { extend } from "@utils/index.js";
 import { TextualProjection } from "@projection/text-projection.js";
 import { Concept } from "./../concept.js";
 
-/**
- * @memberof Concept
- */
+
 export const SetConcept = extend(Concept, {
     create(model) {
         var instance = Object.create(this);
 
         instance.model = model;
-        instance.projection = TextualProjection.create(createProjection(), instance, model.editor);
         instance.value = [];
+
+        defProp(instance, 'count', { get() { return this.value.length; } });
+        defProp(instance, 'canAddValue', { get() { return true; } });
 
         return instance;
     },
@@ -21,14 +21,35 @@ export const SetConcept = extend(Concept, {
     representation: null,
     name: 'set',
     accept: null,
-    get canAddValue() { return true; },
-    init() {
-        for (let i = 0; i < this.min; i++) {
+
+    init(options) {
+        let values = [];
+
+        if (options) {
+            values = valOrDefault(options.value, []);
+            this.accept = options.accept;
+            this.action = options.action;
+            this.parent = options.parent;
+            this.min = valOrDefault(options.min, 1);
+        }
+
+        for (let i = 0; i < values.length; i++) {
+            let element = this.createElement(values[i]);
+            this.addElement(element);
+        }
+
+        let remaining = this.min - values.length;
+        for (let i = 0; i < remaining; i++) {
             this.addElement();
         }
+
+        this.projection = TextualProjection.create(createProjection(), this, this.model.editor);
+
+        return this;
     },
     hasManyProjection() { return true; },
     render() {
+        console.log(this.value.length, this.count);
         var view = this.projection.render();
 
         return view;
@@ -39,7 +60,10 @@ export const SetConcept = extend(Concept, {
         }
 
         return {
-            text: `Add ${this.accept}`
+            projection: {
+                type: "text",
+                layout: `Add ${this.getAcceptedValues()}`
+            }
         };
     },
     getElement(id) {
@@ -51,26 +75,14 @@ export const SetConcept = extend(Concept, {
         return element;
     },
     getElementAt(index) {
-        if (index < this.value.length) {
-            return this.value[index];
-        }
-
-        return undefined;
-    },
-    getFirstElement() {
-        if (isEmpty(this.value)) {
+        if (index < 0 || index >= this.value.length) {
             return undefined;
         }
 
-        return this.value[0];
+        return this.value[index];
     },
-    getLastElement() {
-        if (isEmpty(this.value)) {
-            return undefined;
-        }
-
-        return last(this.value);
-    },
+    getFirstElement() { return this.getElementAt(0); },
+    getLastElement() { return this.getElementAt(this.count - 1); },
     addElement(element) {
         if (isNullOrUndefined(element)) {
             element = this.createElement();
@@ -105,10 +117,25 @@ export const SetConcept = extend(Concept, {
             return false;
         }
         this.value.splice(index, 1);
+
         return true;
     },
-    createElement() {
-        return this.model.createConcept(this.accept);
+    createElement(value) {
+        if (isString(this.accept)) {
+            return this.model.createConcept(this.accept, { value: value });
+        }
+        if (hasOwn(this.accept, "type")) {
+            return this.model.createConcept(this.accept.type, {
+                value: value,
+                alias: this.alias
+            });
+        }
+        if (Array.isArray(this.accept)) {
+            return this.model.createConcept(this.accept[0].type, {
+                value: value,
+                alias: this.alias
+            });
+        }
     },
     canDelete() {
         return this.value.length > this.min;
@@ -118,6 +145,7 @@ export const SetConcept = extend(Concept, {
         this.value.forEach(val => {
             output.push(val.export());
         });
+
         return output;
     },
     toString() {
@@ -125,12 +153,14 @@ export const SetConcept = extend(Concept, {
         this.value.forEach(val => {
             output.push(val.toString());
         });
+
         return output;
     },
     changeProjection() {
         this.projectionIndex++;
         var nextIndex = this.projectionIndex % this.schema.projection.length;
         this.projection.schema = this.schema.projection[nextIndex];
+
         return this.projection.render();
     },
 });

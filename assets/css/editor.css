@@ -1,36 +1,151 @@
-.content-wrapper--header { 
-    height: 28px; 
-    box-sizing: border-box; 
-    font-size: 0.9em; 
-}
-
-.editor-header-content { display: flex; }
-
-main {
-    position: relative;
-    height: calc(100% - 30px);
-}
-
 [data-gentleman-editor] {
     position: relative;
     height: 100%;
     font-size: 1rem;
     background-color: #f5f5f5;
-    padding: 20px;
+    padding: 20px; padding-bottom: 0;
     box-sizing: border-box;
+    overflow: auto;
 } 
+    [data-gentleman-editor]:after {
+        content: "";
+        display: block;
+        height: 20px;
+    }
 
 .body {
     background-color: #fefefe;
     box-shadow: 0 0 1px #555;
-    height: 100%;
+    min-height: calc(100% - 20px);
     padding: 15px 10px;
     box-sizing: border-box;
 }
 
-.concept-container {
-    padding: 10px;
+
+.active-concept-container {
+    position: fixed;
+    top: 0; right: 0;
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+    box-sizing: border-box;
+    background-color: #555;
+    color: #fff;
+    box-shadow: -1px 2px 3px -1px #555;
+    z-index: 10;
 }
+
+.active-concept-container:before {
+    content: attr(data-object);
+    position: absolute;
+    top: 4px; right: 0;
+    width: 80px;
+    text-transform: capitalize; text-align: center;
+    font-size: 1.2rem; font-weight: 600;
+    z-index: -1;
+}
+.active-concept-container:after {
+    content: "";
+    position: absolute;
+    top: -35px; right: 0px;
+    width: 80px; height: 70px;
+    transform: skew(2deg, 2deg);
+    border-radius: 50%;
+    background-color: #242424;
+    box-shadow: 0 1px 1px #111;
+    z-index: -2;
+}
+
+    .active-concept-name {
+        position: relative;
+        margin: 0;
+        padding: 5px 80px 10px 20px;
+        font: bold 1.3rem Consolas, 'Courier New', Courier, monospace;
+    }
+
+    .active-concept-action {
+        display: flex;
+        flex-direction: row;
+        align-content: space-between;
+        padding: 10px 15px;   
+        background-color: #343434;
+    }
+
+    .option-input {
+        padding: 5px 10px;
+        font-size: 1.4rem;
+    }
+
+    .btn-concept {
+        flex-grow: 1; flex-basis: 0;
+        padding: 5px 10px 6px;
+        color: #fff;
+        font-size: 1.3em; font-weight: 600;
+        border-radius: 180px;
+        box-sizing: border-box;
+        box-shadow: inset 0 2px 3px -1px #555;
+        color: #333;
+        background: linear-gradient(#f0f0f0, #fff);
+    }
+    .btn-concept::first-letter {
+        font-weight: bold;
+        font-size: 1.1em;
+    }
+
+    .btn-concept + .btn-concept {
+        margin-left: 5px;
+    }
+    .btn-concept:nth-child(2) {
+        background: none;
+        color: #fff;
+        box-shadow: 0 1px 1px #1b1b1b;
+    }
+
+    .option-results {
+        background: #f5f5f5;
+        display: flex;
+        flex-direction: column;
+        font-size: 1rem;
+        box-shadow: inset 0 1px 2px -1px #999;
+    }
+
+    .option-result {
+        padding: 5px;
+        font-size: 1.3em; font-weight: 500;
+        color: #333;
+    }
+
+    .option-result:hover {
+        background-color: #fff;
+        box-shadow: 0 1px 1px #555;
+    }
+
+    .concept-container--active .btn-projection,
+    .concept-container--active .btn-query {
+
+    }
+
+.notify {
+    position: fixed;
+    bottom: 0;
+    margin: 0;
+    padding: 3vh 20px;
+    width: 50vw;
+    left: 25vw;
+    text-align: center;
+    z-index: 10;
+    background: royalblue;
+    color: #fff;
+    box-shadow: 0 -2px 3px -1px #999;
+    transform: translateY(200px);
+    opacity: .5;
+    transition: transform .5s, opacity .2s;
+}
+    .notify.open { 
+        transform: translateY(0); 
+        opacity: 1;
+        transition: transform .2s, opacity .5s;
+    }
 
 .btn-projection {
     position: absolute;
@@ -44,11 +159,12 @@ main {
     z-index: 5;
 }
 
+.btn-import, 
 .btn-export {
     position: fixed;
-    bottom: 5%; right: 5%;
     height: 80px; width: 80px;
     padding: 0;
+    line-height: 80px;
     font-size: 1.3em; font-weight: 500;
     text-transform: uppercase;
     color: #fff;
@@ -56,6 +172,14 @@ main {
     border-radius: 50%;
     box-shadow: 0 1px 5px -1px #1b1b1b;
     z-index: 10;
+}
+
+.btn-export {
+    bottom: 5%; right: 5%;
+}
+
+.btn-import {
+    bottom: calc(5% + 100px); right: 5%;
 }
 
 .convo {
@@ -91,10 +215,6 @@ main {
 
 /* SCREEN SIZE: Narrow */
 @media screen and (max-width: 44.99em) {
-    #container {
-        width: 100%;
-    }
-
     aside {
         display: none;
     }
@@ -103,3 +223,14 @@ main {
         right: 0;
     }
 }
+
+
+
+
+
+/* Uncomment to display optional attributes [DEBUG]
+---------------------------------------------------------------------------- */
+/* .attribute--optional { width: 10px; height: 10px; background-color: crimson; } */
+/* .field + .attribute--optional { margin-left: 5px; } */
+/* .attribute--optional + .attribute--optional { margin-top: 5px; } */
+/* .projection-wrapper--horizontal .attribute--optional + .attribute--optional { margin-left: 5px; } */

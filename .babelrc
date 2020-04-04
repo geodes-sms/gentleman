@@ -16,14 +16,20 @@
                 ],
                 "alias": {
                     "@": ".",
+                    "@samples": "./samples",
+                    "@assets": "./assets",
+                    "@css": "./assets/css",
                     "@src": "./src",
                     "@global": "./src/global",
                     "@editor": "./src/editor",
                     "@model": "./src/model",
+                    "@model-concept": "./src/model/concept",
+                    "@model-attribute": "./src/model/attribute",
+                    "@model-component": "./src/model/component",
                     "@projection": "./src/projection",
-                    "@utils": "./src/utils",
-                    "@css": "./assets/css",
-                    "@zenkai": "./node_modules/protolabo-zenkai/dist/zenkai.esm"
+                    "@field": "./src/projection/field'",
+                    "@exception": "./src/exception",
+                    "@utils": "./src/utils"
                 }
             }
         ]

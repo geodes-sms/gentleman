@@ -100,3 +100,9 @@ th { text-align: center; }
 .block { display: block!important; }
 
 .inline { display: inline-block!important; }
+
+.collapse { }
+
+.hidden { display: none; }
+
+.selected { background-color: rgba(45, 105, 196, 0.5); }
