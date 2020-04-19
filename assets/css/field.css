@@ -42,6 +42,7 @@
     border-style: solid; border-radius: 1px;
     overflow: hidden;
     outline: none;
+    z-index: 5;
 }
 
     .field--textbox.empty {

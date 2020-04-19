@@ -1,12 +1,12 @@
 import { Concept } from "./../concept.js";
-import { TextualProjection } from "@projection/text-projection.js";
+import { Projection } from "@projection/projection.js";
 
 export const BooleanConcept = Concept.create({
     create: function (model) {
         var instance = Object.create(this);
 
         instance.model = model;
-        instance.projection = TextualProjection.create(createProjection(), instance, model.editor);
+        instance.projection = Projection.create(createProjection(), instance, model.editor);
         return instance;
     },
     projection: null,

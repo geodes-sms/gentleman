@@ -3,8 +3,8 @@ import {
     createSpan, createInput, createDiv, createButton, createParagraph,
     isNullOrUndefined
 } from "zenkai";
-import { show, hide } from "@utils/index.js";
-import { Key } from "@global/enums.js";
+import { show, hide, Key } from "@utils/index.js";
+
 
 export const Convo = {
     editor: null,

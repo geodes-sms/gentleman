@@ -1,21 +1,15 @@
 import {
-    createDocFragment, createUnorderedList, createListItem, 
-    createTable, createTableRow, createTableCell,
+    createDocFragment, createUnorderedList, createListItem,
     insertBeforeElement, insertAfterElement, removeChildren, isHTMLElement
 } from "zenkai";
-import { Key } from "@global/enums.js";
-import { TextualProjection } from "@projection/text-projection.js";
+import { extend, Key } from "@utils/index.js";
+import { Projection } from "@projection/index.js";
 import { Field } from "./field.js";
 
-export const SetField = Field.create({
-    create(concept, schema) {
-        var instance = Object.create(this);
-
-        instance.concept = concept;
-
-        return instance;
-    },
+export const ListField = extend(Field, {
     init() {
+        this.validators = [];
+
         var validator = function () {
             return true;
         };
@@ -24,38 +18,18 @@ export const SetField = Field.create({
 
         return this;
     },
-    concept: null,
     object: "SET",
-    struct: undefined,
-    /** @type {HTMLElement} */
-    element: null,
 
-    createInput(view = 'text') {
-        switch (view) {
-            case 'text':
-                this.element = createUnorderedList({
-                    id: this.id,
-                    class: ['empty', 'bare-list', 'field', 'field--list'],
-                    data: {
-                        type: "set",
-                        nature: "field",
-                    }
-                }, [valueHandler.call(this, this.concept.value)]);
-                this.element.contentEditable = false;
-                break;
-
-            case 'table':
-                this.element = createTable({
-                    id: this.id,
-                    class: ['empty', 'bare-list', 'field', 'field--list'],
-                    data: {
-                        type: "set",
-                        nature: "field",
-                    }
-                }, [valueHandler.call(this, this.concept.value, view)]);
-                this.element.contentEditable = false;
-                break;
-        }
+    createInput() {
+        this.element = createUnorderedList({
+            id: this.id,
+            class: ['empty', 'bare-list', 'field', 'field--list'],
+            data: {
+                type: "set",
+                nature: "field",
+            }
+        }, [valueHandler.call(this, this.concept.getElements())]);
+        this.element.contentEditable = false;
 
 
         this.bindEvents();
@@ -150,22 +124,17 @@ export const SetField = Field.create({
     }
 });
 
-function valueHandler(value, view = 'text') {
+function valueHandler(value) {
     var fragment = createDocFragment();
     var concept = this.concept;
 
     if (Array.isArray(value)) {
         value.forEach(val => {
             var container = null;
-            if (view === 'text') {
-                container = createListItem({ class: "field--list-item", draggable: true });
-                container.tabIndex = 0;
-                container.appendChild(val.render());
-            } else if (view === 'table') {
-                container = createTableRow({ class: 'field--list-row' }, [
-                    createTableCell({ class: 'field--list-cell' }, [val.render()])
-                ]);
-            }
+
+            container = createListItem({ class: "field--list-item" });
+            container.tabIndex = 0;
+            container.appendChild(val.render());
             fragment.appendChild(container);
         });
     }
@@ -175,7 +144,7 @@ function valueHandler(value, view = 'text') {
         let container = createListItem({ class: "field--list__add" });
 
         if (projectionConfig) {
-            let projection = TextualProjection.create(projectionConfig, this.concept, this.concept.editor);
+            let projection = Projection.create(projectionConfig, this.concept, this.concept.editor);
             container.appendChild(projection.render());
         }
 

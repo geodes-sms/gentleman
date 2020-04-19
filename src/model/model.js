@@ -1,4 +1,4 @@
-import { hasOwn, isNullOrUndefined } from "zenkai";
+import { hasOwn, isNullOrUndefined, createSpan } from "zenkai";
 import { UUID } from "@utils/index.js";
 import { MetaModel } from './metamodel.js';
 import { ConceptFactory } from "./concept/factory.js";
@@ -18,6 +18,7 @@ export const Model = {
         return instance;
     },
     schema: null,
+    /** @type {MetaModel} */
     metamodel: null,
     root: null,
     editor: null,
@@ -33,13 +34,14 @@ export const Model = {
      * @param {Object} args 
      */
     init(model, editor) {
-        this.schema = initSchema(this.metamodel);
-        this.root = ConceptFactory.createConcept(this, this.schema.root['name'], this.schema.root, { value: model });
-        this.concepts.push(this.root);
+        // this.schema = initSchema(this.metamodel);
 
         if (editor) {
             this.editor = editor;
         }
+
+        this.root = this.createConcept(this.metamodel.root, { value: model });
+        this.concepts.push(this.root);
 
         return this;
     },
@@ -50,14 +52,22 @@ export const Model = {
      */
     createConcept(name, args) {
         const schema = this.metamodel.getCompleteModelConcept(name);
+        var concept = ConceptFactory.createConcept(name, this, schema, args);
 
-        var concept = ConceptFactory.createConcept(this, name, schema, args);
-        this.concepts.push(concept);
+        this.addConcept(concept);
 
         return concept;
     },
-    generateId() {
-        return UUID.generate();
+    addConcept(concept) {
+        this.concepts.push(concept);
+        return this;
+    },
+    getConcept(id) {
+        return this.concepts.find(concept => concept.id === id);
+    },
+    removeConcept(id) {
+        var index = this.concepts.findIndex(concept => concept.id === id);
+        return this.concepts.splice(index, 1);
     },
     render() {
         return this.root.render();
@@ -76,12 +86,12 @@ export const Model = {
 };
 
 
-function initSchema(metamodel) {
-    const schema = { "root": metamodel.getCompleteModelConcept(metamodel.root) };
+// function initSchema(metamodel) {
+//     const schema = { "root": metamodel.getCompleteModelConcept(metamodel.root) };
 
-    if (!hasOwn(schema.root, 'name')) {
-        schema.root['name'] = metamodel.root;
-    }
+//     if (!hasOwn(schema.root, 'name')) {
+//         schema.root['name'] = metamodel.root;
+//     }
 
-    return schema;
-}
+//     return schema;
+// }

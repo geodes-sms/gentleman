@@ -1,31 +1,11 @@
-import { Field } from "./field.js";
 import { createSpan, addAttributes, valOrDefault, isEmpty, isNullOrWhitespace } from "zenkai";
+import { extend } from "@utils/index.js";
+import { Field } from "./field.js";
 
-export const StringField = Field.create({
-    /**
-     * Creates a string field
-     * @param {Concept} concept
-     * @returns {StringField} 
-     */
-    create(concept, schema) {
-        var instance = Object.create(this);
-
-        instance.concept = concept;
-        instance.schema = schema;
-
-        return instance;
-    },
-    resolvePlaceholder() {
-        if (this.schema.placeholder) {
-            return this.schema.placeholder;
-        }
-        if (this.concept) {
-            return this.concept.getName();
-        }
-
-        return "Enter data";
-    },
+export const TextField = extend(Field, {
     init() {
+        this.validators = [];
+        
         var validator = function () {
             return true;
         };
@@ -34,6 +14,16 @@ export const StringField = Field.create({
         this.validators.push(validator);
 
         return this;
+    },
+    resolvePlaceholder() {
+        if (this.schema.placeholder) {
+            return this.schema.placeholder;
+        }
+        if (this.concept) {
+            return this.concept.getAlias();
+        }
+
+        return "Enter data";
     },
     placeholder: null,
     object: "STRING",

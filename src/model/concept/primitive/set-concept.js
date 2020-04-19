@@ -1,58 +1,32 @@
 import { hasOwn, isNullOrUndefined, insert, valOrDefault, isString, defProp } from "zenkai";
 import { extend } from "@utils/index.js";
-import { TextualProjection } from "@projection/text-projection.js";
 import { Concept } from "./../concept.js";
 
 
 export const SetConcept = extend(Concept, {
-    create(model) {
-        var instance = Object.create(this);
-
-        instance.model = model;
-        instance.value = [];
-
-        defProp(instance, 'count', { get() { return this.value.length; } });
-        defProp(instance, 'canAddValue', { get() { return true; } });
-
-        return instance;
-    },
-    projection: null,
-    projectionIndex: 0,
-    representation: null,
     name: 'set',
-    accept: null,
+    schema: {
+        projection: [
+            {
+                type: "field",
+                view: "list"
+            }
+        ]
+    },
+    initValue(value) {
+        this.value = [];
 
-    init(options) {
-        let values = [];
-
-        if (options) {
-            values = valOrDefault(options.value, []);
-            this.accept = options.accept;
-            this.action = options.action;
-            this.parent = options.parent;
-            this.min = valOrDefault(options.min, 1);
-        }
-
+        var values = valOrDefault(value, []);
         for (let i = 0; i < values.length; i++) {
-            let element = this.createElement(values[i]);
-            this.addElement(element);
+            this.createElement(values[i]);
         }
 
         let remaining = this.min - values.length;
         for (let i = 0; i < remaining; i++) {
-            this.addElement();
+            this.createElement();
         }
 
-        this.projection = TextualProjection.create(createProjection(), this, this.model.editor);
-
         return this;
-    },
-    hasManyProjection() { return true; },
-    render() {
-        console.log(this.value.length, this.count);
-        var view = this.projection.render();
-
-        return view;
     },
     getAddAction() {
         if (hasOwn(this.action, 'add')) {
@@ -61,52 +35,58 @@ export const SetConcept = extend(Concept, {
 
         return {
             projection: {
-                type: "text",
+                type: "wrap",
                 layout: `Add ${this.getAcceptedValues()}`
             }
         };
     },
+    getElements() {
+        return this.value.map(id => this.model.getConcept(id));
+    },
     getElement(id) {
-        var element = this.value.find((el) => el.id === id);
-        if (isNullOrUndefined(element)) {
+        var elementID = this.value.find(val => val === id);
+
+        if (isNullOrUndefined(elementID)) {
             return undefined;
         }
 
-        return element;
+        return this.model.getConcept(elementID);
     },
     getElementAt(index) {
         if (index < 0 || index >= this.value.length) {
             return undefined;
         }
 
-        return this.value[index];
+        return this.model.getConcept(this.value[index]);
     },
-    getFirstElement() { return this.getElementAt(0); },
-    getLastElement() { return this.getElementAt(this.count - 1); },
+    getFirstElement() {
+        return this.getElementAt(0);
+    },
+    getLastElement() {
+        return this.getElementAt(this.count - 1);
+    },
     addElement(element) {
         if (isNullOrUndefined(element)) {
-            element = this.createElement();
+            return false;
         }
 
-        this.value.push(element);
+        this.value.push(element.id);
 
-        return this;
+        return true;
     },
-    addElementAt(element, index) {
+    addElementAt(element, index = 0) {
         if (isNullOrUndefined(element)) {
             element = this.createElement();
         }
 
-        insert(this.value, index, element);
+        this.value.splice(index, 0, element.id);
 
         return this;
     },
     removeElement(element) {
-        var index = null;
+        var index = this.value.indexOf(element.id);
 
-        if (this.value.includes(element)) {
-            index = this.value.indexOf(element);
-        } else {
+        if (index === -1) {
             return false;
         }
 
@@ -116,30 +96,50 @@ export const SetConcept = extend(Concept, {
         if (!Number.isInteger(index) || index < 0) {
             return false;
         }
+
+        if (!this.model.removeConcept(this.value[index])) {
+            return false;
+        }
+
         this.value.splice(index, 1);
 
         return true;
     },
     createElement(value) {
+        var concept = null;
+        var options = {
+            value: value,
+            parent: this.id,
+            refname: this.name,
+            reftype: "element",
+        };
+
         if (isString(this.accept)) {
-            return this.model.createConcept(this.accept, { value: value });
+            concept = this.model.createConcept(this.accept, options);
         }
+
         if (hasOwn(this.accept, "type")) {
-            return this.model.createConcept(this.accept.type, {
-                value: value,
-                alias: this.alias
-            });
+            let { type, accept, alias, action } = this.accept;
+
+            concept = this.model.createConcept(type, Object.assign(options, {
+                accept: accept,
+                action: action,
+                alias: alias
+            }));
         }
+
         if (Array.isArray(this.accept)) {
-            return this.model.createConcept(this.accept[0].type, {
-                value: value,
-                alias: this.alias
-            });
+            // TODO: Add support for multiple concept
         }
+
+        this.addElement(concept);
+
+        return this;
     },
     canDelete() {
         return this.value.length > this.min;
     },
+
     export() {
         var output = [];
         this.value.forEach(val => {
@@ -155,20 +155,8 @@ export const SetConcept = extend(Concept, {
         });
 
         return output;
-    },
-    changeProjection() {
-        this.projectionIndex++;
-        var nextIndex = this.projectionIndex % this.schema.projection.length;
-        this.projection.schema = this.schema.projection[nextIndex];
-
-        return this.projection.render();
-    },
+    }
 });
 
-function createProjection() {
-    return {
-        type: "text",
-        flowgroup: { type: 'field', view: 'flowgroup' },
-        layout: '$flowgroup'
-    };
-}
+defProp(SetConcept, 'count', { get() { return this.value.length; } });
+defProp(SetConcept, 'canAddValue', { get() { return true; } });

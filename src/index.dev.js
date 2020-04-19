@@ -7,6 +7,7 @@ import '@css/normalize.css';
 import '@css/base.css';
 import '@css/field.css';
 import '@css/editor.css';
+import '@css/explorer.css';
 
 const Workflow = {
     MODEL: 'model',
@@ -14,7 +15,7 @@ const Workflow = {
 };
 
 const WorkflowMetaModel = {
-    [Workflow.MODEL]: METAMODEL_RELIS,
+    [Workflow.MODEL]: METAMODEL_MINDMAP,
     [Workflow.DESIGN]: "METAMODEL_PROTO"
 };
 

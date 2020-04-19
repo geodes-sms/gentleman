@@ -1,29 +1,29 @@
-import { createDiv, removeChildren } from "zenkai";
-import { TextualProjection } from "@projection/text-projection.js";
+import { isNullOrUndefined } from "zenkai";
+import { extend } from "@utils/index.js";
 import { Concept } from "./concept.js";
 
-/**
- * @type {Concept}
- */
-export const BaseConcept = Concept.create({
-    create: function (model, schema) {
-        const instance = Object.create(this);
 
-        instance.model = model;
-        instance.schema = schema;
-        instance.projection = TextualProjection.create(schema.projection[instance.projectionIndex], instance, model.editor);
+export const BaseConcept = extend(Concept, {
+    initValue(value) {
+        if (isNullOrUndefined(value)) {
+            return false;
+        }
 
-        return instance;
-    },
-    projectionIndex: 0,
+        for (const key in value) {
+            const element = value[key];
+            const [type, name] = key.split(".");
+            switch (type) {
+                case "attribute":
+                    this.createAttribute(name, element);
+                    break;
+                case "component":
+                    this.createComponent(name, element);
+                    break;
+                default:
+                    break;
+            }
+        }
 
-    render() {
-        return this.projection.render();
-    },
-    rerender() {
-        removeChildren(this.container);
-        this.container.appendChild(this.projection.render());
-
-        return this.container;
+        return true;
     }
 });

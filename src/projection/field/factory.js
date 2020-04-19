@@ -1,32 +1,21 @@
-import { valOrDefault } from 'zenkai';
-import { SetField } from './set-field.js';
-import { StringField } from './string-field.js';
 import { Field } from './field.js';
-import { ReferenceField } from './reference-field.js';
+import { TextField } from './text-field.js';
+import { ListField } from './list-field.js';
+import { LinkField } from './link-field.js';
+
 
 export const FieldFactory = {
-    createField(type, model, schema) {
-        switch (type) {
-            case 'number':
-            case 'string':
-                return StringField.create(model, schema);
-            case 'reference':
-                return ReferenceField.create(model, schema);
-            case 'set':
-                return SetField.create(model, schema);
+    createField(schema, model) {
+        let { view } = schema;
+        switch (view) {
+            case 'textbox':
+                return TextField.create(model, schema);
+            case 'link':
+                return LinkField.create(model, schema);
+            case 'list':
+                return ListField.create(model, schema);
             default:
-                return createBaseField(model, schema);
+                return Field.create(model, schema);
         }
     }
 };
-
-/**
- * 
- * @param {*} model 
- * @param {*} schema 
- */
-function createBaseField(model, schema) {
-    var base = valOrDefault(schema.base, 'concept');
-
-    return Field.create({ _mAttribute: this.concept.parent.schema });
-}

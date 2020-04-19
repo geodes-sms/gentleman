@@ -3,12 +3,12 @@ import {
     appendChildren, createParagraph, insertAfterElement,
     preprendChild, removeChildren, findAncestor, isHTMLElement,
     createUnorderedList, createListItem, createStrong, createButton, copytoClipboard,
-    isNullOrWhitespace, createInput, createInputAs, createLabel, isNullOrUndefined
+    isNullOrWhitespace, createInput, createInputAs, createLabel, isNullOrUndefined, isNull
 } from 'zenkai';
-import { Key } from '@global/enums.js';
-import { events, hide, show } from '@utils/index.js';
+import { events, hide, show, Key } from '@utils/index.js';
 import { MetaModel, Model } from '@model/index.js';
 import { State } from './state.js';
+import { ExplorerManager } from './explorer.js';
 
 
 const windowheight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
@@ -75,13 +75,12 @@ export const Editor = {
     activeElement: null,
     /** @type {Concept} */
     activeConcept: null,
-    /** @type {HTMLElement} */
-    activeConceptContainer: null,
     /** @type {HTMLButtonElement} */
     btnExport: null,
     /** @type {HTMLButtonElement} */
     btnImport: null,
-    currentContext: null,
+    /** @type {HTMLAnchorElement} */
+    btnPrint: null,
 
     init(metamodel, model) {
         if (metamodel) {
@@ -103,14 +102,13 @@ export const Editor = {
             }
         }
 
-
         // set the initial state
         this.state.init(this.model.schema);
         events.emit('editor.state.initialized');
 
         this.btnExport = createButton({
             id: "btnExportModel",
-            class: "btn btn-export",
+            class: "btn btn-export hidden",
             draggable: true,
             data: {
                 "context": "model",
@@ -120,13 +118,12 @@ export const Editor = {
 
         this.btnImport = createLabel({
             id: "btnImportModel",
-            class: "btn btn-import",
+            class: "btn btn-import hidden",
             draggable: true,
             data: { "context": "model", "action": "import" }
         }, ["Import", createInputAs("file", { class: "hidden", accept: '.json' })]);
 
-        this.activeConceptContainer = createDiv({ class: "active-concept-container hidden" });
-        appendChildren(this.container, [this.btnExport, this.btnImport, this.activeConceptContainer]);
+        appendChildren(this.container, [this.btnExport, this.btnImport]);
         preprendChild(this.container, this.body);
 
         this.render();
@@ -200,7 +197,7 @@ export const Editor = {
         this.activeElement = null;
         this.activeConcept = null;
         removeChildren(this.body);
-        
+
         events.emit('editor.clear');
 
         return this;
@@ -229,6 +226,28 @@ export const Editor = {
         }, message));
         dialog.classList.add('open');
     },
+    print() {
+        const MIME_TYPE = 'application/json';
+        window.URL = window.webkitURL || window.URL;
+
+        if (!isNullOrWhitespace(this.btnPrint.href)) {
+            window.URL.revokeObjectURL(self.btnPrint.href);
+        }
+
+        var bb = new Blob([JSON.stringify(this.model)], { type: MIME_TYPE });
+        Object.assign(this.btnPrint, {
+            download: `model_${this.metamodel.language}_${Date.now()}.json`,
+            href: window.URL.createObjectURL(bb),
+        });
+        self.btnPrint.dataset.downloadurl = [MIME_TYPE, self.btnPrint.download, self.btnPrint.href].join(':');
+
+        self.btnPrint.disabled = true;
+        // Need a small delay for the revokeObjectURL to work properly.
+        setTimeout(() => {
+            window.URL.revokeObjectURL(self.btnPrint.href);
+            this.btnPrint.disabled = false;
+        }, 1500);
+    },
 
     render(container) {
         if (isHTMLElement(container)) {
@@ -254,6 +273,20 @@ export const Editor = {
 
         return this;
     },
+    updateActiveElement(element) {
+        if (this.activeElement && this.activeElement !== element) {
+            this.activeElement.classList.remove('active');
+        }
+        this.activeElement = element;
+        this.activeElement.classList.add('active');
+    },
+    updateActiveConcept(concept) {
+        this.activeConcept = concept;
+        var explorer = ExplorerManager.getExplorer();
+        explorer.init(this.activeConcept)   // eslint-disable-next-line indent
+                .bind(this)                 // eslint-disable-next-line indent
+                .open();
+    },
     bindEvents() {
         var lastKey = null;
         const self = this;
@@ -264,10 +297,13 @@ export const Editor = {
 
         this.body.addEventListener('click', (event) => {
             var target = event.target;
-            var nature = target.dataset['nature'];
+            var object = target.dataset['object'];
+            if (isNull(this.focusedElement) && ['concept', 'component'].includes(object)) {
+                this.updateActiveElement(target);
+            }
         }, false);
 
-        this.container.addEventListener('keydown', (event) => {
+        this.body.addEventListener('keydown', (event) => {
             var target = event.target;
             var field = this.fields[target.id - 1];
             var rememberKey = false;
@@ -311,7 +347,6 @@ export const Editor = {
                     break;
                 case Key.escape:
                     rememberKey = false;
-                    console.log("esc");
                     this.focusedElement.focus();
 
                     break;
@@ -336,7 +371,7 @@ export const Editor = {
 
         }, false);
 
-        this.container.addEventListener('keyup', (event) => {
+        this.body.addEventListener('keyup', (event) => {
             var target = event.target;
             var parent = target.parentElement;
             var field = this.fields[target.id - 1];
@@ -448,128 +483,19 @@ export const Editor = {
             }
         });
 
-        this.activeConceptContainer.addEventListener('click', function (e) {
-            const target = e.target;
-            const { id, object, name } = this.dataset;
-            var concept = null;
-            if (object === "concept") {
-                concept = self.model.concepts.find((concept) => concept.id === id);
-            } else if (object === "component") {
-                let parentConcept = concept = self.model.concepts.find((concept) => concept.id === id);
-                concept = parentConcept.getComponent(name);
-            } else {
-                return;
-            }
-
-            if (target.tagName === 'BUTTON') {
-                let { action } = target.dataset;
-                switch (action) {
-                    case "option":
-                        var data = concept.getOptionalAttributes();
-                        var input = getElement(".option-input", this);
-                        if (!isHTMLElement(input)) {
-                            input = createInput({ class: "option-input", placeholder: "Attribut recherché" });
-                            this.appendChild(input);
-                        }
-                        var results = getElement(".option-results", this);
-                        if (!isHTMLElement(results)) {
-                            results = createUnorderedList({ class: "bare-list option-results" });
-                            this.appendChild(results);
-                        }
-                        removeChildren(results);
-                        data.forEach(attr => {
-                            results.appendChild(createListItem({ class: "option-result", data: { value: attr } }, attr));
-                        });
-                        results.addEventListener('click', (e) => {
-                            let target = e.target;
-                            if (target.dataset.value) {
-                                let attr = concept.createAttribute(e.target.dataset.value);
-                                let temp = getElement(`[data-id=${attr.name}]`, concept.container);
-                                if (temp) {
-                                    temp.replaceWith(attr.render());
-                                    temp.remove();
-                                    target.remove();
-                                } else {
-                                    self.notify("This attribute cannot be rendered");
-                                }
-                            }
-                        });
-                        input.addEventListener('input', function (e) {
-                            if (isNullOrWhitespace(this.value)) {
-                                removeChildren(results);
-                                data.forEach(attr => {
-                                    results.appendChild(createListItem({ class: "option-result", data: { value: attr } }, attr));
-                                });
-                            } else {
-                                let query = this.value.trim().split(' ');
-                                let filteredData = data.filter(val => query.some(q => val.includes(q)));
-                                removeChildren(results);
-                                filteredData.forEach(attr => {
-                                    results.appendChild(createListItem({ class: "option-result", data: { value: attr } }, attr));
-                                });
-                            }
-                        });
-
-                        input.focus();
-                        break;
-                    case "compo":
-                        data = concept.getOptionalComponents();
-                        input = getElement(".option-input", this);
-                        if (!isHTMLElement(input)) {
-                            input = createInput({ class: "option-input", placeholder: "Component recherché" });
-                            this.appendChild(input);
-                        }
-                        results = getElement(".option-results", this);
-                        if (!isHTMLElement(results)) {
-                            results = createUnorderedList({ class: "bare-list option-results" });
-                            this.appendChild(results);
-                        }
-                        removeChildren(results);
-                        data.forEach(attr => {
-                            results.appendChild(createListItem({ class: "option-result", data: { value: attr } }, attr));
-                        });
-                        results.addEventListener('click', (e) => {
-                            let target = e.target;
-                            if (target.dataset.value) {
-                                let attr = concept.createComponent(e.target.dataset.value);
-                                let temp = getElement(`[data-id=${attr.name}]`, concept.container);
-                                if (temp) {
-                                    temp.replaceWith(attr.render());
-                                    temp.remove();
-                                    target.remove();
-                                } else {
-                                    self.notify("This attribute cannot be rendered");
-                                }
-                            }
-                        });
-                        input.addEventListener('input', function (e) {
-                            if (isNullOrWhitespace(this.value)) {
-                                removeChildren(results);
-                                data.forEach(attr => {
-                                    results.appendChild(createListItem({ class: "option-result", data: { value: attr } }, attr));
-                                });
-                            } else {
-                                let query = this.value.trim().split(' ');
-                                let filteredData = data.filter(val => query.some(q => val.includes(q)));
-                                removeChildren(results);
-                                filteredData.forEach(attr => {
-                                    results.appendChild(createListItem({ class: "option-result", data: { value: attr } }, attr));
-                                });
-                            }
-                        });
-
-                        input.focus();
-                        break;
-
-                    case "projection":
-
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
+        // this.activeConceptContainer.addEventListener('click', function (e) {
+        //     const target = e.target;
+        //     const { id, object, name } = this.dataset;
+        //     var concept = null;
+        //     if (object === "concept") {
+        //         concept = self.model.concepts.find((concept) => concept.id === id);
+        //     } else if (object === "component") {
+        //         let parentConcept = concept = self.model.concepts.find((concept) => concept.id === id);
+        //         concept = parentConcept.getComponent(name);
+        //     } else {
+        //         return;
+        //     }
+        // });
 
         this.body.addEventListener('focusin', (event) => {
             var target = event.target;
@@ -581,36 +507,24 @@ export const Editor = {
                 field.focusIn();
 
                 // update active element
-                let fieldParent = findAncestor(target, (el) => el.dataset['nature'] === 'field');
-                if (isHTMLElement(fieldParent) && fieldParent.dataset.type === "set") {
-                    this.activeElement = fieldParent;
-                    this.activeElement.classList.add('active');
+                let fieldParent = findAncestor(target, (el) => ['concept', 'component'].includes(el.dataset['object']));
+                if (isHTMLElement(fieldParent)) {
+                    this.updateActiveElement(fieldParent);
                 }
 
                 // update active concept
                 let conceptParent = field.concept.getConceptParent();
                 if (conceptParent) {
-                    this.activeConcept = conceptParent;
-                    let { fullName } = this.activeConcept;
-                    removeChildren(this.activeConceptContainer);
-                    let conceptName = createParagraph({ class: "active-concept-name" }, `${fullName}`);
-                    this.activeConceptContainer.dataset['id'] = this.activeConcept.id || this.activeConcept.parentId;
-                    this.activeConceptContainer.dataset['object'] = this.activeConcept.object;
-                    this.activeConceptContainer.dataset['name'] = this.activeConcept.name;
-                    this.activeConceptContainer.appendChild(conceptName);
-                    this.activeConceptContainer.appendChild(createDiv({ class: "active-concept-action" }, [
-                        createButton({ class: "btn btn-concept btn-concept-options", data: { action: "option" } }, "Attributes"),
-                        // createButton({ class: "btn btn-concept btn-concept-options", data: { action: "compo" } }, "Components"),
-                        createButton({ class: "btn btn-concept btn-concept-projections", data: { action: "projection" } }, "Projections"),
-                    ]));
-                    show(this.activeConceptContainer);
+                    this.updateActiveConcept(conceptParent);
                 }
             } else if (target.parentElement.classList.contains('field--list')) {
-                this.activeElement = target.parentElement;
-                this.activeElement.classList.add('active');
+                this.updateActiveElement(target.parentElement);
+            } else {
+                let choiceParent = findAncestor(target, (el) => el.dataset['nature'] === 'choice');
+                if (isHTMLElement(choiceParent)) {
+                    this.updateActiveElement(choiceParent);
+                }
             }
-
-            // events.emit('editor.change', field);
         }, false);
 
         this.body.addEventListener('focusout', (event) => {
@@ -624,11 +538,6 @@ export const Editor = {
             }
 
             this.focusedElement = null;
-
-
-            if (this.activeElement) {
-                this.activeElement.classList.remove('active');
-            }
         }, false);
 
         this.btnExport.addEventListener('click', (event) => {

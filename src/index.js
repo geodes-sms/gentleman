@@ -1,9 +1,7 @@
 
 import { getElement, createDiv, createHeader, createParagraph, createSpan, appendChildren, createInput, createLabel } from "zenkai";
 import { Gentleman as GE } from './editor/index.js';
-import { __ENV } from './global/global.js';
-import { UI } from './global/enums.js';
-import { hide, show } from '@utils/effects.js';
+import { __ENV, hide, show, UI } from '@utils/index.js';
 // CSS imports
 import '@css/normalize.css';
 import '@css/base.css';

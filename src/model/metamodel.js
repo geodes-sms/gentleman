@@ -40,7 +40,7 @@ export const MetaModel = {
             // throw an error if the root was not found.
             throw InvalidMetaModelError.create("Root not found: The metamodel does not contain a concept with the property `root`");
         }
-        
+
         var model = Model.create(this);
         this.models.push(model);
 
@@ -53,6 +53,18 @@ export const MetaModel = {
      * @returns {boolean}
      */
     isConcept(type) { return !isUndefined(this.schema[type]); },
+    /**
+     * Gets a value indicating whether this concept is a prototype
+     * @param {string} type 
+     * @returns {boolean}
+     */
+    isPrototype(type) { return this.isConcept(type) && this.schema[type].nature === "prototype"; },
+    /**
+     * Gets a value indicating whether this concept is concrete
+     * @param {string} type 
+     * @returns {boolean}
+     */
+    isConcrete(type) { return this.isConcept(type) && this.schema[type].nature === "concrete"; },
 
     /**
      * Gets a model concept by type
@@ -74,6 +86,23 @@ export const MetaModel = {
         return concept;
     },
 
+    /**
+     * Gets a list of concepts based on a prototype
+     * @param {string} prototype 
+     */
+    getConcreteConcepts(prototype) {
+        var concepts = [];
+        for (const key in this.schema) {
+            const concept = this.schema[key];
+            if (concept.prototype === prototype) {
+                concept.name = key;
+                concepts.push(concept);
+            }
+        }
+
+        return concepts;
+    },
+
     getCompleteModelConcept(type) {
         if (!this.isConcept(type)) {
             return undefined;
@@ -87,37 +116,29 @@ export const MetaModel = {
         if (!hasOwn(conceptSchema, 'component')) {
             conceptSchema.component = [];
         }
+        if (conceptSchema.nature === "prototype") {
+            conceptSchema.concretes = this.getConcreteConcepts(type);
+        }
 
         Object.assign(conceptSchema.attribute, baseSchema.attribute);
-        conceptSchema.component = conceptSchema.component.concat(baseSchema.component);
+        Object.assign(conceptSchema.component, baseSchema.component);
 
         return conceptSchema;
-    },
-
-    /**
-     * Gets a model element type
-     * @param {Object} el element
-     */
-    getModelElementType(el) { return this.isElement(el.name) ? getModelElementType.call(this, el) : undefined; },
+    }
 };
-
-function getModelElementType(el) {
-    if (!hasOwn(el, 'prototype')) return el.name;
-
-    return getModelElementType(this.getModelConcept(el.prototype)) + "." + el.name;
-}
 
 function getConceptBaseSchema(baseConceptName) {
     var prototype = baseConceptName;
-    var baseSchema = {
+    const baseSchema = {
         attribute: {},
-        component: []
+        component: {}
     };
+
     while (!isNullOrUndefined(prototype)) {
         let schema = this.schema[prototype];
         if (schema) {
             Object.assign(baseSchema.attribute, schema.attribute);
-            baseSchema.component = baseSchema.component.concat(valOrDefault(schema.component, []));
+            Object.assign(baseSchema.component, schema.component);
             prototype = schema['prototype'];
         } else {
             prototype = null;

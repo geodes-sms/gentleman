@@ -1,11 +1,12 @@
 {
     "project": {
         "nature": "concrete",
+        "idref": "short_name",
         "attribute": {
             "short_name": {
                 "alias": "short name",
                 "type": "string",
-                "id": true
+                "unique": true
             },
             "name": {
                 "type": "string"
@@ -14,10 +15,12 @@
         "component": [
             {
                 "name": "screening_section",
+                "required": true,
+                "idref": "screen_action",
                 "attribute": {
                     "screen_action": {
                         "type": "string",
-                        "id": true,
+                        "unique": true,
                         "required": false
                     },
                     "screening": {
@@ -35,14 +38,14 @@
                 "name": "qa_section",
                 "alias": "Question/Answer section",
                 "required": false,
+                "idref": "qa_action",
                 "attribute": {
                     "qa_action": {
-                        "name": "qa_action",
-                        "type": "ID",
+                        "type": "string",
+                        "unique": true,
                         "required": false
                     },
                     "quality_assess": {
-                        "name": "quality_assess",
                         "type": "set",
                         "accept": "qa",
                         "min": 0
@@ -58,14 +61,14 @@
             {
                 "name": "data_section",
                 "alias": "Data extraction section",
+                "idref": "class_action",
                 "attribute": {
                     "class_action": {
-                        "name": "class_action",
-                        "type": "ID",
+                        "type": "string",
+                        "unique": true,
                         "required": false
                     },
                     "category": {
-                        "name": "category",
                         "type": "set",
                         "accept": "category"
                     }
@@ -83,9 +86,9 @@
                 "required": false,
                 "attribute": {
                     "reporting": {
-                        "name": "reporting",
                         "type": "set",
-                        "accept": "report"
+                        "accept": "report",
+                        "min": 0
                     }
                 },
                 "projection": [
@@ -108,7 +111,10 @@
                 ],
                 "layout": [
                     "$header:horizontal",
-                    "#[screening_section]"
+                    "#[screening_section]",
+                    "#[qa_section]",
+                    "#[data_section]",
+                    "#[report_section]"
                 ]
             }
         ],
@@ -135,14 +141,23 @@
                 "attribute": {
                     "review_per_paper": {
                         "type": "number",
-                        "value": "2"
+                        "value": "2",
+                        "projection": {
+                            "type": "text",
+                            "field": {
+                                "type": "field",
+                                "placeholder": "Review per paper",
+                                "view": "textbox"
+                            },
+                            "layout": "$field"
+                        }
                     }
                 },
                 "projection": [
                     {
                         "type": "text",
                         "layout": [
-                            "screening #review_per_paper"
+                            "Reviews #review_per_paper"
                         ]
                     }
                 ]
@@ -172,43 +187,7 @@
                     "exclusion_criteria": {
                         "type": "set",
                         "accept": "string",
-                        "min": 1,
-                        "projection": [
-                            {
-                                "type": "text",
-                                "layout": "Criteria = [#exclusion_criteria]"
-                            },
-                            {
-                                "type": "table",
-                                "disposition": "column",
-                                "layout": {
-                                    "header": "Title|List of fields|Description",
-                                    "cell": "title|fields|description",
-                                    "multiple": true
-                                }
-                            },
-                            {
-                                "type": "table",
-                                "disposition": "column",
-                                "layout": {
-                                    "cell": [
-                                        {
-                                            "header": "Title",
-                                            "value": "#title"
-                                        },
-                                        {
-                                            "header": "List of fields",
-                                            "value": "#fields"
-                                        },
-                                        {
-                                            "header": "Description",
-                                            "value": "#description"
-                                        }
-                                    ],
-                                    "multiple": true
-                                }
-                            }
-                        ]
+                        "min": 1
                     }
                 },
                 "projection": [
@@ -255,16 +234,10 @@
                 "attribute": {
                     "source_papers": {
                         "type": "set",
-                        "accept": [
-                            {
-                                "type": "string",
-                                "alias": "source"
-                            },
-                            {
-                                "type": "string",
-                                "alias": "source"
-                            }
-                        ]
+                        "accept": {
+                            "type": "string",
+                            "alias": "source"
+                        }
                     }
                 },
                 "projection": [
@@ -335,7 +308,7 @@
         "projection": [
             {
                 "type": "text",
-                "layout": "#[reviews] #[sources]"
+                "layout": "#[reviews] #[conflict] #[criteria]"
             }
         ]
     },
@@ -470,10 +443,11 @@
     },
     "report": {
         "nature": "prototype",
+        "idref": "name",
         "attribute": {
             "name": {
                 "type": "string",
-                "id": true
+                "unique": true
             },
             "title": {
                 "type": "string",
@@ -521,7 +495,7 @@
         "attribute": {
             "name": {
                 "type": "string",
-                "id": true
+                "unique": true
             },
             "title": {
                 "type": "string",
@@ -541,7 +515,11 @@
                 "value": 1,
                 "projection": {
                     "type": "text",
-                    "layout": "[$value]"
+                    "textbox": {
+                        "type": "field",
+                        "view": "textbox"
+                    },
+                    "layout": "[$textbox]"
                 }
             },
             "subCategory": {
@@ -552,7 +530,15 @@
                 "inline": false,
                 "projection": {
                     "type": "text",
-                    "layout": "{$value}"
+                    "field": {
+                        "type": "field",
+                        "view": "list"
+                    },
+                    "layout": [
+                        "{",
+                        "$field",
+                        "}"
+                    ]
                 }
             }
         }
@@ -560,43 +546,53 @@
     "freeCategory": {
         "nature": "concrete",
         "prototype": "category",
+        "idref": "name",
         "attribute": {
             "type": {
-                "type": "simpleType",
-                "value": "string"
+                "type": "string"
             },
             "max_char": {
-                "type": "integer",
+                "type": "number",
                 "required": false,
-                "projection": [
-                    {
-                        "type": "text",
-                        "layout": "($value)"
-                    }
-                ]
+                "projection": {
+                    "type": "text",
+                    "textbox": {
+                        "type": "field",
+                        "view": "textbox"
+                    },
+                    "layout": "($textbox)"
+                }
             },
             "pattern": {
                 "type": "string",
                 "required": false,
-                "projection": [
-                    {
-                        "type": "text",
-                        "layout": "style($value)"
-                    }
-                ]
+                "projection": {
+                    "type": "text",
+                    "textbox": {
+                        "type": "field",
+                        "view": "textbox"
+                    },
+                    "layout": "style($textbox)"
+                }
             },
             "initial_value": {
                 "type": "string",
                 "required": false,
-                "projection": [
-                    {
-                        "type": "text",
-                        "projection": "= [$value]"
-                    }
-                ]
+                "projection": {
+                    "type": "text",
+                    "textbox": {
+                        "type": "field",
+                        "view": "textbox"
+                    },
+                    "layout": "= [$textbox]"
+                }
             }
         },
         "projection": [
+            {
+                "type": "text",
+                "layout": "Simple #name #title #numberOfValues : #type #max_char #pattern #initial_value #subCategory"
+            },
             {
                 "type": "text",
                 "layout": "Simple #name #title #mandatory #numberOfValues : #type #max_char #pattern #initial_value #subCategory"
@@ -606,6 +602,7 @@
     "staticCategory": {
         "nature": "concrete",
         "prototype": "category",
+        "idref": "name",
         "attribute": {
             "values": {
                 "type": "set",
@@ -615,6 +612,10 @@
         "projection": [
             {
                 "type": "text",
+                "layout": "List #name #title #numberOfValues = [#values] #subCategory"
+            },
+            {
+                "type": "text",
                 "layout": "List #name #title #mandatory #numberOfValues = [#values] #subCategory"
             }
         ]
@@ -622,24 +623,32 @@
     "independantDynamicCategory": {
         "nature": "concrete",
         "prototype": "category",
+        "idref": "name",
         "attribute": {
             "reference_name": {
                 "type": "string",
                 "required": false
             },
             "initial_values": {
-                "type": "string",
+                "type": "set",
                 "accept": "string",
                 "required": false,
-                "projection": [
-                    {
-                        "type": "text",
-                        "layout": "= [$val]"
-                    }
-                ]
+                "projection": {
+                    "type": "text",
+                    "field": {
+                        "type": "field",
+                        "view": "list"
+                    },
+                    "flow": "horizontal",
+                    "layout": ["= [$field]"]
+                }
             }
         },
         "projection": [
+            {
+                "type": "text",
+                "layout": "DynamicList #name #title #numberOfValues #reference_name #initial_values #subCategory"
+            },
             {
                 "type": "text",
                 "layout": "DynamicList #name #title #mandatory #numberOfValues #reference_name #initial_values #subCategory"
@@ -649,6 +658,7 @@
     "dependantDynamicCategory": {
         "nature": "concrete",
         "prototype": "category",
+        "idref": "name",
         "attribute": {
             "depends_on": {
                 "type": "reference",
@@ -656,6 +666,10 @@
             }
         },
         "projection": [
+            {
+                "type": "text",
+                "layout": "DynamicList #name #title #numberOfValues depends on #depends_on #subCategory"
+            },
             {
                 "type": "text",
                 "layout": "DynamicList #name #title #mandatory #numberOfValues depends on #depends_on #subCategory"

@@ -1,7 +1,6 @@
-import { Key, EventType, UI } from '@src/global/enums.js';
+import { Key, EventType, UI } from 'utils/enums.js';
 import { valOrDefault, createDocFragment, removeChildren, createListItem, createUnorderedList } from 'zenkai';
-import { hide, show, highlight, unhighlight } from '@utils/effects.js';
-import { createOptionSelect } from '@utils/interactive.js';
+import { hide, show, highlight, unhighlight } from '@utils/index.js';
 
 const AUTOCOMPLETE_HANDLER = 'autocompleteHandler';
 

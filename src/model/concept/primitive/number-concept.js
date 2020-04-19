@@ -1,33 +1,28 @@
 import { valOrDefault } from "zenkai";
+import { extend } from "@utils/index.js";
 import { Concept } from "./../concept.js";
-import { TextualProjection } from "@projection/text-projection.js";
 
-export const NumberConcept = Concept.create({
-    create: function (model) {
-        var instance = Object.create(this);
 
-        instance.model = model;
-
-        return instance;
-    },
-    projection: null,
-    representation: null,
+export const NumberConcept = extend(Concept, {
     name: 'number',
-
-    init(options) {
-        if (options) {
-            this.value = valOrDefault(options.value, "");
-            this.accept = options.accept;
-            this.action = options.action;
-            this.parent = options.parent;
-            this.min = valOrDefault(options.min, 1);
-        }
-
-        this.projection = TextualProjection.create(valOrDefault(options.customProjection, createProjection.call(this)), this, this.model.editor);
-
+    schema: {
+        projection: [
+            {
+                type: "field",
+                view: "textbox"
+            }
+        ]
+    },
+    initValue(value) {
+        this.value = valOrDefault(value, "");
+    
         return this;
     },
+    update(value) {
+        this.value = value;
 
+        return true;
+    },
     render() {
         return this.projection.render();
     },
@@ -35,15 +30,3 @@ export const NumberConcept = Concept.create({
         return this.value;
     },
 });
-
-function createProjection() {
-    return {
-        type: "text",
-        textbox: {
-            type: 'field',
-            placeholder: this.parent.name,
-            view: 'textbox'
-        },
-        layout: '$textbox'
-    };
-}

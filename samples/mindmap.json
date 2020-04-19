@@ -3,129 +3,109 @@
         "nature": "concrete",
         "attribute": {
             "title": {
-                "alias": "my title", 
-                "type": "string", 
+                "alias": "my title",
+                "target": "string",
                 "projection": {
-                    "type": "text",
-                    "textbox": {
-                        "type": "field",
-                        "view": "textbox"
-                    },
-                    "layout": "$textbox"
+                    "type": "field",
+                    "placeholder": "my title",
+                    "view": "textbox"
                 }
             },
-            "short_description": { "type": "string", "required": false },
-            "long_description": { "type": "string", "required": false },
-            "author": { "type": "string", "required": false },
-            "participants": {
-                "type": "string",
-                "required": false,
-                "projection": {
-                    "type": "text",
-                    "textbox": {
-                        "type": "field",
-                        "view": "textbox"
-                    },
-                    "flow": "horizontal",
-                    "layout": "($textbox)"
-                }
+            "short_description": {
+                "target": "string",
+                "required": false
+            },
+            "long_description": {
+                "target": "string",
+                "required": false
+            },
+            "author": {
+                "target": "string",
+                "required": false
             }
         },
-        "component": [
-            {
-                "name": "central_topic",
+        "component": {
+            "central_topic": {
                 "attribute": {
-                    "id": { "type": "string" },
-                    "topic": { "type": "central_topic" }
+                    "id": {
+                        "target": "string"
+                    },
+                    "topic": {
+                        "target": "central_topic"
+                    }
                 },
                 "projection": [
                     {
-                        "type": "text",
-                        "heading": [
-                            "Subject of discussion: #id"
-                        ],
-                        "flow": "vertical",
+                        "type": "stack",
+                        "element": {
+                            "heading": {
+                                "type": "stack",
+                                "orientation": "horizontal",
+                                "layout": [
+                                    "Subject of discussion: #id"
+                                ]
+                            }
+                        },
+                        "orientation": "vertical",
                         "layout": [
-                            "$heading:horizontal",
+                            "$heading",
                             "#topic"
                         ]
                     }
                 ]
             }
-        ],
+        },
         "projection": [
             {
-                "type": "text",
-                "content-explicit": {
-                    "flow": "vertical",
-                    "layout": [
-                        "Mind map #title #short_description",
-                        "#[central_topic]"
-                    ]
-                },
-                "intro": [
-                    "Mind map #title #short_description",
-                    "#long_description"
-                ],
-                "flow": "vertical",
-                "layout": [
-                    "#author #participants",
-                    "$intro:horizontal",
-                    "#[central_topic]"
-                ],
-                "style": {
-                    "position": {
-                        "relative": null
-                    },
-                    "background": null,
-                    "border": {
-                        "size": null,
-                        "radius": null
-                    },
-                    "size": {
-                        "width": "free",
-                        "height": "free"
-                    },
-                    "spacing": {
-                        "outside": null,
-                        "inside": null
-                    },
-                    "text": {
-                        "font": null,
-                        "color": null,
-                        "spacing": null,
-                        "align": null,
-                        "multiline": false
+                "type": "stack",
+                "element": {
+                    "intro": {
+                        "type": "stack",
+                        "orientation": "horizontal",
+                        "layout": [
+                            "Mind map #title #short_description",
+                            "#long_description"
+                        ]
                     }
-                }
+                },
+                "orientation": "vertical",
+                "layout": [
+                    "#author",
+                    "$intro",
+                    "#central_topic:component"
+                ]
             }
         ]
     },
     "topic": {
         "nature": "prototype",
         "attribute": {
-            "name": { "type": "string" },
+            "name": {
+                "target": "string"
+            },
             "details": {
-                "type": "string",
+                "target": "string",
+                "required": false,
                 "projection": {
-                    "type": "text",
-                    "field": { "type": "field", "view": "textarea" },
-                    "layout": "$field"
+                    "type": "field",
+                    "view": "textbox"
                 }
             },
-            "related": { "name": "related", "type": "number" },
-            "marker": { "name": "marker", "type": "string", "optional": true }
+            "marker": {
+                "name": "marker",
+                "target": "string",
+                "required": false
+            }
         }
     },
     "central_topic": {
         "prototype": "topic",
         "nature": "concrete",
-        "component": [
-            {
-                "name": "main_topics",
+        "component": {
+            "main_topics": {
                 "attribute": {
                     "topics": {
-                        "type": "set",
+                        "target": "set",
                         "accept": "main_topic",
                         "min": 1,
                         "action": {
@@ -134,8 +114,8 @@
                                 "pre": "null",
                                 "post": "$count = $count@pre + 1",
                                 "projection": {
-                                    "type": "text",
-                                    "flow": "vertical",
+                                    "type": "stack",
+                                    "orientation": "vertical",
                                     "layout": [
                                         "Main topic <name>",
                                         "<details>",
@@ -148,55 +128,41 @@
                 },
                 "projection": [
                     {
-                        "type": "text",
-                        "flow": "vertical",
+                        "type": "stack",
+                        "orientation": "vertical",
                         "layout": [
                             "List of main topics:",
                             "#topics"
-                        ],
-                        "style": {
-                            "topics": {
-                                "inline": false,
-                                "spacing": { "before": "2px", "after": "2px" }
-                            }
-                        }
-                    },
-                    {
-                        "type": "text",
-                        "layout": "Main topics: #topics",
-                        "style": {
-                            "topics": {
-                                "inline": false,
-                                "spacing": { "before": "5px", "after": "5px" }
-                            }
-                        }
+                        ]
                     }
                 ]
             }
-        ],
+        },
         "projection": [
             {
-                "type": "text",
-                "layout": "#name #[main_topics]"
+                "type": "stack",
+                "orientation": "vertical",
+                "layout": [
+                    "#name #marker",
+                    "#main_topics:component"
+                ]
             }
         ]
     },
     "main_topic": {
         "prototype": "topic",
         "nature": "concrete",
-        "component": [
-            {
-                "name": "sub_topics",
+        "component": {
+            "sub_topics": {
                 "attribute": {
                     "topics": {
-                        "type": "set",
+                        "target": "set",
                         "accept": "sub_topic",
                         "min": 5,
-                        "projection": ["text", "table"],
                         "action": {
                             "add": {
                                 "projection": {
-                                    "type": "text",
+                                    "type": "wrap",
                                     "layout": "Add a sub topic"
                                 }
                             }
@@ -205,29 +171,30 @@
                 },
                 "projection": [
                     {
-                        "type": "text",
-                        "layout": "List of sub topics: #topics",
-                        "style": {
-                            "topics": {
-                                "inline": false,
-                                "spacing": { "before": "2px", "after": "2px" }
-                            }
-                        }
+                        "type": "stack",
+                        "orientation": "horizontal",
+                        "layout": [
+                            "List of sub topics:",
+                            "#topics"
+                        ]
                     }
                 ]
             }
-        ],
+        },
         "projection": [
             {
-                "type": "text",
-                "heading": [
-                    "Main topic #name"
-                ],
-                "flow": "vertical",
+                "type": "stack",
+                "element": {
+                    "heading": {
+                        "type": "wrap",
+                        "layout": "Main topic #name"
+                    }
+                },
+                "orientation": "vertical",
                 "layout": [
-                    "$heading:horizontal",
+                    "$heading",
                     "#details",
-                    "#[sub_topics]"
+                    "#sub_topics:component"
                 ]
             }
         ]
@@ -235,35 +202,46 @@
     "sub_topic": {
         "prototype": "topic",
         "nature": "concrete",
-        "component": [
-            {
-                "name": "sub_topics",
+        "component": {
+            "sub_topics": {
                 "required": false,
                 "attribute": {
-                    "topics": { "type": "set", "accept": "sub_topic" }
+                    "topics": {
+                        "target": "set",
+                        "accept": "sub_topic"
+                    }
                 },
                 "projection": [
                     {
-                        "type": "text",
+                        "type": "wrap",
                         "layout": "#topics"
                     }
                 ]
             }
-        ],
+        },
         "projection": [
             {
-                "type": "text",
-                "layout": "#name #[sub_topics]"
+                "type": "stack",
+                "orientation": "vertical",
+                "layout": [
+                    "#name",
+                    "#sub_topics:component"
+                ]
             },
             {
                 "type": "table",
                 "disposition": "column",
                 "layout": {
                     "header": {
-                        "subtopics": { "value": "Subtopics" }
+                        "subtopics": {
+                            "value": "Subtopics"
+                        }
                     },
                     "cell": [
-                        { "header": "subtopics", "value": "#name" }
+                        {
+                            "header": "subtopics",
+                            "value": "#name"
+                        }
                     ],
                     "multiple": true
                 }
@@ -279,12 +257,20 @@
         "style": {
             "attribute": {
                 "inline": true,
-                "spacing": { "before": "2px", "after": "2px" }
+                "spacing": {
+                    "before": "2px",
+                    "after": "2px"
+                }
             },
             "component": {
                 "inline": false,
-                "size": { "width": "FIT_CONTENT" },
-                "spacing": { "before": "5px", "after": "5px" },
+                "size": {
+                    "width": "FIT_CONTENT"
+                },
+                "spacing": {
+                    "before": "5px",
+                    "after": "5px"
+                },
                 "corner": {},
                 "background": "#f0f0f0"
             }

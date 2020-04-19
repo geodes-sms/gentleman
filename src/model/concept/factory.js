@@ -1,67 +1,37 @@
-import { BaseConcept } from "./base-concept.js";
-import { StringConcept, SetConcept, NumberConcept, ReferenceConcept } from "./primitive/index.js";
-import { ConcreteConcept, ModelConcept } from "./meta/index.js";
-import { valOrDefault, isNullOrUndefined } from 'zenkai';
+import { isNullOrUndefined } from 'zenkai';
+import { UUID } from '@utils/uuid.js';
+import { StringConcept, SetConcept, NumberConcept, ReferenceConcept, BaseConcept, PrototypeConcept } from "./index.js";
+
+const primitiveHandler = {
+    string: (model, schema) => StringConcept.create(model),
+    number: (model, schema) => NumberConcept.create(model),
+    set: (model, schema) => SetConcept.create(model),
+    reference: (model, schema) => ReferenceConcept.create(model)
+};
+
+const complexHandler = {
+    prototype: (model, schema) => PrototypeConcept.create(model, schema),
+    concrete: (model, schema) => BaseConcept.create(model, schema)
+};
 
 export const ConceptFactory = {
-    createConcept(model, name, schema, options) {
-        var concept = null;
-
-        switch (name) {
-            case 'string':
-                concept = StringConcept.create(model);
-                break;
-            case 'number':
-                concept = NumberConcept.create(model);
-                break;
-            case 'set':
-                concept = SetConcept.create(model);
-                break;
-            case 'reference':
-                concept = ReferenceConcept.create(model);
-                break;
-            case 'concrete':
-            case 'prototype':
-                concept = ConcreteConcept.create(model, schema);
-                break;
-            case 'model':
-                concept = ModelConcept.create(model, schema);
-                break;
-            default:
-                concept = BaseConcept.create(model, schema);
-                break;
+    createConcept(name, model, schema, args) {
+        var handler = primitiveHandler[name] || complexHandler[schema.nature];
+        if (isNullOrUndefined(handler)) {
+            throw new Error(`The '${name}' concept could not be created`);
         }
+
+        var concept = handler(model, schema);
 
         if (isNullOrUndefined(concept)) {
-            // error handler
-            console.error(`The '${name}' concept could not be created`);
-            
-            return null;
+            throw new Error(`The '${name}' concept could not be created`);
         }
 
-        concept.id = model.generateId(); 
+        concept.id = UUID.generate();
         concept.name = name;
-        concept.fullName = name;
-        concept.attributes = [];
-        concept._attributes = [];
-        concept.components = [];
-        concept._components = [];
 
-        concept.init(options);
+        concept.init(args);
 
         return concept;
     }
 };
-
-function createBaseConcept(model, schema) {
-    var base = valOrDefault(schema.base, 'concept');
-
-    if (base === 'string') {
-        let stringConcept = StringConcept.create(model);
-        stringConcept.values = schema.values;
-
-        return stringConcept;
-    }
-
-    return BaseConcept.create(model, schema);
-}
