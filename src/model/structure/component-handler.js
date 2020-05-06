@@ -5,11 +5,14 @@ import { Component } from "./component.js";
 export const ComponentHandler = {
     /** @type {Component[]} */
     components: [],
-    /** @type {number[]} */
-    _components: [],
+    /** @returns {Component[]} */
     initComponent() {
         this.components = [];
-        this._components = [];
+        this.components._created = new Set();
+        this.components._updated = new Set();
+        this.components._deleted = new Set();
+
+        return this;
     },
     /** @returns {Component[]} */
     getComponents() {
@@ -67,7 +70,7 @@ export const ComponentHandler = {
 
     addComponent(component) {
         this.components.push(component);
-        this._components.push(component.name);
+        this.components._created.add(component.name);
     },
     /**
      * Returns a value indicating whether the concept has an component
@@ -83,10 +86,10 @@ export const ComponentHandler = {
     isComponentRequired(name) { return valOrDefault(this.componentSchema[name].required, true); },
     /**
      * Returns a value indicating whether the component has been created
-     * @param {string} id Component's id
+     * @param {string} name Component's name
      * @returns {boolean}
      */
-    isComponentCreated(id) { return this._components.includes(id); },
+    isComponentCreated(name) { return this.components._created.has(name); },
     getOptionalComponents() {
         if (isNullOrUndefined(this.componentSchema)) {
             return [];
@@ -120,27 +123,10 @@ export const ComponentHandler = {
 
         return components;
     },
-    removeComponent(component) {
-        var index = null;
+    removeComponent(name) {
+        var removedComponent = this.components.splice(this.components.findIndex(comp => comp.name === name), 1);
+        this.components._created.remove(name);
 
-        if (isString(component) && this._components.includes(component)) {
-            index = this._components.indexOf(component);
-        } else if (component.object === "component" && this.components.includes(component)) {
-            index = this.components.indexOf(component);
-        } else {
-            return false;
-        }
-
-        return this.removeComponentAt(index);
-    },
-    removeComponentAt(index) {
-        if (!Number.isInteger(index) || index < 0) {
-            return false;
-        }
-
-        this.components.splice(index, 1);
-        this._components.splice(index, 1);
-
-        return true;
-    },
+        return removedComponent.length === 1;
+    }
 };

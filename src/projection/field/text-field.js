@@ -1,6 +1,7 @@
-import { createSpan, addAttributes, valOrDefault, isEmpty, isNullOrWhitespace } from "zenkai";
+import { createSpan, valOrDefault, isEmpty, isNullOrWhitespace } from "zenkai";
 import { extend } from "@utils/index.js";
 import { Field } from "./field.js";
+
 
 export const TextField = extend(Field, {
     init() {

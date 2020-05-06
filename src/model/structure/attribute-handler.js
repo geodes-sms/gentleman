@@ -1,16 +1,18 @@
-import { isNullOrUndefined, isString, valOrDefault, hasOwn, isNullOrWhitespace, defProp } from "zenkai";
+import { isNullOrUndefined, isString, valOrDefault, hasOwn, isNullOrWhitespace } from "zenkai";
 import { Attribute } from "./attribute";
 
 
 export const AttributeHandler = {
     /** @type {Attribute[]} */
     attributes: null,
-    /** @type {number[]} */
-    _attributes: null,
     /** @returns {Attribute[]} */
     initAttribute() {
         this.attributes = [];
-        this._attributes = [];
+        this.attributes._created = new Set();
+        this.attributes._updated = new Set();
+        this.attributes._deleted = new Set();
+
+        return this;
     },
     getAttributes() {
         return this.attributes;
@@ -53,13 +55,13 @@ export const AttributeHandler = {
      * @returns {Attribute}
      */
     createAttribute(name, value) {
-        const schema = this.attributeSchema[name];
-        if (isNullOrUndefined(schema)) {
+        if (!hasOwn(this.attributeSchema, name)) {
             throw new Error(`Attribute not found: The concept ${this.name} does not contain an attribute named ${name}`);
         }
-        this.attributeSchema[name].name = name;
+        
+        const schema = Object.assign(this.attributeSchema[name], { name: name });
+        
         var attribute = Attribute.create(this, schema).init(value);
-
         this.addAttribute(attribute);
 
         return attribute;
@@ -67,7 +69,7 @@ export const AttributeHandler = {
 
     addAttribute(attribute) {
         this.attributes.push(attribute);
-        this._attributes.push(attribute.name);
+        this.attributes._created.add(attribute.name);
     },
     /**
      * Returns a value indicating whether the concept has an attribute
@@ -77,16 +79,16 @@ export const AttributeHandler = {
     hasAttribute(id) { return hasOwn(this.attributeSchema, id); },
     /**
      * Returns a value indicating whether the attribute is required
-     * @param {string} id Attribute's id
+     * @param {string} name Attribute's id
      * @returns {boolean}
      */
-    isAttributeRequired(id) { return valOrDefault(this.attributeSchema[id].required, true); },
+    isAttributeRequired(name) { return valOrDefault(this.attributeSchema[name].required, true); },
     /**
      * Returns a value indicating whether the attribute has been created
-     * @param {string} id Attribute's id
+     * @param {string} name Attribute's id
      * @returns {boolean}
      */
-    isAttributeCreated(id) { return this._attributes.includes(id); },
+    isAttributeCreated(name) { return this.attributes._created.has(name); },
     getOptionalAttributes() {
         if (isNullOrUndefined(this.attributeSchema)) {
             return [];
@@ -121,28 +123,11 @@ export const AttributeHandler = {
 
         return attributes;
     },
-    removeAttribute(attribute) {
-        var index = null;
+    removeAttribute(name) {
+        var removedAttribute = this.attributes.splice(this.attributes.findIndex(attr => attr.name === name), 1);
+        this.attributes._created.remove(name);
 
-        if (isString(attribute) && this._attributes.includes(attribute)) {
-            index = this._attributes.indexOf(attribute);
-        } else if (attribute.object === "attribute" && this.attributes.includes(attribute)) {
-            index = this.attributes.indexOf(attribute);
-        } else {
-            return false;
-        }
-
-        return this.removeAttributeAt(index);
-    },
-    removeAttributeAt(index) {
-        if (!Number.isInteger(index) || index < 0) {
-            return false;
-        }
-
-        this.attributes.splice(index, 1);
-        this._attributes.splice(index, 1);
-
-        return true;
+        return removedAttribute.length === 1;
     },
 };
 

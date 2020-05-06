@@ -1,6 +1,6 @@
 import {
     createDocFragment, createSpan, createDiv, createI, removeChildren, isNode,
-    isNullOrWhitespace, isNullOrUndefined, valOrDefault, isHTMLElement, getRootUrl
+    isNullOrWhitespace, isNullOrUndefined, valOrDefault, isHTMLElement
 } from "zenkai";
 import { FieldFactory } from "./field/factory.js";
 
@@ -25,7 +25,7 @@ export const Projection = {
     create: function (schema, concept, editor) {
         const instance = Object.create(this);
 
-        instance.schema = schema;
+        instance.schema = schema[0];
         instance.concept = concept;
         instance.editor = editor;
 
@@ -35,6 +35,7 @@ export const Projection = {
     concept: null,
     editor: null,
     container: null,
+    index: 0,
     remove() {
         var parent = this.container.parentElement;
 
@@ -104,7 +105,7 @@ function wrapHandler(schema) {
 }
 
 function fieldHandler(schema) {
-    var field = FieldFactory.createField(schema, this.concept).init();
+    var field = FieldFactory.createField(schema, this.concept, this.editor).init();
     field.parentProjection = this;
 
     this.editor.registerField(field);
@@ -172,29 +173,31 @@ function resolveStructure(key) {
 
 function attributeHandler(name) {
     if (!this.concept.hasAttribute(name)) {
-        throw new Error(`Projection error: Attribute ${name} does not exist`);
+        throw new Error(`PROJECTION: Attribute ${name} does not exist`);
     }
 
     if (!(this.concept.isAttributeRequired(name) || this.concept.isAttributeCreated(name))) {
         return createI({ class: "attribute--optional", data: { object: "attribute", id: name } });
     }
 
-    var attribute = this.concept.getAttributeByName(name);
+    var { target } = this.concept.getAttributeByName(name);
+    var projection = Projection.create(target.schema.projection, target, this.editor);
 
-    return attribute.render();
+    return projection.render();
 }
 
 function componentHandler(name) {
     if (!this.concept.hasComponent(name)) {
-        throw new Error(`Projection error: Component ${name} does not exist`);
+        throw new Error(`PROJECTION: Component ${name} does not exist`);
     }
     if (!(this.concept.isComponentCreated(name) || this.concept.isComponentRequired(name))) {
         return createI({ class: "component--optional", data: { object: "component", id: name } });
     }
 
-    let component = this.concept.getComponentByName(name);
+    var component = this.concept.getComponentByName(name);
+    var projection = Projection.create(component.schema.projection, component, this.editor);
 
-    return component.render();
+    return projection.render();
 }
 
 /**

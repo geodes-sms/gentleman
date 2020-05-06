@@ -15,7 +15,8 @@ const Workflow = {
 };
 
 const WorkflowMetaModel = {
-    [Workflow.MODEL]: METAMODEL_MINDMAP,
+    // [Workflow.MODEL]: METAMODEL_MINDMAP,
+    [Workflow.MODEL]: METAMODEL_RELIS,
     [Workflow.DESIGN]: "METAMODEL_PROTO"
 };
 

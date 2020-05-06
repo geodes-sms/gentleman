@@ -1,14 +1,15 @@
 import {
-    cloneObject, isEmpty, getElement, getElements, createLink, createDiv,
-    appendChildren, createParagraph, insertAfterElement,
-    preprendChild, removeChildren, findAncestor, isHTMLElement,
-    createUnorderedList, createListItem, createStrong, createButton, copytoClipboard,
-    isNullOrWhitespace, createInput, createInputAs, createLabel, isNullOrUndefined, isNull
+    createLink, createDiv, createInput, createInputAs, createLabel, createStrong,
+    createUnorderedList, createListItem, createParagraph, createButton,
+    getElement, getElements, appendChildren, insertAfterElement, preprendChild,
+    removeChildren, findAncestor, copytoClipboard, isHTMLElement, cloneObject,
+    isEmpty, isNullOrWhitespace, isNullOrUndefined, isNull
 } from 'zenkai';
 import { events, hide, show, Key } from '@utils/index.js';
 import { MetaModel, Model } from '@model/index.js';
 import { State } from './state.js';
 import { ExplorerManager } from './explorer.js';
+import { Projection } from '@projection/index.js';
 
 
 const windowheight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
@@ -91,15 +92,11 @@ export const Editor = {
             //   else Prompt the user to give the corresponding metamodel
         }
 
-        if (model) {
-            this.loadModel(model);
-        } else {
-            try {
-                this.model = this.metamodel.createModel().init(model, this);
-            } catch (error) {
-                this.container.appendChild(createParagraph({ class: 'body', text: error.toString() }));
-                return;
-            }
+        try {
+            this.model = this.metamodel.createModel().init(model);
+        } catch (error) {
+            this.container.appendChild(createParagraph({ class: 'body', text: error.toString() }));
+            return;
         }
 
         // set the initial state
@@ -171,8 +168,6 @@ export const Editor = {
         this.fields.push(field);
     },
     resize() {
-        var self = this;
-
         // TODO: adapt UI to smaller screen
     },
     undo() {
@@ -231,7 +226,7 @@ export const Editor = {
         window.URL = window.webkitURL || window.URL;
 
         if (!isNullOrWhitespace(this.btnPrint.href)) {
-            window.URL.revokeObjectURL(self.btnPrint.href);
+            window.URL.revokeObjectURL(this.btnPrint.href);
         }
 
         var bb = new Blob([JSON.stringify(this.model)], { type: MIME_TYPE });
@@ -239,12 +234,12 @@ export const Editor = {
             download: `model_${this.metamodel.language}_${Date.now()}.json`,
             href: window.URL.createObjectURL(bb),
         });
-        self.btnPrint.dataset.downloadurl = [MIME_TYPE, self.btnPrint.download, self.btnPrint.href].join(':');
+        this.btnPrint.dataset.downloadurl = [MIME_TYPE, this.btnPrint.download, this.btnPrint.href].join(':');
 
-        self.btnPrint.disabled = true;
+        this.btnPrint.disabled = true;
         // Need a small delay for the revokeObjectURL to work properly.
         setTimeout(() => {
-            window.URL.revokeObjectURL(self.btnPrint.href);
+            window.URL.revokeObjectURL(this.btnPrint.href);
             this.btnPrint.disabled = false;
         }, 1500);
     },
@@ -258,11 +253,16 @@ export const Editor = {
 
         this.clear();
 
-        this.body.appendChild(this.model.render());
+        // TODO: Add support for saved projection
+        // TODO  HINT: Add getProjection to Model (lookup passed value, saved model)
+        var projectionSchema = this.metamodel.getProjectionSchema(this.model.root.name);
+        var projection = Projection.create(projectionSchema, this.model.root, this);
+
+        this.body.appendChild(projection.render());
         this.activeElement = this.body;
 
         if (!isHTMLElement(this.infoContainer)) {
-            this.infoContainer = createDiv({ class: 'info-container font-ui hidden' });
+            this.infoContainer = createDiv({ class: 'info-container hidden' });
             this.container.appendChild(this.infoContainer);
         }
 
@@ -282,14 +282,9 @@ export const Editor = {
     },
     updateActiveConcept(concept) {
         this.activeConcept = concept;
-        var explorer = ExplorerManager.getExplorer();
-        explorer.init(this.activeConcept)   // eslint-disable-next-line indent
-                .bind(this)                 // eslint-disable-next-line indent
-                .open();
     },
     bindEvents() {
         var lastKey = null;
-        const self = this;
 
         this.body.addEventListener('dblclick', (event) => {
             console.log(`give this element (${event.target.name || event.target.id}) main focus`);
@@ -354,6 +349,16 @@ export const Editor = {
 
                     break;
                 case 'g':
+                case 'e':
+                    if (lastKey === Key.ctrl) {
+                        let explorer = ExplorerManager.getExplorer();
+                        explorer.init(this.activeConcept)   // eslint-disable-next-line indent
+                            .bind(this)                     // eslint-disable-next-line indent
+                            .open();
+
+                        event.preventDefault();
+                    }
+                    break;
                 case "y":
                 case "q":
                 case "z":
@@ -483,20 +488,6 @@ export const Editor = {
             }
         });
 
-        // this.activeConceptContainer.addEventListener('click', function (e) {
-        //     const target = e.target;
-        //     const { id, object, name } = this.dataset;
-        //     var concept = null;
-        //     if (object === "concept") {
-        //         concept = self.model.concepts.find((concept) => concept.id === id);
-        //     } else if (object === "component") {
-        //         let parentConcept = concept = self.model.concepts.find((concept) => concept.id === id);
-        //         concept = parentConcept.getComponent(name);
-        //     } else {
-        //         return;
-        //     }
-        // });
-
         this.body.addEventListener('focusin', (event) => {
             var target = event.target;
             var nature = target.dataset['nature'];
@@ -557,10 +548,10 @@ export const Editor = {
             reader.readAsText(file);
         });
 
-        this.btnExport.addEventListener('dragstart', function (e) {
-            e.dataTransfer.setData("text/plain", e.target.innerText);
-            e.dataTransfer.setData("text/html", e.target.outerHTML);
-            e.dataTransfer.setData("text/uri-list", e.target.ownerDocument.location.href);
+        this.btnExport.addEventListener('dragstart', (event) => {
+            event.dataTransfer.setData("text/plain", event.target.innerText);
+            event.dataTransfer.setData("text/html", event.target.outerHTML);
+            event.dataTransfer.setData("text/uri-list", event.target.ownerDocument.location.href);
         });
 
         this.btnExport.addEventListener('dragend', function (e) {
@@ -589,10 +580,8 @@ export const Editor = {
             show(this.infoContainer);
         }
 
-        mql.addListener(handleWidthChange);
+        const handleWidthChange = (mql) => this.resize(mql);
 
-        function handleWidthChange(mql) {
-            self.resize();
-        }
+        mql.addListener(handleWidthChange);
     }
 };

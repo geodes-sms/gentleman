@@ -11,33 +11,17 @@ export const BaseAttribute = {
     object: "attribute",
 
     init(value) {
-        const self = this;
-
-        var concept = this.model.createConcept(this.target, {
+        this.target = this.model.createConcept(this.schema.target, Object.assign({}, this.schema, {
             value: value,
-            accept: this.accept,
-            alias: this.alias,
             parent: this.concept.id,
             min: this.min,
             refname: this.name,
             reftype: "attribute",
-            projection: this.projectionSchema,
-            action: this.actionSchema,
-        });
-
-        this.value = concept;
+        }));
 
         return this;
     },
-    render() {
-        this.container = null;
-        if (Array.isArray(this.value)) {
-            return this.value.forEach((item) => item.render());
-        } else {
-            return this.value.render();
-        }
-    },
-    getValue() { return this.value.value; },
+    getValue() { return this.target.value; },
 
     delete() {
         if (Array.isArray(this.value)) {
@@ -71,8 +55,8 @@ export const Attribute = Object.assign(
     BaseAttribute
 );
 
-defProp(Attribute, 'target', { get() { return this.schema.target; } });
-defProp(Attribute, 'accept', { get() { return this.schema.accept; } });
-defProp(Attribute, 'min', { get() { return this.schema.min; } });
-defProp(Attribute, 'projectionSchema', { get() { return this.schema.projection; } });
-defProp(Attribute, 'actionSchema', { get() { return valOrDefault(this.schema.action, {}); } });
+// defProp(Attribute, 'target', { get() { return this.schema.target; } });
+// defProp(Attribute, 'accept', { get() { return this.schema.accept; } });
+// defProp(Attribute, 'min', { get() { return this.schema.min; } });
+// defProp(Attribute, 'projectionSchema', { get() { return this.schema.projection; } });
+// defProp(Attribute, 'actionSchema', { get() { return valOrDefault(this.schema.action, {}); } });

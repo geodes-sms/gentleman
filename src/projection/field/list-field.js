@@ -6,6 +6,7 @@ import { extend, Key } from "@utils/index.js";
 import { Projection } from "@projection/index.js";
 import { Field } from "./field.js";
 
+
 export const ListField = extend(Field, {
     init() {
         this.validators = [];
@@ -125,36 +126,32 @@ export const ListField = extend(Field, {
 });
 
 function valueHandler(value) {
+    const { concept, editor } = this;
+
     var fragment = createDocFragment();
-    var concept = this.concept;
 
     if (Array.isArray(value)) {
         value.forEach(val => {
-            var container = null;
-
-            container = createListItem({ class: "field--list-item" });
-            container.tabIndex = 0;
-            container.appendChild(val.render());
+            var projection = Projection.create(val.schema.projection, val, editor);
+            var container = createListItem({ class: "field--list-item", tabindex: 0 }, [projection.render()]);
             fragment.appendChild(container);
         });
     }
 
     if (concept.canAddValue) {
-        let { projection: projectionConfig, constaint } = concept.getAddAction();
+        let { projection: projectionConfig, constraint } = concept.getAddAction();
         let container = createListItem({ class: "field--list__add" });
 
         if (projectionConfig) {
-            let projection = Projection.create(projectionConfig, this.concept, this.concept.editor);
+            let projection = Projection.create(projectionConfig, concept, editor);
             container.appendChild(projection.render());
         }
 
         container.addEventListener('click', function () {
-            if (concept.addElement()) {
-                let instance = concept.getLastElement();
-                var container = createListItem({ class: "field--list-item", draggable: true }, [instance.render()]);
-                container.tabIndex = 0;
-                insertBeforeElement(this, container);
-            }
+            let element = concept.createElement();
+            var projection = Projection.create(element.schema.projection, element, editor);
+            var container = createListItem({ class: "field--list-item", tabindex: 0 }, [projection.render()]);
+            insertBeforeElement(this, container);
         });
 
         fragment.appendChild(container);

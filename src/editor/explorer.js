@@ -97,6 +97,7 @@ export const Explorer = {
         this.active = true;
         show(this.container);
         this.container.classList.replace('close', 'open');
+        this.input.focus();
 
         return this;
     },
@@ -201,7 +202,14 @@ export const Explorer = {
 
         if (!isNullOrWhitespace(value)) {
             var values = value.trim().replace(/\s+/g, " ").split(' ');
-            data = data.filter(val => values.some(q => val.name.includes(q)));
+            data = data.filter(val => values.some(q => {
+                let found = false;
+                if (val.alias) {
+                    found = val.alias.includes(q);
+                }
+
+                return found || val.name.includes(q);
+            }));
         }
 
 
@@ -211,6 +219,7 @@ export const Explorer = {
     },
     bindEvents() {
         var lastKey = null;
+        var index = 0;
 
         this.container.addEventListener('keydown', (event) => {
             var rememberKey = false;
@@ -231,6 +240,18 @@ export const Explorer = {
                     break;
                 case Key.right_arrow:
                     break;
+                case Key.up_arrow:
+                    if (index > 0) {
+                        index--;
+                        this.results.children[index].focus();
+                    }
+                    break;
+                case Key.down_arrow:
+                    if (index < this.results.childElementCount) {
+                        this.results.children[index].focus();
+                        index++;
+                    }
+                    break;
                 case Key.escape:
                     rememberKey = false;
                     this.close();
@@ -244,6 +265,12 @@ export const Explorer = {
             }
 
         }, false);
+
+        this.container.addEventListener('click', (e) => {
+            if (e.target.dataset.action === "close") {
+                this.close();
+            }
+        });
 
         this.results.addEventListener('change', (event) => {
             let target = event.target;
@@ -268,6 +295,7 @@ export const Explorer = {
 
         this.input.addEventListener('input', (event) => {
             this.query(this.input.value.trim());
+            index = 0;
         });
 
         this.input.addEventListener('blur', (event) => {
@@ -275,6 +303,20 @@ export const Explorer = {
                 this.input.value = "";
             }
         });
+
+        // this.container.addEventListener('click', function (e) {
+        //     const target = e.target;
+        //     const { id, object, name } = this.dataset;
+        //     var concept = null;
+        //     if (object === "concept") {
+        //         concept = self.model.concepts.find((concept) => concept.id === id);
+        //     } else if (object === "component") {
+        //         let parentConcept = concept = self.model.concepts.find((concept) => concept.id === id);
+        //         concept = parentConcept.getComponent(name);
+        //     } else {
+        //         return;
+        //     }
+        // });
     }
 };
 
@@ -296,11 +338,14 @@ function createResultItem(struct, title, content) {
     const label = createLabel({ class: "explorer-result-item__label" }, [lblName, lblInfo]);
     label.htmlFor = checkbox.id;
 
-    return createListItem({
+    var result = createListItem({
         class: "explorer-result-item",
         data: {
             value: name,
             required: required
         }
     }, [checkbox, label]);
+    result.tabIndex = -1;
+
+    return result;
 }

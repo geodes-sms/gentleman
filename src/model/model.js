@@ -1,7 +1,7 @@
 import { hasOwn, isNullOrUndefined, createSpan } from "zenkai";
-import { UUID } from "@utils/index.js";
 import { MetaModel } from './metamodel.js';
 import { ConceptFactory } from "./concept/factory.js";
+
 
 export const Model = {
     /** 
@@ -13,7 +13,6 @@ export const Model = {
         const instance = Object.create(this);
 
         instance.metamodel = metamodel;
-        instance.concepts = [];
 
         return instance;
     },
@@ -21,25 +20,16 @@ export const Model = {
     /** @type {MetaModel} */
     metamodel: null,
     root: null,
-    editor: null,
-    /**
-     * @type {Concept[]}
-     */
+    /** @type {Concept[]} */
     concepts: null,
 
     /**
      * Initialize the model.
      * @param {Object} model 
-     * @param {Editor} editor 
      * @param {Object} args 
      */
-    init(model, editor) {
-        // this.schema = initSchema(this.metamodel);
-
-        if (editor) {
-            this.editor = editor;
-        }
-
+    init(model) {
+        this.concepts = [];
         this.root = this.createConcept(this.metamodel.root, { value: model });
         this.concepts.push(this.root);
 
@@ -69,9 +59,6 @@ export const Model = {
         var index = this.concepts.findIndex(concept => concept.id === id);
         return this.concepts.splice(index, 1);
     },
-    render() {
-        return this.root.render();
-    },
     export() {
         return JSON.stringify(this.root.toString());
     },
@@ -84,14 +71,3 @@ export const Model = {
         return this.root.project();
     }
 };
-
-
-// function initSchema(metamodel) {
-//     const schema = { "root": metamodel.getCompleteModelConcept(metamodel.root) };
-
-//     if (!hasOwn(schema.root, 'name')) {
-//         schema.root['name'] = metamodel.root;
-//     }
-
-//     return schema;
-// }

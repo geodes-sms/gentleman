@@ -5,11 +5,13 @@
             "title": {
                 "alias": "my title",
                 "target": "string",
-                "projection": {
-                    "type": "field",
-                    "placeholder": "my title",
-                    "view": "textbox"
-                }
+                "projection": [
+                    {
+                        "type": "field",
+                        "placeholder": "mindmap title",
+                        "view": "textbox"
+                    }
+                ]
             },
             "short_description": {
                 "target": "string",
@@ -85,11 +87,7 @@
             },
             "details": {
                 "target": "string",
-                "required": false,
-                "projection": {
-                    "type": "field",
-                    "view": "textbox"
-                }
+                "required": false
             },
             "marker": {
                 "name": "marker",
@@ -113,15 +111,17 @@
                                 "trigger": "click",
                                 "pre": "null",
                                 "post": "$count = $count@pre + 1",
-                                "projection": {
-                                    "type": "stack",
-                                    "orientation": "vertical",
-                                    "layout": [
-                                        "Main topic <name>",
-                                        "<details>",
-                                        "List of sub topics: <sub topics>"
-                                    ]
-                                }
+                                "projection": [
+                                    {
+                                        "type": "stack",
+                                        "orientation": "vertical",
+                                        "layout": [
+                                            "Main topic <name>",
+                                            "<details>",
+                                            "List of sub topics: <sub topics>"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -161,10 +161,12 @@
                         "min": 5,
                         "action": {
                             "add": {
-                                "projection": {
-                                    "type": "wrap",
-                                    "layout": "Add a sub topic"
-                                }
+                                "projection": [
+                                    {
+                                        "type": "wrap",
+                                        "layout": "Add a sub topic"
+                                    }
+                                ]
                             }
                         }
                     }

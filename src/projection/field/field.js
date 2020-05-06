@@ -10,11 +10,12 @@ export const Field = {
      * @param {Object} values values
      * @returns {BaseProjection}
      */
-    create(concept, schema) {
+    create(concept, schema, editor) {
         const instance = Object.create(this);
 
         instance.concept = concept;
         instance.schema = schema;
+        instance.editor = editor;
         instance.validators = [];
 
         if (isDerivedOf(instance, Field)) {

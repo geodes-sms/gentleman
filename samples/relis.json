@@ -5,116 +5,116 @@
         "attribute": {
             "short_name": {
                 "alias": "short name",
-                "type": "string",
+                "target": "string",
                 "unique": true
             },
             "name": {
-                "type": "string"
+                "target": "string"
             }
         },
-        "component": [
-            {
-                "name": "screening_section",
+        "component": {
+            "screening_section": {
                 "required": true,
                 "idref": "screen_action",
                 "attribute": {
                     "screen_action": {
-                        "type": "string",
+                        "target": "string",
                         "unique": true,
                         "required": false
                     },
                     "screening": {
-                        "type": "screening"
+                        "target": "screening"
                     }
                 },
                 "projection": [
                     {
-                        "type": "text",
-                        "layout": "SCREENING #screen_action #screening"
+                        "type": "stack",
+                        "orientation": "vertical",
+                        "layout": [
+                            "SCREENING #screen_action",
+                            "#screening"
+                        ]
                     }
                 ]
             },
-            {
-                "name": "qa_section",
+            "qa_section": {
                 "alias": "Question/Answer section",
                 "required": false,
                 "idref": "qa_action",
                 "attribute": {
                     "qa_action": {
-                        "type": "string",
+                        "target": "string",
                         "unique": true,
                         "required": false
                     },
                     "quality_assess": {
-                        "type": "set",
+                        "target": "set",
                         "accept": "qa",
                         "min": 0
                     }
                 },
                 "projection": [
                     {
-                        "type": "text",
+                        "type": "wrap",
                         "layout": "QA #qa_action #quality_assess"
                     }
                 ]
             },
-            {
-                "name": "data_section",
+            "data_section": {
                 "alias": "Data extraction section",
                 "idref": "class_action",
                 "attribute": {
                     "class_action": {
-                        "type": "string",
+                        "target": "string",
                         "unique": true,
                         "required": false
                     },
                     "category": {
-                        "type": "set",
+                        "target": "set",
                         "accept": "category"
                     }
                 },
                 "projection": [
                     {
-                        "type": "text",
+                        "type": "wrap",
                         "layout": "DATA EXTRACTION #class_action #category"
                     }
                 ]
             },
-            {
-                "name": "report_section",
+            "report_section": {
                 "alias": "Report section",
                 "required": false,
                 "attribute": {
                     "reporting": {
-                        "type": "set",
+                        "target": "set",
                         "accept": "report",
                         "min": 0
                     }
                 },
                 "projection": [
                     {
-                        "type": "text",
+                        "type": "wrap",
                         "layout": "SYNTHESIS #reporting"
                     }
                 ]
             }
-        ],
+        },
         "constraint": {
             "PRESENCE": "C[2] => C[3]"
         },
         "projection": [
             {
-                "type": "text",
-                "flow": "vertical",
-                "header": [
-                    "PROJECT #short_name #name"
-                ],
+                "type": "stack",
+                "orientation": "vertical",
+                "element": {
+                    "header": {
+                        "type": "wrap",
+                        "layout": "PROJECT #short_name #name"
+                    }
+                },
                 "layout": [
-                    "$header:horizontal",
-                    "#[screening_section]",
-                    "#[qa_section]",
-                    "#[data_section]",
-                    "#[report_section]"
+                    "$header",
+                    "#screening_section:component"
                 ]
             }
         ],
@@ -135,64 +135,57 @@
     },
     "screening": {
         "nature": "concrete",
-        "component": [
-            {
-                "name": "reviews",
+        "component": {
+            "reviews": {
                 "attribute": {
                     "review_per_paper": {
-                        "type": "number",
+                        "target": "number",
                         "value": "2",
-                        "projection": {
-                            "type": "text",
-                            "field": {
+                        "projection": [
+                            {
                                 "type": "field",
                                 "placeholder": "Review per paper",
                                 "view": "textbox"
-                            },
-                            "layout": "$field"
-                        }
+                            }
+                        ]
                     }
                 },
                 "projection": [
                     {
-                        "type": "text",
-                        "layout": [
-                            "Reviews #review_per_paper"
-                        ]
+                        "type": "wrap",
+                        "layout": "Reviews #review_per_paper"
                     }
                 ]
             },
-            {
-                "name": "conflict",
+            "conflict": {
                 "attribute": {
                     "conflict_type": {
-                        "type": "conflictType"
+                        "target": "conflictType"
                     },
                     "conflict_resolution": {
-                        "type": "conflictResolution",
+                        "target": "conflictResolution",
                         "value": "unanimity"
                     }
                 },
                 "projection": [
                     {
-                        "type": "text",
+                        "type": "wrap",
                         "layout": "Conflict on #conflict_type resolved by #conflict_resolution"
                     }
                 ]
             },
-            {
-                "name": "criteria",
+            "criteria": {
                 "keyword": "Criteria",
                 "attribute": {
                     "exclusion_criteria": {
-                        "type": "set",
+                        "target": "set",
                         "accept": "string",
                         "min": 1
                     }
                 },
                 "projection": [
                     {
-                        "type": "text",
+                        "type": "wrap",
                         "layout": "Criteria = [#exclusion_criteria]"
                     },
                     {
@@ -227,88 +220,89 @@
                     }
                 ]
             },
-            {
-                "name": "sources",
+            "sources": {
                 "keyword": "Sources",
                 "required": true,
                 "attribute": {
                     "source_papers": {
-                        "type": "set",
+                        "target": "set",
                         "accept": {
-                            "type": "string",
+                            "target": "string",
                             "alias": "source"
                         }
                     }
                 },
                 "projection": [
                     {
-                        "type": "text",
+                        "type": "wrap",
                         "layout": "Sources = [#source_papers]"
                     }
                 ]
             },
-            {
-                "name": "strategies",
+            "strategies": {
                 "keyword": "Strategies",
                 "required": false,
                 "attribute": {
                     "search_strategy": {
-                        "type": "set",
+                        "target": "set",
                         "accept": "string"
                     }
                 },
                 "projection": [
                     {
-                        "type": "text",
+                        "type": "wrap",
                         "layout": "$keyword = [#search_strategy]"
                     }
                 ]
             },
-            {
-                "name": "validation",
+            "validation": {
                 "required": false,
                 "attribute": {
                     "validation_percentage": {
-                        "type": "number",
+                        "target": "number",
                         "value": "20",
                         "min": 0,
                         "max": 100
                     },
                     "validation_assignment_mode": {
-                        "type": "assignmentMode",
+                        "target": "assignmentMode",
                         "value": "normal",
                         "required": false
                     }
                 },
                 "projection": [
                     {
-                        "type": "text",
+                        "type": "wrap",
                         "layout": "Validation #validation_percentage% #validation_assignment_mode"
                     }
                 ]
             },
-            {
-                "name": "phases",
+            "phases": {
                 "keyword": "Phases",
                 "required": false,
                 "attribute": {
                     "phases": {
-                        "type": "set",
+                        "target": "set",
                         "accept": "phase"
                     }
                 },
                 "projection": [
                     {
-                        "type": "text",
+                        "type": "wrap",
                         "layout": "Phases #phases"
                     }
                 ]
             }
-        ],
+        },
         "projection": [
             {
-                "type": "text",
-                "layout": "#[reviews] #[conflict] #[criteria]"
+                "type": "stack",
+                "orientation": "vertical",
+                "layout": [
+                    "#reviews:component",
+                    "#conflict:component",
+                    "#criteria:component"
+                ]
             }
         ]
     },
@@ -316,20 +310,20 @@
         "nature": "concrete",
         "attribute": {
             "title": {
-                "type": "string"
+                "target": "string"
             },
             "description": {
-                "type": "string",
+                "target": "string",
                 "required": false
             },
             "fields": {
-                "type": "set",
+                "target": "set",
                 "accept": "field"
             }
         },
         "projection": [
             {
-                "type": "text",
+                "type": "wrap",
                 "layout": "#title #description Fields (#fields)"
             },
             {
@@ -366,56 +360,53 @@
     },
     "qa": {
         "nature": "concrete",
-        "component": [
-            {
-                "name": "questions",
+        "component": {
+            "questions": {
                 "attribute": {
                     "question": {
-                        "type": "set",
+                        "target": "set",
                         "accept": "string"
                     }
                 },
                 "projection": [
                     {
-                        "type": "text",
+                        "type": "wrap",
                         "layout": "Questions [#question]"
                     }
                 ]
             },
-            {
-                "name": "response",
+            "response": {
                 "attribute": {
                     "response": {
                         "name": "response",
-                        "type": "set",
+                        "target": "set",
                         "accept": "response"
                     }
                 },
                 "projection": [
                     {
-                        "type": "text",
+                        "type": "wrap",
                         "layout": "Response [#response]"
                     }
                 ]
             },
-            {
-                "name": "min_score",
+            "min_score": {
                 "attribute": {
                     "min_score": {
-                        "type": "number"
+                        "target": "number"
                     }
                 },
                 "projection": [
                     {
-                        "type": "text",
+                        "type": "wrap",
                         "layout": "Minimum score #min_score"
                     }
                 ]
             }
-        ],
+        },
         "projection": [
             {
-                "type": "text",
+                "type": "wrap",
                 "layout": "#[questions] #[response] #[min_score]"
             }
         ]
@@ -424,15 +415,15 @@
         "nature": "concrete",
         "attribute": {
             "title": {
-                "type": "string"
+                "target": "string"
             },
             "score": {
-                "type": "number"
+                "target": "number"
             }
         },
         "projection": [
             {
-                "type": "text",
+                "type": "wrap",
                 "layout": "#title:#score"
             }
         ]
@@ -446,19 +437,19 @@
         "idref": "name",
         "attribute": {
             "name": {
-                "type": "string",
+                "target": "string",
                 "unique": true
             },
             "title": {
-                "type": "string",
+                "target": "string",
                 "required": false
             },
             "value": {
-                "type": "reference",
+                "target": "reference",
                 "ref": "category"
             },
             "chart": {
-                "type": "set",
+                "target": "set",
                 "accept": "graphType"
             }
         }
@@ -468,7 +459,7 @@
         "prototype": "report",
         "projection": [
             {
-                "type": "text",
+                "type": "wrap",
                 "layout": "Simple #name #title on #value charts(#chart)"
             }
         ]
@@ -479,13 +470,13 @@
         "attribute": {
             "reference": {
                 "name": "reference",
-                "type": "IDREF",
-                "ref": "category"
+                "target": "reference",
+                "accept": "category"
             }
         },
         "projection": [
             {
-                "type": "text",
+                "type": "wrap",
                 "layout": "Compare #name #title on #value with #reference charts(#chart)"
             }
         ]
@@ -494,15 +485,15 @@
         "nature": "prototype",
         "attribute": {
             "name": {
-                "type": "string",
+                "target": "string",
                 "unique": true
             },
             "title": {
-                "type": "string",
+                "target": "string",
                 "required": false
             },
             "mandatory": {
-                "type": "boolean",
+                "target": "boolean",
                 "projection": {
                     "condition": "$value = true",
                     "layout": "*"
@@ -510,7 +501,7 @@
                 "value": true
             },
             "numberOfValues": {
-                "type": "number",
+                "target": "number",
                 "required": false,
                 "value": 1,
                 "projection": {
@@ -524,7 +515,7 @@
             },
             "subCategory": {
                 "name": "subCategory",
-                "type": "set",
+                "target": "set",
                 "accept": "category",
                 "required": false,
                 "inline": false,
@@ -549,10 +540,10 @@
         "idref": "name",
         "attribute": {
             "type": {
-                "type": "string"
+                "target": "string"
             },
             "max_char": {
-                "type": "number",
+                "target": "number",
                 "required": false,
                 "projection": {
                     "type": "text",
@@ -564,7 +555,7 @@
                 }
             },
             "pattern": {
-                "type": "string",
+                "target": "string",
                 "required": false,
                 "projection": {
                     "type": "text",
@@ -576,7 +567,7 @@
                 }
             },
             "initial_value": {
-                "type": "string",
+                "target": "string",
                 "required": false,
                 "projection": {
                     "type": "text",
@@ -605,7 +596,7 @@
         "idref": "name",
         "attribute": {
             "values": {
-                "type": "set",
+                "target": "set",
                 "accept": "string"
             }
         },
@@ -626,11 +617,11 @@
         "idref": "name",
         "attribute": {
             "reference_name": {
-                "type": "string",
+                "target": "string",
                 "required": false
             },
             "initial_values": {
-                "type": "set",
+                "target": "set",
                 "accept": "string",
                 "required": false,
                 "projection": {
@@ -640,7 +631,9 @@
                         "view": "list"
                     },
                     "flow": "horizontal",
-                    "layout": ["= [$field]"]
+                    "layout": [
+                        "= [$field]"
+                    ]
                 }
             }
         },
@@ -661,7 +654,7 @@
         "idref": "name",
         "attribute": {
             "depends_on": {
-                "type": "reference",
+                "target": "reference",
                 "accept": "category"
             }
         },
@@ -698,20 +691,27 @@
         }
     },
     "conflictType": {
-        "name": "conflictType",
+        "nature": "derivative",
         "base": "string",
-        "values": {
-            "exclusionCriteria": {
-                "projection": {
-                    "type": "text",
-                    "layout": "Criteria"
-                }
+        "values": [
+            {
+                "value": "exclusionCriteria",
+                "alias": "Criteria",
+                "projection": [
+                    {
+                        "type": "wrap",
+                        "layout": "Criteria"
+                    }
+                ]
             },
-            "includeExclude": "Decision"
-        }
+            {
+                "value": "includeExclude",
+                "alias": "Decision"
+            }
+        ]
     },
     "conflictResolution": {
-        "name": "conflictResolution",
+        "nature": "derivative",
         "base": "string",
         "values": [
             "majority",
@@ -719,8 +719,8 @@
         ]
     },
     "graphType": {
-        "name": "graphType",
-        "type": "enum",
+        "nature": "derivative",
+        "base": "string",
         "values": [
             "bar",
             "line",
@@ -728,8 +728,8 @@
         ]
     },
     "field": {
-        "name": "field",
-        "type": "enum",
+        "nature": "derivative",
+        "base": "string",
         "values": [
             "abstract",
             "bibtex",

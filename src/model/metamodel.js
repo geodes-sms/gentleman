@@ -1,4 +1,4 @@
-import { isNullOrUndefined, hasOwn, valOrDefault, isString, isNullOrWhitespace, isUndefined } from "zenkai";
+import { isNullOrUndefined, hasOwn, valOrDefault, isString, isNullOrWhitespace } from "zenkai";
 import { deepCopy, tryResolve } from "@utils/index.js";
 import { InvalidMetaModelError } from '@exception/index.js';
 import { Model } from "./model.js";
@@ -52,7 +52,7 @@ export const MetaModel = {
      * @param {string} type 
      * @returns {boolean}
      */
-    isConcept(type) { return !isUndefined(this.schema[type]); },
+    isConcept(type) { return hasOwn(this.schema, type); },
     /**
      * Gets a value indicating whether this concept is a prototype
      * @param {string} type 
@@ -124,6 +124,13 @@ export const MetaModel = {
         Object.assign(conceptSchema.component, baseSchema.component);
 
         return conceptSchema;
+    },
+    getProjectionSchema(concept) {
+        if (!this.isConcept(concept)) {
+            return null;
+        }
+
+        return this.schema[concept].projection;
     }
 };
 

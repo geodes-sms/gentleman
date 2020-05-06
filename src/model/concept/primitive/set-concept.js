@@ -34,10 +34,10 @@ export const SetConcept = extend(Concept, {
         }
 
         return {
-            projection: {
+            projection: [{
                 type: "wrap",
                 layout: `Add ${this.getAcceptedValues()}`
-            }
+            }]
         };
     },
     getElements() {
@@ -134,7 +134,7 @@ export const SetConcept = extend(Concept, {
 
         this.addElement(concept);
 
-        return this;
+        return concept;
     },
     canDelete() {
         return this.value.length > this.min;

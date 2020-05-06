@@ -6,7 +6,8 @@ import { ProjectionHandler } from "@projection/index.js";
 const BaseConcept = {
     /**
      * Creates a concept
-     * @param {*} args 
+     * @param {Model} args 
+     * @param {*} schema 
      * @returns {Concept}
      */
     create(model, schema) {
@@ -59,12 +60,15 @@ const BaseConcept = {
     object: "concept",
     init(args) {
         this.accept = args.accept;
-        this.action = args.action;
+        this.action = valOrDefault(args.action, {});
         this.parent = args.parent;
         this.refname = args.refname;
         this.reftype = args.reftype;
         this.alias = args.alias;
         this.min = valOrDefault(args.min, 1);
+        if (args.projection) {
+            this.schema.projection = args.projection;
+        }
 
         this.initAttribute();
         this.initComponent();
@@ -114,7 +118,7 @@ const BaseConcept = {
         return !this.isAttributeRequired(name);
     },
     remove(concept) {
-        if(!this.removeAttribute(concept.refname)) {
+        if (!this.removeAttribute(concept.refname)) {
             return false;
         }
         this.model.removeConcept(concept.id);
@@ -122,10 +126,10 @@ const BaseConcept = {
         return true;
     },
     delete() {
-        if(!this.getConceptParent().remove(this)){
+        if (!this.getConceptParent().remove(this)) {
             return false;
         }
-        
+
         if (this.projection) {
             this.projection.remove();
         }

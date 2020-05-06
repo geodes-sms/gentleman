@@ -11,7 +11,8 @@ const primitiveHandler = {
 
 const complexHandler = {
     prototype: (model, schema) => PrototypeConcept.create(model, schema),
-    concrete: (model, schema) => BaseConcept.create(model, schema)
+    concrete: (model, schema) => BaseConcept.create(model, schema),
+    derivative: (model, schema) => primitiveHandler[schema.base](model)
 };
 
 export const ConceptFactory = {
