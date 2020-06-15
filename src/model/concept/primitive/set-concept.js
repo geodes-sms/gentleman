@@ -1,18 +1,11 @@
-import { hasOwn, isNullOrUndefined, insert, valOrDefault, isString, defProp } from "zenkai";
+import { hasOwn, isNullOrUndefined, valOrDefault, isString } from "zenkai";
 import { extend } from "@utils/index.js";
 import { Concept } from "./../concept.js";
 
 
 export const SetConcept = extend(Concept, {
     name: 'set',
-    schema: {
-        projection: [
-            {
-                type: "field",
-                view: "list"
-            }
-        ]
-    },
+
     initValue(value) {
         this.value = [];
 
@@ -27,18 +20,6 @@ export const SetConcept = extend(Concept, {
         }
 
         return this;
-    },
-    getAddAction() {
-        if (hasOwn(this.action, 'add')) {
-            return this.action['add'];
-        }
-
-        return {
-            projection: [{
-                type: "wrap",
-                layout: `Add ${this.getAcceptedValues()}`
-            }]
-        };
     },
     getElements() {
         return this.value.map(id => this.model.getConcept(id));
@@ -71,6 +52,7 @@ export const SetConcept = extend(Concept, {
         }
 
         this.value.push(element.id);
+        this.notify("value.added", element);
 
         return true;
     },
@@ -158,5 +140,5 @@ export const SetConcept = extend(Concept, {
     }
 });
 
-defProp(SetConcept, 'count', { get() { return this.value.length; } });
-defProp(SetConcept, 'canAddValue', { get() { return true; } });
+Object.defineProperty(SetConcept, 'count', { get() { return this.value.length; } });
+Object.defineProperty(SetConcept, 'canAddValue', { get() { return true; } });

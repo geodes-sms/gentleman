@@ -13,7 +13,7 @@ export const Autocomplete = {
             });
         }
         // private members
-        instance._input = createUnorderedList({ class: "bare-list autocomplete" });
+        instance._input = createUnorderedList({ class: ["bare-list", "autocomplete"] });
         instance._target = undefined;
         instance._id = "";
         instance._data = [];

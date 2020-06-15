@@ -103,6 +103,6 @@ th { text-align: center; }
 
 .collapse { }
 
-.hidden { display: none; }
+.hidden { display: none!important; }
 
 .selected { background-color: rgba(45, 105, 196, 0.5); }

@@ -1,6 +1,4 @@
-import {
-    createI, removeChildren, isDerivedOf
-} from 'zenkai';
+import { createI, removeChildren, isDerivedOf } from 'zenkai';
 import { DataType, shake } from '@utils/index.js';
 
 
@@ -18,15 +16,11 @@ export const Field = {
         instance.editor = editor;
         instance.validators = [];
 
-        if (isDerivedOf(instance, Field)) {
-            instance.init();
-        }
-
         return instance;
     },
     id: null,
     editor: null,
-    parentProjection: null,
+    projection: null,
     concept: null,
     schema: null,
 
@@ -36,7 +30,7 @@ export const Field = {
     element: null,
     hasFocus: false,
 
-    createInput() { throw new Error("This function has not been implemented"); },
+    createInput() { throw new Error("Unimplemented function"); },
     focus() {
         this.element.contentEditable = false;
         this.element.focus();
@@ -70,7 +64,7 @@ export const Field = {
         if (this.concept.canDelete()) {
             this.concept.delete();
             removeChildren(this.element);
-            this.element.replaceWith(createI({ class: "attribute--optional", data: { object: "attribute", id: this.concept.parent.name } }));
+            this.element.replaceWith(createI({ class: "attribute--optional", dataset: { object: "attribute", id: this.concept.parent.name } }));
         } else {
             this.editor.notify("This element cannot be deleted");
             shake(this.element);

@@ -1,6 +1,6 @@
 import {
     createParagraph, createUnorderedList, createListItem, createStrong, createSpan,
-    createDiv, createButton, createInput, createInputAs, createLabel, getElement,
+    createDiv, createButton, createInput, createLabel, getElement,
     removeChildren, isHTMLElement, isNullOrWhitespace, capitalize, valOrDefault,
     appendChildren, isNullOrUndefined, createDocFragment,
 } from 'zenkai';
@@ -134,9 +134,9 @@ export const Explorer = {
         var missing = false;
 
         if (!isHTMLElement(this.container)) {
-            this.container = createDiv({ class: "explorer-container close" }, [
+            this.container = createDiv({ class: ["explorer-container", "close"] }, [
                 createDiv({ class: "explorer-action" }, [
-                    createButton({ class: "btn btn-close", data: { action: "close" } })
+                    createButton({ class: ["btn", "btn-close"], dataset: { action: "close" } })
                 ])
             ]);
             this.container.tabIndex = -1;
@@ -154,7 +154,7 @@ export const Explorer = {
         }
 
         if (!isHTMLElement(this.results)) {
-            this.results = createUnorderedList({ class: "bare-list explorer-results" });
+            this.results = createUnorderedList({ class: ["bare-list", "explorer-results"] });
             missing = true;
         }
 
@@ -282,14 +282,10 @@ export const Explorer = {
             } else if (type === "component") {
                 structure = this.concept.createComponent(name);
             }
-
-            let temp = getElement(`[data-id=${structure.name}]`, this.concept.projection.container);
-            if (!isHTMLElement(temp)) {
-                this.editor.notify("This attribute cannot be rendered");
-            }
-
-            temp.replaceWith(structure.render());
-            temp.remove();
+            // this.concept.listeners.forEach(listener => {
+            //     listener.update(type, structure);
+            // });
+           
             target.disabled = true;
         });
 
@@ -323,7 +319,7 @@ export const Explorer = {
 function createResultItem(struct, title, content) {
     const { name, alias, type, created, required } = struct;
 
-    const checkbox = createInputAs('checkbox', { class: "explorer-result-item__checkbox", value: `${name}:${type}` });
+    const checkbox = createInput({ type: "checkbox", class: "explorer-result-item__checkbox", value: `${name}:${type}` });
     checkbox.id = `${capitalize(name)}${capitalize(type)}`;
     checkbox.checked = created;
     checkbox.required = required;
@@ -340,7 +336,7 @@ function createResultItem(struct, title, content) {
 
     var result = createListItem({
         class: "explorer-result-item",
-        data: {
+        dataset: {
             value: name,
             required: required
         }

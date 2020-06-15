@@ -1,5 +1,5 @@
 import {
-    createLink, createDiv, createInput, createInputAs, createLabel, createStrong,
+    createLink, createDiv, createInput, createLabel, createStrong,
     createUnorderedList, createListItem, createParagraph, createButton,
     getElement, getElements, appendChildren, insertAfterElement, preprendChild,
     removeChildren, findAncestor, copytoClipboard, isHTMLElement, cloneObject,
@@ -105,9 +105,9 @@ export const Editor = {
 
         this.btnExport = createButton({
             id: "btnExportModel",
-            class: "btn btn-export hidden",
+            class: ["btn", "btn-export", "hidden"],
             draggable: true,
-            data: {
+            dataset: {
                 "context": "model",
                 "action": "export",
             }
@@ -115,10 +115,13 @@ export const Editor = {
 
         this.btnImport = createLabel({
             id: "btnImportModel",
-            class: "btn btn-import hidden",
+            class: ["btn", "btn-import", "hidden"],
             draggable: true,
-            data: { "context": "model", "action": "import" }
-        }, ["Import", createInputAs("file", { class: "hidden", accept: '.json' })]);
+            dataset: {
+                "context": "model", 
+                "action": "import"
+            }
+        }, ["Import", createInput({ type: "file", class: "hidden", accept: '.json' })]);
 
         appendChildren(this.container, [this.btnExport, this.btnImport]);
         preprendChild(this.container, this.body);
@@ -262,12 +265,12 @@ export const Editor = {
         this.activeElement = this.body;
 
         if (!isHTMLElement(this.infoContainer)) {
-            this.infoContainer = createDiv({ class: 'info-container hidden' });
+            this.infoContainer = createDiv({ class: ["info-container", "hidden"] });
             this.container.appendChild(this.infoContainer);
         }
 
         if (!isHTMLElement(this.actionContainer)) {
-            this.actionContainer = createDiv({ class: 'action-container hidden' });
+            this.actionContainer = createDiv({ class: ["action-container", "hidden"] });
             this.container.appendChild(this.actionContainer);
         }
 
@@ -300,6 +303,7 @@ export const Editor = {
 
         this.body.addEventListener('keydown', (event) => {
             var target = event.target;
+
             var field = this.fields[target.id - 1];
             var rememberKey = false;
 
@@ -342,7 +346,11 @@ export const Editor = {
                     break;
                 case Key.escape:
                     rememberKey = false;
-                    this.focusedElement.focus();
+                    if (field) {
+                        field.escapeHandler();
+                    } else {
+                        this.focusedElement.focus();
+                    }
 
                     break;
                 case Key.tab:
@@ -386,7 +394,9 @@ export const Editor = {
             switch (event.key) {
                 case Key.spacebar:
                     if (lastKey == Key.ctrl) {
-                        field.next();
+                        if (field) {
+                            field.spaceHandler();
+                        }
                     }
                     break;
                 case Key.delete: // Delete the field->attribute
@@ -424,8 +434,8 @@ export const Editor = {
                                 queryContent = createParagraph({ class: 'query-content' }, `No suggestion for this ${parentConcept.object}`);
                             } else {
                                 queryContent = createUnorderedList(
-                                    { class: 'bare-list suggestion-list' },
-                                    optionalAttributes.map(item => createListItem({ class: "suggestion", data: { attr: item } }, item))
+                                    { class: ["bare-list", "suggestion-list"] },
+                                    optionalAttributes.map(item => createListItem({ class: "suggestion", dataset: { attr: item } }, item))
                                 );
                             }
                             queryContainer.appendChild(queryContent);
@@ -524,7 +534,6 @@ export const Editor = {
 
             if (nature === 'attribute') {
                 let field = this.fields[target.id - 1];
-                this.focusedElement = field;
                 field.focusOut();
             }
 
@@ -562,23 +571,6 @@ export const Editor = {
         events.on('model.change', (from) => {
             this.save();
         });
-
-        function infoHandler(field, target) {
-            var info = field.getInfo();
-            removeChildren(this.infoContainer);
-            this.infoContainer.appendChild(
-                createUnorderedList({ class: 'bare-list' }, [
-                    createListItem({ class: 'info-type' }, [
-                        createStrong(null, "type"), `: ${info.type}`]),
-                    createListItem({ class: 'info-value' }, [
-                        createStrong(null, "length"), `: ${info.value}`])
-                ]));
-            insertAfterElement(target, this.infoContainer);
-            Object.assign(this.infoContainer.style, {
-                left: `${target.offsetLeft}px`
-            });
-            show(this.infoContainer);
-        }
 
         const handleWidthChange = (mql) => this.resize(mql);
 

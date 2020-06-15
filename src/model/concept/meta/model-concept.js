@@ -19,8 +19,8 @@ export const ModelConcept = extend(BaseConcept, {
             btnDesign = createButton({ class: "btn-projection-design" }, "Design")
         ]);
 
-        var projection = createDiv({ class: "projection concept-projection" }, [
-            createSpan({ class: "field empty", editable: true }, "Nom du concept"),
+        var projection = createDiv({ class: ["projection", "concept-projection"] }, [
+            createSpan({ class: ["field", "empty"], editable: true }, "Nom du concept"),
             createH3({ class: 'title' }, "Define structure"),
             createDiv({ class: "concept-attribute" }),
             createDiv({ class: "concept-component" }),

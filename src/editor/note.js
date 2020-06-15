@@ -1,6 +1,6 @@
 import {
     createAside, createAnchor, getElement, createDocFragment, createLineBreak, removeChildren,
-    createParagraph, createSpan, addClass, appendChildren, createH3, createH4, createListItem, 
+    createParagraph, createSpan, appendChildren, createH3, createH4, createListItem, 
     createUnorderedList, hasOwn, isString, isNullOrWhitespace
 } from 'zenkai';
 import { EventType, events } from '@utils/index.js';
@@ -127,14 +127,14 @@ function updateNote(projection) {
     // display error
     var error = createParagraph({ class: NOTE_SECTION });
     if (projection.hasError) {
-        addClass(error, 'note-error');
+        error.classList.add('note-error');
         appendChildren(error, [
             createSpan({ html: "You seem to have an error on that attribute:" }), BR(),
             createSpan({ html: projection.error })
         ]);
         fragment.appendChild(error);
     } else {
-        addClass(error, 'note-error--valid');
+        error.classList.add('note-error--valid');
         error.appendChild(createSpan({ html: "Everything is good here." }));
         fragment.appendChild(error);
     }

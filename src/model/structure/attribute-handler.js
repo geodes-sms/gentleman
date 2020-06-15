@@ -1,4 +1,4 @@
-import { isNullOrUndefined, isString, valOrDefault, hasOwn, isNullOrWhitespace } from "zenkai";
+import { isNullOrUndefined, valOrDefault, hasOwn, isNullOrWhitespace } from "zenkai";
 import { Attribute } from "./attribute";
 
 
@@ -20,7 +20,7 @@ export const AttributeHandler = {
     /** @returns {Attribute} */
     getAttribute(id) {
         if (isNullOrWhitespace(id) || !Number.isInteger(id)) {
-            throw new Error("Bad parameter");
+            throw new TypeError("Bad argument");
         }
 
         if (Number.isInteger(id)) {
@@ -32,7 +32,7 @@ export const AttributeHandler = {
     /** @returns {Attribute} */
     getAttributeByName(name) {
         if (isNullOrWhitespace(name)) {
-            throw new Error("Bad parameter");
+            throw new TypeError("Bad argument");
         }
 
         var attribute = this.attributes.find((c) => c.name === name);
@@ -58,9 +58,9 @@ export const AttributeHandler = {
         if (!hasOwn(this.attributeSchema, name)) {
             throw new Error(`Attribute not found: The concept ${this.name} does not contain an attribute named ${name}`);
         }
-        
+
         const schema = Object.assign(this.attributeSchema[name], { name: name });
-        
+
         var attribute = Attribute.create(this, schema).init(value);
         this.addAttribute(attribute);
 
@@ -70,6 +70,8 @@ export const AttributeHandler = {
     addAttribute(attribute) {
         this.attributes.push(attribute);
         this.attributes._created.add(attribute.name);
+
+        this.notify("attribute.added", attribute);
     },
     /**
      * Returns a value indicating whether the concept has an attribute
@@ -127,7 +129,8 @@ export const AttributeHandler = {
         var removedAttribute = this.attributes.splice(this.attributes.findIndex(attr => attr.name === name), 1);
         this.attributes._created.remove(name);
 
+        this.notify("attribute.removed", removedAttribute);
+        
         return removedAttribute.length === 1;
     },
 };
-

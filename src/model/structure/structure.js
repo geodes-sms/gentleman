@@ -1,4 +1,4 @@
-import { valOrDefault, defProp } from "zenkai";
+import { valOrDefault } from "zenkai";
 
 
 export const BaseStructure = {
@@ -27,7 +27,7 @@ export const BaseStructure = {
     render() { return this.projection.render(); }
 };
 
-defProp(BaseStructure, 'model', { get() { return this.concept.model; } });
-defProp(BaseStructure, 'alias', { get() { return this.schema.alias; } });
-defProp(BaseStructure, 'name', { get() { return this.schema.name; } });
-defProp(BaseStructure, 'required', { get() { return valOrDefault(this.schema.required, true); } });
+Object.defineProperty(BaseStructure, 'model', { get() { return this.concept.model; } });
+Object.defineProperty(BaseStructure, 'alias', { get() { return this.schema.alias; } });
+Object.defineProperty(BaseStructure, 'name', { get() { return this.schema.name; } });
+Object.defineProperty(BaseStructure, 'required', { get() { return valOrDefault(this.schema.required, true); } });

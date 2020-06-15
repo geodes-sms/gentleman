@@ -1,0 +1,197 @@
+{
+    "stage": {
+        "nature": "concrete",
+        "attribute": {
+            "name": { "target": "string" },
+            "info": { "target": "string" },
+            "description": { "target": "string" },
+            "rules": { "target": "set", "accept": { "target": "set" } }
+        },
+        "component": {
+            "actor_section": {
+                "attribute": {
+                    "actors": { "target": "set", "accept": "actor" }
+                },
+                "projection": [
+                    {
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": ["#actors"]
+                        }
+                    }
+                ]
+            },
+            "role_section": {
+                "attribute": {
+                    "roles": { "target": "set", "accept": "role" }
+                },
+                "projection": [
+                    {
+                        "layout": { 
+                            "type": "wrap",
+                            "disposition": ["#roles"]}
+                    }
+                ]
+            }
+        },
+        "projection": [
+            {
+                "element": {
+                    "header": {
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": ["STAGE #name #description"]
+                        }
+                    },
+                    "table": {
+                        "layout": {
+                            "type": "table",
+                            "orientation": "cross",
+                            "row": { "count": 3 },
+                            "column": { "count": 4 },
+                            "disposition": [
+                                {
+                                    "section": "header",
+                                    "layout": [
+                                        ["H[0:0]", "H[0:1]", "H[0:2]", "H[0:3]"]
+                                    ]
+                                },
+                                ["H[0:0]", "H[0:1]", "H[0:2]", "H[0:3]"],
+                                ["C[0:0]", "C[0:1] #info #name", "C[0:2]", "C[0:3]"],
+                                ["C[1:0]", { "colspan": 2, "rowspan": 2, "layout": "C[1-2:1-2]" }, "C[2:3]"],
+                                ["C[2:0]", "C[2:4]"]
+                            ]
+                        }
+                    }
+                },
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "$header",
+                        "$table",
+                        "#actor_section:component",
+                        "#role_section:component"
+                    ]
+                },
+                "layout@preview": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "$header",
+                        "$table",
+                        "ACTOR SECTION",
+                        "ROLE SECTION"
+                    ]
+                }
+            },
+            {
+                "element": {
+                    "header": {
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": ["Build a stage"]
+                        }
+                    },
+                    "table": {
+                        "layout": {
+                            "type": "table",
+                            "orientation": "cross",
+                            "row": { "count": 3 },
+                            "column": { "count": 4 },
+                            "disposition": [
+                                {
+                                    "section": "header",
+                                    "layout": [
+                                        ["H[0:0]", "H[0:1]", "H[0:2]", "H[0:3]"]
+                                    ]
+                                },
+                                ["Name:", "#name"],
+                                ["Description", " #description"]
+                            ]
+                        }
+                    }
+                },
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "$header",
+                        "$table",
+                        "#actor_section:component",
+                        "#role_section:component"
+                    ]
+                }
+            }
+        ]
+    },
+    "actor": {
+        "nature": "concrete",
+        "attribute": {
+            "name": { "target": "string" },
+            "description": { "target": "string" },
+            "criteria": {
+                "target": "set", "accept": "string",
+                "required": false,
+                "projection": [
+                    {
+                        "element": {
+                            "field": {
+                                "type": "field",
+                                "view": "list",
+                                "source": "criteria"
+                            }
+                        },
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "disposition": [
+                                "MANDATORY Criteria",
+                                "$field"
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "DEFINE Actor #name",
+                        "#description",
+                        "#criteria"
+                    ]
+                }
+            }
+        ]
+    },
+    "role": {
+        "nature": "concrete",
+        "attribute": {
+            "name": { "target": "string" },
+            "description": { "target": "string" }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "DEFINE Role #name",
+                        "#description"
+                    ]
+                }
+            }
+        ]
+    },
+    "@root": "stage",
+    "@config": {
+        "language": "AskMe",
+        "settings": {
+            "autosave": true
+        }
+    }
+}

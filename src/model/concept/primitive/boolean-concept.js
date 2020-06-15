@@ -6,16 +6,13 @@ export const BooleanConcept = Concept.create({
         var instance = Object.create(this);
 
         instance.model = model;
-        instance.projection = Projection.create(createProjection(), instance, model.editor);
+
         return instance;
     },
     projection: null,
     representation: null,
     name: 'boolean',
 
-    render() {
-        return this.projection.render();
-    },
     export() {
         return this.value;
     },

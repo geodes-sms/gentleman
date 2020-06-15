@@ -34,9 +34,9 @@ export const LinkField = extend(Field, {
         var container = createDiv({ class: "field-wrapper" });
         this.element = createSpan({
             id: this.id,
-            class: "field field--textbox",
+            class: ["field", "field--textbox"],
             html: "",
-            data: {
+            dataset: {
                 nature: "attribute",
                 type: this.object,
                 placeholder: this.placeholder
@@ -50,7 +50,7 @@ export const LinkField = extend(Field, {
         } else {
             this.element.classList.add("empty");
         }
-        this.results = createUnorderedList({ class: "bare-list choice-results hidden" });
+        this.results = createUnorderedList({ class: ["bare-list", "choice-results", "hidden"] });
         this.results.tabIndex = 0;
 
         appendChildren(container, [this.element, this.results]);
@@ -67,7 +67,7 @@ export const LinkField = extend(Field, {
         // Create fields
         var DATA = [];
 
-        const createChoice = (value, text) => createListItem({ class: "choice-result-item", data: { value: value } }, text);
+        const createChoice = (value, text) => createListItem({ class: "choice-result-item", dataset: { value: value } }, text);
         const getInputValue = () => this.element.textContent.trim();
         const filterDATA = (query) => DATA.filter(val => query.some(q => val.name.toLowerCase().includes(q.toLowerCase())));
 

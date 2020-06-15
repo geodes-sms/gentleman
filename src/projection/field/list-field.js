@@ -1,6 +1,7 @@
 import {
     createDocFragment, createUnorderedList, createListItem,
-    insertBeforeElement, insertAfterElement, removeChildren, isHTMLElement
+    insertBeforeElement, insertAfterElement, removeChildren, isHTMLElement,
+    valOrDefault
 } from "zenkai";
 import { extend, Key } from "@utils/index.js";
 import { Projection } from "@projection/index.js";
@@ -9,6 +10,8 @@ import { Field } from "./field.js";
 
 export const ListField = extend(Field, {
     init() {
+        this.errors = [];
+        this.extras = [];
         this.validators = [];
 
         var validator = function () {
@@ -20,22 +23,46 @@ export const ListField = extend(Field, {
         return this;
     },
     object: "SET",
+    /** @type {*[]} */
+    extras: null,
+    value: null,
+    errors: null,
+    update(message, value) {
+        switch (message) {
+            case "value.added":
+                var projection = Projection.create(valOrDefault(value.protoSchema, value.schema.projection), value, this.editor);
+                var container = createListItem({ class: "field--list-item", tabindex: 0 }, [projection.render()]);
+
+                this.element.lastChild.before(container);
+
+                break;
+            default:
+                console.warn(`List Field not updated for operation '${message}'`);
+                break;
+        }
+        // this.updateUI();
+    },
 
     createInput() {
         this.element = createUnorderedList({
             id: this.id,
-            class: ['empty', 'bare-list', 'field', 'field--list'],
-            data: {
+            class: ["bare-list", "field", "field--list", "empty"],
+            dataset: {
                 type: "set",
                 nature: "field",
             }
-        }, [valueHandler.call(this, this.concept.getElements())]);
+        });
         this.element.contentEditable = false;
-
+        this.element.appendChild(valueHandler.call(this, this.concept.getElements()));
 
         this.bindEvents();
 
+        this.concept.register(this);
+
         return this.element;
+    },
+    createElement() {
+        return this.concept.createElement();
     },
     bindEvents() {
         var lastKey = -1;
@@ -44,12 +71,13 @@ export const ListField = extend(Field, {
         const isItem = (element) => isHTMLElement(element) && element.classList.contains('field--list-item');
         const concept = this.concept;
 
-        this.element.addEventListener('click', function () {
+        this.element.addEventListener('click', (event) => {
         });
 
-        this.element.addEventListener('keydown', (e) => {
+        this.element.addEventListener('keydown', (event) => {
             var activeElement = document.activeElement;
-            switch (e.key) {
+
+            switch (event.key) {
                 case Key.backspace:
                     break;
                 case Key.left_arrow:
@@ -69,7 +97,7 @@ export const ListField = extend(Field, {
                     }
                     break;
                 case Key.ctrl:
-                    e.preventDefault();
+                    event.preventDefault();
                     break;
                 case Key.delete:
                     if (this.concept.canDelete() && activeElement.classList.contains('field--list-item')) {
@@ -79,16 +107,17 @@ export const ListField = extend(Field, {
                     }
             }
 
-            lastKey = e.key;
+            lastKey = event.key;
         }, false);
 
-        this.element.addEventListener('keyup', function (e) {
+        this.element.addEventListener('keyup', (event) => {
             var activeElement = document.activeElement;
-            switch (e.key) {
+
+            switch (event.key) {
                 case Key.backspace:
                     break;
                 case Key.ctrl:
-                    e.preventDefault();
+                    event.preventDefault();
                     break;
                 case Key.spacebar:
                     if (lastKey === Key.spacebar && isChild(activeElement)) {
@@ -98,7 +127,7 @@ export const ListField = extend(Field, {
                             container.tabIndex = 0;
                             insertAfterElement(activeElement, container);
                             container.focus();
-                            e.preventDefault();
+                            event.preventDefault();
                         }
                     }
 
@@ -126,36 +155,55 @@ export const ListField = extend(Field, {
 });
 
 function valueHandler(value) {
-    const { concept, editor } = this;
+    const { editor } = this;
 
     var fragment = createDocFragment();
 
-    if (Array.isArray(value)) {
-        value.forEach(val => {
-            var projection = Projection.create(val.schema.projection, val, editor);
-            var container = createListItem({ class: "field--list-item", tabindex: 0 }, [projection.render()]);
-            fragment.appendChild(container);
-        });
+    if (!Array.isArray(value)) {
+        return null;
     }
 
-    if (concept.canAddValue) {
-        let { projection: projectionConfig, constraint } = concept.getAddAction();
-        let container = createListItem({ class: "field--list__add" });
-
-        if (projectionConfig) {
-            let projection = Projection.create(projectionConfig, concept, editor);
-            container.appendChild(projection.render());
-        }
-
-        container.addEventListener('click', function () {
-            let element = concept.createElement();
-            var projection = Projection.create(element.schema.projection, element, editor);
-            var container = createListItem({ class: "field--list-item", tabindex: 0 }, [projection.render()]);
-            insertBeforeElement(this, container);
-        });
-
+    value.forEach(val => {
+        var projection = Projection.create(valOrDefault(val.protoSchema, val.schema.projection), val, editor);
+        var container = createListItem({ class: "field--list-item", tabindex: 0 }, [projection.render()]);
         fragment.appendChild(container);
-    }
+    });
+
+    var actionContainer = actionHandler.call(this);
+
+    fragment.appendChild(actionContainer);
 
     return fragment;
+}
+
+const actionDefaultSchema = {
+    add: {
+        projection: [{
+            layout: {
+                "type": "wrap",
+                "disposition": ["Add an element"]
+            }
+        }]
+    }
+};
+
+function actionHandler() {
+    const { concept, editor, schema } = this;
+
+    const action = valOrDefault(schema.action, actionDefaultSchema);
+
+    var { projection: projectionSchema, constraint } = action.add;
+
+    var projection = Projection.create(projectionSchema, concept, editor);
+
+    var addContainer = createListItem({ class: "field--list__add" }, [projection.render()]);
+
+    addContainer.addEventListener('click', () => {
+        var element = this.createElement();
+        if (!element) {
+            this.editor("Element could not be created");
+        }
+    });
+
+    return addContainer;
 }

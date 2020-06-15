@@ -63,6 +63,7 @@
             "data_section": {
                 "alias": "Data extraction section",
                 "idref": "class_action",
+                "required": true,
                 "attribute": {
                     "class_action": {
                         "target": "string",
@@ -87,7 +88,7 @@
                 "attribute": {
                     "reporting": {
                         "target": "set",
-                        "accept": "report",
+                        "accept": "simple_graph",
                         "min": 0
                     }
                 },
@@ -114,7 +115,10 @@
                 },
                 "layout": [
                     "$header",
-                    "#screening_section:component"
+                    "#screening_section:component",
+                    "#qa_section:component",
+                    "#data_section:component",
+                    "#report_section:component"
                 ]
             }
         ],
@@ -180,22 +184,48 @@
                     "exclusion_criteria": {
                         "target": "set",
                         "accept": "string",
-                        "min": 1
+                        "min": 1,
+                        "operation": {
+                            "add": {
+                                "trigger": "request",
+                                "post": "$size := $size@pre + 1",
+                                "@value": [
+                                    {
+                                        "new_set": "init:[set:string]"
+                                    },
+                                    "union:[$new_set, #value]"
+                                ]
+                            },
+                            "remove": {
+                                "trigger": "request",
+                                "pre": "$size > $min",
+                                "post": "$size := $size@pre - 1",
+                                "@value": "diff:[#value, @input]"
+                            }
+                        },
+                        "projection": [
+                            {
+                                "type": "field",
+                                "view": "list",
+                                "source": "values",
+                                "action": {
+                                    "add": {
+                                        "projection": [
+                                            {
+                                                "type": "wrap",
+                                                "layout": "New criteria"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
                     }
                 },
                 "projection": [
                     {
                         "type": "wrap",
                         "layout": "Criteria = [#exclusion_criteria]"
-                    },
-                    {
-                        "type": "table",
-                        "disposition": "column",
-                        "layout": {
-                            "header": "Title|List of fields|Description",
-                            "cell": "title|fields|description",
-                            "multiple": true
-                        }
                     },
                     {
                         "type": "table",
@@ -222,7 +252,7 @@
             },
             "sources": {
                 "keyword": "Sources",
-                "required": true,
+                "required": false,
                 "attribute": {
                     "source_papers": {
                         "target": "set",
@@ -301,7 +331,11 @@
                 "layout": [
                     "#reviews:component",
                     "#conflict:component",
-                    "#criteria:component"
+                    "#criteria:component",
+                    "#sources:component",
+                    "#strategies:component",
+                    "#validation:component",
+                    "#phases:component"
                 ]
             }
         ]
@@ -325,15 +359,6 @@
             {
                 "type": "wrap",
                 "layout": "#title #description Fields (#fields)"
-            },
-            {
-                "type": "table",
-                "disposition": "column",
-                "layout": {
-                    "header": "Title|List of fields|Description",
-                    "cell": "title|fields|description",
-                    "multiple": true
-                }
             },
             {
                 "type": "table",
@@ -406,8 +431,13 @@
         },
         "projection": [
             {
-                "type": "wrap",
-                "layout": "#[questions] #[response] #[min_score]"
+                "type": "stack",
+                "orientation": "vertical",
+                "layout": [
+                    "#questions:component",
+                    "#response:component",
+                    "#min_score:component"
+                ]
             }
         ]
     },
@@ -418,18 +448,19 @@
                 "target": "string"
             },
             "score": {
-                "target": "number"
+                "target": "double"
             }
         },
         "projection": [
             {
                 "type": "wrap",
-                "layout": "#title:#score"
+                "layout": "#title : #score"
             }
         ]
     },
     "double": {
-        "prototype": "number",
+        "nature": "derivative",
+        "base": "number",
         "format": "[0-9]+([.][0-9]+)?"
     },
     "report": {
@@ -581,7 +612,7 @@
         },
         "projection": [
             {
-                "type": "text",
+                "type": "wrap",
                 "layout": "Simple #name #title #numberOfValues : #type #max_char #pattern #initial_value #subCategory"
             },
             {
@@ -602,7 +633,7 @@
         },
         "projection": [
             {
-                "type": "text",
+                "type": "wrap",
                 "layout": "List #name #title #numberOfValues = [#values] #subCategory"
             },
             {
@@ -623,23 +654,12 @@
             "initial_values": {
                 "target": "set",
                 "accept": "string",
-                "required": false,
-                "projection": {
-                    "type": "text",
-                    "field": {
-                        "type": "field",
-                        "view": "list"
-                    },
-                    "flow": "horizontal",
-                    "layout": [
-                        "= [$field]"
-                    ]
-                }
+                "required": false
             }
         },
         "projection": [
             {
-                "type": "text",
+                "type": "wrap",
                 "layout": "DynamicList #name #title #numberOfValues #reference_name #initial_values #subCategory"
             },
             {
@@ -660,7 +680,7 @@
         },
         "projection": [
             {
-                "type": "text",
+                "type": "wrap",
                 "layout": "DynamicList #name #title #numberOfValues depends on #depends_on #subCategory"
             },
             {
@@ -670,25 +690,34 @@
         ]
     },
     "simpleType": {
-        "name": "simpleType",
-        "type": "enum",
-        "values": {
-            "bool": "bool",
-            "date": "date",
-            "int": "int",
-            "real": "real",
-            "string": "string",
-            "text": "text"
-        }
+        "nature": "derivative",
+        "base": "string",
+        "values": [
+            "bool",
+            "date",
+            "int",
+            "real",
+            "string",
+            "text"
+        ]
     },
     "assignmentMode": {
-        "name": "assignmentMode",
+        "nature": "derivative",
         "base": "string",
-        "values": {
-            "info": "Info",
-            "normal": "Normal",
-            "veto": "Veto"
-        }
+        "values": [
+            {
+                "value": "info",
+                "alias": "Info"
+            },
+            {
+                "value": "normal",
+                "alias": "Normal"
+            },
+            {
+                "value": "veto",
+                "alias": "Veto"
+            }
+        ]
     },
     "conflictType": {
         "nature": "derivative",
@@ -743,27 +772,6 @@
         "language": "ReLiS",
         "settings": {
             "autosave": true
-        },
-        "style": {
-            "attribute": {
-                "inline": true,
-                "spacing": {
-                    "before": "2px",
-                    "after": "2px"
-                }
-            },
-            "component": {
-                "inline": false,
-                "size": {
-                    "width": "FIT_CONTENT"
-                },
-                "spacing": {
-                    "before": "5px",
-                    "after": "5px"
-                },
-                "corner": {},
-                "background": "#f0f0f0"
-            }
         }
     }
 }

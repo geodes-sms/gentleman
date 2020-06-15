@@ -1,4 +1,4 @@
-import { cloneObject, defProp } from 'zenkai';
+import { cloneObject } from 'zenkai';
 
 /**
  * State management
@@ -40,10 +40,10 @@ export const State = {
             future = [];
         };
 
-        defProp(instance, 'hasUndo', {
+        Object.defineProperty(instance, 'hasUndo', {
             get() { return past.length > 0; },
         });
-        defProp(instance, 'hasRedo', {
+        Object.defineProperty(instance, 'hasRedo', {
             get() { return future.length > 0; },
         });
 

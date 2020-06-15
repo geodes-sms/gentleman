@@ -5,16 +5,23 @@ import { Projection } from "./projection.js";
 export const ProjectionHandler = {
     /** @type {Projection[]} */
     projections: null,
-    /** @type {Projection[]} */
-    _projections: null,
     /** @type {TextualProjection} */
     projection: null,
     projectionIndex: 0,
     projectionSchema: null,
     initProjection(schema) {
         this.projections = [];
-        this._projections = [];
         this.projectionSchema = Array.isArray(schema) ? schema[0] : schema;
+    },
+    updateProjection() {
+        console.log(this.name, this.projections);
+        // let temp = getElement(`[data-id=${structure.name}]`, this.concept.projection.container);
+        // if (!isHTMLElement(temp)) {
+        //     this.editor.notify("This attribute cannot be rendered");
+        // }
+
+        // temp.replaceWith(structure.render());
+        // temp.remove();  
     },
     changeProjection() {
         this.projectionIndex++;
@@ -22,12 +29,5 @@ export const ProjectionHandler = {
         this.projection.schema = this.schema.projection[nextIndex];
 
         return this.projection.render();
-    },
-    render() {
-        if (isNullOrUndefined(this.projection)) {
-            this.projection = Projection.create(this.projectionSchema, this, this.model.editor);
-        }
-
-        return this.projection.render();
-    },
+    }
 };

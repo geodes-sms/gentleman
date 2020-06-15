@@ -15,7 +15,7 @@ export const Convo = {
             throw new Error("Missing editor parameter: Convo requires an editor");
         }
         this.editor = editor;
-        this.container = createUnorderedList({ class: "convo bare-list" });
+        this.container = createUnorderedList({ class: ["convo", "bare-list"] });
         this.container.tabIndex = 0;
         if (items) {
             appendChildren(this.container, items.map(item => createListItem({ class: "convo-item" }, item)));
@@ -40,9 +40,9 @@ export const Convo = {
 
         // context.getActions();
         /** @type {HTMLButtonElement} */
-        let btnAction1 = createButton({ class: "btn convo__btn-action" }, "Create a box");
+        let btnAction1 = createButton({ class: ["btn", "convo__btn-action"] }, "Create a box");
         /** @type {HTMLButtonElement} */
-        let btnAction2 = createButton({ class: "btn convo__btn-action" }, "Get data");
+        let btnAction2 = createButton({ class: ["btn", "convo__btn-action"] }, "Get data");
 
         /** @type {HTMLInputElement} */
         let input = createInput({ class: "convo-input" });

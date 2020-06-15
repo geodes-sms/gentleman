@@ -1,5 +1,5 @@
-import { isString, valOrDefault, hasOwn, isNullOrUndefined, isIterable, defProp, isEmpty } from "zenkai";
-import { AttributeHandler, ComponentHandler } from "@structure/index.js";
+import { isString, valOrDefault, hasOwn, isNullOrUndefined, isIterable, isEmpty } from "zenkai";
+import { AttributeHandler, ComponentHandler, ObserverHandler } from "@structure/index.js";
 import { ProjectionHandler } from "@projection/index.js";
 
 
@@ -15,12 +15,13 @@ const BaseConcept = {
 
         instance.model = model;
         if (schema) {
-            instance.schema = schema;
+            instance.schema = Object.assign(valOrDefault(instance.schema, {}), schema);
         }
         instance.references = [];
 
         return instance;
     },
+
     /** Reference to parent model */
     model: null,
     /** Cache of the schema describing the concept */
@@ -32,13 +33,11 @@ const BaseConcept = {
     /** @type {string} */
     name: null,
     /** @type {string} */
+    alias: null,
+    /** @type {string} */
     refname: null,
     /** @type {string} */
     reftype: null,
-    /** @type {string} */
-    alias: null,
-    /** @type {string} */
-    path: null,
     /** @type {string[]} */
     actions: null,
     /** @type {string[]} */
@@ -49,27 +48,33 @@ const BaseConcept = {
     parent: null,
     /** @type {int[]} */
     references: null,
+    /** Concept value */
     value: null,
-    /** possible values for the concept */
+    /** Possible values for the concept */
     values: null,
-    /** concept actions configuration */
+    /** Concept actions configuration */
     action: null,
-    /** concept shadow list */
+    /** Concept shadow list */
     shadows: null,
     /** Object nature */
     object: "concept",
-    init(args) {
+
+    init(args = {}) {
         this.accept = args.accept;
         this.action = valOrDefault(args.action, {});
         this.parent = args.parent;
         this.refname = args.refname;
         this.reftype = args.reftype;
+
+        this.values = valOrDefault(args.values, this.schema.values);
         this.alias = args.alias;
         this.min = valOrDefault(args.min, 1);
+
         if (args.projection) {
             this.schema.projection = args.projection;
         }
 
+        this.initObserver();
         this.initAttribute();
         this.initComponent();
         this.initValue(args.value);
@@ -178,11 +183,12 @@ const BaseConcept = {
 
 export const Concept = Object.assign(
     BaseConcept,
+    ObserverHandler,
     AttributeHandler,
     ComponentHandler,
     ProjectionHandler
 );
 
-defProp(Concept, 'fullName', { get() { return `${this.name}`; } });
-defProp(Concept, 'attributeSchema', { get() { return this.schema.attribute; } });
-defProp(Concept, 'componentSchema', { get() { return this.schema.component; } });
+Object.defineProperty(Concept, 'fullName', { get() { return `${this.name}`; } });
+Object.defineProperty(Concept, 'attributeSchema', { get() { return this.schema.attribute; } });
+Object.defineProperty(Concept, 'componentSchema', { get() { return this.schema.component; } });

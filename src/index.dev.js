@@ -1,6 +1,7 @@
 import { Editor } from './editor/index.js';
 const METAMODEL_MINDMAP = require('@samples/mindmap.json');
 const METAMODEL_RELIS = require('@samples/relis.json');
+const METAMODEL_ASKME = require('@samples/askme.json');
 
 // CSS imports
 import '@css/normalize.css';
@@ -16,7 +17,7 @@ const Workflow = {
 
 const WorkflowMetaModel = {
     // [Workflow.MODEL]: METAMODEL_MINDMAP,
-    [Workflow.MODEL]: METAMODEL_RELIS,
+    [Workflow.MODEL]: METAMODEL_ASKME,
     [Workflow.DESIGN]: "METAMODEL_PROTO"
 };
 

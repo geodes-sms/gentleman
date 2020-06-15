@@ -1,4 +1,4 @@
-import { valOrDefault, isEmpty, defProp } from "zenkai";
+import { valOrDefault, isEmpty } from "zenkai";
 import { BaseStructure } from "./structure.js";
 
 
@@ -44,9 +44,6 @@ export const BaseAttribute = {
         return {
             [`attribute.${this.name}`]: this.value.toString()
         };
-        // return {
-        //     [`${this.name}@attribute`]: this.value.toString()
-        // };
     }
 };
 
@@ -54,9 +51,3 @@ export const Attribute = Object.assign(
     Object.create(BaseStructure),
     BaseAttribute
 );
-
-// defProp(Attribute, 'target', { get() { return this.schema.target; } });
-// defProp(Attribute, 'accept', { get() { return this.schema.accept; } });
-// defProp(Attribute, 'min', { get() { return this.schema.min; } });
-// defProp(Attribute, 'projectionSchema', { get() { return this.schema.projection; } });
-// defProp(Attribute, 'actionSchema', { get() { return valOrDefault(this.schema.action, {}); } });

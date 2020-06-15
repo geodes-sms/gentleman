@@ -26,7 +26,7 @@ inputSelector.addEventListener('change', function (e) {
         reader.onload = function (e) {
             hide(lblSelector);
             var editor = GE.Editor.create(JSON.parse(reader.result));
-            var headerContent = createDiv({ class: "content-wrapper editor-header-content" });
+            var headerContent = createDiv({ class: ["content-wrapper", "editor-header-content"] });
             headerContent.appendChild(createSpan({ id: 'language', class: 'model-language', text: editor.language }));
             header.appendChild(headerContent);
             GE.Menu.create().init(editor, headerContent);

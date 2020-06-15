@@ -1,4 +1,4 @@
-import { isNullOrUndefined, isString, valOrDefault, hasOwn, isNullOrWhitespace } from "zenkai";
+import { isNullOrUndefined, valOrDefault, hasOwn, isNullOrWhitespace } from "zenkai";
 import { Component } from "./component.js";
 
 
@@ -59,6 +59,7 @@ export const ComponentHandler = {
         if (isNullOrUndefined(schema)) {
             throw new Error(`Component not found: The concept ${this.name} does not contain an component named ${name}`);
         }
+        
         this.componentSchema[name].name = name;
         var component = Component.create(this, schema).init(value);
         component.id = this.id;
@@ -71,6 +72,8 @@ export const ComponentHandler = {
     addComponent(component) {
         this.components.push(component);
         this.components._created.add(component.name);
+
+        this.notify("component.added", component);
     },
     /**
      * Returns a value indicating whether the concept has an component
@@ -126,6 +129,8 @@ export const ComponentHandler = {
     removeComponent(name) {
         var removedComponent = this.components.splice(this.components.findIndex(comp => comp.name === name), 1);
         this.components._created.remove(name);
+
+        this.notify("component.removed", removedComponent);
 
         return removedComponent.length === 1;
     }
