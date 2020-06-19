@@ -1,4 +1,4 @@
-import { hasOwn, isNullOrUndefined, valOrDefault, isString } from "zenkai";
+import { hasOwn, isNullOrUndefined, valOrDefault, isString, isEmpty } from "zenkai";
 import { extend } from "@utils/index.js";
 import { Concept } from "./../concept.js";
 
@@ -20,6 +20,12 @@ export const SetConcept = extend(Concept, {
         }
 
         return this;
+    },
+    hasValue() {
+        return !isEmpty(this.value);
+    },
+    getValue() {
+        return this.value;
     },
     getElements() {
         return this.value.map(id => this.model.getConcept(id));

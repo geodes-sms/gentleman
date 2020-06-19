@@ -1,4 +1,4 @@
-import { valOrDefault, isNullOrWhitespace } from "zenkai";
+import { valOrDefault, isNullOrWhitespace, isNullOrUndefined } from "zenkai";
 import { extend } from "@utils/index.js";
 import { Concept } from "./../concept.js";
 
@@ -25,18 +25,25 @@ function responseHandler(code) {
 
 export const NumberConcept = extend(Concept, {
     name: 'number',
-    schema: {
-        projection: [
-            {
-                type: "field",
-                view: "textbox"
-            }
-        ]
-    },
+
     initValue(value) {
         this.value = valOrDefault(value, "");
 
         return this;
+    },
+    hasValue() {
+        return !isNullOrWhitespace(this.value);
+    },
+    getValue() {
+        return this.value;
+    },
+    setValue(value) {
+        if (isNullOrUndefined(value) || this.value == value) {
+            return;
+        }
+
+        this.value = value;
+        this.notify("value.changed", value);
     },
     update(value) {
         var result = this.validate(value);
@@ -51,7 +58,7 @@ export const NumberConcept = extend(Concept, {
             };
         }
 
-        this.value = value;
+        this.setValue(value);
 
         return {
             success: true,

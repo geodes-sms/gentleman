@@ -1,6 +1,5 @@
 import { isString, valOrDefault, hasOwn, isNullOrUndefined, isIterable, isEmpty } from "zenkai";
 import { AttributeHandler, ComponentHandler, ObserverHandler } from "@structure/index.js";
-import { ProjectionHandler } from "@projection/index.js";
 
 
 const BaseConcept = {
@@ -14,6 +13,8 @@ const BaseConcept = {
         const instance = Object.create(this);
 
         instance.model = model;
+        instance.metamodel = model.metamodel;
+        
         if (schema) {
             instance.schema = Object.assign(valOrDefault(instance.schema, {}), schema);
         }
@@ -65,7 +66,6 @@ const BaseConcept = {
         this.parent = args.parent;
         this.refname = args.refname;
         this.reftype = args.reftype;
-
         this.values = valOrDefault(args.values, this.schema.values);
         this.alias = args.alias;
         this.min = valOrDefault(args.min, 1);
@@ -78,7 +78,6 @@ const BaseConcept = {
         this.initAttribute();
         this.initComponent();
         this.initValue(args.value);
-        this.initProjection(valOrDefault(args.projection, this.schema.projection));
 
         return this;
     },
@@ -185,8 +184,7 @@ export const Concept = Object.assign(
     BaseConcept,
     ObserverHandler,
     AttributeHandler,
-    ComponentHandler,
-    ProjectionHandler
+    ComponentHandler
 );
 
 Object.defineProperty(Concept, 'fullName', { get() { return `${this.name}`; } });

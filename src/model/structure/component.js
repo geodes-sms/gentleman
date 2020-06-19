@@ -1,17 +1,15 @@
 import { valOrDefault, isNullOrUndefined } from "zenkai";
 import { BaseStructure } from "./structure.js";
 import { AttributeHandler } from "./attribute-handler.js";
-import { ProjectionHandler } from "@projection/projection-handler.js";
 import { ObserverHandler } from "./observer-handler.js";
 
 
 const BaseComponent = {
     object: "component",
-    listeners: null,
+
     init(data) {
         this.initObserver();
         this.initAttribute();
-        this.initProjection(this.schema.projection);
 
         if (isNullOrUndefined(data)) {
             return this;
@@ -32,6 +30,7 @@ const BaseComponent = {
         return this;
     },
     canDelete() { return !this.required; },
+    
     export() {
         var output = {
             name: valOrDefault(this.name, this.id)
@@ -58,8 +57,7 @@ export const Component = Object.assign(
     Object.create(BaseStructure),
     BaseComponent,
     ObserverHandler,
-    AttributeHandler,
-    ProjectionHandler
+    AttributeHandler
 );
 
 Object.defineProperty(Component, 'fullName', { get() { return `${this.concept.name}:${this.name}`; } });

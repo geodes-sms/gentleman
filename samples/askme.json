@@ -2,34 +2,101 @@
     "stage": {
         "nature": "concrete",
         "attribute": {
-            "name": { "target": "string" },
-            "info": { "target": "string" },
-            "description": { "target": "string" },
-            "rules": { "target": "set", "accept": { "target": "set" } }
+            "name": {
+                "target": "string"
+            },
+            "info": {
+                "target": "string"
+            },
+            "description": {
+                "target": "string"
+            },
+            "rules": {
+                "target": "set",
+                "accept": {
+                    "target": "set"
+                }
+            }
         },
         "component": {
             "actor_section": {
                 "attribute": {
-                    "actors": { "target": "set", "accept": "actor" }
+                    "actors": {
+                        "target": "set",
+                        "accept": "actor",
+                        "projection": [
+                            {
+                                "type": "field",
+                                "view": "table",
+                                "orientation": "column",
+                                "header": [
+                                    "Name",
+                                    "Description",
+                                    "Mix"
+                                ],
+                                "body": [
+                                    "#name",
+                                    "#description",
+                                    "#name : #description"
+                                ],
+                                "disposition": [
+                                    {
+                                        "section": "header",
+                                        "layout": [
+                                            [
+                                                "H[0:0]",
+                                                "H[0:1]"
+                                            ]
+                                        ]
+                                    },
+                                    [
+                                        "C[0:0]",
+                                        "C[0:1] #info #name"
+                                    ],
+                                    [
+                                        {
+                                            "colspan": 2,
+                                            "rowspan": 2,
+                                            "layout": "C[1-2:1-2]"
+                                        }
+                                    ],
+                                    [
+                                        "C[2:0]",
+                                        "C[2:4]"
+                                    ]
+                                ]
+                            }
+                        ]
+                    }
                 },
                 "projection": [
                     {
                         "layout": {
-                            "type": "wrap",
-                            "disposition": ["#actors"]
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "disposition": [
+                                "DEFINE Actor",
+                                "#actors"
+                            ]
                         }
                     }
                 ]
             },
             "role_section": {
                 "attribute": {
-                    "roles": { "target": "set", "accept": "role" }
+                    "roles": {
+                        "target": "set",
+                        "accept": "role"
+                    }
                 },
                 "projection": [
                     {
-                        "layout": { 
+                        "layout": {
                             "type": "wrap",
-                            "disposition": ["#roles"]}
+                            "disposition": [
+                                "#roles"
+                            ]
+                        }
                     }
                 ]
             }
@@ -40,26 +107,8 @@
                     "header": {
                         "layout": {
                             "type": "wrap",
-                            "disposition": ["STAGE #name #description"]
-                        }
-                    },
-                    "table": {
-                        "layout": {
-                            "type": "table",
-                            "orientation": "cross",
-                            "row": { "count": 3 },
-                            "column": { "count": 4 },
                             "disposition": [
-                                {
-                                    "section": "header",
-                                    "layout": [
-                                        ["H[0:0]", "H[0:1]", "H[0:2]", "H[0:3]"]
-                                    ]
-                                },
-                                ["H[0:0]", "H[0:1]", "H[0:2]", "H[0:3]"],
-                                ["C[0:0]", "C[0:1] #info #name", "C[0:2]", "C[0:3]"],
-                                ["C[1:0]", { "colspan": 2, "rowspan": 2, "layout": "C[1-2:1-2]" }, "C[2:3]"],
-                                ["C[2:0]", "C[2:4]"]
+                                "STAGE #name #description"
                             ]
                         }
                     }
@@ -69,7 +118,6 @@
                     "orientation": "vertical",
                     "disposition": [
                         "$header",
-                        "$table",
                         "#actor_section:component",
                         "#role_section:component"
                     ]
@@ -79,7 +127,6 @@
                     "orientation": "vertical",
                     "disposition": [
                         "$header",
-                        "$table",
                         "ACTOR SECTION",
                         "ROLE SECTION"
                     ]
@@ -90,24 +137,47 @@
                     "header": {
                         "layout": {
                             "type": "wrap",
-                            "disposition": ["Build a stage"]
+                            "disposition": [
+                                "Build a stage"
+                            ]
                         }
                     },
                     "table": {
                         "layout": {
                             "type": "table",
                             "orientation": "cross",
-                            "row": { "count": 3 },
-                            "column": { "count": 4 },
+                            "row": {
+                                "count": 3
+                            },
+                            "column": {
+                                "count": 4
+                            },
                             "disposition": [
                                 {
                                     "section": "header",
                                     "layout": [
-                                        ["H[0:0]", "H[0:1]", "H[0:2]", "H[0:3]"]
+                                        [
+                                            "H[0:0]",
+                                            "H[0:1]",
+                                            "H[0:2]",
+                                            "H[0:3]"
+                                        ]
                                     ]
                                 },
-                                ["Name:", "#name"],
-                                ["Description", " #description"]
+                                [
+                                    "Name:",
+                                    "#name"
+                                ],
+                                [
+                                    "Description",
+                                    " #description"
+                                ],
+                                [
+                                    {
+                                        "colspan": 2,
+                                        "layout": "COMMIT"
+                                    }
+                                ]
                             ]
                         }
                     }
@@ -128,10 +198,15 @@
     "actor": {
         "nature": "concrete",
         "attribute": {
-            "name": { "target": "string" },
-            "description": { "target": "string" },
+            "name": {
+                "target": "string"
+            },
+            "description": {
+                "target": "string"
+            },
             "criteria": {
-                "target": "set", "accept": "string",
+                "target": "set",
+                "accept": "string",
                 "required": false,
                 "projection": [
                     {
@@ -171,8 +246,12 @@
     "role": {
         "nature": "concrete",
         "attribute": {
-            "name": { "target": "string" },
-            "description": { "target": "string" }
+            "name": {
+                "target": "string"
+            },
+            "description": {
+                "target": "string"
+            }
         },
         "projection": [
             {

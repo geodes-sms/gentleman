@@ -1,109 +1,171 @@
+import {
+    createSpan, createUnorderedList, createListItem, createDiv, createDocFragment,
+    addAttributes, appendChildren, removeChildren, isHTMLElement,
+    valOrDefault, isEmpty, isNullOrWhitespace, createAnchor, createInput, findAncestor,
+} from "zenkai";
 import { Field } from "./field.js";
-import { createSpan, addAttributes, valOrDefault, isEmpty, createUnorderedList, createListItem, removeChildren, isNullOrWhitespace, createDocFragment, createDiv, appendChildren } from "zenkai";
-import { extend } from "@utils/index.js";
+import { extend, show, hide } from "@utils/index.js";
+import { Projection } from "@projection/index.js";
 
+
+function createElement() {
+    var container = createAnchor({
+        class: ["field", "field--link", "empty"],
+        tabindex: 0,
+        editable: true,
+        dataset: {
+            nature: "field",
+            view: "link",
+            id: this.id,
+        }
+    });
+
+    if (this.concept.hasValue()) {
+        container.classList.remove("empty");
+    }
+
+    return container;
+}
+
+
+function createChoice(value) {
+    var choice = createListItem({
+        class: "field--link__choice",
+        tabindex: 0,
+        dataset: {
+            nature: "field-component",
+            id: this.id,
+            value: value.id
+        }
+    });
+
+    const schema = this.choice.projection;
+    schema.forEach(config => {
+        config.element = {};
+        for (const key in value) {
+            Object.assign(config.element, {
+                [key]: {
+                    "type": "text",
+                    "disposition": value[key]
+                }
+            });
+        }
+    });
+
+    var projection = Projection.create(schema, null, this.editor);
+    choice.appendChild(projection.render());
+
+    return choice;
+}
 
 export const LinkField = extend(Field, {
     init() {
-        this.validators = [];
-
-        var validator = function () {
-            return true;
-        };
-
-        this.placeholder = this.resolvePlaceholder();
-        this.validators.push(validator);
+        this.value = this.schema.value;
+        this.choice = this.schema.choice;
 
         return this;
     },
-    resolvePlaceholder() {
-        if (this.schema.placeholder) {
-            return this.schema.placeholder;
+    value: null,
+    source: null,
+    choice: null,
+    input: null,
+    choices: null,
+
+    render() {
+        if (!isHTMLElement(this.element)) {
+            this.element = createElement.call(this);
+            this.element.id = this.id;
+
+            this.input = createInput({
+                class: "field--link__input",
+                placeholder: `Select ${this.concept.name}`,
+                tabindex: 0,
+                dataset: {
+                    nature: "field-component",
+                    id: this.id
+                }
+            });
+            this.choices = createUnorderedList({
+                class: ["bare-list", "field--link__choices", "hidden"],
+                tabindex: 0,
+                dataset: {
+                    nature: "field-component",
+                    id: this.id
+                }
+            });
+
+            appendChildren(this.element, [this.input, this.choices]);
         }
-        if (this.concept) {
-            return this.concept.getName();
+
+        if (this.concept.hasValue()) {
+            let concept = this.getValue();
+
+            var projectionSchema = valOrDefault(this.value.projection, concept.schema.projection);
+            var projection = Projection.create(projectionSchema, concept, this.editor);
+            this.element.appendChild(projection.render());
         }
-
-        return "Select reference";
-    },
-    placeholder: null,
-    object: "REFERENCE",
-    results: null,
-
-    createInput() {
-        var container = createDiv({ class: "field-wrapper" });
-        this.element = createSpan({
-            id: this.id,
-            class: ["field", "field--textbox"],
-            html: "",
-            dataset: {
-                nature: "attribute",
-                type: this.object,
-                placeholder: this.placeholder
-            }
-        });
-        this.element.contentEditable = true;
-        this.element.tabIndex = 0;
-
-        if (this.concept.value) {
-            this.element.textContent = this.concept.value;
-        } else {
-            this.element.classList.add("empty");
-        }
-        this.results = createUnorderedList({ class: ["bare-list", "choice-results", "hidden"] });
-        this.results.tabIndex = 0;
-
-        appendChildren(container, [this.element, this.results]);
 
         this.bindEvents();
 
-        return container;
+        return this.element;
+    },
+    focusIn() {
+        this.source = this.concept.getCandidates();
+    },
+    focusOut() {
+        return true;
+    },
+    spaceHandler() {
+        removeChildren(this.choices);
+        this.source.forEach(value => {
+            var choice = createChoice.call(this, value);
+            this.choices.appendChild(choice);
+        });
+
+        show(this.choices);
+        this.choices.focus();
     },
     bindEvents() {
         var lastKey = -1;
 
         const concept = this.concept;
 
-        // Create fields
-        var DATA = [];
+        const getInputValue = () => this.input.value.trim();
+        const filterDATA = (query) => this.source.filter(val => query.some(q => val.name.toLowerCase().includes(q.toLowerCase())));
 
-        const createChoice = (value, text) => createListItem({ class: "choice-result-item", dataset: { value: value } }, text);
-        const getInputValue = () => this.element.textContent.trim();
-        const filterDATA = (query) => DATA.filter(val => query.some(q => val.name.toLowerCase().includes(q.toLowerCase())));
+        this.element.addEventListener('click', (event) => {
+            let target = event.target;
+            var parent = findAncestor(target, (el) => el.classList.contains('field--link__choice'));
+            
+            if (parent.parentElement === this.choices) {
+                let { value } = parent.dataset;
+                this.concept.setValue(value);
+                let concept = this.concept.getValue();
+                var projectionSchema = concept.schema.projection;
+                var projection = Projection.create(this.value.projection, concept, this.editor);
+                this.element.parentElement.insertBefore(projection.render(), this.element);
+                this.value = concept;
 
-
-        // Fill in results
-        DATA.forEach(x => { this.results.appendChild(createChoice(x.id, x.uniqueAttribute.getValue() || x.name)); });
-
-        // Bind events
-        this.results.addEventListener('click', (e) => {
-            let target = e.target;
-            let { value } = target.dataset;
-
-            if (value) {
-                concept.update(value);
-                this.element.textContent = target.textContent;
-                this.results.classList.add('hidden');
+                hide(this.input);
+                hide(this.choices);
             }
         });
-        this.element.addEventListener('focusin', (e) =>  DATA = concept.getRefCandidates());
-        this.element.addEventListener('input', (e) => {
-            removeChildren(this.results);
-            if (this.element.textContent.length > 0) {
-                this.element.classList.remove('empty');
-            } else {
-                this.element.classList.add('empty');
-            }
+
+        this.element.addEventListener('input', (event) => {
             var fragment = createDocFragment();
+
             if (isNullOrWhitespace(getInputValue())) {
-                DATA.forEach(x => { fragment.appendChild(createChoice(x.id, x.uniqueAttribute.getValue() || x.name)); });
-                this.results.classList.add('hidden');
+                this.source.forEach(concept => { fragment.appendChild(createChoice.call(this, concept)); });
+
+                hide(this.choices);
             } else {
                 let query = getInputValue().split(' ');
-                filterDATA(query).forEach(x => { fragment.appendChild(createChoice(x.id, x.uniqueAttribute.getValue() || x.name)); });
-                this.results.classList.remove('hidden');
+                filterDATA(query).forEach(concept => { fragment.appendChild(createChoice.call(this, concept)); });
+
+                show(this.choices);
             }
-            this.results.appendChild(fragment);
+
+            removeChildren(this.choices).appendChild(fragment);
         });
     }
 });

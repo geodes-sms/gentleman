@@ -32,6 +32,10 @@
     z-index: 1;
 }
 
+.field--table {
+    max-width: 50vw;
+}
+
 .field--label {
     display: inline-block;
     white-space: nowrap;
@@ -97,6 +101,8 @@
     padding: 0;
     font-size: 1rem;
 }
+    .field--list.vertical { flex-direction: column; }
+    .field--list.horizontal { flex-direction: row; }
 
     .field--list.active > .field--list-item {
         padding: 5px;
@@ -126,52 +132,34 @@
             border: 2px solid rgb(0, 102, 255);
             box-shadow: 7px -5px 0 rgb(0, 102, 255);
         }
-      
-      .shake {
-        -webkit-animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-                animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-        -webkit-transform: translate3d(0, 0, 0);
-                transform: translate3d(0, 0, 0);
-        -webkit-backface-visibility: hidden;
-                backface-visibility: hidden;
-        -webkit-perspective: 1000px;
-                perspective: 1000px;
-      }
-      
-      @-webkit-keyframes shake {
-        10%, 90% {
-          -webkit-transform: translate3d(-1px, 0, 0);
-                  transform: translate3d(-1px, 0, 0);
-        }
-        20%, 80% {
-          -webkit-transform: translate3d(2px, 0, 0);
-                  transform: translate3d(2px, 0, 0);
-        }
-        30%, 50%, 70% {
-          -webkit-transform: translate3d(-4px, 0, 0);
-                  transform: translate3d(-4px, 0, 0);
-        }
-        40%, 60% {
-          -webkit-transform: translate3d(4px, 0, 0);
-                  transform: translate3d(4px, 0, 0);
-        }
-      }
-      
-      @keyframes shake {
-        10%, 90% {
-          -webkit-transform: translate3d(-1px, 0, 0);
-                  transform: translate3d(-1px, 0, 0);
-        }
-        20%, 80% {
-          -webkit-transform: translate3d(2px, 0, 0);
-                  transform: translate3d(2px, 0, 0);
-        }
-        30%, 50%, 70% {
-          -webkit-transform: translate3d(-4px, 0, 0);
-                  transform: translate3d(-4px, 0, 0);
-        }
-        40%, 60% {
-          -webkit-transform: translate3d(4px, 0, 0);
-                  transform: translate3d(4px, 0, 0);
-        }
-      }
+
+.field--choice {
+    display: inline-flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    padding: 0;
+    font-size: 1rem;
+}
+
+.field--choice__input {
+    font-size: 1.4em;
+}
+
+
+.field--choice__choices {
+    position: relative;
+    background: #fff;
+    box-shadow: 0 1px 2px #999;
+    z-index: 2;
+}
+
+.field--choice__choice {
+    position: relative;
+    padding: 2px 5px 3px;
+    box-sizing: border-box;
+    font-size: 1.3em;
+}
+
+.field--choice__choice:hover {
+    background-color: #ffd300;
+}

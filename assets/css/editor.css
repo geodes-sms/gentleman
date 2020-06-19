@@ -143,11 +143,6 @@
                 background-color: #5F4B8B; 
             }
 
-    .concept-container--active .btn-projection,
-    .concept-container--active .btn-query {
-
-    }
-
 .notify {
     position: fixed;
     bottom: 0;
@@ -171,10 +166,10 @@
     }
 
 .btn-projection {
-    position: absolute;
+    position: fixed;
     display: block;
     padding: 4px 10px 5px;
-    width: 175px;
+    width: 150px;
     box-sizing: border-box;
     font-size: 1.3rem; font-weight: 600;
     color: #fff;
@@ -187,7 +182,7 @@
     .btn-projection:after {
         content: "";
         position: absolute;
-        width: 120px; height: 120px;
+        width: 100px; height: 100px;
         border-radius: 50%;
         background-color: royalblue;
         transition: 0.5s;
@@ -206,11 +201,11 @@
     }
 
 .btn-projection--previous {
-    right: calc(1% + 200px); bottom: 1%;
+    right: calc(2% + 170px); bottom: calc(1% + 50px);
     text-align: right;
 }
     .btn-projection--previous:after {
-        top: -50px; left: -5px;
+        top: -40px; left: -5px;
     }
     .btn-projection--previous:not(:disabled):hover:after {
         transform: rotate(180deg) scale(1.1);
@@ -218,11 +213,11 @@
     }
 
 .btn-projection--next {
-    right: 1%; bottom: 1%;
+    right: 20px; bottom: calc(1% + 50px);
     text-align: left;
 }        
     .btn-projection--next:after {
-        top: -50px; right: -5px;
+        top: -40px; right: -5px;
     }
     .btn-projection--next:not(:disabled):hover:after {
         transform: rotate(-180deg) scale(1.1);

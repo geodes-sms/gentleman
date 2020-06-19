@@ -1,40 +1,57 @@
 import {
     createSpan, createParagraph, createDiv, createUnorderedList, createListItem,
-    insertAfterElement, removeChildren, isEmpty, isNullOrUndefined, isNullOrWhitespace,
-    capitalizeFirstLetter, createButton, appendChildren
+    createButton, appendChildren, removeChildren, isHTMLElement,
+    isNullOrUndefined, isNullOrWhitespace, capitalizeFirstLetter,
 } from "zenkai";
 import { extend, hide, Key } from "@utils/index.js";
 import { Field } from "./field.js";
 
 
+function createInputField() {
+    var input = createSpan({
+        class: ["field", "field--textbox", "empty"],
+        tabindex: 0,
+        editable: true,
+        dataset: {
+            nature: "field",
+            view: "text",
+            id: this.id,
+            placeholder: this.placeholder
+        }
+    });
+
+    if (this.concept.hasValue()) {
+        input.textContent = this.concept.getValue();
+        input.classList.remove("empty");
+    }
+
+    return input;
+}
+
 export const TextField = extend(Field, {
     /** @type {string} */
     placeholder: null,
-    /** @type {string} */
-    object: "STRING",
-    /** @type {*[]} */
-    extras: null,
     /** @type {HTMLElement} */
     input: null,
-    value: null,
-    errors: null,
-
-    get hasError() { return !isEmpty(this.errors); },
-    get hasExtra() { return !isEmpty(this.extras); },
+    /** @type {string} */
+    value: null,    
 
     init() {
-        this.errors = [];
-        this.extras = [];
-
         this.placeholder = this.resolvePlaceholder();
+        this.concept.register(this);
+        console.log(this.concept);
 
         return this;
     },
-
+    /**
+     * Resolves the value of the placeholder
+     * @returns {string}
+     */
     resolvePlaceholder() {
         if (this.schema.placeholder) {
             return this.schema.placeholder;
         }
+
         if (this.concept) {
             return this.concept.getAlias();
         }
@@ -47,41 +64,27 @@ export const TextField = extend(Field, {
                 this.input.textContent = value;
                 break;
             default:
-                console.warn(`Field not updated for operation '${type}'`);
+                console.warn(`The operation '${type}' was not handled`);
                 break;
         }
         this.updateUI();
     },
 
-    createInput() {
-        this.input = createSpan({
-            id: this.id,
-            class: ["field", "field--textbox"],
-            html: "",
-            dataset: {
-                nature: "attribute",
-                type: this.object,
-                placeholder: this.placeholder
-            }
-        });
-        this.input.contentEditable = true;
-        this.input.tabIndex = 0;
-
-        if (this.concept.value) {
-            this.input.textContent = this.concept.value;
-        } else {
-            this.input.classList.add("empty");
+    render() {
+        if (!isHTMLElement(this.input)) {
+            this.input = createInputField.call(this);
+            this.element = this.input;
+            this.element.id = this.id;
         }
-        this.element = this.input;
 
         this.bindEvents();
-        this.concept.register(this);
 
         return this.element;
     },
+
     focusIn() {
-        this.hasFocus = false;
         this.value = this.input.textContent;
+        this.hasFocus = true;
     },
     focusOut() {
         this.input.contentEditable = true;
@@ -216,11 +219,23 @@ export const TextField = extend(Field, {
     },
     append(element) {
         if (this.element === this.input) {
-            this.element = createDiv({ class: "field-wrapper" });
-            this.element.tabIndex = -1;
+            this.element = createDiv({
+                class: "field-wrapper",
+                id: this.input.id,
+                tabindex: -1,
+                dataset: {
+                    nature: "field",
+                    view: "text",
+                    id: this.id,
+                }
+            });
+            this.input.removeAttribute('id');
+            this.input.dataset.nature = "field-component";
+
             this.input.after(this.element);
             this.element.appendChild(this.input);
         }
+
         this.element.appendChild(element);
         this.extras.push(element);
         this.input.style.minWidth = `${element.offsetWidth}px`;

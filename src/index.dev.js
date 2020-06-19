@@ -7,6 +7,7 @@ const METAMODEL_ASKME = require('@samples/askme.json');
 import '@css/normalize.css';
 import '@css/base.css';
 import '@css/field.css';
+import '@css/effect.css';
 import '@css/editor.css';
 import '@css/explorer.css';
 
@@ -16,8 +17,7 @@ const Workflow = {
 };
 
 const WorkflowMetaModel = {
-    // [Workflow.MODEL]: METAMODEL_MINDMAP,
-    [Workflow.MODEL]: METAMODEL_ASKME,
+    [Workflow.MODEL]: METAMODEL_RELIS,
     [Workflow.DESIGN]: "METAMODEL_PROTO"
 };
 

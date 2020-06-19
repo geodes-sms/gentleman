@@ -1,7 +1,6 @@
 {
     "project": {
         "nature": "concrete",
-        "idref": "short_name",
         "attribute": {
             "short_name": {
                 "alias": "short name",
@@ -15,7 +14,6 @@
         "component": {
             "screening_section": {
                 "required": true,
-                "idref": "screen_action",
                 "attribute": {
                     "screen_action": {
                         "target": "string",
@@ -28,19 +26,20 @@
                 },
                 "projection": [
                     {
-                        "type": "stack",
-                        "orientation": "vertical",
-                        "layout": [
-                            "SCREENING #screen_action",
-                            "#screening"
-                        ]
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "disposition": [
+                                "SCREENING #screen_action",
+                                "#screening"
+                            ]
+                        }
                     }
                 ]
             },
             "qa_section": {
                 "alias": "Question/Answer section",
                 "required": false,
-                "idref": "qa_action",
                 "attribute": {
                     "qa_action": {
                         "target": "string",
@@ -55,14 +54,17 @@
                 },
                 "projection": [
                     {
-                        "type": "wrap",
-                        "layout": "QA #qa_action #quality_assess"
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                "QA #qa_action #quality_assess"
+                            ]
+                        }
                     }
                 ]
             },
             "data_section": {
                 "alias": "Data extraction section",
-                "idref": "class_action",
                 "required": true,
                 "attribute": {
                     "class_action": {
@@ -72,13 +74,31 @@
                     },
                     "category": {
                         "target": "set",
-                        "accept": "category"
+                        "accept": "category",
+                        "projection": [
+                            {
+                                "type": "field",
+                                "view": "list",
+                                "orientation": "vertical"
+                            }
+                        ]
                     }
                 },
                 "projection": [
                     {
-                        "type": "wrap",
-                        "layout": "DATA EXTRACTION #class_action #category"
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "disposition": [
+                                {
+                                    "type": "wrap",
+                                    "disposition": [
+                                        "DATA EXTRACTION #class_action"
+                                    ]
+                                },
+                                "#category"
+                            ]
+                        }
                     }
                 ]
             },
@@ -94,8 +114,12 @@
                 },
                 "projection": [
                     {
-                        "type": "wrap",
-                        "layout": "SYNTHESIS #reporting"
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                "SYNTHESIS #reporting"
+                            ]
+                        }
                     }
                 ]
             }
@@ -105,21 +129,27 @@
         },
         "projection": [
             {
-                "type": "stack",
-                "orientation": "vertical",
                 "element": {
                     "header": {
-                        "type": "wrap",
-                        "layout": "PROJECT #short_name #name"
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                "PROJECT #short_name #name"
+                            ]
+                        }
                     }
                 },
-                "layout": [
-                    "$header",
-                    "#screening_section:component",
-                    "#qa_section:component",
-                    "#data_section:component",
-                    "#report_section:component"
-                ]
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "$header",
+                        "#screening_section:component",
+                        "#qa_section:component",
+                        "#data_section:component",
+                        "#report_section:component"
+                    ]
+                }
             }
         ],
         "encoding": {
@@ -149,15 +179,19 @@
                             {
                                 "type": "field",
                                 "placeholder": "Review per paper",
-                                "view": "textbox"
+                                "view": "text"
                             }
                         ]
                     }
                 },
                 "projection": [
                     {
-                        "type": "wrap",
-                        "layout": "Reviews #review_per_paper"
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                "Reviews #review_per_paper"
+                            ]
+                        }
                     }
                 ]
             },
@@ -173,8 +207,12 @@
                 },
                 "projection": [
                     {
-                        "type": "wrap",
-                        "layout": "Conflict on #conflict_type resolved by #conflict_resolution"
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                "Conflict on #conflict_type resolved by #conflict_resolution"
+                            ]
+                        }
                     }
                 ]
             },
@@ -212,8 +250,10 @@
                                     "add": {
                                         "projection": [
                                             {
-                                                "type": "wrap",
-                                                "layout": "New criteria"
+                                                "layout": {
+                                                    "type": "text",
+                                                    "disposition": "New criteria"
+                                                }
                                             }
                                         ]
                                     }
@@ -224,8 +264,12 @@
                 },
                 "projection": [
                     {
-                        "type": "wrap",
-                        "layout": "Criteria = [#exclusion_criteria]"
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                "Criteria = [#exclusion_criteria]"
+                            ]
+                        }
                     },
                     {
                         "type": "table",
@@ -264,8 +308,12 @@
                 },
                 "projection": [
                     {
-                        "type": "wrap",
-                        "layout": "Sources = [#source_papers]"
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                "Sources = [#source_papers]"
+                            ]
+                        }
                     }
                 ]
             },
@@ -280,8 +328,12 @@
                 },
                 "projection": [
                     {
-                        "type": "wrap",
-                        "layout": "$keyword = [#search_strategy]"
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                "$keyword = [#search_strategy]"
+                            ]
+                        }
                     }
                 ]
             },
@@ -302,8 +354,12 @@
                 },
                 "projection": [
                     {
-                        "type": "wrap",
-                        "layout": "Validation #validation_percentage% #validation_assignment_mode"
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                "Validation #validation_percentage% #validation_assignment_mode"
+                            ]
+                        }
                     }
                 ]
             },
@@ -318,25 +374,30 @@
                 },
                 "projection": [
                     {
-                        "type": "wrap",
-                        "layout": "Phases #phases"
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                "Phases #phases"
+                            ]
+                        }
                     }
                 ]
             }
         },
         "projection": [
             {
-                "type": "stack",
-                "orientation": "vertical",
-                "layout": [
-                    "#reviews:component",
-                    "#conflict:component",
-                    "#criteria:component",
-                    "#sources:component",
-                    "#strategies:component",
-                    "#validation:component",
-                    "#phases:component"
-                ]
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "#reviews:component",
+                        "#conflict:component",
+                        "#sources:component",
+                        "#strategies:component",
+                        "#validation:component",
+                        "#phases:component"
+                    ]
+                }
             }
         ]
     },
@@ -357,8 +418,12 @@
         },
         "projection": [
             {
-                "type": "wrap",
-                "layout": "#title #description Fields (#fields)"
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "#title #description Fields (#fields)"
+                    ]
+                }
             },
             {
                 "type": "table",
@@ -395,8 +460,12 @@
                 },
                 "projection": [
                     {
-                        "type": "wrap",
-                        "layout": "Questions [#question]"
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                "Questions [#question]"
+                            ]
+                        }
                     }
                 ]
             },
@@ -410,8 +479,12 @@
                 },
                 "projection": [
                     {
-                        "type": "wrap",
-                        "layout": "Response [#response]"
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                "Response [#response]"
+                            ]
+                        }
                     }
                 ]
             },
@@ -423,21 +496,27 @@
                 },
                 "projection": [
                     {
-                        "type": "wrap",
-                        "layout": "Minimum score #min_score"
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                "Minimum score #min_score"
+                            ]
+                        }
                     }
                 ]
             }
         },
         "projection": [
             {
-                "type": "stack",
-                "orientation": "vertical",
-                "layout": [
-                    "#questions:component",
-                    "#response:component",
-                    "#min_score:component"
-                ]
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "#questions:component",
+                        "#response:component",
+                        "#min_score:component"
+                    ]
+                }
             }
         ]
     },
@@ -453,8 +532,12 @@
         },
         "projection": [
             {
-                "type": "wrap",
-                "layout": "#title : #score"
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "#title : #score"
+                    ]
+                }
             }
         ]
     },
@@ -465,7 +548,6 @@
     },
     "report": {
         "nature": "prototype",
-        "idref": "name",
         "attribute": {
             "name": {
                 "target": "string",
@@ -477,7 +559,7 @@
             },
             "value": {
                 "target": "reference",
-                "ref": "category"
+                "accept": "category"
             },
             "chart": {
                 "target": "set",
@@ -490,8 +572,12 @@
         "prototype": "report",
         "projection": [
             {
-                "type": "wrap",
-                "layout": "Simple #name #title on #value charts(#chart)"
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "Simple #name #title on #value charts(#chart)"
+                    ]
+                }
             }
         ]
     },
@@ -507,8 +593,12 @@
         },
         "projection": [
             {
-                "type": "wrap",
-                "layout": "Compare #name #title on #value with #reference charts(#chart)"
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "Compare #name #title on #value with #reference charts(#chart)"
+                    ]
+                }
             }
         ]
     },
@@ -516,33 +606,34 @@
         "nature": "prototype",
         "attribute": {
             "name": {
-                "target": "string",
-                "unique": true
+                "target": "string"
             },
             "title": {
                 "target": "string",
                 "required": false
             },
             "mandatory": {
-                "target": "boolean",
-                "projection": {
-                    "condition": "$value = true",
-                    "layout": "*"
-                },
+                "target": "string",
                 "value": true
             },
             "numberOfValues": {
                 "target": "number",
                 "required": false,
                 "value": 1,
-                "projection": {
-                    "type": "text",
-                    "textbox": {
-                        "type": "field",
-                        "view": "textbox"
-                    },
-                    "layout": "[$textbox]"
-                }
+                "projection": [
+                    {
+                        "element": {
+                            "textbox": {
+                                "type": "field",
+                                "view": "text"
+                            }
+                        },
+                        "layout": {
+                            "type": "text",
+                            "disposition": "[$textbox]"
+                        }
+                    }
+                ]
             },
             "subCategory": {
                 "name": "subCategory",
@@ -550,25 +641,40 @@
                 "accept": "category",
                 "required": false,
                 "inline": false,
-                "projection": {
-                    "type": "text",
-                    "field": {
+                "projection": [
+                    {
                         "type": "field",
-                        "view": "list"
+                        "view": "list",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "disposition": [
+                                "{",
+                                "&LIST",
+                                "}"
+                            ]
+                        }
                     },
-                    "layout": [
-                        "{",
-                        "$field",
-                        "}"
-                    ]
-                }
+                    {
+                        "type": "field",
+                        "view": "table",
+                        "orientation": "column",
+                        "header": [
+                            "Name",
+                            "Mandatory"
+                        ],
+                        "body": [
+                            "#name",
+                            "#mandatory"
+                        ]
+                    }
+                ]
             }
         }
     },
     "freeCategory": {
         "nature": "concrete",
         "prototype": "category",
-        "idref": "name",
         "attribute": {
             "type": {
                 "target": "string"
@@ -576,44 +682,66 @@
             "max_char": {
                 "target": "number",
                 "required": false,
-                "projection": {
-                    "type": "text",
-                    "textbox": {
-                        "type": "field",
-                        "view": "textbox"
-                    },
-                    "layout": "($textbox)"
-                }
+                "projection": [
+                    {
+                        "element": {
+                            "textbox": {
+                                "type": "field",
+                                "view": "text"
+                            }
+                        },
+                        "layout": {
+                            "type": "text",
+                            "disposition": "($textbox)"
+                        }
+                    }
+                ]
             },
             "pattern": {
                 "target": "string",
                 "required": false,
-                "projection": {
-                    "type": "text",
-                    "textbox": {
-                        "type": "field",
-                        "view": "textbox"
-                    },
-                    "layout": "style($textbox)"
-                }
+                "projection": [
+                    {
+                        "element": {
+                            "textbox": {
+                                "type": "field",
+                                "view": "text"
+                            }
+                        },
+                        "layout": {
+                            "type": "text",
+                            "disposition": "style($textbox)"
+                        }
+                    }
+                ]
             },
             "initial_value": {
                 "target": "string",
                 "required": false,
-                "projection": {
-                    "type": "text",
-                    "textbox": {
-                        "type": "field",
-                        "view": "textbox"
-                    },
-                    "layout": "= [$textbox]"
-                }
+                "projection": [
+                    {
+                        "element": {
+                            "textbox": {
+                                "type": "field",
+                                "view": "text"
+                            }
+                        },
+                        "layout": {
+                            "type": "text",
+                            "disposition": "= [$textbox]"
+                        }
+                    }
+                ]
             }
         },
         "projection": [
             {
-                "type": "wrap",
-                "layout": "Simple #name #title #numberOfValues : #type #max_char #pattern #initial_value #subCategory"
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "Simple #name #title #numberOfValues : #type #max_char #pattern #initial_value #subCategory"
+                    ]
+                }
             },
             {
                 "type": "text",
@@ -624,7 +752,6 @@
     "staticCategory": {
         "nature": "concrete",
         "prototype": "category",
-        "idref": "name",
         "attribute": {
             "values": {
                 "target": "set",
@@ -633,8 +760,12 @@
         },
         "projection": [
             {
-                "type": "wrap",
-                "layout": "List #name #title #numberOfValues = [#values] #subCategory"
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "List #name #title #numberOfValues = [#values] #subCategory"
+                    ]
+                }
             },
             {
                 "type": "text",
@@ -645,7 +776,6 @@
     "independantDynamicCategory": {
         "nature": "concrete",
         "prototype": "category",
-        "idref": "name",
         "attribute": {
             "reference_name": {
                 "target": "string",
@@ -659,8 +789,12 @@
         },
         "projection": [
             {
-                "type": "wrap",
-                "layout": "DynamicList #name #title #numberOfValues #reference_name #initial_values #subCategory"
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "DynamicList #name #title #numberOfValues #reference_name #initial_values #subCategory"
+                    ]
+                }
             },
             {
                 "type": "text",
@@ -671,17 +805,59 @@
     "dependantDynamicCategory": {
         "nature": "concrete",
         "prototype": "category",
-        "idref": "name",
         "attribute": {
             "depends_on": {
                 "target": "reference",
-                "accept": "category"
+                "accept": "category",
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "link",
+                        "rel": "clone",
+                        "value": {
+                            "projection": [
+                                {
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            "#name"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "layout": {
+                                        "type": "text",
+                                        "disposition": [
+                                            "POINTING"
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        "choice": {
+                            "projection": [
+                                {
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            "$name ($id)"
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
             }
         },
         "projection": [
             {
-                "type": "wrap",
-                "layout": "DynamicList #name #title #numberOfValues depends on #depends_on #subCategory"
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "DynamicList #name #title #numberOfValues depends on #depends_on #subCategory"
+                    ]
+                }
             },
             {
                 "type": "text",
@@ -728,8 +904,10 @@
                 "alias": "Criteria",
                 "projection": [
                     {
-                        "type": "wrap",
-                        "layout": "Criteria"
+                        "layout": {
+                            "type": "text",
+                            "disposition": "Criteria"
+                        }
                     }
                 ]
             },

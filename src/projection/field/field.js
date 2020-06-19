@@ -1,5 +1,5 @@
-import { createI, removeChildren, isDerivedOf } from 'zenkai';
-import { DataType, shake } from '@utils/index.js';
+import { createI, removeChildren, isDerivedOf, isEmpty } from 'zenkai';
+import { shake } from '@utils/index.js';
 
 
 export const Field = {
@@ -15,29 +15,43 @@ export const Field = {
         instance.schema = schema;
         instance.editor = editor;
         instance.validators = [];
+        instance.extras = [];
+        instance.errors = [];
 
         return instance;
     },
+    init() {
+        return this;
+    },
+    /** @type {string} */
     id: null,
+    /** @type {Editor} */
     editor: null,
+    /** @type {Projection} */
     projection: null,
+    /** @type {Concept} */
     concept: null,
+    /** @type {*} */
     schema: null,
-
-    get error() { return this._error; },
-    set error(val) { this._error = val; },
     /** @type {HTMLElement} */
     element: null,
+    /** @type {HTMLElement[]} */
+    extras: null,
+    /** @type {string[]} */
+    errors: null,
+    /** @type {boolean} */
     hasFocus: false,
+    /** @type {boolean} */
+    isDisabled: false,
+    
+    get hasError() { return !isEmpty(this.errors); },
+    get hasExtra() { return !isEmpty(this.extras); },
 
-    createInput() { throw new Error("Unimplemented function"); },
     focus() {
         this.element.contentEditable = false;
         this.element.focus();
         this.hasFocus = true;
     },
-    focusIn() { this.hasFocus = false; },
-    focusOut() { this.element.contentEditable = true; },
     validate() {
         var isValid = true;
         var validator;
@@ -55,8 +69,9 @@ export const Field = {
         return false;
     },
     remove() {
-        removeChildren(this._input);
-        this._input.remove();
+        removeChildren(this.input);
+        this.input.remove();
+
         removeChildren(this.element);
         this.element.remove();
     },
@@ -71,13 +86,13 @@ export const Field = {
         }
     },
     enable() {
-        this._input.contentEditable = true;
-        this._input.tabIndex = 0;
+        this.input.contentEditable = true;
+        this.input.tabIndex = 0;
         this.isDisabled = false;
     },
     disable() {
-        this._input.contentEditable = false;
-        this._input.tabIndex = -1;
+        this.input.contentEditable = false;
+        this.input.tabIndex = -1;
         this.isDisabled = true;
     },
 };

@@ -22,6 +22,8 @@ const LayoutHandler = {
     'grid': stackHandler,
     'relative': stackHandler,
     'field': fieldHandler,
+    'template': fieldHandler,
+    'text': textHandler,
 };
 
 export const Projection = {
@@ -32,16 +34,27 @@ export const Projection = {
         instance.concept = concept;
         instance.editor = editor;
         instance.containers = [];
+        instance.attributes = [];
+        instance.components = [];
 
         return instance;
     },
     schema: null,
     concept: null,
     editor: null,
+    /** @type {HTMLElement[]} */
     containers: null,
+    /** @type {HTMLElement} */
     container: null,
+    /** @type {HTMLElement} */
     btnNext: null,
+    /** @type {HTMLElement} */
     btnPrev: null,
+    /** @type {string[]} */
+    attributes: null,
+    /** @type {string[]} */
+    components: null,
+    /** @type {number} */
     index: 0,
     getSchema() {
         return this.schema[this.index];
@@ -85,6 +98,16 @@ export const Projection = {
         }
 
         const [type, action] = message.split('.');
+
+        if (type === "attribute" && !this.attributes.includes(value.name)) {
+            console.warn("Attribute not found in projection");
+            return;
+        }
+        if (type === "component" && !this.components.includes(value.name)) {
+            console.warn("Component not found in projection", this.components);
+            return;
+        }
+
         const target = type === "attribute" ? value.target : value;
 
         var temp = getElement(`[data-id=${value.name}]`, this.container);
@@ -110,11 +133,10 @@ export const Projection = {
     delete() {
 
     },
-    render() {
-        const schema = this.getSchema();
-        const { action, behaviour, constraint, element, layout, view } = schema;
+    render(_schema) {
+        const schema = valOrDefault(_schema, this.getSchema());
 
-        const { id, object, name } = this.concept;
+        const { action, behaviour, constraint, element, layout, view } = schema;
 
         if (isHTMLElement(this.containers[this.index])) {
             this.container = this.containers[this.index];
@@ -175,6 +197,7 @@ export const Projection = {
                         insertAfterElement(previousContainer, container);
                     }
                     show(this.container);
+
                     this.btnPrev.disabled = this.index <= 0;
                     this.btnNext.disabled = this.index >= this.schema.length - 1;
                 });
@@ -182,23 +205,28 @@ export const Projection = {
                 appendChildren(container, [this.btnNext, this.btnPrev]);
             }
 
-            if (!["string", "set", "number", "reference"].includes(name)) {
-                Object.assign(container.dataset, {
-                    object: object,
-                    id: id,
-                    name: name,
-                });
+            if (this.concept) {
+                const { id, object, name } = this.concept;
+                if (!["string", "set", "number", "reference"].includes(name)) {
+                    Object.assign(container.dataset, {
+                        object: object,
+                        id: id,
+                        name: name,
+                    });
+                }
             }
         }
 
-        if (!isHTMLElement(container)) {
+        if (!isNode(container)) {
             throw new Error("Projection element container could not be created");
         }
 
         this.containers.push(container);
         this.container = container;
 
-        this.concept.register(this);
+        if (this.concept) {
+            this.concept.register(this);
+        }
 
         return this.container;
     }
@@ -218,7 +246,7 @@ function stackHandler(layout) {
 }
 
 function wrapHandler(layout) {
-    const { disposition, orientation } = layout;
+    const { disposition } = layout;
 
     var container = createDiv({ class: `projection-wrapper`, });
 
@@ -229,6 +257,24 @@ function wrapHandler(layout) {
 
 
     return container;
+}
+
+function textHandler(layout) {
+    const { disposition } = layout;
+
+    var fragment = createDocFragment();
+
+    if (Array.isArray(disposition)) {
+        for (let i = 0; i < disposition.length; i++) {
+            const content = disposition[i];
+            fragment.appendChild(dispositionHandler.call(this, content));
+        }
+    } else {
+        fragment.appendChild(dispositionHandler.call(this, disposition));
+    }
+
+
+    return fragment;
 }
 
 const tableLayoutHandler = {
@@ -384,11 +430,15 @@ function fieldHandler(schema) {
 
     this.editor.registerField(field);
 
-    return field.createInput();
+    return field.render();
 }
 
 function dispositionHandler(value) {
     var fragment = createDocFragment();
+
+    if (hasOwn(LayoutHandler, value.type)) {
+        return LayoutHandler[value.type].call(this, value);
+    }
 
     var parts = parseDisposition(value);
 
@@ -437,8 +487,7 @@ function parseDisposition(value) {
 
 const StructureHandler = {
     'attribute': attributeHandler,
-    'component': componentHandler,
-    'prototype': prototypeHandler,
+    'component': componentHandler
 };
 
 /**
@@ -461,6 +510,8 @@ function attributeHandler(name) {
         throw new Error(`PROJECTION: Attribute ${name} does not exist`);
     }
 
+    this.attributes.push(name);
+
     if (!(this.concept.isAttributeRequired(name) || this.concept.isAttributeCreated(name))) {
         return createI({ class: "attribute--optional", dataset: { object: "attribute", id: name } });
     }
@@ -479,6 +530,9 @@ function componentHandler(name) {
     if (!this.concept.hasComponent(name)) {
         throw new Error(`PROJECTION: Component ${name} does not exist`);
     }
+
+    this.components.push(name);
+
     if (!(this.concept.isComponentCreated(name) || this.concept.isComponentRequired(name))) {
         return createI({ class: "component--optional", dataset: { object: "component", id: name } });
     }
@@ -490,67 +544,6 @@ function componentHandler(name) {
 }
 
 /**
- * Create a choice of prototype candidates
- * @param {*} schema 
- */
-function prototypeHandler(schema) {
-    // Create fields
-    var container = createDiv({ class: "choice-container", dataset: { nature: "choice" } });
-    var input = createInput({ class: "choice-input", placeholder: `Choose ${this.concept.name}` });
-    var results = createUnorderedList({ class: ["bare-list", "choice-results", "hidden"] });
-    results.tabIndex = 0;
-
-    const DATA = this.concept.concretes;
-    const createChoice = (value) => createListItem({ class: "choice-result-item", dataset: { value: value } }, value);
-    const getInputValue = () => input.value.trim();
-    const filterDATA = (query) => DATA.filter(val => query.some(q => val.name.toLowerCase().includes(q.toLowerCase())));
-
-
-    // Fill in results
-    DATA.forEach(concept => { results.appendChild(createChoice(concept.name)); });
-
-    // Bind events
-    results.addEventListener('click', (e) => {
-        let target = e.target;
-        let { value } = target.dataset;
-
-        if (value) {
-            let concept = this.concept.model.createConcept(value);
-
-            var projectionSchema = concept.schema.projection;
-            var projection = Projection.create(concept.schema.projection, concept, this.editor);
-            container.parentElement.insertBefore(projection.render(), container);
-            concept.prototype = this;
-            this.value = concept;
-
-            removeChildren(container);
-            container.remove();
-        }
-    });
-
-    input.addEventListener('input', (event) => {
-        removeChildren(results);
-
-        var fragment = createDocFragment();
-
-        if (isNullOrWhitespace(getInputValue())) {
-            DATA.forEach(concept => { fragment.appendChild(createChoice(concept.name)); });
-            results.classList.add('hidden');
-        } else {
-            let query = getInputValue().split(' ');
-            filterDATA(query).forEach(concept => { fragment.appendChild(createChoice(concept.name)); });
-            results.classList.remove('hidden');
-        }
-
-        results.appendChild(fragment);
-    });
-
-    appendChildren(container, [input, results]);
-
-    return container;
-}
-
-/**
  * Resolves a reference in the schema
  * @param {string} key 
  * @this {Projection}
@@ -559,14 +552,15 @@ function resolveReference(key) {
     var [name, from] = key.split(":");
 
     var element = this.getElement(name);
+
     const { action, behaviour, constraint, layout, view } = element;
     if (view) {
         return fieldHandler.call(this, element);
-    } else {
+    }else if( layout) {
         const { type, disposition } = layout;
-
         return LayoutHandler[type].call(this, layout);
     }
+    return LayoutHandler['text'].call(this, element);
 }
 
 function resolveScope() {

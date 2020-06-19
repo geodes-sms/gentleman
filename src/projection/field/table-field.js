@@ -1,56 +1,79 @@
 import {
-    createDocFragment, createUnorderedList, createListItem,
-    insertBeforeElement, insertAfterElement, removeChildren, isHTMLElement,
-    valOrDefault
+    createDocFragment, createTable, createTableHeader, createTableBody,
+    createTableRow, createListItem, createTableCell, createTableHeaderCell,
+    insertAfterElement, removeChildren, isHTMLElement, valOrDefault
 } from "zenkai";
 import { extend, Key } from "@utils/index.js";
 import { Projection } from "@projection/index.js";
 import { Field } from "./field.js";
 
 
-function createInputField() {
-    var element = createUnorderedList({
-        id: this.id,
-        class: ["bare-list", "field", "field--list", this.orientation, "empty"],
-        tabindex: -1,
-        dataset: {
-            nature: "field",
-            view: "list",
-            id: this.id
-        }
-    });
-
-    if (this.concept.hasValue()) {
-        element.classList.remove("empty");
-    }
-
-    return element;
-}
-
-
-export const ListField = extend(Field, {
+export const TableField = extend(Field, {
     init() {
-        this.orientation = valOrDefault(this.schema.orientation, "horizontal");
-        this.concept.register(this);
+        this.errors = [];
+        this.extras = [];
+        this.validators = [];
+
+        var validator = function () {
+            return true;
+        };
+
+        this.validators.push(validator);
 
         return this;
     },
 
-    orientation: null,
+    /** @type {*[]} */
+    extras: null,
+    /** @type {HTMLTableElement} */
+    table: null,
+    /** @type {HTMLTableSectionElement} */
+    header: null,
+    /** @type {HTMLTableSectionElement} */
+    body: null,
+    /** @type {HTMLTableSectionElement} */
+    footer: null,
+    /** @type {*[]} */
+    errors: null,
     update(message, value) {
         switch (message) {
             case "value.added":
-                var projection = Projection.create(valOrDefault(value.protoSchema, value.schema.projection), value, this.editor);
-                var container = createListItem({
-                    class: "field--list-item",
-                    tabindex: 0,
-                    dataset: {
-                        nature: "field-component",
-                        id: this.id
-                    }
-                }, [projection.render()]);
+                var row = createTableRow({ class: "field--table-row", tabindex: 0 });
+                this.schema.body.forEach(cell => {
+                    var schema = [
+                        {
+                            "layout": {
+                                "type": "wrap",
+                                "disposition": [cell]
+                            }
+                        }
+                    ];
+        
+                    var projection = Projection.create(schema, value, this.editor);
+                    row.appendChild(createTableCell({ class: "field--table-cell", tabindex: 0 }, [projection.render()]));
+                });
 
-                this.element.lastChild.before(container);
+                var schema = [{
+                    "layout": {
+                        "type": "wrap",
+                        "disposition": "ADD"
+                    }
+                }];
+        
+                var projection = Projection.create(schema, value, this.editor);
+        
+                var addContainer = createTableCell({ class: "field--table-cell", tabindex: 0 }, [projection.render()]);
+        
+                addContainer.addEventListener('click', () => {
+                    var element = this.createElement();
+                    if (!element) {
+                        this.editor("Element could not be created");
+                    }
+                });
+        
+                row.appendChild(addContainer);
+                
+                this.body.appendChild(row);
 
                 break;
             default:
@@ -60,45 +83,24 @@ export const ListField = extend(Field, {
         // this.updateUI();
     },
 
-    render() {
-        if (!isHTMLElement((this.element))) {
-            this.element = createInputField.call(this);
-        }
-
-        removeChildren(this.element);
-
-        var fragment = createDocFragment();
-
-        this.concept.getElements().forEach(value => {
-            var projection = Projection.create(value.schema.projection, value, this.editor);
-            var container = createListItem({
-                class: "field--list-item",
-                tabindex: 0,
-                dataset: {
-                    nature: "field-component",
-                    id: this.id
-                }
-            }, [projection.render()]);
-
-            fragment.appendChild(container);
+    createInput() {
+        this.element = createTable({
+            id: this.id,
+            class: ["field", "field--table"],
+            dataset: {
+                type: "set",
+                nature: "field",
+            }
         });
+        this.element.contentEditable = false;
 
-        var actionContainer = actionHandler.call(this);
-
-        fragment.appendChild(actionContainer);
-
-        this.element.appendChild(fragment);
+        this.element.appendChild(valueHandler.call(this, this.concept.getElements()));
 
         this.bindEvents();
 
+        this.concept.register(this);
+
         return this.element;
-    },
-    focusIn() {
-        this.hasFocus = true;
-    },
-    focusOut() {
-        console.log("focusing out of list field...");
-        this.hasFocus = false;
     },
     createElement() {
         return this.concept.createElement();
@@ -109,6 +111,9 @@ export const ListField = extend(Field, {
         const isChild = (element) => element.parentElement === this.element && isItem;
         const isItem = (element) => isHTMLElement(element) && element.classList.contains('field--list-item');
         const concept = this.concept;
+
+        this.element.addEventListener('click', (event) => {
+        });
 
         this.element.addEventListener('keydown', (event) => {
             var activeElement = document.activeElement;
@@ -190,6 +195,77 @@ export const ListField = extend(Field, {
     }
 });
 
+function valueHandler(values) {
+    const { editor } = this;
+    const { header, body, orientation } = this.schema;
+
+    var fragment = createDocFragment();
+
+    if (!Array.isArray(values)) {
+        return null;
+    }
+
+    if (header) {
+        this.header = createTableHeader({ class: "field--table-header" });
+        let row = createTableRow({ class: "field--table-header-row", tabindex: 0 });
+        header.forEach(value => {
+            row.appendChild(createTableHeaderCell({ class: "field--table-header-cell", tabindex: 0 }, value));
+        });
+
+        this.header.appendChild(row);
+        fragment.appendChild(this.header);
+    }
+
+    this.body = createTableBody({ class: "field--table-body" });
+
+    values.forEach(concept => {
+        var row = createTableRow({ class: "field--table-row", tabindex: 0 });
+        body.forEach(cell => {
+            var schema = [
+                {
+                    "layout": {
+                        "type": "wrap",
+                        "disposition": [cell]
+                    }
+                }
+            ];
+
+            var projection = Projection.create(schema, concept, editor);
+            row.appendChild(createTableCell({ class: "field--table-cell", tabindex: 0 }, [projection.render()]));
+        });
+
+        var schema = [{
+            "layout": {
+                "type": "wrap",
+                "disposition": "ADD"
+            }
+        }];
+
+        var projection = Projection.create(schema, concept, editor);
+
+        var addContainer = createTableCell({ class: "field--table-cell", tabindex: 0 }, [projection.render()]);
+
+        addContainer.addEventListener('click', () => {
+            var element = this.createElement();
+            if (!element) {
+                this.editor("Element could not be created");
+            }
+        });
+
+        row.appendChild(addContainer);
+
+        this.body.appendChild(row);
+    });
+
+    fragment.appendChild(this.body);
+
+    // var actionContainer = actionHandler.call(this);
+
+    // fragment.appendChild(actionContainer);
+
+    return fragment;
+}
+
 const actionDefaultSchema = {
     add: {
         projection: [{
@@ -210,14 +286,7 @@ function actionHandler() {
 
     var projection = Projection.create(projectionSchema, concept, editor);
 
-    var addContainer = createListItem({
-        class: "field--list__add",
-        tabindex: 0,
-        dataset: {
-            nature: "field-component",
-            id: this.id
-        }
-    }, [projection.render()]);
+    var addContainer = createListItem({ class: "field--list__add" }, [projection.render()]);
 
     addContainer.addEventListener('click', () => {
         var element = this.createElement();

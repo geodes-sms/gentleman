@@ -12,7 +12,7 @@ export const BaseAttribute = {
 
     init(value) {
         this.target = this.model.createConcept(this.schema.target, Object.assign({}, this.schema, {
-            value: value,
+            value: valOrDefault(value, this.schema.value),
             parent: this.concept.id,
             min: this.min,
             refname: this.name,

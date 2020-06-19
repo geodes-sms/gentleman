@@ -1,4 +1,4 @@
-import { isNullOrUndefined, cloneObject } from 'zenkai';
+import { isNullOrUndefined, cloneObject, valOrDefault, hasOwn } from 'zenkai';
 import { UUID } from '@utils/uuid.js';
 import {
     StringConcept,
@@ -9,7 +9,8 @@ import {
     PrototypeConcept
 } from "./index.js";
 
-const schemaHandler = {
+
+const DefaultSchema = {
     set: {
         projection: [
             {
@@ -22,20 +23,57 @@ const schemaHandler = {
         projection: [
             {
                 type: "field",
-                view: "textbox"
+                view: "text"
+            }
+        ]
+    },
+    number: {
+        projection: [
+            {
+                type: "field",
+                view: "text"
+            }
+        ]
+    },
+    reference: {
+        projection: [
+            {
+                type: "field",
+                view: "link"
+            }
+        ]
+    },
+    prototype: {
+        projection: [
+            {
+                type: "field",
+                view: "choice"
             }
         ]
     }
 };
 
+const resolveSchema = (conceptName, customSchema) => {
+    if(isNullOrUndefined(customSchema)) {
+        return cloneObject(DefaultSchema[conceptName]);
+    }
+
+    var schema = cloneObject( customSchema);
+    if (schema && !hasOwn(schema, 'projection')) {
+        schema.projection = cloneObject(DefaultSchema[conceptName].projection);
+    }
+
+    return schema;
+};
+
 const Handler = {
     // Primitive
-    string: (model, schema) => StringConcept.create(model, schema),
-    number: (model, schema) => NumberConcept.create(model, schema),
-    set: (model, schema) => SetConcept.create(model, cloneObject(schemaHandler['set'])),
-    reference: (model, schema) => ReferenceConcept.create(model, schema),
+    string: (model, schema) => StringConcept.create(model, resolveSchema('string', schema)),
+    number: (model, schema) => NumberConcept.create(model, resolveSchema('number', schema)),
+    set: (model, schema) => SetConcept.create(model, resolveSchema('set', schema)),
+    reference: (model, schema) => ReferenceConcept.create(model, resolveSchema('reference', schema)),
     // Complex
-    prototype: (model, schema) => PrototypeConcept.create(model, schema),
+    prototype: (model, schema) => PrototypeConcept.create(model, resolveSchema('prototype', schema)),
     concrete: (model, schema) => BaseConcept.create(model, schema),
     derivative: (model, schema) => Handler[schema.base](model, schema),
 };

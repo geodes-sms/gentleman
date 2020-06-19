@@ -1,19 +1,15 @@
 import {
-    createLink, createDiv, createInput, createLabel, createStrong,
+    createLink, createDiv, createInput, createLabel,
     createUnorderedList, createListItem, createParagraph, createButton,
-    getElement, getElements, appendChildren, insertAfterElement, preprendChild,
+    getElement, getElements, appendChildren, preprendChild,
     removeChildren, findAncestor, copytoClipboard, isHTMLElement, cloneObject,
-    isEmpty, isNullOrWhitespace, isNullOrUndefined, isNull
+    isEmpty, isNullOrWhitespace, isNullOrUndefined, isNull, windowHeight, windowWidth
 } from 'zenkai';
 import { events, hide, show, Key } from '@utils/index.js';
 import { MetaModel, Model } from '@model/index.js';
 import { State } from './state.js';
 import { ExplorerManager } from './explorer.js';
 import { Projection } from '@projection/index.js';
-
-
-const windowheight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 
 const EditorMode = {
     READ: 'read',
@@ -48,9 +44,8 @@ export const Editor = {
         }
 
         instance.container.tabIndex = -1;
-        instance.body = createDiv({ class: 'body' });
-        instance.body.tabIndex = 0;
-        instance.fields = [];
+        instance.body = createDiv({ class: 'body', tabindex: 0 });
+        instance.fields = new Map();
         instance.state = State.create();
 
         return instance;
@@ -58,7 +53,7 @@ export const Editor = {
 
     /** @type {state} */
     state: null,
-    /** @type {Field[]} */
+    /** @type {Map} */
     fields: null,
     /** @type {string} */
     workflow: null,
@@ -70,8 +65,8 @@ export const Editor = {
     container: null,
     /** @type {HTMLElement} */
     body: null,
-    /** @type {HTMLElement} */
-    focusedElement: null,
+    /** @type {Field} */
+    focusedField: null,
     /** @type {HTMLElement} */
     activeElement: null,
     /** @type {Concept} */
@@ -118,7 +113,7 @@ export const Editor = {
             class: ["btn", "btn-import", "hidden"],
             draggable: true,
             dataset: {
-                "context": "model", 
+                "context": "model",
                 "action": "import"
             }
         }, ["Import", createInput({ type: "file", class: "hidden", accept: '.json' })]);
@@ -130,6 +125,7 @@ export const Editor = {
 
         this.bindEvents();
     },
+
     loadMetamodel(metamodel) {
         this.metamodel = MetaModel.create(metamodel);
 
@@ -166,9 +162,35 @@ export const Editor = {
     },
 
     registerField(field) {
-        field.id = this.fields.length + 1;
         field.editor = this;
-        this.fields.push(field);
+        this.fields.set(field.id, field);
+
+        return this;
+    },
+    /**
+     * Get a the related field object
+     * @param {HTMLElement} element 
+     * @returns {Field}
+     */
+    getField(element) {
+        if (!isHTMLElement(element)) {
+            console.warn("Field error: Bad argument");
+            return null;
+        }
+
+        const { id, nature } = element.dataset;
+
+        if (isNullOrUndefined(id)) {
+            console.warn("Field error: Missing id attribute on field");
+            return null;
+        }
+
+        if (!["field", "field-component"].includes(nature)) {
+            console.warn("Field error: Unknown nature attribute on field");
+            return null;
+        }
+
+        return this.fields.get(id);
     },
     resize() {
         // TODO: adapt UI to smaller screen
@@ -190,8 +212,8 @@ export const Editor = {
         return this;
     },
     clear() {
-        this.fields = [];
-        this.focusedElement = null;
+        this.fields.clear();
+        this.focusedField = null;
         this.activeElement = null;
         this.activeConcept = null;
         removeChildren(this.body);
@@ -295,16 +317,17 @@ export const Editor = {
 
         this.body.addEventListener('click', (event) => {
             var target = event.target;
+            console.log("CLICK EVENT CALLED");
             var object = target.dataset['object'];
-            if (isNull(this.focusedElement) && ['concept', 'component'].includes(object)) {
+            if (isNull(this.focusedField) && ['concept', 'component'].includes(object)) {
                 this.updateActiveElement(target);
             }
-        }, false);
+        });
 
         this.body.addEventListener('keydown', (event) => {
             var target = event.target;
 
-            var field = this.fields[target.id - 1];
+            var field = this.getField(target);
             var rememberKey = false;
 
             switch (event.key) {
@@ -325,7 +348,7 @@ export const Editor = {
 
                     break;
                 case Key.right_arrow:
-                    if (this.focusedElement.hasElementFocus) {
+                    if (this.focusedField.hasElementFocus) {
 
                         // // get field element
                         // /** @type {HTMLElement} */
@@ -349,7 +372,7 @@ export const Editor = {
                     if (field) {
                         field.escapeHandler();
                     } else {
-                        this.focusedElement.focus();
+                        this.focusedField.focus();
                     }
 
                     break;
@@ -387,7 +410,8 @@ export const Editor = {
         this.body.addEventListener('keyup', (event) => {
             var target = event.target;
             var parent = target.parentElement;
-            var field = this.fields[target.id - 1];
+            const { nature } = target.dataset;
+            var field = this.getField(target);
 
             if (lastKey == event.key) lastKey = -1;
 
@@ -480,14 +504,7 @@ export const Editor = {
 
         this.body.addEventListener('mouseover', (event) => {
             var target = event.target;
-            var nature = target.dataset['nature'];
-            if (nature === 'attribute') {
-                var field = this.fields[target.id - 1];
-                // infoHandler.call(this, field, target);
-            }
-            if (target.classList.contains('component')) {
-                target.classList.add('component--on_mouseover');
-            }
+
         });
 
         this.body.addEventListener('mouseout', (event) => {
@@ -500,12 +517,15 @@ export const Editor = {
 
         this.body.addEventListener('focusin', (event) => {
             var target = event.target;
-            var nature = target.dataset['nature'];
-
-            if (nature === 'attribute') {
-                let field = this.fields[target.id - 1];
-                this.focusedElement = field;
-                field.focusIn();
+            var field = this.getField(target);
+            if (this.focusedField && this.focusedField !== field) {
+                this.focusedField.focusOut();
+                this.focusedField = null;
+            }
+          
+            if (field) {
+                this.focusedField = field;
+                this.focusedField.focusIn();
 
                 // update active element
                 let fieldParent = findAncestor(target, (el) => ['concept', 'component'].includes(el.dataset['object']));
@@ -514,7 +534,7 @@ export const Editor = {
                 }
 
                 // update active concept
-                let conceptParent = field.concept.getConceptParent();
+                let conceptParent = this.focusedField.concept.getConceptParent();
                 if (conceptParent) {
                     this.updateActiveConcept(conceptParent);
                 }
@@ -526,20 +546,9 @@ export const Editor = {
                     this.updateActiveElement(choiceParent);
                 }
             }
-        }, false);
+        });
 
-        this.body.addEventListener('focusout', (event) => {
-            var target = event.target;
-            var nature = target.dataset['nature'];
-
-            if (nature === 'attribute') {
-                let field = this.fields[target.id - 1];
-                field.focusOut();
-            }
-
-            this.focusedElement = null;
-        }, false);
-
+    
         this.btnExport.addEventListener('click', (event) => {
             copytoClipboard(this.model.export());
             this.notify("Model has been copied to clipboard");
@@ -564,8 +573,8 @@ export const Editor = {
         });
 
         this.btnExport.addEventListener('dragend', function (e) {
-            this.style.right = `${windowWidth - e.clientX}px`;
-            this.style.bottom = `${windowheight - e.clientY}px`;
+            this.style.right = `${windowWidth() - e.clientX}px`;
+            this.style.bottom = `${windowHeight() - e.clientY}px`;
         });
 
         events.on('model.change', (from) => {

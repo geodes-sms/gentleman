@@ -1,67 +1,22 @@
-import {
-    valOrDefault, isNullOrUndefined, createUnorderedList, createListItem,
-    createInput, createDiv, appendChildren, isNullOrWhitespace, removeChildren, createDocFragment, insertBeforeElement
-} from "zenkai";
-import { Projection } from "@projection";
+import { extend } from "@utils/index.js";
+import { Concept } from "./concept.js";
+import { isString } from "zenkai";
 
-export const PrototypeConcept = {
-    /**
-     * Creates a concept
-     * @returns {PrototypeConcept}
-     */
-    create(model, schema) {
-        const instance = Object.create(this); 
 
-        instance.model = model;
-        instance.schema = schema;
-        instance.concretes = schema.concretes;
-        instance.references = [];
-        instance.listeners = [];
-        instance.protoSchema = [
-            {
-                type: "prototype"
-            }
-        ];
+export const PrototypeConcept = extend(Concept, {
+    name: 'set',
+    concretes: null,
 
-        return instance;
-    },
-    /** Reference to parent model */
-    model: null,
-    /** @type {int} */
-    id: null,
-    /** @type {string} */
-    name: null,
-    /** @type {string} */
-    refname: null,
-    /** @type {string} */
-    alias: null,
-    /** @type {string} */
-    fullName: null,
-    /** @type {Concept} */
-    parent: null,
-    /** @type {int[]} */
-    references: null,
-    /** @type {*[]} */
-    listeners: null,
-    /** @type {Projection[]} */
-    projection: null,
-    value: null,
-    /** Object nature */
-    object: "prototype",
-    schema: null,
-    protoSchema: null,
-    init(args) {
-        if (isNullOrUndefined(args)) {
-            return this;
-        }
+    initValue(value) {
+        this.value = [];
+        this.concretes = [];
 
         return this;
     },
 
-    getIdRef() { return this.schema['idref']; },
-    getName() { return valOrDefault(this.refname, this.name); },
-    getAlias() { return valOrDefault(this.alias, this.getName()); },
-
+    getCandidates() {
+        return this.metamodel.getConcreteConcepts(this.name);
+    },
     getConceptParent() {
         if (this.isRoot()) {
             return null;
@@ -69,8 +24,23 @@ export const PrototypeConcept = {
 
         return this.parent.concept;
     },
+    createElement(value) {
+        var concept = null;
+        var options = {
+            parent: this.id,
+            refname: this.name,
+            reftype: "element",
+        };
 
+        if (isString(value)) {
+            concept = this.model.createConcept(value, options);
+        }
 
+        this.value = concept;
+        concept.prototype = this;
+
+        return concept;
+    },
 
     export() {
         var output = {};
@@ -104,4 +74,4 @@ export const PrototypeConcept = {
 
         return output;
     },
-};
+});

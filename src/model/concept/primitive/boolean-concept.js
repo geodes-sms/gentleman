@@ -17,11 +17,3 @@ export const BooleanConcept = Concept.create({
         return this.value;
     },
 });
-
-function createProjection() {
-    return {
-        type: "text",
-        textbox: { type: 'field', view: 'textbox' },
-        layout: '$textbox'
-    };
-}

@@ -91,7 +91,8 @@ export const MetaModel = {
      * @param {string} prototype 
      */
     getConcreteConcepts(prototype) {
-        var concepts = [];
+        const concepts = [];
+        
         for (const key in this.schema) {
             const concept = this.schema[key];
             if (concept.prototype === prototype) {
@@ -115,9 +116,6 @@ export const MetaModel = {
         }
         if (!hasOwn(conceptSchema, 'component')) {
             conceptSchema.component = [];
-        }
-        if (conceptSchema.nature === "prototype") {
-            conceptSchema.concretes = this.getConcreteConcepts(type);
         }
 
         Object.assign(conceptSchema.attribute, baseSchema.attribute);

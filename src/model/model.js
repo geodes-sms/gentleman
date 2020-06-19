@@ -42,6 +42,7 @@ export const Model = {
      */
     createConcept(name, args) {
         const schema = this.metamodel.getCompleteModelConcept(name);
+
         var concept = ConceptFactory.createConcept(name, this, schema, args);
 
         this.addConcept(concept);
