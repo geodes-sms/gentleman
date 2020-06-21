@@ -39,7 +39,6 @@ export const TextField = extend(Field, {
     init() {
         this.placeholder = this.resolvePlaceholder();
         this.concept.register(this);
-        console.log(this.concept);
 
         return this;
     },
@@ -87,8 +86,6 @@ export const TextField = extend(Field, {
         this.hasFocus = true;
     },
     focusOut() {
-        this.input.contentEditable = true;
-
         var response = this.concept.update(this.input.textContent);
 
         if (!response.success) {
@@ -112,6 +109,8 @@ export const TextField = extend(Field, {
             });
             this.extras = [];
             this.errors = [];
+
+            this.input.blur();
         }
 
         this.updateUI();
@@ -167,9 +166,6 @@ export const TextField = extend(Field, {
     },
     bindEvents() {
         var lastKey = -1;
-
-        const isChild = (element) => element.parentElement === this.element;
-        const concept = this.concept;
 
         this.element.addEventListener('keydown', (event) => {
             var activeElement = document.activeElement;

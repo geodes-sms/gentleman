@@ -15,9 +15,6 @@ export const MetaModel = {
         const instance = Object.create(this);
 
         instance.schema = metamodel;
-        instance._root = metamodel[KEY_ROOT];
-        instance._config = metamodel[KEY_CONFIG];
-        instance._resources = valOrDefault(metamodel[KEY_RESOURCES], []);
         instance.models = [];
 
         return instance;
@@ -26,14 +23,14 @@ export const MetaModel = {
     models: null,
 
     /** @type {string} */
-    get root() { return this._root; },
+    get root() { return this.schema[KEY_ROOT]; },
     /** @type {string} */
-    get language() { return valOrDefault(tryResolve(this._config, PROP_LANGUAGE, ""), ""); },
-    get style() { return valOrDefault(tryResolve(this._config, PROP_STYLE, ""), ""); },
+    get config() { return this.schema[KEY_CONFIG]; },
+    /** @type {string} */
+    get language() { return valOrDefault(tryResolve(this.config, PROP_LANGUAGE, ""), ""); },
+    get style() { return valOrDefault(tryResolve(this.config, PROP_STYLE, ""), ""); },
     /** @type {string[]} */
-    get resources() { return this._resources; },
-
-    getModel(id) { return isString(id) ? this.models.find((m) => m.id === id) : this.models[id]; },
+    get resources() { return this.schema[KEY_RESOURCES]; },
 
     createModel() {
         if (isNullOrWhitespace(this.root)) {
@@ -46,42 +43,37 @@ export const MetaModel = {
 
         return model;
     },
+    getModel(id) { return isString(id) ? this.models.find((m) => m.id === id) : this.models[id]; },
 
     /**
-     * Gets a value indicating whether this type is declared in the model
-     * @param {string} type 
+     * Gets a value indicating whether this concept is declared in the model
+     * @param {string} name 
      * @returns {boolean}
      */
-    isConcept(type) { return hasOwn(this.schema, type); },
-    /**
-     * Gets a value indicating whether this concept is a prototype
-     * @param {string} type 
-     * @returns {boolean}
-     */
-    isPrototype(type) { return this.isConcept(type) && this.schema[type].nature === "prototype"; },
+    isConcept(name) { return hasOwn(this.schema, name); },
     /**
      * Gets a value indicating whether this concept is concrete
-     * @param {string} type 
+     * @param {string} name 
      * @returns {boolean}
      */
-    isConcrete(type) { return this.isConcept(type) && this.schema[type].nature === "concrete"; },
+    isConcrete(name) { return this.isConcept(name) && this.schema[name].nature === "concrete"; },
+    /**
+     * Gets a value indicating whether this concept is a prototype
+     * @param {string} name 
+     * @returns {boolean}
+     */
+    isPrototype(name) { return this.isConcept(name) && this.schema[name].nature === "prototype"; },
 
     /**
-     * Gets a model concept by type
-     * @param {string} type 
+     * Gets a model concept by name
+     * @param {string} name 
      */
-    getModelConcept(type) {
-        const [conceptName, prop] = type.split('.');
-
-        if (!this.isConcept(conceptName)) {
+    getConceptSchema(name) {
+        if (!this.isConcept(name)) {
             return undefined;
         }
 
-        var concept = deepCopy(this.schema[conceptName]);
-        if (isString(prop) && prop.startsWith('component')) {
-            let componentName = prop.substring(prop.indexOf('[') + 1, prop.indexOf(']'));
-            concept = concept.component.find((c) => c.name === componentName);
-        }
+        var concept = deepCopy(this.schema[name]);
 
         return concept;
     },
@@ -92,10 +84,28 @@ export const MetaModel = {
      */
     getConcreteConcepts(prototype) {
         const concepts = [];
-        
+
         for (const key in this.schema) {
             const concept = this.schema[key];
             if (concept.prototype === prototype) {
+                concept.name = key;
+                concepts.push(concept);
+            }
+        }
+
+        return concepts;
+    },
+
+    /**
+     * Gets a list of concepts based on a prototype
+     * @param {string} base 
+     */
+    getDerivedConcepts(base) {
+        const concepts = [];
+
+        for (const key in this.schema) {
+            const concept = this.schema[key];
+            if ( concept.base === base) {
                 concept.name = key;
                 concepts.push(concept);
             }
@@ -109,26 +119,30 @@ export const MetaModel = {
             return undefined;
         }
 
-        const conceptSchema = this.getModelConcept(type);
-        const baseSchema = getConceptBaseSchema.call(this, conceptSchema.prototype);
+        const conceptSchema = this.getConceptSchema(type);
+        
         if (!hasOwn(conceptSchema, 'attribute')) {
             conceptSchema.attribute = {};
         }
         if (!hasOwn(conceptSchema, 'component')) {
-            conceptSchema.component = [];
+            conceptSchema.component = {};
         }
+
+        const baseSchema = getConceptBaseSchema.call(this, conceptSchema.prototype);
 
         Object.assign(conceptSchema.attribute, baseSchema.attribute);
         Object.assign(conceptSchema.component, baseSchema.component);
 
         return conceptSchema;
     },
-    getProjectionSchema(concept) {
-        if (!this.isConcept(concept)) {
+    getProjectionSchema(conceptName) {
+        if (!this.isConcept(conceptName)) {
             return null;
         }
 
-        return this.schema[concept].projection;
+        var conceptSchema = this.getConceptSchema(conceptName);
+
+        return conceptSchema.projection;
     }
 };
 

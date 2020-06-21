@@ -27,6 +27,15 @@ export const SetConcept = extend(Concept, {
     getValue() {
         return this.value;
     },
+    setValue(value) {
+        if (!Array.isArray(value)) {
+            return;
+        }
+        this.removeAll();
+        this.value = value;
+
+        this.notify("value.changed", value);
+    },
     getElements() {
         return this.value.map(id => this.model.getConcept(id));
     },
@@ -92,6 +101,11 @@ export const SetConcept = extend(Concept, {
         this.value.splice(index, 1);
 
         return true;
+    },
+    removeAllElement() {
+        this.value.forEach(element => {
+            this.model.removeConcept(element);
+        });
     },
     createElement(value) {
         var concept = null;

@@ -40,8 +40,12 @@ export const Projection = {
         return instance;
     },
     schema: null,
+    /** @type {Concept} */
     concept: null,
+    /** @type {Editor} */
     editor: null,
+    /** @type {Projection} */
+    parent: null,
     /** @type {HTMLElement[]} */
     containers: null,
     /** @type {HTMLElement} */
@@ -235,7 +239,12 @@ export const Projection = {
 function stackHandler(layout) {
     const { disposition, orientation } = layout;
 
-    var container = createDiv({ class: ["projection-wrapper", `projection-wrapper--${orientation}`] });
+    var container = createDiv({
+        class: ["projection-wrapper", `projection-wrapper--${orientation}`],
+        dataset: {
+            nature: "layout"
+        }
+    });
 
     for (let i = 0; i < disposition.length; i++) {
         const content = disposition[i];
@@ -248,7 +257,12 @@ function stackHandler(layout) {
 function wrapHandler(layout) {
     const { disposition } = layout;
 
-    var container = createDiv({ class: `projection-wrapper`, });
+    var container = createDiv({
+        class: `projection-wrapper`,
+        dataset: {
+            nature: "layout"
+        }
+    });
 
     for (let i = 0; i < disposition.length; i++) {
         const content = disposition[i];
@@ -286,7 +300,11 @@ const tableLayoutHandler = {
 function tableHandler(layout) {
     const { disposition, orientation, row, column } = layout;
 
-    var table = createTable();
+    var table = createTable({
+        dataset: {
+            nature: "layout"
+        }
+    });
     table.appendChild(tableLayoutHandler[orientation].call(this, disposition));
 
     return table;
@@ -518,6 +536,7 @@ function attributeHandler(name) {
 
     var { target } = this.concept.getAttributeByName(name);
     var projection = Projection.create(target.schema.projection, target, this.editor);
+    projection.parent = this;
 
     return projection.render();
 }
@@ -539,6 +558,7 @@ function componentHandler(name) {
 
     var component = this.concept.getComponentByName(name);
     var projection = Projection.create(component.schema.projection, component, this.editor);
+    projection.parent = this;
 
     return projection.render();
 }
@@ -556,7 +576,7 @@ function resolveReference(key) {
     const { action, behaviour, constraint, layout, view } = element;
     if (view) {
         return fieldHandler.call(this, element);
-    }else if( layout) {
+    } else if (layout) {
         const { type, disposition } = layout;
         return LayoutHandler[type].call(this, layout);
     }

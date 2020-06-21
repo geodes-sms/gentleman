@@ -13,12 +13,25 @@
         height: 20px;
     }
 
-.body {
+.editor-body {
     background-color: #fefefe;
     box-shadow: 0 0 1px #555;
     min-height: calc(100% - 20px);
     padding: 15px 10px;
     box-sizing: border-box;
+}
+
+.editor-body.dragging .field {
+    background-color: #ffd300;
+    color: transparent;
+}
+
+.editor-body.dragging .projection-wrapper {
+    background-color: royalblue;
+    border: 1px solid #fff;
+    margin: 5px;
+    transition: .2s;
+    color: transparent;
 }
 
 .projection-wrapper[data-object] {

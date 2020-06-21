@@ -3,9 +3,9 @@ import {
     createUnorderedList, createListItem, createParagraph, createButton,
     getElement, getElements, appendChildren, preprendChild,
     removeChildren, findAncestor, copytoClipboard, isHTMLElement, cloneObject,
-    isEmpty, isNullOrWhitespace, isNullOrUndefined, isNull, windowHeight, windowWidth
+    isEmpty, isNullOrWhitespace, isNullOrUndefined, isNull, windowHeight, windowWidth, createDocFragment
 } from 'zenkai';
-import { events, hide, show, Key } from '@utils/index.js';
+import { Events, hide, show, Key } from '@utils/index.js';
 import { MetaModel, Model } from '@model/index.js';
 import { State } from './state.js';
 import { ExplorerManager } from './explorer.js';
@@ -16,7 +16,12 @@ const EditorMode = {
     EDIT: 'edit'
 };
 
-function getContainer(container) {
+/**
+ * Resolves the container
+ * @param {HTMLElement|string} container 
+ * @returns {HTMLElement}
+ */
+function resolveContainer(container) {
     if (isHTMLElement(container)) {
         return container;
     } else if (!isNullOrWhitespace(container)) {
@@ -38,23 +43,20 @@ export const Editor = {
     create(container) {
         const instance = Object.create(this);
 
-        instance.container = getContainer(container);
+        instance.container = resolveContainer(container);
         if (!isHTMLElement(instance.container)) {
-            throw new Error("Container not found. Gentleman editor could not be created.");
+            throw new TypeError("Bad argument: The container argument could not be resolved to an HTML Element.");
         }
 
         instance.container.tabIndex = -1;
-        instance.body = createDiv({ class: 'body', tabindex: 0 });
+        instance.body = createDiv({ class: 'editor-body', tabindex: 0 });
+        instance.container.appendChild(instance.body);
         instance.fields = new Map();
         instance.state = State.create();
 
         return instance;
     },
 
-    /** @type {state} */
-    state: null,
-    /** @type {Map} */
-    fields: null,
     /** @type {string} */
     workflow: null,
     /** @type {MetaModel} */
@@ -65,8 +67,10 @@ export const Editor = {
     container: null,
     /** @type {HTMLElement} */
     body: null,
+    /** @type {Map} */
+    fields: null,
     /** @type {Field} */
-    focusedField: null,
+    activeField: null,
     /** @type {HTMLElement} */
     activeElement: null,
     /** @type {Concept} */
@@ -90,36 +94,13 @@ export const Editor = {
         try {
             this.model = this.metamodel.createModel().init(model);
         } catch (error) {
-            this.container.appendChild(createParagraph({ class: 'body', text: error.toString() }));
+            this.display(error.toString());
             return;
         }
 
         // set the initial state
         this.state.init(this.model.schema);
-        events.emit('editor.state.initialized');
-
-        this.btnExport = createButton({
-            id: "btnExportModel",
-            class: ["btn", "btn-export", "hidden"],
-            draggable: true,
-            dataset: {
-                "context": "model",
-                "action": "export",
-            }
-        }, "Export");
-
-        this.btnImport = createLabel({
-            id: "btnImportModel",
-            class: ["btn", "btn-import", "hidden"],
-            draggable: true,
-            dataset: {
-                "context": "model",
-                "action": "import"
-            }
-        }, ["Import", createInput({ type: "file", class: "hidden", accept: '.json' })]);
-
-        appendChildren(this.container, [this.btnExport, this.btnImport]);
-        preprendChild(this.container, this.body);
+        Events.emit('editor.state.initialized');
 
         this.render();
 
@@ -129,10 +110,10 @@ export const Editor = {
     loadMetamodel(metamodel) {
         this.metamodel = MetaModel.create(metamodel);
 
-        var resources = this.metamodel.resources;
+        const { resources } = this.metamodel;
 
         // add stylesheets
-        if (!isEmpty(resources)) {
+        if (Array.isArray(resources)) {
             let dir = '../assets/css/';
 
             // remove existing (previous) custom stylesheets
@@ -167,6 +148,16 @@ export const Editor = {
 
         return this;
     },
+    unregisterField(field) {
+        var _field = this.fields.get(field.id);
+
+        if (_field) {
+            _field.editor = null;
+            this.fields.delete(_field.id);
+        }
+
+        return this;
+    },
     /**
      * Get a the related field object
      * @param {HTMLElement} element 
@@ -198,27 +189,33 @@ export const Editor = {
     undo() {
         this.state.undo();
         this.setState(cloneObject(this.state.current));
-        events.emit('editor.undo', this.state.hasUndo);
+
+        Events.emit('editor.undo', this.state.hasUndo);
+
+        return this;
     },
     redo() {
         this.state.redo();
         this.setState(cloneObject(this.state.current));
-        events.emit('editor.redo', this.state.hasRedo);
+
+        Events.emit('editor.redo', this.state.hasRedo);
+
+        return this;
     },
     save() {
         this.state.set(this.concrete);
-        events.emit('editor.save');
+        Events.emit('editor.save');
 
         return this;
     },
     clear() {
         this.fields.clear();
-        this.focusedField = null;
+        this.activeField = null;
         this.activeElement = null;
         this.activeConcept = null;
         removeChildren(this.body);
 
-        events.emit('editor.clear');
+        Events.emit('editor.clear');
 
         return this;
     },
@@ -270,58 +267,102 @@ export const Editor = {
     },
 
     render(container) {
+        // TODO: Add support for saved projection
+        // TODO  HINT: Add getProjection to Model (lookup passed value, saved model)
+        const projectionSchema = this.metamodel.getProjectionSchema(this.model.root.name);
+        var projection = Projection.create(projectionSchema, this.model.root, this);
+
         if (isHTMLElement(container)) {
-            container.appendChild(this.model.render());
+            container.appendChild(projection.render());
 
             return container;
         }
 
-        this.clear();
-
-        // TODO: Add support for saved projection
-        // TODO  HINT: Add getProjection to Model (lookup passed value, saved model)
-        var projectionSchema = this.metamodel.getProjectionSchema(this.model.root.name);
-        var projection = Projection.create(projectionSchema, this.model.root, this);
-
-        this.body.appendChild(projection.render());
-        this.activeElement = this.body;
+        var fragment = createDocFragment();
 
         if (!isHTMLElement(this.infoContainer)) {
-            this.infoContainer = createDiv({ class: ["info-container", "hidden"] });
-            this.container.appendChild(this.infoContainer);
+            this.infoContainer = createDiv({
+                class: ["info-container", "hidden"]
+            });
+            fragment.appendChild(this.infoContainer);
         }
 
         if (!isHTMLElement(this.actionContainer)) {
-            this.actionContainer = createDiv({ class: ["action-container", "hidden"] });
-            this.container.appendChild(this.actionContainer);
+            this.actionContainer = createDiv({
+                class: ["action-container", "hidden"]
+            });
+            fragment.appendChild(this.actionContainer);
         }
+
+        if (!isHTMLElement(this.btnExport)) {
+            this.btnExport = createButton({
+                id: "btnExportModel",
+                class: ["btn", "btn-export"],
+                draggable: true,
+                dataset: {
+                    "context": "model",
+                    "action": "export",
+                }
+            }, "Export");
+
+            fragment.appendChild(this.btnExport);
+        }
+
+        if (!isHTMLElement(this.btnImport)) {
+            this.btnImport = createLabel({
+                id: "btnImportModel",
+                class: ["btn", "btn-import", "hidden"],
+                draggable: true,
+                dataset: {
+                    "context": "model",
+                    "action": "import"
+                }
+            }, ["Import", createInput({ type: "file", class: "hidden", accept: '.json' })]);
+
+            fragment.appendChild(this.btnImport);
+        }
+
+        this.container.appendChild(fragment);
+
+        this.clear().body.appendChild(projection.render());
 
         return this;
     },
+    /**
+     * Updates the active HTML Element
+     * @param {HTMLElement} element 
+     */
     updateActiveElement(element) {
         if (this.activeElement && this.activeElement !== element) {
             this.activeElement.classList.remove('active');
         }
         this.activeElement = element;
         this.activeElement.classList.add('active');
+
+        return this;
     },
+    /**
+     * Updates the active concept
+     * @param {Concept} concept 
+     */
     updateActiveConcept(concept) {
         this.activeConcept = concept;
+
+        return this;
     },
     bindEvents() {
         var lastKey = null;
 
-        this.body.addEventListener('dblclick', (event) => {
-            console.log(`give this element (${event.target.name || event.target.id}) main focus`);
-        });
-
         this.body.addEventListener('click', (event) => {
             var target = event.target;
-            console.log("CLICK EVENT CALLED");
             var object = target.dataset['object'];
-            if (isNull(this.focusedField) && ['concept', 'component'].includes(object)) {
+            if (isNull(this.activeField) && ['concept', 'component'].includes(object)) {
                 this.updateActiveElement(target);
             }
+        });
+
+        this.body.addEventListener('dblclick', (event) => {
+            console.log(`GIVE THIS ELEMENT (${event.target.name || event.target.id}) MAIN FOCUS`);
         });
 
         this.body.addEventListener('keydown', (event) => {
@@ -343,12 +384,15 @@ export const Editor = {
                     rememberKey = true;
                     break;
                 case Key.enter:
-                    // target.blur(); // remove focus
+                    if(this.activeField) {
+                        console.log("ENRE");
+                        this.activeField.focusOut();
+                    }
                     event.preventDefault();
 
                     break;
                 case Key.right_arrow:
-                    if (this.focusedField.hasElementFocus) {
+                    if (this.activeField.hasElementFocus) {
 
                         // // get field element
                         // /** @type {HTMLElement} */
@@ -372,7 +416,7 @@ export const Editor = {
                     if (field) {
                         field.escapeHandler();
                     } else {
-                        this.focusedField.focus();
+                        this.activeField.focus();
                     }
 
                     break;
@@ -502,53 +546,54 @@ export const Editor = {
             }
         }, false);
 
-        this.body.addEventListener('mouseover', (event) => {
-            var target = event.target;
-
-        });
-
-        this.body.addEventListener('mouseout', (event) => {
-            var target = event.target;
-
-            if (target.classList.contains('component')) {
-                target.classList.remove('component--on_mouseover');
-            }
-        });
-
         this.body.addEventListener('focusin', (event) => {
-            var target = event.target;
-            var field = this.getField(target);
-            if (this.focusedField && this.focusedField !== field) {
-                this.focusedField.focusOut();
-                this.focusedField = null;
-            }
-          
-            if (field) {
-                this.focusedField = field;
-                this.focusedField.focusIn();
+            const target = event.target;
 
-                // update active element
-                let fieldParent = findAncestor(target, (el) => ['concept', 'component'].includes(el.dataset['object']));
-                if (isHTMLElement(fieldParent)) {
-                    this.updateActiveElement(fieldParent);
-                }
+            const { nature } = target.dataset;
 
-                // update active concept
-                let conceptParent = this.focusedField.concept.getConceptParent();
-                if (conceptParent) {
-                    this.updateActiveConcept(conceptParent);
-                }
-            } else if (target.parentElement.classList.contains('field--list')) {
-                this.updateActiveElement(target.parentElement);
+            var handler = focusinHandler[nature];
+            if (handler) {
+                handler.call(this, target);
             } else {
-                let choiceParent = findAncestor(target, (el) => el.dataset['nature'] === 'choice');
-                if (isHTMLElement(choiceParent)) {
-                    this.updateActiveElement(choiceParent);
+                if (this.activeField) {
+                    this.activeField.focusOut();
+                    this.activeField = null;
                 }
             }
         });
 
-    
+        const focusinHandler = {
+            'field': focusinField
+        };
+
+        function focusinField(target) {
+            const field = this.getField(target);
+
+            if (this.activeField && this.activeField !== field) {
+                this.activeField.focusOut();
+                this.activeField = null;
+            }
+            
+            if (isNullOrUndefined(field)) {
+                return;
+            }
+
+            this.activeField = field;
+            this.activeField.focusIn();
+
+            // update active element (projection)
+            let parentProjection = this.activeField.projection.parent;
+            if (parentProjection) {
+                this.updateActiveElement(parentProjection.container);
+            }
+
+            // update active concept
+            let conceptParent = this.activeField.concept.getConceptParent();
+            if (conceptParent) {
+                this.updateActiveConcept(conceptParent);
+            }
+        }
+
         this.btnExport.addEventListener('click', (event) => {
             copytoClipboard(this.model.export());
             this.notify("Model has been copied to clipboard");
@@ -567,17 +612,32 @@ export const Editor = {
         });
 
         this.btnExport.addEventListener('dragstart', (event) => {
-            event.dataTransfer.setData("text/plain", event.target.innerText);
-            event.dataTransfer.setData("text/html", event.target.outerHTML);
-            event.dataTransfer.setData("text/uri-list", event.target.ownerDocument.location.href);
+            event.dataTransfer.effectAllowed = "move";
+            event.dataTransfer.setData("clientX", event.clientX);
+            event.dataTransfer.setData("clientY", event.clientY);
+            this.body.classList.add("dragging");
+            // event.dataTransfer.setData("text/plain", event.target.innerText);
+            // event.dataTransfer.setData("text/html", event.target.outerHTML);
+            // event.dataTransfer.setData("text/uri-list", event.target.ownerDocument.location.href);
         });
 
-        this.btnExport.addEventListener('dragend', function (e) {
-            this.style.right = `${windowWidth() - e.clientX}px`;
-            this.style.bottom = `${windowHeight() - e.clientY}px`;
+        this.btnExport.addEventListener('dragend', (event) => {
+            this.body.classList.remove("dragging");
         });
 
-        events.on('model.change', (from) => {
+        this.body.addEventListener('drop', (event) => {
+            var prevClientX = event.dataTransfer.getData("clientX");
+            var prevClientY = event.dataTransfer.getData("clientY");
+
+            this.btnExport.style.top = `${this.btnExport.offsetTop - (prevClientY - event.clientY)}px`;
+            this.btnExport.style.left = `${this.btnExport.offsetLeft - (prevClientX - event.clientX)}px`;
+        });
+
+        this.body.addEventListener('dragover', (event) => {
+            event.preventDefault();
+        });
+
+        Events.on('model.change', (from) => {
             this.save();
         });
 

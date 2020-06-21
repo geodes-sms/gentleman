@@ -3,7 +3,7 @@ import {
     createParagraph, createSpan, appendChildren, createH3, createH4, createListItem, 
     createUnorderedList, hasOwn, isString, isNullOrWhitespace
 } from 'zenkai';
-import { EventType, events } from '@utils/index.js';
+import { EventType, Events } from '@utils/index.js';
 
 /**
  * Preprend a string with a hashtag
@@ -43,10 +43,10 @@ export const Note = {
         return this.container;
     },
     bindEvents() {
-        events.on('editor.change', (projection) => {
+        Events.on('editor.change', (projection) => {
             this.update(projection);
         });
-        events.on('editor.clear', () => {
+        Events.on('editor.clear', () => {
             this.clear();
         });
     },
