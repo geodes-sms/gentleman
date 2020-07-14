@@ -3,34 +3,87 @@
         "nature": "concrete",
         "attribute": {
             "title": {
-                "alias": "my title",
                 "target": "string",
                 "projection": [
                     {
                         "type": "field",
-                        "placeholder": "mindmap title",
-                        "view": "textbox"
+                        "view": "text",
+                        "placeholder": "Title"
                     }
                 ]
             },
-            "short_description": {
+            "description": {
                 "target": "string",
-                "required": false
-            },
-            "long_description": {
-                "target": "string",
-                "required": false
-            },
-            "author": {
-                "target": "string",
-                "required": false
+                "required": false,
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "text",
+                        "before": {
+                            "projection": [
+                                {
+                                    "layout": {
+                                        "type": "text",
+                                        "disposition": "Description: "
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
             }
         },
         "component": {
             "central_topic": {
                 "attribute": {
-                    "id": {
-                        "target": "string"
+                    "markers": {
+                        "target": "set",
+                        "accept": "marker",
+                        "min": 1,
+                        "projection": [
+                            {
+                                "type": "field",
+                                "view": "list",
+                                "orientation": "horizontal",
+                                "item": {
+                                    "after": {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "style": {
+                                                        "box": {
+                                                            "space": {
+                                                                "outer": {
+                                                                    "right": 3
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "disposition": [
+                                                        ","
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                "action": {
+                                    "add": {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "disposition": [
+                                                        "Add a marker"
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
                     },
                     "topic": {
                         "target": "central_topic"
@@ -38,44 +91,106 @@
                 },
                 "projection": [
                     {
-                        "type": "stack",
-                        "element": {
-                            "heading": {
-                                "type": "stack",
-                                "orientation": "horizontal",
-                                "layout": [
-                                    "Subject of discussion: #id"
-                                ]
-                            }
-                        },
-                        "orientation": "vertical",
-                        "layout": [
-                            "$heading",
-                            "#topic"
-                        ]
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "disposition": [
+                                "Markers: #markers",
+                                "#topic"
+                            ]
+                        }
                     }
                 ]
             }
         },
         "projection": [
             {
-                "type": "stack",
                 "element": {
-                    "intro": {
-                        "type": "stack",
-                        "orientation": "horizontal",
-                        "layout": [
-                            "Mind map #title #short_description",
-                            "#long_description"
-                        ]
+                    "heading": {
+                        "layout": {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "size": 24,
+                                    "bold": 800,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#555"
+                                    }
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 12
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Mind Map"
+                        }
+                    },
+                    "identification": {
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "style": {
+                                "box": {
+                                    "border": {
+                                        "bottom": {
+                                            "size": 2,
+                                            "color": {
+                                                "type": "rgb",
+                                                "value": "#d5d5d5"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": [
+                                "Mind map #title",
+                                "#description"
+                            ]
+                        }
                     }
                 },
-                "orientation": "vertical",
-                "layout": [
-                    "#author",
-                    "$intro",
-                    "#central_topic:component"
-                ]
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "$heading",
+                        "$identification",
+                        "#central_topic:component"
+                    ]
+                }
+            }
+        ]
+    },
+    "marker": {
+        "nature": "concrete",
+        "attribute": {
+            "symbol": {
+                "target": "string"
+            }
+        },
+        "projection": [
+            {
+                "tags": ["editor"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "#symbol"
+                    ]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "readonly": true,
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "Symbol #symbol"
+                    ]
+                }
             }
         ]
     },
@@ -90,8 +205,8 @@
                 "required": false
             },
             "marker": {
-                "name": "marker",
-                "target": "string",
+                "target": "reference",
+                "accept": "marker",
                 "required": false
             }
         }
@@ -106,46 +221,161 @@
                         "target": "set",
                         "accept": "main_topic",
                         "min": 1,
-                        "action": {
-                            "add": {
-                                "trigger": "click",
-                                "pre": "null",
-                                "post": "$count = $count@pre + 1",
-                                "projection": [
-                                    {
-                                        "type": "stack",
-                                        "orientation": "vertical",
-                                        "layout": [
-                                            "Main topic <name>",
-                                            "<details>",
-                                            "List of sub topics: <sub topics>"
+                        "projection": [
+                            {
+                                "type": "field",
+                                "view": "list",
+                                "orientation": "horizontal",
+                                "item": {
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "inner": {
+                                                    "top": 10,
+                                                    "left": 15,
+                                                    "right": 15,
+                                                    "bottom": 10
+                                                },
+                                                "outer": {
+                                                    "right": 10
+                                                }
+                                            },
+                                            "border": {
+                                                "size": 4,
+                                                "color": "royalblue",
+                                                "radius": 10
+                                            },
+                                            "background": {
+                                                "type": "rgb",
+                                                "value": "#E1EBF9"
+                                            }
+                                        }
+                                    }
+                                },
+                                "action": {
+                                    "add": {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "stack",
+                                                    "orientation": "vertical",
+                                                    "style": {
+                                                        "box": {
+                                                            "space": {
+                                                                "inner": 15
+                                                            }
+                                                        }
+                                                    },
+                                                    "disposition": [
+                                                        {
+                                                            "type": "wrap",
+                                                            "disposition": [
+                                                                {
+                                                                    "type": "text",
+                                                                    "style": {
+                                                                        "text": {
+                                                                            "bold": 600
+                                                                        }
+                                                                    },
+                                                                    "disposition": "Main topic"
+                                                                },
+                                                                {
+                                                                    "type": "text",
+                                                                    "style": {
+                                                                        "text": {
+                                                                            "italic": true
+                                                                        }
+                                                                    },
+                                                                    "disposition": "<name>"
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "text",
+                                                            "style": {
+                                                                "text": {
+                                                                    "italic": true
+                                                                }
+                                                            },
+                                                            "disposition": "<details?>"
+                                                        },
+                                                        {
+                                                            "type": "text",
+                                                            "style": {
+                                                                "text": {
+                                                                    "bold": 700,
+                                                                    "size": 15
+                                                                }
+                                                            },
+                                                            "disposition": "Subtopics"
+                                                        },
+                                                        {
+                                                            "type": "text",
+                                                            "style": {
+                                                                "text": {
+                                                                    "italic": true
+                                                                }
+                                                            },
+                                                            "disposition": "<subtopics>"
+                                                        }
+                                                    ]
+                                                }
+                                            }
                                         ]
                                     }
-                                ]
+                                }
                             }
-                        }
+                        ]
                     }
                 },
                 "projection": [
                     {
-                        "type": "stack",
-                        "orientation": "vertical",
-                        "layout": [
-                            "List of main topics:",
-                            "#topics"
-                        ]
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "text": {
+                                            "bold": 700,
+                                            "color": {
+                                                "type": "rgb",
+                                                "value": "#333"
+                                            },
+                                            "size": 18
+                                        }
+                                    },
+                                    "disposition": "Main topics"
+                                },
+                                "#topics"
+                            ]
+                        }
                     }
                 ]
             }
         },
         "projection": [
             {
-                "type": "stack",
-                "orientation": "vertical",
-                "layout": [
-                    "#name #marker",
-                    "#main_topics:component"
-                ]
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        {
+                            "type": "wrap",
+                            "style": {
+                                "text": {
+                                    "bold": true,
+                                    "size": 16
+                                }
+                            },
+                            "disposition": [
+                                "Central topic #name (#marker)"
+                            ]
+                        },
+                        "#main_topics:component"
+                    ]
+                }
             }
         ]
     },
@@ -158,46 +388,115 @@
                     "topics": {
                         "target": "set",
                         "accept": "sub_topic",
-                        "min": 5,
-                        "action": {
-                            "add": {
-                                "projection": [
-                                    {
-                                        "type": "wrap",
-                                        "layout": "Add a sub topic"
+                        "required": false,
+                        "min": 1,
+                        "projection": [
+                            {
+                                "type": "field",
+                                "view": "list",
+                                "orientation": "horizontal",
+                                "item": {
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "inner": 5,
+                                                "outer": {
+                                                    "right": 5
+                                                }
+                                            },
+                                            "border": {
+                                                "size": 2,
+                                                "color": {
+                                                    "type": "rgb",
+                                                    "value": "#3FBA5E"
+                                                },
+                                                "radius": 2
+                                            },
+                                            "background": {
+                                                "type": "rgb",
+                                                "value": "#D6F9D8"
+                                            }
+                                        }
                                     }
-                                ]
+                                },
+                                "action": {
+                                    "add": {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "style": {
+                                                        "box": {
+                                                            "space": {
+                                                                "inner": 5
+                                                            }
+                                                        }
+                                                    },
+                                                    "disposition": [
+                                                        "Add a subtopic"
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
                             }
-                        }
+                        ]
                     }
                 },
                 "projection": [
                     {
-                        "type": "stack",
-                        "orientation": "horizontal",
-                        "layout": [
-                            "List of sub topics:",
-                            "#topics"
-                        ]
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "text": {
+                                            "bold": 700,
+                                            "color": {
+                                                "type": "rgb",
+                                                "value": "#333"
+                                            },
+                                            "size": 16
+                                        }
+                                    },
+                                    "disposition": "Subtopics"
+                                },
+                                "#topics"
+                            ]
+                        }
                     }
                 ]
             }
         },
         "projection": [
             {
-                "type": "stack",
                 "element": {
                     "heading": {
-                        "type": "wrap",
-                        "layout": "Main topic #name"
+                        "layout": {
+                            "type": "wrap",
+                            "style": {
+                                "text": {
+                                    "bold": 600
+                                }
+                            },
+                            "disposition": [
+                                "Main topic #name"
+                            ]
+                        }
                     }
                 },
-                "orientation": "vertical",
-                "layout": [
-                    "$heading",
-                    "#details",
-                    "#sub_topics:component"
-                ]
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "$heading",
+                        "#details",
+                        "#sub_topics:component"
+                    ]
+                }
             }
         ]
     },
@@ -210,42 +509,75 @@
                 "attribute": {
                     "topics": {
                         "target": "set",
-                        "accept": "sub_topic"
+                        "accept": "sub_topic",
+                        "min": 0,
+                        "projection": [
+                            {
+                                "type": "field",
+                                "view": "list",
+                                "item": {
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "inner": 3,
+                                                "outer": {
+                                                    "bottom": 5
+                                                }
+                                            },
+                                            "border": {
+                                                "size": 1,
+                                                "color": "gray",
+                                                "radius": 2
+                                            }
+                                        }
+                                    }
+                                },
+                                "action": {
+                                    "add": {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "style": {
+                                                        "box": {
+                                                            "space": {
+                                                                "inner": 5
+                                                            }
+                                                        }
+                                                    },
+                                                    "disposition": [
+                                                        "Add a subsubtopic"
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
                     }
                 },
                 "projection": [
                     {
-                        "type": "wrap",
-                        "layout": "#topics"
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                "#topics"
+                            ]
+                        }
                     }
                 ]
             }
         },
         "projection": [
             {
-                "type": "stack",
-                "orientation": "vertical",
-                "layout": [
-                    "#name",
-                    "#sub_topics:component"
-                ]
-            },
-            {
-                "type": "table",
-                "disposition": "column",
                 "layout": {
-                    "header": {
-                        "subtopics": {
-                            "value": "Subtopics"
-                        }
-                    },
-                    "cell": [
-                        {
-                            "header": "subtopics",
-                            "value": "#name"
-                        }
-                    ],
-                    "multiple": true
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "#name",
+                        "#sub_topics:component"
+                    ]
                 }
             }
         ]

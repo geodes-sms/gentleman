@@ -86,9 +86,10 @@ export const MetaModel = {
         const concepts = [];
 
         for (const key in this.schema) {
-            const concept = this.schema[key];
-            if (concept.prototype === prototype) {
+            if (this.schema[key].prototype === prototype) {
+                const concept = this.getConceptSchema(key);
                 concept.name = key;
+                concept.type = "concept";
                 concepts.push(concept);
             }
         }

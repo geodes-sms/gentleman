@@ -1,11 +1,12 @@
 import {
-    createSpan, createUnorderedList, createListItem, createDiv, createDocFragment,
-    addAttributes, appendChildren, removeChildren, isHTMLElement,
-    valOrDefault, isEmpty, isNullOrWhitespace, createAnchor, createInput, findAncestor,
+    createUnorderedList, createListItem, createAnchor, createInput, createDocFragment,
+    appendChildren, removeChildren, isHTMLElement, findAncestor,
+    valOrDefault, isNullOrWhitespace,
 } from "zenkai";
+import { show, hide } from "@utils/index.js";
 import { Field } from "./field.js";
-import { extend, show, hide } from "@utils/index.js";
-import { Projection } from "@projection/index.js";
+import { ProjectionManager } from "@projection/index.js";
+import { StyleHandler } from "./../style-handler.js";
 
 
 function createElement() {
@@ -20,54 +21,70 @@ function createElement() {
         }
     });
 
-    if (this.concept.hasValue()) {
+    if (this.source.hasValue()) {
         container.classList.remove("empty");
     }
+
+    StyleHandler(container, this.schema.style);
 
     return container;
 }
 
 
-function createChoice(value) {
-    var choice = createListItem({
-        class: "field--link__choice",
+function createChoice(object) {
+    const { choice } = this.schema;
+
+    var item = createListItem({
+        class: ["field--link__choice"],
         tabindex: 0,
         dataset: {
             nature: "field-component",
             id: this.id,
-            value: value.id
+            value: resolveChoiceValue(object)
         }
     });
 
-    const schema = this.choice.projection;
-    schema.forEach(config => {
-        config.element = {};
-        for (const key in value) {
-            Object.assign(config.element, {
-                [key]: {
-                    "type": "text",
-                    "disposition": value[key]
-                }
-            });
-        }
-    });
+    var projection = null;
+    var concept = null;
+    if (object.type === "concept") {
+        concept = object.value;
+    }
 
-    var projection = Projection.create(schema, null, this.editor);
-    choice.appendChild(projection.render());
+    if (choice) {
+        projection = ProjectionManager.createProjection(choice.projection, concept, this.editor).init();
+    } else {
+        let schema = concept.schema.projection.filter(projection => projection.tags && projection.tags.includes("choice"));
+        projection = ProjectionManager.createProjection(schema, concept, this.editor).init();
+    }
+    
+    item.appendChild(projection.render());
+
+    return item;
+}
+
+function resolveChoiceValue(choice) {
+    if (choice.type === "concept") {
+        return choice.value.id;
+    } else if (choice.type === "value") {
+        return choice.value;
+    }
 
     return choice;
 }
 
-export const LinkField = extend(Field, {
+
+const _LinkField = {
     init() {
         this.value = this.schema.value;
         this.choice = this.schema.choice;
+        this.scope = this.schema.scope;
+        this.placeholder = this.schema.placeholder;
 
         return this;
     },
     value: null,
-    source: null,
     choice: null,
+    placeholder: null,
     input: null,
     choices: null,
 
@@ -77,8 +94,8 @@ export const LinkField = extend(Field, {
             this.element.id = this.id;
 
             this.input = createInput({
-                class: "field--link__input",
-                placeholder: `Select ${this.concept.name}`,
+                class: ["field--link__input"],
+                placeholder: this.placeholder ? this.placeholder : `Select ${this.source.name}`,
                 tabindex: 0,
                 dataset: {
                     nature: "field-component",
@@ -97,11 +114,11 @@ export const LinkField = extend(Field, {
             appendChildren(this.element, [this.input, this.choices]);
         }
 
-        if (this.concept.hasValue()) {
+        if (this.source.hasValue()) {
             let concept = this.getValue();
 
             var projectionSchema = valOrDefault(this.value.projection, concept.schema.projection);
-            var projection = Projection.create(projectionSchema, concept, this.editor);
+            var projection = ProjectionManager.createProjection(projectionSchema, concept, this.editor).init();
             this.element.appendChild(projection.render());
         }
 
@@ -110,17 +127,31 @@ export const LinkField = extend(Field, {
         return this.element;
     },
     focusIn() {
-        this.source = this.concept.getCandidates();
+        this.focused = true;
     },
     focusOut() {
-        return true;
+        this.focused = false;
     },
     spaceHandler() {
         removeChildren(this.choices);
-        this.source.forEach(value => {
+        this.source.getCandidates().forEach(value => {
             var choice = createChoice.call(this, value);
             this.choices.appendChild(choice);
         });
+
+        if (this.source.accept === "concept") {
+            ["string", "number", "set", "reference"].forEach(value => {
+                this.choices.appendChild(createListItem({
+                    class: ["field--link__choice"],
+                    tabindex: 0,
+                    dataset: {
+                        nature: "field-component",
+                        id: this.id,
+                        value: value
+                    }
+                }, value));
+            });
+        }
 
         show(this.choices);
         this.choices.focus();
@@ -128,21 +159,31 @@ export const LinkField = extend(Field, {
     bindEvents() {
         var lastKey = -1;
 
-        const concept = this.concept;
-
         const getInputValue = () => this.input.value.trim();
-        const filterDATA = (query) => this.source.filter(val => query.some(q => val.name.toLowerCase().includes(q.toLowerCase())));
+        const filterDATA = (query) => this.source.getCandidates().filter(val => query.some(q => val.name.toLowerCase().includes(q.toLowerCase())));
+
+        /**
+         * Get the choice element
+         * @param {HTMLElement} element 
+         */
+        const getItem = (element) => element.parentElement === this.choices ? element : findAncestor(element, (el) => el.parentElement === this.choices);
 
         this.element.addEventListener('click', (event) => {
-            let target = event.target;
-            var parent = findAncestor(target, (el) => el.classList.contains('field--link__choice'));
-            
-            if (parent.parentElement === this.choices) {
-                let { value } = parent.dataset;
-                this.concept.setValue(value);
-                let concept = this.concept.getValue();
-                var projectionSchema = concept.schema.projection;
-                var projection = Projection.create(this.value.projection, concept, this.editor);
+            const item = getItem(event.target);
+
+            if (isHTMLElement(item)) {
+                let { value } = item.dataset;
+                this.source.setValue(value);
+                let concept = this.source.getValue();
+
+                var projection = null;
+                if (this.schema.value) {
+                    projection = ProjectionManager.createProjection(this.schema.value.projection, concept, this.editor).init();
+                } else {
+                    let schema = concept.schema.projection.filter(projection => projection.tags && projection.tags.includes("choice"));
+                    projection = ProjectionManager.createProjection(schema, concept, this.editor).init();
+                }
+
                 this.element.parentElement.insertBefore(projection.render(), this.element);
                 this.value = concept;
 
@@ -155,12 +196,12 @@ export const LinkField = extend(Field, {
             var fragment = createDocFragment();
 
             if (isNullOrWhitespace(getInputValue())) {
-                this.source.forEach(concept => { fragment.appendChild(createChoice.call(this, concept)); });
+                this.source.getCandidates().forEach(concept => fragment.appendChild(createChoice.call(this, concept)));
 
                 hide(this.choices);
             } else {
                 let query = getInputValue().split(' ');
-                filterDATA(query).forEach(concept => { fragment.appendChild(createChoice.call(this, concept)); });
+                filterDATA(query).forEach(concept => fragment.appendChild(createChoice.call(this, concept)));
 
                 show(this.choices);
             }
@@ -168,4 +209,9 @@ export const LinkField = extend(Field, {
             removeChildren(this.choices).appendChild(fragment);
         });
     }
-});
+};
+
+export const LinkField = Object.assign({},
+    Field,
+    _LinkField
+);

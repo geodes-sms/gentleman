@@ -1,0 +1,1946 @@
+{
+    "model": {
+        "nature": "concrete",
+        "attribute": {
+            "name": {
+                "target": "string",
+                "description": "The name of your model."
+            },
+            "root": {
+                "target": "reference",
+                "accept": "concrete_concept",
+                "description": "The root concept of your model. Every instance of your model will begin with this concept.",
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "link",
+                        "rel": "clone",
+                        "placeholder": "Select a concept",
+                        "value": {
+                            "projection": [
+                                {
+                                    "readonly": true,
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": ["#name"]
+                                    }
+                                }
+                            ]
+                        },
+                        "choice": {
+                            "projection": [
+                                {
+                                    "readonly": true,
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": ["Concept #name"]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "component": {
+            "model_concept": {
+                "attribute": {
+                    "concepts": {
+                        "target": "set",
+                        "accept": "model_concept",
+                        "projection": [
+                            {
+                                "type": "field",
+                                "view": "list",
+                                "orientation": "vertical",
+                                "action": {
+                                    "add": {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "disposition": ["Add a concept"]
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "remove": {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "disposition": ["X Remove"]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                "projection": [
+                    {
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "text": {
+                                            "bold": 600,
+                                            "color": {
+                                                "type": "rgb",
+                                                "value": "#333"
+                                            },
+                                            "size": 20
+                                        },
+                                        "box": {
+                                            "space": {
+                                                "outer": {
+                                                    "bottom": 6
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "disposition": "List of concepts"
+                                },
+                                "#concepts"
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "projection": [
+            {
+                "tags": ["editor"],
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "style": {
+                        "text": {
+                            "color": "black",
+                            "size": 15
+                        }
+                    },
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 800,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#555"
+                                    },
+                                    "size": 24
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 12
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "MODEL DEFINITION"
+                        },
+                        "Name: #name",
+                        {
+                            "type": "text",
+                            "style": {
+                                "box": {
+                                    "space": {
+                                        "inner": {
+                                            "bottom": 6
+                                        },
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    },
+                                    "border": {
+                                        "bottom": {
+                                            "color": "gray",
+                                            "size": 1
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Root: #root"
+                        },
+                        "#model_concept:component"
+                    ]
+                }
+            },
+            {
+                "readonly": true,
+                "tags": ["explorer"],
+                "environment": "explorer",
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["MODEL #name"]
+                }
+            }
+        ]
+    },
+    "model_concept": {
+        "nature": "prototype",
+        "attribute": {
+            "name": {
+                "target": "string"
+            },
+            "description": {
+                "target": "string",
+                "required": false,
+                "projection": [
+                    {
+                        "element": {
+                            "field": {
+                                "type": "field",
+                                "view": "text"
+                            }
+                        },
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": ["Description: $field"]
+                        }
+                    }
+                ]
+            }
+        },
+        "component": {
+            "concept_structure": {
+                "attribute": {
+                    "attributes": {
+                        "target": "set",
+                        "required": false,
+                        "accept": "attribute",
+                        "projection": [
+                            {
+                                "type": "field",
+                                "view": "table",
+                                "style": {
+                                    "box": {
+                                        "space": {
+                                            "outer": {
+                                                "bottom": 10
+                                            }
+                                        }
+                                    }
+                                },
+                                "orientation": "column",
+                                "header": [
+                                    "Name",
+                                    "Alias",
+                                    "Target",
+                                    "Minimum",
+                                    "Maximum",
+                                    "Required",
+                                    "Projection"
+                                ],
+                                "body": [
+                                    "#name",
+                                    "#alias",
+                                    "#target",
+                                    "#min",
+                                    "#max",
+                                    "#required",
+                                    "#projection"
+                                ]
+                            },
+                            {
+                                "type": "field",
+                                "view": "list",
+                                "orientation": "vertical"
+                            }
+                        ]
+                    },
+                    "components": {
+                        "target": "set",
+                        "accept": "component",
+                        "required": false,
+                        "projection": [
+                            {
+                                "type": "field",
+                                "view": "list",
+                                "orientation": "vertical",
+                                "action": {
+                                    "add": {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "disposition": ["Add a component"]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                "projection": [
+                    {
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "text": {
+                                            "underline": true,
+                                            "color": {
+                                                "type": "rgb",
+                                                "value": "#222"
+                                            },
+                                            "size": 16
+                                        },
+                                        "box": {
+                                            "space": {
+                                                "outer": {
+                                                    "bottom": 5
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "disposition": "Attributes"
+                                },
+                                "#attributes",
+                                "#components"
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "prototype_concept": {
+        "nature": "concrete",
+        "prototype": "model_concept",
+        "projection": [
+            {
+                "tags": ["editor"],
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 800,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#555"
+                                    },
+                                    "size": 18
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "PROTOTYPE DEFINITION"
+                        },
+                        {
+                            "type": "text",
+                            "style": {
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Name: #name"
+                        },
+                        "#description",
+                        "#concept_structure:component"
+                    ]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "Define a new ",
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": true
+                                },
+                                "box": {
+                                    "space": {
+                                        "inner": {
+                                            "left": 4
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "prototype"
+                        }
+                    ]
+                }
+            },
+            {
+                "tags": ["explorer"],
+                "readonly": true,
+                "environment": "explorer",
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["PROTOTYPE #name"]
+                }
+            }
+        ]
+    },
+    "concrete_concept": {
+        "nature": "concrete",
+        "prototype": "model_concept",
+        "attribute": {
+            "prototype": {
+                "target": "reference",
+                "accept": "prototype_concept",
+                "required": false,
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "link",
+                        "rel": "clone",
+                        "placeholder": "Select a prototype",
+                        "value": {
+                            "projection": [
+                                {
+                                    "readonly": true,
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": ["#name"]
+                                    }
+                                }
+                            ]
+                        },
+                        "choice": {
+                            "projection": [
+                                {
+                                    "readonly": true,
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": ["Prototype #name"]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "component": {
+            "concept_projection": {
+                "attribute": {
+                    "projections": {
+                        "target": "set",
+                        "accept": "projection",
+                        "min": 1,
+                        "projection": [
+                            {
+                                "type": "field",
+                                "view": "list",
+                                "orientation": "vertical",
+                                "action": {
+                                    "add": {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "disposition": ["Add a projection"]
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "remove": {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "disposition": ["X Remove"]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                "projection": [
+                    {
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "text": {
+                                            "size": 18,
+                                            "bold": true
+                                        },
+                                        "box": {
+                                            "space": {
+                                                "outer": {
+                                                    "bottom": 6
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "disposition": "Projection"
+                                },                            
+                                "#projections"
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "projection": [
+            {
+                "tags": ["editor"],
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 800,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#555"
+                                    },
+                                    "size": 18
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "CONCEPT DEFINITION"
+                        },
+                        "Name: #name",
+                        "#description",
+                        {
+                            "type": "text",
+                            "style": {
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Prototype: #prototype"
+                        },
+                        "#concept_structure:component",
+                        "#concept_projection:component"
+                    ]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "Define a new",
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": true
+                                },
+                                "box": {
+                                    "space": {
+                                        "inner": {
+                                            "left": 4
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "concrete concept"
+                        }
+                    ]
+                }
+            },
+            {
+                "tags": ["explorer"],
+                "readonly": true,
+                "environment": "explorer",
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["CONCEPT #name"]
+                }
+            }
+        ]
+    },
+    "structure": {
+        "nature": "prototype",
+        "attribute": {
+            "name": {
+                "target": "string"
+            },
+            "description": {
+                "target": "string"
+            },
+            "alias": {
+                "target": "string"
+            },
+            "required": {
+                "target": "boolean"
+            }
+        }
+    },
+    "attribute": {
+        "nature": "concrete",
+        "prototype": "structure",
+        "attribute": {
+            "target": {
+                "target": "primitive"
+            },
+            "min": {
+                "target": "number",
+                "required": false
+            },
+            "max": {
+                "target": "number",
+                "required": false
+            },
+            "values": {
+                "target": "set",
+                "accept": "string",
+                "required": false
+            },
+            "projection": {
+                "target": "field",
+                "required": false
+            }
+        },
+        "projection": [
+            {
+                "tags": ["editor"],
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        {
+                            "type": "wrap",
+                            "disposition": ["DEFINE Attribute #name AS #target"]
+                        },
+                        {
+                            "type": "wrap",
+                            "disposition": ["With constraints min=#min max=#max"]
+                        }
+                    ]
+                }
+            },
+            {
+                "tags": ["explorer"],
+                "readonly": true,
+                "environment": "explorer",
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["Attribute #name (#target)"]
+                }
+            }
+        ]
+    },
+    "component": {
+        "nature": "concrete",
+        "prototype": "structure",
+        "attribute": {
+            "attributes": {
+                "target": "set",
+                "accept": "attribute",
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "table",
+                        "orientation": "column",
+                        "header": [
+                            "Name",
+                            "Alias",
+                            "Target",
+                            "Minimum",
+                            "Maximum",
+                            "Required"
+                        ],
+                        "body": [
+                            "#name",
+                            "#alias",
+                            "#target",
+                            "#min",
+                            "#max",
+                            "#required"
+                        ]
+                    }
+                ]
+            },
+            "projections": {
+                "target": "set",
+                "accept": "stack_projection",
+                "min": 1,
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "list",
+                        "orientation": "vertical",
+                        "action": {
+                            "add": {
+                                "projection": [
+                                    {
+                                        "layout": {
+                                            "type": "wrap",
+                                            "disposition": ["Add a projection"]
+                                        }
+                                    }
+                                ]
+                            },
+                            "remove": {
+                                "projection": [
+                                    {
+                                        "layout": {
+                                            "type": "wrap",
+                                            "disposition": ["X Remove"]
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "component": {
+            "component_projection": {
+                "attribute": {
+                    "projections": {
+                        "target": "set",
+                        "accept": "projection",
+                        "min": 1,
+                        "projection": [
+                            {
+                                "type": "field",
+                                "view": "list",
+                                "orientation": "vertical",
+                                "action": {
+                                    "add": {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "disposition": ["Add a projection"]
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "remove": {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "disposition": ["X Remove"]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                "projection": [
+                    {
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "text": {
+                                            "size": 18,
+                                            "bold": true
+                                        },
+                                        "box": {
+                                            "space": {
+                                                "outer": {
+                                                    "bottom": 6
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "disposition": "Projection"
+                                },                            
+                                "#projections"
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "projection": [
+            {
+                "tags": ["editor"],
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "style": {
+                        "box": {
+                            "space": {
+                                "inner": {
+                                    "left": 6
+                                }
+                            }
+                        }
+                    },
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 700,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#555"
+                                    },
+                                    "size": 16
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "COMPONENT DEFINITION"
+                        },
+                        "Name: #name",
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "underline": true,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#222"
+                                    },
+                                    "size": 16
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 5
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Attributes"
+                        },
+                        "#attributes",
+                        "#component_projection:component"
+                    ]
+                }
+            },
+            {
+                "tags": ["explorer"],
+                "readonly": true,
+                "environment": "explorer",
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["Component #name"]
+                }
+            }
+        ]
+    },
+    "primitive": {
+        "nature": "prototype",
+        "attribute": { }
+    },
+    "string_primitive": {
+        "nature": "concrete",
+        "prototype": "primitive",
+        "attribute": {
+            "values": {
+                "target": "set",
+                "accept": "string",
+                "required": false,
+                "projection": [
+                    {
+                        "element": {
+                            "field": {
+                                "type": "field",
+                                "view": "list",
+                                "orientation": "horizontal",
+                                "action": {
+                                    "add": {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "disposition": ["Add a value"]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": ["with values [$field]"]
+                        }
+                    }
+                ]
+            }
+        },
+        "projection": [
+            {
+                "tags": ["editor"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["STRING #values"]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["STRING"]
+                }
+            }
+        ]
+    },
+    "number_primitive": {
+        "nature": "concrete",
+        "prototype": "primitive",
+        "attribute": {
+            "values": {
+                "target": "set",
+                "accept": "number",
+                "required": false
+            }
+        },
+        "projection": [
+            {
+                "tags": ["editor"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["NUMBER with values [#values]"]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["NUMBER"]
+                }
+            }
+        ]
+    },
+    "boolean_primitive": {
+        "nature": "concrete",
+        "prototype": "primitive",
+        "attribute": {
+            "values": {
+                "target": "set",
+                "accept": "number",
+                "required": false
+            }
+        },
+        "projection": [
+            {
+                "tags": ["editor"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["NUMBER with values [#values]"]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["BOOLEAN"]
+                }
+            }
+        ]
+    },
+    "reference_primitive": {
+        "nature": "concrete",
+        "prototype": "primitive",
+        "attribute": {
+            "accept": {
+                "target": "primitive",
+                "required": true
+            }
+        },
+        "projection": [
+            {
+                "tags": ["editor"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["REFERENCE accept #accept"]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["REFERENCE"]
+                }
+            }
+        ]
+    },
+    "set_primitive": {
+        "nature": "concrete",
+        "prototype": "primitive",
+        "attribute": {
+            "accept": {
+                "target": "primitive",
+                "required": true
+            }
+        },
+        "projection": [
+            {
+                "tags": ["editor"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["SET accept #accept"]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["SET"]
+                }
+            }
+        ]
+    },
+    "concept_primitive": {
+        "nature": "concrete",
+        "prototype": "primitive",
+        "attribute": {
+            "concept": {
+                "target": "reference",
+                "accept": "model_concept",
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "link",
+                        "placeholder": "Select a concept",
+                        "scope": "parent",
+                        "value": {
+                            "projection": [
+                                {
+                                    "readonly": true,
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": ["#name"]
+                                    }
+                                }
+                            ]
+                        },
+                        "choice": {
+                            "projection": [
+                                {
+                                    "readonly": true,
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": ["Concept #name"]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "projection": [
+            {
+                "tags": ["editor"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["CONCEPT #concept"]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["CONCEPT"]
+                }
+            }
+        ]
+    },
+    "projection": {
+        "nature": "concrete",
+        "attribute": {
+            "tags": {
+                "target": "set",
+                "accept": {
+                    "name": "string",
+                    "alias": "tag"
+                },
+                "required": true,
+                "projection": [
+                    {
+                        "element": {
+                            "field": {
+                                "type": "field",
+                                "view": "list",
+                                "orientation": "horizontal",
+                                "item": {
+                                    "before": {
+                                        "condition" : {
+                                            "index": { "ge": 1 }
+                                        },
+                                        "projection": [
+                                            {
+                                                "readonly": true,
+                                                "layout":{
+                                                    "type": "text",
+                                                    "disposition": ","
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                "action": {
+                                    "add": {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "disposition": ["Add a tag"]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": ["Tags: $field"]
+                        }
+                    }
+                ]
+            },
+            "layout":{
+                "target": "layout"
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "#tags",
+                        "#layout"
+                    ]
+                }
+            }
+        ]
+    },
+    "layout": {
+        "nature": "prototype",
+        "attribute": {
+            "elements": {
+                "target": "set",
+                "accept": "element"
+            }
+        }
+    },
+    "stack_layout": {
+        "nature": "concrete",
+        "prototype": "layout",
+        "attribute": {
+            "orientation": {
+                "target": "string",
+                "value": "horizontal",
+                "values": ["horizontal", "vertical"]
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#555"
+                                    },
+                                    "size": 18
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 12
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Stack Layout"
+                        },
+                        "#orientation",
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#222"
+                                    },
+                                    "size": 16
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 2
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Content"
+                        },
+                        {
+                            "type": "text",
+                            "style": {
+                                "box": {
+                                    "space": {
+                                        "inner": {
+                                            "top": 8,
+                                            "left": 12,
+                                            "right": 12,
+                                            "bottom": 8
+                                        }
+                                    },
+                                    "border": {
+                                        "size": 2,
+                                        "color": "lightgray"
+                                    }
+                                }
+                            },
+                            "disposition": "#elements"
+                        }
+                    ]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["Stack Layout"]
+                }
+            }
+        ]
+    },
+    "wrap_layout": {
+        "nature": "concrete",
+        "prototype": "layout",
+        "attribute": { },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#555"
+                                    },
+                                    "size": 18
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 12
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Wrap Layout"
+                        },
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#222"
+                                    },
+                                    "size": 16
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 2
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Content"
+                        },
+                        {
+                            "type": "text",
+                            "style": {
+                                "box": {
+                                    "space": {
+                                        "inner": {
+                                            "top": 8,
+                                            "left": 12,
+                                            "right": 12,
+                                            "bottom": 8
+                                        }
+                                    },
+                                    "border": {
+                                        "size": 2,
+                                        "color": "lightgray"
+                                    }
+                                }
+                            },
+                            "disposition": "#elements"
+                        }
+                    ]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["Wrap Layout"]
+                }
+            }
+        ]
+    },
+    "field": {
+        "nature":"prototype",
+        "attribute": {
+            "readonly": {
+                "target": "boolean",
+                "value": false
+            },
+            "disabled": {
+                "target": "boolean",
+                "value": false
+            },
+            "visible": {
+                "target": "boolean",
+                "value": true
+            }
+        }
+    },
+    "text_field": {
+        "nature": "concrete",
+        "prototype":"field",
+        "attribute": {
+            "placeholder": {
+                "target": "string"
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#222"
+                                    },
+                                    "size": 18
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Text Field"
+                        },
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#333"
+                                    },
+                                    "underline": true,
+                                    "size": 16
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 2
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Properties:"
+                        },
+                        "Placeholder: #placeholder",
+                        "Read-only: #readonly",
+                        "Visible: #visible",
+                        "Disabled: #disabled"
+                    ]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["Text Field"]
+                }
+            }
+        ]
+    },
+    "check_field": {
+        "nature": "concrete",
+        "prototype":"field",
+        "attribute": {
+            "label": {
+                "target": "string"
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#222"
+                                    },
+                                    "size": 18
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Check Field"
+                        },
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#333"
+                                    },
+                                    "underline": true,
+                                    "size": 16
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 2
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Properties:"
+                        },
+                        "Label: #label",
+                        "Read-only: #readonly",
+                        "Visible: #visible",
+                        "Disabled: #disabled"
+                    ]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["Check Field"]
+                }
+            }
+        ]
+    },
+    "choice_field": {
+        "nature": "concrete",
+        "prototype":"field",
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#222"
+                                    },
+                                    "size": 18
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Choice Field"
+                        },
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#333"
+                                    },
+                                    "underline": true,
+                                    "size": 16
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 2
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Properties:"
+                        },
+                        "Read-only: #readonly",
+                        "Visible: #visible",
+                        "Disabled: #disabled"
+                    ]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["Choice Field"]
+                }
+            }
+        ]
+    },
+    "link_field": {
+        "nature": "concrete",
+        "prototype":"field",
+        "attribute": {
+            "placeholder": {
+                "target": "string"
+            },
+            "value": {
+                "target": "string"
+            },
+            "choice": {
+                "target": "string"
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#222"
+                                    },
+                                    "size": 18
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Link Field"
+                        },
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#333"
+                                    },
+                                    "underline": true,
+                                    "size": 16
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 2
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Properties:"
+                        },
+                        "Placeholder: #placeholder",
+                        "Value: #value",
+                        "Choice: #choice",
+                        "Read-only: #readonly",
+                        "Visible: #visible",
+                        "Disabled: #disabled"
+                    ]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["Link Field"]
+                }
+            }
+        ]
+    },
+    "list_field": {
+        "nature": "concrete",
+        "prototype":"field",
+        "attribute": {
+            "orientation": {
+                "target": "string",
+                "value": "horizontal",
+                "values": [
+                    "horizontal",
+                    "vertical"
+                ]
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#222"
+                                    },
+                                    "size": 18
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "List Field"
+                        },
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#333"
+                                    },
+                                    "underline": true,
+                                    "size": 16
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 2
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Properties:"
+                        },
+                        "Read-only: #readonly",
+                        "Visible: #visible",
+                        "Disabled: #disabled"
+                    ]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["List Field"]
+                }
+            }
+        ]
+    },
+    "element": {
+        "nature": "prototype",
+        "attribute": {
+            "name": {
+                "target": "string"
+            },
+            "style": {
+                "target": "string"
+            }
+        }
+    },
+    "layout_element" :{
+        "nature": "concrete",
+        "prototype": "element",
+        "attribute": {
+            "value": {
+                "target": "layout"
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["#value"]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["Add layout"]
+                }
+            }
+        ]
+    },
+    "group_element": {
+        "nature": "concrete",
+        "prototype": "element",
+        "attribute": {
+            "value": {
+                "target": "set",
+                "accept": "element"
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["#value"]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["Add Group"]
+                }
+            }
+        ]
+    },
+    "text_element": {
+        "nature": "concrete",
+        "prototype": "element",
+        "attribute": {
+            "value": {
+                "target": "string"
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["#value"]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["Add text"]
+                }
+            }
+        ]
+    },
+    "attribute_element": {
+        "nature": "concrete",
+        "prototype": "element",
+        "attribute": {
+            "value": {
+                "target": "reference",
+                "accept": {
+                    "name": "attribute",
+                    "scope": "concrete_concept",
+                    "rel": "parent"
+                },
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "link",
+                        "placeholder": "Select an attribute",
+                        "value": {
+                            "projection": [
+                                {
+                                    "readonly": true,
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": ["#name"]
+                                    }
+                                }
+                            ]
+                        },
+                        "choice": {
+                            "projection": [
+                                {
+                                    "readonly": true,
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": ["Attribute #name"]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["#value"]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["Add attribute"]
+                }
+            }
+        ]
+    },
+    "component_element": {
+        "nature": "concrete",
+        "prototype": "element",
+        "attribute": {
+            "value": {
+                "target": "reference",
+                "accept": "component",
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "link",
+                        "placeholder": "Select a component",
+                        "scope": "parent",
+                        "value": {
+                            "projection": [
+                                {
+                                    "readonly": true,
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": ["#name"]
+                                    }
+                                }
+                            ]
+                        },
+                        "choice": {
+                            "projection": [
+                                {
+                                    "readonly": true,
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": ["Component #name"]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["#value"]
+                }
+            },
+            {
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["Add component"]
+                }
+            }
+        ]
+    },
+    "@root": "model",
+    "@config": {
+        "language": "Gentleman",
+        "settings": {
+            "autosave": true
+        }
+    }
+}

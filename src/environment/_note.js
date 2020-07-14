@@ -1,16 +1,10 @@
 import {
-    createAside, createAnchor, getElement, createDocFragment, createLineBreak, removeChildren,
-    createParagraph, createSpan, appendChildren, createH3, createH4, createListItem, 
-    createUnorderedList, hasOwn, isString, isNullOrWhitespace
+    createParagraph, createSpan, createAside, createAnchor, createDocFragment,
+    createH3, createH4, createListItem, createLineBreak, createUnorderedList,
+    getElement, appendChildren, removeChildren, hasOwn, isString, isNullOrWhitespace
 } from 'zenkai';
 import { EventType, Events } from '@utils/index.js';
 
-/**
- * Preprend a string with a hashtag
- * @param {string} str 
- * @returns {string}
- */
-function hash(str) { return '#' + str; }
 
 export const Note = {
     /** @type {Editor} */
@@ -100,7 +94,7 @@ function printSchema(schema) {
             }
         }
     }
-    
+
     return container;
 }
 
@@ -160,9 +154,9 @@ function updateNote(projection) {
             for (let i = 0; i < idrefCount; i++) {
                 let id = idref[i];
                 let li = createListItem({ class: 'ref-list-item' });
-                let a = createAnchor(hash(id), { text: projection.name });
+                let a = createAnchor(`#${id}`, { text: projection.name });
                 a.addEventListener(EventType.CLICK, function () {
-                    var el = getElement(hash(id), self.editor.body);
+                    var el = getElement(`#${id}`, self.editor.body);
                     el.focus();
                 });
                 li.appendChild(a);

@@ -12,8 +12,9 @@ module.exports = {
         alias: {
             '@': '.',
             '@src': path.resolve(__dirname, 'src'),
+            '@bin': path.resolve(__dirname, 'bin'),
             '@samples': path.resolve(__dirname, 'samples'),
-            '@editor': path.resolve(__dirname, 'src/editor'),
+            '@environment': path.resolve(__dirname, 'src/environment'),
             '@model': path.resolve(__dirname, 'src/model'),
             '@concept': path.resolve(__dirname, 'src/model/concept'),
             '@structure': path.resolve(__dirname, 'src/model/structure'),

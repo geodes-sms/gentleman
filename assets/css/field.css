@@ -1,23 +1,49 @@
 .projection {
     position: relative;
-    width: 50%;
-    font-size: 1.4rem;
     border: 1px solid #d5d5d5; border-radius: 1px;
+}
+
+.btn-hide {
+    display: none;
+}
+.projection-container {
+    
 }
 
 .projection-wrapper {
     position: relative;
     display: flex;
+    flex-wrap: wrap;
     padding-bottom: 5px;
+    width: 100%;
 }
 
 .projection-wrapper--vertical {
     flex-direction: column;
 }
 
+    .projection-wrapper--vertical [data-nature=layout-part] {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+    }
+        .projection-wrapper--vertical [data-nature=layout-part]:not(:last-child) {
+            margin-bottom: 5px;
+        }
+
 .projection-wrapper--horizontal {
     flex-direction: row;
 }
+
+    .projection-wrapper--horizontal [data-nature=layout-part] {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+        .projection-wrapper--horizontal [data-nature=layout-part]:not(:last-child) {
+            margin-right: 5px;
+        }
 
 .field-wrapper {
     position: relative;
@@ -27,81 +53,176 @@
 
 .field {
     position: relative;
+    padding: 0;
     box-sizing: border-box;
-    font-size: 1.4rem;
     z-index: 1;
 }
+    .field:hover > .field-status {
+        opacity: 0.4;
+    }
 
-.field--table {
-    max-width: 50vw;
+    .field.active > .field-status {
+        opacity: 1;
+        transform: scale(1.1) translateY(-2px);
+    }
+
+.field-status {
+    position: absolute;
+    top: -12px; right: 0;
+    height: 10px; width: 10px;
+    border-radius: 50%;
+    background-color: green;
+    opacity: 0;
+    transition: .2s;
 }
+
+    .field-status.change {
+        background-color: orange;
+        opacity: 0.8;
+    }
+
+    .field-status.error {
+        background-color: red;
+        font-style: normal;
+        opacity: 1;
+    }
+
+    .field-status .error-message {
+        position: absolute;
+        display: block;
+        left: 100%;
+        top: 100%;
+        min-width: 100px;
+        padding: 5px;
+        font-size: 0.9em; font-weight: 600;
+        color: #fff;
+        border-radius: 2px;
+        background-color: #dd4024de;
+        transform: translateY(-50%);
+        opacity: 0;
+        transition: .5s;
+        z-index: -10;
+    }
+
+    .field.active .error-message {
+        opacity: 1;
+        z-index: 1;
+    }
+
 
 .field--label {
-    display: inline-block;
     white-space: nowrap;
-    border-radius: 1px;
+    font-size: 1em;
 }
 
+/*
+ * Field: Text
+-----------------------------------------------------------------------------*/
+
 .field--label + .field--textbox,
+.field--label + .field--textbox__input,
 .field--textbox + .field--textbox {
     margin-left: 3px;
 }
 
 .field--textbox {
+    display: flex;
+}
+
+.field--textbox__input {
     display: inline-block;
     padding: 2px 5px 1px;
-    font-size: 1.4rem;
+    font-size: 1em;
     border-style: solid; border-radius: 1px;
     overflow: hidden;
     outline: none;
     z-index: 5;
 }
+    .field--textbox__input:before {
+        content: attr(data-placeholder);
+        transition: .2s;
+    }
 
-    .field--textbox.error {
+    .field--textbox__input.error {
         background-color: rgba(191, 25, 50, 0.2)!important;
         border-color: #DD4124!important;
     }
 
-    .field--textbox.empty {
+    .field--textbox__input.empty {
         max-width: 150px;
         border-color: #ffd300;
         background-color: #fffff0;
         white-space: nowrap;
+        font-size: 0.9em;
         overflow: hidden;
         text-overflow: ellipsis;
     }
-        .field--textbox.empty:before {
-            content: attr(data-placeholder);
+    
+    .field--textbox__input.readonly {
+        border: none!important;
+        background: transparent!important;
+        box-shadow: none!important;
+    }
+        .field--textbox__input.readonly:before {
+            content: "";
+            display: none;
+        }
+
+        .field--textbox__input.empty:before {
             color: #555;
         }
-        .field--textbox.empty:not(:focus) {
+        .field--textbox__input.empty:not(:focus) {
             box-shadow: 0 -1px 2px -1px #c0c0c0;
         }
-        .field--textbox:not(.empty) {
+        .field--textbox__input:not(.empty) {
             background-color: #f5f5f5;
             border-color: #555;
+            font-size: 1em;
         }
-            .field--textbox:not(.empty):focus {
+            .field--textbox__input:not(.empty):before {
+                position: absolute;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                font-size: 0.9em;
+                color: #777;
+                transform: translate(-5px, -100%);
+                transition: transform .2s;
+                z-index: 10;
+            }
+            .field--textbox__input:not(.empty):focus {
                 background-color: #fefefe;
             }
-    .field--textbox:focus {
+                .field--textbox__input:not(.empty):focus:before {
+                    padding: 1px 2px;
+                    font-size: 0.95em; font-weight: 600;
+                    color: #222;
+                    background: rgba(255, 255, 255, 0.8);
+                    z-index: 20;
+                }
+    .field--textbox__input:focus {
         border-width: 1px; border-radius: 2px;
     }
-        .field--textbox:not(:focus) {
+        .field--textbox__input:not(:focus) {
             border-width: 0 0 2px;
         }
-            .field--textbox:not(:focus):hover {
+            .field--textbox__input:not(:focus):hover {
                 box-shadow: 0 -1px 2px #c0c0c0;
             }
 
+/*
+ * Field: List
+-----------------------------------------------------------------------------*/
+
 .field--list {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
-    align-items: stretch;
-    padding: 0;
-    font-size: 1rem;
+    align-items: stretch;    
+    width: 100%;
 }
     .field--list.vertical { flex-direction: column; }
+
     .field--list.horizontal { flex-direction: row; }
 
     .field--list.active > .field--list-item {
@@ -110,8 +231,8 @@
     }
 
     .field--list-item {
-        margin-right: 10px;
-        padding: 5px 0;
+        position: relative;
+        display: flex;
         box-sizing: border-box;
         font-size: 1em;
         transition: .2s;
@@ -120,10 +241,8 @@
     .field--list__add {
         display: flex;
         align-items: center;
-        padding-left: 5px; padding-right: 5px;
         box-sizing: border-box;
-        color: #333;
-        font-size: 1.4em; font-weight: 500;
+        font-size: 1em;
         transition: .2s;
         border: 2px dashed rgb(42, 115, 224);
         cursor: default;
@@ -133,33 +252,81 @@
             box-shadow: 7px -5px 0 rgb(0, 102, 255);
         }
 
+
+/*
+ * Field: Table
+-----------------------------------------------------------------------------*/
+
+.field--table {
+    width: 100%;
+}
+
+    .field--table-cell {
+        position: relative;
+        padding: 2px 1%;
+    }
+
+
+/*
+ * Field: Choice
+-----------------------------------------------------------------------------*/
+
 .field--choice {
     display: inline-flex;
     flex-wrap: wrap;
     flex-direction: column;
     padding: 0;
-    font-size: 1rem;
+    font-size: 1em;
 }
 
-.field--choice__input {
-    font-size: 1.4em;
-}
+    .field--choice__input {
+        font-size: 1.4rem;
+    }
+
+    .field--choice__choices {
+        position: relative;
+        background: #fff;
+        box-shadow: 0 1px 2px #999;
+        z-index: 2;
+        cursor: pointer;
+    }
+
+    .field--choice__choice {
+        position: relative;
+        padding: 2px 5px 3px;
+        box-sizing: border-box;
+        font-size: 0.9em;
+    }
+        .field--choice__choice:hover {
+            background-color: #ffd300;
+        }
 
 
-.field--choice__choices {
-    position: relative;
-    background: #fff;
-    box-shadow: 0 1px 2px #999;
-    z-index: 2;
+/*
+ * Field: Link
+-----------------------------------------------------------------------------*/
+
+.field--link {
+    font-size: 1em;
 }
 
-.field--choice__choice {
-    position: relative;
-    padding: 2px 5px 3px;
-    box-sizing: border-box;
-    font-size: 1.3em;
-}
+    .field--link__input {
+        font-size: 1.4rem;
+    }
 
-.field--choice__choice:hover {
-    background-color: #ffd300;
-}
+    .field--link__choices {
+        position: relative;
+        background: #fff;
+        box-shadow: 0 1px 2px #999;
+        z-index: 2;
+        cursor: pointer;
+    }
+    .field--link__choice {
+        position: relative;
+        padding: 2px 5px 3px;
+        box-sizing: border-box;
+        font-size: 0.9em;
+    }
+        .field--link__choice:hover {
+            background-color: #ffd300;
+        }

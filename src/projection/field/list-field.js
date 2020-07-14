@@ -1,14 +1,19 @@
 import {
     createDocFragment, createUnorderedList, createListItem,
-    insertBeforeElement, insertAfterElement, removeChildren, isHTMLElement,
-    valOrDefault
+    removeChildren, isHTMLElement, valOrDefault, isNullOrUndefined
 } from "zenkai";
-import { extend, Key } from "@utils/index.js";
-import { Projection } from "@projection/index.js";
 import { Field } from "./field.js";
+import { ProjectionManager } from "./../projection.js";
+import { StyleHandler } from "./../style-handler.js";
+import { shake } from "@utils/index.js";
 
 
-function createInputField() {
+/**
+ * Creates the field main element
+ * @returns {HTMLElement}
+ * @this {BaseListField}
+ */
+function createFieldElement() {
     var element = createUnorderedList({
         id: this.id,
         class: ["bare-list", "field", "field--list", this.orientation, "empty"],
@@ -16,41 +21,131 @@ function createInputField() {
         dataset: {
             nature: "field",
             view: "list",
-            id: this.id
+            id: this.id,
+            orientation: this.orientation
         }
     });
 
-    if (this.concept.hasValue()) {
+    if (this.source.hasValue()) {
         element.classList.remove("empty");
     }
+
+    StyleHandler(element, this.schema.style);
 
     return element;
 }
 
+/**
+ * Creates a list field item
+ * @param {*} object 
+ * @returns {HTMLElement}
+ * @this {BaseListField}
+ */
+function createListFieldItem(object) {
+    const { before, style, projection, after } = valOrDefault(this.schema.item, {});
 
-export const ListField = extend(Field, {
+    const container = createListItem({
+        class: ["field--list-item"],
+        tabindex: 0,
+        dataset: {
+            nature: "field-component",
+            id: this.id,
+            index: valOrDefault(object.index, this.items.size)
+        }
+    });
+
+    if (before && assertCondition.call(this, before.condition)) {
+        let beforeProjection = ProjectionManager.createProjection(before.projection, this.source, this.editor).init();
+        container.appendChild(beforeProjection.render());
+    }
+
+    const projectionSchema = valOrDefault(projection, object.schema.projection);
+    var itemProjection = ProjectionManager.createProjection(projectionSchema, object, this.editor).init();
+    container.appendChild(itemProjection.render());
+
+    if (after) {
+        let projection = ProjectionManager.createProjection(after.projection, this.source, this.editor).init();
+        container.appendChild(projection.render());
+    }
+
+    this.items.set(object.id, container);
+
+    StyleHandler(container, style);
+
+    return container;
+}
+
+/**
+ * Evaluates a condition expression
+ * @param {*} object 
+ * @returns {boolean}
+ * @this {BaseListField}
+ */
+function assertCondition(cond) {
+    if (isNullOrUndefined(cond)) {
+        return true;
+    }
+
+    var result = true;
+
+    for (const key in cond) {
+        const rule = cond[key];
+        switch (key) {
+            case "index":
+                var index = this.items.size;
+                if (rule.eq) {
+                    result &= index == rule.eq;
+                }
+                if (rule.ne) {
+                    result &= index != rule.ne;
+                }
+                if (rule.gt) {
+                    result &= index > rule.gt;
+                }
+                if (rule.lt) {
+                    result &= index < rule.lt;
+                }
+                if (rule.ge) {
+                    result &= index >= rule.ge;
+                }
+                if (rule.le) {
+                    result &= index <= rule.le;
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    return result;
+}
+
+const BaseListField = {
+    orientation: null,
+    /** @type {Map} */
+    items: null,
+
     init() {
         this.orientation = valOrDefault(this.schema.orientation, "horizontal");
-        this.concept.register(this);
+        this.items = new Map();
+        this.source.register(this);
 
         return this;
     },
 
-    orientation: null,
     update(message, value) {
         switch (message) {
             case "value.added":
-                var projection = Projection.create(valOrDefault(value.protoSchema, value.schema.projection), value, this.editor);
-                var container = createListItem({
-                    class: "field--list-item",
-                    tabindex: 0,
-                    dataset: {
-                        nature: "field-component",
-                        id: this.id
-                    }
-                }, [projection.render()]);
+                this.addItem(value);
 
-                this.element.lastChild.before(container);
+                break;
+            case "value.removed":
+                this.removeItem(value);
+
+                break;
+            case "delete":
+                this.source.unregister(this);
 
                 break;
             default:
@@ -62,25 +157,16 @@ export const ListField = extend(Field, {
 
     render() {
         if (!isHTMLElement((this.element))) {
-            this.element = createInputField.call(this);
+            this.element = createFieldElement.call(this);
         }
 
-        removeChildren(this.element);
+        this.clear();
 
         var fragment = createDocFragment();
 
-        this.concept.getElements().forEach(value => {
-            var projection = Projection.create(value.schema.projection, value, this.editor);
-            var container = createListItem({
-                class: "field--list-item",
-                tabindex: 0,
-                dataset: {
-                    nature: "field-component",
-                    id: this.id
-                }
-            }, [projection.render()]);
-
-            fragment.appendChild(container);
+        this.source.getValue().forEach((value) => {
+            var item = createListFieldItem.call(this, value);
+            fragment.appendChild(item);
         });
 
         var actionContainer = actionHandler.call(this);
@@ -93,102 +179,62 @@ export const ListField = extend(Field, {
 
         return this.element;
     },
+    clear() {
+        this.items.clear();
+        removeChildren(this.element);
+    },
     focusIn() {
         this.hasFocus = true;
     },
     focusOut() {
-        console.log("focusing out of list field...");
         this.hasFocus = false;
     },
     createElement() {
-        return this.concept.createElement();
+        return this.source.createElement();
+    },
+    getItem(id) {
+        return this.items.get(id);
+    },
+    addItem(value) {
+        this.element.lastChild.before(createListFieldItem.call(this, value));
+    },
+    removeItem(value) {
+        let item = this.getItem(value.id);
+        if (!isHTMLElement(item)) {
+            throw new Error("List error: Item not found");
+        }
+
+        this.items.delete(value.id);
+        removeChildren(item);
+        item.remove();
+    },
+    spaceHandler() {
+        if (!this.source.addElement()) {
+            this.editor.notify("something went wrong");
+        }
+    },
+    delete(target) {
+        if (target === this.element) {
+            this.source.remove();
+            
+            return;
+        }
+
+        const { index } = target.dataset;
+
+        var result = this.source.removeElementAt(+index);
+
+        if (result) {
+            this.editor.notify("The element was successfully deleted");
+        } else {
+            this.editor.notify("This element cannot be deleted");
+            shake(target);
+        }
     },
     bindEvents() {
-        var lastKey = -1;
 
-        const isChild = (element) => element.parentElement === this.element && isItem;
-        const isItem = (element) => isHTMLElement(element) && element.classList.contains('field--list-item');
-        const concept = this.concept;
-
-        this.element.addEventListener('keydown', (event) => {
-            var activeElement = document.activeElement;
-
-            switch (event.key) {
-                case Key.backspace:
-                    break;
-                case Key.left_arrow:
-                    if (isChild(activeElement)) {
-                        let previousElement = activeElement.previousElementSibling;
-                        if (isItem(previousElement)) {
-                            previousElement.focus();
-                        }
-                    }
-                    break;
-                case Key.right_arrow:
-                    if (isChild(activeElement)) {
-                        let nextElement = activeElement.nextElementSibling;
-                        if (isItem(nextElement)) {
-                            nextElement.focus();
-                        }
-                    }
-                    break;
-                case Key.ctrl:
-                    event.preventDefault();
-                    break;
-                case Key.delete:
-                    if (this.concept.canDelete() && activeElement.classList.contains('field--list-item')) {
-                        activeElement.classList.add('delete');
-                    } else {
-                        this.editor.notify("This element cannot be deleted");
-                    }
-            }
-
-            lastKey = event.key;
-        }, false);
-
-        this.element.addEventListener('keyup', (event) => {
-            var activeElement = document.activeElement;
-
-            switch (event.key) {
-                case Key.backspace:
-                    break;
-                case Key.ctrl:
-                    event.preventDefault();
-                    break;
-                case Key.spacebar:
-                    if (lastKey === Key.spacebar && isChild(activeElement)) {
-                        if (concept.addElement()) {
-                            let instance = concept.getLastElement();
-                            var container = createListItem({ class: "field--list-item", draggable: true }, [instance.render()]);
-                            container.tabIndex = 0;
-                            insertAfterElement(activeElement, container);
-                            container.focus();
-                            event.preventDefault();
-                        }
-                    }
-
-                    break;
-                case Key.delete:
-                    if (lastKey === Key.delete && isChild(activeElement) && activeElement.classList.contains('delete')) {
-                        if (concept.removeElementAt(Array.from(this.children).indexOf(activeElement))) {
-                            removeChildren(activeElement);
-                            let nextElement = activeElement.nextElementSibling;
-                            let previousElement = activeElement.previousElementSibling;
-                            if (isChild(nextElement)) {
-                                nextElement.focus();
-                            }
-                            else if (isChild(previousElement)) {
-                                previousElement.focus();
-                            }
-                            activeElement.remove();
-                        }
-                    }
-
-                    break;
-            }
-        }, false);
     }
-});
+};
 
 const actionDefaultSchema = {
     add: {
@@ -198,20 +244,28 @@ const actionDefaultSchema = {
                 "disposition": ["Add an element"]
             }
         }]
+    },
+    remove: {
+        projection: [{
+            layout: {
+                "type": "wrap",
+                "disposition": ["Remove element"]
+            }
+        }]
     }
 };
 
 function actionHandler() {
-    const { concept, editor, schema } = this;
+    const { source: concept, editor, schema } = this;
 
     const action = valOrDefault(schema.action, actionDefaultSchema);
 
     var { projection: projectionSchema, constraint } = action.add;
 
-    var projection = Projection.create(projectionSchema, concept, editor);
+    var projection = ProjectionManager.createProjection(projectionSchema, concept, editor).init();
 
     var addContainer = createListItem({
-        class: "field--list__add",
+        class: ["field--list__add"],
         tabindex: 0,
         dataset: {
             nature: "field-component",
@@ -228,3 +282,8 @@ function actionHandler() {
 
     return addContainer;
 }
+
+export const ListField = Object.assign(
+    Object.create(Field),
+    BaseListField
+);

@@ -17,10 +17,11 @@
                 "alias": {
                     "@": ".",
                     "@samples": "./samples",
+                    "@bin": "./bin",
                     "@assets": "./assets",
                     "@css": "./assets/css",
                     "@src": "./src",
-                    "@editor": "./src/editor",
+                    "@environment": "./src/environment",
                     "@model": "./src/model",
                     "@concept": "./src/model/concept",
                     "@structure": "./src/model/structure",

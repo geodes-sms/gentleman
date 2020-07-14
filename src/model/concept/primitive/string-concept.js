@@ -1,5 +1,4 @@
-import { valOrDefault, isNullOrWhitespace, isNullOrUndefined } from "zenkai";
-import { extend } from "@utils/index.js";
+import { isNullOrWhitespace, isNullOrUndefined, isObject, isEmpty, isString } from "zenkai";
 import { Concept } from "./../concept.js";
 
 
@@ -18,11 +17,21 @@ function responseHandler(code) {
     }
 }
 
-export const StringConcept = extend(Concept, {
+const _StringConcept = {
     name: 'string',
-    
-    initValue(value) {
-        this.value = valOrDefault(value, "");
+
+    initValue(args) {
+        if (isNullOrUndefined(args)) {
+            this.value = "";
+            return this;
+        }
+
+        if (isObject(args)) {
+            this.id = args.id;
+            this.setValue(args.value);
+        } else {
+            this.setValue(args);
+        }
 
         return this;
     },
@@ -33,15 +42,6 @@ export const StringConcept = extend(Concept, {
         return this.value;
     },
     setValue(value) {
-        if (isNullOrUndefined(value) || this.value == value) {
-            return;
-        }
-
-        this.value = value;
-        this.notify("value.changed", value);
-    },
-
-    update(value) {
         var result = this.validate(value);
 
         if (result !== ResponseCode.SUCCESS) {
@@ -54,7 +54,8 @@ export const StringConcept = extend(Concept, {
             };
         }
 
-        this.setValue(value);
+        this.value = value;
+        this.notify("value.changed", value);
 
         return {
             success: true,
@@ -62,12 +63,42 @@ export const StringConcept = extend(Concept, {
         };
     },
 
+    getCandidates() {
+        this.values.forEach(value => {
+            if (isObject(value)) {
+                value.type = "value";
+            }
+        });
+
+        return this.values;
+    },
+    getChildren(name) {
+        return [];
+    },
+    getDescendant(name) {
+        return [];
+    },
+
+    update(message, value) {
+        return true;
+    },
+
     validate(value) {
-        if (!Array.isArray(this.values) || isNullOrWhitespace(value)) {
+        if (isNullOrWhitespace(value) || isEmpty(this.values)) {
             return ResponseCode.SUCCESS;
         }
 
-        if (!this.values.includes(value)) {
+        var found = false;
+        for (let i = 0; !found && i < this.values.length; i++) {
+            const val = this.values[i];
+            if (isObject(val)) {
+                found = val.value === value;
+            } else {
+                found = val === value;
+            }
+        }
+
+        if (!found) {
             return ResponseCode.INVALID_VALUE;
         }
 
@@ -75,9 +106,18 @@ export const StringConcept = extend(Concept, {
     },
 
     export() {
-        return this.value;
+        return {
+            id: this.id,
+            name: this.name,
+            value: this.value
+        };
     },
     toString() {
         return this.value;
     }
-});
+};
+
+export const StringConcept = Object.assign(
+    Object.create(Concept),
+    _StringConcept
+);

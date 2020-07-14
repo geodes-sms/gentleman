@@ -1,0 +1,23 @@
+{
+    "id": "d7074bb8-4893-489f-b94d-20db142cde4e",
+    "name": "model",
+    "name:attribute": {
+        "id": "86f4fad6-2168-4a88-a478-262c7f16789b",
+        "name": "string",
+        "value": "Relvcmnofldnmvlais"
+    },
+    "root:attribute": {
+        "id": "d36cdbde-58aa-4e69-9c2d-6619262589e3",
+        "name": "reference",
+        "value": null
+    },
+    "model_concept:component": {
+        "concepts:attribute": {
+            "id": "d3915cb1-9b35-4a56-a187-ed37e14a5911",
+            "name": "set",
+            "value": [
+                null
+            ]
+        }
+    }
+}

@@ -1,39 +1,110 @@
-import { extend } from "@utils/index.js";
+import { isString, isNullOrUndefined, isObject, isNullOrWhitespace, isEmpty } from "zenkai";
 import { Concept } from "./concept.js";
-import { isString } from "zenkai";
 
 
-export const PrototypeConcept = extend(Concept, {
-    name: 'set',
-    concretes: null,
 
-    initValue(value) {
-        this.value = [];
-        this.concretes = [];
+const ResponseCode = {
+    SUCCESS: 200,
+    INVALID_VALUE: 401
+};
+
+function responseHandler(code) {
+    switch (code) {
+        case ResponseCode.INVALID_VALUE:
+            return {
+                success: false,
+                message: "The value is not included in the list of valid values."
+            };
+    }
+}
+
+const _PrototypeConcept = {
+    name: 'prototype',
+
+    initValue(args) {
+        if(isNullOrUndefined(args)) {
+            return this;
+        }
+
+        var concept = this.createConcept(args.name, args);
+        this.value = concept;
 
         return this;
+    },
+    getValue() {
+        return this.value;
+    },
+    setValue(value) {
+        var result = this.validate(value);
+
+        if (result !== ResponseCode.SUCCESS) {
+            return {
+                success: false,
+                message: "Validation failed: The value could not be updated.",
+                errors: [
+                    responseHandler(result).message
+                ]
+            };
+        }
+
+        if (isString(value)) {
+            this.createConcept(value);
+        } else {
+            this.value = value;
+        }
+        this.notify("value.changed", value);
+
+        return {
+            success: true,
+            message: "The value has been successfully updated."
+        };
+    },
+    hasValue() {
+        return !isNullOrUndefined(this.value);
     },
 
     getCandidates() {
         return this.metamodel.getConcreteConcepts(this.name);
     },
-    getConceptParent() {
-        if (this.isRoot()) {
-            return null;
+    /**
+     * Gets the concept parent if exist
+     * @returns {Concept}
+     */
+    getChildren(name) {
+        if (!this.hasValue()) {
+            return [];
         }
 
-        return this.parent.concept;
-    },
-    createElement(value) {
-        var concept = null;
-        var options = {
-            parent: this.id,
-            refname: this.name,
-            reftype: "element",
-        };
+        const children = [];
+        const concept = this.getValue();
 
-        if (isString(value)) {
-            concept = this.model.createConcept(value, options);
+        if (isNullOrUndefined(name)) {
+            children.push(concept);
+        } else if (concept.name === name) {
+            children.push(concept);
+        }
+
+        return children;
+    },
+    getDescendant(name) {
+        return [];
+    },
+
+    createConcept(name, value) {
+        var concept = null;
+
+        var options = {
+            parent: this.parent,
+            refname: this.refname,
+            reftype: this.reftype,
+        };
+        
+        if(value) {
+            options.value = value;
+        }
+
+        if (isString(name)) {
+            concept = this.model.createConcept(name, options);
         }
 
         this.value = concept;
@@ -41,37 +112,45 @@ export const PrototypeConcept = extend(Concept, {
 
         return concept;
     },
+    validate(value) {
+        if (isNullOrWhitespace(value)) {
+            return ResponseCode.SUCCESS;
+        }
 
+        // if(this.metamodel.getConcreteConcepts(this.name)) {
+
+        // }
+
+        if(isEmpty(this.values)) {
+            return ResponseCode.SUCCESS;
+        }
+
+        var found = false;
+        for (let i = 0; !found && i < this.values.length; i++) {
+            const val = this.values[i];
+            if (isObject(val)) {
+                found = val.value === value;
+            } else {
+                found = val === value;
+            }
+        }
+        
+        if (!found) {
+            return ResponseCode.INVALID_VALUE;
+        }
+
+        return ResponseCode.SUCCESS;
+    },
     export() {
-        var output = {};
-
-        var attributes = {};
-        this.attributes.forEach(attr => {
-            Object.assign(attributes, attr.export());
-        });
-
-        var components = [];
-        this.components.forEach(comp => {
-            components.push(comp.export());
-        });
-
-        Object.assign(output, attributes);
-
-        return output;
+        if(!this.hasValue()) {
+            return null;
+        }
+        
+        return this.value.export();
     },
-    toString() {
-        var output = {};
+};
 
-        this.attributes.forEach(attr => {
-            Object.assign(output, attr.toString());
-        });
-        this.components.forEach(comp => {
-            Object.assign(output, {
-                // [`${comp.name}@component`]: comp.toString()
-                [`component.${comp.name}`]: comp.toString()
-            });
-        });
-
-        return output;
-    },
-});
+export const PrototypeConcept = Object.assign({},
+    Concept,
+    _PrototypeConcept
+);

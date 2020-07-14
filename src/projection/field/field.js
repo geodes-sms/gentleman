@@ -1,22 +1,22 @@
-import { createI, removeChildren, isDerivedOf, isEmpty } from 'zenkai';
-import { shake } from '@utils/index.js';
+import { createI, removeChildren, isEmpty, isFunction, valOrDefault } from 'zenkai';
+import { ObserverHandler } from '@structure/index.js';
+import { shake, show, hide } from '@utils/index.js';
+import { Concept } from '@concept/index.js';
 
 
-export const Field = {
-    /**
-     * Constructor
-     * @param {Object} values values
-     * @returns {BaseProjection}
-     */
-    create(concept, schema, editor) {
+const BaseField = {
+    create(source, schema, editor) {
         const instance = Object.create(this);
 
-        instance.concept = concept;
+        instance.source = source;
+        instance.sourceType = valOrDefault(source.kind, "value");
         instance.schema = schema;
         instance.editor = editor;
-        instance.validators = [];
-        instance.extras = [];
+        instance.attached = [];
+        instance.references = [];
         instance.errors = [];
+        instance.readonly = valOrDefault(schema.readonly, false);
+        instance.initObserver();
 
         return instance;
     },
@@ -25,48 +25,64 @@ export const Field = {
     },
     /** @type {string} */
     id: null,
+    /** @type {Concept|Field} */
+    source: null,
+    /** @type {string} */
+    sourceType: null,
+    /** @type {*} */
+    schema: null,
     /** @type {Editor} */
     editor: null,
     /** @type {Projection} */
     projection: null,
-    /** @type {Concept} */
-    concept: null,
-    /** @type {*} */
-    schema: null,
+
     /** @type {HTMLElement} */
     element: null,
+    /** @type {HTMLElement} */
+    statusElement: null,
     /** @type {HTMLElement[]} */
-    extras: null,
+    attached: null,
+
     /** @type {string[]} */
     errors: null,
-    /** @type {boolean} */
-    hasFocus: false,
-    /** @type {boolean} */
-    isDisabled: false,
-    
-    get hasError() { return !isEmpty(this.errors); },
-    get hasExtra() { return !isEmpty(this.extras); },
+    /** @type {string[]} */
+    references: null,
 
+    /** @type {boolean} */
+    readonly: false,
+    /** @type {boolean} */
+    visible: false,
+    /** @type {boolean} */
+    disabled: false,
+    /** @type {boolean} */
+    active: false,
+    /** @type {boolean} */
+    focused: false,
+    /** Object nature */
+    object: "field",
+    kind: "field",
+
+    get hasError() { return !isEmpty(this.errors); },
+    get hasAttached() { return !isEmpty(this.attached); },
+    get hasReference() { return !isEmpty(this.references); },
+
+    attach(element, type) {
+        this.attached.push(element);
+    },
+    detach(element) {
+        this.attached.slice(this.attached.indexOf(element), 1);
+    },
+    getAttached(pred) {
+        if (!isFunction(pred)) {
+            return this.attached;
+        }
+
+        return this.attached.filter(element => pred(element));
+    },
     focus() {
         this.element.contentEditable = false;
         this.element.focus();
-        this.hasFocus = true;
-    },
-    validate() {
-        var isValid = true;
-        var validator;
-        for (validator of this.validators) {
-            if (!validator.call(this)) {
-                return false;
-            }
-        }
-
-        if (this.modelAttribute.validate(this)) {
-            this.error = "";
-            return true;
-        }
-
-        return false;
+        this.focused = true;
     },
     remove() {
         removeChildren(this.input);
@@ -76,23 +92,47 @@ export const Field = {
         this.element.remove();
     },
     delete() {
-        if (this.concept.canDelete()) {
-            this.concept.delete();
+        var result = this.source.delete();
+        
+        if (result.success) {
+            this.clear();
             removeChildren(this.element);
-            this.element.replaceWith(createI({ class: "attribute--optional", dataset: { object: "attribute", id: this.concept.parent.name } }));
+            /** @type {HTMLElement} */
+            let option = createI({
+                class: ["attribute--optional"],
+                dataset: {
+                    object: "attribute",
+                    id: this.source.refname
+                }
+            }, this.source.refname);
+            this.element.replaceWith(option);
         } else {
-            this.editor.notify("This element cannot be deleted");
+            this.editor.notify(result.message);
             shake(this.element);
         }
     },
+    clear() {
+        removeChildren(this.element);
+    },
+    show() {
+        show(this.element);
+        this.visible = true;
+        this.active = true;
+    },
+    hide() {
+        hide(this.element);
+        this.visible = false;
+    },
     enable() {
-        this.input.contentEditable = true;
-        this.input.tabIndex = 0;
-        this.isDisabled = false;
+        this.disabled = false;
     },
     disable() {
-        this.input.contentEditable = false;
-        this.input.tabIndex = -1;
-        this.isDisabled = true;
+        this.disabled = true;
     },
 };
+
+
+export const Field = Object.assign(
+    BaseField,
+    ObserverHandler
+);

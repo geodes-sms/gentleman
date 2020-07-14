@@ -1,20 +1,30 @@
-import { hasOwn, isNullOrUndefined, valOrDefault, isString, isEmpty } from "zenkai";
-import { extend } from "@utils/index.js";
+import { hasOwn, isNullOrUndefined, isString, isEmpty } from "zenkai";
 import { Concept } from "./../concept.js";
 
 
-export const SetConcept = extend(Concept, {
+const _SetConcept = {
     name: 'set',
 
-    initValue(value) {
+    initValue(args) {
         this.value = [];
 
-        var values = valOrDefault(value, []);
-        for (let i = 0; i < values.length; i++) {
-            this.createElement(values[i]);
+        if (isNullOrUndefined(args)) {
+            for (let i = 0; i < this.min; i++) {
+                this.createElement();
+            }
+
+            return this;
         }
 
-        let remaining = this.min - values.length;
+        const { id, value } = args;
+
+        this.id = id;
+
+        for (let i = 0; i < value.length; i++) {
+            this.createElement(value[i]);
+        }
+
+        var remaining = this.min - value.length;
         for (let i = 0; i < remaining; i++) {
             this.createElement();
         }
@@ -25,17 +35,24 @@ export const SetConcept = extend(Concept, {
         return !isEmpty(this.value);
     },
     getValue() {
-        return this.value;
+        return this.value.map(id => this.model.getConcept(id));
     },
     setValue(value) {
         if (!Array.isArray(value)) {
             return;
         }
-        this.removeAll();
-        this.value = value;
+
+        this.removeAllElement();
+
+        for (let i = 0; i < value.length; i++) {
+            this.createElement(value[i]);
+        }
 
         this.notify("value.changed", value);
     },
+    /**
+     * @returns {*[]}
+     */
     getElements() {
         return this.value.map(id => this.model.getConcept(id));
     },
@@ -67,6 +84,8 @@ export const SetConcept = extend(Concept, {
         }
 
         this.value.push(element.id);
+        element.index = this.value.length - 1;
+
         this.notify("value.added", element);
 
         return true;
@@ -90,28 +109,55 @@ export const SetConcept = extend(Concept, {
         return this.removeElementAt(index);
     },
     removeElementAt(index) {
-        if (!Number.isInteger(index) || index < 0) {
-            return false;
+        if (this.value.length === this.min) {
+            return {
+                message: `The element could not be removed. The set needs at least ${this.min} element.`,
+                success: false,
+            };
         }
 
-        if (!this.model.removeConcept(this.value[index])) {
-            return false;
+        if (!Number.isInteger(index) || index < 0) {
+            return {
+                message: `The element was not removed. The given 'index' is not valid.`,
+                success: false,
+            };
+        }
+
+        var removedConcept = this.model.removeConcept(this.value[index]);
+
+        if (isNullOrUndefined(removedConcept)) {
+            return {
+                message: `The element at index '${index}' was not found.`,
+                success: false,
+            };
         }
 
         this.value.splice(index, 1);
 
-        return true;
+        this.notify("value.removed", removedConcept);
+
+        return {
+            message: `The element '${removedConcept.name}' was successfully removed.`,
+            success: true,
+        };
     },
     removeAllElement() {
         this.value.forEach(element => {
             this.model.removeConcept(element);
         });
+
+        this.value = [];
+
+        this.notify("value.changed", this.value);
+
+        return this;
     },
     createElement(value) {
         var concept = null;
+
         var options = {
             value: value,
-            parent: this.id,
+            parent: this,
             refname: this.name,
             reftype: "element",
         };
@@ -120,10 +166,10 @@ export const SetConcept = extend(Concept, {
             concept = this.model.createConcept(this.accept, options);
         }
 
-        if (hasOwn(this.accept, "type")) {
-            let { type, accept, alias, action } = this.accept;
+        if (hasOwn(this.accept, "name")) {
+            let { name, accept, alias, action } = this.accept;
 
-            concept = this.model.createConcept(type, Object.assign(options, {
+            concept = this.model.createConcept(name, Object.assign(options, {
                 accept: accept,
                 action: action,
                 alias: alias
@@ -142,23 +188,53 @@ export const SetConcept = extend(Concept, {
         return this.value.length > this.min;
     },
 
+    /**
+     * Gets the concept parent if exist
+     * @returns {Concept}
+     */
+    getChildren(name) {
+        if (!this.hasValue()) {
+            return [];
+        }
+
+        const concepts = this.getElements();
+
+        if (isNullOrUndefined(name)) {
+            return concepts;
+        }
+
+        return concepts.filter(concept => concept.name === name);
+    },
+
     export() {
         var output = [];
         this.value.forEach(val => {
-            output.push(val.export());
+            var concept = this.model.getConcept(val);
+            output.push(concept.export());
         });
 
-        return output;
+        return {
+            id: this.id,
+            name: this.name,
+            value: output
+        };
     },
     toString() {
         var output = [];
+
         this.value.forEach(val => {
             output.push(val.toString());
         });
 
         return output;
     }
-});
+};
+
+
+export const SetConcept = Object.assign(
+    Object.create(Concept),
+    _SetConcept
+);
 
 Object.defineProperty(SetConcept, 'count', { get() { return this.value.length; } });
 Object.defineProperty(SetConcept, 'canAddValue', { get() { return true; } });

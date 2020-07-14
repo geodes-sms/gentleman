@@ -1,8 +1,8 @@
-import { isString, valOrDefault, hasOwn, isNullOrUndefined, isIterable, isEmpty } from "zenkai";
+import { isString, valOrDefault, hasOwn, isNullOrUndefined, isIterable, isEmpty, isFunction, isObject, isNullOrWhitespace } from "zenkai";
 import { AttributeHandler, ComponentHandler, ObserverHandler } from "@structure/index.js";
 
 
-const BaseConcept = {
+const _Concept = {
     /**
      * Creates a concept
      * @param {Model} args 
@@ -14,10 +14,8 @@ const BaseConcept = {
 
         instance.model = model;
         instance.metamodel = model.metamodel;
-        
-        if (schema) {
-            instance.schema = Object.assign(valOrDefault(instance.schema, {}), schema);
-        }
+        instance.schema = schema;
+
         instance.references = [];
 
         return instance;
@@ -33,6 +31,8 @@ const BaseConcept = {
     id: null,
     /** @type {string} */
     name: null,
+    /** @type {string} */
+    description: null,
     /** @type {string} */
     alias: null,
     /** @type {string} */
@@ -59,6 +59,7 @@ const BaseConcept = {
     shadows: null,
     /** Object nature */
     object: "concept",
+    kind: "concept",
 
     init(args = {}) {
         this.accept = args.accept;
@@ -66,8 +67,9 @@ const BaseConcept = {
         this.parent = args.parent;
         this.refname = args.refname;
         this.reftype = args.reftype;
-        this.values = valOrDefault(args.values, this.schema.values);
+        this.values = valOrDefault(args.values, valOrDefault(this.schema.values, []));
         this.alias = args.alias;
+        this.description = args.description;
         this.min = valOrDefault(args.min, 1);
 
         if (args.projection) {
@@ -79,13 +81,28 @@ const BaseConcept = {
         this.initComponent();
         this.initValue(args.value);
 
+        if (isFunction(this.init.post)) {
+            this.init.post(args);
+        }
+
         return this;
     },
     initValue() { throw new Error("This function has not been implemented"); },
 
-    getIdRef() { return this.schema['idref']; },
-    getName() { return valOrDefault(this.refname, this.name); },
-    getAlias() { return valOrDefault(this.alias, this.getName()); },
+    /**
+     * Gets the reference name (attribute) or initial name
+     * @returns {string}
+     */
+    getName() {
+        return valOrDefault(this.refname, this.name);
+    },
+    /**
+     * Gets the alias or the name
+     * @returns {string}
+     */
+    getAlias() {
+        return valOrDefault(this.alias, this.getName());
+    },
 
     getAcceptedValues() {
         if (!isIterable(this.accept) && isNullOrUndefined(this.accept.type)) {
@@ -104,41 +121,158 @@ const BaseConcept = {
             return this.accept.map(accept => this.getAcceptedValues.call({ accept: accept })).join(" or ");
         }
     },
+    getCandidates() {
+        this.values.forEach(value => {
+            if (isObject(value)) {
+                value.type = "value";
+            }
+        });
+
+        return this.values;
+    },
     getStructure() {
         return [...this.listAttributes(), ...this.listComponents()];
     },
-    getConceptParent() {
+
+    /**
+     * Returns a value indicating whether the concept has a parent
+     * @returns {boolean}
+     */
+    hasParent() {
+        return !this.isRoot();
+    },
+    /**
+     * Gets the concept parent if exist
+     * @param {string} [name]
+     * @returns {Concept}
+     */
+    getParent(name) {
         if (this.isRoot()) {
             return null;
         }
 
-        return this.model.getConcept(this.parent);
+        if (isNullOrWhitespace(name)) {
+            return this.parent;
+        }
+
+        var parent = this.parent;
+
+        while (parent) {
+            if (parent.name === name) {
+                return parent;
+            }
+
+            parent = parent.getParent();
+        }
+
+        return null;
     },
+    /**
+     * Gets the concept ancestor
+     * @param {string} [name]
+     * @returns {Concept[]}
+     */
+    getAncestor(name) {
+        if (this.isRoot()) {
+            return null;
+        }
+
+        const parents = [];
+
+        var parent = this.parent;
+
+        while (parent) {
+            parents.push(parent);
+            parent = parent.getParent(name);
+        }
+
+        return parents;
+    },
+    /**
+     * Gets the children of parent
+     * @param {string} [name]
+     * @returns {Concept}
+     */
+    getChildren(name) {
+        const children = [];
+
+        if (isNullOrUndefined(name)) {
+            this.getAttributes().forEach(attr => {
+                children.push(attr.target);
+            });
+            this.getComponents().forEach(comp => {
+                children.push(...comp.getChildren());
+            });
+        } else {
+            this.getAttributes().forEach(attr => {
+                if (attr.target.name === name) {
+                    children.push(...attr.target);
+                } else {
+                    children.push(...attr.target.getChildren(name));
+                }
+            });
+            this.getComponents().forEach(comp => {
+                console.log(comp);
+                children.push(...comp.getChildren(name));
+            });
+        }
+
+        return children;
+    },
+    /**
+     * Gets the descendants of a concept
+     * @param {string} [name]
+     * @returns {Concept}
+     */
+    getDescendant(name) {
+        const descendants = [];
+
+        this.getChildren(name).forEach(children => {
+            descendants.push(...children);
+            children.forEach(child => {
+                descendants.push(child.getDescendant(name));
+            });
+        });
+
+        return descendants;
+    },
+
+    /**
+     * Verifies that a child concept can be deleted
+     * @param {string} name 
+     * @returns {boolean}
+     */
     canDelete(name) {
         if (isNullOrUndefined(name)) {
-            return isEmpty(this.references) && this.getConceptParent().canDelete(this.refname);
+            return isEmpty(this.references) && this.getParent().canDelete(this.refname);
         }
 
         return !this.isAttributeRequired(name);
     },
+    /**
+     * Removes a child concept
+     * @param {Concept} concept 
+     * @returns {boolean} Value indicating the success of the operation
+     */
     remove(concept) {
-        if (!this.removeAttribute(concept.refname)) {
-            return false;
-        }
-        this.model.removeConcept(concept.id);
+        var result = this.removeAttribute(concept.refname);
 
-        return true;
+        return result;
     },
     delete() {
-        if (!this.getConceptParent().remove(this)) {
-            return false;
+        var result = this.getParent().remove(this);
+        if (!result.success) {
+            return result;
         }
 
-        if (this.projection) {
-            this.projection.remove();
-        }
+        this.model.removeConcept(this.id);
 
-        return true;
+        this.notify("delete");
+
+        return {
+            message: `The concept '${name}' was successfully deleted.`,
+            success: true,
+        };
     },
 
     /** @returns {boolean} */
@@ -147,19 +281,18 @@ const BaseConcept = {
     },
 
     export() {
-        var output = {};
+        var output = {
+            id: this.id,
+            name: this.name
+        };
 
-        var attributes = {};
         this.attributes.forEach(attr => {
-            Object.assign(attributes, attr.export());
+            Object.assign(output, attr.export());
         });
 
-        var components = [];
         this.components.forEach(comp => {
-            components.push(comp.export());
+            Object.assign(output, comp.export());
         });
-
-        Object.assign(output, attributes);
 
         return output;
     },
@@ -181,12 +314,12 @@ const BaseConcept = {
 };
 
 export const Concept = Object.assign(
-    BaseConcept,
+    _Concept,
     ObserverHandler,
     AttributeHandler,
     ComponentHandler
 );
 
-Object.defineProperty(Concept, 'fullName', { get() { return `${this.name}`; } });
+
 Object.defineProperty(Concept, 'attributeSchema', { get() { return this.schema.attribute; } });
 Object.defineProperty(Concept, 'componentSchema', { get() { return this.schema.component; } });

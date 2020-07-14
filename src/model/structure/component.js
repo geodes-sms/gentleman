@@ -1,4 +1,4 @@
-import { valOrDefault, isNullOrUndefined } from "zenkai";
+import { isNullOrUndefined } from "zenkai";
 import { BaseStructure } from "./structure.js";
 import { AttributeHandler } from "./attribute-handler.js";
 import { ObserverHandler } from "./observer-handler.js";
@@ -7,17 +7,19 @@ import { ObserverHandler } from "./observer-handler.js";
 const BaseComponent = {
     object: "component",
 
-    init(data) {
+    init(args) {
         this.initObserver();
         this.initAttribute();
 
-        if (isNullOrUndefined(data)) {
+        if (isNullOrUndefined(args)) {
             return this;
         }
 
-        for (const key in data) {
-            const element = data[key];
-            const [type, name] = key.split(".");
+        this.id = args.id;
+
+        for (const key in args) {
+            const element = args[key];
+            const [name, type] = key.split(":");
             switch (type) {
                 case "attribute":
                     this.createAttribute(name, element);
@@ -29,18 +31,68 @@ const BaseComponent = {
 
         return this;
     },
-    canDelete() { return !this.required; },
-    
-    export() {
-        var output = {
-            name: valOrDefault(this.name, this.id)
-        };
+    canDelete() {
+        return !this.required;
+    },
 
-        this.getAttributes().forEach(attr => {
+    /**
+     * Gets the concept parent if exist
+     * @param {string} [name]
+     * @returns {Concept}
+     */
+    getParent(name) {
+        return this.concept;
+    },
+
+    /**
+     * Gets the children
+     * @returns {Concept}
+     */
+    getChildren(name) {
+        const children = [];
+
+        if (isNullOrUndefined(name)) {
+            this.getAttributes().forEach(attr => {
+                children.push(attr.target);
+            });
+        } else {
+            this.getAttributes().forEach(attr => {
+                if (attr.target.name === name) {
+                    children.push(...attr.target);
+                } else {
+                    children.push(...attr.target.getChildren(name));
+                }
+            });
+        }
+
+        return children;
+    },
+    /**
+     * Removes a child concept
+     * @param {Concept} concept 
+     * @returns {boolean} Value indicating the success of the operation
+     */
+    remove(concept) {
+        var result = this.removeAttribute(concept.refname);
+
+        return result;
+    },
+    delete() {
+        this.notify("delete");
+
+        return this.concept.removeComponent(this.name);
+    },
+
+    export() {
+        var output = {};
+
+        this.attributes.forEach(attr => {
             Object.assign(output, attr.export());
         });
 
-        return output;
+        return {
+            [`${this.name}:component`]: output
+        };
     },
     toString() {
         var output = {};
@@ -60,5 +112,4 @@ export const Component = Object.assign(
     AttributeHandler
 );
 
-Object.defineProperty(Component, 'fullName', { get() { return `${this.concept.name}:${this.name}`; } });
 Object.defineProperty(Component, 'attributeSchema', { get() { return this.schema.attribute; } });

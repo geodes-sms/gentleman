@@ -1,0 +1,21 @@
+{
+    "cdacadcds": {
+        "nature": "concrete",
+        "attribute": {},
+        "component": {},
+        "projection": [
+            {
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "HELLO WORLD"
+                    ]
+                }
+            }
+        ]
+    },
+    "@root": "cdacadcds",
+    "@config": {
+        "language": "aaaaa"
+    }
+}

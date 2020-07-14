@@ -1,8 +1,9 @@
-import { isNullOrUndefined, cloneObject, valOrDefault, hasOwn } from 'zenkai';
+import { isNullOrUndefined, cloneObject, hasOwn } from 'zenkai';
 import { UUID } from '@utils/uuid.js';
 import {
     StringConcept,
     SetConcept,
+    BooleanConcept,
     NumberConcept,
     ReferenceConcept,
     BaseConcept,
@@ -24,6 +25,14 @@ const DefaultSchema = {
             {
                 type: "field",
                 view: "text"
+            }
+        ]
+    },
+    boolean: {
+        projection: [
+            {
+                type: "field",
+                view: "check"
             }
         ]
     },
@@ -54,11 +63,11 @@ const DefaultSchema = {
 };
 
 const resolveSchema = (conceptName, customSchema) => {
-    if(isNullOrUndefined(customSchema)) {
+    if (isNullOrUndefined(customSchema)) {
         return cloneObject(DefaultSchema[conceptName]);
     }
 
-    var schema = cloneObject( customSchema);
+    var schema = cloneObject(customSchema);
     if (schema && !hasOwn(schema, 'projection')) {
         schema.projection = cloneObject(DefaultSchema[conceptName].projection);
     }
@@ -70,6 +79,7 @@ const Handler = {
     // Primitive
     string: (model, schema) => StringConcept.create(model, resolveSchema('string', schema)),
     number: (model, schema) => NumberConcept.create(model, resolveSchema('number', schema)),
+    boolean: (model, schema) => BooleanConcept.create(model, resolveSchema('boolean', schema)),
     set: (model, schema) => SetConcept.create(model, resolveSchema('set', schema)),
     reference: (model, schema) => ReferenceConcept.create(model, resolveSchema('reference', schema)),
     // Complex

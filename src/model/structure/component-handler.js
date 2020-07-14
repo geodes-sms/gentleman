@@ -1,11 +1,12 @@
-import { isNullOrUndefined, valOrDefault, hasOwn, isNullOrWhitespace } from "zenkai";
+import { isNullOrUndefined, valOrDefault, hasOwn, isNullOrWhitespace, isEmpty } from "zenkai";
 import { Component } from "./component.js";
 
 
 export const ComponentHandler = {
     /** @type {Component[]} */
-    components: [],
-    /** @returns {Component[]} */
+    components: null,
+
+    /** @returns {ComponentHandler} */
     initComponent() {
         this.components = [];
         this.components._created = new Set();
@@ -18,34 +19,51 @@ export const ComponentHandler = {
     getComponents() {
         return this.components;
     },
-    /** @returns {Component} */
-    getComponent(id) {
-        if (isNullOrWhitespace(id) || !Number.isInteger(id)) {
-            throw new Error("Bad parameter");
+    /**
+     * Returns a component matching the query
+     * @param {*} query
+     * @returns {Component}
+     */
+    getComponent(query) {
+        if (isNullOrUndefined(query)) {
+            throw new TypeError("Bad argument");
         }
 
-        if (Number.isInteger(id)) {
-            return id < this.components.length ? this.components[id] : null;
+        if (query.type === "id") {
+            return this.getComponentById(query.value);
         }
 
-        return this.getComponentByName(id);
+        return this.getComponentByName(query);
     },
-    /** @returns {Component} */
+    /**
+     * Returns a component with the given name
+     * @param {string} name 
+     * @returns {Component}
+     */
     getComponentByName(name) {
         if (isNullOrWhitespace(name)) {
-            throw new Error("Bad parameter");
+            throw new TypeError("Bad argument");
         }
 
         var component = this.components.find((c) => c.name === name);
+        
         if (isNullOrUndefined(component)) {
             component = this.createComponent(name);
         }
 
         return component;
     },
-    /** @returns {Component} */
-    getUniqueComponent() {
-        var component = this.components.find((c) => c.isUnique());
+    /**
+     * Returns a component with the given id
+     * @param {string} id 
+     * @returns {Component}
+     */
+    getComponentById(id) {
+        if (isNullOrWhitespace(id)) {
+            throw new TypeError("Bad argument");
+        }
+
+        var component = this.components.find((c) => c.id === id);
 
         return component;
     },
@@ -55,12 +73,14 @@ export const ComponentHandler = {
      * @returns {Component}
      */
     createComponent(name, value) {
-        const schema = this.componentSchema[name];
-        if (isNullOrUndefined(schema)) {
+        if (!this.hasComponent(name)) {
             throw new Error(`Component not found: The concept ${this.name} does not contain an component named ${name}`);
         }
-        
-        this.componentSchema[name].name = name;
+
+        const schema = Object.assign(this.componentSchema[name], {
+            name: name
+        });
+
         var component = Component.create(this, schema).init(value);
         component.id = this.id;
 
@@ -69,30 +89,53 @@ export const ComponentHandler = {
         return component;
     },
 
+    /**
+     * Adds a component to the list of components held by the parent concept
+     * @param {Component} component 
+     */
     addComponent(component) {
+        if (isNullOrUndefined(component) || component.object !== "component") {
+            throw new Error(`Bad argument: 'component' must be a component object`);
+        }
+
         this.components.push(component);
         this.components._created.add(component.name);
 
         this.notify("component.added", component);
+
+        return this;
     },
     /**
-     * Returns a value indicating whether the concept has an component
-     * @param {string} id Component's id
+     * Returns a value indicating whether the concept has any components
      * @returns {boolean}
      */
-    hasComponent(id) { return hasOwn(this.componentSchema, id); },
+    hasComponents() {
+        return !isEmpty(Object.keys(this.componentSchema)) || !isEmpty(this.components);
+    },
+    /**
+     * Returns a value indicating whether the concept has a component with the given name
+     * @param {string} name Component's name
+     * @returns {boolean}
+     */
+    hasComponent(name) {
+        return hasOwn(this.componentSchema, name);
+    },
     /**
      * Returns a value indicating whether the component is required
      * @param {string} name Component's name
      * @returns {boolean}
      */
-    isComponentRequired(name) { return valOrDefault(this.componentSchema[name].required, true); },
+    isComponentRequired(name) {
+        return valOrDefault(this.componentSchema[name].required, true);
+    },
     /**
      * Returns a value indicating whether the component has been created
      * @param {string} name Component's name
      * @returns {boolean}
      */
-    isComponentCreated(name) { return this.components._created.has(name); },
+    isComponentCreated(name) {
+        return this.components._created.has(name);
+    },
     getOptionalComponents() {
         if (isNullOrUndefined(this.componentSchema)) {
             return [];
@@ -109,29 +152,53 @@ export const ComponentHandler = {
         return optionalComponents;
     },
     listComponents() {
-        var components = [];
+        const components = [];
 
-        for (const compName in this.componentSchema) {
-            let component = this.componentSchema[compName];
+        for (const name in this.componentSchema) {
+            let component = this.componentSchema[name];
+
             components.push({
                 type: "component",
-                name: compName,
+                name: name,
                 alias: component['alias'],
                 description: component['description'],
                 attributes: Object.keys(component.attribute),
-                required: this.isComponentRequired(compName),
-                created: this.isComponentCreated(compName)
+                required: this.isComponentRequired(name),
+                created: this.isComponentCreated(name),
             });
         }
 
         return components;
     },
+    /**
+     * Removes a component from a concept if possible
+     * @param {string} name 
+     */
     removeComponent(name) {
-        var removedComponent = this.components.splice(this.components.findIndex(comp => comp.name === name), 1);
-        this.components._created.remove(name);
+        if (this.isComponentRequired(name)) {
+            return {
+                message: `The component '${name}' is required.`,
+                success: false,
+            };
+        }
+
+        var index = this.components.findIndex(comp => comp.name === name);
+
+        if (index === -1) {
+            return {
+                message: `The component '${name}' was not found.`,
+                success: false,
+            };
+        }
+
+        var removedComponent = this.components.splice(index, 1);
+        this.components._created.delete(name);
 
         this.notify("component.removed", removedComponent);
 
-        return removedComponent.length === 1;
+        return {
+            message: `The component '${name}' was successfully removed.`,
+            success: true,
+        };
     }
 };

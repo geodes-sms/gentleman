@@ -1,30 +1,48 @@
 import {
-    createDocFragment, createTable, createTableHeader, createTableBody,
-    createTableRow, createListItem, createTableCell, createTableHeaderCell,
-    insertAfterElement, removeChildren, isHTMLElement, valOrDefault
+    createDocFragment, createTable, createTableHeader, createTableBody, createTableRow,
+    createTableCell, createTableHeaderCell, removeChildren, createDiv, isHTMLElement
 } from "zenkai";
-import { extend, Key } from "@utils/index.js";
-import { Projection } from "@projection/index.js";
+import { ProjectionManager } from "@projection/index.js";
 import { Field } from "./field.js";
+import { StyleHandler } from "./../style-handler.js";
+import { shake } from "@utils/index.js";
 
 
-export const TableField = extend(Field, {
+const addSchema = [{
+    "layout": {
+        "type": "wrap",
+        "style": {
+            "box": {
+                "space": {
+                    "inner": 5
+                }
+            }
+        },
+        "disposition": ["ADD"]
+    }
+}];
+
+const removeSchema = [{
+    "layout": {
+        "type": "wrap",
+        "style": {
+            "box": {
+                "space": {
+                    "inner": 5
+                }
+            }
+        },
+        "disposition": ["REMOVE"]
+    }
+}];
+
+
+const _TableField = {
     init() {
-        this.errors = [];
-        this.extras = [];
-        this.validators = [];
-
-        var validator = function () {
-            return true;
-        };
-
-        this.validators.push(validator);
-
+        this.source.register(this);
         return this;
     },
 
-    /** @type {*[]} */
-    extras: null,
     /** @type {HTMLTableElement} */
     table: null,
     /** @type {HTMLTableSectionElement} */
@@ -38,7 +56,10 @@ export const TableField = extend(Field, {
     update(message, value) {
         switch (message) {
             case "value.added":
-                var row = createTableRow({ class: "field--table-row", tabindex: 0 });
+                var row = createTableRow({
+                    class: ["field--table-row"],
+                    tabindex: -1,
+                });
                 this.schema.body.forEach(cell => {
                     var schema = [
                         {
@@ -48,31 +69,44 @@ export const TableField = extend(Field, {
                             }
                         }
                     ];
-        
-                    var projection = Projection.create(schema, value, this.editor);
-                    row.appendChild(createTableCell({ class: "field--table-cell", tabindex: 0 }, [projection.render()]));
+
+                    var projection = ProjectionManager.createProjection(schema, value, this.editor).init();
+                    row.appendChild(createTableCell({
+                        class: ["field--table-cell"],
+                        tabindex: -1,
+                    }, [projection.render()]));
                 });
 
-                var schema = [{
-                    "layout": {
-                        "type": "wrap",
-                        "disposition": "ADD"
-                    }
-                }];
-        
-                var projection = Projection.create(schema, value, this.editor);
-        
-                var addContainer = createTableCell({ class: "field--table-cell", tabindex: 0 }, [projection.render()]);
-        
+                var projection = ProjectionManager.createProjection(addSchema, value, this.editor).init();
+
+                var addContainer = createTableCell({
+                    class: ["field--table-cell"],
+                    tabindex: -1,
+                }, [projection.render()]);
+
                 addContainer.addEventListener('click', () => {
                     var element = this.createElement();
                     if (!element) {
                         this.editor("Element could not be created");
                     }
                 });
-        
+
                 row.appendChild(addContainer);
-                
+
+                projection = ProjectionManager.createProjection(removeSchema, value, this.editor).init();
+
+                var removeContainer = createTableCell({
+                    class: ["field--table-cell"],
+                    tabindex: -1,
+                }, [projection.render()]);
+
+                removeContainer.addEventListener('click', () => {
+                    removeChildren(row);
+                    row.remove();
+                });
+
+                row.appendChild(removeContainer);
+
                 this.body.appendChild(row);
 
                 break;
@@ -80,120 +114,89 @@ export const TableField = extend(Field, {
                 console.warn(`List Field not updated for operation '${message}'`);
                 break;
         }
-        // this.updateUI();
     },
 
-    createInput() {
-        this.element = createTable({
-            id: this.id,
-            class: ["field", "field--table"],
-            dataset: {
-                type: "set",
-                nature: "field",
-            }
-        });
-        this.element.contentEditable = false;
+    render() {
+        const fragment = createDocFragment();
 
-        this.element.appendChild(valueHandler.call(this, this.concept.getElements()));
+        if (!isHTMLElement(this.element)) {
+            this.element = createDiv({
+                class: ["field", "field--table"],
+                id: this.id,
+                tabindex: -1,
+                dataset: {
+                    nature: "field",
+                    view: "table",
+                    id: this.id,
+                }
+            });
+
+            if (this.readonly) {
+                this.element.classList.add("readonly");
+            }
+
+            StyleHandler(this.element, this.schema.style);
+        }
+
+        if (!isHTMLElement(this.table)) {
+            this.table = createTable({
+                class: ["field--table__table"],
+                tabindex: 0,
+                dataset: {
+                    nature: "field-component",
+                    id: this.id,
+                    placeholder: this.placeholder
+                }
+            });
+
+            fragment.appendChild(this.table);
+        }
+
+        this.table.appendChild(valueHandler.call(this, this.source.getElements()));
+
+        if (fragment.hasChildNodes) {
+            this.element.appendChild(this.table);
+        }
 
         this.bindEvents();
 
-        this.concept.register(this);
-
         return this.element;
     },
+    focusIn() {
+        this.hasFocus = true;
+    },
+    focusOut() {
+        this.hasFocus = false;
+    },
     createElement() {
-        return this.concept.createElement();
+        return this.source.createElement();
+    },
+    removeElement(element) {
+        return this.source.removeElement(element);
+    },
+    delete(target) {
+        if (target === this.element || target === this.table) {
+            this.source.delete();
+
+            return;
+        }
+
+        const { index } = target.dataset;
+
+        var result = this.source.removeElementAt(+index);
+
+        if (result) {
+            this.editor.notify("The element was successfully deleted");
+        } else {
+            this.editor.notify("This element cannot be deleted");
+            shake(target);
+        }
     },
     bindEvents() {
         var lastKey = -1;
 
-        const isChild = (element) => element.parentElement === this.element && isItem;
-        const isItem = (element) => isHTMLElement(element) && element.classList.contains('field--list-item');
-        const concept = this.concept;
-
-        this.element.addEventListener('click', (event) => {
-        });
-
-        this.element.addEventListener('keydown', (event) => {
-            var activeElement = document.activeElement;
-
-            switch (event.key) {
-                case Key.backspace:
-                    break;
-                case Key.left_arrow:
-                    if (isChild(activeElement)) {
-                        let previousElement = activeElement.previousElementSibling;
-                        if (isItem(previousElement)) {
-                            previousElement.focus();
-                        }
-                    }
-                    break;
-                case Key.right_arrow:
-                    if (isChild(activeElement)) {
-                        let nextElement = activeElement.nextElementSibling;
-                        if (isItem(nextElement)) {
-                            nextElement.focus();
-                        }
-                    }
-                    break;
-                case Key.ctrl:
-                    event.preventDefault();
-                    break;
-                case Key.delete:
-                    if (this.concept.canDelete() && activeElement.classList.contains('field--list-item')) {
-                        activeElement.classList.add('delete');
-                    } else {
-                        this.editor.notify("This element cannot be deleted");
-                    }
-            }
-
-            lastKey = event.key;
-        }, false);
-
-        this.element.addEventListener('keyup', (event) => {
-            var activeElement = document.activeElement;
-
-            switch (event.key) {
-                case Key.backspace:
-                    break;
-                case Key.ctrl:
-                    event.preventDefault();
-                    break;
-                case Key.spacebar:
-                    if (lastKey === Key.spacebar && isChild(activeElement)) {
-                        if (concept.addElement()) {
-                            let instance = concept.getLastElement();
-                            var container = createListItem({ class: "field--list-item", draggable: true }, [instance.render()]);
-                            container.tabIndex = 0;
-                            insertAfterElement(activeElement, container);
-                            container.focus();
-                            event.preventDefault();
-                        }
-                    }
-
-                    break;
-                case Key.delete:
-                    if (lastKey === Key.delete && isChild(activeElement) && activeElement.classList.contains('delete')) {
-                        if (concept.removeElementAt(Array.from(this.children).indexOf(activeElement))) {
-                            removeChildren(activeElement);
-                            let nextElement = activeElement.nextElementSibling;
-                            let previousElement = activeElement.previousElementSibling;
-                            if (isChild(nextElement)) {
-                                nextElement.focus();
-                            }
-                            else if (isChild(previousElement)) {
-                                previousElement.focus();
-                            }
-                            activeElement.remove();
-                        }
-                    }
-
-                    break;
-            }
-        }, false);
     }
-});
+};
 
 function valueHandler(values) {
     const { editor } = this;
@@ -206,20 +209,33 @@ function valueHandler(values) {
     }
 
     if (header) {
-        this.header = createTableHeader({ class: "field--table-header" });
-        let row = createTableRow({ class: "field--table-header-row", tabindex: 0 });
+        this.header = createTableHeader({
+            class: ["field--table-header"],
+        });
+        let row = createTableRow({
+            class: ["field--table-header-row"],
+            tabindex: -1,
+        });
         header.forEach(value => {
-            row.appendChild(createTableHeaderCell({ class: "field--table-header-cell", tabindex: 0 }, value));
+            row.appendChild(createTableHeaderCell({
+                class: ["field--table-header-cell"],
+                tabindex: -1
+            }, value));
         });
 
         this.header.appendChild(row);
         fragment.appendChild(this.header);
     }
 
-    this.body = createTableBody({ class: "field--table-body" });
+    this.body = createTableBody({
+        class: ["field--table-body"],
+    });
 
     values.forEach(concept => {
-        var row = createTableRow({ class: "field--table-row", tabindex: 0 });
+        var row = createTableRow({
+            class: ["field--table-row"],
+            tabindex: -1,
+        });
         body.forEach(cell => {
             var schema = [
                 {
@@ -230,20 +246,21 @@ function valueHandler(values) {
                 }
             ];
 
-            var projection = Projection.create(schema, concept, editor);
-            row.appendChild(createTableCell({ class: "field--table-cell", tabindex: 0 }, [projection.render()]));
+            var projection = ProjectionManager.createProjection(schema, concept, editor).init();
+            row.appendChild(createTableCell({
+                class: ["field--table-cell"],
+                tabindex: -1,
+            }, [projection.render()]));
         });
 
-        var schema = [{
-            "layout": {
-                "type": "wrap",
-                "disposition": "ADD"
-            }
-        }];
 
-        var projection = Projection.create(schema, concept, editor);
 
-        var addContainer = createTableCell({ class: "field--table-cell", tabindex: 0 }, [projection.render()]);
+        var projection = ProjectionManager.createProjection(addSchema, concept, editor).init();
+
+        var addContainer = createTableCell({
+            class: ["field--table-cell"],
+            tabindex: -1,
+        }, [projection.render()]);
 
         addContainer.addEventListener('click', () => {
             var element = this.createElement();
@@ -254,46 +271,30 @@ function valueHandler(values) {
 
         row.appendChild(addContainer);
 
+        projection = ProjectionManager.createProjection(removeSchema, concept, editor).init();
+
+        var removeContainer = createTableCell({
+            class: ["field--table-cell"],
+            tabindex: -1,
+        }, [projection.render()]);
+
+        removeContainer.addEventListener('click', () => {
+            removeChildren(row);
+            row.remove();
+        });
+
+        row.appendChild(removeContainer);
+
         this.body.appendChild(row);
     });
 
     fragment.appendChild(this.body);
 
-    // var actionContainer = actionHandler.call(this);
-
-    // fragment.appendChild(actionContainer);
-
     return fragment;
 }
 
-const actionDefaultSchema = {
-    add: {
-        projection: [{
-            layout: {
-                "type": "wrap",
-                "disposition": ["Add an element"]
-            }
-        }]
-    }
-};
 
-function actionHandler() {
-    const { concept, editor, schema } = this;
-
-    const action = valOrDefault(schema.action, actionDefaultSchema);
-
-    var { projection: projectionSchema, constraint } = action.add;
-
-    var projection = Projection.create(projectionSchema, concept, editor);
-
-    var addContainer = createListItem({ class: "field--list__add" }, [projection.render()]);
-
-    addContainer.addEventListener('click', () => {
-        var element = this.createElement();
-        if (!element) {
-            this.editor("Element could not be created");
-        }
-    });
-
-    return addContainer;
-}
+export const TableField = Object.assign(
+    Object.create(Field),
+    _TableField
+);

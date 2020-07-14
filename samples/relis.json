@@ -217,7 +217,6 @@
                 ]
             },
             "criteria": {
-                "keyword": "Criteria",
                 "attribute": {
                     "exclusion_criteria": {
                         "target": "set",
@@ -295,7 +294,6 @@
                 ]
             },
             "sources": {
-                "keyword": "Sources",
                 "required": false,
                 "attribute": {
                     "source_papers": {
@@ -318,7 +316,6 @@
                 ]
             },
             "strategies": {
-                "keyword": "Strategies",
                 "required": false,
                 "attribute": {
                     "search_strategy": {
@@ -331,7 +328,7 @@
                         "layout": {
                             "type": "wrap",
                             "disposition": [
-                                "$keyword = [#search_strategy]"
+                                "Strategies = [#search_strategy]"
                             ]
                         }
                     }
@@ -364,7 +361,6 @@
                 ]
             },
             "phases": {
-                "keyword": "Phases",
                 "required": false,
                 "attribute": {
                     "phases": {
@@ -586,7 +582,6 @@
         "prototype": "report",
         "attribute": {
             "reference": {
-                "name": "reference",
                 "target": "reference",
                 "accept": "category"
             }
@@ -614,7 +609,7 @@
             },
             "mandatory": {
                 "target": "string",
-                "value": true
+                "value": "true"
             },
             "numberOfValues": {
                 "target": "number",
@@ -636,7 +631,6 @@
                 ]
             },
             "subCategory": {
-                "name": "subCategory",
                 "target": "set",
                 "accept": "category",
                 "required": false,
@@ -644,16 +638,7 @@
                 "projection": [
                     {
                         "type": "field",
-                        "view": "list",
-                        "layout": {
-                            "type": "stack",
-                            "orientation": "vertical",
-                            "disposition": [
-                                "{",
-                                "&LIST",
-                                "}"
-                            ]
-                        }
+                        "view": "list"
                     },
                     {
                         "type": "field",
@@ -670,7 +655,39 @@
                     }
                 ]
             }
-        }
+        },
+        "projection": [
+            {
+                "type": "field",
+                "view": "choice",
+                "value": {
+                    "projection": [
+                        {
+                            "layout": {
+                                "type": "wrap",
+                                "disposition": ["#name"]
+                            }
+                        },
+                        {
+                            "layout": {
+                                "type": "wrap",
+                                "disposition": ["POINTING"]
+                            }
+                        }
+                    ]
+                },
+                "choice": {
+                    "projection": [
+                        {
+                            "layout": {
+                                "type": "wrap",
+                                "disposition": ["$name ($id)"]
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
     },
     "freeCategory": {
         "nature": "concrete",
@@ -736,16 +753,18 @@
         },
         "projection": [
             {
+                "tags": ["editor"],
                 "layout": {
                     "type": "wrap",
-                    "disposition": [
-                        "Simple #name #title #numberOfValues : #type #max_char #pattern #initial_value #subCategory"
-                    ]
+                    "disposition": ["Simple #name #title #numberOfValues : #type #max_char #pattern #initial_value #subCategory"]
                 }
             },
             {
-                "type": "text",
-                "layout": "Simple #name #title #mandatory #numberOfValues : #type #max_char #pattern #initial_value #subCategory"
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["Simple <name> <title> <mandatory> <numberOfValues> : <type> <max_char> <pattern> <initial_value> <subCategory>"]
+                }
             }
         ]
     },
@@ -760,16 +779,18 @@
         },
         "projection": [
             {
+                "tags": ["editor"],
                 "layout": {
                     "type": "wrap",
-                    "disposition": [
-                        "List #name #title #numberOfValues = [#values] #subCategory"
-                    ]
+                    "disposition": ["List #name #title #numberOfValues = [#values] #subCategory"]
                 }
             },
             {
-                "type": "text",
-                "layout": "List #name #title #mandatory #numberOfValues = [#values] #subCategory"
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["List <name> <title> <mandatory> <numberOfValues> = [<values>] <subCategory>"]
+                }
             }
         ]
     },
@@ -789,6 +810,7 @@
         },
         "projection": [
             {
+                "tags": ["editor"],
                 "layout": {
                     "type": "wrap",
                     "disposition": [
@@ -797,8 +819,11 @@
                 }
             },
             {
-                "type": "text",
-                "layout": "DynamicList #name #title #mandatory #numberOfValues #reference_name #initial_values #subCategory"
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": ["DynamicList <name> <title> <mandatory> <numberOfValues> <reference_name> <initial_values> <subCategory>"]
+                }
             }
         ]
     },
@@ -823,14 +848,6 @@
                                             "#name"
                                         ]
                                     }
-                                },
-                                {
-                                    "layout": {
-                                        "type": "text",
-                                        "disposition": [
-                                            "POINTING"
-                                        ]
-                                    }
                                 }
                             ]
                         },
@@ -852,6 +869,7 @@
         },
         "projection": [
             {
+                "tags": ["editor"],
                 "layout": {
                     "type": "wrap",
                     "disposition": [
@@ -860,8 +878,12 @@
                 }
             },
             {
-                "type": "text",
-                "layout": "DynamicList #name #title #mandatory #numberOfValues depends on #depends_on #subCategory"
+                "tags": ["choice"],
+                "layout": {
+                    "type": "wrap",
+                    "view": "choice",
+                    "disposition": ["DynamicList <name> <title> <mandatory> <numberOfValues> depends on <depends_on> <subCategory>"]
+                }
             }
         ]
     },
@@ -901,7 +923,6 @@
         "values": [
             {
                 "value": "exclusionCriteria",
-                "alias": "Criteria",
                 "projection": [
                     {
                         "layout": {
@@ -913,7 +934,14 @@
             },
             {
                 "value": "includeExclude",
-                "alias": "Decision"
+                "projection": [
+                    {
+                        "layout": {
+                            "type": "text",
+                            "disposition": "Exclude"
+                        }
+                    }
+                ]
             }
         ]
     },

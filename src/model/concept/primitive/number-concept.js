@@ -1,6 +1,6 @@
-import { valOrDefault, isNullOrWhitespace, isNullOrUndefined } from "zenkai";
-import { extend } from "@utils/index.js";
+import { isNullOrWhitespace, isObject, isEmpty, isNullOrUndefined } from "zenkai";
 import { Concept } from "./../concept.js";
+
 
 const ResponseCode = {
     SUCCESS: 200,
@@ -23,11 +23,21 @@ function responseHandler(code) {
     }
 }
 
-export const NumberConcept = extend(Concept, {
+const _NumberConcept = {
     name: 'number',
 
-    initValue(value) {
-        this.value = valOrDefault(value, "");
+    initValue(args) {
+        if (isNullOrUndefined(args)) {
+            this.value =  "";
+            return this;
+        }
+        
+        if (isObject(args)) {
+            this.id = args.id;
+            this.setValue(args.value);
+        } else {
+            this.setValue(args);
+        }
 
         return this;
     },
@@ -38,14 +48,6 @@ export const NumberConcept = extend(Concept, {
         return this.value;
     },
     setValue(value) {
-        if (isNullOrUndefined(value) || this.value == value) {
-            return;
-        }
-
-        this.value = value;
-        this.notify("value.changed", value);
-    },
-    update(value) {
         var result = this.validate(value);
 
         if (result !== ResponseCode.SUCCESS) {
@@ -58,23 +60,53 @@ export const NumberConcept = extend(Concept, {
             };
         }
 
-        this.setValue(value);
+        this.value = value;
+        this.notify("value.changed", value);
 
         return {
             success: true,
             message: "The value has been successfully updated."
         };
     },
+    update(message, value) {
+        return true;
+    },
+    getCandidates() {
+        this.values.forEach(value => {
+            if (isObject(value)) {
+                value.type = "value";
+            }
+        });
+
+        return this.values;
+    },
+    getChildren(name) {
+        return [];
+    },
+    getDescendant(name) {
+        return [];
+    },
+
     validate(value) {
         if (isNaN(value)) {
             return ResponseCode.INVALID_NUMBER;
         }
 
-        if (!Array.isArray(this.values) || isNullOrWhitespace(value)) {
+        if (isNullOrWhitespace(value) || isEmpty(this.values)) {
             return ResponseCode.SUCCESS;
         }
 
-        if (!this.values.includes(value)) {
+        var found = false;
+        for (let i = 0; !found && i < this.values.length; i++) {
+            const val = this.values[i];
+            if (isObject(val)) {
+                found = val.value == value;
+            } else {
+                found = val == value;
+            }
+        }
+        
+        if (!found) {
             return ResponseCode.INVALID_VALUE;
         }
 
@@ -82,6 +114,16 @@ export const NumberConcept = extend(Concept, {
     },
 
     export() {
-        return this.value;
+        return {
+            id: this.id,
+            name: this.name,
+            value: this.value
+        };
     },
-});
+};
+
+
+export const NumberConcept = Object.assign(
+    Object.create(Concept),
+    _NumberConcept
+);
