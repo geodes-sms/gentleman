@@ -4,6 +4,7 @@
         "attribute": {
             "title": {
                 "target": "string",
+                "values": ["bob","alice"],
                 "projection": [
                     {
                         "type": "field",

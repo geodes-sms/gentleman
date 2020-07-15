@@ -57,21 +57,36 @@
     box-sizing: border-box;
     z-index: 1;
 }
-    .field:hover > .field-status {
+
+    .field:hover .field-status {
         opacity: 0.4;
     }
 
-    .field.active > .field-status {
+    .field.active .field-status {
+        opacity: 1;
+        transform: scale(1.1) translateY(-2px);
+    }
+    .field.active .field-message {
         opacity: 1;
         transform: scale(1.1) translateY(-2px);
     }
 
+    
+    .field-notification {
+        position: absolute;
+        bottom: 100%; right: 0;
+        display: flex;
+        justify-content: flex-end;
+        min-width: 100%;
+        padding-bottom: 2px;
+        z-index: 5;
+    }
+
 .field-status {
-    position: absolute;
-    top: -12px; right: 0;
     height: 10px; width: 10px;
     border-radius: 50%;
     background-color: green;
+    font-style: normal;
     opacity: 0;
     transition: .2s;
 }
@@ -83,21 +98,19 @@
 
     .field-status.error {
         background-color: red;
-        font-style: normal;
         opacity: 1;
     }
 
     .field-status .error-message {
         position: absolute;
+        top: 100%; left: 100%;
         display: block;
-        left: 100%;
-        top: 100%;
         min-width: 100px;
         padding: 5px;
         font-size: 0.9em; font-weight: 600;
         color: #fff;
         border-radius: 2px;
-        background-color: #dd4024de;
+        background-color: rgb(221, 64, 36, 0.85);
         transform: translateY(-50%);
         opacity: 0;
         transition: .5s;
@@ -107,8 +120,45 @@
     .field.active .error-message {
         opacity: 1;
         z-index: 1;
+        background-color: #db3b1f;
     }
 
+    .field.active .notification-message {
+        opacity: 1;
+        z-index: 1;
+    }
+
+
+    .field-message {
+        height: 10px; width: 10px;
+        margin-left: 5px;
+        border-radius: 50%;
+        background-color: #555;
+        font-style: normal;
+        transition: .2s;
+    }
+
+        .field-message .notification-message {
+            position: absolute;
+            top: 100%; left: calc(100% + 2px);
+            display: block;
+            min-width: 100px;
+            padding: 5px;
+            font-size: 0.9em; font-weight: 600;
+            color: #fff;
+            border-radius: 2px;
+            background-color: rgba(50, 50, 50, 0.85);
+            box-shadow: 1px 2px 2px -1px rgba(100, 100, 100, 0.95);
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: .5s;
+            z-index: -10;
+        }
+
+
+/*
+ * Field: Label
+-----------------------------------------------------------------------------*/
 
 .field--label {
     white-space: nowrap;
@@ -209,6 +259,26 @@
             .field--textbox__input:not(:focus):hover {
                 box-shadow: 0 -1px 2px #c0c0c0;
             }
+
+.field--textbox__choices {
+    position: absolute;
+    top: 100%; left: 0;
+    min-width: 150px;
+    font-size: 1em;
+    background-color: #fff;
+    box-shadow: 0 1px 2px #999;
+    z-index: 10;
+    cursor: default;
+}
+
+.field--textbox__choice {
+    padding: 5px 1%;
+    box-sizing: border-box;
+    font-size: 0.9em;
+}
+    .field--choice__choice:hover {
+        background-color: #ffd300;
+    }
 
 /*
  * Field: List

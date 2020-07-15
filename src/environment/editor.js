@@ -525,13 +525,15 @@ export const Editor = {
         });
 
         this.body.addEventListener('keydown', (event) => {
-            var target = event.target;
+            const { target } = event;
 
-            var field = this.getField(target);
             var rememberKey = false;
 
             switch (event.key) {
                 case Key.backspace:
+                    if (this.activeField) {
+                        this.activeField.backspaceHandler(target);
+                    }
                     break;
                 case Key.ctrl:
                     event.preventDefault();
@@ -544,38 +546,19 @@ export const Editor = {
                     break;
                 case Key.enter:
                     if (this.activeField) {
-                        this.activeField.focusOut();
+                        this.activeField.enterHandler(target);
                     }
                     event.preventDefault();
 
                     break;
                 case Key.right_arrow:
-                    if (this.activeField.hasElementFocus) {
 
-                        // // get field element
-                        // /** @type {HTMLElement} */
-                        // let element = this.focusedElement.element;
-                        // // lookup near brother
-                        // let nextElement = element.nextElementSibling;
-                        // console.log(nextElement);
-                        // while (nextElement && nextElement.dataset['nature'] !== "attribute") {
-                        //     nextElement = nextElement.nextElementSibling;
-                        // }
-                        // // focus on brother
-                        // if (nextElement.dataset['nature'] === "attribute") {
-                        //     let field = this.fields[nextElement.id - 1];
-                        //     this.focusedElement = field;
-                        //     field.focus();
-                        // }
-                    }
                     break;
                 case Key.escape:
                     rememberKey = false;
-                    if (field) {
-                        field.escapeHandler();
-                    } else {
-                        this.activeField.focus();
-                    }
+                    if (this.activeField) {
+                        this.activeField.escapeHandler(target);
+                    } 
 
                     break;
                 case Key.tab:
@@ -618,6 +601,7 @@ export const Editor = {
                 default:
                     break;
             }
+
             if (rememberKey) {
                 lastKey = event.key;
             }
@@ -628,95 +612,26 @@ export const Editor = {
             var target = event.target;
 
             const { nature } = target.dataset;
-            var field = this.getField(target);
 
             if (lastKey == event.key) lastKey = -1;
 
             switch (event.key) {
                 case Key.spacebar:
                     if (lastKey == Key.ctrl) {
-                        if (field) {
-                            field.spaceHandler();
+                        if (this.activeField) {
+                            this.activeField.spaceHandler(target);
                         }
                     }
                     break;
                 case Key.delete:
                     if (lastKey == Key.ctrl) {
-                        if (field) {
-                            field.delete(target);
+                        if (this.activeField) {
+                            this.activeField.delete(target);
                         }
                     }
                     break;
                 case Key.alt:
 
-                    break;
-                case 'q': // Query the parent concept/component
-                    if (lastKey == Key.ctrl) {
-                        if (field) {
-                            let parentConcept = field.getParentConcept();
-                            let optionalAttributes = parentConcept.getOptionalAttributes();
-                            let parentContainer = null;
-                            if (parentConcept.object === 'component') {
-                                parentContainer = findAncestor(target, (el) => el.classList.contains('component'), 5);
-                            } else {
-                                parentContainer = findAncestor(target, (el) => el.classList.contains('concept-container'), 5);
-                            }
-                            parentContainer.classList.add('query');
-
-                            // Create query container
-                            let queryContainer = getElement('.query-container', parentContainer);
-                            if (!isHTMLElement(queryContainer)) {
-                                queryContainer = createDiv({ class: 'query-container' });
-                            }
-
-                            // Create query content
-                            let queryContent = null;
-                            if (isEmpty(optionalAttributes)) {
-                                queryContent = createParagraph({ class: 'query-content' }, `No suggestion for this ${parentConcept.object}`);
-                            } else {
-                                queryContent = createUnorderedList(
-                                    {
-                                        class: ["bare-list", "suggestion-list"]
-                                    },
-                                    optionalAttributes.map(item => createListItem({
-                                        class: ["suggestion"], dataset: { attr: item }
-                                    }, item))
-                                );
-                            }
-                            queryContainer.appendChild(queryContent);
-
-                            // Bind events
-                            queryContainer.addEventListener('click', function (event) {
-                                target = event.target;
-                                if (target.classList.contains('suggestion')) {
-                                    parentConcept.createAttribute(target.dataset['attr']);
-                                    parentConcept.rerender();
-                                }
-                                hide(this);
-                                parentContainer.classList.remove('query');
-                                field.focus();
-                            });
-                            queryContainer.addEventListener('keydown', function (event) {
-                                target = event.target;
-                                switch (event.key) {
-                                    case Key.escape:
-                                        hide(this);
-                                        parentContainer.classList.remove('query');
-                                        field.focus();
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            });
-                            parentContainer.appendChild(queryContainer);
-                            queryContainer.tabIndex = 0;
-                            queryContainer.focus();
-                        }
-                    }
-
-                    break;
-                case 'g':
-                    // show actions
                     break;
                 default:
                     break;
@@ -734,8 +649,8 @@ export const Editor = {
             } else {
                 if (this.activeField) {
                     this.activeField.focusOut();
-                    this.activeField = null;
                 }
+                this.activeField = null;
             }
         });
 

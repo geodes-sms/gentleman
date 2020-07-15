@@ -1,13 +1,11 @@
 import {
-    createDocFragment, createSpan, createDiv, createI, isHTMLElement, isNullOrWhitespace,
-    isDerivedOf, isEmpty, isNullOrUndefined, valOrDefault, removeChildren,
+    createDocFragment, createSpan, createDiv, createI, createUnorderedList,
+    createListItem, findAncestor, isHTMLElement, removeChildren, isNullOrWhitespace,
+    isDerivedOf, isEmpty, valOrDefault,
 } from "zenkai";
-import { hide, show, isPrototypeOf } from "@utils/index.js";
+import { hide, show } from "@utils/index.js";
 import { Concept } from "@concept/index.js";
 import { Field } from "./field.js";
-import { NoteManager } from "./note.js";
-import { ChoiceField } from "./choice-field.js";
-import { FieldManager } from "@projection/field-manager.js";
 import { StyleHandler } from "./../style-handler.js";
 import { ProjectionManager } from "./../projection.js";
 
@@ -40,11 +38,21 @@ function resolvePlaceholder() {
     return "Enter data";
 }
 
+/**
+ * Get the choice element
+ * @param {HTMLElement} element 
+ */
+function getItem(element) {
+    return element.parentElement === this.choice ? element : findAncestor(element, (el) => el.parentElement === this.choices, 3);
+}
+
 const _TextField = {
     /** @type {string} */
     placeholder: null,
     /** @type {HTMLElement} */
     input: null,
+    /** @type {HTMLElement} */
+    choice: null,
     /** @type {string} */
     value: "",
 
@@ -79,6 +87,18 @@ const _TextField = {
             StyleHandler(this.element, this.schema.style);
         }
 
+        if (!isHTMLElement(this.notification)) {
+            this.notification = createDiv({
+                class: ["field-notification"],
+                dataset: {
+                    nature: "field-component",
+                    view: "text",
+                    id: this.id,
+                }
+            });
+            fragment.appendChild(this.notification);
+        }
+
         if (!isHTMLElement(this.statusElement)) {
             this.statusElement = createI({
                 class: ["field-status"],
@@ -88,7 +108,7 @@ const _TextField = {
                     id: this.id,
                 }
             });
-            fragment.appendChild(this.statusElement);
+            this.notification.appendChild(this.statusElement);
         }
 
         if (before) {
@@ -159,6 +179,10 @@ const _TextField = {
         this.hasFocus = true;
         this.value = this.input.textContent;
         this.element.classList.add("active");
+
+        if (this.choice && this.choice.hasChildNodes()) {
+            show(this.choice);
+        }
         // show(this.statusElement);
     },
     focusOut() {
@@ -174,10 +198,17 @@ const _TextField = {
             this.input.textContent = "";
         }
 
-        // hide(this.statusElement);
+        if (this.messageElement) {
+            hide(this.messageElement);
+            removeChildren(this.messageElement);
+        }
 
         this.input.blur();
         this.element.classList.remove("active");
+
+        if (this.choice) {
+            hide(this.choice);
+        }
 
         this.refresh();
     },
@@ -206,6 +237,9 @@ const _TextField = {
         this.value = value;
 
         this.refresh();
+    },
+    getCandidates() {
+        return this.source.getCandidates();
     },
     enable() {
         this.input.contentEditable = true;
@@ -241,6 +275,33 @@ const _TextField = {
             this.input.classList.remove("error");
             this.statusElement.classList.remove("error");
         }
+
+        if (this.choice) {
+            this.filterChoice(this.getValue());
+        }
+    },
+    filterChoice(query) {
+        const { children } = this.choice;
+        for (let i = 0; i < children.length; i++) {
+            const item = children[i];
+            const { value } = item.dataset;
+
+            var parts = query.trim().replace(/\s+/g, " ").split(' ');
+            var match = parts.some(q => value.includes(q));
+
+            if (match) {
+                show(item);
+            } else {
+                hide(item);
+            }
+        }
+    },
+    selectChoice(item) {
+        const { value } = item.dataset;
+
+        this.setValue(value);
+        hide(this.choice);
+        this.input.focus();
     },
     /**
      * Appends an element to the field container
@@ -261,30 +322,104 @@ const _TextField = {
 
         return this;
     },
-    spaceHandler() {
+    spaceHandler(target) {
         const candidates = this.getCandidates();
 
         if (!Array.isArray(candidates)) {
             throw new TypeError("Bad values");
         }
 
-        var note = null;
+        if (!isHTMLElement(this.messageElement)) {
+            this.messageElement = createI({
+                class: ["field-message", "hidden"],
+                dataset: {
+                    nature: "field-component",
+                    view: "text",
+                    id: this.id,
+                }
+            });
+            this.notification.appendChild(this.messageElement);
+        }
 
+        removeChildren(this.messageElement);
         if (isEmpty(candidates)) {
-            this.editor.notify("Enter any text");
+            this.messageElement.appendChild(
+                createSpan({ class: "notification-message" }, "Enter any text")
+            );
+            show(this.messageElement);
         } else {
-            console.log("show candidates", candidates);
+            if (!isHTMLElement(this.choice)) {
+                this.choice = createUnorderedList({
+                    class: ["bare-list", "field--textbox__choices"],
+                    dataset: {
+                        nature: "field-component",
+                        view: "text",
+                        component: "choice",
+                        id: this.id,
+                    }
+                });
+                this.element.appendChild(this.choice);
+            }
+
+            const fragment = createDocFragment();
+
+            candidates.forEach(value => {
+                let item = createListItem({
+                    class: ["field--textbox__choice"],
+                    tabindex: 0,
+                    dataset: {
+                        nature: "field-component",
+                        view: "text",
+                        component: "choice-item",
+                        value: value,
+                        id: this.id,
+                    }
+                }, value);
+
+                fragment.appendChild(item);
+            });
+
+            removeChildren(this.choice).appendChild(fragment);
+            this.filterChoice(this.getValue());
+
+            show(this.choice);
         }
     },
-    getCandidates() {
-        return this.source.getCandidates();
-    },
-    escapeHandler() {
+    escapeHandler(target) {
         this.attached.forEach(element => {
             element.hide();
         });
+
+        if (this.messageElement) {
+            hide(this.messageElement);
+        }
+        if (this.choice) {
+            hide(this.choice);
+        }
+    },
+    enterHandler(target) {
+        const item = getItem.call(this, target);
+        if (item) {
+            this.selectChoice(item);
+        }
+    },
+    backspaceHandler(target) {
+        const item = getItem.call(this, target);
+        if (item) {
+            this.input.focus();
+        }
     },
     bindEvents() {
+        this.element.addEventListener('click', (event) => {
+            const target = event.target;
+
+            const item = getItem.call(this, target);
+
+            if (isHTMLElement(item)) {
+                this.selectChoice(item);
+            }
+        });
+
         this.element.addEventListener('input', (event) => {
             this.refresh();
         });

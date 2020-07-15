@@ -119,6 +119,12 @@ const BaseField = {
         this.visible = true;
         this.active = true;
     },
+    enterHandler() {
+        this.focusOut();
+    },
+    backspaceHandler() {
+        return;
+    },
     hide() {
         hide(this.element);
         this.visible = false;
