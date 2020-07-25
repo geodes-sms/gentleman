@@ -2,7 +2,6 @@ import { isString, isNullOrUndefined, isObject, isNullOrWhitespace, isEmpty } fr
 import { Concept } from "./concept.js";
 
 
-
 const ResponseCode = {
     SUCCESS: 200,
     INVALID_VALUE: 401
@@ -18,11 +17,12 @@ function responseHandler(code) {
     }
 }
 
-const _PrototypeConcept = {
+const BasePrototypeConcept = {
     name: 'prototype',
+    nature: "prototype",
 
     initValue(args) {
-        if(isNullOrUndefined(args)) {
+        if (isNullOrUndefined(args)) {
             return this;
         }
 
@@ -52,7 +52,7 @@ const _PrototypeConcept = {
         } else {
             this.value = value;
         }
-        this.notify("value.changed", value);
+        this.notify("value.changed", this.value);
 
         return {
             success: true,
@@ -64,7 +64,15 @@ const _PrototypeConcept = {
     },
 
     getCandidates() {
-        return this.metamodel.getConcreteConcepts(this.name);
+        var candidates = resolveAccept.call(this, this.accept);
+
+        var values = candidates.map((candidate) => ({
+            type: "concept-metamodel",
+            value: candidate.name,
+            schema: candidate
+        }));
+
+        return values;
     },
     /**
      * Gets the concept parent if exist
@@ -98,8 +106,8 @@ const _PrototypeConcept = {
             refname: this.refname,
             reftype: this.reftype,
         };
-        
-        if(value) {
+
+        if (value) {
             options.value = value;
         }
 
@@ -121,7 +129,7 @@ const _PrototypeConcept = {
 
         // }
 
-        if(isEmpty(this.values)) {
+        if (isEmpty(this.values)) {
             return ResponseCode.SUCCESS;
         }
 
@@ -134,7 +142,7 @@ const _PrototypeConcept = {
                 found = val === value;
             }
         }
-        
+
         if (!found) {
             return ResponseCode.INVALID_VALUE;
         }
@@ -142,15 +150,29 @@ const _PrototypeConcept = {
         return ResponseCode.SUCCESS;
     },
     export() {
-        if(!this.hasValue()) {
+        if (!this.hasValue()) {
             return null;
         }
-        
+
         return this.value.export();
     },
 };
 
+function resolveAccept(accept) {
+    var candidates = this.metamodel.getConcreteConcepts(this.name);
+    if (isNullOrUndefined(accept)) {
+        return candidates;
+    }
+
+    if (Array.isArray(accept)) {
+        return candidates.filter(candidate => accept.includes(candidate.name));
+    }
+
+    return candidates.filter(candidate => accept === candidate.name);
+}
+
+
 export const PrototypeConcept = Object.assign({},
     Concept,
-    _PrototypeConcept
+    BasePrototypeConcept
 );

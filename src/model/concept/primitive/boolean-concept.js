@@ -25,6 +25,7 @@ function responseHandler(code) {
 
 const _BooleanConcept = {
     name: 'boolean',
+    nature: 'primitive',
 
     initValue(args) {
         if (isNullOrUndefined(args)) {

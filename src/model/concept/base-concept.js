@@ -18,6 +18,7 @@ function responseHandler(code) {
 }
 
 const _BaseConcept  = {
+    nature: "concrete",
     initValue(args) {
         if (isNullOrUndefined(args)) {
             return false;

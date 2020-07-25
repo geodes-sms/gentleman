@@ -43,14 +43,26 @@ function styleTextHandler(element, schema) {
             case "underline":
                 element.style.textDecoration = "underline";
                 break;
+            case "strikethrough":
+                element.style.textDecoration = "line-through";
+                break;
             case "color":
                 element.style.color = resolveColor(value);
                 break;
             case "font":
                 element.style.fontFamily = value;
                 break;
+            case "highlight":
+                element.style.backgroundColor = resolveColor(value);
+                break;
             case "size":
                 element.style.fontSize = resolveSize(value);
+                break;
+            case "align":
+                element.style.textAlign = value;
+                break;
+            case "space":
+                element.style.lineHeight = resolveSize(value);
                 break;
             default:
                 break;
@@ -85,11 +97,11 @@ function resolveBold(schema) {
     return "bold";
 }
 
-function resolveSize(schema) {
+function resolveSize(schema, unit = "px") {
     const { type, value } = schema;
 
     if (Number.isInteger(schema)) {
-        return `${schema}px`;
+        return `${schema}${unit}`;
     }
 
     return 0;
@@ -113,6 +125,15 @@ function styleBoxHandler(element, schema) {
                 break;
             case "background":
                 resolveBackground(element, value);
+                break;
+            case "width":
+                element.style.width = resolveSize(value, "%");
+                break;
+            case "height":
+                element.style.height = resolveSize(value, "%");
+                break;
+            case "overflow":
+                element.style.overflow = value;
                 break;
             default:
                 break;
@@ -195,9 +216,6 @@ function resolveBorder(element, schema) {
         element.style.borderStyle = "solid";
         element.style.borderWidth = resolveSize(schema.size);
         element.style.borderColor = resolveColor(schema.color);
-        if(schema.radius) {
-            resolveBorderRadius(element, schema.radius);
-        }
     } else {
         for (const rule in schema) {
             const value = schema[rule];
@@ -224,6 +242,10 @@ function resolveBorder(element, schema) {
                     break;
             }
         }
+    }
+
+    if (schema.radius) {
+        resolveBorderRadius(element, schema.radius);
     }
 }
 

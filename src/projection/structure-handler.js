@@ -1,4 +1,4 @@
-import { createI, hasOwn, cloneObject } from "zenkai";
+import { createI, hasOwn, cloneObject, valOrDefault } from "zenkai";
 import { ProjectionManager } from "./projection.js";
 
 
@@ -8,12 +8,14 @@ import { ProjectionManager } from "./projection.js";
  */
 function attributeHandler(name) {
     if (!this.concept.hasAttribute(name)) {
-        throw new Error(`PROJECTION: Attribute ${name} does not exist`);
+        throw new Error(`Attribute '${name}' does not exist in the concept '${this.concept.name}'`);
     }
 
     this.attributes.push(name);
 
     if (!(this.concept.isAttributeRequired(name) || this.concept.isAttributeCreated(name))) {
+        const schema = this.concept.schema.attribute[name];
+
         /** @type {HTMLElement} */
         let option = createI({
             class: ["projection-element", "projection-element--optional"],
@@ -21,7 +23,7 @@ function attributeHandler(name) {
                 object: "attribute",
                 id: name
             },
-        }, `Add ${name}`);
+        }, `Add ${valOrDefault(schema.alias, name)}`);
 
         option.addEventListener('click', (event) => {
             const { id } = event.target.dataset;
@@ -41,7 +43,7 @@ function attributeHandler(name) {
     });
 
     var projection = ProjectionManager.createProjection(schemaProjection, target, this.editor).init();
-    
+
     projection.parent = this;
 
     return projection.render();
@@ -53,7 +55,7 @@ function attributeHandler(name) {
  */
 function componentHandler(name) {
     if (!this.concept.hasComponent(name)) {
-        throw new Error(`PROJECTION: Component ${name} does not exist`);
+        throw new Error(`Component '${name}' does not exist in the concept '${this.concept.name}'`);
     }
 
     this.components.push(name);

@@ -4,6 +4,7 @@ import { Concept } from "./../concept.js";
 
 const _SetConcept = {
     name: 'set',
+    nature: 'primitive',
 
     initValue(args) {
         this.value = [];

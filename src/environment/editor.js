@@ -1,8 +1,8 @@
 import {
-    createDiv, createH2, createDocFragment, createUnorderedList, createListItem,
-    createParagraph, createButton, createHeader, getElement, getElements,
-    appendChildren, removeChildren, findAncestor, isHTMLElement, isEmpty,
-    isNullOrWhitespace, isNullOrUndefined, isNull, copytoClipboard, cloneObject, createAnchor, createInput,
+    createDocFragment, createDiv, createH2, createUnorderedList, createListItem,
+    createParagraph, createButton, createHeader, createAnchor, createInput, createSpan,
+    getElement, getElements, appendChildren, removeChildren, isHTMLElement,
+    isNullOrWhitespace, isNullOrUndefined, isNull, copytoClipboard, cloneObject, valOrDefault, isEmpty,
 } from 'zenkai';
 import { Events, hide, show, Key } from '@utils/index.js';
 import { MetaModel, Model } from '@model/index.js';
@@ -31,9 +31,12 @@ export const Editor = {
     /** @type {HTMLElement} */
     footer: null,
     /** @type {HTMLElement} */
-    selectorElement: null,
+    metamodelSelector: null,
     /** @type {HTMLElement} */
-    selectorList: null,
+    modelSelector: null,
+    /** @type {HTMLElement} */
+    conceptSelector: null,
+
     /** @type {Map} */
     fields: null,
     /** @type {Field} */
@@ -42,7 +45,6 @@ export const Editor = {
     activeElement: null,
     /** @type {Concept} */
     activeConcept: null,
-    loader: null,
 
     /** @type {HTMLButtonElement} */
     btnExport: null,
@@ -54,6 +56,8 @@ export const Editor = {
     btnPrint: null,
     /** @type {HTMLInputElement} */
     input: null,
+    /** @type {Loader} */
+    loader: null,
 
     /** @type {boolean} */
     active: false,
@@ -176,6 +180,58 @@ export const Editor = {
 
         return this;
     },
+    print() {
+        const MIME_TYPE = 'application/json';
+        window.URL = window.webkitURL || window.URL;
+
+        if (!isNullOrWhitespace(this.btnPrint.href)) {
+            window.URL.revokeObjectURL(this.btnPrint.href);
+        }
+
+        var bb = new Blob([JSON.stringify(this.model)], { type: MIME_TYPE });
+        Object.assign(this.btnPrint, {
+            download: `model_${this.metamodel.language}_${Date.now()}.json`,
+            href: window.URL.createObjectURL(bb),
+        });
+        this.btnPrint.dataset.downloadurl = [MIME_TYPE, this.btnPrint.download, this.btnPrint.href].join(':');
+
+        this.btnPrint.disabled = true;
+        // Need a small delay for the revokeObjectURL to work properly.
+        setTimeout(() => {
+            window.URL.revokeObjectURL(this.btnPrint.href);
+            this.btnPrint.disabled = false;
+        }, 1500);
+    },
+    preview() {
+
+    },
+    build() {
+        const MIME_TYPE = 'application/json';
+        window.URL = window.webkitURL || window.URL;
+
+        /** @type {HTMLAnchorElement} */
+        var link = createAnchor({});
+        this.container.appendChild(link);
+
+        if (!isNullOrWhitespace(link.href)) {
+            window.URL.revokeObjectURL(link.href);
+        }
+
+        var bb = new Blob([this.model.build()], { type: MIME_TYPE });
+        Object.assign(link, {
+            download: `demo.json`,
+            href: window.URL.createObjectURL(bb),
+        });
+        console.log(link);
+        link.dataset.downloadurl = [MIME_TYPE, link.download, link.href].join(':');
+        link.click();
+
+        // Need a small delay for the revokeObjectURL to work properly.
+        setTimeout(() => {
+            window.URL.revokeObjectURL(link.href);
+            link.remove();
+        }, 1500);
+    },
 
     open() {
         show(this.container);
@@ -208,6 +264,7 @@ export const Editor = {
 
         return this;
     },
+
     notify(message, type) {
         var notify = getElement('.notify:not(.open)', this.container);
         if (!isHTMLElement(notify)) {
@@ -236,55 +293,6 @@ export const Editor = {
         }, message));
         dialog.classList.add('open');
     },
-    print() {
-        const MIME_TYPE = 'application/json';
-        window.URL = window.webkitURL || window.URL;
-
-        if (!isNullOrWhitespace(this.btnPrint.href)) {
-            window.URL.revokeObjectURL(this.btnPrint.href);
-        }
-
-        var bb = new Blob([JSON.stringify(this.model)], { type: MIME_TYPE });
-        Object.assign(this.btnPrint, {
-            download: `model_${this.metamodel.language}_${Date.now()}.json`,
-            href: window.URL.createObjectURL(bb),
-        });
-        this.btnPrint.dataset.downloadurl = [MIME_TYPE, this.btnPrint.download, this.btnPrint.href].join(':');
-
-        this.btnPrint.disabled = true;
-        // Need a small delay for the revokeObjectURL to work properly.
-        setTimeout(() => {
-            window.URL.revokeObjectURL(this.btnPrint.href);
-            this.btnPrint.disabled = false;
-        }, 1500);
-    },
-    build() {
-        const MIME_TYPE = 'application/json';
-        window.URL = window.webkitURL || window.URL;
-
-        /** @type {HTMLAnchorElement} */
-        var link = createAnchor({});
-        this.container.appendChild(link);
-
-        if (!isNullOrWhitespace(link.href)) {
-            window.URL.revokeObjectURL(link.href);
-        }
-
-        var bb = new Blob([this.model.build()], { type: MIME_TYPE });
-        Object.assign(link, {
-            download: `demo.json`,
-            href: window.URL.createObjectURL(bb),
-        });
-        console.log(link);
-        link.dataset.downloadurl = [MIME_TYPE, link.download, link.href].join(':');
-        link.click();
-
-        // Need a small delay for the revokeObjectURL to work properly.
-        setTimeout(() => {
-            window.URL.revokeObjectURL(link.href);
-            link.remove();
-        }, 1500);
-    },
     append(element) {
         this.body.appendChild(element);
 
@@ -294,11 +302,28 @@ export const Editor = {
     render(container) {
         const fragment = createDocFragment();
 
+        // const  { build, import, export } = this.metamodel.schema["@editor"];
+
         if (!isHTMLElement(this.header)) {
             this.header = createDiv({
                 class: ["editor-header"],
                 tabindex: 0,
             });
+
+            this.modelSelector = createDiv({
+                class: ["editor-selector-model"],
+                tabindex: 0,
+            });
+
+            this.conceptSelector = createDiv({
+                class: ["editor-selector-concept"],
+                tabindex: 0,
+            });
+
+            let selector = createDiv({
+                class: ["editor-selector"],
+                tabindex: 0,
+            }, [this.modelSelector, this.conceptSelector]);
 
             let btnClose = createButton({
                 class: ["btn", "btn-close"],
@@ -310,7 +335,7 @@ export const Editor = {
                 class: ["editor-toolbar"],
             }, [btnClose]);
 
-            this.header.appendChild(toolbar);
+            appendChildren(this.header, [selector, toolbar]);
 
             fragment.appendChild(this.header);
         }
@@ -333,24 +358,10 @@ export const Editor = {
             fragment.appendChild(this.footer);
         }
 
-        if (!isHTMLElement(this.selectorElement)) {
-            this.selectorElement = createButton({
-                class: ["btn", "explorer-header-concept", "hidden"],
-            });
-            this.header.appendChild(this.selectorElement);
-        }
-
-        if (!isHTMLElement(this.selectorList)) {
-            this.selectorList = createUnorderedList({
-                class: ["bare-list", "explorer-selector-list", "hidden"],
-            });
-            fragment.appendChild(this.selectorList);
-        }
-
         if (!isHTMLElement(this.btnExport)) {
             this.btnExport = createButton({
                 id: "btnExportModel",
-                class: ["btn", "btn-export"],
+                class: ["btn", "btn-export", "hidden"],
                 draggable: true,
                 dataset: {
                     "context": "model",
@@ -364,7 +375,7 @@ export const Editor = {
         if (!isHTMLElement(this.btnImport)) {
             this.btnImport = createButton({
                 id: "btnImportModel",
-                class: ["btn", "btn-import"],
+                class: ["btn", "btn-import", "hidden"],
                 draggable: true,
                 dataset: {
                     "context": "model",
@@ -378,7 +389,7 @@ export const Editor = {
         if (!isHTMLElement(this.btnBuild)) {
             this.btnBuild = createButton({
                 id: "btnBuildModel",
-                class: ["btn", "btn-build"],
+                class: ["btn", "btn-build", "hidden"],
                 draggable: true,
                 dataset: {
                     "context": "model",
@@ -424,10 +435,34 @@ export const Editor = {
         return this.container;
     },
     refresh() {
+        const { language } = this.metamodel;
 
+        /** @type {HTMLElement} */
+        let modelSelectorContent = createSpan({
+            class: ["editor-selector-model-content"]
+        }, language);
+
+        removeChildren(this.modelSelector).appendChild(modelSelectorContent);
+
+
+        /** @type {HTMLElement} */
+        let conceptSelectorContent = createUnorderedList({
+            class: ["bare-list", "selector-concepts", "font-ui"]
+        });
+        conceptSelectorContent.appendChild(conceptSelectorHandler(this.concept, this.activeConcept));
+
+        conceptSelectorContent.addEventListener('click', (event) => {
+            console.log("SHOW LIST OF CONCEPT");
+        });
+
+        removeChildren(this.conceptSelector).appendChild(conceptSelectorContent);
+
+        return this;
     },
     // TODO: adapt UI to smaller screen
-    resize() { },
+    resize() {
+
+    },
     /**
      * Updates the active HTML Element
      * @param {HTMLElement} element 
@@ -464,10 +499,7 @@ export const Editor = {
     updateActiveConcept(concept) {
         this.activeConcept = concept;
 
-        const { refname, reftype, name } = this.activeConcept;
-
-        this.selectorElement.textContent = `${name} (${refname}:${reftype})`;
-        show(this.selectorElement);
+        this.refresh();
 
         return this;
     },
@@ -502,7 +534,7 @@ export const Editor = {
                 bubbles: true,
                 cancelable: true,
             });
-            loaderCb = this.loader.loadModel;
+            // loaderCb = this.loader.loadModel;
             this.input.dispatchEvent(event);
         }
 
@@ -558,7 +590,7 @@ export const Editor = {
                     rememberKey = false;
                     if (this.activeField) {
                         this.activeField.escapeHandler(target);
-                    } 
+                    }
 
                     break;
                 case Key.tab:
@@ -643,6 +675,8 @@ export const Editor = {
 
             const { nature } = target.dataset;
 
+            console.warn(target);
+
             var handler = focusinHandler[nature];
             if (handler) {
                 handler.call(this, target);
@@ -683,7 +717,7 @@ export const Editor = {
             // update active concept
             let conceptParent = this.activeField.source.getParent();
             if (conceptParent) {
-                this.updateActiveConcept(conceptParent);
+                this.updateActiveConcept(this.activeField.source);
             }
         }
 
@@ -750,3 +784,110 @@ export const Editor = {
         MQL.addListener(handleWidthChange);
     }
 };
+
+/**
+ * Creates a selector between a root concept and the active concept
+ * @param {Concept!} rootConcept 
+ * @param {Concept} [activeConcept] 
+ * @returns {Node}
+ */
+function conceptSelectorHandler(rootConcept, activeConcept) {
+    if (isNullOrUndefined(rootConcept)) {
+        throw new TypeError("Bad argument: rootConcept must be a Concept");
+    }
+
+    /**
+     * Createa a selector item
+     * @param {string} type 
+     * @param {Concept} concept 
+     * @returns {HTMLElement}
+     */
+    const createSelectorItem = (type, concept, source = false) => {
+        const { name, alias, object, refname, reftype } = concept;
+
+        const typeHandler = {
+            "root": `${valOrDefault(alias, name)}`,
+            "parent": `${valOrDefault(alias, name)}`,
+            "ancestor": `${valOrDefault(alias, name)}`,
+            "active": `${valOrDefault(refname, name)}`,
+        };
+
+        /** @type {HTMLElement} */
+        var item = createListItem({
+            class: ["selector-concept", `selector-concept--${type}`],
+            dataset: {
+                object: object
+            }
+        }, typeHandler[type]);
+
+        if (source) {
+            item.classList.add("source");
+        }
+
+        return item;
+    };
+
+    const fragment = createDocFragment();
+    const hasActiveConcept = !isNullOrUndefined(activeConcept);
+
+    fragment.appendChild(createSelectorItem("root", rootConcept, hasActiveConcept));
+
+    if (!hasActiveConcept) {
+        return fragment;
+    }
+
+    let activeParent = activeConcept.getParent();
+
+    if (activeParent !== rootConcept) {
+        let parent = activeParent;
+        let parentItem = null;
+
+        if (activeParent.object === "component") {
+            parent = activeParent.getParent();
+
+            parentItem = createSelectorItem("parent", parent);
+
+            let componentItem = createDiv({
+                class: ["selector-concept__component", "source"]
+            }, `${valOrDefault(activeParent.alias, activeParent.name)}`);
+
+            parentItem.appendChild(componentItem);
+        } else {
+            parentItem = createSelectorItem("parent", activeParent, true);
+        }
+
+        let ancestor = parent.getAncestor().filter(val => val.object === "concept" && val.nature !== "primitive" && val !== rootConcept);
+
+        if (!isEmpty(ancestor)) {
+            ancestor = ancestor.reverse();
+            // let ancestorItem = createListItem({
+            //     class: ["selector-concept", `selector-concept--ancestor`, "source", "collapse"]
+            // });
+
+            // let list = createUnorderedList({
+            //     class: ["bare-list", "selector-ancestor-concepts"]
+            // });
+            // ancestor.forEach(concept => {
+            //     list.appendChild(createListItem({
+            //         class: ["selector-ancestor-concept", "hidden"],
+            //     }, concept.name));
+            // });
+
+            // ancestorItem.appendChild(list);
+
+            // fragment.appendChild(ancestorItem);
+
+            ancestor.forEach(concept => {
+                fragment.appendChild(createSelectorItem("ancestor", concept, true));
+            });
+        }
+
+        fragment.appendChild(parentItem);
+    } else {
+        // TODO: mark root as parent
+    }
+
+    fragment.appendChild(createSelectorItem("active", activeConcept));
+
+    return fragment;
+}

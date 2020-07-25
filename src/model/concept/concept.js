@@ -63,13 +63,12 @@ const _Concept = {
 
     init(args = {}) {
         this.accept = args.accept;
-        this.action = valOrDefault(args.action, {});
         this.parent = args.parent;
         this.refname = args.refname;
         this.reftype = args.reftype;
         this.values = valOrDefault(args.values, valOrDefault(this.schema.values, []));
-        this.alias = args.alias;
-        this.description = args.description;
+        this.alias = valOrDefault(args.alias, this.schema.alias);
+        this.description = valOrDefault(args.description, this.schema.description);
         this.min = valOrDefault(args.min, 1);
 
         if (args.projection) {

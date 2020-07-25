@@ -19,6 +19,7 @@ function responseHandler(code) {
 
 const _StringConcept = {
     name: 'string',
+    nature: 'primitive',
 
     initValue(args) {
         if (isNullOrUndefined(args)) {

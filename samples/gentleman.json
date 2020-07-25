@@ -14,15 +14,16 @@
                     {
                         "type": "field",
                         "view": "link",
-                        "rel": "clone",
-                        "placeholder": "Select a concept",
+                        "placeholder": "Search for a concept",
                         "value": {
                             "projection": [
                                 {
                                     "readonly": true,
                                     "layout": {
                                         "type": "wrap",
-                                        "disposition": ["#name"]
+                                        "disposition": [
+                                            "#name"
+                                        ]
                                     }
                                 }
                             ]
@@ -33,7 +34,9 @@
                                     "readonly": true,
                                     "layout": {
                                         "type": "wrap",
-                                        "disposition": ["Concept #name"]
+                                        "disposition": [
+                                            "Concept #name"
+                                        ]
                                     }
                                 }
                             ]
@@ -47,7 +50,7 @@
                 "attribute": {
                     "concepts": {
                         "target": "set",
-                        "accept": "model_concept",
+                        "accept": "concrete_concept",
                         "projection": [
                             {
                                 "type": "field",
@@ -59,7 +62,24 @@
                                             {
                                                 "layout": {
                                                     "type": "wrap",
-                                                    "disposition": ["Add a concept"]
+                                                    "style": {
+                                                        "text": {
+                                                            "align": "center"
+                                                        },
+                                                        "box": {
+                                                            "space": {
+                                                                "inner": {
+                                                                    "top": 5,
+                                                                    "right": 10,
+                                                                    "left": 10,
+                                                                    "bottom": 5
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "disposition": [
+                                                        "Add a concept"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -69,7 +89,9 @@
                                             {
                                                 "layout": {
                                                     "type": "wrap",
-                                                    "disposition": ["X Remove"]
+                                                    "disposition": [
+                                                        "Remove concept"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -104,7 +126,7 @@
                                             }
                                         }
                                     },
-                                    "disposition": "List of concepts"
+                                    "disposition": "Model Concepts"
                                 },
                                 "#concepts"
                             ]
@@ -115,7 +137,9 @@
         },
         "projection": [
             {
-                "tags": ["editor"],
+                "tags": [
+                    "editor"
+                ],
                 "layout": {
                     "type": "stack",
                     "orientation": "vertical",
@@ -159,12 +183,6 @@
                                         "outer": {
                                             "bottom": 6
                                         }
-                                    },
-                                    "border": {
-                                        "bottom": {
-                                            "color": "gray",
-                                            "size": 1
-                                        }
                                     }
                                 }
                             },
@@ -176,11 +194,15 @@
             },
             {
                 "readonly": true,
-                "tags": ["explorer"],
+                "tags": [
+                    "explorer"
+                ],
                 "environment": "explorer",
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["MODEL #name"]
+                    "disposition": [
+                        "MODEL #name"
+                    ]
                 }
             }
         ]
@@ -204,7 +226,9 @@
                         },
                         "layout": {
                             "type": "wrap",
-                            "disposition": ["Description: $field"]
+                            "disposition": [
+                                "Description: $field"
+                            ]
                         }
                     }
                 ]
@@ -215,7 +239,7 @@
                 "attribute": {
                     "attributes": {
                         "target": "set",
-                        "required": false,
+                        "required": true,
                         "accept": "attribute",
                         "projection": [
                             {
@@ -232,21 +256,139 @@
                                 },
                                 "orientation": "column",
                                 "header": [
-                                    "Name",
-                                    "Alias",
-                                    "Target",
-                                    "Minimum",
-                                    "Maximum",
-                                    "Required",
-                                    "Projection"
+                                    {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "style": {
+                                                        "box": {
+                                                            "space": {
+                                                                "inner": {
+                                                                    "top": 2,
+                                                                    "right": 5,
+                                                                    "left": 5,
+                                                                    "bottom": 2
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "disposition": [
+                                                        "Required"
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "style": {
+                                                        "box": {
+                                                            "space": {
+                                                                "inner": {
+                                                                    "top": 2,
+                                                                    "right": 5,
+                                                                    "left": 5,
+                                                                    "bottom": 2
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "disposition": [
+                                                        "Name"
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "style": {
+                                                        "box": {
+                                                            "space": {
+                                                                "inner": {
+                                                                    "top": 2,
+                                                                    "right": 5,
+                                                                    "left": 5,
+                                                                    "bottom": 2
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "disposition": [
+                                                        "Alias"
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "style": {
+                                                        "box": {
+                                                            "space": {
+                                                                "inner": {
+                                                                    "top": 2,
+                                                                    "right": 5,
+                                                                    "left": 5,
+                                                                    "bottom": 2
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "disposition": [
+                                                        "Target"
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "style": {
+                                                        "box": {
+                                                            "space": {
+                                                                "inner": {
+                                                                    "top": 2,
+                                                                    "right": 5,
+                                                                    "left": 5,
+                                                                    "bottom": 2
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "disposition": [
+                                                        "Projection"
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
                                 ],
                                 "body": [
+                                    {
+                                        "style": {
+                                            "text": {
+                                                "align": "center"
+                                            }
+                                        },
+                                        "layout": "#required"
+                                    },
                                     "#name",
                                     "#alias",
                                     "#target",
-                                    "#min",
-                                    "#max",
-                                    "#required",
                                     "#projection"
                                 ]
                             },
@@ -272,7 +414,9 @@
                                             {
                                                 "layout": {
                                                     "type": "wrap",
-                                                    "disposition": ["Add a component"]
+                                                    "disposition": [
+                                                        "Add a component"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -287,30 +431,87 @@
                         "layout": {
                             "type": "stack",
                             "orientation": "vertical",
+                            "collapsible": true,
                             "disposition": [
                                 {
                                     "type": "text",
                                     "style": {
                                         "text": {
-                                            "underline": true,
+                                            "bold": 700,
                                             "color": {
                                                 "type": "rgb",
-                                                "value": "#222"
+                                                "value": "#444"
                                             },
-                                            "size": 16
+                                            "size": 18
                                         },
                                         "box": {
                                             "space": {
                                                 "outer": {
-                                                    "bottom": 5
+                                                    "bottom": 6
                                                 }
                                             }
                                         }
                                     },
-                                    "disposition": "Attributes"
+                                    "disposition": "Structure"
                                 },
-                                "#attributes",
-                                "#components"
+                                {
+                                    "type": "stack",
+                                    "orientation": "vertical",
+                                    "collapsible": true,
+                                    "disposition": [
+                                        {
+                                            "type": "text",
+                                            "style": {
+                                                "text": {
+                                                    "underline": true,
+                                                    "color": {
+                                                        "type": "rgb",
+                                                        "value": "#222"
+                                                    },
+                                                    "size": 16
+                                                },
+                                                "box": {
+                                                    "space": {
+                                                        "outer": {
+                                                            "bottom": 5
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "disposition": "Attributes"
+                                        },
+                                        "#attributes"
+                                    ]
+                                },
+                                {
+                                    "type": "stack",
+                                    "orientation": "vertical",
+                                    "collapsible": true,
+                                    "disposition": [
+                                        {
+                                            "type": "text",
+                                            "style": {
+                                                "text": {
+                                                    "underline": true,
+                                                    "color": {
+                                                        "type": "rgb",
+                                                        "value": "#222"
+                                                    },
+                                                    "size": 16
+                                                },
+                                                "box": {
+                                                    "space": {
+                                                        "outer": {
+                                                            "bottom": 5
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "disposition": "Components"
+                                        },
+                                        "#components"
+                                    ]
+                                }
                             ]
                         }
                     }
@@ -323,7 +524,9 @@
         "prototype": "model_concept",
         "projection": [
             {
-                "tags": ["editor"],
+                "tags": [
+                    "editor"
+                ],
                 "layout": {
                     "type": "stack",
                     "orientation": "vertical",
@@ -368,7 +571,9 @@
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
                     "orientation": "vertical",
@@ -394,12 +599,16 @@
                 }
             },
             {
-                "tags": ["explorer"],
+                "tags": [
+                    "explorer"
+                ],
                 "readonly": true,
                 "environment": "explorer",
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["PROTOTYPE #name"]
+                    "disposition": [
+                        "PROTOTYPE #name"
+                    ]
                 }
             }
         ]
@@ -424,7 +633,9 @@
                                     "readonly": true,
                                     "layout": {
                                         "type": "wrap",
-                                        "disposition": ["#name"]
+                                        "disposition": [
+                                            "#name"
+                                        ]
                                     }
                                 }
                             ]
@@ -435,7 +646,9 @@
                                     "readonly": true,
                                     "layout": {
                                         "type": "wrap",
-                                        "disposition": ["Prototype #name"]
+                                        "disposition": [
+                                            "Prototype #name"
+                                        ]
                                     }
                                 }
                             ]
@@ -462,7 +675,24 @@
                                             {
                                                 "layout": {
                                                     "type": "wrap",
-                                                    "disposition": ["Add a projection"]
+                                                    "style": {
+                                                        "text": {
+                                                            "align": "center"
+                                                        },
+                                                        "box": {
+                                                            "space": {
+                                                                "inner": {
+                                                                    "top": 5,
+                                                                    "right": 10,
+                                                                    "left": 10,
+                                                                    "bottom": 5
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "disposition": [
+                                                        "Add a projection"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -472,7 +702,9 @@
                                             {
                                                 "layout": {
                                                     "type": "wrap",
-                                                    "disposition": ["X Remove"]
+                                                    "disposition": [
+                                                        "X Remove"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -487,6 +719,7 @@
                         "layout": {
                             "type": "stack",
                             "orientation": "vertical",
+                            "collapsible": true,
                             "disposition": [
                                 {
                                     "type": "text",
@@ -504,7 +737,7 @@
                                         }
                                     },
                                     "disposition": "Projection"
-                                },                            
+                                },
                                 "#projections"
                             ]
                         }
@@ -514,10 +747,13 @@
         },
         "projection": [
             {
-                "tags": ["editor"],
+                "tags": [
+                    "editor"
+                ],
                 "layout": {
                     "type": "stack",
                     "orientation": "vertical",
+                    "collapsible": true,
                     "disposition": [
                         {
                             "type": "text",
@@ -541,7 +777,6 @@
                             "disposition": "CONCEPT DEFINITION"
                         },
                         "Name: #name",
-                        "#description",
                         {
                             "type": "text",
                             "style": {
@@ -561,7 +796,9 @@
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
                     "disposition": [
@@ -586,12 +823,16 @@
                 }
             },
             {
-                "tags": ["explorer"],
+                "tags": [
+                    "explorer"
+                ],
                 "readonly": true,
                 "environment": "explorer",
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["CONCEPT #name"]
+                    "disposition": [
+                        "CONCEPT #name"
+                    ]
                 }
             }
         ]
@@ -609,7 +850,14 @@
                 "target": "string"
             },
             "required": {
-                "target": "boolean"
+                "target": "boolean",
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "check",
+                        "label": false
+                    }
+                ]
             }
         }
     },
@@ -618,51 +866,48 @@
         "prototype": "structure",
         "attribute": {
             "target": {
-                "target": "primitive"
-            },
-            "min": {
-                "target": "number",
-                "required": false
-            },
-            "max": {
-                "target": "number",
-                "required": false
-            },
-            "values": {
-                "target": "set",
-                "accept": "string",
-                "required": false
+                "target": "set_primitive"
             },
             "projection": {
                 "target": "field",
-                "required": false
+                "required": true
             }
         },
         "projection": [
             {
-                "tags": ["editor"],
+                "tags": [
+                    "editor"
+                ],
                 "layout": {
                     "type": "stack",
                     "orientation": "vertical",
                     "disposition": [
                         {
                             "type": "wrap",
-                            "disposition": ["DEFINE Attribute #name AS #target"]
+                            "disposition": [
+                                "DEFINE Attribute #name AS #target"
+                            ]
                         },
                         {
                             "type": "wrap",
-                            "disposition": ["With constraints min=#min max=#max"]
+                            "disposition": [
+                                "With Projection #projection"
+                            ]
                         }
                     ]
                 }
             },
             {
-                "tags": ["explorer"],
+                "tags": [
+                    "explorer"
+                ],
                 "readonly": true,
                 "environment": "explorer",
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["Attribute #name (#target)"]
+                    "disposition": [
+                        "Attribute #name (#target)"
+                    ]
                 }
             }
         ]
@@ -678,57 +923,152 @@
                     {
                         "type": "field",
                         "view": "table",
+                        "style": {
+                            "box": {
+                                "space": {
+                                    "outer": {
+                                        "bottom": 10
+                                    }
+                                }
+                            }
+                        },
                         "orientation": "column",
                         "header": [
-                            "Name",
-                            "Alias",
-                            "Target",
-                            "Minimum",
-                            "Maximum",
-                            "Required"
-                        ],
-                        "body": [
-                            "#name",
-                            "#alias",
-                            "#target",
-                            "#min",
-                            "#max",
-                            "#required"
-                        ]
-                    }
-                ]
-            },
-            "projections": {
-                "target": "set",
-                "accept": "stack_projection",
-                "min": 1,
-                "projection": [
-                    {
-                        "type": "field",
-                        "view": "list",
-                        "orientation": "vertical",
-                        "action": {
-                            "add": {
+                            {
                                 "projection": [
                                     {
                                         "layout": {
                                             "type": "wrap",
-                                            "disposition": ["Add a projection"]
+                                            "style": {
+                                                "box": {
+                                                    "space": {
+                                                        "inner": {
+                                                            "top": 2,
+                                                            "right": 5,
+                                                            "left": 5,
+                                                            "bottom": 2
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "disposition": [
+                                                "Required"
+                                            ]
                                         }
                                     }
                                 ]
                             },
-                            "remove": {
+                            {
                                 "projection": [
                                     {
                                         "layout": {
                                             "type": "wrap",
-                                            "disposition": ["X Remove"]
+                                            "style": {
+                                                "box": {
+                                                    "space": {
+                                                        "inner": {
+                                                            "top": 2,
+                                                            "right": 5,
+                                                            "left": 5,
+                                                            "bottom": 2
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "disposition": [
+                                                "Name"
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "projection": [
+                                    {
+                                        "layout": {
+                                            "type": "wrap",
+                                            "style": {
+                                                "box": {
+                                                    "space": {
+                                                        "inner": {
+                                                            "top": 2,
+                                                            "right": 5,
+                                                            "left": 5,
+                                                            "bottom": 2
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "disposition": [
+                                                "Alias"
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "projection": [
+                                    {
+                                        "layout": {
+                                            "type": "wrap",
+                                            "style": {
+                                                "box": {
+                                                    "space": {
+                                                        "inner": {
+                                                            "top": 2,
+                                                            "right": 5,
+                                                            "left": 5,
+                                                            "bottom": 2
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "disposition": [
+                                                "Target"
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "projection": [
+                                    {
+                                        "layout": {
+                                            "type": "wrap",
+                                            "style": {
+                                                "box": {
+                                                    "space": {
+                                                        "inner": {
+                                                            "top": 2,
+                                                            "right": 5,
+                                                            "left": 5,
+                                                            "bottom": 2
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "disposition": [
+                                                "Projection"
+                                            ]
                                         }
                                     }
                                 ]
                             }
-                        }
+                        ],
+                        "body": [
+                            {
+                                "style": {
+                                    "text": {
+                                        "align": "center"
+                                    }
+                                },
+                                "layout": "#required"
+                            },
+                            "#name",
+                            "#alias",
+                            "#target",
+                            "#projection"
+                        ]
                     }
                 ]
             }
@@ -751,7 +1091,9 @@
                                             {
                                                 "layout": {
                                                     "type": "wrap",
-                                                    "disposition": ["Add a projection"]
+                                                    "disposition": [
+                                                        "Add a projection"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -761,7 +1103,9 @@
                                             {
                                                 "layout": {
                                                     "type": "wrap",
-                                                    "disposition": ["X Remove"]
+                                                    "disposition": [
+                                                        "X Remove"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -793,7 +1137,7 @@
                                         }
                                     },
                                     "disposition": "Projection"
-                                },                            
+                                },
                                 "#projections"
                             ]
                         }
@@ -803,10 +1147,13 @@
         },
         "projection": [
             {
-                "tags": ["editor"],
+                "tags": [
+                    "editor"
+                ],
                 "layout": {
                     "type": "stack",
                     "orientation": "vertical",
+                    "collapsible": true,
                     "style": {
                         "box": {
                             "space": {
@@ -840,45 +1187,56 @@
                         },
                         "Name: #name",
                         {
-                            "type": "text",
-                            "style": {
-                                "text": {
-                                    "underline": true,
-                                    "color": {
-                                        "type": "rgb",
-                                        "value": "#222"
-                                    },
-                                    "size": 16
-                                },
-                                "box": {
-                                    "space": {
-                                        "outer": {
-                                            "bottom": 5
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "collapsible": true,
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "text": {
+                                            "underline": true,
+                                            "color": {
+                                                "type": "rgb",
+                                                "value": "#222"
+                                            },
+                                            "size": 16
+                                        },
+                                        "box": {
+                                            "space": {
+                                                "outer": {
+                                                    "bottom": 5
+                                                }
+                                            }
                                         }
-                                    }
-                                }
-                            },
-                            "disposition": "Attributes"
+                                    },
+                                    "disposition": "Attributes"
+                                },
+                                "#attributes"
+                            ]
                         },
-                        "#attributes",
                         "#component_projection:component"
                     ]
                 }
             },
             {
-                "tags": ["explorer"],
+                "tags": [
+                    "explorer"
+                ],
                 "readonly": true,
                 "environment": "explorer",
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["Component #name"]
+                    "disposition": [
+                        "Component #name"
+                    ]
                 }
             }
         ]
     },
     "primitive": {
         "nature": "prototype",
-        "attribute": { }
+        "attribute": {}
     },
     "string_primitive": {
         "nature": "concrete",
@@ -886,8 +1244,11 @@
         "attribute": {
             "values": {
                 "target": "set",
-                "accept": "string",
-                "required": false,
+                "accept": {
+                    "name": "string",
+                    "alias": "string"
+                },
+                "required": true,
                 "projection": [
                     {
                         "element": {
@@ -895,13 +1256,58 @@
                                 "type": "field",
                                 "view": "list",
                                 "orientation": "horizontal",
+                                "item": {
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "outer": {
+                                                    "right": 4,
+                                                    "bottom": 4
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "after": {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "text",
+                                                    "style": {
+                                                        "box": {
+                                                            "space": {
+                                                                "outer": {
+                                                                    "left": 2
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "disposition": ","
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
                                 "action": {
                                     "add": {
                                         "projection": [
                                             {
                                                 "layout": {
                                                     "type": "wrap",
-                                                    "disposition": ["Add a value"]
+                                                    "style": {
+                                                        "box": {
+                                                            "space": {
+                                                                "inner": {
+                                                                    "top": 2,
+                                                                    "right": 5,
+                                                                    "bottom": 2,
+                                                                    "left": 5
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "disposition": [
+                                                        "Add"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -910,26 +1316,125 @@
                             }
                         },
                         "layout": {
-                            "type": "wrap",
-                            "disposition": ["with values [$field]"]
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "text": {
+                                            "underline": true,
+                                            "bold": 600
+                                        }
+                                    },
+                                    "disposition": "Valid values"
+                                },
+                                "$field"
+                            ]
                         }
                     }
                 ]
+            },
+            "min": {
+                "target": "number",
+                "alias": "Minimum",
+                "description": "Defines the minimum number of characters the user must input. This must be an integer value 0 or higher. If no minlength is specified, or an invalid value is specified, the input has no minimum length.",
+                "required": true
+            },
+            "max": {
+                "target": "number",
+                "alias": "Maximum",
+                "description": "Defines the maximum number of characters the user can input. This must be an integer value 0 or higher. If no maxlength is specified, or an invalid value is specified, the input has no maximum length.",
+                "required": true
             }
         },
         "projection": [
             {
-                "tags": ["editor"],
+                "tags": [
+                    "editor"
+                ],
                 "layout": {
-                    "type": "wrap",
-                    "disposition": ["STRING #values"]
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "style": {
+                        "box": {
+                            "space": {
+                                "inner": {
+                                    "top": 6,
+                                    "left": 10,
+                                    "right": 10,
+                                    "bottom": 5
+                                }
+                            }
+                        }
+                    },
+                    "disposition": [
+                        {
+                            "type": "wrap",
+                            "style": {
+                                "text": {
+                                    "align": "center"
+                                },
+                                "box": {
+                                    "width": 100
+                                }
+                            },
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "text": {
+                                            "bold": true,
+                                            "align": "center",
+                                            "color": "white"
+                                        },
+                                        "box": {
+                                            "width": 50,
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 8,
+                                                    "right": 8,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "border": {
+                                                "radius": 6
+                                            },
+                                            "background": {
+                                                "type": "rgb",
+                                                "value": "#1F75FE"
+                                            }
+                                        }
+                                    },
+                                    "disposition": "STRING"
+                                }
+                            ]
+                        },
+                        "#values",
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "underline": true,
+                                    "bold": 600
+                                }
+                            },
+                            "disposition": "Length constraints"
+                        },
+                        "[#min ; #max]"
+                    ]
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["STRING"]
+                    "disposition": [
+                        "STRING"
+                    ]
                 }
             }
         ]
@@ -940,23 +1445,202 @@
         "attribute": {
             "values": {
                 "target": "set",
-                "accept": "number",
-                "required": false
+                "accept": {
+                    "name": "number",
+                    "alias": "number"
+                },
+                "required": false,
+                "projection": [
+                    {
+                        "element": {
+                            "field": {
+                                "type": "field",
+                                "view": "list",
+                                "orientation": "horizontal",
+                                "item": {
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "outer": {
+                                                    "right": 4,
+                                                    "bottom": 4
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "after": {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "text",
+                                                    "style": {
+                                                        "box": {
+                                                            "space": {
+                                                                "outer": {
+                                                                    "left": 2
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "disposition": ","
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                "action": {
+                                    "add": {
+                                        "projection": [
+                                            {
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "style": {
+                                                        "box": {
+                                                            "space": {
+                                                                "inner": {
+                                                                    "top": 2,
+                                                                    "right": 5,
+                                                                    "bottom": 2,
+                                                                    "left": 5
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "disposition": [
+                                                        "Add"
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "text": {
+                                            "underline": true,
+                                            "bold": 600
+                                        }
+                                    },
+                                    "disposition": "Valid values"
+                                },
+                                "$field"
+                            ]
+                        }
+                    }
+                ]
+            },
+            "min": {
+                "target": "number",
+                "alias": "Minimum",
+                "description": "Defines the minimum value the user may input. This must be a positive integer lower or equal to the minimum value if specified. If no minimum is specified, or an invalid value is specified, the number has no minimum value restriction.",
+                "required": true
+            },
+            "max": {
+                "target": "number",
+                "alias": "Maximum",
+                "description": "Defines the maximum value the user may input. This must be positive integer greater or equal to the minimum value if specified. If no minimum is specified, or an invalid value is specified, the number has no minimum value restriction.",
+                "required": true
             }
         },
         "projection": [
             {
-                "tags": ["editor"],
+                "tags": [
+                    "editor"
+                ],
                 "layout": {
-                    "type": "wrap",
-                    "disposition": ["NUMBER with values [#values]"]
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "style": {
+                        "box": {
+                            "space": {
+                                "inner": {
+                                    "top": 6,
+                                    "left": 10,
+                                    "right": 10,
+                                    "bottom": 5
+                                }
+                            }
+                        }
+                    },
+                    "disposition": [
+                        {
+                            "type": "wrap",
+                            "style": {
+                                "text": {
+                                    "align": "center"
+                                },
+                                "box": {
+                                    "width": 100,
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "text": {
+                                            "bold": true,
+                                            "align": "center",
+                                            "color": "white"
+                                        },
+                                        "box": {
+                                            "width": 50,
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 8,
+                                                    "right": 8,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "border": {
+                                                "radius": 6
+                                            },
+                                            "background": {
+                                                "type": "rgb",
+                                                "value": "#1F75FE"
+                                            }
+                                        }
+                                    },
+                                    "disposition": "NUMBER"
+                                }
+                            ]
+                        },
+                        "#values",
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "underline": true,
+                                    "bold": 600
+                                }
+                            },
+                            "disposition": "Value constraints"
+                        },
+                        "[#min ; #max]"
+                    ]
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["NUMBER"]
+                    "disposition": [
+                        "NUMBER"
+                    ]
                 }
             }
         ]
@@ -964,26 +1648,87 @@
     "boolean_primitive": {
         "nature": "concrete",
         "prototype": "primitive",
-        "attribute": {
-            "values": {
-                "target": "set",
-                "accept": "number",
-                "required": false
-            }
-        },
+        "attribute": {},
         "projection": [
             {
-                "tags": ["editor"],
+                "tags": [
+                    "editor"
+                ],
                 "layout": {
-                    "type": "wrap",
-                    "disposition": ["NUMBER with values [#values]"]
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "style": {
+                        "box": {
+                            "space": {
+                                "inner": {
+                                    "top": 6,
+                                    "left": 10,
+                                    "right": 10,
+                                    "bottom": 5
+                                }
+                            }
+                        }
+                    },
+                    "disposition": [
+                        {
+                            "type": "wrap",
+                            "style": {
+                                "text": {
+                                    "align": "center"
+                                },
+                                "box": {
+                                    "width": 100,
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "text": {
+                                            "bold": true,
+                                            "align": "center",
+                                            "color": "white"
+                                        },
+                                        "box": {
+                                            "width": 50,
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 8,
+                                                    "right": 8,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "border": {
+                                                "radius": 6
+                                            },
+                                            "background": {
+                                                "type": "rgb",
+                                                "value": "#1F75FE"
+                                            }
+                                        }
+                                    },
+                                    "disposition": "BOOLEAN"
+                                }
+                            ]
+                        }
+                    ]
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["BOOLEAN"]
+                    "disposition": [
+                        "BOOLEAN"
+                    ]
                 }
             }
         ]
@@ -993,23 +1738,101 @@
         "prototype": "primitive",
         "attribute": {
             "accept": {
-                "target": "primitive",
+                "target": "concept_primitive",
                 "required": true
             }
         },
         "projection": [
             {
-                "tags": ["editor"],
+                "tags": [
+                    "editor"
+                ],
                 "layout": {
-                    "type": "wrap",
-                    "disposition": ["REFERENCE accept #accept"]
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "style": {
+                        "box": {
+                            "space": {
+                                "inner": {
+                                    "top": 6,
+                                    "left": 10,
+                                    "right": 10,
+                                    "bottom": 5
+                                }
+                            }
+                        }
+                    },
+                    "disposition": [
+                        {
+                            "type": "wrap",
+                            "style": {
+                                "text": {
+                                    "align": "center"
+                                },
+                                "box": {
+                                    "width": 100,
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "text": {
+                                            "bold": true,
+                                            "align": "center",
+                                            "color": "white"
+                                        },
+                                        "box": {
+                                            "width": 50,
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 8,
+                                                    "right": 8,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "border": {
+                                                "radius": 6
+                                            },
+                                            "background": {
+                                                "type": "rgb",
+                                                "value": "#1F75FE"
+                                            }
+                                        }
+                                    },
+                                    "disposition": "REFERENCE"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "underline": true,
+                                    "bold": 600
+                                }
+                            },
+                            "disposition": "Reference target"
+                        },
+                        "#accept"
+                    ]
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["REFERENCE"]
+                    "disposition": [
+                        "REFERENCE"
+                    ]
                 }
             }
         ]
@@ -1021,21 +1844,122 @@
             "accept": {
                 "target": "primitive",
                 "required": true
+            },
+            "min": {
+                "target": "number",
+                "alias": "Minimum",
+                "description": "Defines the minimum number of elements for the set. This must be a positive integer lower or equal to the maximum value if specified. If no minimum is specified, or an invalid value is specified, the set will use a minimum of 1",
+                "required": true
+            },
+            "max": {
+                "target": "number",
+                "alias": "Maximum",
+                "description": "Defines the maximum number of elements for the set. This must be positive integer greater or equal to the minimum value if specified. If no minimum is specified, or an invalid value is specified, the set has no maximum value restriction.",
+                "required": true
             }
         },
         "projection": [
             {
-                "tags": ["editor"],
+                "tags": [
+                    "editor"
+                ],
                 "layout": {
-                    "type": "wrap",
-                    "disposition": ["SET accept #accept"]
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "style": {
+                        "box": {
+                            "space": {
+                                "inner": {
+                                    "top": 6,
+                                    "left": 10,
+                                    "right": 10,
+                                    "bottom": 5
+                                }
+                            }
+                        }
+                    },
+                    "disposition": [
+                        {
+                            "type": "wrap",
+                            "style": {
+                                "text": {
+                                    "align": "center"
+                                },
+                                "box": {
+                                    "width": 100,
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "text": {
+                                            "bold": true,
+                                            "align": "center",
+                                            "color": "white"
+                                        },
+                                        "box": {
+                                            "width": 50,
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 8,
+                                                    "right": 8,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "border": {
+                                                "radius": 6
+                                            },
+                                            "background": {
+                                                "type": "rgb",
+                                                "value": "#1F75FE"
+                                            }
+                                        }
+                                    },
+                                    "disposition": "SET"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "underline": true,
+                                    "bold": 600
+                                }
+                            },
+                            "disposition": "Set element target"
+                        },
+                        "#accept",
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "underline": true,
+                                    "bold": 600
+                                }
+                            },
+                            "disposition": "Set element constraints"
+                        },
+                        "[#min ; #max]"
+                    ]
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["SET"]
+                    "disposition": [
+                        "SET"
+                    ]
                 }
             }
         ]
@@ -1059,7 +1983,9 @@
                                     "readonly": true,
                                     "layout": {
                                         "type": "wrap",
-                                        "disposition": ["#name"]
+                                        "disposition": [
+                                            "#name"
+                                        ]
                                     }
                                 }
                             ]
@@ -1070,7 +1996,9 @@
                                     "readonly": true,
                                     "layout": {
                                         "type": "wrap",
-                                        "disposition": ["Concept #name"]
+                                        "disposition": [
+                                            "Concept #name"
+                                        ]
                                     }
                                 }
                             ]
@@ -1081,23 +2009,31 @@
         },
         "projection": [
             {
-                "tags": ["editor"],
+                "tags": [
+                    "editor"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["CONCEPT #concept"]
+                    "disposition": [
+                        "#concept"
+                    ]
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["CONCEPT"]
+                    "disposition": [
+                        "CONCEPT"
+                    ]
                 }
             }
         ]
     },
     "projection": {
-        "nature": "concrete",
+        "nature": "prototype",
         "attribute": {
             "tags": {
                 "target": "set",
@@ -1105,7 +2041,7 @@
                     "name": "string",
                     "alias": "tag"
                 },
-                "required": true,
+                "required": false,
                 "projection": [
                     {
                         "element": {
@@ -1115,13 +2051,15 @@
                                 "orientation": "horizontal",
                                 "item": {
                                     "before": {
-                                        "condition" : {
-                                            "index": { "ge": 1 }
+                                        "condition": {
+                                            "index": {
+                                                "ge": 1
+                                            }
                                         },
                                         "projection": [
                                             {
                                                 "readonly": true,
-                                                "layout":{
+                                                "layout": {
                                                     "type": "text",
                                                     "disposition": ","
                                                 }
@@ -1135,7 +2073,9 @@
                                             {
                                                 "layout": {
                                                     "type": "wrap",
-                                                    "disposition": ["Add a tag"]
+                                                    "disposition": [
+                                                        "Add a tag"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -1145,13 +2085,53 @@
                         },
                         "layout": {
                             "type": "wrap",
-                            "disposition": ["Tags: $field"]
+                            "disposition": [
+                                "Tags: $field"
+                            ]
                         }
                     }
                 ]
+            }
+        }
+    },
+    "template_projection": {
+        "nature": "concrete",
+        "prototype": "projection",
+        "attribute": {
+            "template": {
+                "target": "template"
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "#tags",
+                        "#template"
+                    ]
+                }
             },
-            "layout":{
-                "target": "layout"
+            {
+                "tags": [
+                    "choice"
+                ],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "Template"
+                    ]
+                }
+            }
+        ]
+    },
+    "layout_projection": {
+        "nature": "concrete",
+        "prototype": "projection",
+        "attribute": {
+            "layout": {
+                "target": "stack_layout"
             }
         },
         "projection": [
@@ -1164,6 +2144,17 @@
                         "#layout"
                     ]
                 }
+            },
+            {
+                "tags": [
+                    "choice"
+                ],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "Layout"
+                    ]
+                }
             }
         ]
     },
@@ -1173,6 +2164,9 @@
             "elements": {
                 "target": "set",
                 "accept": "element"
+            },
+            "style": {
+                "target": "style"
             }
         }
     },
@@ -1183,7 +2177,10 @@
             "orientation": {
                 "target": "string",
                 "value": "horizontal",
-                "values": ["horizontal", "vertical"]
+                "values": [
+                    "horizontal",
+                    "vertical"
+                ]
             }
         },
         "projection": [
@@ -1214,6 +2211,7 @@
                             "disposition": "Stack Layout"
                         },
                         "#orientation",
+                        "#style",
                         {
                             "type": "text",
                             "style": {
@@ -1259,10 +2257,14 @@
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["Stack Layout"]
+                    "disposition": [
+                        "Stack Layout"
+                    ]
                 }
             }
         ]
@@ -1270,7 +2272,7 @@
     "wrap_layout": {
         "nature": "concrete",
         "prototype": "layout",
-        "attribute": { },
+        "attribute": {},
         "projection": [
             {
                 "layout": {
@@ -1298,6 +2300,7 @@
                             },
                             "disposition": "Wrap Layout"
                         },
+                        "#style",
                         {
                             "type": "text",
                             "style": {
@@ -1343,16 +2346,20 @@
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["Wrap Layout"]
+                    "disposition": [
+                        "Wrap Layout"
+                    ]
                 }
             }
         ]
     },
     "field": {
-        "nature":"prototype",
+        "nature": "prototype",
         "attribute": {
             "readonly": {
                 "target": "boolean",
@@ -1365,12 +2372,15 @@
             "visible": {
                 "target": "boolean",
                 "value": true
+            },
+            "style": {
+                "target": "style"
             }
         }
     },
     "text_field": {
         "nature": "concrete",
-        "prototype":"field",
+        "prototype": "field",
         "attribute": {
             "placeholder": {
                 "target": "string"
@@ -1403,6 +2413,7 @@
                             },
                             "disposition": "Text Field"
                         },
+                        "#style",
                         {
                             "type": "text",
                             "style": {
@@ -1433,17 +2444,21 @@
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["Text Field"]
+                    "disposition": [
+                        "Text Field"
+                    ]
                 }
             }
         ]
     },
     "check_field": {
         "nature": "concrete",
-        "prototype":"field",
+        "prototype": "field",
         "attribute": {
             "label": {
                 "target": "string"
@@ -1476,6 +2491,7 @@
                             },
                             "disposition": "Check Field"
                         },
+                        "#style",
                         {
                             "type": "text",
                             "style": {
@@ -1506,17 +2522,21 @@
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["Check Field"]
+                    "disposition": [
+                        "Check Field"
+                    ]
                 }
             }
         ]
     },
     "choice_field": {
         "nature": "concrete",
-        "prototype":"field",
+        "prototype": "field",
         "projection": [
             {
                 "layout": {
@@ -1544,6 +2564,7 @@
                             },
                             "disposition": "Choice Field"
                         },
+                        "#style",
                         {
                             "type": "text",
                             "style": {
@@ -1573,17 +2594,21 @@
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["Choice Field"]
+                    "disposition": [
+                        "Choice Field"
+                    ]
                 }
             }
         ]
     },
     "link_field": {
         "nature": "concrete",
-        "prototype":"field",
+        "prototype": "field",
         "attribute": {
             "placeholder": {
                 "target": "string"
@@ -1622,6 +2647,7 @@
                             },
                             "disposition": "Link Field"
                         },
+                        "#style",
                         {
                             "type": "text",
                             "style": {
@@ -1654,17 +2680,21 @@
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["Link Field"]
+                    "disposition": [
+                        "Link Field"
+                    ]
                 }
             }
         ]
     },
     "list_field": {
         "nature": "concrete",
-        "prototype":"field",
+        "prototype": "field",
         "attribute": {
             "orientation": {
                 "target": "string",
@@ -1702,6 +2732,7 @@
                             },
                             "disposition": "List Field"
                         },
+                        "#style",
                         {
                             "type": "text",
                             "style": {
@@ -1731,10 +2762,354 @@
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["List Field"]
+                    "disposition": [
+                        "List Field"
+                    ]
+                }
+            }
+        ]
+    },
+    "table_field": {
+        "nature": "concrete",
+        "prototype": "field",
+        "attribute": {
+            "orientation": {
+                "target": "string",
+                "value": "column",
+                "values": [
+                    "column",
+                    "row"
+                ]
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#222"
+                                    },
+                                    "size": 18
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Table Field"
+                        },
+                        "#style",
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#333"
+                                    },
+                                    "underline": true,
+                                    "size": 16
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 2
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Properties:"
+                        },
+                        "Read-only: #readonly",
+                        "Visible: #visible",
+                        "Disabled: #disabled"
+                    ]
+                }
+            },
+            {
+                "tags": [
+                    "choice"
+                ],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "Table Field"
+                    ]
+                }
+            }
+        ]
+    },
+    "template": {
+        "nature": "prototype",
+        "attribute": {}
+    },
+    "table_template": {
+        "nature": "concrete",
+        "prototype": "template",
+        "attribute": {
+            "orientation": {
+                "target": "string",
+                "value": "column",
+                "values": [
+                    "row",
+                    "column"
+                ]
+            },
+            "header": {
+                "target": "set",
+                "accept": "table_header_cell",
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "list",
+                        "item": {
+                            "style": {
+                                "box": {
+                                    "border": {
+                                        "size": 1,
+                                        "color": "black"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "body": {
+                "target": "set",
+                "accept": "table_cell",
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "list",
+                        "item": {
+                            "style": {
+                                "box": {
+                                    "border": {
+                                        "size": 1,
+                                        "color": "black"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#222"
+                                    },
+                                    "size": 18
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Table Field"
+                        },
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#333"
+                                    },
+                                    "underline": true,
+                                    "size": 16
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 2
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Header"
+                        },
+                        "#header",
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#333"
+                                    },
+                                    "underline": true,
+                                    "size": 16
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 2
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Body"
+                        },
+                        "#body"
+                    ]
+                }
+            },
+            {
+                "tags": [
+                    "choice"
+                ],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "Table Field"
+                    ]
+                }
+            }
+        ]
+    },
+    "table_header_cell": {
+        "nature": "concrete",
+        "attribute": {
+            "projection": {
+                "target": "text_element"
+            },
+            "span": {
+                "target": "number",
+                "value": 1
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "#projection",
+                        "#span"
+                    ]
+                }
+            }
+        ]
+    },
+    "table_cell": {
+        "nature": "concrete",
+        "attribute": {
+            "projection": {
+                "target": "element"
+            },
+            "span": {
+                "target": "number",
+                "value": 1
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "#projection",
+                        "#span"
+                    ]
+                }
+            }
+        ]
+    },
+    "choice_template": {
+        "nature": "concrete",
+        "attribute": {}
+    },
+    "list_template": {
+        "nature": "concrete",
+        "prototype": "template",
+        "attribute": {
+            "orientation": {
+                "target": "string",
+                "value": "horizontal",
+                "values": [
+                    "horizontal",
+                    "vertical"
+                ]
+            },
+            "item": {
+                "target": "set",
+                "accept": "field"
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "color": {
+                                        "type": "rgb",
+                                        "value": "#222"
+                                    },
+                                    "size": 18
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "bottom": 6
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "List Template"
+                        }
+                    ]
+                }
+            },
+            {
+                "tags": [
+                    "choice"
+                ],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "List Template"
+                    ]
                 }
             }
         ]
@@ -1746,11 +3121,11 @@
                 "target": "string"
             },
             "style": {
-                "target": "string"
+                "target": "style"
             }
         }
     },
-    "layout_element" :{
+    "layout_element": {
         "nature": "concrete",
         "prototype": "element",
         "attribute": {
@@ -1762,39 +3137,20 @@
             {
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["#value"]
+                    "disposition": [
+                        "#value"
+                    ]
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["Add layout"]
-                }
-            }
-        ]
-    },
-    "group_element": {
-        "nature": "concrete",
-        "prototype": "element",
-        "attribute": {
-            "value": {
-                "target": "set",
-                "accept": "element"
-            }
-        },
-        "projection": [
-            {
-                "layout": {
-                    "type": "wrap",
-                    "disposition": ["#value"]
-                }
-            },
-            {
-                "tags": ["choice"],
-                "layout": {
-                    "type": "wrap",
-                    "disposition": ["Add Group"]
+                    "disposition": [
+                        "Layout"
+                    ]
                 }
             }
         ]
@@ -1811,14 +3167,20 @@
             {
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["#value"]
+                    "disposition": [
+                        "#value"
+                    ]
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["Add text"]
+                    "disposition": [
+                        "Text"
+                    ]
                 }
             }
         ]
@@ -1845,7 +3207,9 @@
                                     "readonly": true,
                                     "layout": {
                                         "type": "wrap",
-                                        "disposition": ["#name"]
+                                        "disposition": [
+                                            "#name"
+                                        ]
                                     }
                                 }
                             ]
@@ -1856,7 +3220,9 @@
                                     "readonly": true,
                                     "layout": {
                                         "type": "wrap",
-                                        "disposition": ["Attribute #name"]
+                                        "disposition": [
+                                            "Attribute #name"
+                                        ]
                                     }
                                 }
                             ]
@@ -1869,14 +3235,20 @@
             {
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["#value"]
+                    "disposition": [
+                        "#value"
+                    ]
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["Add attribute"]
+                    "disposition": [
+                        "Attribute"
+                    ]
                 }
             }
         ]
@@ -1900,7 +3272,9 @@
                                     "readonly": true,
                                     "layout": {
                                         "type": "wrap",
-                                        "disposition": ["#name"]
+                                        "disposition": [
+                                            "#name"
+                                        ]
                                     }
                                 }
                             ]
@@ -1911,7 +3285,9 @@
                                     "readonly": true,
                                     "layout": {
                                         "type": "wrap",
-                                        "disposition": ["Component #name"]
+                                        "disposition": [
+                                            "Component #name"
+                                        ]
                                     }
                                 }
                             ]
@@ -1924,14 +3300,933 @@
             {
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["#value"]
+                    "disposition": [
+                        "#value"
+                    ]
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "layout": {
                     "type": "wrap",
-                    "disposition": ["Add component"]
+                    "disposition": [
+                        "Component"
+                    ]
+                }
+            }
+        ]
+    },
+    "style": {
+        "nature": "concrete",
+        "attribute": {
+            "text": {
+                "target": "text_style",
+                "alias": "Text style"
+            },
+            "box": {
+                "target": "box_style",
+                "alias": "Box style"
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "horizontal",
+                    "disposition": [
+                        {
+                            "type": "wrap",
+                            "style": {
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "right": 10
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": [
+                                "#text"
+                            ]
+                        },
+                        "#box"
+                    ]
+                }
+            }
+        ]
+    },
+    "text_style": {
+        "nature": "concrete",
+        "attribute": {
+            "bold": {
+                "target": "boolean",
+                "required": false,
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "check",
+                        "label": {
+                            "style": {
+                                "text": {
+                                    "bold": true
+                                }
+                            },
+                            "value": "Bold"
+                        }
+                    }
+                ]
+            },
+            "italic": {
+                "target": "boolean",
+                "required": false,
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "check",
+                        "label": {
+                            "style": {
+                                "text": {
+                                    "italic": true
+                                }
+                            },
+                            "value": "Italic"
+                        }
+                    }
+                ]
+            },
+            "underline": {
+                "target": "boolean",
+                "required": false,
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "check",
+                        "label": {
+                            "style": {
+                                "text": {
+                                    "underline": true
+                                }
+                            },
+                            "value": "Underline"
+                        }
+                    }
+                ]
+            },
+            "strikethrough": {
+                "target": "boolean",
+                "required": false,
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "check",
+                        "label": {
+                            "style": {
+                                "text": {
+                                    "strikethrough": true
+                                }
+                            },
+                            "value": "Strikethrough"
+                        }
+                    }
+                ]
+            },
+            "colour": {
+                "target": "colour",
+                "required": false
+            },
+            "font": {
+                "target": "set",
+                "required": false,
+                "accept": {
+                    "name": "string",
+                    "alias": "Font"
+                },
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "list",
+                        "action": {
+                            "add": {
+                                "projection": [
+                                    {
+                                        "layout": {
+                                            "type": "text",
+                                            "disposition": "Add fallback"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
+            "size": {
+                "target": "number",
+                "required": false,
+                "alias": "text size",
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "text",
+                        "before": {
+                            "projection": [
+                                {
+                                    "style": {
+                                        "text": {
+                                            "italic": true
+                                        }
+                                    },
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            "Text size:"
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "align": {
+                "target": "string",
+                "required": false,
+                "alias": "text alignment",
+                "values": [
+                    "left",
+                    "right",
+                    "center",
+                    "justify"
+                ],
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "text",
+                        "before": {
+                            "projection": [
+                                {
+                                    "style": {
+                                        "text": {
+                                            "italic": true
+                                        }
+                                    },
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            "Text alignment:"
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "style": {
+                        "box": {
+                            "background": "white",
+                            "border": {
+                                "radius": 5,
+                                "size": 1,
+                                "color": "royalblue"
+                            }
+                        }
+                    },
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "size": 20,
+                                    "color": "white"
+                                },
+                                "box": {
+                                    "space": {
+                                        "inner": {
+                                            "top": 10,
+                                            "left": 15,
+                                            "right": 15,
+                                            "bottom": 10
+                                        }
+                                    },
+                                    "border": {
+                                        "radius": {
+                                            "top": 5,
+                                            "right": 5
+                                        }
+                                    },
+                                    "width": 100,
+                                    "background": "royalblue"
+                                }
+                            },
+                            "disposition": "TEXT style"
+                        },
+                        {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "collapsible": true,
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 15,
+                                                    "right": 15,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "width": 100
+                                        }
+                                    },
+                                    "disposition": "#bold"
+                                },
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 15,
+                                                    "right": 15,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "width": 100,
+                                            "background": {
+                                                "type": "rgb",
+                                                "value": "#eee"
+                                            }
+                                        }
+                                    },
+                                    "disposition": "#italic"
+                                },
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 15,
+                                                    "right": 15,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "width": 100
+                                        }
+                                    },
+                                    "disposition": "#underline"
+                                },
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 15,
+                                                    "right": 15,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "width": 100,
+                                            "background": {
+                                                "type": "rgb",
+                                                "value": "#eee"
+                                            }
+                                        }
+                                    },
+                                    "disposition": "#strikethrough"
+                                },
+                                {
+                                    "type": "wrap",
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 15,
+                                                    "right": 15,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "width": 100
+                                        }
+                                    },
+                                    "disposition": [
+                                        "Colour: #colour"
+                                    ]
+                                },
+                                {
+                                    "type": "wrap",
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 15,
+                                                    "right": 15,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "width": 100,
+                                            "background": {
+                                                "type": "rgb",
+                                                "value": "#eee"
+                                            }
+                                        }
+                                    },
+                                    "disposition": [
+                                        "Font: #font"
+                                    ]
+                                },
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 15,
+                                                    "right": 15,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "width": 100
+                                        }
+                                    },
+                                    "disposition": "#size"
+                                },
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 15,
+                                                    "right": 15,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "width": 100,
+                                            "background": {
+                                                "type": "rgb",
+                                                "value": "#eee"
+                                            },
+                                            "border": {
+                                                "radius": {
+                                                    "bottom": 5,
+                                                    "left": 5
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "disposition": "#align"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "box_style": {
+        "nature": "concrete",
+        "attribute": {
+            "space": {
+                "target": "space_style",
+                "required": false
+            },
+            "border": {
+                "target": "border_style",
+                "required": false
+            },
+            "background": {
+                "target": "colour",
+                "required": false
+            },
+            "width": {
+                "target": "number",
+                "required": false,
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "text",
+                        "before": {
+                            "projection": [
+                                {
+                                    "style": {
+                                        "text": {
+                                            "italic": true
+                                        }
+                                    },
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            "Width:"
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "height": {
+                "target": "number",
+                "required": false,
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "text",
+                        "before": {
+                            "projection": [
+                                {
+                                    "style": {
+                                        "text": {
+                                            "italic": true
+                                        }
+                                    },
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            "Height:"
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "style": {
+                        "box": {
+                            "background": "white",
+                            "border": {
+                                "radius": 5,
+                                "size": 1,
+                                "color": "royalblue"
+                            }
+                        }
+                    },
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600,
+                                    "size": 20,
+                                    "color": "white"
+                                },
+                                "box": {
+                                    "space": {
+                                        "inner": {
+                                            "top": 10,
+                                            "left": 15,
+                                            "right": 15,
+                                            "bottom": 10
+                                        }
+                                    },
+                                    "border": {
+                                        "radius": {
+                                            "top": 5,
+                                            "right": 5
+                                        }
+                                    },
+                                    "width": 100,
+                                    "background": "royalblue"
+                                }
+                            },
+                            "disposition": "BOX style"
+                        },
+                        {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "collapsible": true,
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 15,
+                                                    "right": 15,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "width": 100
+                                        }
+                                    },
+                                    "disposition": "#space"
+                                },
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 15,
+                                                    "right": 15,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "width": 100,
+                                            "background": {
+                                                "type": "rgb",
+                                                "value": "#eee"
+                                            }
+                                        }
+                                    },
+                                    "disposition": "#border"
+                                },
+                                {
+                                    "type": "wrap",
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 15,
+                                                    "right": 15,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "width": 100
+                                        }
+                                    },
+                                    "disposition": [
+                                        "Background: #background"
+                                    ]
+                                },
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 15,
+                                                    "right": 15,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "background": {
+                                                "type": "rgb",
+                                                "value": "#eee"
+                                            },
+                                            "width": 100
+                                        }
+                                    },
+                                    "disposition": "#width"
+                                },
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "box": {
+                                            "space": {
+                                                "inner": {
+                                                    "top": 4,
+                                                    "left": 15,
+                                                    "right": 15,
+                                                    "bottom": 4
+                                                }
+                                            },
+                                            "width": 100
+                                        }
+                                    },
+                                    "disposition": "#height"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "colour": {
+        "nature": "prototype",
+        "attribute": {}
+    },
+    "name_colour": {
+        "nature": "concrete",
+        "prototype": "colour",
+        "attribute": {
+            "value": {
+                "target": "string"
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "#value"
+                    ]
+                }
+            },
+            {
+                "tags": [
+                    "choice"
+                ],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "Coulour names"
+                    ]
+                }
+            }
+        ]
+    },
+    "rgb_colour": {
+        "nature": "concrete",
+        "prototype": "colour",
+        "attribute": {
+            "red": {
+                "target": "number",
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "target": "number",
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "target": "number",
+                "min": 0,
+                "max": 255
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "RGB(#red, #blue, #green)"
+                    ]
+                }
+            },
+            {
+                "tags": [
+                    "choice"
+                ],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "RGB colour"
+                    ]
+                }
+            }
+        ]
+    },
+    "space_style": {
+        "nature": "concrete",
+        "attribute": {
+            "inner": {
+                "target": "multi_size"
+            },
+            "outer": {
+                "target": "multi_size"
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 700,
+                                    "size": 15
+                                }
+                            },
+                            "disposition": "Spacing style"
+                        },
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600
+                                }
+                            },
+                            "disposition": "Inner spacing"
+                        },
+                        "#inner",
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600
+                                },
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "top": 4
+                                        }
+                                    }
+                                }
+                            },
+                            "disposition": "Outer spacing"
+                        },
+                        "#outer"
+                    ]
+                }
+            }
+        ]
+    },
+    "multi_size": {
+        "nature": "concrete",
+        "attribute": {
+            "value": {
+                "target": "number"
+            },
+            "top": {
+                "target": "number"
+            },
+            "right": {
+                "target": "number"
+            },
+            "bottom": {
+                "target": "number"
+            },
+            "left": {
+                "target": "number"
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "#value",
+                        "[#top; #right; #bottom; #left]"
+                    ]
+                }
+            }
+        ]
+    },
+    "multi_colour": {
+        "nature": "concrete",
+        "attribute": {
+            "value": {
+                "target": "colour"
+            },
+            "top": {
+                "target": "colour"
+            },
+            "right": {
+                "target": "colour"
+            },
+            "bottom": {
+                "target": "colour"
+            },
+            "left": {
+                "target": "colour"
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        "#value",
+                        "#top",
+                        "#right",
+                        "#bottom",
+                        "#left"
+                    ]
+                }
+            }
+        ]
+    },
+    "border_style": {
+        "nature": "concrete",
+        "attribute": {
+            "size": {
+                "target": "multi_size"
+            },
+            "colour": {
+                "target": "colour"
+            },
+            "radius": {
+                "target": "multi_size"
+            }
+        },
+        "projection": [
+            {
+                "layout": {
+                    "type": "stack",
+                    "orientation": "vertical",
+                    "disposition": [
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 700,
+                                    "size": 15
+                                }
+                            },
+                            "disposition": "Border style"
+                        },
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600
+                                }
+                            },
+                            "disposition": "Border size"
+                        },
+                        "#size",
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600
+                                }
+                            },
+                            "disposition": "Border Colour"
+                        },
+                        "#colour",
+                        {
+                            "type": "text",
+                            "style": {
+                                "text": {
+                                    "bold": 600
+                                }
+                            },
+                            "disposition": "Border Radius"
+                        },
+                        "#radius"
+                    ]
                 }
             }
         ]

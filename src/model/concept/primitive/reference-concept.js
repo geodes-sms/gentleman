@@ -42,6 +42,18 @@ const _ReferenceConcept = {
         return this.model.concepts.find((concept) => concept.id === this.value);
     },
     setValue(value) {
+        var result = this.validate(value);
+
+        if (result !== ResponseCode.SUCCESS) {
+            return {
+                success: false,
+                message: "Validation failed: The value could not be updated.",
+                errors: [
+                    responseHandler(result).message
+                ]
+            };
+        }
+
         if (isNullOrUndefined(value) || this.value === value) {
             return;
         }
@@ -50,12 +62,15 @@ const _ReferenceConcept = {
             this.reference.unregister(this);
         }
         this.reference = this.model.getConcept(value);
-        console.log(this.model.concepts);
         this.reference.register(this);
 
         this.value = value;
+        this.notify("value.changed", this.reference);
 
-        this.notify("value.changed", value);
+        return {
+            success: true,
+            message: "The value has been successfully updated."
+        };
     },
 
     update(message, value) {
@@ -68,7 +83,7 @@ const _ReferenceConcept = {
 
         var candidates = resolveAccept.call(this, this.accept);
 
-        console.warn(candidates);
+        console.log(candidates);
 
         var values = candidates.map((candidate) => ({
             type: "concept",
@@ -102,20 +117,6 @@ const _ReferenceConcept = {
             return ResponseCode.SUCCESS;
         }
 
-        var found = false;
-        for (let i = 0; !found && i < this.values.length; i++) {
-            const val = this.values[i];
-            if (isObject(val)) {
-                found = val.value == value;
-            } else {
-                found = val == value;
-            }
-        }
-
-        if (!found) {
-            return ResponseCode.INVALID_VALUE;
-        }
-
         return ResponseCode.SUCCESS;
     },
 
@@ -139,13 +140,12 @@ const _ReferenceConcept = {
 function resolveAccept(accept) {
     if (isString(accept)) {
         const { concepts } = this.model;
-        const parent = this.getParent();
 
         if (this.metamodel.isPrototype(accept)) {
-            return concepts.filter((concept) => concept !== parent && concept.prototype && concept.prototype.name === accept);
+            return concepts.filter((concept) => concept.schema.prototype === accept);
         }
 
-        return concepts.filter((concept) => concept !== parent && concept.name === accept);
+        return concepts.filter((concept) => concept.name === accept);
     }
     if (isObject(accept)) {
         const { name, scope, rel } = accept;

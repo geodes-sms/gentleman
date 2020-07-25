@@ -22,6 +22,86 @@ function resolveValue(object) {
     return object;
 }
 
+function createMessageElement() {
+    if (!isHTMLElement(this.messageElement)) {
+        this.messageElement = createI({
+            class: ["field-message", "hidden"],
+            dataset: {
+                nature: "field-component",
+                view: "text",
+                id: this.id,
+            }
+        });
+        this.notification.appendChild(this.messageElement);
+    }
+
+    return this.messageElement;
+}
+
+/**
+ * Creates a choice element
+ * @param {string} value 
+ * @returns {HTMLElement}
+ */
+function createChoiceElement() {
+    if (!isHTMLElement(this.choice)) {
+        this.choice = createUnorderedList({
+            class: ["bare-list", "field--textbox__choices"],
+            dataset: {
+                nature: "field-component",
+                view: "text",
+                component: "choice",
+                id: this.id,
+            }
+        });
+        this.append(this.choice);
+    }
+
+    return this.choice;
+}
+
+/**
+ * Creates a choice item element
+ * @param {string} value 
+ * @returns {HTMLElement}
+ */
+function createChoiceItemElement(value) {
+    return createListItem({
+        class: ["field--textbox__choice"],
+        tabindex: 0,
+        dataset: {
+            nature: "field-component",
+            view: "text",
+            component: "choice-item",
+            value: value,
+            id: this.id,
+        }
+    }, value);
+}
+
+const NotificationType = {
+    INFO: "info",
+    ERROR: "error"
+};
+
+/**
+ * Creates a notification message
+ * @param {string} type 
+ * @param {string} message 
+ * @returns {HTMLElement}
+ */
+function createNotificationMessage(type, message) {
+    var element = createSpan({ class: ["notification-message", `notification-message--${type}`] }, message);
+
+    if (Array.isArray(message)) {
+        element.style.minWidth = `${Math.min(message[0].length * 0.5, 30)}em`;
+    } else {
+        element.style.minWidth = `${Math.min(message.length * 0.5, 30)}em`;
+    }
+
+    return element;
+}
+
 /**
  * Resolves the value of the placeholder
  * @returns {string}
@@ -35,7 +115,7 @@ function resolvePlaceholder() {
         return this.source.getAlias();
     }
 
-    return "Enter data";
+    return "Enter a value";
 }
 
 /**
@@ -43,18 +123,27 @@ function resolvePlaceholder() {
  * @param {HTMLElement} element 
  */
 function getItem(element) {
-    return element.parentElement === this.choice ? element : findAncestor(element, (el) => el.parentElement === this.choices, 3);
+    return element.parentElement === this.choice ? element : findAncestor(element, (el) => el.parentElement === this.choice, 3);
 }
 
-const _TextField = {
-    /** @type {string} */
-    placeholder: null,
+/**
+ * Get the choice element value
+ * @param {HTMLElement} element
+ * @returns {string} 
+ */
+function getItemValue(item) {
+    return item.dataset.value;
+}
+
+const BaseTextField = {
     /** @type {HTMLElement} */
     input: null,
     /** @type {HTMLElement} */
     choice: null,
     /** @type {string} */
     value: "",
+    /** @type {string} */
+    placeholder: "Enter a value",
 
     init() {
         this.source.register(this);
@@ -66,12 +155,12 @@ const _TextField = {
     render() {
         const fragment = createDocFragment();
 
-        const { before, input, after } = this.schema;
+        const { before = {}, input, after = {} } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createDiv({
-                class: ["field", "field--textbox"],
                 id: this.id,
+                class: ["field", "field--textbox"],
                 tabindex: -1,
                 dataset: {
                     nature: "field",
@@ -111,9 +200,11 @@ const _TextField = {
             this.notification.appendChild(this.statusElement);
         }
 
-        if (before) {
+        if (before.projection) {
             let projection = ProjectionManager.createProjection(before.projection, this.source, this.editor).init();
-            fragment.appendChild(projection.render());
+            let content = projection.render();
+            content.classList.add("field--textbox__before");
+            fragment.appendChild(content);
         }
 
         if (!isHTMLElement(this.input)) {
@@ -137,20 +228,22 @@ const _TextField = {
             let value = resolveValue(this.source);
 
             if (!isNullOrWhitespace(value)) {
-                console.log(value);
                 this.input.textContent = value;
+                this.value = value;
             }
 
-            const { before, projection, after, style } = valOrDefault(input, {});
+            const { projection, style } = valOrDefault(input, {});
 
             StyleHandler(this.input, style);
 
             fragment.appendChild(this.input);
         }
 
-        if (after) {
+        if (after.projection) {
             let projection = ProjectionManager.createProjection(after.projection, this.source, this.editor).init();
-            fragment.appendChild(projection.render());
+            let content = projection.render();
+            content.classList.add("field--textbox__after");
+            fragment.appendChild(content);
         }
 
         if (fragment.hasChildNodes()) {
@@ -163,27 +256,29 @@ const _TextField = {
         return this.element;
     },
 
-    update(type, value) {
-        switch (type) {
+    /**
+     * Updates the text field on source change
+     * @param {string} message
+     * @param {*} value 
+     */
+    update(message, value) {
+        switch (message) {
             case "value.changed":
                 this.input.textContent = value;
                 break;
             default:
-                console.warn(`The operation '${type}' was not handled`);
+                console.warn(`The message '${message}' was not handled for text field`);
                 break;
         }
         this.refresh();
     },
 
     focusIn() {
-        this.hasFocus = true;
+        this.focused = true;
         this.value = this.input.textContent;
         this.element.classList.add("active");
 
-        if (this.choice && this.choice.hasChildNodes()) {
-            show(this.choice);
-        }
-        // show(this.statusElement);
+        return this;
     },
     focusOut() {
         if (this.readonly) {
@@ -203,21 +298,36 @@ const _TextField = {
             removeChildren(this.messageElement);
         }
 
-        this.input.blur();
-        this.element.classList.remove("active");
-
         if (this.choice) {
             hide(this.choice);
         }
 
+        this.input.blur();
+        this.element.classList.remove("active");
+
         this.refresh();
+        this.focused = false;
+
+        return this;
     },
+    /**
+     * Verifies that the field has a changes
+     * @returns {boolean}
+     */
     hasChanges() {
         return this.value !== this.input.textContent;
     },
+    /**
+     * Verifies that the field has a value
+     * @returns {boolean}
+     */
     hasValue() {
         return !isEmpty(this.input.textContent);
     },
+    /**
+     * Gets the input value
+     * @returns {string}
+     */
     getValue() {
         return this.input.textContent;
     },
@@ -269,7 +379,7 @@ const _TextField = {
             this.element.classList.add("error");
             this.input.classList.add("error");
             this.statusElement.classList.add("error");
-            this.statusElement.appendChild(createSpan({ class: "error-message" }, this.errors));
+            this.statusElement.appendChild(createNotificationMessage(NotificationType.ERROR, this.errors));
         } else {
             this.element.classList.remove("error");
             this.input.classList.remove("error");
@@ -280,28 +390,45 @@ const _TextField = {
             this.filterChoice(this.getValue());
         }
     },
+    /**
+     * Filters the list of choice using a query
+     * @param {string} query 
+     */
     filterChoice(query) {
+        if (isNullOrWhitespace(query)) {
+            return;
+        }
+
         const { children } = this.choice;
+
         for (let i = 0; i < children.length; i++) {
             const item = children[i];
             const { value } = item.dataset;
 
-            var parts = query.trim().replace(/\s+/g, " ").split(' ');
-            var match = parts.some(q => value.includes(q));
+            let parts = query.trim().replace(/\s+/g, " ").split(' ');
+            let match = parts.some(q => value.includes(q));
 
-            if (match) {
-                show(item);
-            } else {
-                hide(item);
-            }
+            match ? show(item) : hide(item);
         }
+
+        return true;
     },
+    /**
+     * Assigns the value of the selected item to the input
+     * @param {HTMLElement} item 
+     */
     selectChoice(item) {
-        const { value } = item.dataset;
+        if (!isHTMLElement(item)) {
+            return;
+        }
+
+        const value = getItemValue(item);
 
         this.setValue(value);
-        hide(this.choice);
         this.input.focus();
+        hide(this.choice);
+
+        return this;
     },
     /**
      * Appends an element to the field container
@@ -313,15 +440,13 @@ const _TextField = {
         }
 
         this.element.appendChild(element);
-        Object.assign(element.style, {
-            position: "absolute",
-            top: `${this.element.offsetTop + this.input.offsetHeight}px`,
-            left: `0px`,
-            minWidth: `100%`,
-        });
 
         return this;
     },
+    /**
+     * Handles the `space` command
+     * @param {HTMLElement} target 
+     */
     spaceHandler(target) {
         const candidates = this.getCandidates();
 
@@ -329,82 +454,60 @@ const _TextField = {
             throw new TypeError("Bad values");
         }
 
-        if (!isHTMLElement(this.messageElement)) {
-            this.messageElement = createI({
-                class: ["field-message", "hidden"],
-                dataset: {
-                    nature: "field-component",
-                    view: "text",
-                    id: this.id,
-                }
-            });
-            this.notification.appendChild(this.messageElement);
-        }
+        createMessageElement.call(this);
 
         removeChildren(this.messageElement);
         if (isEmpty(candidates)) {
-            this.messageElement.appendChild(
-                createSpan({ class: "notification-message" }, "Enter any text")
-            );
+            this.messageElement.appendChild(createNotificationMessage(NotificationType.INFO, "Enter any text."));
             show(this.messageElement);
         } else {
-            if (!isHTMLElement(this.choice)) {
-                this.choice = createUnorderedList({
-                    class: ["bare-list", "field--textbox__choices"],
-                    dataset: {
-                        nature: "field-component",
-                        view: "text",
-                        component: "choice",
-                        id: this.id,
-                    }
-                });
-                this.element.appendChild(this.choice);
-            }
+            createChoiceElement.call(this);
 
             const fragment = createDocFragment();
 
-            candidates.forEach(value => {
-                let item = createListItem({
-                    class: ["field--textbox__choice"],
-                    tabindex: 0,
-                    dataset: {
-                        nature: "field-component",
-                        view: "text",
-                        component: "choice-item",
-                        value: value,
-                        id: this.id,
-                    }
-                }, value);
-
-                fragment.appendChild(item);
-            });
+            candidates.forEach(value => fragment.appendChild(createChoiceItemElement.call(this, value)));
 
             removeChildren(this.choice).appendChild(fragment);
             this.filterChoice(this.getValue());
-
             show(this.choice);
+
+            this.messageElement.appendChild(createNotificationMessage(NotificationType.INFO, "Select an element from the list."));
+            show(this.messageElement);
         }
     },
+    /**
+     * Handles the `escape` command
+     * @param {HTMLElement} target 
+     */
     escapeHandler(target) {
-        this.attached.forEach(element => {
-            element.hide();
-        });
+        this.input.focus();
 
         if (this.messageElement) {
             hide(this.messageElement);
         }
+
         if (this.choice) {
             hide(this.choice);
         }
     },
+    /**
+     * Handles the `enter` command
+     * @param {HTMLElement} target 
+     */
     enterHandler(target) {
         const item = getItem.call(this, target);
+
         if (item) {
             this.selectChoice(item);
         }
     },
+    /**
+     * Handles the `backspace` command
+     * @param {HTMLElement} target 
+     */
     backspaceHandler(target) {
         const item = getItem.call(this, target);
+
         if (item) {
             this.input.focus();
         }
@@ -429,5 +532,5 @@ const _TextField = {
 
 export const TextField = Object.assign(
     Object.create(Field),
-    _TextField
+    BaseTextField
 );

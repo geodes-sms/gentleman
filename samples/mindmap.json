@@ -1,10 +1,10 @@
 {
     "mindmap": {
         "nature": "concrete",
+        "alias": "Mind map",
         "attribute": {
             "title": {
                 "target": "string",
-                "values": ["bob","alice"],
                 "projection": [
                     {
                         "type": "field",
@@ -13,22 +13,98 @@
                     }
                 ]
             },
-            "description": {
-                "target": "string",
+            "markers": {
+                "target": "set",
+                "accept": "marker",
+                "min": 1,
                 "required": false,
                 "projection": [
                     {
                         "type": "field",
-                        "view": "text",
-                        "before": {
-                            "projection": [
-                                {
-                                    "layout": {
-                                        "type": "text",
-                                        "disposition": "Description: "
+                        "view": "list",
+                        "orientation": "horizontal",
+                        "item": {
+                            "after": {
+                                "projection": [
+                                    {
+                                        "layout": {
+                                            "type": "wrap",
+                                            "style": {
+                                                "box": {
+                                                    "space": {
+                                                        "outer": {
+                                                            "right": 3
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "disposition": [
+                                                ","
+                                            ]
+                                        }
                                     }
-                                }
-                            ]
+                                ]
+                            }
+                        },
+                        "action": {
+                            "add": {
+                                "projection": [
+                                    {
+                                        "layout": {
+                                            "type": "wrap",
+                                            "style": {
+                                                "box": {
+                                                    "space": {
+                                                        "inner": {
+                                                            "top": 2,
+                                                            "left": 5,
+                                                            "bottom": 2,
+                                                            "right": 5
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "disposition": [
+                                                "Add a marker"
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            "remove": {
+                                "projection": [
+                                    {
+                                        "layout": {
+                                            "type": "wrap",
+                                            "style": {
+                                                "text": {
+                                                    "bold": 800,
+                                                    "size": 15,
+                                                    "align": "center"
+                                                },
+                                                "box": {
+                                                    "background": {
+                                                        "type": "rgb",
+                                                        "value": "#e5e5e5"
+                                                    },
+                                                    "border": {
+                                                        "radius": 2
+                                                    },
+                                                    "space": {
+                                                        "inner": {
+                                                            "left": 4,
+                                                            "right": 1
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "disposition": [
+                                                "⨉"
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
                         }
                     }
                 ]
@@ -36,56 +112,8 @@
         },
         "component": {
             "central_topic": {
-                "attribute": {
-                    "markers": {
-                        "target": "set",
-                        "accept": "marker",
-                        "min": 1,
-                        "projection": [
-                            {
-                                "type": "field",
-                                "view": "list",
-                                "orientation": "horizontal",
-                                "item": {
-                                    "after": {
-                                        "projection": [
-                                            {
-                                                "layout": {
-                                                    "type": "wrap",
-                                                    "style": {
-                                                        "box": {
-                                                            "space": {
-                                                                "outer": {
-                                                                    "right": 3
-                                                                }
-                                                            }
-                                                        }
-                                                    },
-                                                    "disposition": [
-                                                        ","
-                                                    ]
-                                                }
-                                            }
-                                        ]
-                                    }
-                                },
-                                "action": {
-                                    "add": {
-                                        "projection": [
-                                            {
-                                                "layout": {
-                                                    "type": "wrap",
-                                                    "disposition": [
-                                                        "Add a marker"
-                                                    ]
-                                                }
-                                            }
-                                        ]
-                                    }
-                                }
-                            }
-                        ]
-                    },
+                "alias": "Central topic",
+                "attribute": {    
                     "topic": {
                         "target": "central_topic"
                     }
@@ -95,8 +123,16 @@
                         "layout": {
                             "type": "stack",
                             "orientation": "vertical",
+                            "style": {
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "top": 12
+                                        }
+                                    }
+                                }
+                            },
                             "disposition": [
-                                "Markers: #markers",
                                 "#topic"
                             ]
                         }
@@ -109,7 +145,7 @@
                 "element": {
                     "heading": {
                         "layout": {
-                            "type": "text",
+                            "type": "wrap",
                             "style": {
                                 "text": {
                                     "size": 24,
@@ -127,30 +163,7 @@
                                     }
                                 }
                             },
-                            "disposition": "Mind Map"
-                        }
-                    },
-                    "identification": {
-                        "layout": {
-                            "type": "stack",
-                            "orientation": "vertical",
-                            "style": {
-                                "box": {
-                                    "border": {
-                                        "bottom": {
-                                            "size": 2,
-                                            "color": {
-                                                "type": "rgb",
-                                                "value": "#d5d5d5"
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            "disposition": [
-                                "Mind map #title",
-                                "#description"
-                            ]
+                            "disposition": ["Mind Map #title"]
                         }
                     }
                 },
@@ -159,7 +172,7 @@
                     "orientation": "vertical",
                     "disposition": [
                         "$heading",
-                        "$identification",
+                        "#markers",
                         "#central_topic:component"
                     ]
                 }
@@ -168,6 +181,7 @@
     },
     "marker": {
         "nature": "concrete",
+        "alias": "Marker",
         "attribute": {
             "symbol": {
                 "target": "string"
@@ -175,7 +189,9 @@
         },
         "projection": [
             {
-                "tags": ["editor"],
+                "tags": [
+                    "editor"
+                ],
                 "layout": {
                     "type": "wrap",
                     "disposition": [
@@ -184,7 +200,9 @@
                 }
             },
             {
-                "tags": ["choice"],
+                "tags": [
+                    "choice"
+                ],
                 "readonly": true,
                 "layout": {
                     "type": "wrap",
@@ -201,10 +219,6 @@
             "name": {
                 "target": "string"
             },
-            "details": {
-                "target": "string",
-                "required": false
-            },
             "marker": {
                 "target": "reference",
                 "accept": "marker",
@@ -215,13 +229,15 @@
     "central_topic": {
         "prototype": "topic",
         "nature": "concrete",
+        "alias": "Central topic",
         "component": {
             "main_topics": {
+                "alias": "Main topics",
                 "attribute": {
                     "topics": {
                         "target": "set",
                         "accept": "main_topic",
-                        "min": 1,
+                        "min": 0,
                         "projection": [
                             {
                                 "type": "field",
@@ -238,7 +254,8 @@
                                                     "bottom": 10
                                                 },
                                                 "outer": {
-                                                    "right": 10
+                                                    "right": 12,
+                                                    "bottom": 12
                                                 }
                                             },
                                             "border": {
@@ -334,21 +351,19 @@
                         "layout": {
                             "type": "stack",
                             "orientation": "vertical",
-                            "disposition": [
-                                {
-                                    "type": "text",
-                                    "style": {
-                                        "text": {
-                                            "bold": 700,
-                                            "color": {
-                                                "type": "rgb",
-                                                "value": "#333"
-                                            },
-                                            "size": 18
+                            "style": {
+                                "box": {
+                                    "space": {
+                                        "inner": {
+                                            "top": 12,
+                                            "right": 24,
+                                            "left": 24,
+                                            "bottom": 18
                                         }
-                                    },
-                                    "disposition": "Main topics"
-                                },
+                                    }
+                                }
+                            },
+                            "disposition": [
                                 "#topics"
                             ]
                         }
@@ -361,20 +376,59 @@
                 "layout": {
                     "type": "stack",
                     "orientation": "vertical",
+                    "style": {
+                        "box": {
+                            "border": {
+                                "size": 6,
+                                "color": {
+                                    "type": "rgb",
+                                    "value": "#5F4B8B"
+                                },
+                                "radius": 60
+                            },
+                            "overflow": "hidden"
+                        }
+                    },
                     "disposition": [
                         {
                             "type": "wrap",
                             "style": {
                                 "text": {
                                     "bold": true,
-                                    "size": 16
+                                    "size": 18,
+                                    "align": "center"
+                                },
+                                "box": {
+                                    "space": {
+                                        "inner": {
+                                            "top": 20,
+                                            "right": 15,
+                                            "left": 15,
+                                            "bottom": 20
+                                        }
+                                    },
+                                    "background": {
+                                        "type": "rgb",
+                                        "value": "#FFF5EE"
+                                    }
                                 }
                             },
                             "disposition": [
-                                "Central topic #name (#marker)"
+                                "Central topic #name"
                             ]
                         },
                         "#main_topics:component"
+                    ]
+                }
+            },
+            {
+                "tags": [
+                    "choice"
+                ],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "Central topic"
                     ]
                 }
             }
@@ -383,14 +437,15 @@
     "main_topic": {
         "prototype": "topic",
         "nature": "concrete",
+        "alias": "Main topic",
         "component": {
             "sub_topics": {
+                "alias": "Sub topics",
                 "attribute": {
                     "topics": {
                         "target": "set",
                         "accept": "sub_topic",
-                        "required": false,
-                        "min": 1,
+                        "min": 0,
                         "projection": [
                             {
                                 "type": "field",
@@ -450,21 +505,16 @@
                         "layout": {
                             "type": "stack",
                             "orientation": "vertical",
-                            "disposition": [
-                                {
-                                    "type": "text",
-                                    "style": {
-                                        "text": {
-                                            "bold": 700,
-                                            "color": {
-                                                "type": "rgb",
-                                                "value": "#333"
-                                            },
-                                            "size": 16
+                            "style": {
+                                "box": {
+                                    "space": {
+                                        "outer": {
+                                            "top": 12
                                         }
-                                    },
-                                    "disposition": "Subtopics"
-                                },
+                                    }
+                                }
+                            },
+                            "disposition": [
                                 "#topics"
                             ]
                         }
@@ -484,7 +534,7 @@
                                 }
                             },
                             "disposition": [
-                                "Main topic #name"
+                                "Main topic #name (#marker)"
                             ]
                         }
                     }
@@ -494,8 +544,18 @@
                     "orientation": "vertical",
                     "disposition": [
                         "$heading",
-                        "#details",
                         "#sub_topics:component"
+                    ]
+                }
+            },
+            {
+                "tags": [
+                    "choice"
+                ],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "Main topic"
                     ]
                 }
             }
@@ -504,8 +564,10 @@
     "sub_topic": {
         "prototype": "topic",
         "nature": "concrete",
+        "alias": "Sub topic",
         "component": {
             "sub_topics": {
+                "alias": "Sub topics",
                 "required": false,
                 "attribute": {
                     "topics": {
@@ -576,39 +638,34 @@
                     "type": "stack",
                     "orientation": "vertical",
                     "disposition": [
-                        "#name",
+                        "#name (#marker)",
                         "#sub_topics:component"
+                    ]
+                }
+            },
+            {
+                "tags": [
+                    "choice"
+                ],
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        "Subtopic"
                     ]
                 }
             }
         ]
     },
     "@root": "mindmap",
+    "@editor": {
+        "build": false,
+        "import": true,
+        "export": true
+    },
     "@config": {
-        "language": "Mind map demo",
+        "language": "Mind map model",
         "settings": {
             "autosave": true
-        },
-        "style": {
-            "attribute": {
-                "inline": true,
-                "spacing": {
-                    "before": "2px",
-                    "after": "2px"
-                }
-            },
-            "component": {
-                "inline": false,
-                "size": {
-                    "width": "FIT_CONTENT"
-                },
-                "spacing": {
-                    "before": "5px",
-                    "after": "5px"
-                },
-                "corner": {},
-                "background": "#f0f0f0"
-            }
         }
     }
 }

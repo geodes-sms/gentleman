@@ -13,136 +13,174 @@ const SymbolResolver = {
     '@': resolveScope,
 };
 
-/**
- * 
- * @param {string[]} classList 
- * @returns {HTMLElement}
- */
-function createContainer(classList) {
-    return createDiv({
-        class: ["projection-wrapper", ...classList],
-        tabindex: -1,
-        dataset: {
-            nature: "layout"
-        }
-    });
-}
 
 function stackHandler(layout) {
-    const { disposition, orientation, style } = layout;
+    const { disposition, orientation, collapsible = false, style } = layout;
 
-    var container = createDiv({
-        class: ["projection-container"],
-        tabindex: -1,
-        dataset: {
-            nature: "layout"
-        }
-    });
-    
     /** @type {HTMLElement} */
-    var btnHide = createButton({
-        class: ["btn", "btn-hide", "hidden"],
-        dataset: {
-            "action": "collapse"
-        }
-    }, "Hide");
-
-    var body = createDiv({
-        class: ["projection-wrapper", `projection-wrapper--${orientation}`],
+    const container = createDiv({
+        class: ["projection-container"],
         dataset: {
             nature: "layout"
         }
     });
 
-    btnHide.addEventListener('click', (event) => {
-        body.classList.toggle("hidden");
+    /** @type {HTMLElement} */
+    const body = createDiv({
+        class: ["projection-body", "projection-wrapper", `projection-wrapper--${orientation}`],
+        dataset: {
+            nature: "layout-section"
+        }
     });
 
+    if (collapsible) {
+        /** @type {HTMLElement} */
+        var header = createDiv({
+            class: ["projection-header", "collapsed"],
+            dataset: {
+                nature: "layout-section"
+            }
+        });
 
-    container.appendChild(btnHide);
-    container.appendChild(body);
+        /** @type {HTMLElement} */
+        var btnCollapse = createButton({
+            class: ["btn", "btn-collapse"],
+            dataset: {
+                "action": "collapse"
+            }
+        });
+
+        btnCollapse.addEventListener('click', (event) => {
+            if (body.classList.contains("collapsed")) {
+                body.classList.remove("collapsed");
+                btnCollapse.classList.remove("on");
+                header.classList.add("collapsed");
+                setTimeout(() => {
+                    body.style.removeProperty("height");
+                }, 200);
+            } else {
+                body.style.height = `${body.offsetHeight}px`;
+                btnCollapse.classList.add("on");
+                header.classList.remove("collapsed");
+                setTimeout(() => {
+                    body.classList.add("collapsed");
+                }, 20);
+            }
+        });
+
+        header.appendChild(btnCollapse);
+
+        container.appendChild(header);
+    }
 
     if (!Array.isArray(disposition) || isEmpty(disposition)) {
         throw new SyntaxError("Bad disposition");
     }
 
+    var bodyContent = createDocFragment();
+
     if (disposition.length === 1) {
-        let render = dispositionHandler.call(this, disposition[0]);
-        body.appendChild(render);
+        bodyContent.appendChild(dispositionHandler.call(this, disposition[0]));
     } else {
         for (let i = 0; i < disposition.length; i++) {
             const content = disposition[i];
             let render = dispositionHandler.call(this, content);
-            let renderElement = createDiv({
+            bodyContent.appendChild(createDiv({
                 dataset: {
                     nature: "layout-part"
                 }
-            }, render);
-            StyleHandler.call(this, renderElement, content.style);
-            body.appendChild(renderElement);
+            }, render));
         }
     }
 
+    body.appendChild(bodyContent);
+
     StyleHandler.call(this, body, style);
+
+    container.appendChild(body);
 
     return container;
 }
 
 function wrapHandler(layout) {
-    const { disposition, style } = layout;
+    const { disposition, style, collapsible = false } = layout;
 
-    var container = createDiv({
-        class: ["projection-container"],
-        tabindex: -1,
-        dataset: {
-            nature: "layout"
-        }
-    });
-    
     /** @type {HTMLElement} */
-    var btnHide = createButton({
-        class: ["btn", "btn-hide", "hidden"],
-        dataset: {
-            "action": "collapse"
-        }
-    }, "Hide");
-
-    var body = createDiv({
-        class: ["projection-wrapper"],
+    const container = createDiv({
+        class: ["projection-container"],
         dataset: {
             nature: "layout"
         }
     });
 
-    btnHide.addEventListener('click', (event) => {
-        body.classList.toggle("hidden");
+    /** @type {HTMLElement} */
+    const body = createDiv({
+        class: ["projection-body", "projection-layout", "projection-layout--wrap"],
+        dataset: {
+            nature: "layout-section"
+        }
     });
 
-    container.appendChild(btnHide);
-    container.appendChild(body);
+    if (collapsible) {
+        /** @type {HTMLElement} */
+        var header = createDiv({
+            class: ["projection-header", "collapsed"],
+            dataset: {
+                nature: "layout-section"
+            }
+        });
+
+        /** @type {HTMLElement} */
+        var btnCollapse = createButton({
+            class: ["btn", "btn-collapse"],
+            dataset: {
+                "action": "collapse"
+            }
+        });
+
+        btnCollapse.addEventListener('click', (event) => {
+            if (body.classList.contains("collapsed")) {
+                body.classList.remove("collapsed");
+                btnCollapse.classList.remove("on");
+                header.classList.add("collapsed");
+                setTimeout(() => {
+                    body.style.removeProperty("height");
+                }, 200);
+            } else {
+                body.style.height = `${body.offsetHeight}px`;
+                btnCollapse.classList.add("on");
+                header.classList.remove("collapsed");
+                setTimeout(() => {
+                    body.classList.add("collapsed");
+                }, 20);
+            }
+        });
+
+        header.appendChild(btnCollapse);
+
+        container.appendChild(header);
+    }
 
     if (!Array.isArray(disposition) || isEmpty(disposition)) {
         throw new SyntaxError("Bad disposition");
     }
 
+    var bodyContent = createDocFragment();
+
     if (disposition.length === 1) {
-        let render = dispositionHandler.call(this, disposition[0]);
-        body.appendChild(render);
+        bodyContent.appendChild(dispositionHandler.call(this, disposition[0]));
     } else {
         for (let i = 0; i < disposition.length; i++) {
             const content = disposition[i];
-            let render = dispositionHandler.call(this, content);
-            let renderElement = createDiv({
-                dataset: {
-                    nature: "layout-part"
-                }
-            }, render);
-            StyleHandler.call(this, renderElement, content.style);
-            body.appendChild(renderElement);
+            bodyContent.appendChild(dispositionHandler.call(this, content));
         }
     }
 
+    body.appendChild(bodyContent);
+
     StyleHandler.call(this, body, style);
+
+    container.appendChild(body);
 
     return container;
 }
@@ -150,7 +188,7 @@ function wrapHandler(layout) {
 function textHandler(layout) {
     const { disposition, style } = layout;
 
-    var fragment = createDocFragment();
+    const fragment = createDocFragment();
 
     if (Array.isArray(disposition)) {
         for (let i = 0; i < disposition.length; i++) {
@@ -166,6 +204,8 @@ function textHandler(layout) {
     return fragment;
 }
 
+//#region TABLE LAYOUT HANDLER
+
 const tableLayoutHandler = {
     'cross': crossTableHandler,
     'column': columnTableHandler,
@@ -173,7 +213,7 @@ const tableLayoutHandler = {
 };
 
 function tableHandler(layout) {
-    const { disposition, orientation, row, column } = layout;
+    const { disposition, orientation, style, collapsible = false, row, column } = layout;
 
     var table = createTable({
         dataset: {
@@ -305,6 +345,8 @@ function rowTableHandler(layout) {
     return fragment;
 }
 
+//#endregion
+
 function dispositionHandler(value) {
     var fragment = createDocFragment();
 
@@ -348,15 +390,6 @@ function dispositionHandler(value) {
     return fragment;
 }
 
-function fieldHandler(schema) {
-    var field = FieldManager.createField(schema, this.concept).init();
-    field.projection = this;
-
-    this.editor.registerField(field);
-
-    return field.render();
-}
-
 /**
  * 
  * @param {string} value 
@@ -371,10 +404,19 @@ function parseDisposition(value) {
     return parts;
 }
 
+function fieldHandler(schema) {
+    const field = FieldManager.createField(schema, this.concept).init();
+    field.projection = this;
+
+    this.editor.registerField(field);
+
+    return field.render();
+}
+
 /**
- * 
+ * Resolves a structure in the schema
  * @param {string} key 
- * @this {TextualProjection}
+ * @this {Projection}
  */
 function resolveStructure(key) {
     var [name, type = "attribute"] = key.split(":");
@@ -392,28 +434,36 @@ function resolveReference(key) {
 
     var element = this.getElement(name);
 
-    const { action, behaviour, constraint, layout, view } = element;
+    const { layout, view } = element;
 
     if (view) {
         return fieldHandler.call(this, element);
     } else if (layout) {
         const { type, disposition } = layout;
+
         return LayoutHandler[type].call(this, layout);
     }
+
     return LayoutHandler['text'].call(this, element);
 }
 
-function resolveScope() {
+/**
+ * Resolves a scope in the schema
+ * @param {string} scope 
+ * @this {Projection}
+ */
+function resolveScope(scope) {
 
 }
+
 
 export const LayoutHandler = {
     'stack': stackHandler,
     'wrap': wrapHandler,
     'table': tableHandler,
-    'grid': stackHandler,
+    'grid': tableHandler,
     'relative': stackHandler,
     'field': fieldHandler,
-    'template': fieldHandler,
     'text': textHandler,
+    'template': fieldHandler,
 };

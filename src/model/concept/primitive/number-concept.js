@@ -25,6 +25,7 @@ function responseHandler(code) {
 
 const _NumberConcept = {
     name: 'number',
+    nature: 'primitive',
 
     initValue(args) {
         if (isNullOrUndefined(args)) {

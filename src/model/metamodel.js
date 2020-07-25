@@ -3,6 +3,7 @@ import { deepCopy, tryResolve } from "@utils/index.js";
 import { InvalidMetaModelError } from '@exception/index.js';
 import { Model } from "./model.js";
 
+
 const KEY_ROOT = '@root';
 const KEY_CONFIG = '@config';
 const KEY_RESOURCES = '@resources';
@@ -115,12 +116,12 @@ export const MetaModel = {
         return concepts;
     },
 
-    getCompleteModelConcept(type) {
-        if (!this.isConcept(type)) {
+    getCompleteModelConcept(name) {
+        if (!this.isConcept(name)) {
             return undefined;
         }
 
-        const conceptSchema = this.getConceptSchema(type);
+        const conceptSchema = this.getConceptSchema(name);
         
         if (!hasOwn(conceptSchema, 'attribute')) {
             conceptSchema.attribute = {};
@@ -147,15 +148,21 @@ export const MetaModel = {
     }
 };
 
-function getConceptBaseSchema(baseConceptName) {
-    var prototype = baseConceptName;
+/**
+ * Gets the concept base schema
+ * @param {string} protoName 
+ */
+function getConceptBaseSchema(protoName) {
+    var prototype = protoName;
+
     const baseSchema = {
         attribute: {},
-        component: {}
+        component: {},
     };
 
     while (!isNullOrUndefined(prototype)) {
         let schema = this.schema[prototype];
+
         if (schema) {
             Object.assign(baseSchema.attribute, schema.attribute);
             Object.assign(baseSchema.component, schema.component);

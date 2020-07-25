@@ -1,11 +1,14 @@
 import {
     createDocFragment, createTable, createTableHeader, createTableBody, createTableRow,
-    createTableCell, createTableHeaderCell, removeChildren, createDiv, isHTMLElement
+    createTableCell, createTableHeaderCell, createSpan, createDiv, createI, createButton,
+    removeChildren, isHTMLElement, isDerivedOf, isEmpty, valOrDefault, hasOwn, isString,
 } from "zenkai";
-import { ProjectionManager } from "@projection/index.js";
+import { hide, show, shake } from "@utils/index.js";
+import { Concept } from "@concept/index.js";
 import { Field } from "./field.js";
 import { StyleHandler } from "./../style-handler.js";
-import { shake } from "@utils/index.js";
+import { ProjectionManager } from "./../projection.js";
+
 
 
 const addSchema = [{
@@ -37,12 +40,31 @@ const removeSchema = [{
 }];
 
 
-const _TableField = {
-    init() {
-        this.source.register(this);
-        return this;
-    },
+const NotificationType = {
+    INFO: "info",
+    ERROR: "error"
+};
 
+/**
+ * Creates a notification message
+ * @param {string} type 
+ * @param {string} message 
+ * @returns {HTMLElement}
+ */
+function createNotificationMessage(type, message) {
+    var element = createSpan({ class: ["notification-message", `notification-message--${type}`] }, message);
+
+    if (Array.isArray(message)) {
+        element.style.minWidth = `${Math.min(message[0].length * 0.5, 30)}em`;
+    } else {
+        element.style.minWidth = `${Math.min(message.length * 0.5, 30)}em`;
+    }
+
+    return element;
+}
+
+
+const BaseTableField = {
     /** @type {HTMLTableElement} */
     table: null,
     /** @type {HTMLTableSectionElement} */
@@ -51,72 +73,30 @@ const _TableField = {
     body: null,
     /** @type {HTMLTableSectionElement} */
     footer: null,
-    /** @type {*[]} */
-    errors: null,
+    /** @type {string}  */
+    caption: null,
+
+    init() {
+        this.source.register(this);
+        this.caption = this.schema.caption;
+        return this;
+    },
+
     update(message, value) {
         switch (message) {
             case "value.added":
-                var row = createTableRow({
-                    class: ["field--table-row"],
-                    tabindex: -1,
-                });
-                this.schema.body.forEach(cell => {
-                    var schema = [
-                        {
-                            "layout": {
-                                "type": "wrap",
-                                "disposition": [cell]
-                            }
-                        }
-                    ];
-
-                    var projection = ProjectionManager.createProjection(schema, value, this.editor).init();
-                    row.appendChild(createTableCell({
-                        class: ["field--table-cell"],
-                        tabindex: -1,
-                    }, [projection.render()]));
-                });
-
-                var projection = ProjectionManager.createProjection(addSchema, value, this.editor).init();
-
-                var addContainer = createTableCell({
-                    class: ["field--table-cell"],
-                    tabindex: -1,
-                }, [projection.render()]);
-
-                addContainer.addEventListener('click', () => {
-                    var element = this.createElement();
-                    if (!element) {
-                        this.editor("Element could not be created");
-                    }
-                });
-
-                row.appendChild(addContainer);
-
-                projection = ProjectionManager.createProjection(removeSchema, value, this.editor).init();
-
-                var removeContainer = createTableCell({
-                    class: ["field--table-cell"],
-                    tabindex: -1,
-                }, [projection.render()]);
-
-                removeContainer.addEventListener('click', () => {
-                    removeChildren(row);
-                    row.remove();
-                });
-
-                row.appendChild(removeContainer);
-
-                this.body.appendChild(row);
+                this.addRow(value);
 
                 break;
             default:
-                console.warn(`List Field not updated for operation '${message}'`);
+                console.warn(`The message '${message}' was not handled for table field`);
                 break;
         }
     },
 
     render() {
+        const { before = {}, table = {}, header, body, footer, after = {} } = this.schema;
+
         const fragment = createDocFragment();
 
         if (!isHTMLElement(this.element)) {
@@ -138,38 +118,287 @@ const _TableField = {
             StyleHandler(this.element, this.schema.style);
         }
 
+
+        if (!isHTMLElement(this.notification)) {
+            this.notification = createDiv({
+                class: ["field-notification"],
+                dataset: {
+                    nature: "field-component",
+                    view: "table",
+                    id: this.id,
+                }
+            });
+            fragment.appendChild(this.notification);
+        }
+
+        if (!isHTMLElement(this.statusElement)) {
+            this.statusElement = createI({
+                class: ["field-status"],
+                dataset: {
+                    nature: "field-component",
+                    view: "table",
+                    id: this.id,
+                }
+            });
+            this.notification.appendChild(this.statusElement);
+        }
+
+        if (before.projection) {
+            let projection = ProjectionManager.createProjection(before.projection, this.source, this.editor).init();
+            fragment.appendChild(projection.render());
+        }
+
         if (!isHTMLElement(this.table)) {
             this.table = createTable({
                 class: ["field--table__table"],
                 tabindex: 0,
                 dataset: {
                     nature: "field-component",
+                    view: "table",
                     id: this.id,
-                    placeholder: this.placeholder
+                    caption: this.caption
                 }
             });
 
             fragment.appendChild(this.table);
         }
 
-        this.table.appendChild(valueHandler.call(this, this.source.getElements()));
+        if (Array.isArray(header)) {
+            this.header = createTableHeader({
+                class: ["field--table-header"],
+                tabindex: 0,
+                dataset: {
+                    nature: "field-component",
+                    view: "table",
+                    id: this.id,
+                }
+            });
 
-        if (fragment.hasChildNodes) {
-            this.element.appendChild(this.table);
+            let row = createTableRow({
+                class: ["field--table-header-row"],
+                tabindex: -1,
+                dataset: {
+                    nature: "field-component",
+                    view: "table",
+                    id: this.id,
+                }
+            });
+
+            header.forEach(value => {
+                var schema = value.projection;
+
+                if (isString(value)) {
+                    schema = [{
+                        "layout": {
+                            "type": "text",
+                            "disposition": value
+                        }
+                    }];
+                }
+
+                var projection = ProjectionManager.createProjection(schema, this.source, this.editor).init();
+
+                var cell = createTableHeaderCell({
+                    class: ["field--table-header-cell"],
+                    tabindex: -1,
+                    dataset: {
+                        nature: "field-component",
+                        view: "table",
+                        id: this.id,
+                    }
+                }, projection.render());
+
+                row.appendChild(cell);
+            });
+
+            this.header.appendChild(row);
+            this.table.appendChild(this.header);
+        }
+
+        if (!isHTMLElement(this.body)) {
+            this.body = createTableBody({
+                class: ["field--table-body"],
+                dataset: {
+                    nature: "field-component",
+                    view: "table",
+                    id: this.id,
+                }
+            });
+
+            this.table.appendChild(this.body);
+        }
+
+        if (this.source.hasValue()) {
+            this.source.getValue().forEach(concept => {
+                this.addRow(concept);
+            });
+        }
+
+        if (after.projection) {
+            let projection = ProjectionManager.createProjection(after.projection, this.source, this.editor).init();
+            fragment.appendChild(projection.render());
+        }
+
+        if (fragment.hasChildNodes()) {
+            this.element.appendChild(fragment);
         }
 
         this.bindEvents();
+        this.refresh();
 
         return this.element;
     },
+    /**
+     * Verifies that the field has a changes
+     * @returns {boolean}
+     */
+    hasChanges() {
+        return false;
+    },
+    /**
+     * Verifies that the field has a value
+     * @returns {boolean}
+     */
+    hasValue() {
+        return this.table.rows.length > 0;
+    },
+    /**
+     * Gets the input value
+     * @returns {*[]}
+     */
+    getValue() {
+        return this.table.rows;
+    },
+
     focusIn() {
-        this.hasFocus = true;
+        this.focused = true;
+        this.value = this.input.textContent;
+        this.element.classList.add("active");
+
+        return this;
     },
     focusOut() {
-        this.hasFocus = false;
+        if (this.readonly) {
+            return;
+        }
+
+        if (this.hasChanges()) {
+            this.setValue(this.input.textContent);
+        }
+
+        if (this.messageElement) {
+            hide(this.messageElement);
+            removeChildren(this.messageElement);
+        }
+
+        this.element.classList.remove("active");
+
+        this.refresh();
+        this.focused = false;
+
+        return this;
+    },
+    refresh() {
+        if (this.hasChanges()) {
+            this.statusElement.classList.add("change");
+        } else {
+            this.statusElement.classList.remove("change");
+        }
+
+        removeChildren(this.statusElement);
+        if (this.hasError) {
+            this.element.classList.add("error");
+            this.statusElement.classList.add("error");
+            this.statusElement.appendChild(createNotificationMessage(NotificationType.ERROR, this.errors));
+        } else {
+            this.element.classList.remove("error");
+            this.statusElement.classList.remove("error");
+        }
     },
     createElement() {
         return this.source.createElement();
+    },
+    addRow(concept) {
+        const { body } = this.schema;
+
+        var row = createTableRow({
+            class: ["field--table-row"],
+            tabindex: -1,
+            dataset: {
+                nature: "field-component",
+                view: "table",
+                id: this.id,
+            }
+        });
+
+        body.forEach(schema => {
+            const { style, projection, layout } = schema;
+
+            var projectionSchema = null;
+
+            if (isString(schema)) {
+                projectionSchema = [
+                    {
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [schema]
+                        }
+                    }
+                ];
+            } else if (projection) {
+                projectionSchema = projection;
+            } else {
+                projectionSchema = [
+                    {
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [layout]
+                        }
+                    }
+                ];
+            }
+
+            var content = ProjectionManager.createProjection(projectionSchema, concept, this.editor).init();
+            var cell = createTableCell({
+                class: ["field--table-cell"],
+                tabindex: -1,
+            }, [content.render()]);
+            row.appendChild(cell);
+
+            StyleHandler(cell, style);
+        });
+
+        var projection = ProjectionManager.createProjection(addSchema, concept, this.editor).init();
+
+        var addContainer = createTableCell({
+            class: ["field--table-cell"],
+            tabindex: -1,
+        }, [projection.render()]);
+
+        addContainer.addEventListener('click', () => {
+            var element = this.createElement();
+            if (!element) {
+                this.editor("Element could not be created");
+            }
+        });
+
+        row.appendChild(addContainer);
+
+        projection = ProjectionManager.createProjection(removeSchema, concept, this.editor).init();
+
+        var removeContainer = createTableCell({
+            class: ["field--table-cell"],
+            tabindex: -1,
+        }, [projection.render()]);
+
+        removeContainer.addEventListener('click', () => {
+            removeChildren(row);
+            row.remove();
+        });
+
+        row.appendChild(removeContainer);
+
+        this.body.appendChild(row);
     },
     removeElement(element) {
         return this.source.removeElement(element);
@@ -198,103 +427,8 @@ const _TableField = {
     }
 };
 
-function valueHandler(values) {
-    const { editor } = this;
-    const { header, body, orientation } = this.schema;
-
-    var fragment = createDocFragment();
-
-    if (!Array.isArray(values)) {
-        return null;
-    }
-
-    if (header) {
-        this.header = createTableHeader({
-            class: ["field--table-header"],
-        });
-        let row = createTableRow({
-            class: ["field--table-header-row"],
-            tabindex: -1,
-        });
-        header.forEach(value => {
-            row.appendChild(createTableHeaderCell({
-                class: ["field--table-header-cell"],
-                tabindex: -1
-            }, value));
-        });
-
-        this.header.appendChild(row);
-        fragment.appendChild(this.header);
-    }
-
-    this.body = createTableBody({
-        class: ["field--table-body"],
-    });
-
-    values.forEach(concept => {
-        var row = createTableRow({
-            class: ["field--table-row"],
-            tabindex: -1,
-        });
-        body.forEach(cell => {
-            var schema = [
-                {
-                    "layout": {
-                        "type": "wrap",
-                        "disposition": [cell]
-                    }
-                }
-            ];
-
-            var projection = ProjectionManager.createProjection(schema, concept, editor).init();
-            row.appendChild(createTableCell({
-                class: ["field--table-cell"],
-                tabindex: -1,
-            }, [projection.render()]));
-        });
-
-
-
-        var projection = ProjectionManager.createProjection(addSchema, concept, editor).init();
-
-        var addContainer = createTableCell({
-            class: ["field--table-cell"],
-            tabindex: -1,
-        }, [projection.render()]);
-
-        addContainer.addEventListener('click', () => {
-            var element = this.createElement();
-            if (!element) {
-                this.editor("Element could not be created");
-            }
-        });
-
-        row.appendChild(addContainer);
-
-        projection = ProjectionManager.createProjection(removeSchema, concept, editor).init();
-
-        var removeContainer = createTableCell({
-            class: ["field--table-cell"],
-            tabindex: -1,
-        }, [projection.render()]);
-
-        removeContainer.addEventListener('click', () => {
-            removeChildren(row);
-            row.remove();
-        });
-
-        row.appendChild(removeContainer);
-
-        this.body.appendChild(row);
-    });
-
-    fragment.appendChild(this.body);
-
-    return fragment;
-}
-
 
 export const TableField = Object.assign(
     Object.create(Field),
-    _TableField
+    BaseTableField
 );

@@ -1,13 +1,30 @@
 import {
-    createUnorderedList, createListItem, createAnchor, createInput, createDocFragment,
-    appendChildren, removeChildren, isHTMLElement, findAncestor,
-    valOrDefault, isNullOrWhitespace,
+    createDocFragment, createUnorderedList, createListItem, createAnchor, createInput,
+    createSpan, createDiv, createI, removeChildren, isHTMLElement, findAncestor,
+    valOrDefault, isDerivedOf, isNullOrWhitespace, isNullOrUndefined, isEmpty
 } from "zenkai";
-import { show, hide } from "@utils/index.js";
+import { hide, show } from "@utils/index.js";
+import { Concept } from "@concept/index.js";
 import { Field } from "./field.js";
-import { ProjectionManager } from "@projection/index.js";
 import { StyleHandler } from "./../style-handler.js";
+import { ProjectionManager } from "./../projection.js";
 
+
+function createMessageElement() {
+    if (!isHTMLElement(this.messageElement)) {
+        this.messageElement = createI({
+            class: ["field-message", "hidden"],
+            dataset: {
+                nature: "field-component",
+                view: "choice",
+                id: this.id,
+            }
+        });
+        this.notification.appendChild(this.messageElement);
+    }
+
+    return this.messageElement;
+}
 
 function createElement() {
     var container = createAnchor({
@@ -30,6 +47,23 @@ function createElement() {
     return container;
 }
 
+/**
+ * Get the choice element
+ * @param {HTMLElement} element 
+ * @this {BaseLinkField}
+ */
+function getItem(element) {
+    return element.parentElement === this.choices ? element : findAncestor(element, (el) => el.parentElement === this.choices, 3);
+}
+
+/**
+ * Get the choice element value
+ * @param {HTMLElement} element
+ * @returns {string} 
+ */
+function getItemValue(item) {
+    return item.dataset.value;
+}
 
 function createChoice(object) {
     const { choice } = this.schema;
@@ -56,10 +90,33 @@ function createChoice(object) {
         let schema = concept.schema.projection.filter(projection => projection.tags && projection.tags.includes("choice"));
         projection = ProjectionManager.createProjection(schema, concept, this.editor).init();
     }
-    
+
     item.appendChild(projection.render());
 
     return item;
+}
+
+const NotificationType = {
+    INFO: "info",
+    ERROR: "error"
+};
+
+/**
+ * Creates a notification message
+ * @param {string} type 
+ * @param {string} message 
+ * @returns {HTMLElement}
+ */
+function createNotificationMessage(type, message) {
+    var element = createSpan({ class: ["notification-message", `notification-message--${type}`] }, message);
+
+    if (Array.isArray(message)) {
+        element.style.minWidth = `${Math.min(message[0].length * 0.5, 30)}em`;
+    } else {
+        element.style.minWidth = `${Math.min(message.length * 0.5, 30)}em`;
+    }
+
+    return element;
 }
 
 function resolveChoiceValue(choice) {
@@ -72,46 +129,107 @@ function resolveChoiceValue(choice) {
     return choice;
 }
 
+/**
+ * Resolves the value of the placeholder
+ * @returns {string}
+ */
+function resolvePlaceholder() {
+    if (this.schema.placeholder) {
+        return this.schema.placeholder;
+    }
 
-const _LinkField = {
+    if (this.source.object === "concept") {
+        return `Search for ${this.source.accept}`;
+    }
+
+    return "Search for an element";
+}
+
+
+const BaseLinkField = {
+    /** @type {string} */
+    placeholder: null,
+    /** @type {HTMLElement} */
+    input: null,
+    /** @type {HTMLElement} */
+    choices: null,
+    value: null,
+    scope: null,
+
     init() {
-        this.value = this.schema.value;
-        this.choice = this.schema.choice;
-        this.scope = this.schema.scope;
-        this.placeholder = this.schema.placeholder;
+        this.source.register(this);
+        this.placeholder = resolvePlaceholder.call(this);
 
         return this;
     },
-    value: null,
-    choice: null,
-    placeholder: null,
-    input: null,
-    choices: null,
 
     render() {
+        const { before = {}, input, after = {} } = this.schema;
+
+        const fragment = createDocFragment();
+
         if (!isHTMLElement(this.element)) {
             this.element = createElement.call(this);
             this.element.id = this.id;
 
-            this.input = createInput({
-                class: ["field--link__input"],
-                placeholder: this.placeholder ? this.placeholder : `Select ${this.source.name}`,
-                tabindex: 0,
+            StyleHandler(this.element, this.schema.style);
+        }
+
+        if (!isHTMLElement(this.notification)) {
+            this.notification = createDiv({
+                class: ["field-notification"],
                 dataset: {
                     nature: "field-component",
-                    id: this.id
+                    view: "link",
+                    id: this.id,
                 }
             });
-            this.choices = createUnorderedList({
-                class: ["bare-list", "field--link__choices", "hidden"],
-                tabindex: 0,
+            fragment.appendChild(this.notification);
+        }
+
+        if (!isHTMLElement(this.statusElement)) {
+            this.statusElement = createI({
+                class: ["field-status"],
                 dataset: {
                     nature: "field-component",
+                    view: "link",
+                    id: this.id,
+                }
+            });
+            this.notification.appendChild(this.statusElement);
+        }
+
+        if (!isHTMLElement(this.input)) {
+            this.input = createInput({
+                type: "text",
+                placeholder: this.placeholder,
+                class: ["field--link__input"],
+                dataset: {
+                    nature: "field-component",
+                    view: "link",
+                    id: this.id,
+                }
+            });
+            fragment.appendChild(this.input);
+        }
+
+        if (!isHTMLElement(this.choices)) {
+            this.choices = createUnorderedList({
+                class: ["bare-list", "field--link__choices"],
+                tabindex: -1,
+                dataset: {
+                    nature: "field-component",
+                    view: "link",
                     id: this.id
                 }
             });
 
-            appendChildren(this.element, [this.input, this.choices]);
+            fragment.appendChild(this.choices);
+        }
+
+        if (before.projection) {
+            let projection = ProjectionManager.createProjection(before.projection, this.source, this.editor).init();
+            fragment.appendChild(projection.render());
         }
 
         if (this.source.hasValue()) {
@@ -122,19 +240,161 @@ const _LinkField = {
             this.element.appendChild(projection.render());
         }
 
+        if (after.projection) {
+            let projection = ProjectionManager.createProjection(after.projection, this.source, this.editor).init();
+            fragment.appendChild(projection.render());
+        }
+
+        if (fragment.hasChildNodes()) {
+            this.element.appendChild(fragment);
+        }
+
         this.bindEvents();
+        this.refresh();
 
         return this.element;
     },
+
+    update(message, value) {
+        var projection = null;
+
+        switch (message) {
+            case "value.changed":        
+                if (this.schema.value) {
+                    projection = ProjectionManager.createProjection(this.schema.value.projection, value, this.editor).init();
+                } else {
+                    let schema = value.schema.projection.filter(projection => projection.tags && projection.tags.includes("choice"));
+                    projection = ProjectionManager.createProjection(schema, value, this.editor).init();
+                }
+
+                this.element.appendChild(projection.render());
+                this.value = value.id;
+                break;
+            default:
+                console.warn(`The message '${message}' was not handled for link field`);
+                break;
+        }
+        this.refresh();
+    },
+
+    /**
+     * Verifies that the field has a changes
+     * @returns {boolean}
+     */
+    hasChanges() {
+        return false;
+    },
+    /**
+     * Verifies that the field has a value
+     * @returns {boolean}
+     */
+    hasValue() {
+        return !isNullOrWhitespace(this.value);
+    },
+    /**
+     * Gets the input value
+     * @returns {boolean}
+     */
+    getValue() {
+        return this.selection;
+    },
+    setValue(value) {
+        var response = this.source.setValue(value);
+
+        if (!response.success) {
+            this.editor.notify(response.message);
+            this.errors.push(...response.errors);
+        } else {
+            this.errors = [];
+        }
+
+        this.value = value;
+
+        this.refresh();
+    },   
+    enable() {
+        this.input.disabled = false;
+        this.input.tabIndex = 0;
+        this.disabled = false;
+    },
+    disable() {
+        this.input.disabled = true;
+        this.input.tabIndex = -1;
+        this.disabled = true;
+    },
+    refresh() {
+        if (this.hasValue()) {
+            hide(this.input);
+            hide(this.choices);
+        } else {
+            show(this.input);
+            show(this.choices);
+        }
+
+        if (this.hasChanges()) {
+            this.statusElement.classList.add("change");
+        } else {
+            this.statusElement.classList.remove("change");
+        }
+
+        removeChildren(this.statusElement);
+        if (this.hasError) {
+            this.element.classList.add("error");
+            this.input.classList.add("error");
+            this.statusElement.classList.add("error");
+            this.statusElement.appendChild(createNotificationMessage(NotificationType.ERROR, this.errors));
+        } else {
+            this.element.classList.remove("error");
+            this.input.classList.remove("error");
+            this.statusElement.classList.remove("error");
+        }
+    },
+
     focusIn() {
         this.focused = true;
+        this.element.classList.add("active");
+
+        // const fragment = createDocFragment();
+
+        // this.source.getCandidates().forEach(concept => fragment.appendChild(createChoice.call(this, concept)));
+
+        // removeChildren(this.choices).appendChild(fragment);
     },
     focusOut() {
+        if (this.readonly) {
+            return;
+        }
+
+        if (isNullOrWhitespace(this.input.value)) {
+            this.input.value = "";
+        }
+
+        if (this.messageElement) {
+            hide(this.messageElement);
+            removeChildren(this.messageElement);
+        }
+
+        this.element.classList.remove("active");
+
+        this.refresh();
         this.focused = false;
     },
     spaceHandler() {
         removeChildren(this.choices);
-        this.source.getCandidates().forEach(value => {
+
+        createMessageElement.call(this);
+
+        removeChildren(this.messageElement);
+
+        const values = this.source.getCandidates();
+
+        if(isEmpty(values)) {
+            this.messageElement.appendChild(createNotificationMessage(NotificationType.INFO, "There are currently no valid references."));
+            show(this.messageElement);
+            return;
+        }
+        
+        values.forEach(value => {
             var choice = createChoice.call(this, value);
             this.choices.appendChild(choice);
         });
@@ -156,62 +416,104 @@ const _LinkField = {
         show(this.choices);
         this.choices.focus();
     },
+    filterChoice(query) {
+        const { children } = this.choices;
+
+        if (isNullOrWhitespace(query)) {
+            for (let i = 0; i < children.length; i++) {
+                const item = children[i];
+                show(item);
+            }
+
+            return;
+        }
+
+        for (let i = 0; i < children.length; i++) {
+            const item = children[i];
+            const { value } = item.dataset;
+
+            let parts = query.trim().replace(/\s+/g, " ").split(' ');
+            let match = parts.some(q => value.includes(q));
+
+            match ? show(item) : hide(item);
+        }
+
+        return true;
+    },
+    /**
+     * Handles the `escape` command
+     * @param {HTMLElement} target 
+     */
+    escapeHandler(target) {
+        this.input.focus();
+
+        if (this.messageElement) {
+            hide(this.messageElement);
+        }
+
+        if (this.choices) {
+            hide(this.choice);
+        }
+    },
+    /**
+     * Handles the `enter` command
+     * @param {HTMLElement} target 
+     */
+    enterHandler(target) {
+        const item = getItem.call(this, target);
+
+        if (item) {
+            this.selectChoice(item);
+        }
+    },
+    /**
+     * Assigns the value of the selected item to the input
+     * @param {HTMLElement} item 
+     */
+    selectChoice(item) {
+        if (!isHTMLElement(item)) {
+            return;
+        }
+
+        const value = getItemValue(item);
+
+        this.setValue(value);
+
+        return this;
+    },
+    /**
+     * Handles the `backspace` command
+     * @param {HTMLElement} target 
+     */
+    backspaceHandler(target) {
+        const item = getItem.call(this, target);
+
+        if (item) {
+            this.input.focus();
+        }
+    },
     bindEvents() {
-        var lastKey = -1;
-
-        const getInputValue = () => this.input.value.trim();
-        const filterDATA = (query) => this.source.getCandidates().filter(val => query.some(q => val.name.toLowerCase().includes(q.toLowerCase())));
-
         /**
          * Get the choice element
          * @param {HTMLElement} element 
          */
         const getItem = (element) => element.parentElement === this.choices ? element : findAncestor(element, (el) => el.parentElement === this.choices);
 
-        this.element.addEventListener('click', (event) => {
+        this.choices.addEventListener('click', (event) => {
             const item = getItem(event.target);
 
             if (isHTMLElement(item)) {
-                let { value } = item.dataset;
-                this.source.setValue(value);
-                let concept = this.source.getValue();
-
-                var projection = null;
-                if (this.schema.value) {
-                    projection = ProjectionManager.createProjection(this.schema.value.projection, concept, this.editor).init();
-                } else {
-                    let schema = concept.schema.projection.filter(projection => projection.tags && projection.tags.includes("choice"));
-                    projection = ProjectionManager.createProjection(schema, concept, this.editor).init();
-                }
-
-                this.element.parentElement.insertBefore(projection.render(), this.element);
-                this.value = concept;
-
-                hide(this.input);
-                hide(this.choices);
+                this.selectChoice(item);
             }
         });
 
         this.element.addEventListener('input', (event) => {
-            var fragment = createDocFragment();
-
-            if (isNullOrWhitespace(getInputValue())) {
-                this.source.getCandidates().forEach(concept => fragment.appendChild(createChoice.call(this, concept)));
-
-                hide(this.choices);
-            } else {
-                let query = getInputValue().split(' ');
-                filterDATA(query).forEach(concept => fragment.appendChild(createChoice.call(this, concept)));
-
-                show(this.choices);
-            }
-
-            removeChildren(this.choices).appendChild(fragment);
+            this.filterChoice(this.input.value);
         });
     }
 };
 
-export const LinkField = Object.assign({},
-    Field,
-    _LinkField
+export const LinkField = Object.assign(
+    Object.create(Field),
+    BaseLinkField
 );

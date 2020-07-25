@@ -3,73 +3,51 @@
     border: 1px solid #d5d5d5; border-radius: 1px;
 }
 
-.btn-hide {
-    display: none;
-}
-.projection-container {
-    
-}
-
 .projection-wrapper {
     position: relative;
     display: flex;
     flex-wrap: wrap;
-    padding-bottom: 5px;
     width: 100%;
 }
 
-.projection-wrapper--vertical {
-    flex-direction: column;
-}
 
-    .projection-wrapper--vertical [data-nature=layout-part] {
-        position: relative;
-        display: flex;
-        flex-direction: row;
-        align-items: flex-start;
-    }
-        .projection-wrapper--vertical [data-nature=layout-part]:not(:last-child) {
-            margin-bottom: 5px;
-        }
-
-.projection-wrapper--horizontal {
-    flex-direction: row;
-}
-
-    .projection-wrapper--horizontal [data-nature=layout-part] {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-    }
-        .projection-wrapper--horizontal [data-nature=layout-part]:not(:last-child) {
-            margin-right: 5px;
-        }
-
-.field-wrapper {
-    position: relative;
-    display: inline-block;
-    box-sizing: border-box;
-}
+/*
+ * General field style
+-----------------------------------------------------------------------------*/
 
 .field {
     position: relative;
-    padding: 0;
     box-sizing: border-box;
     z-index: 1;
 }
 
-    .field:hover .field-status {
+    .field:hover > .field-notification .field-status {
         opacity: 0.4;
     }
 
-    .field.active .field-status {
+    .field.active {
         opacity: 1;
-        transform: scale(1.1) translateY(-2px);
+        background-color: #fff;
+        border-radius: 5px;
     }
-    .field.active .field-message {
-        opacity: 1;
-        transform: scale(1.1) translateY(-2px);
-    }
+
+        .field.active > .field-notification .field-status {
+            opacity: 1;
+            transform: scale(1.1) translateY(-2px);
+        }
+
+        .field.active > .field-notification .field-message {
+            opacity: 1;
+            transform: scale(1.1) translateY(-2px);
+        }
+
+        .field.active .notification-message {
+            opacity: 1;
+            z-index: 1;
+        }
+        .field.active .notification-message--error {
+            background-color: #db3b1f;
+        }
 
     
     .field-notification {
@@ -82,52 +60,46 @@
         z-index: 5;
     }
 
-.field-status {
-    height: 10px; width: 10px;
-    border-radius: 50%;
-    background-color: green;
-    font-style: normal;
-    opacity: 0;
-    transition: .2s;
-}
+        .field-notification .notification-message {
+            position: absolute;
+            top: 100%; left: calc(100% + 2px);
+            display: block;
+            padding: 5px;
+            box-sizing: border-box;
+            font-size: 0.9em; font-weight: 600;
+            color: #fff;
+            border-radius: 2px;
+            box-shadow: 1px 1px 3px -1px rgba(50, 50, 50, 0.95);
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: .2s;
+            z-index: -10;
+        }
+        .field-notification .notification-message--info {
+            background-color: rgba(50, 50, 50, 0.85);
+        }
+        .field-notification .notification-message--error {
+            background-color: rgb(221, 64, 36, 0.85);
+        }
 
-    .field-status.change {
-        background-color: orange;
-        opacity: 0.8;
-    }
-
-    .field-status.error {
-        background-color: red;
-        opacity: 1;
-    }
-
-    .field-status .error-message {
-        position: absolute;
-        top: 100%; left: 100%;
-        display: block;
-        min-width: 100px;
-        padding: 5px;
-        font-size: 0.9em; font-weight: 600;
-        color: #fff;
-        border-radius: 2px;
-        background-color: rgb(221, 64, 36, 0.85);
-        transform: translateY(-50%);
+    .field-status {
+        height: 10px; width: 10px;
+        border-radius: 50%;
+        background-color: green;
+        font-style: normal;
         opacity: 0;
-        transition: .5s;
-        z-index: -10;
+        transition: .2s;
     }
 
-    .field.active .error-message {
-        opacity: 1;
-        z-index: 1;
-        background-color: #db3b1f;
-    }
+        .field-status.change {
+            background-color: orange;
+            opacity: 0.8;
+        }
 
-    .field.active .notification-message {
-        opacity: 1;
-        z-index: 1;
-    }
-
+        .field-status.error {
+            background-color: red;
+            opacity: 1;
+        } 
 
     .field-message {
         height: 10px; width: 10px;
@@ -138,23 +110,6 @@
         transition: .2s;
     }
 
-        .field-message .notification-message {
-            position: absolute;
-            top: 100%; left: calc(100% + 2px);
-            display: block;
-            min-width: 100px;
-            padding: 5px;
-            font-size: 0.9em; font-weight: 600;
-            color: #fff;
-            border-radius: 2px;
-            background-color: rgba(50, 50, 50, 0.85);
-            box-shadow: 1px 2px 2px -1px rgba(100, 100, 100, 0.95);
-            transform: translateY(-50%);
-            opacity: 0;
-            transition: .5s;
-            z-index: -10;
-        }
-
 
 /*
  * Field: Label
@@ -162,8 +117,32 @@
 
 .field--label {
     white-space: nowrap;
+    display: inline-block;
     font-size: 1em;
 }
+
+
+/*
+ * Field: Check
+-----------------------------------------------------------------------------*/
+
+.field--checkbox {
+    display: inline-block;
+}
+
+.field--checkbox__input {
+    white-space: nowrap;
+    font-size: 1em;
+}
+
+.field--checkbox__label {
+    display: flex;
+    align-items: center;
+}
+
+    .field--checkbox__label-text {
+        margin-left: 4px;
+    }
 
 /*
  * Field: Text
@@ -176,7 +155,16 @@
 }
 
 .field--textbox {
-    display: flex;
+    display: inline-block;
+    display: inline-flex;
+}
+
+.field--textbox__before {
+    width: auto;
+}
+
+.field--textbox__before + .field--textbox__input {
+    margin-left: 4px;
 }
 
 .field--textbox__input {
@@ -267,7 +255,7 @@
     font-size: 1em;
     background-color: #fff;
     box-shadow: 0 1px 2px #999;
-    z-index: 10;
+    z-index: 20;
     cursor: default;
 }
 
@@ -276,7 +264,9 @@
     box-sizing: border-box;
     font-size: 0.9em;
 }
-    .field--choice__choice:hover {
+    .field--textbox__choice:hover,
+    .field--textbox__choice:focus,
+    .field--textbox__choice:active {
         background-color: #ffd300;
     }
 
@@ -286,16 +276,21 @@
 
 .field--list {
     position: relative;
+    box-sizing: border-box;
+}
+
+.field--list__list {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     align-items: stretch;    
     width: 100%;
 }
-    .field--list.vertical { flex-direction: column; }
+    .field--list__list.vertical { flex-direction: column; }
 
-    .field--list.horizontal { flex-direction: row; }
+    .field--list__list.horizontal { flex-direction: row; }
 
-    .field--list.active > .field--list-item {
+    .field--list__list.active > .field--list-item {
         padding: 5px;
         box-shadow: 1px 2px 1px #c0c0c0;
     }
@@ -322,6 +317,15 @@
             box-shadow: 7px -5px 0 rgb(0, 102, 255);
         }
 
+    .field--list-item .btn-remove {
+        position: absolute;
+        bottom: 100%; right: 1px;
+        display: none;
+        font-size: 0.9em;
+        font-weight: 600;
+        z-index: 10;
+    }
+
 
 /*
  * Field: Table
@@ -333,7 +337,7 @@
 
     .field--table-cell {
         position: relative;
-        padding: 2px 1%;
+        box-sizing: border-box;
     }
 
 
@@ -350,8 +354,47 @@
 }
 
     .field--choice__input {
-        font-size: 1.4rem;
+        padding: 2px 5px 1px;
+        font-size: 1em;
+        border-style: solid; border-radius: 1px;
+        overflow: hidden;
+        outline: none;
+        z-index: 5;
     }
+
+    .field--choice__input.error {
+        background-color: rgba(191, 25, 50, 0.2)!important;
+        border-color: #DD4124!important;
+    }
+
+    .field--choice__input:empty {
+        max-width: 150px;
+        white-space: nowrap;
+        font-size: 0.9em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .field--choice__input:empty:not(:focus) {
+        box-shadow: 0 -1px 2px -1px #c0c0c0;
+    }
+    .field--choice__input:not(:empty) {
+        background-color: #f5f5f5;
+        border-color: #555;
+        font-size: 1em;
+    }
+        .field--choice__input:not(:empty):focus {
+            background-color: #fefefe;
+        }
+    .field--choice__input:focus {
+        border-width: 1px; border-radius: 2px;
+    }
+        .field--choice__input:not(:focus) {
+            border-width: 0 0 2px;
+        }
+            .field--choice__input:not(:focus):hover {
+                box-shadow: 0 -1px 2px #c0c0c0;
+            }
+    
 
     .field--choice__choices {
         position: relative;
@@ -367,7 +410,9 @@
         box-sizing: border-box;
         font-size: 0.9em;
     }
-        .field--choice__choice:hover {
+        .field--choice__choice:hover,
+        .field--choice__choice:focus,
+        .field--choice__choice:active {
             background-color: #ffd300;
         }
 
@@ -397,6 +442,8 @@
         box-sizing: border-box;
         font-size: 0.9em;
     }
-        .field--link__choice:hover {
+        .field--link__choice:hover,
+        .field--link__choice:focus,
+        .field--link__choice:active {
             background-color: #ffd300;
         }
