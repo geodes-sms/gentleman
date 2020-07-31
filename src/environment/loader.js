@@ -67,7 +67,6 @@ export const Loader = {
 
             return metamodel;
         } catch (error) {
-            console.error(error);
             this.context.display(error.toString());
 
             return;

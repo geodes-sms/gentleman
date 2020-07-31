@@ -1,13 +1,15 @@
 import {
     createSpan, createDiv, createParagraph, createButton,
-    getElement, isHTMLElement, isNullOrWhitespace, isNullOrUndefined,
+    getElement, isHTMLElement, isNullOrWhitespace, isNullOrUndefined, removeChildren, createInput,
 } from "zenkai";
 import { Builder, Editor } from './index.js';
 import { Explorer } from "./explorer.js";
+import { Loader } from "./loader.js";
 
 
-const METAMODEL_GENTLEMAN = require('@samples/gentleman.json');
-const METAMODEL_RELIS = require('@samples/relis.json');
+// const METAMODEL_GENTLEMAN = require('@samples/gentleman.json');
+// const METAMODEL_MINDMAP = require('@samples/mindmap.json');
+// const METAMODEL_RELIS = require('@samples/relis.json');
 
 const builders = [];
 const editors = [];
@@ -53,6 +55,14 @@ export const Manager = {
                 class: ["home-content-title", "font-gentleman"]
             }, "Gentleman")
         ]);
+
+
+        var input = createInput({
+            type: "file",
+            class: ["loader-option__input", "hidden"],
+            accept: '.json'
+        });
+
         /** @type {HTMLElement} */
         const homeContainer = createDiv({
             class: ["home-container"]
@@ -66,18 +76,44 @@ export const Manager = {
             createSpan({
                 class: ["btn-home__help"]
             }, "Create a new Model instance"),
+            input,
         ]);
 
         homeContainer.addEventListener('click', (event) => {
             const target = event.target;
 
-            if (target === btnCreateMetaModel) {
-                let editor = this.createEditor();
-                editor.init(METAMODEL_GENTLEMAN);
-            }
-            if (target === btnCreateModel) {
-                this.init(METAMODEL_RELIS);
-            }
+            // if (target === btnCreateMetaModel) {
+            //     const metamodel = Loader.loadMetaModel(METAMODEL_GENTLEMAN);
+            //     const model = metamodel.createModel().init();
+
+            //     const Editor = this.getEditor().init(metamodel, model).open();
+            //     removeChildren(homeContainer);
+            //     homeContainer.remove();
+            // }
+            // if (target === btnCreateModel) {
+            //     let event = new MouseEvent('click', {
+            //         view: window,
+            //         bubbles: true,
+            //         cancelable: true,
+            //     });
+    
+            //     input.dispatchEvent(event);
+            // }
+        });
+
+        input.addEventListener('change', (event) => {
+            var file = input.files[0];
+
+            var reader = new FileReader();
+            reader.onload = (e) => {
+                const metamodel = Loader.loadMetaModel(JSON.parse(reader.result));
+                const model = metamodel.createModel().init();
+
+                const Editor = this.getEditor().init(metamodel, model).open();
+                removeChildren(homeContainer);
+                homeContainer.remove();
+            };
+            reader.readAsText(file);
         });
 
         this.container.appendChild(homeContainer);

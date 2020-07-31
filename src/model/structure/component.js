@@ -1,4 +1,4 @@
-import { isNullOrUndefined } from "zenkai";
+import { isNullOrUndefined, valOrDefault } from "zenkai";
 import { BaseStructure } from "./structure.js";
 import { AttributeHandler } from "./attribute-handler.js";
 import { ObserverHandler } from "./observer-handler.js";
@@ -31,6 +31,21 @@ const BaseComponent = {
 
         return this;
     },
+    /**
+     * Gets the reference name (attribute) or initial name
+     * @returns {string}
+     */
+    getName() {
+        return valOrDefault(this.refname, this.name);
+    },
+    /**
+     * Gets the alias or the name
+     * @returns {string}
+     */
+    getAlias() {
+        return valOrDefault(this.alias, this.getName());
+    },
+
     canDelete() {
         return !this.required;
     },

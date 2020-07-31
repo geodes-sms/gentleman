@@ -180,38 +180,10 @@
         ]
     },
     "marker": {
-        "nature": "concrete",
+        "nature": "derivative",
+        "base": "string",
         "alias": "Marker",
-        "attribute": {
-            "symbol": {
-                "target": "string"
-            }
-        },
-        "projection": [
-            {
-                "tags": [
-                    "editor"
-                ],
-                "layout": {
-                    "type": "wrap",
-                    "disposition": [
-                        "#symbol"
-                    ]
-                }
-            },
-            {
-                "tags": [
-                    "choice"
-                ],
-                "readonly": true,
-                "layout": {
-                    "type": "wrap",
-                    "disposition": [
-                        "Symbol #symbol"
-                    ]
-                }
-            }
-        ]
+        "max": 2
     },
     "topic": {
         "nature": "prototype",
@@ -222,7 +194,32 @@
             "marker": {
                 "target": "reference",
                 "accept": "marker",
-                "required": false
+                "required": false,
+                "projection": [
+                    {
+                        "type": "field",
+                        "view": "link",
+                        "placeholder": "Select a marker",
+                        "value": {
+                            "projection": [
+                                {
+                                    "readonly": true,
+                                    "type": "field",
+                                    "view": "text"
+                                }
+                            ]
+                        },
+                        "choice": {
+                            "projection": [
+                                {
+                                    "readonly": true,
+                                    "type": "field",
+                                    "view": "text"
+                                }
+                            ]
+                        }
+                    }
+                ]
             }
         }
     },
@@ -230,6 +227,11 @@
         "prototype": "topic",
         "nature": "concrete",
         "alias": "Central topic",
+        "attribute": {
+            "description": {
+                "target": "string"
+            }
+        },
         "component": {
             "main_topics": {
                 "alias": "Main topics",
@@ -384,15 +386,17 @@
                                     "type": "rgb",
                                     "value": "#5F4B8B"
                                 },
-                                "radius": 60
+                                "radius": 20
                             },
                             "overflow": "hidden"
                         }
                     },
                     "disposition": [
                         {
-                            "type": "wrap",
+                            "type": "stack",
+                            "orientation": "vertical",
                             "style": {
+                                "css": "central_topic",
                                 "text": {
                                     "bold": true,
                                     "size": 18,
@@ -414,7 +418,8 @@
                                 }
                             },
                             "disposition": [
-                                "Central topic #name"
+                                "Central topic #name",
+                                "#description"
                             ]
                         },
                         "#main_topics:component"

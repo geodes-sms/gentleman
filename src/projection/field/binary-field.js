@@ -5,8 +5,8 @@ import {
 import { hide, show } from "@utils/index.js";
 import { Concept } from "@concept/index.js";
 import { Field } from "./field.js";
-import { StyleHandler } from "./../style-handler.js";
-import { ProjectionManager } from "./../projection.js";
+import { StyleHandler } from "../style-handler.js";
+import { ProjectionManager } from "../projection.js";
 
 
 /**
@@ -20,7 +20,7 @@ function createFieldElement(id) {
         tabindex: -1,
         dataset: {
             nature: "field",
-            view: "check",
+            view: "binary",
             id: id,
         }
     });
@@ -37,7 +37,7 @@ function createFieldNotificationElement(id) {
         class: ["field-notification"],
         dataset: {
             nature: "field-component",
-            view: "check",
+            view: "binary",
             id: id,
         }
     });
@@ -54,7 +54,7 @@ function createFieldStatusElement(id) {
         class: ["field-status"],
         dataset: {
             nature: "field-component",
-            view: "check",
+            view: "binary",
             id: id,
         }
     });
@@ -74,7 +74,7 @@ function createFieldInput(id) {
         tabindex: 0,
         dataset: {
             nature: "field-component",
-            view: "check",
+            view: "binary",
             id: id,
         }
     });
@@ -135,7 +135,7 @@ function resolveLabel() {
     return "";
 }
 
-const BaseCheckField = {
+const BaseBinaryField = {
     /** @type {HTMLInputElement} */
     input: null,
     /** @type {boolean} */
@@ -207,10 +207,9 @@ const BaseCheckField = {
                 } else {
                     labelText = createSpan({
                         class: ["field--checkbox__label-text"],
-                        tabindex: 0,
                         dataset: {
                             nature: "field-component",
-                            view: "check",
+                            view: "binary",
                             id: this.id,
                         }
                     }, value || this.label);
@@ -218,10 +217,9 @@ const BaseCheckField = {
 
                 let labelElement = createLabel({
                     class: ["field--checkbox__label"],
-                    tabindex: 0,
                     dataset: {
                         nature: "field-component",
-                        view: "check",
+                        view: "binary",
                         id: this.id,
                     }
                 }, [this.input, labelText]);
@@ -413,7 +411,7 @@ const BaseCheckField = {
 };
 
 
-export const CheckField = Object.assign(
+export const BinaryField = Object.assign(
     Object.create(Field),
-    BaseCheckField
+    BaseBinaryField
 );

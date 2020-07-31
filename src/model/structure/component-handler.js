@@ -1,4 +1,7 @@
-import { isNullOrUndefined, valOrDefault, hasOwn, isNullOrWhitespace, isEmpty } from "zenkai";
+import { 
+    isNullOrUndefined, valOrDefault, hasOwn, isNullOrWhitespace,
+    cloneObject, isEmpty 
+} from "zenkai";
 import { Component } from "./component.js";
 
 
@@ -34,6 +37,22 @@ export const ComponentHandler = {
         }
 
         return this.getComponentByName(query);
+    },
+    /**
+     * Returns a component schema for the given component name
+     * @param {string} name 
+     * @returns {Attribute}
+     */
+    getComponentSchema(name) {
+        if (isNullOrWhitespace(name)) {
+            throw new TypeError("Bad argument");
+        }
+
+        if (!this.hasComponent(name)) {
+            throw new Error(`Component '${name}' does not exist`);
+        }
+
+        return cloneObject(this.componentSchema[name]);
     },
     /**
      * Returns a component with the given name
@@ -191,7 +210,7 @@ export const ComponentHandler = {
             };
         }
 
-        var removedComponent = this.components.splice(index, 1);
+        var removedComponent = this.components.splice(index, 1)[0];
         this.components._created.delete(name);
 
         this.notify("component.removed", removedComponent);

@@ -32,7 +32,7 @@ const DefaultSchema = {
         projection: [
             {
                 type: "field",
-                view: "check"
+                view: "binary"
             }
         ]
     },

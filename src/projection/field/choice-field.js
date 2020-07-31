@@ -47,6 +47,7 @@ function createChoice(choice) {
 
     const defSchema = choice.schema.projection.filter(p => p.tags && p.tags.includes("choice"));
     const projectionSchema = valOrDefault(projection, defSchema);
+    
     var choiceProjection = ProjectionManager.createProjection(projectionSchema, this.source, this.editor).init();
     container.appendChild(choiceProjection.render());
 
@@ -308,7 +309,6 @@ const BaseChoiceField = {
         this.element.classList.add("active");
     },
     focusOut() {
-        console.log("FOCUS OUT");
         if (this.readonly) {
             return;
         }
@@ -358,7 +358,6 @@ const BaseChoiceField = {
 
         removeChildren(this.statusElement);
         if (this.hasError) {
-            console.log(this.errors);
             this.element.classList.add("error");
             this.input.classList.add("error");
             this.statusElement.classList.add("error");

@@ -1,106 +1,11 @@
 import {
     createSpan, createDiv, createDocFragment, createTable, createTableRow, createTableCell,
-    isNode, isNullOrWhitespace, isObject, isString, hasOwn, isEmpty, createButton
+    isNode, isNullOrWhitespace, isObject, isString, hasOwn, isEmpty, createButton, isIterable
 } from "zenkai";
-import { StructureHandler } from './structure-handler.js';
+
 import { StyleHandler } from './style-handler.js';
 import { FieldManager } from "./field-manager.js";
 
-
-const SymbolResolver = {
-    '#': resolveStructure,
-    '$': resolveReference,
-    '@': resolveScope,
-};
-
-
-function stackHandler(layout) {
-    const { disposition, orientation, collapsible = false, style } = layout;
-
-    /** @type {HTMLElement} */
-    const container = createDiv({
-        class: ["projection-container"],
-        dataset: {
-            nature: "layout"
-        }
-    });
-
-    /** @type {HTMLElement} */
-    const body = createDiv({
-        class: ["projection-body", "projection-wrapper", `projection-wrapper--${orientation}`],
-        dataset: {
-            nature: "layout-section"
-        }
-    });
-
-    if (collapsible) {
-        /** @type {HTMLElement} */
-        var header = createDiv({
-            class: ["projection-header", "collapsed"],
-            dataset: {
-                nature: "layout-section"
-            }
-        });
-
-        /** @type {HTMLElement} */
-        var btnCollapse = createButton({
-            class: ["btn", "btn-collapse"],
-            dataset: {
-                "action": "collapse"
-            }
-        });
-
-        btnCollapse.addEventListener('click', (event) => {
-            if (body.classList.contains("collapsed")) {
-                body.classList.remove("collapsed");
-                btnCollapse.classList.remove("on");
-                header.classList.add("collapsed");
-                setTimeout(() => {
-                    body.style.removeProperty("height");
-                }, 200);
-            } else {
-                body.style.height = `${body.offsetHeight}px`;
-                btnCollapse.classList.add("on");
-                header.classList.remove("collapsed");
-                setTimeout(() => {
-                    body.classList.add("collapsed");
-                }, 20);
-            }
-        });
-
-        header.appendChild(btnCollapse);
-
-        container.appendChild(header);
-    }
-
-    if (!Array.isArray(disposition) || isEmpty(disposition)) {
-        throw new SyntaxError("Bad disposition");
-    }
-
-    var bodyContent = createDocFragment();
-
-    if (disposition.length === 1) {
-        bodyContent.appendChild(dispositionHandler.call(this, disposition[0]));
-    } else {
-        for (let i = 0; i < disposition.length; i++) {
-            const content = disposition[i];
-            let render = dispositionHandler.call(this, content);
-            bodyContent.appendChild(createDiv({
-                dataset: {
-                    nature: "layout-part"
-                }
-            }, render));
-        }
-    }
-
-    body.appendChild(bodyContent);
-
-    StyleHandler.call(this, body, style);
-
-    container.appendChild(body);
-
-    return container;
-}
 
 function wrapHandler(layout) {
     const { disposition, style, collapsible = false } = layout;
@@ -183,25 +88,6 @@ function wrapHandler(layout) {
     container.appendChild(body);
 
     return container;
-}
-
-function textHandler(layout) {
-    const { disposition, style } = layout;
-
-    const fragment = createDocFragment();
-
-    if (Array.isArray(disposition)) {
-        for (let i = 0; i < disposition.length; i++) {
-            const content = disposition[i];
-            fragment.appendChild(dispositionHandler.call(this, content));
-        }
-    } else {
-        fragment.appendChild(dispositionHandler.call(this, disposition));
-    }
-
-    StyleHandler.call(this, fragment.firstElementChild, style);
-
-    return fragment;
 }
 
 //#region TABLE LAYOUT HANDLER
@@ -347,63 +233,6 @@ function rowTableHandler(layout) {
 
 //#endregion
 
-function dispositionHandler(value) {
-    var fragment = createDocFragment();
-
-    if (hasOwn(LayoutHandler, value.type)) {
-        return LayoutHandler[value.type].call(this, value);
-    }
-
-    var parts = parseDisposition(value);
-
-    var textBuffer = "";
-
-    const addText = () => {
-        if (!isNullOrWhitespace(textBuffer)) {
-            var tag = createSpan({
-                class: ["field", "field--label"],
-            }, textBuffer.trim());
-            fragment.appendChild(tag);
-            textBuffer = "";
-        }
-    };
-
-    const addContent = (content) => {
-        if (isNode(content)) {
-            fragment.appendChild(content);
-        }
-    };
-
-    for (let i = 0; i < parts.length; i++) {
-        let part = parts[i];
-        let handler = SymbolResolver[part.charAt(0)];
-        if (handler) {
-            addText();
-            addContent(handler.call(this, part.substring(1)));
-        } else {
-            textBuffer += " " + parts[i];
-        }
-    }
-
-    addText();
-
-    return fragment;
-}
-
-/**
- * 
- * @param {string} value 
- */
-function parseDisposition(value) {
-    var parts = value.replace(/\s+/g, " ")
-        .replace(/(#\w+(:\w+)?(@\w+)?)/g, " $1 ")
-        .replace(/(\$\w+(:\w+)?(@\w+)?)/g, " $1 ")
-        .split(" ")
-        .filter((x) => !isNullOrWhitespace(x));
-
-    return parts;
-}
-
 function fieldHandler(schema) {
     const field = FieldManager.createField(schema, this.concept).init();
     field.projection = this;
@@ -413,57 +242,11 @@ function fieldHandler(schema) {
     return field.render();
 }
 
-/**
- * Resolves a structure in the schema
- * @param {string} key 
- * @this {Projection}
- */
-function resolveStructure(key) {
-    var [name, type = "attribute"] = key.split(":");
-
-    return StructureHandler[type].call(this, name);
-}
-
-/**
- * Resolves a reference in the schema
- * @param {string} key 
- * @this {Projection}
- */
-function resolveReference(key) {
-    var [name, from] = key.split(":");
-
-    var element = this.getElement(name);
-
-    const { layout, view } = element;
-
-    if (view) {
-        return fieldHandler.call(this, element);
-    } else if (layout) {
-        const { type, disposition } = layout;
-
-        return LayoutHandler[type].call(this, layout);
-    }
-
-    return LayoutHandler['text'].call(this, element);
-}
-
-/**
- * Resolves a scope in the schema
- * @param {string} scope 
- * @this {Projection}
- */
-function resolveScope(scope) {
-
-}
-
 
 export const LayoutHandler = {
-    'stack': stackHandler,
     'wrap': wrapHandler,
     'table': tableHandler,
     'grid': tableHandler,
-    'relative': stackHandler,
     'field': fieldHandler,
-    'text': textHandler,
     'template': fieldHandler,
 };

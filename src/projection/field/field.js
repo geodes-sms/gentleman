@@ -96,16 +96,8 @@ const BaseField = {
         
         if (result.success) {
             this.clear();
-            removeChildren(this.element);
-            /** @type {HTMLElement} */
-            let option = createI({
-                class: ["attribute--optional"],
-                dataset: {
-                    object: "attribute",
-                    id: this.source.refname
-                }
-            }, this.source.refname);
-            this.element.replaceWith(option);
+            this.source.unregister(this);
+            this.element.remove();
         } else {
             this.editor.notify(result.message);
             shake(this.element);

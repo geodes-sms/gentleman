@@ -1,31 +1,38 @@
 import {
     createDocFragment, createSpan, createDiv, createI, createUnorderedList,
     createListItem, findAncestor, isHTMLElement, removeChildren, isNullOrUndefined,
-    isDerivedOf, isEmpty, valOrDefault, createButton, hasOwn,
+    valOrDefault, createButton, hasOwn,
 } from "zenkai";
 import { hide, show, shake } from "@utils/index.js";
 import { Concept } from "@concept/index.js";
 import { Field } from "./field.js";
 import { StyleHandler } from "./../style-handler.js";
 import { ProjectionManager } from "./../projection.js";
+import { LayoutFactory } from "./../layout/factory.js";
 
 
 const actionDefaultSchema = {
     add: {
-        projection: [{
-            layout: {
-                "type": "wrap",
-                "disposition": ["Add an element"]
-            }
-        }]
+        layout: {
+            "type": "wrap",
+            "disposition": [
+                {
+                    "type": "text",
+                    "content": "Add"
+                }
+            ]
+        }
     },
     remove: {
-        projection: [{
-            layout: {
-                "type": "wrap",
-                "disposition": ["Remove"]
-            }
-        }]
+        layout: {
+            "type": "wrap",
+            "disposition": [
+                {
+                    "type": "text",
+                    "content": "Remove"
+                }
+            ]
+        }
     }
 };
 
@@ -69,12 +76,13 @@ function createListFieldItem(object) {
         }
     });
 
-    const { projection: removeProjectionSchema } = actionSchema.remove;
-
-    var btnRemoveProjection = ProjectionManager.createProjection(removeProjectionSchema, object, this.editor).init();
+    const { layout: removeLayout } = actionSchema.remove;
+    
+    var btnRemoveProjection = LayoutFactory.createLayout(removeLayout, this.projection).init();
 
     var btnRemove = createButton({
         class: ["btn", "btn-remove"],
+        tabindex: -1,
         dataset: {
             nature: "field-component",
             view: "list",
@@ -299,9 +307,10 @@ const BaseListField = {
 
         const actionSchema = Object.assign({}, actionDefaultSchema, valOrDefault(this.schema.action, {}));
 
-        var { projection: projectionSchema, position = "last" } = actionSchema.add;
+        var { layout: addLayout, position = "last" } = actionSchema.add;
+        console.log(actionSchema);
 
-        var addProjection = ProjectionManager.createProjection(projectionSchema, this.source, this.editor).init();
+        var addProjection = LayoutFactory.createLayout(addLayout, this.projection).init();
 
         const createAdd = ["first", "last"].includes(position) ? createListItem : createDiv;
 
@@ -328,6 +337,7 @@ const BaseListField = {
 
                 break;
             case "after":
+                console.log("after");
                 this.list.after(addElement);
                 break;
             default:
@@ -430,12 +440,7 @@ const BaseListField = {
     addItem(value) {
         var item = createListFieldItem.call(this, value);
 
-        if (this.selection) {
-            console.log(item);
-            this.selection.before(item);
-        } else {
-            this.list.appendChild(item);
-        }
+        this.list.appendChild(item);
     },
     removeItem(value) {
         let item = this.getItem(value.id);
@@ -516,7 +521,7 @@ const BaseListField = {
 
         const getItem = (element) => isValid(element) ? element : findAncestor(element, (el) => isValid(el), 5);
 
-        this.list.addEventListener('click', (event) => {
+        this.element.addEventListener('click', (event) => {
             const item = getItem(event.target);
 
             if (item) {

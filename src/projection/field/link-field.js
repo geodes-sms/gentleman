@@ -27,10 +27,9 @@ function createMessageElement() {
 }
 
 function createElement() {
-    var container = createAnchor({
+    var container = createDiv({
         class: ["field", "field--link", "empty"],
-        tabindex: 0,
-        editable: true,
+        tabindex: -1,
         dataset: {
             nature: "field",
             view: "link",

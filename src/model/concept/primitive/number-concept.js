@@ -5,7 +5,9 @@ import { Concept } from "./../concept.js";
 const ResponseCode = {
     SUCCESS: 200,
     INVALID_NUMBER: 400,
-    INVALID_VALUE: 401
+    INVALID_VALUE: 401,
+    MIN_ERROR: 402,
+    MAX_ERROR: 403,
 };
 
 function responseHandler(code) {
@@ -20,6 +22,16 @@ function responseHandler(code) {
                 success: false,
                 message: "The value is not included in the list of valid values."
             };
+        case ResponseCode.MAX_ERROR:
+            return {
+                success: false,
+                message: `The value is greater than the maximum allowed: ${this.max}.`
+            };
+        case ResponseCode.MIN_ERROR:
+            return {
+                success: false,
+                message: `The value is less than the minimum allowed: ${this.min}.`
+            };
     }
 }
 
@@ -29,10 +41,10 @@ const _NumberConcept = {
 
     initValue(args) {
         if (isNullOrUndefined(args)) {
-            this.value =  "";
+            this.value = "";
             return this;
         }
-        
+
         if (isObject(args)) {
             this.id = args.id;
             this.setValue(args.value);
@@ -56,7 +68,7 @@ const _NumberConcept = {
                 success: false,
                 message: "Validation failed: The value could not be updated.",
                 errors: [
-                    responseHandler(result).message
+                    responseHandler.call(this, result).message
                 ]
             };
         }
@@ -93,6 +105,10 @@ const _NumberConcept = {
             return ResponseCode.INVALID_NUMBER;
         }
 
+        if(this.max && value > this.max) {
+            return ResponseCode.MAX_ERROR;
+        }
+
         if (isNullOrWhitespace(value) || isEmpty(this.values)) {
             return ResponseCode.SUCCESS;
         }
@@ -106,7 +122,7 @@ const _NumberConcept = {
                 found = val == value;
             }
         }
-        
+
         if (!found) {
             return ResponseCode.INVALID_VALUE;
         }

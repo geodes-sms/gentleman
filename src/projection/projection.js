@@ -1,11 +1,10 @@
 import {
-    createButton, appendChildren, removeChildren, createI, getElement,
-    insertAfterElement, insertBeforeElement, isNode, isHTMLElement,
-    isNullOrUndefined, hasOwn, valOrDefault,
+    createButton, appendChildren, removeChildren, insertAfterElement, insertBeforeElement,
+    isNode, isHTMLElement, isNullOrUndefined, hasOwn, valOrDefault, isEmpty,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
-import { LayoutHandler } from "./layout-handler";
 import { FieldManager } from "./field-manager.js";
+import { LayoutFactory } from "./layout/index.js";
 
 
 var inc = 0;
@@ -34,18 +33,35 @@ export const ProjectionManager = {
      * @param {string|number} id 
      */
     getProjection(id) {
-        return projections[id];
+        if (Number.isInteger(id)) {
+            return projections[id];
+        }
+
+        return projections.find(p => p.id === id);
     },
     changeProjection() {
 
+    },
+    removeProjection(id) {
+        var index = projections.findIndex(p => p.id === id);
+
+        if (index === -1) {
+            return false;
+        }
+
+        projections.splice(index, 1);
+
+        return true;
     }
 };
 
-export const Projection = {
+const Projection = {
     init() {
         this.containers = [];
         this.attributes = [];
         this.components = [];
+
+        this.concept.register(this);
 
         return this;
     },
@@ -58,8 +74,6 @@ export const Projection = {
     parent: null,
     /** @type {HTMLElement[]} */
     containers: null,
-    /** @type {HTMLElement} */
-    container: null,
     /** @type {string[]} */
     attributes: null,
     /** @type {string[]} */
@@ -95,10 +109,10 @@ export const Projection = {
 
         removeChildren(this.container);
         if (isHTMLElement(this.container)) {
-            let handler = LayoutHandler[this.concept.reftype];
-            var renderContent = handler.call(this.concept.getParent().projection, this.concept.refname);
-            parent.replaceChild(renderContent, this.container);
-            this.container = renderContent;
+            // let handler = LayoutHandler[this.concept.reftype];
+            // var renderContent = handler.call(this.concept.getParent().projection, this.concept.refname);
+            // parent.replaceChild(renderContent, this.container);
+            // this.container = renderContent;
         }
 
         this.concept.unregister(this);
@@ -111,28 +125,21 @@ export const Projection = {
      * @param {*} value 
      */
     update(message, value) {
+        console.log(message);
+        if (isEmpty(this.containers)) {
+            return;
+        }
+
         if (message === "delete") {
             this.concept.unregister(this);
-            removeChildren(this.container);
-
-            const {reftype, refname, parent} = this.concept;
-
-            /** @type {HTMLElement} */
-            let option = createI({
-                class: ["projection-element", "projection-element--optional"],
-                dataset: {
-                    object: reftype,
-                    id: refname
-                },
-            }, `Add ${refname}`);
-
-            option.addEventListener('click', (event) => {
-                const { id } = event.target.dataset;
-
-                parent.createAttribute(id);
+            this.concept = null;
+            
+            this.containers.forEach(container => {
+                removeChildren(container);
+                container.remove();
             });
-
-            this.container.replaceWith(option);
+            
+            ProjectionManager.removeProjection(this.id);
 
             return;
         }
@@ -143,35 +150,45 @@ export const Projection = {
         }
 
         const [type, action] = message.split('.');
+        var structure = null;
 
-        if (type === "attribute" && !this.attributes.includes(value.name)) {
-            // console.warn("Attribute not found in projection");
-            return;
+        if (type === "attribute") {
+            structure = this.attributes.find((attr) => attr.name === value.name);
         }
-        if (type === "component" && !this.components.includes(value.name)) {
-            // console.warn("Component not found in projection", this.components);
+        if (type === "component") {
+            console.log(value);
+            structure = this.components.find((comp) => comp.name === value.name);
+        }
+        if (isNullOrUndefined(structure)) {
+            console.warn(`${type} not found in projection`);
             return;
         }
 
         const target = type === "attribute" ? value.target : value;
 
-        var temp = getElement(`[data-id=${value.name}]`, this.container);
-
-        if (!isHTMLElement(temp)) {
-            this.editor.notify(`This ${type} cannot be rendered`);
-
-            return;
-        }
-
         switch (action) {
             case "added":
                 var projection = ProjectionManager.createProjection(target.schema.projection, target, this.editor).init();
                 projection.parent = this;
-                temp.replaceWith(projection.render());
-                projection.container.classList.add("optional");
-                temp.remove();
+
+                var render = projection.render();
+                var btnDelete = createButton({
+                    class: ["btn", "btn-delete"],
+                }, "Delete");
+                btnDelete.addEventListener('click', (e) => {
+                    target.delete();
+                });
+                render.prepend(btnDelete);
+                structure.element = render;
+                structure.optional.after(render);
+
+                hide(structure.optional);
+
                 break;
             case "removed":
+                structure.element = null;
+
+                show(structure.optional);
 
                 break;
             default:
@@ -184,103 +201,114 @@ export const Projection = {
     render() {
         const schema = this.getSchema();
 
-        const { action, behaviour, constraint, element, layout, view } = schema;
+        const { type, element, style, constraint } = schema;
 
-        // if (isHTMLElement(this.containers[this.index])) {
-        //     this.container = this.containers[this.index];
-        //     show(this.container);
-        //     appendChildren(this.container, [this.btnNext, this.btnPrev]);
-
-        //     return this.container;
-        // }
-
+        /** @type {HTMLElement} */
         var container = null;
 
-        if (view) {
+        if (type === "layout") {
+            let layout = LayoutFactory.createLayout(schema.layout, this).init();
+
+            container = layout.render();
+        } else if (type === "field") {
             let field = FieldManager.createField(schema, this.concept).init();
             field.projection = this;
 
             this.editor.registerField(field);
 
             container = field.render();
-        } else {
-            const { type, disposition } = layout;
-
-            container = LayoutHandler[type].call(this, layout);
-
-            if (this.schema.length > 1) {
-                if (!isHTMLElement(this.btnPrev)) {
-                    this.btnPrev = createButton({
-                        type: "button",
-                        class: ["btn", "btn-projection", "btn-projection--previous", "hidden"],
-                        disabled: this.index <= 0,
-                        dataset: {
-                            context: "projection",
-                            action: "previous"
-                        }
-                    }, "Previous Projection");
-                }
-
-                if (!isHTMLElement(this.btnNext)) {
-                    this.btnNext = createButton({
-                        type: "button",
-                        class: ["btn", "btn-projection", "btn-projection--next", "hidden"],
-                        disabled: this.index >= this.schema.length - 1,
-                        dataset: {
-                            context: "projection",
-                            action: "next"
-                        }
-                    }, "Next Projection");
-                }
-
-                container.addEventListener('click', (event) => {
-                    var target = event.target;
-                    var previousContainer = this.container;
-                    var container = null;
-
-                    hide(previousContainer);
-                    if (target === this.btnPrev) {
-                        this.index -= 1;
-                        container = this.render();
-                        insertBeforeElement(previousContainer, container);
-
-                    } else if (target === this.btnNext) {
-                        this.index += 1;
-                        container = this.render();
-                        insertAfterElement(previousContainer, container);
-                    }
-                    show(this.container);
-
-                    this.btnPrev.disabled = this.index <= 0;
-                    this.btnNext.disabled = this.index >= this.schema.length - 1;
-                });
-
-                appendChildren(container, [this.btnNext, this.btnPrev]);
-            }
-
-            if (this.concept) {
-                const { id, object, name } = this.concept;
-                if (!["string", "set", "number", "reference"].includes(name)) {
-                    Object.assign(container.dataset, {
-                        object: object,
-                        id: id,
-                        name: name,
-                    });
-                }
-            }
         }
 
         if (!isNode(container)) {
             throw new Error("Projection element container could not be created");
         }
 
-        this.containers.push(container);
-        this.container = container;
+        container.tabIndex = -1;
+        Object.assign(container.dataset, {
+            "projection": this.id,
+            "object": this.concept.object
+        });
 
-        if (this.concept) {
-            this.concept.register(this);
+        this.containers.push(container);
+
+        return container;
+    },
+    changeView(index) {
+        if (this.schema.length < 2) {
+            this.editor.notify("There is no alternative projection for this concept");
+            return;
         }
 
-        return this.container;
+        var currentContainer = this.containers[this.index];
+
+        this.index = valOrDefault(index, (this.index + 1) % this.schema.length);
+        var container = this.containers[this.index];
+
+        if (!container) {
+            container = this.render();
+        }
+
+        currentContainer.classList.remove("fade-in");
+        currentContainer.classList.add("swap-left");
+
+        setTimeout(() => {
+            currentContainer.replaceWith(container);
+            currentContainer.classList.remove("swap-left");
+            container.classList.add("fade-in");
+            container.focus();
+        }, 800);
+
+        return this;
+    },
+    bindEvents() {
+        if (this.schema.length > 1) {
+            if (!isHTMLElement(this.btnPrev)) {
+                this.btnPrev = createButton({
+                    type: "button",
+                    class: ["btn", "btn-projection", "btn-projection--previous", "hidden"],
+                    disabled: this.index <= 0,
+                    dataset: {
+                        context: "projection",
+                        action: "previous"
+                    }
+                }, "Previous Projection");
+            }
+
+            if (!isHTMLElement(this.btnNext)) {
+                this.btnNext = createButton({
+                    type: "button",
+                    class: ["btn", "btn-projection", "btn-projection--next", "hidden"],
+                    disabled: this.index >= this.schema.length - 1,
+                    dataset: {
+                        context: "projection",
+                        action: "next"
+                    }
+                }, "Next Projection");
+            }
+
+            this.container.addEventListener('click', (event) => {
+                var target = event.target;
+                var previousContainer = this.container;
+                var container = null;
+
+                hide(previousContainer);
+                if (target === this.btnPrev) {
+                    this.index -= 1;
+                    container = this.render();
+                    insertBeforeElement(previousContainer, container);
+
+                } else if (target === this.btnNext) {
+                    this.index += 1;
+                    container = this.render();
+                    insertAfterElement(previousContainer, container);
+                }
+                show(this.container);
+
+                this.btnPrev.disabled = this.index <= 0;
+                this.btnNext.disabled = this.index >= this.schema.length - 1;
+            });
+
+            appendChildren(this.container, [this.btnNext, this.btnPrev]);
+        }
     }
 };

@@ -1,8 +1,9 @@
 import {
     createDocFragment, createDiv, createH2, createUnorderedList, createListItem,
     createParagraph, createButton, createHeader, createAnchor, createInput, createSpan,
-    getElement, getElements, appendChildren, removeChildren, isHTMLElement,
-    isNullOrWhitespace, isNullOrUndefined, isNull, copytoClipboard, cloneObject, valOrDefault, isEmpty,
+    getElement, getElements, appendChildren, removeChildren, isHTMLElement, hasOwn,
+    isNullOrWhitespace, isNullOrUndefined, isNull, copytoClipboard, cloneObject,
+    valOrDefault, isEmpty, createI, findAncestor,
 } from 'zenkai';
 import { Events, hide, show, Key } from '@utils/index.js';
 import { MetaModel, Model } from '@model/index.js';
@@ -219,10 +220,12 @@ export const Editor = {
 
         var bb = new Blob([this.model.build()], { type: MIME_TYPE });
         Object.assign(link, {
-            download: `demo.json`,
+            download: `phone_book.json`,
             href: window.URL.createObjectURL(bb),
         });
-        console.log(link);
+
+        this.notify("The model has been successfully built. Please download the metamodel.");
+
         link.dataset.downloadurl = [MIME_TYPE, link.download, link.href].join(':');
         link.click();
 
@@ -361,7 +364,7 @@ export const Editor = {
         if (!isHTMLElement(this.btnExport)) {
             this.btnExport = createButton({
                 id: "btnExportModel",
-                class: ["btn", "btn-export", "hidden"],
+                class: ["btn", "btn-export"],
                 draggable: true,
                 dataset: {
                     "context": "model",
@@ -375,7 +378,7 @@ export const Editor = {
         if (!isHTMLElement(this.btnImport)) {
             this.btnImport = createButton({
                 id: "btnImportModel",
-                class: ["btn", "btn-import", "hidden"],
+                class: ["btn", "btn-import"],
                 draggable: true,
                 dataset: {
                     "context": "model",
@@ -386,10 +389,10 @@ export const Editor = {
             fragment.appendChild(this.btnImport);
         }
 
-        if (!isHTMLElement(this.btnBuild)) {
+        if (!isHTMLElement(this.btnBuild) && this.metamodel.schema["@editor"].build) {
             this.btnBuild = createButton({
                 id: "btnBuildModel",
-                class: ["btn", "btn-build", "hidden"],
+                class: ["btn", "btn-build"],
                 draggable: true,
                 dataset: {
                     "context": "model",
@@ -452,7 +455,7 @@ export const Editor = {
         conceptSelectorContent.appendChild(conceptSelectorHandler(this.concept, this.activeConcept));
 
         conceptSelectorContent.addEventListener('click', (event) => {
-            console.log("SHOW LIST OF CONCEPT");
+            // console.log("SHOW LIST OF CONCEPT");
         });
 
         removeChildren(this.conceptSelector).appendChild(conceptSelectorContent);
@@ -470,25 +473,11 @@ export const Editor = {
     updateActiveElement(element) {
         if (this.activeElement && this.activeElement !== element) {
             this.activeElement.classList.remove('active');
-
-            const { id } = this.activeElement.dataset;
-            let elements = getElements(`[data-id='${id}']`, this.container);
-            elements.forEach(el => {
-                el.classList.remove('active');
-            });
         }
+
         this.activeElement = element;
 
-        const { id, object } = element.dataset;
-        if (['concept', 'component'].includes(object)) {
-            let elements = getElements(`[data-id='${id}']`, this.container);
-            elements.forEach(el => {
-                el.classList.add('active');
-            });
-        } else {
-            this.activeElement.classList.add('active');
-        }
-
+        this.activeElement.classList.add('active');
 
         return this;
     },
@@ -541,11 +530,6 @@ export const Editor = {
         this.container.addEventListener('click', (event) => {
             var target = event.target;
             var object = target.dataset['object'];
-            if (isNull(this.activeField)) {
-                if (['concept', 'component'].includes(object)) {
-                    this.updateActiveElement(target);
-                }
-            }
 
             if (target.dataset.action === "close") {
                 this.close();
@@ -556,8 +540,21 @@ export const Editor = {
             // TODO: Give element main focus    
         });
 
+        /**
+         * Get the choice element
+         * @param {HTMLElement} element 
+         */
+        function getProjection(element) {
+            if (hasOwn(element.dataset, 'projection')) {
+                return element;
+            }
+            return findAncestor(element, (el) => hasOwn(el.dataset, 'projection'));
+        }
+
         this.body.addEventListener('keydown', (event) => {
             const { target } = event;
+
+            var projectionElement = getProjection(target);
 
             var rememberKey = false;
 
@@ -574,6 +571,12 @@ export const Editor = {
                 case Key.delete:
                     break;
                 case Key.alt:
+                    event.preventDefault();
+                    if (projectionElement) {
+                        const { projection: id } = projectionElement.dataset;
+                        let projection = ProjectionManager.getProjection(id);
+                        projection.changeView();
+                    }
                     rememberKey = true;
                     break;
                 case Key.enter:
@@ -675,8 +678,6 @@ export const Editor = {
 
             const { nature } = target.dataset;
 
-            console.warn(target);
-
             var handler = focusinHandler[nature];
             if (handler) {
                 handler.call(this, target);
@@ -686,6 +687,13 @@ export const Editor = {
                 }
                 this.activeField = null;
             }
+
+            // update active element (projection)
+            let parentProjection = getProjection(target);
+            if (parentProjection) {
+                this.updateActiveElement(parentProjection);
+            }
+
         });
 
         const focusinHandler = {
@@ -708,12 +716,6 @@ export const Editor = {
             this.activeField = field;
             this.activeField.focusIn();
 
-            // update active element (projection)
-            let parentProjection = this.activeField.projection.parent;
-            if (parentProjection) {
-                this.updateActiveElement(parentProjection.container);
-            }
-
             // update active concept
             let conceptParent = this.activeField.source.getParent();
             if (conceptParent) {
@@ -735,7 +737,124 @@ export const Editor = {
             }
 
             var reader = new FileReader();
-            reader.onload = (e) => this.loader.loadMetaModel(JSON.parse(reader.result));
+            // reader.onload = (e) => this.loader.loadMetaModel(JSON.parse(reader.result));
+            reader.onload = (e) => this.loader.loadMetaModel({
+                "directory": {
+                    "nature": "concrete",
+                    "attribute": {
+                        "subscribers": {
+                            "target": "set",
+                            "accept": "subscriber",
+                            "required": true,
+                            "projection": [
+                                {
+                                    "type": "field",
+                                    "view": "table",
+                                    "orientation": "column",
+                                    "header": [
+                                        {
+                                            "projection": [
+                                                {
+                                                    "layout": {
+                                                        "type": "wrap",
+                                                        "style": {
+                                                            "box": {
+                                                                "space": {
+                                                                    "inner": {
+                                                                        "top": 2,
+                                                                        "right": 5,
+                                                                        "left": 5,
+                                                                        "bottom": 2
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        "disposition": [
+                                                            "Name"
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "projection": [
+                                                {
+                                                    "layout": {
+                                                        "type": "wrap",
+                                                        "style": {
+                                                            "box": {
+                                                                "space": {
+                                                                    "inner": {
+                                                                        "top": 2,
+                                                                        "right": 5,
+                                                                        "left": 5,
+                                                                        "bottom": 2
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        "disposition": [
+                                                            "Phone number"
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                    ],
+                                    "body": [
+                                        "#name",
+                                        "#phone",
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    "component": {},
+                    "projection": [
+                        {
+                            "layout": {
+                                "type": "stack",
+                                "orientation": "vertical",
+                                "disposition": [
+                                    "List of subscribers",
+                                    "#subscribers"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "subscriber": {
+                    "nature": "concrete",
+                    "attribute": {
+                        "name": {
+                            "target": "string",
+                            "alias": "Full name"
+                        },
+                        "phone": {
+                            "target": "string",
+                            "alias": "Phone number"
+                        }
+                    },
+                    "component": {},
+                    "projection": [{
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontally",
+                            "disposition": [
+                                "#name",
+                                "#phone"
+                            ]
+                        }
+                    }]
+                },
+                "@root": "directory",
+                "@config": {
+                    "language": "Phone Book",
+                    "settings": {
+                        "autosave": true
+                    }
+                }
+            });
             reader.readAsText(file);
         });
 
@@ -744,9 +863,11 @@ export const Editor = {
             this.notify("Export has been copied to clipboard");
         });
 
-        this.btnBuild.addEventListener('click', (event) => {
-            this.build();
-        });
+        if (this.btnBuild) {
+            this.btnBuild.addEventListener('click', (event) => {
+                this.build();
+            });
+        }
 
         var dragElement = null;
 
@@ -812,13 +933,33 @@ function conceptSelectorHandler(rootConcept, activeConcept) {
             "active": `${valOrDefault(refname, name)}`,
         };
 
+        const fragment = createDocFragment();
+
+        if (type === "active") {
+            fragment.appendChild(createI({
+                class: [`selector-concept-nature`]
+            }, name));
+        }
+
+        /** @type {HTMLElement} */
+        var content = createSpan({
+            class: ["selector-concept-content"],
+        }, typeHandler[type]);
+
+        fragment.appendChild(content);
+
+        if (type === "ancestor") {
+            content.classList.add("fit-content");
+        }
+
+
         /** @type {HTMLElement} */
         var item = createListItem({
             class: ["selector-concept", `selector-concept--${type}`],
             dataset: {
                 object: object
             }
-        }, typeHandler[type]);
+        }, fragment);
 
         if (source) {
             item.classList.add("source");
@@ -860,26 +1001,26 @@ function conceptSelectorHandler(rootConcept, activeConcept) {
 
         if (!isEmpty(ancestor)) {
             ancestor = ancestor.reverse();
-            // let ancestorItem = createListItem({
-            //     class: ["selector-concept", `selector-concept--ancestor`, "source", "collapse"]
-            // });
-
-            // let list = createUnorderedList({
-            //     class: ["bare-list", "selector-ancestor-concepts"]
-            // });
-            // ancestor.forEach(concept => {
-            //     list.appendChild(createListItem({
-            //         class: ["selector-ancestor-concept", "hidden"],
-            //     }, concept.name));
-            // });
-
-            // ancestorItem.appendChild(list);
-
-            // fragment.appendChild(ancestorItem);
-
-            ancestor.forEach(concept => {
-                fragment.appendChild(createSelectorItem("ancestor", concept, true));
+            let ancestorItem = createListItem({
+                class: ["selector-concept", `selector-concept--ancestor`, "source", "collapse"]
             });
+
+            let list = createUnorderedList({
+                class: ["bare-list", "selector-ancestor-concepts"]
+            });
+            ancestor.forEach(concept => {
+                list.appendChild(createListItem({
+                    class: ["selector-ancestor-concept", "fit-content"],
+                }, concept.name));
+            });
+
+            ancestorItem.appendChild(list);
+
+            fragment.appendChild(ancestorItem);
+
+            // ancestor.forEach(concept => {
+            //     fragment.appendChild(createSelectorItem("ancestor", concept, true));
+            // });
         }
 
         fragment.appendChild(parentItem);

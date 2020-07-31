@@ -6,5 +6,6 @@ import '@css/field.css';
 import '@css/effect.css';
 import '@css/loader.css';
 import '@css/editor.css';
+import '@css/home.css';
 import '@css/explorer.css';
 import '@css/builder.css';

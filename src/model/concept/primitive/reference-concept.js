@@ -83,8 +83,6 @@ const _ReferenceConcept = {
 
         var candidates = resolveAccept.call(this, this.accept);
 
-        console.log(candidates);
-
         var values = candidates.map((candidate) => ({
             type: "concept",
             value: candidate

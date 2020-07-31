@@ -69,7 +69,8 @@ const _Concept = {
         this.values = valOrDefault(args.values, valOrDefault(this.schema.values, []));
         this.alias = valOrDefault(args.alias, this.schema.alias);
         this.description = valOrDefault(args.description, this.schema.description);
-        this.min = valOrDefault(args.min, 1);
+        this.min = valOrDefault(args.min, valOrDefault(this.schema.min, 1));
+        this.max = valOrDefault(args.max, this.schema.max);
 
         if (args.projection) {
             this.schema.projection = args.projection;
@@ -211,7 +212,6 @@ const _Concept = {
                 }
             });
             this.getComponents().forEach(comp => {
-                console.log(comp);
                 children.push(...comp.getChildren(name));
             });
         }

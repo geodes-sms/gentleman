@@ -1,4 +1,4 @@
-import { isNullOrUndefined, isEmpty, valOrDefault, hasOwn, isNullOrWhitespace } from "zenkai";
+import { isNullOrUndefined, isEmpty, valOrDefault, hasOwn, isNullOrWhitespace, cloneObject } from "zenkai";
 import { Attribute } from "./attribute";
 
 
@@ -33,6 +33,22 @@ export const AttributeHandler = {
         }
 
         return this.getAttributeByName(query);
+    },
+    /**
+     * Returns an attribute with the given name
+     * @param {string} name 
+     * @returns {Attribute}
+     */
+    getAttributeSchema(name) {
+        if (isNullOrWhitespace(name)) {
+            throw new TypeError("Bad argument");
+        }
+
+        if (!this.hasAttribute(name)) {
+            throw new Error(`Attribute '${name}' does not exist`);
+        }
+
+        return cloneObject(this.attributeSchema[name]);
     },
     /**
      * Returns an attribute with the given name
@@ -191,7 +207,7 @@ export const AttributeHandler = {
             };
         }
 
-        var removedAttribute = this.attributes.splice(index, 1);
+        var removedAttribute = this.attributes.splice(index, 1)[0];
         this.attributes._created.delete(name);
 
         this.notify("attribute.removed", removedAttribute);

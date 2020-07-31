@@ -158,55 +158,55 @@ export const Model = {
 
         var concepts = {};
 
-        setConcepts.filter(concept => concept.hasValue()).forEach(proto => {
-            const concept = proto.getValue();
-            const structure = concept.getComponentByName('concept_structure');
+        // setConcepts.filter(concept => concept.hasValue()).forEach(proto => {
+        //     const concept = proto.getValue();
+        //     const structure = concept.getComponentByName('concept_structure');
 
-            const name = getName(concept);
+        //     const name = getName(concept);
 
-            var attributes = [];
-            if (structure.isAttributeCreated('attributes')) {
-                attributes = getAttr(structure, 'attributes').getValue();
-            }
+        //     var attributes = [];
+        //     if (structure.isAttributeCreated('attributes')) {
+        //         attributes = getAttr(structure, 'attributes').getValue();
+        //     }
 
-            var components = [];
-            if (structure.isAttributeCreated('components')) {
-                components = getAttr(structure, 'components').getValue();
-            }
+        //     var components = [];
+        //     if (structure.isAttributeCreated('components')) {
+        //         components = getAttr(structure, 'components').getValue();
+        //     }
 
-            if (concept.name === "concrete_concept") {
-                let projections = [];
-                if (concept.isAttributeCreated('projections')) {
-                    projections = getAttr(concept, 'projections').getValue();
-                }
+        //     if (concept.name === "concrete_concept") {
+        //         let projections = [];
+        //         if (concept.isAttributeCreated('projections')) {
+        //             projections = getAttr(concept, 'projections').getValue();
+        //         }
 
-                let schema = {
-                    "nature": "concrete",
-                    "attribute": buildAttribute(attributes),
-                    "component": buildComponent(components),
-                    "projection": buildProjection(projections),
-                };
+        //         let schema = {
+        //             "nature": "concrete",
+        //             "attribute": buildAttribute(attributes),
+        //             "component": buildComponent(components),
+        //             "projection": buildProjection(projections),
+        //         };
 
-                if (concept.isAttributeCreated("prototype")) {
-                    let prototype = getAttr(concept, 'prototype').getValue();
-                    schema.prototype = getAttr(prototype, 'name').getValue().toLowerCase();
-                }
+        //         if (concept.isAttributeCreated("prototype")) {
+        //             let prototype = getAttr(concept, 'prototype').getValue();
+        //             schema.prototype = getAttr(prototype, 'name').getValue().toLowerCase();
+        //         }
 
-                Object.assign(concepts, {
-                    [name]: schema
-                });
-            } else if (concept.name === "prototype_concept") {
-                let schema = {
-                    "nature": "prototype",
-                    "attribute": buildAttribute(attributes),
-                    "component": buildComponent(components),
-                };
+        //         Object.assign(concepts, {
+        //             [name]: schema
+        //         });
+        //     } else if (concept.name === "prototype_concept") {
+        //         let schema = {
+        //             "nature": "prototype",
+        //             "attribute": buildAttribute(attributes),
+        //             "component": buildComponent(components),
+        //         };
 
-                Object.assign(concepts, {
-                    [name]: schema
-                });
-            }
-        });
+        //         Object.assign(concepts, {
+        //             [name]: schema
+        //         });
+        //     }
+        // });
 
         let rootConcept = getAttr(this.root, 'root').getValue();
         return JSON.stringify(Object.assign(concepts, {
@@ -441,7 +441,7 @@ function buildField(field) {
         if (field.isAttributeCreated("label")) {
             schema.label = getAttr(field, 'label').getValue();
         }
-        schema.view = "check";
+        schema.view = "binary";
     }
     else if (field.name === "choice_field") {
         schema.view = "choice";

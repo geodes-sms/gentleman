@@ -8,7 +8,7 @@ import { Concept } from "@concept/index.js";
 import { Field } from "./field.js";
 import { StyleHandler } from "./../style-handler.js";
 import { ProjectionManager } from "./../projection.js";
-
+import { contentHandler } from "./../content-handler.js";
 
 
 const addSchema = [{
@@ -79,6 +79,9 @@ const BaseTableField = {
     init() {
         this.source.register(this);
         this.caption = this.schema.caption;
+        this.template = this.source.getCandidates().projection
+            .filter(p => p.type === "template" && p.template === "table")[0];
+
         return this;
     },
 
@@ -95,7 +98,7 @@ const BaseTableField = {
     },
 
     render() {
-        const { before = {}, table = {}, header, body, footer, after = {} } = this.schema;
+        const { before = {}, table = {}, header, footer, after = {} } = this.template;
 
         const fragment = createDocFragment();
 
@@ -117,7 +120,6 @@ const BaseTableField = {
 
             StyleHandler(this.element, this.schema.style);
         }
-
 
         if (!isHTMLElement(this.notification)) {
             this.notification = createDiv({
@@ -166,7 +168,6 @@ const BaseTableField = {
         if (Array.isArray(header)) {
             this.header = createTableHeader({
                 class: ["field--table-header"],
-                tabindex: 0,
                 dataset: {
                     nature: "field-component",
                     view: "table",
@@ -185,18 +186,9 @@ const BaseTableField = {
             });
 
             header.forEach(value => {
-                var schema = value.projection;
+                var { style, content } = value;
 
-                if (isString(value)) {
-                    schema = [{
-                        "layout": {
-                            "type": "text",
-                            "disposition": value
-                        }
-                    }];
-                }
-
-                var projection = ProjectionManager.createProjection(schema, this.source, this.editor).init();
+                var render = contentHandler.call(this, content);
 
                 var cell = createTableHeaderCell({
                     class: ["field--table-header-cell"],
@@ -206,7 +198,7 @@ const BaseTableField = {
                         view: "table",
                         id: this.id,
                     }
-                }, projection.render());
+                }, render);
 
                 row.appendChild(cell);
             });
@@ -319,7 +311,7 @@ const BaseTableField = {
         return this.source.createElement();
     },
     addRow(concept) {
-        const { body } = this.schema;
+        const { body } = this.template;
 
         var row = createTableRow({
             class: ["field--table-row"],
@@ -332,71 +324,54 @@ const BaseTableField = {
         });
 
         body.forEach(schema => {
-            const { style, projection, layout } = schema;
+            const { style, content } = schema;
 
-            var projectionSchema = null;
+            var render = contentHandler.call(this, content, concept);
 
-            if (isString(schema)) {
-                projectionSchema = [
-                    {
-                        "layout": {
-                            "type": "wrap",
-                            "disposition": [schema]
-                        }
-                    }
-                ];
-            } else if (projection) {
-                projectionSchema = projection;
-            } else {
-                projectionSchema = [
-                    {
-                        "layout": {
-                            "type": "wrap",
-                            "disposition": [layout]
-                        }
-                    }
-                ];
-            }
-
-            var content = ProjectionManager.createProjection(projectionSchema, concept, this.editor).init();
-            var cell = createTableCell({
+            var cell = createTableHeaderCell({
                 class: ["field--table-cell"],
                 tabindex: -1,
-            }, [content.render()]);
-            row.appendChild(cell);
+                dataset: {
+                    nature: "field-component",
+                    view: "table",
+                    id: this.id,
+                }
+            }, render);
 
             StyleHandler(cell, style);
+
+            row.appendChild(cell);
         });
 
-        var projection = ProjectionManager.createProjection(addSchema, concept, this.editor).init();
+        // var projection = ProjectionManager.createProjection(addSchema, concept, this.editor).init();
 
-        var addContainer = createTableCell({
-            class: ["field--table-cell"],
-            tabindex: -1,
-        }, [projection.render()]);
+        // var addContainer = createTableCell({
+        //     class: ["field--table-cell"],
+        //     tabindex: -1,
+        // }, [projection.render()]);
 
-        addContainer.addEventListener('click', () => {
-            var element = this.createElement();
-            if (!element) {
-                this.editor("Element could not be created");
-            }
-        });
+        // addContainer.addEventListener('click', () => {
+        //     var element = this.createElement();
+        //     if (!element) {
+        //         this.editor("Element could not be created");
+        //     }
+        // });
 
-        row.appendChild(addContainer);
+        // row.appendChild(addContainer);
 
-        projection = ProjectionManager.createProjection(removeSchema, concept, this.editor).init();
+        // projection = ProjectionManager.createProjection(removeSchema, concept, this.editor).init();
 
-        var removeContainer = createTableCell({
-            class: ["field--table-cell"],
-            tabindex: -1,
-        }, [projection.render()]);
+        // var removeContainer = createTableCell({
+        //     class: ["field--table-cell"],
+        //     tabindex: -1,
+        // }, [projection.render()]);
 
-        removeContainer.addEventListener('click', () => {
-            removeChildren(row);
-            row.remove();
-        });
+        // removeContainer.addEventListener('click', () => {
+        //     removeChildren(row);
+        //     row.remove();
+        // });
 
-        row.appendChild(removeContainer);
+        // row.appendChild(removeContainer);
 
         this.body.appendChild(row);
     },

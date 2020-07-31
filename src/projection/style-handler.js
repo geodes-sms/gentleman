@@ -1,8 +1,9 @@
-import { isObject } from "zenkai";
+import { isObject, isIterable, isNullOrWhitespace } from "zenkai";
 
 const StyleMap = {
     "text": styleTextHandler,
     "box": styleBoxHandler,
+    "css": styleCSSHandler,
     "size": styleSizeHandler,
 };
 
@@ -68,6 +69,44 @@ function styleTextHandler(element, schema) {
                 break;
         }
     }
+
+    return element;
+}
+
+const formatClass = (val) => val.replace(/\s+/g, ' ').trim();
+
+/**
+ * Add class selectors to an element
+ * @param {HTMLElement} element 
+ * @param {string|string[]} value 
+ */
+function addClass(element, value) {
+    if (Array.isArray(value)) {
+        element.classList.add(...value);
+    } else {
+        let formattedValue = formatClass(value);
+
+        if (isNullOrWhitespace(element.className)) {
+            element.className = formattedValue;
+        } else {
+            addClass(element, formattedValue.split(' '));
+        }
+    }
+
+    return element;
+}
+
+/**
+ * Applies CSS style to an element
+ * @param {HTMLElement} element 
+ * @param {*} schema 
+ */
+function styleCSSHandler(element, schema) {
+    if (!isIterable(schema)) {
+        return element;
+    }
+
+    addClass(element, schema);
 
     return element;
 }

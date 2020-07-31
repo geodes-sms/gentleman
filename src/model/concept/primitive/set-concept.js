@@ -110,12 +110,12 @@ const _SetConcept = {
         return this.removeElementAt(index);
     },
     removeElementAt(index) {
-        if (this.value.length === this.min) {
-            return {
-                message: `The element could not be removed. The set needs at least ${this.min} element.`,
-                success: false,
-            };
-        }
+        // if (this.value.length === this.min) {
+        //     return {
+        //         message: `The element could not be removed. The set needs at least ${this.min} element.`,
+        //         success: false,
+        //     };
+        // }
 
         if (!Number.isInteger(index) || index < 0) {
             return {
@@ -189,6 +189,12 @@ const _SetConcept = {
         return this.value.length > this.min;
     },
 
+    getCandidates() {
+        var candidates = resolveAccept.call(this, this.accept);
+
+        return candidates;
+    },
+
     /**
      * Gets the concept parent if exist
      * @returns {Concept}
@@ -230,6 +236,14 @@ const _SetConcept = {
         return output;
     }
 };
+
+
+function resolveAccept(accept) {
+    var candidates = this.metamodel.getConceptSchema(accept);
+
+    return candidates;
+}
+
 
 
 export const SetConcept = Object.assign(

@@ -4,7 +4,9 @@ import { Concept } from "./../concept.js";
 
 const ResponseCode = {
     SUCCESS: 200,
-    INVALID_VALUE: 401
+    INVALID_VALUE: 401,
+    MINLENGTH_ERROR: 402,
+    MAXLENGTH_ERROR: 403,
 };
 
 function responseHandler(code) {
@@ -13,6 +15,16 @@ function responseHandler(code) {
             return {
                 success: false,
                 message: "The value is not included in the list of valid values."
+            };
+        case ResponseCode.MAXLENGTH_ERROR:
+            return {
+                success: false,
+                message: `The length of the value exceeds the maximum allowed: ${this.max}.`
+            };
+        case ResponseCode.MINLENGTH_ERROR:
+            return {
+                success: false,
+                message: `The length of the value is beneath the minimum allowed: ${this.min}.`
             };
     }
 }
@@ -50,7 +62,7 @@ const _StringConcept = {
                 success: false,
                 message: "Validation failed: The value could not be updated.",
                 errors: [
-                    responseHandler(result).message
+                    responseHandler.call(this, result).message
                 ]
             };
         }
@@ -84,7 +96,11 @@ const _StringConcept = {
         return true;
     },
 
-    validate(value) {
+    validate(value = "") {
+        if(this.max && value.length > this.max) {
+            return ResponseCode.MAXLENGTH_ERROR;
+        }
+
         if (isNullOrWhitespace(value) || isEmpty(this.values)) {
             return ResponseCode.SUCCESS;
         }
