@@ -82,11 +82,12 @@ export const StackLayout = {
 
         if (fragment.hasChildNodes()) {
             this.container.appendChild(fragment);
+            this.bindEvents();
         }
 
         this.container.style.display = "flex";
+        this.container.style.alignItems = "flex-start";
 
-        this.bindEvents();
         this.refresh();
 
         return this.container;

@@ -21,14 +21,13 @@
     z-index: 1;
 }
 
-    .field:hover > .field-notification .field-status {
-        opacity: 0.4;
+    .field.active {
+        z-index: 20;
+        opacity: 1;
     }
 
-    .field.active {
-        opacity: 1;
-        background-color: #fff;
-        border-radius: 5px;
+    .field:hover > .field-notification .field-status {
+        opacity: 0.4;
     }
 
         .field.active > .field-notification .field-status {
@@ -49,7 +48,7 @@
             background-color: #db3b1f;
         }
 
-    
+
     .field-notification {
         position: absolute;
         bottom: 100%; right: 0;
@@ -57,7 +56,7 @@
         justify-content: flex-end;
         min-width: 100%;
         padding-bottom: 2px;
-        z-index: 5;
+        z-index: 20;
     }
 
         .field-notification .notification-message {
@@ -76,10 +75,10 @@
             z-index: -10;
         }
         .field-notification .notification-message--info {
-            background-color: rgba(50, 50, 50, 0.85);
+            background-color: rgba(50, 50, 50, 0.95);
         }
         .field-notification .notification-message--error {
-            background-color: rgb(221, 64, 36, 0.85);
+            background-color: rgb(221, 64, 36, 0.95);
         }
 
     .field-status {
@@ -99,7 +98,7 @@
         .field-status.error {
             background-color: red;
             opacity: 1;
-        } 
+        }
 
     .field-message {
         height: 10px; width: 10px;
@@ -112,18 +111,7 @@
 
 
 /*
- * Field: Label
------------------------------------------------------------------------------*/
-
-.field--label {
-    white-space: nowrap;
-    display: inline-block;
-    font-size: 1em;
-}
-
-
-/*
- * Field: Check
+ * Field: Binary
 -----------------------------------------------------------------------------*/
 
 .field--checkbox {
@@ -170,9 +158,10 @@
 .field--textbox__input {
     display: inline-block;
     padding: 2px 5px 1px;
-    font-size: 1em;
+    font-size: 1.3em;
     border-style: solid; border-radius: 1px;
     overflow: hidden;
+    color: #333;
     outline: none;
     z-index: 5;
 }
@@ -191,11 +180,10 @@
         border-color: #ffd300;
         background-color: #fffff0;
         white-space: nowrap;
-        font-size: 0.9em;
         overflow: hidden;
         text-overflow: ellipsis;
     }
-    
+
     .field--textbox__input.readonly {
         border: none!important;
         background: transparent!important;
@@ -222,7 +210,7 @@
                 overflow: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;
-                font-size: 0.9em;
+                font-size: 1.2em;
                 color: #777;
                 transform: translate(-5px, -100%);
                 transition: transform .2s;
@@ -282,7 +270,7 @@
     position: relative;
     display: flex;
     flex-wrap: wrap;
-    align-items: stretch;    
+    align-items: stretch;
     width: 100%;
 }
     .field--list__list.vertical { flex-direction: column; }
@@ -328,6 +316,10 @@
 .field--table {
     width: 100%;
 }
+
+    .field--table__table {
+        width: 100%;
+    }
 
     .field--table-cell {
         position: relative;
@@ -387,11 +379,11 @@
             .field--choice__input:not(:focus):hover {
                 box-shadow: 0 -1px 2px #c0c0c0;
             }
-    
+
 
     .field--choice__choices {
         position: relative;
-        box-shadow: 0 1px 2px #999;
+        font-size: 10px;
         z-index: 2;
         cursor: pointer;
     }
@@ -400,13 +392,11 @@
         position: relative;
         padding: 2px 5px 3px;
         box-sizing: border-box;
-        font-size: 0.9em;
     }
-        .field--choice__choice:hover,
-        .field--choice__choice:focus,
-        .field--choice__choice:active {
-            background-color: #ffd300;
-        }
+
+    .field--choice__selection {
+        margin-top: 8px;
+    }
 
 
 /*
@@ -418,7 +408,7 @@
 }
 
     .field--link__input {
-        font-size: 1.4rem;
+        font-size: 1.3em;
     }
 
     .field--link__choices {

@@ -88,9 +88,6 @@ const _StringConcept = {
     getChildren(name) {
         return [];
     },
-    getDescendant(name) {
-        return [];
-    },
 
     update(message, value) {
         return true;

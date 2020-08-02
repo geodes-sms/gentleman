@@ -1,9 +1,18 @@
-.heading {
-
+.model-title {
+    padding-bottom: 8px;
+    border-bottom: 10px solid royalblue;
+    width: 100%;
+    font-size: 2rem;
 }
 
-.model-title {
-    font-size: 1.4em;
+.model-root {
+    align-self: center;
+    color: #fff;
+    background-color: royalblue;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    font-size: 1.4rem;
+    padding: 4px 8px 6px;
 }
 
 .model-name-option {
@@ -34,37 +43,93 @@
 
 }
 
+.model-concept-choices > .field--choice__choices {
+    display: flex;
+    flex-direction: row;
+}
+
+.model-concept-choice {
+    padding: 8px 12px;
+    margin-right: 4px;
+    background-color: #fff;
+    box-shadow: 0 1px 2px #c0c0c0;
+    transition: .2s;
+}
+    .model-concept-choice:hover,
+    .model-concept-choice:focus,
+    .model-concept-choice:active {
+        box-shadow: 0 2px 4px #999;
+        transform: scale(1.02);
+    }
+    .model-concept-choice.selected {
+        background-color: #ffd300;
+        box-shadow: 0 1px 2px -1px #555;
+    }
+
 .model-concept-list {
     display: flex;
     padding-top: 12px;
     align-items: flex-start;
 }
 
-.model-concept-list-item {
-    margin-right: 18px;
-    margin-bottom: 24px;
+    .model-concept-list-item {
+        margin-right: 18px;
+        margin-bottom: 24px;
+        background-color: #f5f5f5;
+        padding: 8px 12px;
+        border-radius: 10px;
+    }
+
+.concrete-concept {
+    border-radius: 2px;
+    box-shadow: 1px 2px 4px -1px #555;
+}
+
+    .concrete-concept-header {
+        padding: 10px 15px;
+        background-color: #d5d5d5;
+        width: 100%;
+        box-sizing: border-box;
+        color: #333;
+    }
+
+    .concrete-concept-body {
+        padding: 4px 8px;
+        background-color: #fff;
+        width: 100%;
+    }
+
+.prototype-concept {
     border-radius: 2px;
     box-shadow: 1px 2px 4px 1px #999;
 }
 
-.concrete-concept-header {
-    padding: 10px 15px;
+    .prototype-concept-header {
+        padding: 10px 15px;
+        background-color: #555;
+        width: 100%;
+        box-sizing: border-box;
+        color: #fff;
+    }
+
+    .prototype-concept-body {
+        padding: 4px 8px;
+        width: 100%;
+        background-color: #fff;
+    }
+
+    .prototype-structure {
+        width: 100%;
+    }
+
+.concept-component-list {
+    
+}
+
+.concept-component-list-item {
+    margin-right: 18px;
+    margin-bottom: 24px;
     background-color: #f0f0f0;
-    color: #333;
-}
-
-.concrete-concept-body {
-    padding: 10px 15px;
-    background-color: #fff;
-}
-
-.prototype-concept-header {
-    padding: 10px 15px;
-    background-color: #555;
-    color: #fff;
-}
-
-.prototype-concept-body {
-    padding: 10px 15px;
-    background-color: #fff;
+    padding: 8px 12px;
+    border-radius: 5px;
 }

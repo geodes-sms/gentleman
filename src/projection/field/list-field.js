@@ -308,7 +308,6 @@ const BaseListField = {
         const actionSchema = Object.assign({}, actionDefaultSchema, valOrDefault(this.schema.action, {}));
 
         var { layout: addLayout, position = "last" } = actionSchema.add;
-        console.log(actionSchema);
 
         var addProjection = LayoutFactory.createLayout(addLayout, this.projection).init();
 
@@ -337,7 +336,6 @@ const BaseListField = {
 
                 break;
             case "after":
-                console.log("after");
                 this.list.after(addElement);
                 break;
             default:
@@ -353,9 +351,9 @@ const BaseListField = {
 
         if (fragment.hasChildNodes()) {
             this.element.appendChild(fragment);
+            this.bindEvents();
         }
 
-        this.bindEvents();
         this.refresh();
 
         return this.element;
@@ -383,7 +381,7 @@ const BaseListField = {
     },
     clear() {
         this.items.clear();
-        removeChildren(this.element);
+        removeChildren(this.list);
     },
     focusIn(target) {
         this.focused = true;

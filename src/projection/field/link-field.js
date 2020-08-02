@@ -246,9 +246,9 @@ const BaseLinkField = {
 
         if (fragment.hasChildNodes()) {
             this.element.appendChild(fragment);
+            this.bindEvents();
         }
 
-        this.bindEvents();
         this.refresh();
 
         return this.element;
@@ -258,21 +258,27 @@ const BaseLinkField = {
         var projection = null;
 
         switch (message) {
-            case "value.changed":        
-                if (this.schema.value) {
-                    projection = ProjectionManager.createProjection(this.schema.value.projection, value, this.editor).init();
+            case "value.changed":
+                if (isNullOrUndefined(value)) {
+                    this.value = null;
+                    this.clear();
                 } else {
-                    let schema = value.schema.projection.filter(projection => projection.tags && projection.tags.includes("choice"));
-                    projection = ProjectionManager.createProjection(schema, value, this.editor).init();
-                }
+                    if (this.schema.value) {
+                        projection = ProjectionManager.createProjection(this.schema.value.projection, value, this.editor).init();
+                    } else {
+                        let schema = value.schema.projection.filter(projection => projection.tags && projection.tags.includes("choice"));
+                        projection = ProjectionManager.createProjection(schema, value, this.editor).init();
+                    }
 
-                this.element.appendChild(projection.render());
-                this.value = value.id;
+                    this.element.appendChild(projection.render());
+                    this.value = value.id;
+                }
                 break;
             default:
                 console.warn(`The message '${message}' was not handled for link field`);
                 break;
         }
+
         this.refresh();
     },
 
@@ -310,7 +316,7 @@ const BaseLinkField = {
         this.value = value;
 
         this.refresh();
-    },   
+    },
     enable() {
         this.input.disabled = false;
         this.input.tabIndex = 0;
@@ -320,6 +326,10 @@ const BaseLinkField = {
         this.input.disabled = true;
         this.input.tabIndex = -1;
         this.disabled = true;
+    },
+    clear() {
+        removeChildren(this.choices);
+        this.input.textContent = "";
     },
     refresh() {
         if (this.hasValue()) {
@@ -378,43 +388,6 @@ const BaseLinkField = {
         this.refresh();
         this.focused = false;
     },
-    spaceHandler() {
-        removeChildren(this.choices);
-
-        createMessageElement.call(this);
-
-        removeChildren(this.messageElement);
-
-        const values = this.source.getCandidates();
-
-        if(isEmpty(values)) {
-            this.messageElement.appendChild(createNotificationMessage(NotificationType.INFO, "There are currently no valid references."));
-            show(this.messageElement);
-            return;
-        }
-        
-        values.forEach(value => {
-            var choice = createChoice.call(this, value);
-            this.choices.appendChild(choice);
-        });
-
-        if (this.source.accept === "concept") {
-            ["string", "number", "set", "reference"].forEach(value => {
-                this.choices.appendChild(createListItem({
-                    class: ["field--link__choice"],
-                    tabindex: 0,
-                    dataset: {
-                        nature: "field-component",
-                        id: this.id,
-                        value: value
-                    }
-                }, value));
-            });
-        }
-
-        show(this.choices);
-        this.choices.focus();
-    },
     filterChoice(query) {
         const { children } = this.choices;
 
@@ -440,32 +413,6 @@ const BaseLinkField = {
         return true;
     },
     /**
-     * Handles the `escape` command
-     * @param {HTMLElement} target 
-     */
-    escapeHandler(target) {
-        this.input.focus();
-
-        if (this.messageElement) {
-            hide(this.messageElement);
-        }
-
-        if (this.choices) {
-            hide(this.choice);
-        }
-    },
-    /**
-     * Handles the `enter` command
-     * @param {HTMLElement} target 
-     */
-    enterHandler(target) {
-        const item = getItem.call(this, target);
-
-        if (item) {
-            this.selectChoice(item);
-        }
-    },
-    /**
      * Assigns the value of the selected item to the input
      * @param {HTMLElement} item 
      */
@@ -480,6 +427,70 @@ const BaseLinkField = {
 
         return this;
     },
+
+    /**
+     * Handles the `escape` command
+     * @param {HTMLElement} target 
+     */
+    escapeHandler(target) {
+        this.input.focus();
+
+        if (this.messageElement) {
+            hide(this.messageElement);
+        }
+
+        if (this.choices) {
+            hide(this.choice);
+        }
+    },
+    spaceHandler() {
+        removeChildren(this.choices);
+
+        createMessageElement.call(this);
+
+        removeChildren(this.messageElement);
+
+        const values = this.source.getCandidates();
+
+        if (isEmpty(values)) {
+            this.messageElement.appendChild(createNotificationMessage(NotificationType.INFO, "There are currently no valid references."));
+            show(this.messageElement);
+            return;
+        }
+
+        values.forEach(value => {
+            var choice = createChoice.call(this, value);
+            this.choices.appendChild(choice);
+        });
+
+        if (this.source.accept === "concept") {
+            ["string", "number", "set", "reference"].forEach(value => {
+                this.choices.appendChild(createListItem({
+                    class: ["field--link__choice"],
+                    tabindex: 0,
+                    dataset: {
+                        nature: "field-component",
+                        id: this.id,
+                        value: value
+                    }
+                }, value));
+            });
+        }
+
+        show(this.choices);
+        this.choices.focus();
+    },
+    /**
+     * Handles the `enter` command
+     * @param {HTMLElement} target 
+     */
+    enterHandler(target) {
+        const item = getItem.call(this, target);
+
+        if (item) {
+            this.selectChoice(item);
+        }
+    },
     /**
      * Handles the `backspace` command
      * @param {HTMLElement} target 
@@ -491,6 +502,7 @@ const BaseLinkField = {
             this.input.focus();
         }
     },
+
     bindEvents() {
         /**
          * Get the choice element

@@ -3,7 +3,7 @@
     display: flex;
     align-items: stretch;
     height: 100%;
-    padding: 20px; padding-bottom: 0;
+    padding: 1% 1% 0;
     box-sizing: border-box;
     font-size: 1rem;
     background-color: #e5e5e5;
@@ -30,6 +30,21 @@
     .editor-container.close { 
         display: none; 
     }
+    .editor-container.empty {
+        box-shadow: 0 0 5px #555;
+    }
+    .editor-container.empty .editor-selector-model {
+        display: none;
+    }
+
+    .editor-container.empty .editor-selector-concept {
+        display: none;
+    }
+
+    .editor-container.empty .editor-body {
+        
+        padding: 0;
+    }
 
 .editor-header {
     position: relative;
@@ -37,7 +52,6 @@
     align-items: center;
     height: 36px;
     box-sizing: border-box;
-    font-size: 1.2em;
     color: #333;
     transition: .2s;
     background-color: #f5f5f5;
@@ -46,7 +60,7 @@
     .editor-header:before {
         content: "Editor";
         padding-left: 1%; margin-right: 1%;
-        font: 600 1.3rem 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
+        font: 600 1.3em 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
         color: #555;
     }
     .editor-header:hover {
@@ -228,20 +242,19 @@
         flex-direction: row;
         align-content: space-between;
         justify-content: flex-end;
-        padding-top: 4px; padding-right: 1%; 
-        width: 72px;
+        padding-top: 4px; padding-right: 1%; padding-left: 1%; 
         height: 36px;
         box-sizing: border-box;
         align-self: flex-start;
         background-color: #d5d5d5;
+        overflow: hidden;
         transition: .2s;
     }
         .editor-toolbar:hover {
-            background-color: #555;
+            background-color: #c0c0c0;
             border-bottom-left-radius: 10px;
-            transform: scale(1.1) translate(-5%, 5%);
             z-index: 10;
-            box-shadow: -1px 2px 1px -1px rgba(10, 10, 10, 0.85);
+            box-shadow: -1px 2px 1px -1px rgba(50, 50, 50, 0.8);
         }
 
         .editor-toolbar .btn-close {
@@ -250,30 +263,50 @@
             height: 24px;
             padding: 0;
             line-height: 15px;
-            background-color: #f5f5f5;
+            background-color: #f0f0f0;
             box-shadow: 0 1px 1px #555;
             border-radius: 50%;
             transition: .2s;
         }
             .editor-toolbar .btn-close:after {
                 content: "⨯";
-                font-size: 20px;
-                
+                font-size: 20px;   
             }
             .editor-toolbar .btn-close:hover {
                 background-color: #fff;
-                transform: rotate(360deg);
-                box-shadow: 1px 2px 4px -1px #222;
+                transform: rotate(-360deg) scale(1.1);
+                box-shadow: -2px 2px 4px 50px #555;
             }
             .editor-toolbar .btn-close:hover:after {
                 color: #222;
+            }
+        .editor-toolbar .btn-new {
+            display: block;
+            margin-right: 12px;
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            line-height: 15px;
+            color: #fff;
+            background-color: royalblue;
+            box-shadow: 0 1px 1px #777;
+            border-radius: 50%;
+            transition: .2s;
+        }
+            .editor-toolbar .btn-new:after {
+                content: "+";
+                font-size: 20px;
+            }
+            .editor-toolbar .btn-new:hover {
+                background-color: #638AFF;
+                transform: rotate(360deg) scale(1.1);
+                box-shadow: 2px 2px 0 50px #fff;
             }
 
 .editor-body {
     flex-grow: 1;
     padding: 60px calc(1% + 6px) 12px;
     box-sizing: border-box;
-    font-size: 1.4rem;
     background-color: #fefefe;
     overflow-y: auto; overflow-x: visible;
     scrollbar-color: #c0c0c0; scrollbar-width: thin;
@@ -498,18 +531,10 @@
 }
 
 .projection-element--optional { 
-    padding: 5px 10px;
     border: 2px dotted #0F4C81; border-radius: 2px;
-    transition: .2s;
     cursor: pointer;
+    transition: .2s;
 }
     .projection-element--optional:hover { 
-        border: 2px solid #0F4C81; border-radius: 2px;
-        box-shadow: 0 1px 3px #999;
-        transform: scale(1.05);
+        border: 2px solid #0F4C81;
     }
-
-.central_topic > [data-nature=layout-part] {
-    justify-content: center;
-    margin-bottom: 4px;
-}

@@ -239,9 +239,9 @@ const BaseBinaryField = {
 
         if (fragment.hasChildNodes()) {
             this.element.appendChild(fragment);
+            this.bindEvents();
         }
 
-        this.bindEvents();
         this.refresh();
 
         return this.element;

@@ -64,13 +64,13 @@ export const Editor = {
     active: false,
 
     init(metamodel, model, concept) {
-        if (isNullOrUndefined(metamodel)) {
-            return this.menu();
+        this.metamodel = metamodel;
+
+        if (this.metamodel) {
+            this.model = model ? model : this.metamodel.createModel().init(model);
+            this.concept = concept ? concept : this.model.root;
         }
 
-        this.metamodel = metamodel;
-        this.model = model ? model : this.metamodel.createModel().init(model);
-        this.concept = concept ? concept : this.model.root;
         this.state = State.create();
         this.fields = new Map();
 
@@ -82,31 +82,9 @@ export const Editor = {
 
         this.render();
 
-        return this;
-    },
-
-    menu() {
-        const loader = LoaderFactory.create({
-            afterLoadMetaModel: (metamodel) => {
-                this.init(metamodel);
-                removeChildren(header);
-                header.remove();
-                loader.close();
-            }
-        }).init(this);
-
-        var header = createHeader({
-            class: ["menu-header"]
-        });
-        var title = createH2({
-            class: ["menu-title"]
-        }, "Editor");
-        var content = createParagraph({
-            class: ["menu-content"]
-        }, "Welcome to Gentleman's editor. To begin, please load a metamodel.");
-        appendChildren(header, [title, content]);
-
-        appendChildren(this.container, [header, loader.render()]);
+        if (this.concept) {
+            this.createProjection(this.concept);
+        }
 
         return this;
     },
@@ -114,6 +92,12 @@ export const Editor = {
     changeModel(modelSchema) {
         var model = Loader.loadModel(modelSchema);
         model.render();
+    },
+    createProjection(concept) {
+        const projectionSchema = this.metamodel.getProjectionSchema(concept.name);
+        var projection = ProjectionManager.createProjection(concept.schema.projection, concept, this).init();
+
+        this.clear().append(projection.render());
     },
 
     registerField(field) {
@@ -250,6 +234,9 @@ export const Editor = {
         this.active = false;
         this.container.classList.replace('open', 'close');
 
+        removeChildren(this.container);
+        this.container.remove();
+
         Events.emit('editor.close');
 
         return this;
@@ -334,9 +321,15 @@ export const Editor = {
                     action: "close"
                 }
             });
+            let btnNew = createButton({
+                class: ["btn", "btn-new"],
+                dataset: {
+                    action: "new"
+                }
+            });
             let toolbar = createDiv({
                 class: ["editor-toolbar"],
-            }, [btnClose]);
+            }, [btnNew, btnClose]);
 
             appendChildren(this.header, [selector, toolbar]);
 
@@ -361,83 +354,99 @@ export const Editor = {
             fragment.appendChild(this.footer);
         }
 
-        if (!isHTMLElement(this.btnExport)) {
-            this.btnExport = createButton({
-                id: "btnExportModel",
-                class: ["btn", "btn-export"],
-                draggable: true,
-                dataset: {
-                    "context": "model",
-                    "action": "export",
-                }
-            }, "Export");
+        // if (!isHTMLElement(this.btnExport)) {
+        //     this.btnExport = createButton({
+        //         id: "btnExportModel",
+        //         class: ["btn", "btn-export"],
+        //         draggable: true,
+        //         dataset: {
+        //             "context": "model",
+        //             "action": "export",
+        //         }
+        //     }, "Export");
 
-            fragment.appendChild(this.btnExport);
-        }
+        //     fragment.appendChild(this.btnExport);
+        // }
 
-        if (!isHTMLElement(this.btnImport)) {
-            this.btnImport = createButton({
-                id: "btnImportModel",
-                class: ["btn", "btn-import"],
-                draggable: true,
-                dataset: {
-                    "context": "model",
-                    "action": "import"
-                }
-            }, "Import");
+        // if (!isHTMLElement(this.btnImport)) {
+        //     this.btnImport = createButton({
+        //         id: "btnImportModel",
+        //         class: ["btn", "btn-import"],
+        //         draggable: true,
+        //         dataset: {
+        //             "context": "model",
+        //             "action": "import"
+        //         }
+        //     }, "Import");
 
-            fragment.appendChild(this.btnImport);
-        }
+        //     fragment.appendChild(this.btnImport);
+        // }
 
-        if (!isHTMLElement(this.btnBuild) && this.metamodel.schema["@editor"].build) {
-            this.btnBuild = createButton({
-                id: "btnBuildModel",
-                class: ["btn", "btn-build"],
-                draggable: true,
-                dataset: {
-                    "context": "model",
-                    "action": "build"
-                }
-            }, "Build");
+        // if (!isHTMLElement(this.btnBuild) && this.metamodel.schema["@editor"].build) {
+        //     this.btnBuild = createButton({
+        //         id: "btnBuildModel",
+        //         class: ["btn", "btn-build"],
+        //         draggable: true,
+        //         dataset: {
+        //             "context": "model",
+        //             "action": "build"
+        //         }
+        //     }, "Build");
 
-            fragment.appendChild(this.btnBuild);
-        }
+        //     fragment.appendChild(this.btnBuild);
+        // }
 
-        if (!isHTMLElement(this.input)) {
-            this.input = createInput({
-                type: "file",
-                class: ["hidden"],
-                accept: '.json'
-            });
+        // if (!isHTMLElement(this.input)) {
+        //     this.input = createInput({
+        //         type: "file",
+        //         class: ["hidden"],
+        //         accept: '.json'
+        //     });
 
-            fragment.appendChild(this.input);
-        }
+        //     fragment.appendChild(this.input);
+        // }
 
 
-        if (fragment.hasChildNodes) {
+        if (fragment.hasChildNodes()) {
             this.container.appendChild(fragment);
+            this.bindEvents();
         }
 
         if (isHTMLElement(container)) {
-            // container.appendChild(projection.render());
             container.appendChild(this.container);
         }
 
         // TODO: Add support for saved projection
         // TODO  HINT: Add getProjection to Model (lookup passed value, saved model)
 
-        const projectionSchema = this.metamodel.getProjectionSchema(this.concept.name);
-        var projection = ProjectionManager.createProjection(this.concept.schema.projection, this.concept, this).init();
-
-        this.clear().append(projection.render());
-
-        this.bindEvents();
-
         this.refresh();
 
         return this.container;
     },
     refresh() {
+        if (!this.metamodel) {
+            this.container.classList.add("empty");
+
+            var header = createHeader({
+                class: ["menu-header"]
+            });
+            var title = createH2({
+                class: ["menu-title"]
+            }, "Editor");
+            var content = createParagraph({
+                class: ["menu-content"]
+            }, "Welcome to Gentleman's editor. To begin, please load a model or continue with a previous instance.");
+            appendChildren(header, [title, content]);
+
+            appendChildren(this.body, [header, this.loader.render()]);
+
+            this.loader.open();
+
+            return;
+        }
+
+        this.container.classList.remove("empty");
+
         const { language } = this.metamodel;
 
         /** @type {HTMLElement} */
@@ -496,43 +505,32 @@ export const Editor = {
     bindEvents() {
         var lastKey = null;
 
-        const valueHander = {
-            metamodel: metamodelOptionHandler,
-            model: modelOptionHandler,
-        };
-
-        /**
-         * @this {Loader}
-         */
-        function metamodelOptionHandler() {
-            let event = new MouseEvent('click', {
-                view: window,
-                bubbles: true,
-                cancelable: true,
-            });
-
-            this.input.dispatchEvent(event);
-        }
-
-        /**
-         * @this {Loader}
-         */
-        function modelOptionHandler() {
-            let event = new MouseEvent('click', {
-                view: window,
-                bubbles: true,
-                cancelable: true,
-            });
-            // loaderCb = this.loader.loadModel;
-            this.input.dispatchEvent(event);
-        }
-
         this.container.addEventListener('click', (event) => {
             var target = event.target;
             var object = target.dataset['object'];
 
             if (target.dataset.action === "close") {
                 this.close();
+                this.manager.deleteEditor(this);
+                target.blur();
+            }
+            if (target.dataset.action === "new") {
+                console.trace("someone clicked");
+                let editor = this.manager.createEditor().init().open();
+                target.blur();
+            }
+            if (target.dataset.action === "import") {
+                console.warn("Function import not implemented");
+                target.blur();
+            }
+            if (target.dataset.action === "export") {
+                copytoClipboard(this.model.export());
+                this.notify("Export has been copied to clipboard");
+            }
+            if (target.dataset.action === "build") {
+                this.btnBuild.addEventListener('click', (event) => {
+                    this.build();
+                });
             }
         });
 
@@ -601,7 +599,7 @@ export const Editor = {
                     break;
                 case 'b':
                     if (lastKey === Key.ctrl) {
-                        let builder = this.manager.getBuilder();
+                        let builder = this.manager.createBuilder();
                         builder.init(this.metamodel, this.model, this.activeConcept).open();
 
                         event.preventDefault();
@@ -609,7 +607,7 @@ export const Editor = {
                     break;
                 case 'e':
                     if (lastKey === Key.ctrl) {
-                        let explorer = this.manager.getExplorer();
+                        let explorer = this.manager.createExplorer();
                         explorer.init(this.metamodel, this.model, this.activeConcept).open();
 
                         event.preventDefault();
@@ -617,7 +615,7 @@ export const Editor = {
                     break;
                 case 'i':
                     if (lastKey === Key.ctrl) {
-                        let editor = this.manager.getEditor();
+                        let editor = this.manager.createEditor();
                         editor.init(this.metamodel, this.model, this.activeConcept).open();
 
                         event.preventDefault();
@@ -721,152 +719,6 @@ export const Editor = {
             if (conceptParent) {
                 this.updateActiveConcept(this.activeField.source);
             }
-        }
-
-        this.btnImport.addEventListener('click', (event) => {
-            const { target } = event;
-            let handler = valueHander['metamodel'];
-            handler.call(this);
-        });
-
-        this.input.addEventListener('change', (event) => {
-            var file = this.input.files[0];
-
-            if (!file.name.endsWith('.json')) {
-                this.notify("This file is not supported. Please use a .gen file");
-            }
-
-            var reader = new FileReader();
-            // reader.onload = (e) => this.loader.loadMetaModel(JSON.parse(reader.result));
-            reader.onload = (e) => this.loader.loadMetaModel({
-                "directory": {
-                    "nature": "concrete",
-                    "attribute": {
-                        "subscribers": {
-                            "target": "set",
-                            "accept": "subscriber",
-                            "required": true,
-                            "projection": [
-                                {
-                                    "type": "field",
-                                    "view": "table",
-                                    "orientation": "column",
-                                    "header": [
-                                        {
-                                            "projection": [
-                                                {
-                                                    "layout": {
-                                                        "type": "wrap",
-                                                        "style": {
-                                                            "box": {
-                                                                "space": {
-                                                                    "inner": {
-                                                                        "top": 2,
-                                                                        "right": 5,
-                                                                        "left": 5,
-                                                                        "bottom": 2
-                                                                    }
-                                                                }
-                                                            }
-                                                        },
-                                                        "disposition": [
-                                                            "Name"
-                                                        ]
-                                                    }
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "projection": [
-                                                {
-                                                    "layout": {
-                                                        "type": "wrap",
-                                                        "style": {
-                                                            "box": {
-                                                                "space": {
-                                                                    "inner": {
-                                                                        "top": 2,
-                                                                        "right": 5,
-                                                                        "left": 5,
-                                                                        "bottom": 2
-                                                                    }
-                                                                }
-                                                            }
-                                                        },
-                                                        "disposition": [
-                                                            "Phone number"
-                                                        ]
-                                                    }
-                                                }
-                                            ]
-                                        },
-                                    ],
-                                    "body": [
-                                        "#name",
-                                        "#phone",
-                                    ]
-                                }
-                            ]
-                        }
-                    },
-                    "component": {},
-                    "projection": [
-                        {
-                            "layout": {
-                                "type": "stack",
-                                "orientation": "vertical",
-                                "disposition": [
-                                    "List of subscribers",
-                                    "#subscribers"
-                                ]
-                            }
-                        }
-                    ]
-                },
-                "subscriber": {
-                    "nature": "concrete",
-                    "attribute": {
-                        "name": {
-                            "target": "string",
-                            "alias": "Full name"
-                        },
-                        "phone": {
-                            "target": "string",
-                            "alias": "Phone number"
-                        }
-                    },
-                    "component": {},
-                    "projection": [{
-                        "layout": {
-                            "type": "stack",
-                            "orientation": "horizontally",
-                            "disposition": [
-                                "#name",
-                                "#phone"
-                            ]
-                        }
-                    }]
-                },
-                "@root": "directory",
-                "@config": {
-                    "language": "Phone Book",
-                    "settings": {
-                        "autosave": true
-                    }
-                }
-            });
-            reader.readAsText(file);
-        });
-
-        this.btnExport.addEventListener('click', (event) => {
-            copytoClipboard(this.model.export());
-            this.notify("Export has been copied to clipboard");
-        });
-
-        if (this.btnBuild) {
-            this.btnBuild.addEventListener('click', (event) => {
-                this.build();
-            });
         }
 
         var dragElement = null;

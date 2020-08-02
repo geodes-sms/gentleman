@@ -84,9 +84,6 @@ const _BooleanConcept = {
     getChildren(name) {
         return [];
     },
-    getDescendant(name) {
-        return [];
-    },
 
     validate(value) {
         // string to bool

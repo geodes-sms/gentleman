@@ -101,11 +101,11 @@ export const TableLayout = {
             fragment.appendChild(this.table);
         }
 
-        if (fragment.hasChildNodes) {
+        if (fragment.hasChildNodes()) {
             this.container.appendChild(fragment);
+            this.bindEvents();
         }
 
-        this.bindEvents();
 
         return this.container;
     },

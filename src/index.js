@@ -9,14 +9,11 @@ const METAMODEL_GENTLEMAN = require('@samples/gentleman_model.json');
 // const METAMODEL_RELIS = require('@samples/relis.json');
 
 const Environment = Manager.init();
+Environment.render();
 
 const metamodel = Loader.loadMetaModel(METAMODEL_GENTLEMAN);
 const model = metamodel.createModel().init();
 
-const Editor = Environment.getEditor()      
-                          .init(metamodel, model)
-                          .open();                  
-
-// const Explorer = Environment.getExplorer()
-//                             .init(metamodel, model)
-//                             .open();
+const Editor = Environment.createEditor()      
+                          .init(metamodel)
+                          .open();         

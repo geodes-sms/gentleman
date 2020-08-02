@@ -81,9 +81,7 @@ const _NumberConcept = {
             message: "The value has been successfully updated."
         };
     },
-    update(message, value) {
-        return true;
-    },
+
     getCandidates() {
         this.values.forEach(value => {
             if (isObject(value)) {
@@ -96,10 +94,10 @@ const _NumberConcept = {
     getChildren(name) {
         return [];
     },
-    getDescendant(name) {
-        return [];
+    
+    update(message, value) {
+        return true;
     },
-
     validate(value) {
         if (isNaN(value)) {
             return ResponseCode.INVALID_NUMBER;

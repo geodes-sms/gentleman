@@ -108,8 +108,6 @@ export const Loader = {
         }
     },
     render() {
-        var missing = false;
-
         const fragment = createDocFragment();
 
         if (!isHTMLElement(this.container)) {
@@ -117,8 +115,6 @@ export const Loader = {
                 class: ["loader-container"],
                 tabindex: -1
             });
-
-            missing = true;
         }
 
         if (!isHTMLElement(this.options)) {
@@ -140,9 +136,9 @@ export const Loader = {
                     text: "New",
                     value: "metamodel"
                 }
-            }, "Create a metamodel");
+            }, "Create a model");
 
-            appendChildren(this.options, [modelOption, metamodelOption]);
+            appendChildren(this.options, [metamodelOption, modelOption]);
 
             fragment.appendChild(this.options);
         }
@@ -157,14 +153,11 @@ export const Loader = {
             fragment.appendChild(this.input);
         }
 
-        if (fragment.hasChildNodes) {
+        if (fragment.hasChildNodes()) {
             this.container.appendChild(fragment);
-        }
-
-        if (missing) {
             this.bindEvents();
         }
-
+        
         return this.container;
     },
     destroy() {

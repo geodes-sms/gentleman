@@ -124,21 +124,23 @@ const _SetConcept = {
             };
         }
 
-        var removedConcept = this.model.removeConcept(this.value[index]);
+        var concept = this.getElementAt(index);
 
-        if (isNullOrUndefined(removedConcept)) {
+        if (isNullOrUndefined(concept)) {
             return {
                 message: `The element at index '${index}' was not found.`,
                 success: false,
             };
         }
 
+        concept.delete(true);
+
         this.value.splice(index, 1);
 
-        this.notify("value.removed", removedConcept);
+        this.notify("value.removed", concept);
 
         return {
-            message: `The element '${removedConcept.name}' was successfully removed.`,
+            message: `The element '${concept.name}' was successfully removed.`,
             success: true,
         };
     },

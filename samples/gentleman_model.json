@@ -16,6 +16,9 @@
                         "type": "field",
                         "view": "link",
                         "placeholder": "Select a root concept",
+                        "style": {
+                            "css": "model-root"
+                        },
                         "choice": {
                             "projection": [
                                 {
@@ -51,7 +54,6 @@
         },
         "component": {
             "model_concept": {
-                "required":false,
                 "attribute": {
                     "concepts": {
                         "target": "set",
@@ -113,23 +115,14 @@
                         "layout": {
                             "type": "stack",
                             "orientation": "vertical",
+                            "style": {
+                                "box": {
+                                    "space": {
+                                        "outer": { "top": 12 }
+                                    }
+                                }
+                            },
                             "disposition": [
-                                {
-                                    "type": "text",
-                                    "style": {
-                                        "text": {
-                                            "bold": 600,
-                                            "color": { "type": "rgb", "value": "#333" },
-                                            "size": 20
-                                        },
-                                        "box": {
-                                            "space": {
-                                                "outer": { "bottom": 6 }
-                                            }
-                                        }
-                                    },
-                                    "content": "Model Concepts"
-                                },
                                 {
                                     "type": "attribute",
                                     "name": "concepts"
@@ -153,12 +146,7 @@
                             "layout": {
                                 "type": "wrap",
                                 "style": {
-                                    "css": ["heading", "model-title"],
-                                    "box": {
-                                        "space": {
-                                            "outer": { "bottom": 12 }
-                                        }
-                                    }
+                                    "css": ["heading", "model-title"]
                                 },
                                 "disposition": [
                                     {
@@ -243,6 +231,16 @@
                         "type": "field",
                         "view": "list",
                         "orientation": "vertical",
+                        "list": {
+                            "style": {
+                                "css": ["concept-component-list"]
+                            }
+                        },
+                        "item": {
+                            "style": {
+                                "css": ["concept-component-list-item"]
+                            }
+                        },
                         "action": {
                             "add": {
                                 "layout": {
@@ -303,7 +301,21 @@
                     }
                 ]
             }
-        }
+        },
+        "projection": [
+            {
+                "type": "field",
+                "view": "choice",
+                "style": {
+                    "css": "model-concept-choices"
+                },
+                "choice": {
+                    "style": {
+                        "css": "model-concept-choice"
+                    }
+                }
+            }
+        ]
     },
     "prototype_concept": {
         "nature": "concrete",
@@ -315,6 +327,9 @@
                 "layout": {
                     "type": "stack",
                     "orientation": "vertical",
+                    "style": {
+                        "css": "prototype-concept"
+                    },
                     "disposition": [
                         {
                             "type": "layout",
@@ -357,6 +372,9 @@
                                             "type": "stack",
                                             "orientation": "vertical",
                                             "collapsible": true,
+                                            "style": {
+                                                "css": "prototype-structure"
+                                            },
                                             "disposition": [
                                                 {
                                                     "type": "text",
@@ -387,11 +405,14 @@
                 "type": "layout",
                 "layout": {
                     "type": "wrap",
+                    "style": {
+                        "css": "choice-prototype-concept"
+                    },
                     "disposition": [
                         {
                             "type": "text",
                             "content": [
-                                "Define a new ",
+                                "Define a ",
                                 {
                                     "style": {
                                         "text": {
@@ -495,6 +516,9 @@
                 "layout": {
                     "type": "stack",
                     "orientation": "vertical",
+                    "style": {
+                        "css": "concrete-concept"
+                    },
                     "disposition": [
                         {
                             "type": "layout",
@@ -576,7 +600,7 @@
                         {
                             "type": "text",
                             "content": [
-                                "Define a new ",
+                                "Define a ",
                                 {
                                     "style": {
                                         "text": {

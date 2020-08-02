@@ -173,8 +173,9 @@ export const Explorer = {
             this.body.appendChild(this.results);
         }
 
-        if (fragment.hasChildNodes) {
+        if (fragment.hasChildNodes()) {
             this.container.appendChild(fragment);
+            this.bindEvents();
         }
 
         if (isHTMLElement(container)) {
@@ -183,7 +184,6 @@ export const Explorer = {
 
         this.clear();
         this.refresh();
-        this.bindEvents();
 
         return this.container;
     },

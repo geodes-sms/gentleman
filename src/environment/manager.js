@@ -1,6 +1,6 @@
 import {
     createSpan, createDiv, createParagraph, createButton,
-    getElement, isHTMLElement, isNullOrWhitespace, isNullOrUndefined, removeChildren, createInput,
+    getElement, isHTMLElement, isNullOrWhitespace, isNullOrUndefined, removeChildren, createInput, createDocFragment, isString, isEmpty,
 } from "zenkai";
 import { Builder, Editor } from './index.js';
 import { Explorer } from "./explorer.js";
@@ -21,6 +21,8 @@ const nextId = () => `GE${inc++}`;
 export const Manager = {
     /** @type {HTMLElement} */
     container: null,
+    /** @type {HTMLElement} */
+    menu: null,
 
     init(container) {
         var result = resolveContainer(container);
@@ -32,9 +34,23 @@ export const Manager = {
         this.container = result;
         this.container.tabIndex = -1;
 
+        this.bindDOM();
         this.bindEvents();
 
         return this;
+    },
+    render() {
+        const fragment = createDocFragment();
+
+        if (isNullOrUndefined(this.menu.parentElement)) {
+            fragment.appendChild(this.menu);
+        }
+
+        if (fragment.hasChildNodes()) {
+            this.container.appendChild(fragment);
+        }
+
+        return this.container;
     },
     home() {
         /** @type {HTMLButtonElement} */
@@ -96,7 +112,7 @@ export const Manager = {
             //         bubbles: true,
             //         cancelable: true,
             //     });
-    
+
             //     input.dispatchEvent(event);
             // }
         });
@@ -118,9 +134,16 @@ export const Manager = {
 
         this.container.appendChild(homeContainer);
     },
+    refresh() {
+        if([editors, builders, explorers].every((env) => isEmpty(env))) {
+            this.home();
+        }
+
+        return this;
+    },
     /** @returns {Editor} */
     getEditor(id) {
-        var editor = getEnvironment.call({ environments: editors }, id, () => this.createEditor());
+        var editor = getEnvironment.call({ environments: editors }, id);
 
         return editor;
     },
@@ -141,11 +164,32 @@ export const Manager = {
 
         editors.push(editor);
 
+        this.refresh();
+
         return editor;
+    },
+    deleteEditor(id) {
+        var index = -1;
+
+        if (isString(id)) {
+            index = editors.findIndex(p => p.id === id);
+        } else {
+            index = editors.indexOf(id);
+        }
+
+        if (index === -1) {
+            return false;
+        }
+
+        editors.splice(index, 1);
+
+        this.refresh();
+
+        return true;
     },
     /** @returns {Builder} */
     getBuilder(id) {
-        var builder = getEnvironment.call({ environments: builders }, id, () => this.createBuilder());
+        var builder = getEnvironment.call({ environments: builders }, id);
 
         return builder;
     },
@@ -166,11 +210,13 @@ export const Manager = {
 
         builders.push(builder);
 
+        this.refresh();
+
         return builder;
     },
     /** @returns {Explorer} */
     getExplorer(id) {
-        var explorer = getEnvironment.call({ environments: explorers }, id, () => this.createExplorer());
+        var explorer = getEnvironment.call({ environments: explorers }, id);
 
         return explorer;
     },
@@ -191,10 +237,21 @@ export const Manager = {
 
         explorers.push(explorer);
 
+        this.refresh();
+
         return explorer;
     },
+    bindDOM() {
+        if (!isHTMLElement(this.menu)) {
+            this.menu = createDiv({
+                class: ["manager-menu", "hidden"]
+            }, "MENU");
+        }
+    },
     bindEvents() {
-
+        this.menu.addEventListener("click", (event) => {
+            console.log("SHOW MENU");
+        });
     }
 };
 
@@ -204,16 +261,12 @@ export const Manager = {
  * @param {Function} createEnvCb Create Environment callback
  * @returns {Environment}
  */
-function getEnvironment(id, createEnvCb) {
+function getEnvironment(id) {
     if (id) {
         return this.environments.find((env) => env.id === id);
     }
 
     var environment = this.environments.find((env) => !env.active);
-
-    if (isNullOrUndefined(environment)) {
-        environment = createEnvCb();
-    }
 
     return environment;
 }

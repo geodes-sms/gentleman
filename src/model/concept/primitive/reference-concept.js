@@ -73,9 +73,6 @@ const _ReferenceConcept = {
         };
     },
 
-    update(message, value) {
-        return true;
-    },
     getCandidates() {
         if (isNullOrUndefined(this.accept)) {
             throw new Error("Bad reference: 'accept' property is not defined");
@@ -106,10 +103,21 @@ const _ReferenceConcept = {
 
         return children;
     },
-    getDescendant(name) {
-        return [];
-    },
 
+    update(message, value) {
+        switch (message) {
+            case "delete":
+                this.reference.unregister(this);
+                this.value = null;
+                this.reference = null;
+                this.notify("value.changed", this.reference);
+                break;
+
+            default:
+                break;
+        }
+        return true;
+    },
     validate(value) {
         if (isNullOrWhitespace(value) || isEmpty(this.values)) {
             return ResponseCode.SUCCESS;

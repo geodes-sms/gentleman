@@ -95,8 +95,9 @@ const BaseField = {
         var result = this.source.delete();
         
         if (result.success) {
-            this.clear();
             this.source.unregister(this);
+            this.clear();
+            removeChildren(this.element);
             this.element.remove();
         } else {
             this.editor.notify(result.message);
@@ -104,7 +105,7 @@ const BaseField = {
         }
     },
     clear() {
-        removeChildren(this.element);
+        return true;
     },
     show() {
         show(this.element);

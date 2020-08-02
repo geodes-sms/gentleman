@@ -227,10 +227,8 @@ const _Concept = {
         const descendants = [];
 
         this.getChildren(name).forEach(children => {
-            descendants.push(...children);
-            children.forEach(child => {
-                descendants.push(child.getDescendant(name));
-            });
+            descendants.push(children);
+            descendants.push(...children.getDescendant(name));
         });
 
         return descendants;
@@ -254,15 +252,22 @@ const _Concept = {
      * @returns {boolean} Value indicating the success of the operation
      */
     remove(concept) {
-        var result = this.removeAttribute(concept.refname);
+        const result = this.removeAttribute(concept.refname);
 
         return result;
     },
-    delete() {
-        var result = this.getParent().remove(this);
-        if (!result.success) {
-            return result;
+    delete(force = false) {
+        if (!force) {
+            const result = this.getParent().remove(this);
+
+            if (!result.success) {
+                return result;
+            }
         }
+
+        this.getChildren().forEach(child => {
+            child.delete(true);
+        });
 
         this.model.removeConcept(this.id);
 

@@ -77,11 +77,11 @@ export const WrapLayout = {
 
         if (fragment.hasChildNodes()) {
             this.container.appendChild(fragment);
+            this.bindEvents();
         }
 
         this.container.style.display = "inline-block";
 
-        this.bindEvents();
         this.refresh();
 
         return this.container;

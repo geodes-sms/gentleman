@@ -67,11 +67,11 @@ export const WrapLayout = {
         }, "Add a field or layout");
         this.body.appendChild(this.placeholder);
 
-        if (fragment.hasChildNodes) {
+        if (fragment.hasChildNodes()) {
             this.container.appendChild(fragment);
+            this.bindEvents();
         }
 
-        this.bindEvents();
 
         return this.container;
     },

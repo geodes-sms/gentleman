@@ -171,15 +171,14 @@ export const Builder = {
             this.footer.appendChild(this.selectors);
         }
 
-        if (fragment.hasChildNodes) {
+        if (fragment.hasChildNodes()) {
             this.container.appendChild(fragment);
+            this.bindEvents();
         }
 
         if (isHTMLElement(container)) {
             container.appendChild(this.container);
         }
-
-        this.bindEvents();
 
         this.refresh();
 

@@ -125,7 +125,6 @@ const Projection = {
      * @param {*} value 
      */
     update(message, value) {
-        console.log(message);
         if (isEmpty(this.containers)) {
             return;
         }

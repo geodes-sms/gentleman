@@ -114,6 +114,8 @@ export const Model = {
             this.notify('concept.added', concept);
         }
 
+        // console.warn("concept added", this.concepts.length);
+
         return this;
     },
     /**
@@ -132,7 +134,11 @@ export const Model = {
             return null;
         }
 
-        return this.concepts.splice(index, 1)[0];
+        let removedConcept = this.concepts.splice(index, 1)[0];
+
+        // console.warn("concept removed", this.concepts.length);
+
+        return removedConcept;
     },
     /**
      * Verifies that a concept is part of the list of concepts held by the model

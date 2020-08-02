@@ -47,11 +47,23 @@ const BasePrototypeConcept = {
             };
         }
 
+        var concept = value;
         if (isString(value)) {
-            this.createConcept(value);
-        } else {
-            this.value = value;
+            concept = this.createConcept(value);
         }
+
+        if (this.value) {
+            this.value.getChildren().forEach(child => {
+                child.delete(true);
+                // this.model.removeConcept(this.value.id);
+            });
+
+            this.model.removeConcept(this.value.id);
+            this.value.notify("delete");
+        }
+
+        this.value = concept;
+
         this.notify("value.changed", this.value);
 
         return {
@@ -115,7 +127,6 @@ const BasePrototypeConcept = {
             concept = this.model.createConcept(name, options);
         }
 
-        this.value = concept;
         concept.prototype = this;
 
         return concept;
@@ -124,10 +135,6 @@ const BasePrototypeConcept = {
         if (isNullOrWhitespace(value)) {
             return ResponseCode.SUCCESS;
         }
-
-        // if(this.metamodel.getConcreteConcepts(this.name)) {
-
-        // }
 
         if (isEmpty(this.values)) {
             return ResponseCode.SUCCESS;

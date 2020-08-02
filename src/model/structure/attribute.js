@@ -23,19 +23,6 @@ export const BaseAttribute = {
         return this.target.value;
     },
 
-    canDelete() {
-        return !this.required;
-    },
-    delete() {
-        if (!this.canDelete()) {
-            return false;
-        }
-
-        this.target.delete();
-
-        return this.concept.removeAttribute(this.name);
-    },
-
     export() {
         var output = {
             [`${this.name}:attribute`]: this.target.export()
