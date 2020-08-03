@@ -1,0 +1,113 @@
+.layout-container {
+    position: relative;
+    box-sizing: border-box;
+    z-index: 5;
+    transition: .2s;
+}
+    .layout-container:before {
+        content: "";
+        position: absolute;
+        top: 0; right: 0; left: 0;
+        height: 100%;
+        background-color: #232425;
+        opacity: 0;
+        transition: .4s;
+        z-index: -1;
+    }
+
+    .layout-container.collapsed {
+        min-height: 24px;
+    }
+        .layout-container.collapsed:before {
+            transform: scaleY(0.25) translateX(-2px);
+            opacity: 1;
+        }
+
+.text {
+    font-size: 1.4em;
+}
+
+.text .text {
+    font-size: 1em;
+}
+
+.btn-collapse {
+    position: absolute;
+    top: 0; left: -24px;
+    font-weight: 600;
+    width: 24px;
+    height: 24px;
+    text-transform: uppercase;
+    color: #fff;
+    border-radius: 50%;
+    background-color: royalblue;
+    box-shadow: 2px 1px 2px -1px #555;
+    opacity: 0.2;
+    transition: .2s;
+    z-index: 10;
+}
+    .btn-collapse:hover { opacity: 1; }
+    .btn-collapse:before {
+        content: '>';
+        position: absolute;
+        top: 50%; left: 50%; 
+        font-size: 1.3em; font-weight: 400;
+        transform: translate(-20%, -50%) rotate(90deg);
+        transition: transform .2s;
+    }
+    .btn-collapse.on {
+        box-shadow: none;
+        color: #fff;
+        background-color: #232425;
+        opacity: 1;
+        z-index: 10;
+    }
+        .btn-collapse.on:before { transform: translate(-30%, -60%); }
+
+.layout-container-collapse {
+    display: none;
+}        
+
+/* .layout-container.active {
+    box-shadow: 0 0 2px 1px #555;
+} */
+
+.layout-container.active > .btn-delete {
+    opacity: 1;
+}
+
+.btn-delete {
+    position: absolute;
+    top: 0; right: 0;
+    display: flex;
+    align-items: center;
+    padding: 2px 8px 2px 4px;
+    background-color: #e5e5e5;
+    font-weight: 500;
+    padding-left: 4px;
+    border-bottom-left-radius: 4px;
+    opacity: 0;
+    transition: .4s;
+}
+    .btn-delete:before {
+        content: "✖";
+        padding-top: 1px;
+        width: 24px;
+        height: 24px;
+        box-sizing: border-box;
+        background-color: #555;
+        color: #fff;
+        border-radius: 50%;
+        margin-right: 4px;
+        font-size: 1.2em;
+        transition: .4s;
+    }
+    .btn-delete:hover { 
+        box-shadow: -1px 1px 1px #555;
+        transform: scale(1.2);
+    }
+    .btn-delete:hover:before {
+        transform: translateX(4px) rotate(-90deg);
+        background-color: #777;
+        box-shadow: -1px -1px 1px #333;
+    }

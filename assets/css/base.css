@@ -4,15 +4,9 @@ body {
     font: normal 10px 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
 }
 
-.logo {
-    margin: 0;
-    font: bold 1.3em 'Bookman Old Style', Bookman, 'Segoe UI', Tahoma, Geneva, sans-serif;
-    display: inline-block;
-    margin-right: 10px;
-    color: #36454F;
+h1, h2, h3, h4, h5, h6 {
+    font-family: Garamond, Georgia, 'Times New Roman', Times, serif;
 }
-
-.logo strong { font: 600 1em 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif; }
 
 p, li, td, th { font-size: 1.5em; }
 
@@ -35,11 +29,11 @@ th { text-align: center; }
 
 [contenteditable=true] { outline: none; }
 
+.font-gentleman { font-family: Garamond, Baskerville, Georgia, 'Times New Roman', Times, serif; }
+
 .font-ui { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif; }
 
 .font-code { font-family: Consolas, 'Courier New', Courier, monospace; }
-
-.font-gentleman { font-family: 'Bookman Old Style', Bookman, 'Segoe UI', Tahoma, Geneva, sans-serif; }
 
 /* Organization */
 
@@ -57,46 +51,44 @@ th { text-align: center; }
     visibility: hidden;
 }
 
-.menu { display: inline-flex; justify-content: space-between; }
-
-.menu-item { font-size: 1.4em; border-radius: 2px; overflow: hidden; }
-    .menu-item:not(:last-child) { margin-right: 3px; }
-
-.btn-menu {
-    display: inline-block;
-    padding-left: 10px; padding-right: 10px;
-    height: 25px;
-    box-sizing: border-box;
-    line-height: 24px;
-    color: #f5f5f5;
-    font-weight: 500;
-    background-color: #464646;
-    cursor: default;
-    transition: .2s;
-}
-    .btn-menu:not(:disabled):not([data-disabled=true]):not(.selected):hover { 
-        background-color: #005386;
-    }
-    .btn-menu.selected { background-color: #5497FF; }
-    .btn-menu:disabled,
-    .btn-menu[data-disabled=true] { 
-        color: #f0f0f0;
-        background-color: #808080;
-        box-shadow: none;
-    }
-
 /* Reset */
 
-.bare-list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
+.bare-list { margin: 0; padding: 0; list-style: none; }
 
-.bare-link {
-    text-decoration: none;
-}
+.bare-link { text-decoration: none; }
 
 .block { display: block!important; }
 
 .inline { display: inline-block!important; }
+
+.hidden { display: none!important; }
+
+.fit-content { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+/* Scrollbar */
+
+/* width */
+::-webkit-scrollbar {
+    width: calc(2px + 1%);
+    max-width: 10px;
+}
+  
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f5f5f5;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #a9a9a9;
+}
+
+/* Handle on active */
+::-webkit-scrollbar-thumb:active {
+    background: #808080;
+}

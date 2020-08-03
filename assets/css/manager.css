@@ -1,0 +1,17 @@
+.manager-menu {
+    position: fixed;
+    bottom: 0; left: 0;
+    width: 64px;
+    height: 64px;
+    text-align: center;
+    line-height: 64px;
+    color: #fff;
+    background-color: #232425;
+    box-shadow: 1px -1px 2px #000;
+    opacity: 0.8;
+    z-index: 100;
+}
+
+.manager-menu:hover {
+    opacity: 1;
+}

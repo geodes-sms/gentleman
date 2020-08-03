@@ -3,9 +3,6 @@ const merge = require('webpack-merge');
 const common = require('./webpack.common');
 
 module.exports = merge(common, {
-    entry: {
-        app: './src/index.dev.js'
-    },
     mode: 'development',
     devtool: 'inline-source-map',
     devServer: {
@@ -18,6 +15,13 @@ module.exports = merge(common, {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader']
             },
+            {
+                test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
+                loader: 'url-loader',
+                options: {
+                    limit: 10000
+                }
+            }
         ]
     },
     plugins: [

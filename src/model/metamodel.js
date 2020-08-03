@@ -1,27 +1,21 @@
-import { cloneObject, isNullOrUndefined, hasOwn, valOrDefault, isString, isNullOrWhitespace, isUndefined } from "zenkai";
-import { InvalidMetaModelError } from '@src/exception/index.js';
-import { DataType, ModelType } from '@src/global/enums.js';
+import { isNullOrUndefined, hasOwn, valOrDefault, isString, isNullOrWhitespace } from "zenkai";
+import { deepCopy, tryResolve } from "@utils/index.js";
+import { InvalidMetaModelError } from '@exception/index.js';
 import { Model } from "./model.js";
 
-const COMPOSITION = 'composition';
+
 const KEY_ROOT = '@root';
 const KEY_CONFIG = '@config';
 const KEY_RESOURCES = '@resources';
 const PROP_LANGUAGE = 'language';
 const PROP_STYLE = 'style';
 
-const deepCopy = (obj) => JSON.parse(JSON.stringify(obj));
-const tryResolve = (obj, prop, fallback) => isNullOrUndefined(obj) ? fallback : obj[prop];
-
 export const MetaModel = {
     /** @returns {MetaModel} */
     create(metamodel) {
-        var instance = Object.create(this);
+        const instance = Object.create(this);
 
         instance.schema = metamodel;
-        instance._root = metamodel[KEY_ROOT];
-        instance._config = metamodel[KEY_CONFIG];
-        instance._resources = valOrDefault(metamodel[KEY_RESOURCES], []);
         instance.models = [];
 
         return instance;
@@ -30,118 +24,153 @@ export const MetaModel = {
     models: null,
 
     /** @type {string} */
-    get root() { return this._root; },
+    get root() { return this.schema[KEY_ROOT]; },
     /** @type {string} */
-    get language() { return valOrDefault(tryResolve(this._config, PROP_LANGUAGE, ""), ""); },
-    get style() { return valOrDefault(tryResolve(this._config, PROP_STYLE, ""), ""); },
+    get config() { return this.schema[KEY_CONFIG]; },
+    /** @type {string} */
+    get language() { return valOrDefault(tryResolve(this.config, PROP_LANGUAGE, ""), ""); },
+    get style() { return valOrDefault(tryResolve(this.config, PROP_STYLE, ""), ""); },
     /** @type {string[]} */
-    get resources() { return this._resources; },
-
-    init(metamodel, args) {
-        this.schema = metamodel;
-
-        return this;
-    },
-
-    getModel(id) { return isString(id) ? this.models.find((m) => m.id === id) : this.models[id]; },
+    get resources() { return this.schema[KEY_RESOURCES]; },
 
     createModel() {
-        if (!isNullOrWhitespace(this.root)) {
-            let model = Model.create(this);
-            this.models.push(model);
-
-            return model;
+        if (isNullOrWhitespace(this.root)) {
+            // throw an error if the root was not found.
+            throw InvalidMetaModelError.create("Root not found: The metamodel does not contain a concept with the property `root`");
         }
 
-        // throw an error if the root was not found.
-        throw InvalidMetaModelError.create("Root not found: The metamodel does not contain a concept with the property `root`");
-    },
+        var model = Model.create(this);
+        this.models.push(model);
 
+        return model;
+    },
+    getModel(id) { return isString(id) ? this.models.find((m) => m.id === id) : this.models[id]; },
 
     /**
-     * Gets a model element by type
-     * @param {string} type 
+     * Gets a value indicating whether this concept is declared in the model
+     * @param {string} name 
+     * @returns {boolean}
      */
-    getModelElement(type) { 
-        var [concept, prop] = type.split('.');
+    isConcept(name) { return hasOwn(this.schema, name); },
+    /**
+     * Gets a value indicating whether this concept is concrete
+     * @param {string} name 
+     * @returns {boolean}
+     */
+    isConcrete(name) { return this.isConcept(name) && this.schema[name].nature === "concrete"; },
+    /**
+     * Gets a value indicating whether this concept is a prototype
+     * @param {string} name 
+     * @returns {boolean}
+     */
+    isPrototype(name) { return this.isConcept(name) && this.schema[name].nature === "prototype"; },
 
-        if(!this.isElement(concept)) {
+    /**
+     * Gets a model concept by name
+     * @param {string} name 
+     */
+    getConceptSchema(name) {
+        if (!this.isConcept(name)) {
             return undefined;
         }
 
-        var conceptTarget =  deepCopy(this.schema[concept]);
-        if (isString(prop) && prop.startsWith('component')) {
-            let componentName = prop.substring(prop.indexOf('[') + 1, prop.indexOf(']'));
-            conceptTarget = conceptTarget.component.find((c) => c.name === componentName);
+        var concept = deepCopy(this.schema[name]);
+
+        return concept;
+    },
+
+    /**
+     * Gets a list of concepts based on a prototype
+     * @param {string} prototype 
+     */
+    getConcreteConcepts(prototype) {
+        const concepts = [];
+
+        for (const key in this.schema) {
+            if (this.schema[key].prototype === prototype) {
+                const concept = this.getConceptSchema(key);
+                concept.name = key;
+                concept.type = "concept";
+                concepts.push(concept);
+            }
         }
 
-        return conceptTarget; 
+        return concepts;
     },
 
     /**
-     * Create an instance of the model element
-     * @param {string} type 
+     * Gets a list of concepts based on a prototype
+     * @param {string} base 
      */
-    createInstance(type) {
-        var element = this.getModelElement(type);
-        return element && !(this.isEnum(type) || this.isDataType(type)) ? cloneObject(element) : "";
+    getDerivedConcepts(base) {
+        const concepts = [];
+
+        for (const key in this.schema) {
+            const concept = this.schema[key];
+            if ( concept.base === base) {
+                concept.name = key;
+                concepts.push(concept);
+            }
+        }
+
+        return concepts;
     },
 
-    /**
-     * Gets a value indicating whether this type is declared in the model
-     * @param {string} type 
-     * @returns {boolean}
-     */
-    isElement(type) { return !isUndefined(this.schema[type]); },
+    getCompleteModelConcept(name) {
+        if (!this.isConcept(name)) {
+            return undefined;
+        }
 
-    /**
-     * Gets a value indicating whether this type is declared in the model
-     * @param {string} type 
-     * @returns {boolean}
-     */
-    isConcept(type) { return !isUndefined(this.schema[type]); },
+        const conceptSchema = this.getConceptSchema(name);
+        
+        if (!hasOwn(conceptSchema, 'attribute')) {
+            conceptSchema.attribute = {};
+        }
+        if (!hasOwn(conceptSchema, 'component')) {
+            conceptSchema.component = {};
+        }
 
-    /**
-     * Gets a value indicating whether the element is of type "ENUM"
-     * @param {string} type 
-     * @returns {boolean}
-     */
-    isEnum(type) { return this.isElement(type) && this.schema[type].type == ModelType.ENUM; },
+        const baseSchema = getConceptBaseSchema.call(this, conceptSchema.prototype);
 
-    /**
-     * Gets a value indicating whether the element is of type "PRIMITIVE" or "DATATYPE"
-     * @param {string} type 
-     * @returns {boolean}
-     */
-    isDataType(type) { return hasOwn(DataType, type.split(':')[0]) || this.isModelDataType(type); },
+        Object.assign(conceptSchema.attribute, baseSchema.attribute);
+        Object.assign(conceptSchema.component, baseSchema.component);
 
-    /**
-     * Gets a value indicating whether the element is of type "DATATYPE"
-     * @param {string} type 
-     * @returns {boolean}
-     */
-    isModelDataType(type) { return this.isElement(type) && this.schema[type].type === ModelType.DATATYPE; },
+        return conceptSchema;
+    },
+    getProjectionSchema(conceptName) {
+        if (!this.isConcept(conceptName)) {
+            return null;
+        }
 
-    /**
-     * Gets a value indicating whether the element has a composition
-     * @param {string} type 
-     * @returns {boolean}
-     */
-    hasComposition(type) { return this.isElement(type) && hasOwn(this.schema[type], COMPOSITION); },
+        var conceptSchema = this.getConceptSchema(conceptName);
 
-    /**
-     * Gets a model element type
-     * @param {Object} el element
-     */
-    getModelElementType(el) { return this.isElement(el.name) ? getModelElementType.call(this, el) : undefined; },
-
-    toString() {
-        return this.root.toString();
+        return conceptSchema.projection;
     }
 };
 
-function getModelElementType(el) {
-    if (!hasOwn(el, 'base')) return el.name;
+/**
+ * Gets the concept base schema
+ * @param {string} protoName 
+ */
+function getConceptBaseSchema(protoName) {
+    var prototype = protoName;
 
-    return getModelElementType(this.getModelElement(el.base)) + "." + el.name;
+    const baseSchema = {
+        attribute: {},
+        component: {},
+    };
+
+    while (!isNullOrUndefined(prototype)) {
+        let schema = this.schema[prototype];
+
+        if (schema) {
+            Object.assign(baseSchema.attribute, schema.attribute);
+            Object.assign(baseSchema.component, schema.component);
+            prototype = schema['prototype'];
+        } else {
+            prototype = null;
+        }
+    }
+
+    return baseSchema;
 }

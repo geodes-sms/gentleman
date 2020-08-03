@@ -1,15 +1,17 @@
-import { cloneObject, hasOwn, valOrDefault, isNullOrUndefined } from "zenkai";
-import { InvalidModelError } from '@src/exception/index.js';
-import { DataType, ModelType } from '@global/enums.js';
+import { isString, isObject, isNullOrUndefined, isEmpty } from "zenkai";
+import { MetaModel } from './metamodel.js';
 import { ConceptFactory } from "./concept/factory.js";
+import { ObserverHandler } from "./structure/index.js";
+
 
 export const Model = {
-    /** 
+    /**
      * Creates a `Model` instance.
+     * @param {MetaModel} metamodel
      * @returns {Model}
      */
     create(metamodel) {
-        var instance = Object.create(this);
+        const instance = Object.create(this);
 
         instance.metamodel = metamodel;
 
@@ -18,102 +20,456 @@ export const Model = {
     schema: null,
     /** @type {MetaModel} */
     metamodel: null,
-    /** @type {BaseConcept} */
+    /** @type {Concept} */
     root: null,
-    editor: null,
+    /** @type {Concept[]} */
+    concepts: null,
+    /** @type {*[]} */
+    listeners: null,
+    /** @type {*[]} */
+    watchers: null,
+    register(listener, watch) {
+        if (!this.listeners.includes(listener)) {
+            this.listeners.push(listener);
+            this.watchers.push(watch);
+        }
+
+        return true;
+    },
+    unregister(listener) {
+        var index = this.listeners.indexOf(listener);
+        if (index !== -1) {
+            this.listeners.splice(index, 1);
+
+            return true;
+        }
+
+        return false;
+    },
+    notify(message, value) {
+        this.listeners.forEach(listener => {
+            listener.update(message, value);
+        });
+    },
 
     /**
-     * Initialize the model.
-     * @param {Object} model 
-     * @param {Editor} editor 
-     * @param {Object} args 
+     * Initializes the model.
+     * @param {Object} model
      */
-    init(model, editor, args) {
-        this.schema = !isNullOrUndefined(model) ? model : initSchema(this.metamodel);
-        this.editor = editor;
-        this.root = ConceptFactory.createConcept(this, 'root', this.schema.root);
-        Object.assign(this, args);
+    init(model) {
+        this.concepts = [];
+        this.listeners = [];
+        this.watchers = [];
+        this.root = this.createConcept(this.metamodel.root, {
+            value: model
+        });
 
         return this;
     },
-
     /**
      * Creates and returns a model element
-     * @param {Object} el
-     * @param {boolean} asRoot
-     * @returns {BaseConcept}
+     * @param {string} name
+     * @returns {Concept}
      */
-    createConcept(name) {
-        var schema = this.metamodel.getModelElement(name);
+    createConcept(name, args) {
+        const schema = this.metamodel.getCompleteModelConcept(name);
 
-        return ConceptFactory.createConcept(this, name, schema);
+        var concept = ConceptFactory.createConcept(name, this, schema, args);
+
+        this.addConcept(concept);
+
+        return concept;
+    },
+    getConcepts(name) {
+        if (!isNullOrUndefined(name)) {
+            return this.concepts.filter(concept => concept.name === name);
+        }
+
+        return this.concepts.slice();
+    },
+    /**
+     * Returns a concept with matching id from the list of concepts held by the model
+     * @param {string} id
+     * @returns {Concept}
+     */
+    getConcept(id) {
+        if (!(isString(id) && !isEmpty(id))) {
+            throw new TypeError("Bad request: The 'id' argument must be a non-empty string");
+        }
+
+        return this.concepts.find(concept => concept.id === id);
+    },
+    /**
+     * Adds a concept to the list of concepts held by the model
+     * @param {Concept} concept
+     */
+    addConcept(concept) {
+        if (isNullOrUndefined(concept)) {
+            throw new TypeError("Bad request: The 'concept' argument must be a Concept");
+        }
+
+        this.concepts.push(concept);
+
+        if (this.watchers.includes(concept.name)) {
+            this.notify('concept.added', concept);
+        }
+
+        // console.warn("concept added", this.concepts.length);
+
+        return this;
+    },
+    /**
+     * Removes a concept from the list of concepts held by the model
+     * @param {string} id
+     * @returns {Concept} The removed concept
+     */
+    removeConcept(id) {
+        if (!(isObject(id) || isString(id))) {
+            throw new TypeError("Bad request: The 'id' argument must be a non-empty string");
+        }
+
+        var index = this.concepts.findIndex(concept => concept.id === id);
+
+        if (index === -1) {
+            return null;
+        }
+
+        let removedConcept = this.concepts.splice(index, 1)[0];
+
+        // console.warn("concept removed", this.concepts.length);
+
+        return removedConcept;
+    },
+    /**
+     * Verifies that a concept is part of the list of concepts held by the model
+     * @param {string} id
+     * @returns {boolean} Value indicating whether the concept is present
+     */
+    hasConcept(id) {
+        if (!(isObject(id) || isString(id))) {
+            throw new TypeError("Bad request: The 'id' argument must be a non-empty string");
+        }
+
+        if (isString(id)) {
+            return this.concepts.findIndex(concept => concept.id === id) !== -1;
+        }
+
+        return this.concepts.includes(id);
     },
 
-    /**
-     * Create an instance of the model element
-     * @param {string} type 
-     */
-    createInstance(type) {
-        var element = this.getModelElement(type);
-        return element && !(this.isEnum(type) || this.isDataType(type)) ? cloneObject(element) : "";
+    build() {
+        const compModelConcept = this.root.getComponentByName('model_concept');
+        const attrConcepts = compModelConcept.getAttributeByName('concepts');
+        const setConcepts = attrConcepts.target.getValue();
+
+        var concepts = {};
+
+        // setConcepts.filter(concept => concept.hasValue()).forEach(proto => {
+        //     const concept = proto.getValue();
+        //     const structure = concept.getComponentByName('concept_structure');
+
+        //     const name = getName(concept);
+
+        //     var attributes = [];
+        //     if (structure.isAttributeCreated('attributes')) {
+        //         attributes = getAttr(structure, 'attributes').getValue();
+        //     }
+
+        //     var components = [];
+        //     if (structure.isAttributeCreated('components')) {
+        //         components = getAttr(structure, 'components').getValue();
+        //     }
+
+        //     if (concept.name === "concrete_concept") {
+        //         let projections = [];
+        //         if (concept.isAttributeCreated('projections')) {
+        //             projections = getAttr(concept, 'projections').getValue();
+        //         }
+
+        //         let schema = {
+        //             "nature": "concrete",
+        //             "attribute": buildAttribute(attributes),
+        //             "component": buildComponent(components),
+        //             "projection": buildProjection(projections),
+        //         };
+
+        //         if (concept.isAttributeCreated("prototype")) {
+        //             let prototype = getAttr(concept, 'prototype').getValue();
+        //             schema.prototype = getAttr(prototype, 'name').getValue().toLowerCase();
+        //         }
+
+        //         Object.assign(concepts, {
+        //             [name]: schema
+        //         });
+        //     } else if (concept.name === "prototype_concept") {
+        //         let schema = {
+        //             "nature": "prototype",
+        //             "attribute": buildAttribute(attributes),
+        //             "component": buildComponent(components),
+        //         };
+
+        //         Object.assign(concepts, {
+        //             [name]: schema
+        //         });
+        //     }
+        // });
+
+        let rootConcept = getAttr(this.root, 'root').getValue();
+        return JSON.stringify(Object.assign(concepts, {
+            "@root": getName(rootConcept),
+            "@config": {
+                "language": getName(this.root),
+                "settings": {
+                    "autosave": true
+                }
+            }
+        }));
     },
-
-    /**
-     * Gets a value indicating whether this type is declared in the model
-     * @param {string} type 
-     * @returns {boolean}
-     */
-    isElement(type) { return this.MM[type] !== undefined; },
-    /**
-     * Gets a value indicating whether the element is of type "ENUM"
-     * @param {string} type 
-     * @returns {boolean}
-     */
-    isEnum(type) { return this.isElement(type) && this.MM[type].type == ModelType.ENUM; },
-    /**
-     * Gets a value indicating whether the element is of type "PRIMITIVE" or "DATATYPE"
-     * @param {string} type 
-     * @returns {boolean}
-     */
-    isDataType(type) { return hasOwn(DataType, type.split(':')[0]) || this.isModelDataType(type); },
-    /**
-     * Gets a value indicating whether the element is of type "DATATYPE"
-     * @param {string} type 
-     * @returns {boolean}
-     */
-    isModelDataType(type) { return this.isElement(type) && this.MM[type].type === ModelType.DATATYPE; },
-    /**
-     * Gets a value indicating whether the element has a composition
-     * @param {string} type 
-     * @returns {boolean}
-     */
-    hasComposition(type) { return this.isElement(type) && hasOwn(this.MM[type], 'composition'); },
-
-    /**
-     * Gets a model element type
-     * @param {Object} el element
-     */
-    getModelElementType(el) {
-        return this.isElement(el.name) ? getModelElementType.call(this, el) : undefined;
+    export() {
+        return JSON.stringify(this.root.export());
     },
-
-    toString() { return this.root.toString(); }
+    toString() {
+        return JSON.stringify({
+            [this.root.name]: this.root.toString()
+        });
+    },
+    project() {
+        return this.root.project();
+    }
 };
 
-function initSchema(metamodel) {
-    var schema = { "root": metamodel.getModelElement(metamodel.root) };
-    if (!hasOwn(schema.root, 'name')) {
-        schema.root['name'] = metamodel.root;
+const getAttr = (concept, name) => concept.getAttributeByName(name).target;
+const getName = (concept) => getAttr(concept, 'name').getValue().toLowerCase();
+
+const nameMap = {
+    string_primitive: (concept) => "string",
+    number_primitive: (concept) => "number",
+    boolean_primitive: (concept) => "boolean",
+    reference_primitive: (concept) => "reference",
+    set_primitive: (concept) => "set",
+    concept_primitive: (concept) => getName(getAttr(concept, 'concept').getValue()),
+};
+
+function buildConcept() {
+
+}
+
+function buildPrototype() {
+
+}
+
+function buildAttribute(attributes) {
+    if (!Array.isArray(attributes)) {
+        return {};
     }
+
+    var attributeSchema = {};
+
+    attributes.forEach(attribute => {
+        var schema = {};
+
+        const attr = (name) => attribute.getAttributeByName(name).target;
+
+        const primitive = attr('target').value;
+
+        schema.target = nameMap[primitive.name](primitive);
+
+        if (primitive.isAttributeCreated("accept")) {
+            schema.accept = primitive.getAttributeByName("accept").target.value;
+        }
+
+        if (attribute.isAttributeCreated("alias")) {
+            schema.alias = attr('alias').value;
+        }
+
+        if (attribute.isAttributeCreated("min")) {
+            schema.min = attr('min').value;
+        }
+
+        if (attribute.isAttributeCreated("max")) {
+            schema.max = attr('max').value;
+        }
+
+        if (attribute.isAttributeCreated("required")) {
+            schema.required = attr('required').value;
+        }
+
+        if (attribute.isAttributeCreated('projection')) {
+            let projection = getAttr(attribute, 'projection').getValue();
+            schema.projection = [buildField(projection)];
+        }
+
+        Object.assign(attributeSchema, {
+            [getName(attribute)]: schema
+        });
+    });
+
+    return attributeSchema;
+}
+
+function buildComponent(components) {
+    if (!Array.isArray(components)) {
+        return {};
+    }
+
+    var componentSchema = {};
+
+    components.forEach(component => {
+        var schema = {};
+
+        const attr = (name) => component.getAttributeByName(name).target;
+
+        if (component.isAttributeCreated("alias")) {
+            schema.alias = attr('alias').value;
+        }
+
+        if (component.isAttributeCreated("required")) {
+            schema.required = attr('required').value;
+        }
+
+        schema.attribute = buildAttribute(attr("attributes").getValue());
+
+        Object.assign(componentSchema, {
+            [attr('name').value.toLowerCase()]: schema,
+        });
+    });
+
+    return componentSchema;
+}
+
+/**
+ * Build projection schema
+ * @param {*[]} projections 
+ */
+function buildProjection(projections) {
+    if (!Array.isArray(projections)) {
+        return [];
+    }
+
+    var projectionSchema = [];
+
+    projections.filter(proto => proto.hasValue()).forEach(proto => {
+        const projection = proto.getValue();
+
+        /** @type {*[]} */
+        const elements = getAttr(projection, "elements").getValue();
+        /** @type {*[]} */
+        const tags = getAttr(projection, "tags").getValue();
+
+        var schema = {};
+
+        if (projection.isAttributeCreated("readonly")) {
+            schema.readonly = getAttr(projection, 'readonly').getValue();
+        }
+        if (projection.isAttributeCreated("visible")) {
+            schema.visible = getAttr(projection, 'visible').getValue();
+        }
+
+        schema.layout = buildLayout(projection, elements);
+
+        projectionSchema.push(schema);
+    });
+
+    return projectionSchema;
+}
+
+function buildLayout(layout, elements) {
+    var schema = {};
+    var disposition = [];
+
+    if (layout.name === "stack_projection") {
+        schema.type = "stack";
+        schema.orientation = getAttr(layout, 'orientation').getValue();
+
+        elements.filter(proto => proto.hasValue()).forEach(proto => {
+            const element = proto.getValue();
+            disposition.push(buildElement(element));
+        });
+    }
+    else if (layout.name === "wrap_projection") {
+        schema.type = "wrap";
+        elements.filter(proto => proto.hasValue()).forEach(proto => {
+            const element = proto.getValue();
+            disposition.push(buildElement(element));
+        });
+    }
+    else if (layout.name === "table_projection") {
+        // TODO
+    }
+
+    schema.disposition = disposition;
+
     return schema;
 }
 
-function getModelElementType(el) {
-    if (!hasOwn(el, 'base')) return el.name;
+function buildElement(element) {
+    if (element.name === "text_element") {
+        return getAttr(element, "value").getValue();
+    }
+    else if (element.name === "attribute_element") {
+        let attr = getAttr(element, 'value').getValue();
 
-    return getModelElementType(this.getModelElement(el.base)) + "." + el.name;
+        return `#${getName(attr)}:attribute`;
+    }
+    else if (element.name === "component_element") {
+        let comp = getAttr(element, 'value').getValue();
+
+        return `#${getName(comp)}:component`;
+    }
+
+    return null;
 }
 
-function isPrimitive(type) {
-    return hasOwn(DataType, type);
+function buildField(field) {
+    var schema = {
+        type: "field"
+    };
+
+    if (field.isAttributeCreated("readonly")) {
+        schema.readonly = getAttr(field, 'readonly').getValue();
+    }
+
+    if (field.isAttributeCreated("disabled")) {
+        schema.disabled = getAttr(field, 'disabled').getValue();
+    }
+
+    if (field.isAttributeCreated("visible")) {
+        schema.visible = getAttr(field, 'visible').getValue();
+    }
+
+    if (field.name === "text_field") {
+        if (field.isAttributeCreated("placeholder")) {
+            schema.placeholder = getAttr(field, 'placeholder').getValue();
+        }
+        schema.view = "text";
+    }
+    else if (field.name === "check_field") {
+        if (field.isAttributeCreated("label")) {
+            schema.label = getAttr(field, 'label').getValue();
+        }
+        schema.view = "binary";
+    }
+    else if (field.name === "choice_field") {
+        schema.view = "choice";
+    }
+    else if (field.name === "link_field") {
+        if (field.isAttributeCreated("placeholder")) {
+            schema.placeholder = getAttr(field, 'placeholder').getValue();
+        }
+        if (field.isAttributeCreated("value")) {
+            schema.value = getAttr(field, 'value').getValue();
+        }
+        if (field.isAttributeCreated("choice")) {
+            schema.choice = getAttr(field, 'choice').getValue();
+        }
+        schema.view = "link";
+    }
+    else if (field.name === "list_field") {
+        if (field.isAttributeCreated("orientation")) {
+            schema.orientation = getAttr(field, 'orientation').getValue();
+        }
+        schema.view = "list";
+    }
+
+    return schema;
 }

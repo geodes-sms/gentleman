@@ -1,0 +1,23 @@
+/* Autocomplete */
+
+.autocomplete {
+    position: absolute;
+    display: flex; flex-direction: column; flex-basis: auto;
+    max-width: 200px;
+    font-size: 1rem;
+    color: #333;
+    border-radius: 0 0 2px 2px;
+    background-color: #fff;
+    box-shadow: 0 1px 2px #999;
+    cursor: default;
+    z-index: 10;
+}
+
+    .autocomplete-item {
+        padding: 2px 5px;
+        font-size: 1.4em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+        .autocomplete-item:hover { background-color: #eee; }

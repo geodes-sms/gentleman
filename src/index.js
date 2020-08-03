@@ -1,49 +1,19 @@
+/* eslint-disable indent */
+import { Manager } from '@environment/index.js';
+import { Loader } from '@environment/loader.js';
+import './stylesheets.js';
+import '@css/model/gentleman.css';
 
-import { getElement, createDiv, createHeader, createParagraph, createSpan, appendChildren, createInput, createLabel } from "zenkai";
-import { Gentleman as GE } from './editor/index.js';
-import { __ENV } from './global/global.js';
-import { UI } from './global/enums.js';
-import { hide, show } from '@utils/effects.js';
-// CSS imports
-import '@css/normalize.css';
-import '@css/base.css';
-import '@css/site.css';
-import '@css/editor.css';
-import '@css/note.css';
-import '@css/state.css';
+const METAMODEL_GENTLEMAN = require('@samples/gentleman_model.json');
+// const METAMODEL_MINDMAP = require('@samples/mindmap.json');
+// const METAMODEL_RELIS = require('@samples/relis.json');
 
-const EL = UI.Element;
+const Environment = Manager.init();
+Environment.render();
 
-const container = getElement("[data-gentleman-editor]");
-var header = createHeader({ id: 'header', class: 'editor-header' });
-var splashscreen = createDiv({ id: 'splashscreen', class: 'splashscreen' });
-var instruction = createParagraph({ class: 'instruction-container font-gentleman' });
+const metamodel = Loader.loadMetaModel(METAMODEL_GENTLEMAN);
+const model = metamodel.createModel().init();
 
-var lblSelector = createLabel({ class: [EL.BUTTON, 'btn-loader', UI.HIDDEN], text: "Load a Metamodel" });
-var inputSelector = createInput.file({ id: 'fileInput', accept: '.json' });
-inputSelector.addEventListener('change', function (e) {
-    var file = this.files[0];
-    var reader = new FileReader();
-    if (file.name.endsWith('.json')) {
-        reader.onload = function (e) {
-            hide(lblSelector);
-            var editor = GE.Editor.create(JSON.parse(reader.result));
-            var headerContent = createDiv({ class: "content-wrapper editor-header-content" });
-            headerContent.appendChild(createSpan({ id: 'language', class: 'model-language', text: editor.language }));
-            header.appendChild(headerContent);
-            GE.Menu.create().init(editor, headerContent);
-            GE.Note.create().init(editor, container);
-
-            instruction.innerHTML = "Good news! Your Metamodel is valid and has been successfully loaded.\nTo continue, open a saved model or create a new one.";
-        };
-        reader.readAsText(file);
-    } else {
-        alert("Please use a .gen file");
-    }
-});
-
-lblSelector.appendChild(inputSelector);
-appendChildren(splashscreen, [instruction, lblSelector]);
-appendChildren(container, [header, splashscreen]);
-
-instruction.innerHTML = "Greetings and welcome to <strong>Gentleman</strong>.\n To begin, please load a model.";
+const Editor = Environment.createEditor()      
+                          .init(metamodel)
+                          .open();         

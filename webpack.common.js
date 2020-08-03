@@ -12,10 +12,15 @@ module.exports = {
         alias: {
             '@': '.',
             '@src': path.resolve(__dirname, 'src'),
-            '@global': path.resolve(__dirname, 'src/global'),
-            '@editor': path.resolve(__dirname, 'src/editor'),
+            '@bin': path.resolve(__dirname, 'bin'),
+            '@samples': path.resolve(__dirname, 'samples'),
+            '@environment': path.resolve(__dirname, 'src/environment'),
             '@model': path.resolve(__dirname, 'src/model'),
+            '@concept': path.resolve(__dirname, 'src/model/concept'),
+            '@structure': path.resolve(__dirname, 'src/model/structure'),
             '@projection': path.resolve(__dirname, 'src/projection'),
+            '@field': path.resolve(__dirname, 'src/projection/field'),
+            '@exception': path.resolve(__dirname, 'src/exception'),
             '@utils': path.resolve(__dirname, 'src/utils'),
             '@css': path.resolve(__dirname, 'assets/css'),
         }

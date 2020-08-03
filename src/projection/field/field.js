@@ -1,238 +1,137 @@
-import { DataType, EventType, UI, RepresentationType, ModelAttributeProperty as MAttrProp } from '@src/global/enums.js';
-import { createDiv, createUnorderedList, createListItem, appendChildren, insertAfterElement, addClass, removeClass, getElement, createSpan, addAttributes, removeChildren, isDerivedOf, isNullOrWhitespace, valOrDefault } from 'zenkai';
+import { createI, removeChildren, isEmpty, isFunction, valOrDefault } from 'zenkai';
+import { ObserverHandler } from '@structure/index.js';
+import { shake, show, hide } from '@utils/index.js';
+import { Concept } from '@concept/index.js';
 
-const EL = UI.Element;
 
-export const Field = {
-    /**
-     * Constructor
-     * @param {Object} values values
-     * @returns {BaseProjection}
-     */
-    create: function (args) {
-        var instance = Object.create(this);
+const BaseField = {
+    create(source, schema, editor) {
+        const instance = Object.create(this);
 
-        Object.assign(instance, args);
-
-        // private members
-        instance._validators = [];
-
-        if (!instance.isOptional) {
-            instance.validators.push(validateRequired);
-        }
-
-        if (isDerivedOf(instance, Field)) {
-            instance.init();
-        }
+        instance.source = source;
+        instance.sourceType = valOrDefault(source.kind, "value");
+        instance.schema = schema;
+        instance.editor = editor;
+        instance.attached = [];
+        instance.references = [];
+        instance.errors = [];
+        instance.readonly = valOrDefault(schema.readonly, false);
+        instance.initObserver();
 
         return instance;
     },
+    init() {
+        return this;
+    },
+    /** @type {string} */
     id: null,
-    object: "BASE",
-    getInfo() {
-        return {
-            type: this._mAttribute.type,
-            value: this._mAttribute.value
-        };
-    },
-    prepare: function (id, val, mAttr, type, fnUpdate) {
-        return Object.freeze({
-            _id: id,
-            _val: val,
-            _mAttribute: mAttr,
-            _type: type,
-            _update: fnUpdate,
-            _isOptional: mAttr.isOptional,
-            _name: mAttr.name,
-            _description: mAttr.description
-        });
-    },
-    /** @returns {ModelAttribute} */
-    get modelAttribute() { return this._mAttribute; },
+    /** @type {Concept|Field} */
+    source: null,
+    /** @type {string} */
+    sourceType: null,
+    /** @type {*} */
+    schema: null,
+    /** @type {Editor} */
+    editor: null,
+    /** @type {Projection} */
+    projection: null,
 
-    get text() {
-        if (this.modelAttribute.type === DataType.boolean) {
-            let chk = this._input.firstChild;
-            return chk.checked ? this._input.dataset.representation : '';
-        }
-        return this._input.textContent;
-    },
-    get value() {
-        return this._input.textContent;
-    },
-    set value(val) {
-        this._input.textContent = val;
-        if (isNullOrWhitespace(val)) {
-            addClass(this._input, UI.EMPTY);
-        }
-        else {
-            removeClass(this._input, UI.EMPTY);
-        }
-    },
-    get name() { return this._name; },
-    get description() { return this._description; },
-    get isOptional() { return this._isOptional; },
-    get hasError() { return !isNullOrWhitespace(this.error); },
-
-    // get id() { return this._id; },
-    /**
-     * Returns an element's data-type
-     * @param {Element} el element
-     */
-    get type() { return this._type; },
-    /**
-     * Returns an element's data error message
-     * @param {Element} el element
-     */
-    get error() { return this._error; },
-    set error(val) { this._error = val; },
-    /**
-     * Returns an element's data position
-     * @param {Element} el element
-     */
-    get position() { return this._position; },
-    get validators() { return this._validators; },
-    index: 0,
     /** @type {HTMLElement} */
     element: null,
-    isDisabled: false,
+    /** @type {HTMLElement} */
+    statusElement: null,
+    /** @type {HTMLElement[]} */
+    attached: null,
 
-    createInput(editable) {
-        var inputProjection;
+    /** @type {string[]} */
+    errors: null,
+    /** @type {string[]} */
+    references: null,
 
-        this._input = createSpan({
-            id: this.id,
-            class: ['attr', 'empty'],
-            html: "",
-            data: {
-                nature: "attribute",
-                type: this.object,
-                placeholder: editable
-            }
-        });
-        this._input.contentEditable = true;
-        this._input.tabIndex = 0;
-        if (this._options) {
-            addAttributes(this._input, this._options);
-        }
+    /** @type {boolean} */
+    readonly: false,
+    /** @type {boolean} */
+    visible: false,
+    /** @type {boolean} */
+    disabled: false,
+    /** @type {boolean} */
+    active: false,
+    /** @type {boolean} */
+    focused: false,
+    /** Object nature */
+    object: "field",
+    kind: "field",
 
-        // if (mAttr.isOptional) {
-        //     Object.assign(self._input.dataset, { optional: true });
-        // }
-        // this.value = this._val;
+    get hasError() { return !isEmpty(this.errors); },
+    get hasAttached() { return !isEmpty(this.attached); },
+    get hasReference() { return !isEmpty(this.references); },
 
-        inputProjection = this._input;
-
-        // if (mAttr.isMultiple && mElement.representation.type == RepresentationType.TEXT) {
-        //     var li = createLi({ class: 'array-item array-item--single', data: { prop: MAttrProp.VAL, separator: mAttr.separator } });
-        //     li.appendChild(inputProjection);
-        //     inputProjection = li;
-        // }
-
-        this.element = inputProjection;
-
-        return inputProjection;
+    attach(element, type) {
+        this.attached.push(element);
     },
-    focus() { this._input.focus(); },
-    focusIn() {
-        var self = this;
-        if (self.isOptional) {
-            removeClass(this._input, UI.COLLAPSE);
-        }
+    detach(element) {
+        this.attached.slice(this.attached.indexOf(element), 1);
     },
-    focusOut() {
-        var self = this;
-        if (self.isOptional) {
-            if (isNullOrWhitespace(this.value)) {
-                addClass(this._input, UI.COLLAPSE);
-            }
+    getAttached(pred) {
+        if (!isFunction(pred)) {
+            return this.attached;
         }
+
+        return this.attached.filter(element => pred(element));
     },
-    update() {
-        var self = this;
-        var attr = self._mAttribute;
-        var val = self._input.textContent;
-
-        if (val === "") {
-            addClass(self._input, UI.EMPTY);
-        }
-
-        this.value = val;
-        // update attribute
-        self._update(self.value, self.index);
-
-        if (attr.type === DataType.ID) {
-            let src = attr.MODEL.ID.find(function (x) { return x.id == self.id; });
-            if (src) {
-                let arr = src.ref;
-                for (let i = 0, len = arr.length; i < len; i++) {
-                    let el = getElement('#' + arr[i]);
-                    el.textContent = src.attr.val;
-                    if (isNullOrWhitespace(src.attr.val)) addClass(el, UI.EMPTY);
-                    else removeClass(el, UI.EMPTY);
-                }
-            }
-        }
-    },
-
-    validate() {
-        var self = this;
-
-        var isValid = true;
-        var validator;
-        for (validator of self.validators) {
-            if (!validator.call(self)) {
-                return false;
-            }
-        }
-
-        if (self.modelAttribute.validate(self)) {
-            self.error = "";
-            return true;
-        }
-
-        return false;
+    focus() {
+        this.element.contentEditable = false;
+        this.element.focus();
+        this.focused = true;
     },
     remove() {
-        var self = this;
-        removeChildren(self._input);
-        self._input.remove();
-        removeChildren(self.element);
-        self.element.remove();
+        removeChildren(this.input);
+        this.input.remove();
+
+        removeChildren(this.element);
+        this.element.remove();
     },
     delete() {
-        var self = this;
-        self.modelAttribute.remove(self.index);
+        var result = this.source.delete();
+        
+        if (result.success) {
+            this.source.unregister(this);
+            this.clear();
+            removeChildren(this.element);
+            this.element.remove();
+        } else {
+            this.editor.notify(result.message);
+            shake(this.element);
+        }
+    },
+    clear() {
+        return true;
+    },
+    show() {
+        show(this.element);
+        this.visible = true;
+        this.active = true;
+    },
+    enterHandler() {
+        this.focusOut();
+    },
+    backspaceHandler() {
+        return;
+    },
+    hide() {
+        hide(this.element);
+        this.visible = false;
     },
     enable() {
-        var self = this;
-        self._input.contentEditable = true;
-        self._input.tabIndex = 0;
-        self.isDisabled = false;
+        this.disabled = false;
     },
     disable() {
-        var self = this;
-        self._input.contentEditable = false;
-        self._input.tabIndex = -1;
-        self.isDisabled = true;
+        this.disabled = true;
     },
 };
 
-var baseProjection = Field.create();
 
-/**
- * Required validation
- * @this BaseProjection
- */
-function validateRequired() {
-    var isValid = true;
-    // required validation
-    if (!this.isOptional) {
-        isValid = !isNullOrWhitespace(this.value.toString());
-        if (!isValid) {
-            this.error = "This attribute is <strong>required</strong>.";
-        }
-    }
-
-    return isValid;
-}
+export const Field = Object.assign(
+    BaseField,
+    ObserverHandler
+);

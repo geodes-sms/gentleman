@@ -1,32 +1,52 @@
-import { createDiv, createButton, appendChildren } from "zenkai";
+import { isNullOrUndefined } from "zenkai";
 import { Concept } from "./concept.js";
-import { TextualProjection } from "@projection/text-projection.js";
 
-export const BaseConcept = Concept.create({
-    create: function (model, schema) {
-        var instance = Object.create(this);
 
-        instance.model = model;
-        instance.schema = schema;
-        instance.name = schema.name;
-        instance.projection = TextualProjection.create(schema.projection[0], instance, model.editor);
+const ResponseCode = {
+    SUCCESS: 200,
+    INVALID_VALUE: 401
+};
 
-        return instance;
-    },
-    /** @type {TextualProjection} */
-    projection: null,
-    representation: null,
-    container: null,
-
-    render() {
-        return this.projection.render();
-        this.container = createDiv({ class: 'container' });
-        this.container.appendChild(this.projection.render());
-
-        var actionContainer = createDiv({ class: 'container-action' });
-        this.container.appendChild(actionContainer);
-
-        return this.container;
-
+function responseHandler(code) {
+    switch (code) {
+        case ResponseCode.INVALID_VALUE:
+            return {
+                success: false,
+                message: "The value is not included in the list of valid values."
+            };
     }
-});
+}
+
+const _BaseConcept  = {
+    nature: "concrete",
+    initValue(args) {
+        if (isNullOrUndefined(args)) {
+            return false;
+        }
+
+        this.id = args.id;
+
+        for (const key in args) {
+            const element = args[key];
+            const [name, type] = key.split(":");
+            
+            switch (type) {
+                case "attribute":
+                    this.createAttribute(name, element);
+                    break;
+                case "component":
+                    this.createComponent(name, element);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return true;
+    }
+};
+
+export const BaseConcept = Object.assign(
+    Object.create(Concept),
+    _BaseConcept
+);

@@ -16,14 +16,19 @@
                 ],
                 "alias": {
                     "@": ".",
-                    "@src": "./src",
-                    "@global": "./src/global",
-                    "@editor": "./src/editor",
-                    "@model": "./src/model",
-                    "@projection": "./src/projection",
-                    "@utils": "./src/utils",
+                    "@samples": "./samples",
+                    "@bin": "./bin",
+                    "@assets": "./assets",
                     "@css": "./assets/css",
-                    "@zenkai": "./node_modules/protolabo-zenkai/dist/zenkai.esm"
+                    "@src": "./src",
+                    "@environment": "./src/environment",
+                    "@model": "./src/model",
+                    "@concept": "./src/model/concept",
+                    "@structure": "./src/model/structure",
+                    "@projection": "./src/projection",
+                    "@field": "./src/projection/field'",
+                    "@exception": "./src/exception",
+                    "@utils": "./src/utils"
                 }
             }
         ]
