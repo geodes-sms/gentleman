@@ -88,20 +88,29 @@ const _ReferenceConcept = {
         return values;
     },
     getChildren(name) {
-        if (!this.hasValue()) {
-            return [];
+        return [];
+    },
+    delete(force = false) {
+        if (!force) {
+            let result = this.getParent().remove(this);
+
+            if (!result.success) {
+                return result;
+            }
+        }
+        
+        if (this.reference) {
+            this.reference.unregister(this);
         }
 
-        const children = [];
-        const concept = this.getValue();
+        this.model.removeConcept(this.id);
 
-        if (isNullOrUndefined(name)) {
-            children.push(concept);
-        } else if (concept.name === name) {
-            children.push(concept);
-        }
+        this.notify("delete");
 
-        return children;
+        return {
+            message: `The concept '${name}' was successfully deleted.`,
+            success: true,
+        };
     },
 
     update(message, value) {

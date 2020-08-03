@@ -1,7 +1,7 @@
 import {
     createDocFragment, createTable, createTableHeader, createTableBody, createTableRow,
     createTableCell, createTableHeaderCell, createSpan, createDiv, createI, createButton,
-    removeChildren, isHTMLElement, isDerivedOf, isEmpty, valOrDefault, hasOwn, isString,
+    removeChildren, isHTMLElement, isDerivedOf, isEmpty, valOrDefault, hasOwn, isString, appendChildren, findAncestor,
 } from "zenkai";
 import { hide, show, shake } from "@utils/index.js";
 import { Concept } from "@concept/index.js";
@@ -11,33 +11,44 @@ import { ProjectionManager } from "./../projection.js";
 import { contentHandler } from "./../content-handler.js";
 
 
-const addSchema = [{
+const addSchema = {
+    "type": "layout",
     "layout": {
         "type": "wrap",
         "style": {
-            "box": {
-                "space": {
-                    "inner": 5
-                }
-            }
+            "css": "field--table__btn-add-row"
         },
-        "disposition": ["ADD"]
+        "disposition": [
+            { "type": "text", "content": "Add row" }
+        ]
     }
-}];
+};
 
-const removeSchema = [{
+const addRowSchema = {
+    "type": "layout",
     "layout": {
         "type": "wrap",
         "style": {
-            "box": {
-                "space": {
-                    "inner": 5
-                }
-            }
+            "css": "field--table__btn-add"
         },
-        "disposition": ["REMOVE"]
+        "disposition": [
+            { "type": "text", "content": "+" }
+        ]
     }
-}];
+};
+
+const removeRowSchema = {
+    "type": "layout",
+    "layout": {
+        "type": "wrap",
+        "style": {
+            "css": "table-remove"
+        },
+        "disposition": [
+            { "type": "text", "content": "Remove" }
+        ]
+    }
+};
 
 
 const NotificationType = {
@@ -61,6 +72,16 @@ function createNotificationMessage(type, message) {
     }
 
     return element;
+}
+
+function resolveFieldComponent(element) {
+    const FIELD_COMPONENT = "field-component";
+
+    if (element.dataset.nature === FIELD_COMPONENT) {
+        return element;
+    }
+
+    return findAncestor(element, (el) => el.dataset.nature === FIELD_COMPONENT);
 }
 
 
@@ -91,10 +112,16 @@ const BaseTableField = {
                 this.addRow(value);
 
                 break;
+            case "value.removed":
+                this.removeRow(value);
+
+                break;
             default:
                 console.warn(`The message '${message}' was not handled for table field`);
                 break;
         }
+
+        this.refresh();
     },
 
     render() {
@@ -192,7 +219,6 @@ const BaseTableField = {
 
                 var cell = createTableHeaderCell({
                     class: ["field--table-header-cell"],
-                    tabindex: -1,
                     dataset: {
                         nature: "field-component",
                         view: "table",
@@ -252,7 +278,7 @@ const BaseTableField = {
      * @returns {boolean}
      */
     hasValue() {
-        return this.table.rows.length > 0;
+        return this.body.rows.length > 0;
     },
     /**
      * Gets the input value
@@ -264,7 +290,6 @@ const BaseTableField = {
 
     focusIn() {
         this.focused = true;
-        this.value = this.input.textContent;
         this.element.classList.add("active");
 
         return this;
@@ -272,10 +297,6 @@ const BaseTableField = {
     focusOut() {
         if (this.readonly) {
             return;
-        }
-
-        if (this.hasChanges()) {
-            this.setValue(this.input.textContent);
         }
 
         if (this.messageElement) {
@@ -291,6 +312,27 @@ const BaseTableField = {
         return this;
     },
     refresh() {
+        if (this.hasValue()) {
+            if (this.btnAdd) {
+                hide(this.btnAdd);
+            }
+        } else {
+            if (!isHTMLElement(this.btnAdd)) {
+                let render = contentHandler.call(this, addSchema);
+                this.btnAdd = createButton({
+                    class: ["btn", "field--table__button"],
+                    dataset: {
+                        "nature": "field-component",
+                        "id": this.id,
+                        "action": "add"
+                    }
+                }, render);
+                this.element.appendChild(this.btnAdd);
+            }
+
+            show(this.btnAdd);
+        }
+
         if (this.hasChanges()) {
             this.statusElement.classList.add("change");
         } else {
@@ -320,6 +362,7 @@ const BaseTableField = {
                 nature: "field-component",
                 view: "table",
                 id: this.id,
+                index: valOrDefault(concept.index, this.table.rows.length)
             }
         });
 
@@ -328,9 +371,8 @@ const BaseTableField = {
 
             var render = contentHandler.call(this, content, concept);
 
-            var cell = createTableHeaderCell({
+            var cell = createTableCell({
                 class: ["field--table-cell"],
-                tabindex: -1,
                 dataset: {
                     nature: "field-component",
                     view: "table",
@@ -343,37 +385,48 @@ const BaseTableField = {
             row.appendChild(cell);
         });
 
-        // var projection = ProjectionManager.createProjection(addSchema, concept, this.editor).init();
+        var actionCell = createTableCell({
+            class: ["field--table__cell-action"],
+            tabindex: -1,
+        });
 
-        // var addContainer = createTableCell({
-        //     class: ["field--table-cell"],
-        //     tabindex: -1,
-        // }, [projection.render()]);
+        var addRender = contentHandler.call(this, addRowSchema);
+        addRender.dataset.action = "add";
 
-        // addContainer.addEventListener('click', () => {
-        //     var element = this.createElement();
-        //     if (!element) {
-        //         this.editor("Element could not be created");
-        //     }
-        // });
+        var removeRender = contentHandler.call(this, removeRowSchema);
+        removeRender.dataset.action = "remove";
 
-        // row.appendChild(addContainer);
+        appendChildren(actionCell, [addRender, removeRender]);
 
-        // projection = ProjectionManager.createProjection(removeSchema, concept, this.editor).init();
+        actionCell.addEventListener('click', (event) => {
+            const { target } = event;
 
-        // var removeContainer = createTableCell({
-        //     class: ["field--table-cell"],
-        //     tabindex: -1,
-        // }, [projection.render()]);
+            const actionTarget = findAncestor(target, (element) => element.parentElement === actionCell);
 
-        // removeContainer.addEventListener('click', () => {
-        //     removeChildren(row);
-        //     row.remove();
-        // });
+            if (actionTarget.dataset.action) {
+                const { action } = actionTarget.dataset;
 
-        // row.appendChild(removeContainer);
+                if (action === "add") {
+                    this.createElement();
+                }
+                if (action === "remove") {
+                    this.delete(actionCell.parentElement);
+                }
+            }
+        }, true);
+
+        row.appendChild(actionCell);
 
         this.body.appendChild(row);
+    },
+    removeRow(value) {
+        let row = this.body.rows.item(value.index);
+        if (!isHTMLElement(row)) {
+            throw new Error("Table error: Row not found");
+        }
+
+        removeChildren(row);
+        row.remove();
     },
     removeElement(element) {
         return this.source.removeElement(element);
@@ -397,7 +450,23 @@ const BaseTableField = {
         }
     },
     bindEvents() {
-        var lastKey = -1;
+        this.element.addEventListener('click', (event) => {
+            const { target } = event;
+
+            const fieldComponent = resolveFieldComponent(target);
+
+            if (fieldComponent.dataset.id !== this.id) {
+                return;
+            }
+
+            if (fieldComponent.dataset.action) {
+                const { action } = fieldComponent.dataset;
+
+                if (action === "add") {
+                    this.createElement();
+                }
+            }
+        }, true);
 
     }
 };

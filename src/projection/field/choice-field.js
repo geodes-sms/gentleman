@@ -113,7 +113,8 @@ const BaseChoiceField = {
         switch (message) {
             case "value.changed":
                 if (value.object === "concept") {
-                    let projection = ProjectionManager.createProjection(value.schema.projection, value, this.editor).init();
+                    let schema = value.schema.projection.filter(p => p.tags.includes("choice-selection"));
+                    let projection = ProjectionManager.createProjection(schema, value, this.editor).init();
                     this.setChoice(value.name);
                     removeChildren(this.selectionElement).appendChild(projection.render());
                 }
@@ -262,7 +263,7 @@ const BaseChoiceField = {
             this.element.appendChild(projection.render());
         }
 
-        if(!isHTMLElement(this.selectionElement)) {
+        if (!isHTMLElement(this.selectionElement)) {
             this.selectionElement = createDiv({
                 class: ["field--choice__selection"],
                 dataset: {
@@ -331,6 +332,12 @@ const BaseChoiceField = {
         return this;
     },
     refresh() {
+        if (this.hasValue()) {
+            this.element.classList.remove("empty");
+        } else {
+            this.element.classList.add("empty");
+        }
+        
         if (this.hasChanges()) {
             this.statusElement.classList.add("change");
         } else {

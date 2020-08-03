@@ -8,7 +8,7 @@ import { contentHandler } from "./content-handler.js";
  * @param {string} name 
  */
 export function AttributeHandler(schema, concept) {
-    const { name, optional } = schema;
+    const { name, optional, tag } = schema;
 
     if (!concept.hasAttribute(name)) {
         throw new Error(`Attribute '${name}' does not exist in the concept '${concept.name}'`);
@@ -49,6 +49,11 @@ export function AttributeHandler(schema, concept) {
     } else {
         let { target, description } = concept.getAttributeByName(name);
         let { projection: schemaProjection } = cloneObject(target.schema);
+
+        if (tag) {
+            schemaProjection = schemaProjection.filter(p => p.tags.includes(tag));
+            console.log(schemaProjection);
+        }
 
         schemaProjection.forEach(schema => {
             if (!hasOwn(schema, 'readonly')) {

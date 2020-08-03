@@ -290,15 +290,6 @@
         transition: .2s;
     }
 
-    .field--list__add {
-        display: flex;
-        align-items: center;
-        box-sizing: border-box;
-        font-size: 1em;
-        transition: .2s;
-        border: 2px dashed rgb(42, 115, 224);
-        cursor: default;
-    }
 
     .field--list-item .btn-remove {
         position: absolute;
@@ -319,11 +310,52 @@
 
     .field--table__table {
         width: 100%;
+        border: 0 none;
     }
+
+    .field--table-row:hover 
 
     .field--table-cell {
         position: relative;
         box-sizing: border-box;
+    }
+
+    .field--table__cell-action {
+        position: relative;
+        min-width: 24px;
+        border: 0 none;
+    }
+
+    .field--table-row:hover .field--table__btn-add {
+        opacity: 1;
+        transform: translateY(50%);
+    }
+
+    .field--table__btn-add {
+        position: absolute;
+        bottom: 0;
+        height: 24px;
+        width: 24px;
+        line-height: 20px;
+        font-size: 1.5em;
+        color: #fff;
+        border-radius: 50%;
+        text-align: center;
+        transform: translateY(50%) scale(0.5) translateX(-50%);
+        background-color: #232425;
+        opacity: 0.2;
+        transition: .2s;
+        cursor: pointer;
+    }
+
+    .field--table__button {
+        display: block;
+        margin: 4px auto;
+        width: 80%;
+        padding: 6px 12px;
+        color: #fff;
+        border-radius: 180px;
+        background-color: royalblue;
     }
 
 

@@ -32,6 +32,7 @@ export const WrapLayout = {
         if (!isHTMLElement(this.container)) {
             this.container = createDiv({
                 class: ["layout-container"],
+                tabindex: -1,
                 dataset: {
                     nature: "layout",
                     layout: "wrap",
