@@ -1,0 +1,179 @@
+[
+    {
+        "name": "text_style",
+        "nature": "concrete",
+        "attribute": {
+            "bold": {
+                "target": "boolean",
+                "required": false
+            },
+            "italic": {
+                "target": "boolean",
+                "required": false
+            },
+            "underline": {
+                "target": "boolean",
+                "required": false
+            },
+            "strikethrough": {
+                "target": "boolean",
+                "required": false
+            },
+            "colour": {
+                "target": "colour",
+                "required": false
+            },
+            "font": {
+                "target": "set",
+                "required": false,
+                "accept": {
+                    "name": "string",
+                    "alias": "Font"
+                }
+            },
+            "size": {
+                "target": "number",
+                "required": false,
+                "alias": "text size"
+            },
+            "align": {
+                "target": "string",
+                "required": false,
+                "alias": "text alignment",
+                "values": ["left", "right", "center", "justify"]
+            }
+        }
+    },
+    {
+        "name": "box_style",
+        "nature": "concrete",
+        "attribute": {
+            "space": {
+                "target": "space_style",
+                "required": false
+            },
+            "border": {
+                "target": "border_style",
+                "required": false
+            },
+            "background": {
+                "target": "colour",
+                "required": false
+            },
+            "width": {
+                "target": "number",
+                "required": false
+            },
+            "height": {
+                "target": "number",
+                "required": false
+            }
+        }
+    },
+    {
+        "name": "colour",
+        "nature": "prototype",
+        "attribute": {}
+    },
+    {
+        "name": "name_colour",
+        "nature": "concrete",
+        "prototype": "colour",
+        "attribute": {
+            "value": {
+                "target": "string"
+            }
+        }
+    },
+    {
+        "name": "rgb_colour",
+        "nature": "concrete",
+        "prototype": "colour",
+        "attribute": {
+            "red": {
+                "target": "number",
+                "min": 0,
+                "max": 255
+            },
+            "blue": {
+                "target": "number",
+                "min": 0,
+                "max": 255
+            },
+            "green": {
+                "target": "number",
+                "min": 0,
+                "max": 255
+            }
+        }
+    },
+    {
+        "name": "space_style",
+        "nature": "concrete",
+        "attribute": {
+            "inner": {
+                "target": "multi_size"
+            },
+            "outer": {
+                "target": "multi_size"
+            }
+        }
+    },
+    {
+        "name": "multi_size",
+        "nature": "concrete",
+        "attribute": {
+            "value": {
+                "target": "number"
+            },
+            "top": {
+                "target": "number"
+            },
+            "right": {
+                "target": "number"
+            },
+            "bottom": {
+                "target": "number"
+            },
+            "left": {
+                "target": "number"
+            }
+        }
+    },
+    {
+        "name": "multi_colour",
+        "nature": "concrete",
+        "attribute": {
+            "value": {
+                "target": "colour"
+            },
+            "top": {
+                "target": "colour"
+            },
+            "right": {
+                "target": "colour"
+            },
+            "bottom": {
+                "target": "colour"
+            },
+            "left": {
+                "target": "colour"
+            }
+        }
+    },
+    {
+        "name": "border_style",
+        "nature": "concrete",
+        "attribute": {
+            "size": {
+                "target": "multi_size"
+            },
+            "colour": {
+                "target": "colour"
+            },
+            "radius": {
+                "target": "multi_size"
+            }
+        }
+    }
+]

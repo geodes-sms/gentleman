@@ -1,65 +1,39 @@
 import {
     createButton, appendChildren, removeChildren, insertAfterElement, insertBeforeElement,
-    isNode, isHTMLElement, isNullOrUndefined, hasOwn, valOrDefault, isEmpty,
+    isNode, isHTMLElement, isNullOrUndefined, hasOwn, valOrDefault, isEmpty, createI,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
-import { FieldManager } from "./field-manager.js";
 import { LayoutFactory } from "./layout/index.js";
+import { FieldFactory } from "./field/index.js";
 
 
 var inc = 0;
 const nextId = () => `projection${inc++}`;
 
-/** @type {Projection[]} */
-const projections = [];
-
-export const ProjectionManager = {
-    createProjection(schema, concept, context) {
+export const ProjectionFactory = {
+    createProjection(model, schema, concept, env) {
         var projection = Object.create(Projection, {
-            id: { value: nextId() }
+            id: { value: valOrDefault(schema.id, nextId()) },
+            model: { value: model },
+            schema: { value: schema },
+            environment: { value: env },
         });
 
-        projection.schema = schema;
         projection.concept = concept;
-        projection.context = context;
-        projection.editor = context;
-
-        projections.push(projection);
 
         return projection;
-    },
-    /**
-     * 
-     * @param {string|number} id 
-     */
-    getProjection(id) {
-        if (Number.isInteger(id)) {
-            return projections[id];
-        }
-
-        return projections.find(p => p.id === id);
-    },
-    changeProjection() {
-
-    },
-    removeProjection(id) {
-        var index = projections.findIndex(p => p.id === id);
-
-        if (index === -1) {
-            return false;
-        }
-
-        projections.splice(index, 1);
-
-        return true;
     }
 };
 
 const Projection = {
-    init() {
+    init(concept) {
         this.containers = [];
         this.attributes = [];
         this.components = [];
+
+        if (concept) {
+            this.concept = concept;
+        }
 
         this.concept.register(this);
 
@@ -69,7 +43,7 @@ const Projection = {
     /** @type {Concept} */
     concept: null,
     /** @type {Editor} */
-    editor: null,
+    environment: null,
     /** @type {Projection} */
     parent: null,
     /** @type {HTMLElement[]} */
@@ -132,13 +106,13 @@ const Projection = {
         if (message === "delete") {
             this.concept.unregister(this);
             this.concept = null;
-            
+
             this.containers.forEach(container => {
                 removeChildren(container);
                 container.remove();
             });
-            
-            ProjectionManager.removeProjection(this.id);
+
+            this.model.removeProjection(this.id);
 
             return;
         }
@@ -167,7 +141,7 @@ const Projection = {
 
         switch (action) {
             case "added":
-                var projection = ProjectionManager.createProjection(target.schema.projection, target, this.editor).init();
+                var projection = this.model.createProjection(target).init();
                 projection.parent = this;
 
                 var render = projection.render();
@@ -200,33 +174,43 @@ const Projection = {
     render() {
         const schema = this.getSchema();
 
-        const { type, element, style, constraint } = schema;
+        const { type, element, style, constraint, projection } = schema;
 
         /** @type {HTMLElement} */
         var container = null;
 
         if (type === "layout") {
-            let layout = LayoutFactory.createLayout(schema.layout, this).init();
+            let layout = LayoutFactory.createLayout(this.model, projection, this).init();
 
             container = layout.render();
         } else if (type === "field") {
-            let field = FieldManager.createField(schema, this.concept).init();
+            let field = FieldFactory.createField(this.model, projection, this.concept).init();
+
             field.projection = this;
 
-            this.editor.registerField(field);
+            this.environment.registerField(field);
 
             container = field.render();
         }
 
         if (!isNode(container)) {
+            console.log(schema);
             throw new Error("Projection element container could not be created");
         }
 
         container.tabIndex = -1;
         Object.assign(container.dataset, {
             "projection": this.id,
-            "object": this.concept.object
+            "object": this.concept.object,
+            "alt": this.schema.length
         });
+
+        if (this.schema.length > 1) {
+            let altBadge = createI({
+                class: ["badge", "badge--alt"]
+            });
+            container.prepend(altBadge);
+        }
 
         this.containers.push(container);
 
@@ -234,7 +218,7 @@ const Projection = {
     },
     changeView(index) {
         if (this.schema.length < 2) {
-            this.editor.notify("There is no alternative projection for this concept");
+            this.environment.notify("There is no alternative projection for this concept");
             return;
         }
 

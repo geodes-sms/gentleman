@@ -3,16 +3,12 @@ import {
     isEmpty, valOrDefault, isString, hasOwn, createTextNode,
 } from "zenkai";
 import { StyleHandler } from './../style-handler.js';
-import { contentHandler } from './../content-handler.js';
+import { ContentHandler } from './../content-handler.js';
 
 
 export const WrapLayout = {
     /** @type {HTMLElement} */
     container: null,
-    /** @type {HTMLElement} */
-    header: null,
-    /** @type {HTMLElement} */
-    body: null,
 
     init() {
         this.collapsible = valOrDefault(this.schema.collapsible, false);
@@ -42,26 +38,32 @@ export const WrapLayout = {
 
         if (this.collapsible) {
             /** @type {HTMLElement} */
-            var btnCollapse = createButton({
+            const btnCollapse = createButton({
                 class: ["btn", "btn-collapse"],
                 dataset: {
                     "action": "collapse"
                 }
             });
 
+     
             btnCollapse.addEventListener('click', (event) => {
-                if (this.container.classList.contains("collapsed")) {
+                if (btnCollapse.dataset.status === "off") {
+                    let children = Array.from(this.container.children).filter(element => element !== btnCollapse);
+                    this.collapseContainer = createDiv({
+                        class: "layout-container-collapse"
+                    }, children);
+                    btnCollapse.after(this.collapseContainer);
+                    this.container.classList.add("collapsed");
+                    btnCollapse.classList.add("on");
+                    btnCollapse.dataset.status = "on";
+                }
+                else {
+                    let fragment = createDocFragment(Array.from(this.collapseContainer.children));
+                    btnCollapse.after(fragment);
+                    this.collapseContainer.remove();
                     this.container.classList.remove("collapsed");
                     btnCollapse.classList.remove("on");
-                    setTimeout(() => {
-                        this.body.style.removeProperty("height");
-                    }, 200);
-                } else {
-                    this.container.style.height = `${this.body.offsetHeight}px`;
-                    btnCollapse.classList.add("on");
-                    setTimeout(() => {
-                        this.container.classList.add("collapsed");
-                    }, 20);
+                    btnCollapse.dataset.status = "off";  
                 }
             });
 
@@ -69,7 +71,7 @@ export const WrapLayout = {
         }
 
         for (let i = 0; i < disposition.length; i++) {
-            let render = contentHandler.call(this, disposition[i]);
+            let render = ContentHandler.call(this, disposition[i]);
 
             fragment.appendChild(render);
         }

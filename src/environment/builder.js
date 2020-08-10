@@ -1,10 +1,14 @@
 import {
-    createParagraph, createUnorderedList, createListItem, createSpan, createDiv,
-    createDocFragment, createButton, getElements, removeChildren, findAncestor,
-    isHTMLElement, appendChildren, isNullOrUndefined, isEmpty
+    createDocFragment, createDiv, createH2, createUnorderedList, createListItem,
+    createParagraph, createButton, createHeader, createAnchor, createInput, createSpan,
+    getElement, getElements, appendChildren, removeChildren, isHTMLElement, hasOwn,
+    isNullOrWhitespace, isNullOrUndefined, isNull, copytoClipboard, cloneObject,
+    valOrDefault, isEmpty, createI, findAncestor,
 } from 'zenkai';
 import { show, hide, Events } from '@utils/index.js';
-import { ProjectionManager } from '@projection/index.js';
+import { MetaModel, ConceptModel } from '@model/index.js';
+import { ProjectionFactory } from '@projection/index.js';
+import { Loader, LoaderFactory } from './loader.js';
 import { StackLayout } from './builder-ui/stack-layout.js';
 import { TableLayout } from './builder-ui/table-layout.js';
 import { WrapLayout } from './builder-ui/wrap-layout.js';
@@ -44,16 +48,24 @@ export const Builder = {
     /** @type {boolean} */
     active: false,
 
-    init(metamodel, model, concept) {
+    init(metamodel, concept) {
         this.metamodel = metamodel;
-        this.model = model;
+
         this.concept = concept;
 
         this.fields = new Map();
 
-        this.model.register(this, 'concrete_concept');
+        this.loader = LoaderFactory.create({
+            afterLoadMetaModel: (metamodel) => {
+                this.init(metamodel);
+            }
+        }).init(this);
 
         this.render();
+
+        if (this.concept) {
+            this.createProjection(this.concept);
+        }
 
         return this;
     },
@@ -297,7 +309,7 @@ export const Builder = {
         });
 
         concepts.forEach(concept => {
-            var projection = ProjectionManager.createProjection(concreteConceptSchema, concept, this).init();
+            var projection = ProjectionFactory.createProjection(concreteConceptSchema, concept, this).init();
             var item = createListItem({
                 class: ["builder-selector", "builder-selector--concept"],
                 dataset: {

@@ -78,13 +78,7 @@ const BasePrototypeConcept = {
     getCandidates() {
         var candidates = resolveAccept.call(this, this.accept);
 
-        var values = candidates.map((candidate) => ({
-            type: "concept-metamodel",
-            value: candidate.name,
-            schema: candidate
-        }));
-
-        return values;
+        return candidates;
     },
     /**
      * Gets the concept parent if exist
@@ -166,7 +160,8 @@ const BasePrototypeConcept = {
 };
 
 function resolveAccept(accept) {
-    var candidates = this.metamodel.getConcreteConcepts(this.name);
+    const candidates = this.model.getConcreteConcepts(this.name);
+
     if (isNullOrUndefined(accept)) {
         return candidates;
     }

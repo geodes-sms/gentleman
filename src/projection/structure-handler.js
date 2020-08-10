@@ -1,6 +1,5 @@
 import { createI, hasOwn, cloneObject, valOrDefault } from "zenkai";
-import { ProjectionManager } from "./projection.js";
-import { contentHandler } from "./content-handler.js";
+import { ContentHandler } from "./content-handler.js";
 
 
 /**
@@ -29,7 +28,7 @@ export function AttributeHandler(schema, concept) {
         const { alias, description } = concept.getAttributeSchema(name);
 
         if (optional) {
-            render = contentHandler.call(this, optional);
+            render = ContentHandler.call(this, optional);
         } else {
             render = createI({
                 class: ["projection-element", "projection-element--optional"],
@@ -47,21 +46,10 @@ export function AttributeHandler(schema, concept) {
         attr.required = false;
         attr.optional = render;
     } else {
-        let { target, description } = concept.getAttributeByName(name);
-        let { projection: schemaProjection } = cloneObject(target.schema);
+        let { target, description, schema } = concept.getAttributeByName(name);
 
-        if (tag) {
-            schemaProjection = schemaProjection.filter(p => p.tags.includes(tag));
-            console.log(schemaProjection);
-        }
+        var projection = this.model.createProjection(target, tag).init();
 
-        schemaProjection.forEach(schema => {
-            if (!hasOwn(schema, 'readonly')) {
-                schema['readonly'] = this.isReadOnly();
-            }
-        });
-
-        var projection = ProjectionManager.createProjection(schemaProjection, target, this.editor).init();
         projection.parent = this;
 
         render = projection.render();
@@ -75,7 +63,7 @@ export function AttributeHandler(schema, concept) {
  * Resolve and render component projection
  * @param {string} name 
  */
-export function ComponentHandler(schema, concept) {
+export function ComponentHandler(schema, concept, tag) {
     const { name, optional } = schema;
 
     if (!concept.hasComponent(name)) {
@@ -97,7 +85,7 @@ export function ComponentHandler(schema, concept) {
         const { alias, description } = concept.getComponentSchema(name);
 
         if (optional) {
-            render = contentHandler.call(this, optional);
+            render = ContentHandler.call(this, optional);
         } else {
             render = createI({
                 class: ["projection-element", "projection-element--optional"],
@@ -116,7 +104,7 @@ export function ComponentHandler(schema, concept) {
         comp.optional = render;
     } else {
         let component = concept.getComponentByName(name);
-        let projection = ProjectionManager.createProjection(component.schema.projection, component, this.editor).init();
+        let projection = this.model.createProjection(component, tag).init();
 
         projection.parent = this;
 

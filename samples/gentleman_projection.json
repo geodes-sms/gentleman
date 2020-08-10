@@ -1,0 +1,229 @@
+[
+    {
+        "name": "projection",
+        "nature": "prototype",
+        "attribute": {
+            "tags": {
+                "target": "set",
+                "accept": {
+                    "name": "string",
+                    "alias": "tag"
+                },
+                "required": false
+            },
+            "concept": {
+                "target": "concept"
+            }
+        }
+    },
+    {
+        "name": "template_projection",
+        "nature": "concrete",
+        "prototype": "projection",
+        "attribute": {
+            "template": {
+                "target": "template"
+            }
+        }
+    },
+    {
+        "name": "layout_projection",
+        "nature": "concrete",
+        "prototype": "projection",
+        "attribute": {
+            "layout": {
+                "target": "layout"
+            }
+        }
+    },
+
+
+    {
+        "name": "layout",
+        "nature": "prototype",
+        "attribute": {
+            "elements": {
+                "target": "set",
+                "accept": "element"
+            },
+            "style": {
+                "target": "style",
+                "required": false
+            }
+        }
+   
+    },
+    {
+        "name": "stack_layout",
+        "nature": "concrete",
+        "prototype": "layout",
+        "attribute": {
+            "orientation": {
+                "target": "string",
+                "value": "horizontal",
+                "values": ["horizontal", "vertical"]
+            }
+        }
+    },
+    {
+        "name": "wrap_layout",
+        "nature": "concrete",
+        "prototype": "layout"
+    },
+    {
+        "name": "table_layout",
+        "nature": "concrete",
+        "prototype": "layout"
+    },
+
+
+    {
+        "name": "template",
+        "nature": "prototype",
+        "attribute": {}
+    },
+    {
+        "name": "table_template",
+        "nature": "concrete",
+        "prototype": "template",
+        "attribute": {
+            "orientation": {
+                "target": "string",
+                "value": "column",
+                "values": ["row", "column"]
+            },
+            "header": {
+                "target": "set",
+                "accept": "table_header_cell"
+            },
+            "body": {
+                "target": "set",
+                "accept": "table_cell"
+            }
+        }
+    },
+    {
+        "name": "table_header_cell",
+        "nature": "concrete",
+        "attribute": {
+            "projection": {
+                "target": "text_element"
+            },
+            "span": {
+                "target": "number",
+                "value": 1
+            }
+        }
+    },
+    {
+        "name": "table_cell",
+        "nature": "concrete",
+        "attribute": {
+            "projection": {
+                "target": "element"
+            },
+            "span": {
+                "target": "number",
+                "value": 1
+            }
+        }
+    },
+    {
+        "name": "choice_template",
+        "nature": "concrete",
+        "attribute": {}
+    },
+    {
+        "name": "list_template",
+        "nature": "concrete",
+        "prototype": "template",
+        "attribute": {
+            "orientation": {
+                "target": "string",
+                "value": "horizontal",
+                "values": ["horizontal", "vertical"]
+            },
+            "item": {
+                "target": "set",
+                "accept": "field"
+            }
+        }
+    },
+
+
+    {
+        "name": "element",
+        "nature": "prototype",
+        "attribute": {
+            "name": {
+                "target": "string"
+            },
+            "style": {
+                "target": "style",
+                "required": false
+            }
+        }
+    },
+    {
+        "name": "layout_element",
+        "nature": "concrete",
+        "prototype": "element",
+        "attribute": {
+            "value": {
+                "target": "layout"
+            }
+        }
+    },
+    {
+        "name": "text_element",
+        "nature": "concrete",
+        "prototype": "element",
+        "attribute": {
+            "value": {
+                "target": "string"
+            }
+        }
+    },
+    {
+        "name": "attribute_element",
+        "nature": "concrete",
+        "prototype": "element",
+        "attribute": {
+            "value": {
+                "target": "reference",
+                "accept": {
+                    "name": "attribute",
+                    "scope": "concrete_concept",
+                    "rel": "parent"
+                }
+            }
+        }
+    },
+    {
+        "name": "component_element",
+        "nature": "concrete",
+        "prototype": "element",
+        "attribute": {
+            "value": {
+                "target": "reference",
+                "accept": "component"
+            }
+        }
+    },
+
+
+    {
+        "name": "style",
+        "nature": "concrete",
+        "attribute": {
+            "css": {
+                "target": "set",
+                "accept": {
+                    "name": "string",
+                    "alias": "class"
+                },
+                "required": false
+            }
+        }
+    }
+]

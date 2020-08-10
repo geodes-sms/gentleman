@@ -3,24 +3,6 @@ import { AttributeHandler, ComponentHandler, ObserverHandler } from "@structure/
 
 
 const _Concept = {
-    /**
-     * Creates a concept
-     * @param {Model} args 
-     * @param {*} schema 
-     * @returns {Concept}
-     */
-    create(model, schema) {
-        const instance = Object.create(this);
-
-        instance.model = model;
-        instance.metamodel = model.metamodel;
-        instance.schema = schema;
-
-        instance.references = [];
-
-        return instance;
-    },
-
     /** Reference to parent model */
     model: null,
     /** Cache of the schema describing the concept */
@@ -57,8 +39,6 @@ const _Concept = {
     action: null,
     /** Concept shadow list */
     shadows: null,
-    /** Object nature */
-    object: "concept",
     kind: "concept",
 
     init(args = {}) {
@@ -72,10 +52,7 @@ const _Concept = {
         this.min = valOrDefault(args.min, valOrDefault(this.schema.min, 1));
         this.max = valOrDefault(args.max, this.schema.max);
 
-        if (args.projection) {
-            this.schema.projection = args.projection;
-        }
-
+  
         this.initObserver();
         this.initAttribute();
         this.initComponent();

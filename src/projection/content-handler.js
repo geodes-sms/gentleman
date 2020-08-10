@@ -1,18 +1,21 @@
-import {
-    createSpan, createTextNode, isString, hasOwn, valOrDefault,
-} from "zenkai";
+import { createSpan, createTextNode, isString, hasOwn, valOrDefault } from "zenkai";
 import { StyleHandler } from './style-handler.js';
 import { AttributeHandler, ComponentHandler } from './structure-handler.js';
 import { LayoutFactory } from "./layout/index.js";
+import { FieldFactory } from "./field/index.js";
 
-export function contentHandler(value, concept) {
+
+export function ContentHandler(value, concept) {
     if (value.type === "layout") {
-        let layout = LayoutFactory.createLayout(value.layout, this.projection).init();
+        let layout = LayoutFactory.createLayout(this.model, value.layout, this.projection).init();
         layout.parent = this;
 
         return layout.render();
     } else if (value.type === "field") {
-        return;
+        let field = FieldFactory.createField(this.model, value, concept).init();
+        field.model = this.model;
+
+        return field.render();
     } else if (value.type === "attribute") {
         return AttributeHandler.call(this.projection, value, valOrDefault(concept, this.projection.concept));
     } else if (value.type === "component") {
@@ -33,8 +36,7 @@ function TextHandler(value, projection) {
 
     if (isString(content)) {
         text.appendChild(createTextNode(content));
-    }
-    else if (Array.isArray(content)) {
+    } else if (Array.isArray(content)) {
         for (let i = 0; i < content.length; i++) {
             const value = content[i];
             if (isString(value)) {

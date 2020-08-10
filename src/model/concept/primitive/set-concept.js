@@ -241,7 +241,7 @@ const _SetConcept = {
 
 
 function resolveAccept(accept) {
-    var candidates = this.metamodel.getConceptSchema(accept);
+    var candidates = this.model.getConceptSchema(accept);
 
     return candidates;
 }

@@ -39,7 +39,14 @@ const _ReferenceConcept = {
             return null;
         }
 
-        return this.model.concepts.find((concept) => concept.id === this.value);
+        return this.value;
+    },
+    getReference() {
+        if (isNullOrUndefined(this.reference)) {
+            return null;
+        }
+
+        return this.reference;
     },
     setValue(value) {
         var result = this.validate(value);
@@ -119,6 +126,7 @@ const _ReferenceConcept = {
                 this.reference.unregister(this);
                 this.value = null;
                 this.reference = null;
+
                 this.notify("value.changed", this.reference);
                 break;
 
@@ -156,7 +164,7 @@ function resolveAccept(accept) {
     if (isString(accept)) {
         const { concepts } = this.model;
 
-        if (this.metamodel.isPrototype(accept)) {
+        if (this.model.isPrototype(accept)) {
             return concepts.filter((concept) => concept.schema.prototype === accept);
         }
 

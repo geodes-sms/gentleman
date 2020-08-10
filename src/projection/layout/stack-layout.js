@@ -1,9 +1,9 @@
 import {
-    createDocFragment, createDiv, createSpan, createButton, createTextNode,
-    isHTMLElement, isNullOrWhitespace, isEmpty, valOrDefault, isString, hasOwn, appendChildren,
+    createDocFragment, createDiv, createButton, createTextNode,
+    isHTMLElement, isEmpty, valOrDefault, isString, hasOwn
 } from "zenkai";
 import { StyleHandler } from './../style-handler.js';
-import { contentHandler } from './../content-handler.js';
+import { ContentHandler } from './../content-handler.js';
 
 
 export const StackLayout = {
@@ -22,11 +22,16 @@ export const StackLayout = {
     render() {
         const { disposition, style } = this.schema;
 
+        if (!Array.isArray(disposition) || isEmpty(disposition)) {
+            throw new SyntaxError("Bad disposition");
+        }
+
         const fragment = createDocFragment();
 
         if (!isHTMLElement(this.container)) {
             this.container = createDiv({
                 class: ["layout-container"],
+                tabindex: -1,
                 dataset: {
                     nature: "layout",
                     layout: "stack",
@@ -36,7 +41,7 @@ export const StackLayout = {
 
         if (this.collapsible) {
             /** @type {HTMLElement} */
-            var btnCollapse = createButton({
+            const btnCollapse = createButton({
                 class: ["btn", "btn-collapse"],
                 dataset: {
                     "action": "collapse",
@@ -68,12 +73,8 @@ export const StackLayout = {
             fragment.appendChild(btnCollapse);
         }
 
-        if (!Array.isArray(disposition) || isEmpty(disposition)) {
-            throw new SyntaxError("Bad disposition");
-        }
-
         for (let i = 0; i < disposition.length; i++) {
-            let render = contentHandler.call(this, disposition[i]);
+            let render = ContentHandler.call(this, disposition[i]);
 
             fragment.appendChild(render);
         }
@@ -107,69 +108,3 @@ export const StackLayout = {
     }
 };
 
-
-
-
-
-// const SymbolResolver = {
-//     '#': resolveStructure,
-//     '$': resolveReference,
-//     '@': resolveScope,
-// };
-
-// /**
-//  * 
-//  * @param {string} value 
-//  */
-// function parseDisposition(value) {
-//     var parts = value.replace(/\s+/g, " ")
-//         .replace(/(#\w+(:\w+)?(@\w+)?)/g, " $1 ")
-//         .replace(/(\$\w+(:\w+)?(@\w+)?)/g, " $1 ")
-//         .split(" ")
-//         .filter((x) => !isNullOrWhitespace(x));
-
-//     return parts;
-// }
-
-// /**
-//  * Resolves a structure in the schema
-//  * @param {string} key 
-//  * @this {Projection}
-//  */
-// function resolveStructure(key) {
-//     var [name, type = "attribute"] = key.split(":");
-
-//     return StructureHandler[type].call(this.projection, name);
-// }
-
-// /**
-//  * Resolves a reference in the schema
-//  * @param {string} key 
-//  * @this {Projection}
-//  */
-// function resolveReference(key) {
-//     var [name, from] = key.split(":");
-
-//     var element = this.getElement(name);
-
-//     const { layout, view } = element;
-
-//     // if (view) {
-//     //     return fieldHandler.call(this, element);
-//     // } else if (layout) {
-//     //     const { type, disposition } = layout;
-
-//     //     return LayoutHandler[type].call(this, layout);
-//     // }
-
-//     // return LayoutHandler['text'].call(this, element);
-// }
-
-// /**
-//  * Resolves a scope in the schema
-//  * @param {string} scope 
-//  * @this {Projection}
-//  */
-// function resolveScope(scope) {
-
-// }

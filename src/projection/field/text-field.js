@@ -1,17 +1,16 @@
 import {
     createDocFragment, createSpan, createDiv, createI, createUnorderedList,
     createListItem, findAncestor, isHTMLElement, removeChildren, isNullOrWhitespace,
-    isDerivedOf, isEmpty, valOrDefault,
+    isEmpty, valOrDefault,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
-import { Concept } from "@concept/index.js";
-import { Field } from "./field.js";
 import { StyleHandler } from "./../style-handler.js";
-import { ProjectionManager } from "./../projection.js";
+import { ContentHandler } from "./../content-handler.js";
+import { Field } from "./field.js";
 
 
 function resolveValue(object) {
-    if (isDerivedOf(object, Concept)) {
+    if (object.object === "concept") {
         if (object.hasValue()) {
             return object.getValue();
         }
@@ -111,7 +110,7 @@ function resolvePlaceholder() {
         return this.schema.placeholder;
     }
 
-    if (isDerivedOf(this.source, Concept)) {
+    if (this.source.object === "concept") {
         return this.source.getAlias();
     }
 
@@ -185,6 +184,7 @@ const BaseTextField = {
                     id: this.id,
                 }
             });
+
             fragment.appendChild(this.notification);
         }
 
@@ -197,13 +197,14 @@ const BaseTextField = {
                     id: this.id,
                 }
             });
+
             this.notification.appendChild(this.statusElement);
         }
 
         if (before.projection) {
-            let projection = ProjectionManager.createProjection(before.projection, this.source, this.editor).init();
-            let content = projection.render();
+            let content = ContentHandler.call(this, before.projection);
             content.classList.add("field--textbox__before");
+
             fragment.appendChild(content);
         }
 
@@ -240,9 +241,9 @@ const BaseTextField = {
         }
 
         if (after.projection) {
-            let projection = ProjectionManager.createProjection(after.projection, this.source, this.editor).init();
-            let content = projection.render();
+            let content = ContentHandler.call(this, after.projection);
             content.classList.add("field--textbox__after");
+
             fragment.appendChild(content);
         }
 
@@ -277,6 +278,7 @@ const BaseTextField = {
         this.focused = true;
         this.value = this.input.textContent;
         this.element.classList.add("active");
+        this.element.classList.add("focus");
 
         return this;
     },
@@ -286,10 +288,10 @@ const BaseTextField = {
         }
 
         if (this.hasChanges()) {
-            this.setValue(this.input.textContent);
+            this.setValue(this.getValue());
         }
 
-        if (isNullOrWhitespace(this.input.textContent)) {
+        if (isNullOrWhitespace(this.getValue())) {
             this.input.textContent = "";
         }
 
@@ -304,6 +306,7 @@ const BaseTextField = {
 
         this.input.blur();
         this.element.classList.remove("active");
+        this.element.classList.remove("focus");
 
         this.refresh();
         this.focused = false;
@@ -335,13 +338,13 @@ const BaseTextField = {
         var response = this.source.setValue(value);
 
         if (!response.success) {
-            this.editor.notify(response.message);
+            this.environment.notify(response.message);
             this.errors.push(...response.errors);
         } else {
             this.errors = [];
         }
 
-        this.attached.filter(element => !element.active).forEach(element => element.hide());
+        // this.attached.filter(element => !element.active).forEach(element => element.hide());
 
         this.input.textContent = value;
         this.value = value;
@@ -375,6 +378,7 @@ const BaseTextField = {
         }
 
         removeChildren(this.statusElement);
+
         if (this.hasError) {
             this.element.classList.add("error");
             this.input.classList.add("error");
@@ -395,11 +399,17 @@ const BaseTextField = {
      * @param {string} query 
      */
     filterChoice(query) {
+        const { children } = this.choice;
+
         if (isNullOrWhitespace(query)) {
-            return;
+            for (let i = 0; i < children.length; i++) {
+                const item = children[i];
+                show(item);
+            }
+
+            return true;
         }
 
-        const { children } = this.choice;
 
         for (let i = 0; i < children.length; i++) {
             const item = children[i];
@@ -443,6 +453,7 @@ const BaseTextField = {
 
         return this;
     },
+
     /**
      * Handles the `space` command
      * @param {HTMLElement} target 
@@ -499,6 +510,8 @@ const BaseTextField = {
 
         if (item) {
             this.selectChoice(item);
+        } else if (target === this.input) {
+            this.setValue(this.getValue());
         }
     },
     /**
@@ -512,6 +525,7 @@ const BaseTextField = {
             this.input.focus();
         }
     },
+
     bindEvents() {
         this.element.addEventListener('click', (event) => {
             const target = event.target;

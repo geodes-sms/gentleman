@@ -35,14 +35,6 @@
         box-shadow: none;
     }
 
-.concept-list__btn-add {
-
-}
-
-.concept-list__btn-remove {
-
-}
-
 .model-concept-choices > .field--choice__choices {
     display: flex;
     flex-direction: row;

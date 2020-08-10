@@ -7,26 +7,28 @@ var inc = 0;
 const nextId = () => `layout${inc++}`;
 
 const Handler = {
-    'stack': (schema, projection) => Object.create(StackLayout, {
+    'stack': (model, schema, projection) => Object.create(StackLayout, {
         object: { value: "layout" },
         name: { value: "stack-layout" },
         type: { value: "stack" },
         id: { value: nextId() },
+        model: { value: model },
         schema: { value: schema },
         projection: { value: projection },
     }),
-    'wrap': (schema, projection) => Object.create(WrapLayout, {
+    'wrap': (model, schema, projection) => Object.create(WrapLayout, {
         object: { value: "layout" },
         name: { value: "wrap-layout" },
         type: { value: "wrap" },
         id: { value: nextId() },
+        model: { value: model },
         schema: { value: schema },
         projection: { value: projection },
     })
 };
 
 export const LayoutFactory = {
-    createLayout(schema, projection) {
+    createLayout(model, schema, projection) {
         const { type } = schema;
         const handler = Handler[type];
 
@@ -34,7 +36,7 @@ export const LayoutFactory = {
             throw new TypeError(`Missing handler: The '${type}' layout could not be handled`);
         }
 
-        const layout = handler(schema, projection);
+        const layout = handler(model, schema, projection);
         layout.createLayout = this.createLayout;
 
         if (isNullOrUndefined(layout)) {

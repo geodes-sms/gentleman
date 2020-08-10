@@ -4,11 +4,9 @@ import {
     removeChildren, isHTMLElement, isDerivedOf, isEmpty, valOrDefault, hasOwn, isString, appendChildren, findAncestor,
 } from "zenkai";
 import { hide, show, shake } from "@utils/index.js";
-import { Concept } from "@concept/index.js";
-import { Field } from "./field.js";
 import { StyleHandler } from "./../style-handler.js";
-import { ProjectionManager } from "./../projection.js";
-import { contentHandler } from "./../content-handler.js";
+import { ContentHandler } from "./../content-handler.js";
+import { Field } from "./field.js";
 
 
 const addSchema = {
@@ -100,8 +98,9 @@ const BaseTableField = {
     init() {
         this.source.register(this);
         this.caption = this.schema.caption;
-        this.template = this.source.getCandidates().projection
-            .filter(p => p.type === "template" && p.template === "table")[0];
+
+        const { concept, name } = this.schema.template;
+        this.template = this.model.getModelProjectionTemplate(concept, name, "table").projection;
 
         return this;
     },
@@ -172,9 +171,12 @@ const BaseTableField = {
             this.notification.appendChild(this.statusElement);
         }
 
+        
         if (before.projection) {
-            let projection = ProjectionManager.createProjection(before.projection, this.source, this.editor).init();
-            fragment.appendChild(projection.render());
+            let content = ContentHandler.call(this, before.projection);
+            content.classList.add("field--table__before");
+
+            fragment.appendChild(content);
         }
 
         if (!isHTMLElement(this.table)) {
@@ -215,7 +217,7 @@ const BaseTableField = {
             header.forEach(value => {
                 var { style, content } = value;
 
-                var render = contentHandler.call(this, content);
+                var render = ContentHandler.call(this, content);
 
                 var cell = createTableHeaderCell({
                     class: ["field--table-header-cell"],
@@ -253,8 +255,10 @@ const BaseTableField = {
         }
 
         if (after.projection) {
-            let projection = ProjectionManager.createProjection(after.projection, this.source, this.editor).init();
-            fragment.appendChild(projection.render());
+            let content = ContentHandler.call(this, after.projection);
+            content.classList.add("field--table__after");
+
+            fragment.appendChild(content);
         }
 
         if (fragment.hasChildNodes()) {
@@ -318,7 +322,7 @@ const BaseTableField = {
             }
         } else {
             if (!isHTMLElement(this.btnAdd)) {
-                let render = contentHandler.call(this, addSchema);
+                let render = ContentHandler.call(this, addSchema);
                 this.btnAdd = createButton({
                     class: ["btn", "field--table__button"],
                     dataset: {
@@ -369,7 +373,7 @@ const BaseTableField = {
         body.forEach(schema => {
             const { style, content } = schema;
 
-            var render = contentHandler.call(this, content, concept);
+            var render = ContentHandler.call(this, content, concept);
 
             var cell = createTableCell({
                 class: ["field--table-cell"],
@@ -390,10 +394,10 @@ const BaseTableField = {
             tabindex: -1,
         });
 
-        var addRender = contentHandler.call(this, addRowSchema);
+        var addRender = ContentHandler.call(this, addRowSchema);
         addRender.dataset.action = "add";
 
-        var removeRender = contentHandler.call(this, removeRowSchema);
+        var removeRender = ContentHandler.call(this, removeRowSchema);
         removeRender.dataset.action = "remove";
 
         appendChildren(actionCell, [addRender, removeRender]);
@@ -443,9 +447,9 @@ const BaseTableField = {
         var result = this.source.removeElementAt(+index);
 
         if (result) {
-            this.editor.notify("The element was successfully deleted");
+            this.environment.notify("The element was successfully deleted");
         } else {
-            this.editor.notify("This element cannot be deleted");
+            this.environment.notify("This element cannot be deleted");
             shake(target);
         }
     },

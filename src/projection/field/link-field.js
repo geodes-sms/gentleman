@@ -1,13 +1,12 @@
 import {
-    createDocFragment, createUnorderedList, createListItem, createAnchor, createInput,
-    createSpan, createDiv, createI, removeChildren, isHTMLElement, findAncestor,
-    valOrDefault, isDerivedOf, isNullOrWhitespace, isNullOrUndefined, isEmpty
+    createDocFragment, createUnorderedList, createListItem, createInput, createI,
+    createSpan, createDiv, removeChildren, isHTMLElement, findAncestor,
+    isNullOrWhitespace, isNullOrUndefined, isEmpty
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
-import { Concept } from "@concept/index.js";
-import { Field } from "./field.js";
 import { StyleHandler } from "./../style-handler.js";
-import { ProjectionManager } from "./../projection.js";
+import { ContentHandler } from "./../content-handler.js";
+import { Field } from "./field.js";
 
 
 function createMessageElement() {
@@ -77,20 +76,14 @@ function createChoice(object) {
         }
     });
 
-    var projection = null;
     var concept = null;
     if (object.type === "concept") {
         concept = object.value;
     }
 
-    if (choice) {
-        projection = ProjectionManager.createProjection(choice.projection, concept, this.editor).init();
-    } else {
-        let schema = concept.schema.projection.filter(projection => projection.tags && projection.tags.includes("choice"));
-        projection = ProjectionManager.createProjection(schema, concept, this.editor).init();
-    }
+    var projection = this.model.createProjection(concept, "reference-choice");
 
-    item.appendChild(projection.render());
+    item.appendChild(projection.init().render());
 
     return item;
 }
@@ -226,22 +219,27 @@ const BaseLinkField = {
             fragment.appendChild(this.choices);
         }
 
+
         if (before.projection) {
-            let projection = ProjectionManager.createProjection(before.projection, this.source, this.editor).init();
-            fragment.appendChild(projection.render());
+            let content = ContentHandler.call(this, before.projection);
+            content.classList.add("field--link__before");
+
+            fragment.appendChild(content);
         }
 
         if (this.source.hasValue()) {
             let concept = this.getValue();
 
-            var projectionSchema = valOrDefault(this.value.projection, concept.schema.projection);
-            var projection = ProjectionManager.createProjection(projectionSchema, concept, this.editor).init();
-            this.element.appendChild(projection.render());
+            var projection = this.model.createProjection(concept);
+
+            this.element.appendChild(projection.init().render());
         }
 
         if (after.projection) {
-            let projection = ProjectionManager.createProjection(after.projection, this.source, this.editor).init();
-            fragment.appendChild(projection.render());
+            let content = ContentHandler.call(this, after.projection);
+            content.classList.add("field--link__after");
+
+            fragment.appendChild(content);
         }
 
         if (fragment.hasChildNodes()) {
@@ -263,12 +261,8 @@ const BaseLinkField = {
                     this.value = null;
                     this.clear();
                 } else {
-                    if (this.schema.value) {
-                        projection = ProjectionManager.createProjection(this.schema.value.projection, value, this.editor).init();
-                    } else {
-                        let schema = value.schema.projection.filter(projection => projection.tags && projection.tags.includes("choice"));
-                        projection = ProjectionManager.createProjection(schema, value, this.editor).init();
-                    }
+
+                    projection = this.model.createProjection(value, "reference-value").init();
 
                     this.element.appendChild(projection.render());
                     this.value = value.id;
@@ -307,7 +301,7 @@ const BaseLinkField = {
         var response = this.source.setValue(value);
 
         if (!response.success) {
-            this.editor.notify(response.message);
+            this.environment.notify(response.message);
             this.errors.push(...response.errors);
         } else {
             this.errors = [];
@@ -463,19 +457,6 @@ const BaseLinkField = {
             this.choices.appendChild(choice);
         });
 
-        if (this.source.accept === "concept") {
-            ["string", "number", "set", "reference"].forEach(value => {
-                this.choices.appendChild(createListItem({
-                    class: ["field--link__choice"],
-                    tabindex: 0,
-                    dataset: {
-                        nature: "field-component",
-                        id: this.id,
-                        value: value
-                    }
-                }, value));
-            });
-        }
 
         show(this.choices);
         this.choices.focus();

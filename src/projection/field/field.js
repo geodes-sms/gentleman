@@ -1,52 +1,22 @@
-import { createI, removeChildren, isEmpty, isFunction, valOrDefault } from 'zenkai';
+import { removeChildren, isEmpty, isFunction } from 'zenkai';
 import { ObserverHandler } from '@structure/index.js';
 import { shake, show, hide } from '@utils/index.js';
-import { Concept } from '@concept/index.js';
 
 
 const BaseField = {
-    create(source, schema, editor) {
-        const instance = Object.create(this);
-
-        instance.source = source;
-        instance.sourceType = valOrDefault(source.kind, "value");
-        instance.schema = schema;
-        instance.editor = editor;
-        instance.attached = [];
-        instance.references = [];
-        instance.errors = [];
-        instance.readonly = valOrDefault(schema.readonly, false);
-        instance.initObserver();
-
-        return instance;
-    },
     init() {
-        return this;
+        throw new Error("This function has not been implemented");
     },
-    /** @type {string} */
-    id: null,
-    /** @type {Concept|Field} */
-    source: null,
-    /** @type {string} */
-    sourceType: null,
-    /** @type {*} */
-    schema: null,
-    /** @type {Editor} */
-    editor: null,
-    /** @type {Projection} */
-    projection: null,
 
     /** @type {HTMLElement} */
     element: null,
     /** @type {HTMLElement} */
     statusElement: null,
+
     /** @type {HTMLElement[]} */
     attached: null,
-
     /** @type {string[]} */
     errors: null,
-    /** @type {string[]} */
-    references: null,
 
     /** @type {boolean} */
     readonly: false,
@@ -58,13 +28,9 @@ const BaseField = {
     active: false,
     /** @type {boolean} */
     focused: false,
-    /** Object nature */
-    object: "field",
-    kind: "field",
 
     get hasError() { return !isEmpty(this.errors); },
     get hasAttached() { return !isEmpty(this.attached); },
-    get hasReference() { return !isEmpty(this.references); },
 
     attach(element, type) {
         this.attached.push(element);
@@ -79,17 +45,40 @@ const BaseField = {
 
         return this.attached.filter(element => pred(element));
     },
+
+    show() {
+        show(this.element);
+        this.visible = true;
+        this.active = true;
+
+        return this;
+    },
+    hide() {
+        hide(this.element);
+        this.visible = false;
+
+        return this;
+    },
     focus() {
         this.element.contentEditable = false;
         this.element.focus();
         this.focused = true;
-    },
-    remove() {
-        removeChildren(this.input);
-        this.input.remove();
 
-        removeChildren(this.element);
-        this.element.remove();
+        return this;
+    },
+    enable() {
+        this.disabled = false;
+
+        return this;
+    },
+    disable() {
+        this.disabled = true;
+
+        return this;
+    },
+
+    clear() {
+        return true;
     },
     delete() {
         var result = this.source.delete();
@@ -100,33 +89,16 @@ const BaseField = {
             removeChildren(this.element);
             this.element.remove();
         } else {
-            this.editor.notify(result.message);
+            this.environment.notify(result.message);
             shake(this.element);
         }
     },
-    clear() {
-        return true;
-    },
-    show() {
-        show(this.element);
-        this.visible = true;
-        this.active = true;
-    },
+
     enterHandler() {
         this.focusOut();
     },
     backspaceHandler() {
         return;
-    },
-    hide() {
-        hide(this.element);
-        this.visible = false;
-    },
-    enable() {
-        this.disabled = false;
-    },
-    disable() {
-        this.disabled = true;
     },
 };
 

@@ -87,6 +87,26 @@
             z-index: 10;
         }
 
+        .editor-selector-metamodel {
+            position: absolute;
+            top: 34px; left: 0; right: 0;
+            padding: 5px 1% 6px;
+            height: 46px;
+            box-sizing: border-box;
+            background: #fff;
+            box-shadow: 0 1px 4px -1px #999;
+            z-index: 15;
+        }
+
+        .selector-model-concepts {
+            display: flex;
+        }
+            .selector-model-concept {
+                margin-right: 4px;
+                margin-bottom: 4px;
+                border-radius: 4px;
+            }
+
         .editor-selector-concept {
             position: absolute;
             top: 34px; left: 0; right: 0;

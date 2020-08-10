@@ -1,0 +1,874 @@
+"text_style": {
+    "nature": "concrete",
+    "attribute": {
+        "bold": {
+            "target": "boolean",
+            "required": false,
+            "projection": [
+                {
+                    "type": "field",
+                    "view": "binary",
+                    "label": {
+                        "style": {
+                            "text": {
+                                "bold": true
+                            }
+                        },
+                        "value": "Bold"
+                    }
+                }
+            ]
+        },
+        "italic": {
+            "target": "boolean",
+            "required": false,
+            "projection": [
+                {
+                    "type": "field",
+                    "view": "binary",
+                    "label": {
+                        "style": {
+                            "text": {
+                                "italic": true
+                            }
+                        },
+                        "value": "Italic"
+                    }
+                }
+            ]
+        },
+        "underline": {
+            "target": "boolean",
+            "required": false,
+            "projection": [
+                {
+                    "type": "field",
+                    "view": "binary",
+                    "label": {
+                        "style": {
+                            "text": {
+                                "underline": true
+                            }
+                        },
+                        "value": "Underline"
+                    }
+                }
+            ]
+        },
+        "strikethrough": {
+            "target": "boolean",
+            "required": false,
+            "projection": [
+                {
+                    "type": "field",
+                    "view": "binary",
+                    "label": {
+                        "style": {
+                            "text": {
+                                "strikethrough": true
+                            }
+                        },
+                        "value": "Strikethrough"
+                    }
+                }
+            ]
+        },
+        "colour": {
+            "target": "colour",
+            "required": false
+        },
+        "font": {
+            "target": "set",
+            "required": false,
+            "accept": {
+                "name": "string",
+                "alias": "Font"
+            },
+            "projection": [
+                {
+                    "type": "field",
+                    "view": "list",
+                    "action": {
+                        "add": {
+                            "projection": [
+                                {
+                                    "layout": {
+                                        "type": "text",
+                                        "disposition": "Add fallback"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "size": {
+            "target": "number",
+            "required": false,
+            "alias": "text size",
+            "projection": [
+                {
+                    "type": "field",
+                    "view": "text",
+                    "before": {
+                        "projection": [
+                            {
+                                "style": {
+                                    "text": {
+                                        "italic": true
+                                    }
+                                },
+                                "layout": {
+                                    "type": "wrap",
+                                    "disposition": [
+                                        "Text size:"
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "align": {
+            "target": "string",
+            "required": false,
+            "alias": "text alignment",
+            "values": [
+                "left",
+                "right",
+                "center",
+                "justify"
+            ],
+            "projection": [
+                {
+                    "type": "field",
+                    "view": "text",
+                    "before": {
+                        "projection": [
+                            {
+                                "style": {
+                                    "text": {
+                                        "italic": true
+                                    }
+                                },
+                                "layout": {
+                                    "type": "wrap",
+                                    "disposition": [
+                                        "Text alignment:"
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "projection": [
+        {
+            "layout": {
+                "type": "stack",
+                "orientation": "vertical",
+                "style": {
+                    "box": {
+                        "background": "white",
+                        "border": {
+                            "radius": 5,
+                            "size": 1,
+                            "color": "royalblue"
+                        }
+                    }
+                },
+                "disposition": [
+                    {
+                        "type": "text",
+                        "style": {
+                            "text": {
+                                "bold": 600,
+                                "size": 20,
+                                "color": "white"
+                            },
+                            "box": {
+                                "space": {
+                                    "inner": {
+                                        "top": 10,
+                                        "left": 15,
+                                        "right": 15,
+                                        "bottom": 10
+                                    }
+                                },
+                                "border": {
+                                    "radius": {
+                                        "top": 5,
+                                        "right": 5
+                                    }
+                                },
+                                "width": 100,
+                                "background": "royalblue"
+                            }
+                        },
+                        "disposition": "TEXT style"
+                    },
+                    {
+                        "type": "stack",
+                        "orientation": "vertical",
+                        "collapsible": true,
+                        "disposition": [
+                            {
+                                "type": "text",
+                                "style": {
+                                    "box": {
+                                        "space": {
+                                            "inner": {
+                                                "top": 4,
+                                                "left": 15,
+                                                "right": 15,
+                                                "bottom": 4
+                                            }
+                                        },
+                                        "width": 100
+                                    }
+                                },
+                                "disposition": "#bold"
+                            },
+                            {
+                                "type": "text",
+                                "style": {
+                                    "box": {
+                                        "space": {
+                                            "inner": {
+                                                "top": 4,
+                                                "left": 15,
+                                                "right": 15,
+                                                "bottom": 4
+                                            }
+                                        },
+                                        "width": 100,
+                                        "background": {
+                                            "type": "rgb",
+                                            "value": "#eee"
+                                        }
+                                    }
+                                },
+                                "disposition": "#italic"
+                            },
+                            {
+                                "type": "text",
+                                "style": {
+                                    "box": {
+                                        "space": {
+                                            "inner": {
+                                                "top": 4,
+                                                "left": 15,
+                                                "right": 15,
+                                                "bottom": 4
+                                            }
+                                        },
+                                        "width": 100
+                                    }
+                                },
+                                "disposition": "#underline"
+                            },
+                            {
+                                "type": "text",
+                                "style": {
+                                    "box": {
+                                        "space": {
+                                            "inner": {
+                                                "top": 4,
+                                                "left": 15,
+                                                "right": 15,
+                                                "bottom": 4
+                                            }
+                                        },
+                                        "width": 100,
+                                        "background": {
+                                            "type": "rgb",
+                                            "value": "#eee"
+                                        }
+                                    }
+                                },
+                                "disposition": "#strikethrough"
+                            },
+                            {
+                                "type": "wrap",
+                                "style": {
+                                    "box": {
+                                        "space": {
+                                            "inner": {
+                                                "top": 4,
+                                                "left": 15,
+                                                "right": 15,
+                                                "bottom": 4
+                                            }
+                                        },
+                                        "width": 100
+                                    }
+                                },
+                                "disposition": [
+                                    "Colour: #colour"
+                                ]
+                            },
+                            {
+                                "type": "wrap",
+                                "style": {
+                                    "box": {
+                                        "space": {
+                                            "inner": {
+                                                "top": 4,
+                                                "left": 15,
+                                                "right": 15,
+                                                "bottom": 4
+                                            }
+                                        },
+                                        "width": 100,
+                                        "background": {
+                                            "type": "rgb",
+                                            "value": "#eee"
+                                        }
+                                    }
+                                },
+                                "disposition": [
+                                    "Font: #font"
+                                ]
+                            },
+                            {
+                                "type": "text",
+                                "style": {
+                                    "box": {
+                                        "space": {
+                                            "inner": {
+                                                "top": 4,
+                                                "left": 15,
+                                                "right": 15,
+                                                "bottom": 4
+                                            }
+                                        },
+                                        "width": 100
+                                    }
+                                },
+                                "disposition": "#size"
+                            },
+                            {
+                                "type": "text",
+                                "style": {
+                                    "box": {
+                                        "space": {
+                                            "inner": {
+                                                "top": 4,
+                                                "left": 15,
+                                                "right": 15,
+                                                "bottom": 4
+                                            }
+                                        },
+                                        "width": 100,
+                                        "background": {
+                                            "type": "rgb",
+                                            "value": "#eee"
+                                        },
+                                        "border": {
+                                            "radius": {
+                                                "bottom": 5,
+                                                "left": 5
+                                            }
+                                        }
+                                    }
+                                },
+                                "disposition": "#align"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+},
+"box_style": {
+    "nature": "concrete",
+    "attribute": {
+        "space": {
+            "target": "space_style",
+            "required": false
+        },
+        "border": {
+            "target": "border_style",
+            "required": false
+        },
+        "background": {
+            "target": "colour",
+            "required": false
+        },
+        "width": {
+            "target": "number",
+            "required": false,
+            "projection": [
+                {
+                    "type": "field",
+                    "view": "text",
+                    "before": {
+                        "projection": [
+                            {
+                                "style": {
+                                    "text": {
+                                        "italic": true
+                                    }
+                                },
+                                "layout": {
+                                    "type": "wrap",
+                                    "disposition": [
+                                        "Width:"
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "height": {
+            "target": "number",
+            "required": false,
+            "projection": [
+                {
+                    "type": "field",
+                    "view": "text",
+                    "before": {
+                        "projection": [
+                            {
+                                "style": {
+                                    "text": {
+                                        "italic": true
+                                    }
+                                },
+                                "layout": {
+                                    "type": "wrap",
+                                    "disposition": [
+                                        "Height:"
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "projection": [
+        {
+            "layout": {
+                "type": "stack",
+                "orientation": "vertical",
+                "style": {
+                    "box": {
+                        "background": "white",
+                        "border": {
+                            "radius": 5,
+                            "size": 1,
+                            "color": "royalblue"
+                        }
+                    }
+                },
+                "disposition": [
+                    {
+                        "type": "text",
+                        "style": {
+                            "text": {
+                                "bold": 600,
+                                "size": 20,
+                                "color": "white"
+                            },
+                            "box": {
+                                "space": {
+                                    "inner": {
+                                        "top": 10,
+                                        "left": 15,
+                                        "right": 15,
+                                        "bottom": 10
+                                    }
+                                },
+                                "border": {
+                                    "radius": {
+                                        "top": 5,
+                                        "right": 5
+                                    }
+                                },
+                                "width": 100,
+                                "background": "royalblue"
+                            }
+                        },
+                        "disposition": "BOX style"
+                    },
+                    {
+                        "type": "stack",
+                        "orientation": "vertical",
+                        "collapsible": true,
+                        "disposition": [
+                            {
+                                "type": "text",
+                                "style": {
+                                    "box": {
+                                        "space": {
+                                            "inner": {
+                                                "top": 4,
+                                                "left": 15,
+                                                "right": 15,
+                                                "bottom": 4
+                                            }
+                                        },
+                                        "width": 100
+                                    }
+                                },
+                                "disposition": "#space"
+                            },
+                            {
+                                "type": "text",
+                                "style": {
+                                    "box": {
+                                        "space": {
+                                            "inner": {
+                                                "top": 4,
+                                                "left": 15,
+                                                "right": 15,
+                                                "bottom": 4
+                                            }
+                                        },
+                                        "width": 100,
+                                        "background": {
+                                            "type": "rgb",
+                                            "value": "#eee"
+                                        }
+                                    }
+                                },
+                                "disposition": "#border"
+                            },
+                            {
+                                "type": "wrap",
+                                "style": {
+                                    "box": {
+                                        "space": {
+                                            "inner": {
+                                                "top": 4,
+                                                "left": 15,
+                                                "right": 15,
+                                                "bottom": 4
+                                            }
+                                        },
+                                        "width": 100
+                                    }
+                                },
+                                "disposition": [
+                                    "Background: #background"
+                                ]
+                            },
+                            {
+                                "type": "text",
+                                "style": {
+                                    "box": {
+                                        "space": {
+                                            "inner": {
+                                                "top": 4,
+                                                "left": 15,
+                                                "right": 15,
+                                                "bottom": 4
+                                            }
+                                        },
+                                        "background": {
+                                            "type": "rgb",
+                                            "value": "#eee"
+                                        },
+                                        "width": 100
+                                    }
+                                },
+                                "disposition": "#width"
+                            },
+                            {
+                                "type": "text",
+                                "style": {
+                                    "box": {
+                                        "space": {
+                                            "inner": {
+                                                "top": 4,
+                                                "left": 15,
+                                                "right": 15,
+                                                "bottom": 4
+                                            }
+                                        },
+                                        "width": 100
+                                    }
+                                },
+                                "disposition": "#height"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+},
+"colour": {
+    "nature": "prototype",
+    "attribute": {}
+},
+"name_colour": {
+    "nature": "concrete",
+    "prototype": "colour",
+    "attribute": {
+        "value": {
+            "target": "string"
+        }
+    },
+    "projection": [
+        {
+            "layout": {
+                "type": "wrap",
+                "disposition": [
+                    "#value"
+                ]
+            }
+        },
+        {
+            "tags": [
+                "choice"
+            ],
+            "layout": {
+                "type": "wrap",
+                "disposition": [
+                    "Coulour names"
+                ]
+            }
+        }
+    ]
+},
+"rgb_colour": {
+    "nature": "concrete",
+    "prototype": "colour",
+    "attribute": {
+        "red": {
+            "target": "number",
+            "min": 0,
+            "max": 255
+        },
+        "blue": {
+            "target": "number",
+            "min": 0,
+            "max": 255
+        },
+        "green": {
+            "target": "number",
+            "min": 0,
+            "max": 255
+        }
+    },
+    "projection": [
+        {
+            "layout": {
+                "type": "wrap",
+                "disposition": [
+                    "RGB(#red, #blue, #green)"
+                ]
+            }
+        },
+        {
+            "tags": [
+                "choice"
+            ],
+            "layout": {
+                "type": "wrap",
+                "disposition": [
+                    "RGB colour"
+                ]
+            }
+        }
+    ]
+},
+"space_style": {
+    "nature": "concrete",
+    "attribute": {
+        "inner": {
+            "target": "multi_size"
+        },
+        "outer": {
+            "target": "multi_size"
+        }
+    },
+    "projection": [
+        {
+            "layout": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "text",
+                        "style": {
+                            "text": {
+                                "bold": 700,
+                                "size": 15
+                            }
+                        },
+                        "disposition": "Spacing style"
+                    },
+                    {
+                        "type": "text",
+                        "style": {
+                            "text": {
+                                "bold": 600
+                            }
+                        },
+                        "disposition": "Inner spacing"
+                    },
+                    "#inner",
+                    {
+                        "type": "text",
+                        "style": {
+                            "text": {
+                                "bold": 600
+                            },
+                            "box": {
+                                "space": {
+                                    "outer": {
+                                        "top": 4
+                                    }
+                                }
+                            }
+                        },
+                        "disposition": "Outer spacing"
+                    },
+                    "#outer"
+                ]
+            }
+        }
+    ]
+},
+"multi_size": {
+    "nature": "concrete",
+    "attribute": {
+        "value": {
+            "target": "number"
+        },
+        "top": {
+            "target": "number"
+        },
+        "right": {
+            "target": "number"
+        },
+        "bottom": {
+            "target": "number"
+        },
+        "left": {
+            "target": "number"
+        }
+    },
+    "projection": [
+        {
+            "layout": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    "#value",
+                    "[#top; #right; #bottom; #left]"
+                ]
+            }
+        }
+    ]
+},
+"multi_colour": {
+    "nature": "concrete",
+    "attribute": {
+        "value": {
+            "target": "colour"
+        },
+        "top": {
+            "target": "colour"
+        },
+        "right": {
+            "target": "colour"
+        },
+        "bottom": {
+            "target": "colour"
+        },
+        "left": {
+            "target": "colour"
+        }
+    },
+    "projection": [
+        {
+            "layout": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    "#value",
+                    "#top",
+                    "#right",
+                    "#bottom",
+                    "#left"
+                ]
+            }
+        }
+    ]
+},
+"border_style": {
+    "nature": "concrete",
+    "attribute": {
+        "size": {
+            "target": "multi_size"
+        },
+        "colour": {
+            "target": "colour"
+        },
+        "radius": {
+            "target": "multi_size"
+        }
+    },
+    "projection": [
+        {
+            "layout": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "text",
+                        "style": {
+                            "text": {
+                                "bold": 700,
+                                "size": 15
+                            }
+                        },
+                        "disposition": "Border style"
+                    },
+                    {
+                        "type": "text",
+                        "style": {
+                            "text": {
+                                "bold": 600
+                            }
+                        },
+                        "disposition": "Border size"
+                    },
+                    "#size",
+                    {
+                        "type": "text",
+                        "style": {
+                            "text": {
+                                "bold": 600
+                            }
+                        },
+                        "disposition": "Border Colour"
+                    },
+                    "#colour",
+                    {
+                        "type": "text",
+                        "style": {
+                            "text": {
+                                "bold": 600
+                            }
+                        },
+                        "disposition": "Border Radius"
+                    },
+                    "#radius"
+                ]
+            }
+        }
+    ]
+}
