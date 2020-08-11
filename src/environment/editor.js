@@ -13,7 +13,6 @@ import { State } from './state.js';
 
 
 const MODEL_GENTLEMAN_CONCEPT = require('@samples/gentleman_model.json');
-const MODEL_GENTLEMAN_PROJECTION = require('@samples/gentleman_model.projection.json');
 
 
 // Allow responsive design
@@ -71,11 +70,9 @@ export const Editor = {
 
     init(model, concept) {
         // this.model =  model ? model : this.metamodel.createModel().init(model);
-        this.conceptModel = ConceptModelManager.createModel(MODEL_GENTLEMAN_CONCEPT).init();
-        this.projectionModel = createProjectionModel(MODEL_GENTLEMAN_PROJECTION, this).init();
-
-        this.concept = this.conceptModel.createConcept("model_concept");
-        this.projection = this.projectionModel.createProjection(this.concept).init();
+        const { concept: conceptModel, projection: projectionModel, editor } = MODEL_GENTLEMAN_CONCEPT;
+        this.conceptModel = ConceptModelManager.createModel(conceptModel).init();
+        this.projectionModel = createProjectionModel(projectionModel, this).init();
 
         this.state = State.create();
         this.fields = new Map();
@@ -189,8 +186,8 @@ export const Editor = {
     },
     build() {
         console.log(this.conceptModel.build());
-        return;
 
+        return;
 
         const MIME_TYPE = 'application/json';
         window.URL = window.webkitURL || window.URL;
@@ -346,6 +343,12 @@ export const Editor = {
                 tabindex: 0,
             });
 
+            this.conceptSection = createUnorderedList({
+                class: ["bare-list", "model-concept-list"],
+            });
+
+            this.body.appendChild(this.conceptSection);
+
             fragment.appendChild(this.body);
         }
 
@@ -366,7 +369,7 @@ export const Editor = {
             if (!isHTMLElement(this.btnExport)) {
                 this.btnExport = createButton({
                     id: "btnExportModel",
-                    class: ["btn", "btn-export"],
+                    class: ["btn", "btn-export", "hidden"],
                     draggable: true,
                     dataset: {
                         "context": "model",
@@ -380,7 +383,7 @@ export const Editor = {
             if (!isHTMLElement(this.btnImport)) {
                 this.btnImport = createButton({
                     id: "btnImportModel",
-                    class: ["btn", "btn-import"],
+                    class: ["btn", "btn-import", "hidden"],
                     draggable: true,
                     dataset: {
                         "context": "model",
@@ -450,28 +453,6 @@ export const Editor = {
             return;
         }
 
-        if (!this.concept) {
-            let listOfConcepts = createUnorderedList({
-                class: ["bare-list"]
-            });
-
-            for (const concept in this.conceptModel.schema) {
-                let schema = this.conceptModel.schema[concept];
-                if (schema.editor) {
-                    let conceptItem = createListItem({
-                        class: ["list-concept-item"]
-                    }, [concept, " : OK",]);
-                    listOfConcepts.appendChild(conceptItem);
-                }
-            }
-
-            this.container.classList.add("empty");
-
-            appendChildren(this.body, ["SELECT A CONCEPT", listOfConcepts]);
-
-            return;
-        }
-
         this.container.classList.remove("empty");
 
         var modelConceptList = createUnorderedList({
@@ -482,6 +463,7 @@ export const Editor = {
         concreteConcepts.forEach(concept => {
             var conceptItem = createListItem({
                 class: ["selector-model-concept", "font-ui"],
+                title: concept.description,
                 dataset: {
                     "concept": concept.name
                 }
@@ -498,8 +480,22 @@ export const Editor = {
 
                 let concept = this.conceptModel.createConcept(name);
                 let projection = this.projectionModel.createProjection(concept, "editor").init();
+                let btnDelete = createButton({
+                    class: ["btn", "model-concept-list-item__btn-delete"]
+                }, "Delete concept");
 
-                this.append(projection.render());
+                var modelConceptListItem = createListItem({
+                    class: ["model-concept-list-item"],
+                }, [btnDelete, projection.render()]);
+
+                btnDelete.addEventListener('click', (event) => {
+                    if (concept.delete(true)) {
+                        removeChildren(modelConceptListItem);
+                        modelConceptListItem.remove();
+                    }
+                });
+
+                this.conceptSection.appendChild(modelConceptListItem);
             }
         });
 

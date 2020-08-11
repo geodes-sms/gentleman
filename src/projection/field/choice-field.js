@@ -408,16 +408,14 @@ const BaseChoiceField = {
         for (let i = 0; i < children.length; i++) {
             /** @type {HTMLElement} */
             const item = children[i];
+
             if (getItemValue(item) === value) {
                 item.classList.add("selected");
                 item.dataset.selected = "selected";
-                show(item);
                 this.selection = item;
             } else {
                 item.classList.remove("selected");
                 delete item.dataset.selected;
-                // hide(item);
-                item.dataset.selected = "selected";
             }
         }
 

@@ -12,7 +12,8 @@
                 "required": false
             },
             "concept": {
-                "target": "concept"
+                "target": "reference",
+                "accept": "model_concept"
             }
         }
     },
@@ -128,27 +129,6 @@
             }
         }
     },
-    {
-        "name": "choice_template",
-        "nature": "concrete",
-        "attribute": {}
-    },
-    {
-        "name": "list_template",
-        "nature": "concrete",
-        "prototype": "template",
-        "attribute": {
-            "orientation": {
-                "target": "string",
-                "value": "horizontal",
-                "values": ["horizontal", "vertical"]
-            },
-            "item": {
-                "target": "set",
-                "accept": "field"
-            }
-        }
-    },
 
 
     {
@@ -193,8 +173,11 @@
                 "target": "reference",
                 "accept": {
                     "name": "attribute",
-                    "scope": "concrete_concept",
-                    "rel": "parent"
+                    "scope": {
+                        "name": "concept",
+                        "scope": "projection",
+                        "rel": "parent"
+                    }
                 }
             }
         }

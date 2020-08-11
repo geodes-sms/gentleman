@@ -51,7 +51,6 @@ export const ConceptModel = {
      */
     createConcept(name, args) {
         const schema = this.getCompleteModelConcept(name);
-        console.log(schema, name);
 
         var concept = ConceptFactory.createConcept(name, this, schema, args);
 
