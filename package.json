@@ -48,6 +48,7 @@
     "cross-env": "^7.0.2",
     "css-loader": "^3.6.0",
     "cucumber": "^5.1.0",
+    "file-loader": "^6.1.1",
     "jsdom": "^13.2.0",
     "loader-utils": "^2.0.0",
     "nyc": "^14.1.1",

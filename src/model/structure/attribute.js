@@ -9,13 +9,11 @@ export const BaseAttribute = {
     target: null,
 
     init(value) {
-        this.target = this.model.createConcept(this.schema.target, Object.assign({}, this.schema, {
+        this.target = this.model.createConcept(this.schema.target, {
             value: valOrDefault(value, this.schema.value),
             parent: this.concept,
-            min: this.min,
-            refname: this.name,
-            reftype: "attribute",
-        }));
+            ref: this
+        });
 
         return this;
     },
@@ -25,7 +23,10 @@ export const BaseAttribute = {
 
     export() {
         var output = {
-            [`${this.name}:attribute`]: this.target.export()
+            [`${this.name}:attribute`]: {
+                id: this.target.id,
+                name: this.target.name
+            }
         };
 
         return output;
@@ -36,6 +37,7 @@ export const BaseAttribute = {
         };
     }
 };
+
 
 export const Attribute = Object.assign(
     Object.create(BaseStructure),

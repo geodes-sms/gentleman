@@ -94,11 +94,14 @@ const BaseField = {
         }
     },
 
-    enterHandler() {
+    enterHandler(target) {
         this.focusOut();
     },
-    backspaceHandler() {
-        return;
+    backspaceHandler(target) {
+        console.warn("BACKSPACE_HANDLER NOT IMPLEMENTED");
+    },
+    clickHandler(target) {
+        console.warn("CLICK_HANDLER NOT IMPLEMENTED");
     },
 };
 

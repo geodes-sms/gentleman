@@ -1,5 +1,5 @@
-import { isNullOrWhitespace, valOrDefault, isNullOrUndefined, isObject, isEmpty, isString } from "zenkai";
-import { Concept } from "./../concept.js";
+import { isNullOrWhitespace, isNullOrUndefined, isObject, isEmpty, isString } from "zenkai";
+import { Concept } from "./concept.js";
 
 
 const ResponseCode = {
@@ -17,26 +17,10 @@ function responseHandler(code) {
     }
 }
 
-const _ReferenceConcept = {
+const _MetaConcept = {
+    name: "meta",
     reference: null,
-    path: null,
 
-    init(args = {}) {
-        this.parent = args.parent;
-        this.ref = args.ref;
-        this.accept = this.schema.accept;
-        this.path = this.schema.path;
-        this.values = valOrDefault(this.schema.values, []);
-        this.alias = this.schema.alias;
-        this.description = this.schema.description;
-
-
-        this.initObserver();
-        this.initAttribute();
-        this.initValue(args.value);
-
-        return this;
-    },
     initValue(args) {
         if (isNullOrUndefined(args)) {
             return this;
@@ -57,12 +41,23 @@ const _ReferenceConcept = {
 
         return this.value;
     },
-    getReference() {
-        if (isNullOrUndefined(this.reference)) {
-            return null;
+    getProperty(propName) {
+        const value = this.schema[propName];
+        
+        if (isObject(value)) {
+            const result = [];
+            
+            for (const key in value) {
+                const element = value[key];
+                result.push(Object.assign({}, {
+                    "name": key
+                }, element));
+            }
+
+            return result;
         }
 
-        return this.reference;
+        return value;
     },
     setValue(value) {
         var result = this.validate(value);
@@ -84,7 +79,6 @@ const _ReferenceConcept = {
         if (this.reference) {
             this.reference.unregister(this);
         }
-
         this.reference = this.model.getConcept(value);
         this.reference.register(this);
 
@@ -97,37 +91,8 @@ const _ReferenceConcept = {
         };
     },
 
-    getCandidates() {
-        if (isNullOrUndefined(this.accept)) {
-            throw new Error("Bad reference: 'accept' property is not defined");
-        }
-
-        var candidates = resolveAccept.call(this, this.accept);
-
-        if (this.path) {
-            resolvePath(this, this.path).map((candidate) => ({
-                type: this.accept.type,
-                value: candidate
-            }));
-        }
-
-        var values = candidates.map((candidate) => ({
-            type: "concept",
-            value: candidate
-        }));
-
-        return values;
-    },
     getChildren(name) {
-        if (isNullOrUndefined(this.reference)) {
-            return [];
-        }
-
-        if (name && this.reference.name !== name) {
-            return [];
-        }
-
-        return [this.reference];
+        return [];
     },
     delete(force = false) {
         if (!force) {
@@ -175,15 +140,11 @@ const _ReferenceConcept = {
         return ResponseCode.SUCCESS;
     },
 
-    build() {
-        return this.getValue();
-    },
     export() {
         return {
             id: this.id,
             name: this.name,
-            root: this.isRoot(),
-            value: this.getValue(),
+            value: this.value
         };
     },
     toString() {
@@ -197,42 +158,31 @@ const _ReferenceConcept = {
 };
 
 function resolveAccept(accept) {
-    const { name, prototype, scope, rel } = accept;
+    if (isString(accept)) {
+        const { concepts } = this.model;
 
-    if (rel === "parent") {
-        let parent = this.getParent(scope);
-        return parent.getChildren(name);
+        if (this.model.isPrototype(accept)) {
+            return concepts.filter((concept) => concept.schema.prototype === accept);
+        }
+
+        return concepts.filter((concept) => concept.name === accept);
+    }
+    if (isObject(accept)) {
+        const { name, scope, rel } = accept;
+
+        if (rel === "parent") {
+            let parent = this.getParent(scope);
+            return parent.getChildren(name);
+        }
+
+        return resolveAccept.call(this, name);
     }
 
-    if (prototype) {
-        return this.model.getConceptsByPrototype(prototype);
-    }
-
-    return this.model.getConcepts(name);
-}
-
-function resolvePath(source, path) {
-    if (isNullOrUndefined(path)) {
-        return source;
-    }
-
-    const { target, value, rel } = path;
-
-    var result = [];
-
-    if (rel === "parent") {
-        result.push(source.getParentWith(target));
-    } else if (rel === "children") {
-        result.push(...source.getChildren(target));
-    } else if (rel === "property") {
-        result.push(source.getProperty(target));
-    }
-
-    return result.map((e) => resolvePath(e, value)).flat();
+    return [];
 }
 
 
-export const ReferenceConcept = Object.assign({},
+export const MetaConcept = Object.assign({},
     Concept,
-    _ReferenceConcept
+    _MetaConcept
 );

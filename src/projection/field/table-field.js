@@ -1,13 +1,17 @@
 import {
     createDocFragment, createTable, createTableHeader, createTableBody, createTableRow,
     createTableCell, createTableHeaderCell, createSpan, createDiv, createI, createButton,
-    removeChildren, isHTMLElement, isDerivedOf, isEmpty, valOrDefault, hasOwn, isString, appendChildren, findAncestor,
+    removeChildren, isHTMLElement, valOrDefault, findAncestor,
 } from "zenkai";
 import { hide, show, shake } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler } from "./../content-handler.js";
 import { Field } from "./field.js";
 
+
+var inc = 0;
+const nextRowId = () => `row${inc++}`;
+const nextCellId = () => `cell${inc++}`;
 
 const addSchema = {
     "type": "layout",
@@ -35,17 +39,9 @@ const addRowSchema = {
     }
 };
 
-const removeRowSchema = {
-    "type": "layout",
-    "layout": {
-        "type": "wrap",
-        "style": {
-            "css": "table-remove"
-        },
-        "disposition": [
-            { "type": "text", "content": "Remove" }
-        ]
-    }
+const removeRowSchema = { 
+    "type": "text", 
+    "content": "Remove" 
 };
 
 
@@ -94,10 +90,13 @@ const BaseTableField = {
     footer: null,
     /** @type {string}  */
     caption: null,
+    /** @type {Map} */
+    elements: null,
 
     init() {
         this.source.register(this);
         this.caption = this.schema.caption;
+        this.elements = new Map();
 
         const { concept, name } = this.schema.template;
         this.template = this.model.getModelProjectionTemplate(concept, name, "table").projection;
@@ -124,7 +123,8 @@ const BaseTableField = {
     },
 
     render() {
-        const { before = {}, table = {}, header, footer, after = {} } = this.template;
+        const { before = {}, after = {} } = this.schema;
+        const { table = {}, header = {}, body = {}, footer = {} } = this.template;
 
         const fragment = createDocFragment();
 
@@ -171,7 +171,6 @@ const BaseTableField = {
             this.notification.appendChild(this.statusElement);
         }
 
-        
         if (before.projection) {
             let content = ContentHandler.call(this, before.projection);
             content.classList.add("field--table__before");
@@ -191,10 +190,12 @@ const BaseTableField = {
                 }
             });
 
+            StyleHandler(this.table, table.style);
+
             fragment.appendChild(this.table);
         }
 
-        if (Array.isArray(header)) {
+        if (Array.isArray(header.cell)) {
             this.header = createTableHeader({
                 class: ["field--table-header"],
                 dataset: {
@@ -214,7 +215,7 @@ const BaseTableField = {
                 }
             });
 
-            header.forEach(value => {
+            header.cell.forEach(value => {
                 var { style, content } = value;
 
                 var render = ContentHandler.call(this, content);
@@ -228,10 +229,21 @@ const BaseTableField = {
                     }
                 }, render);
 
+                StyleHandler(cell, style);
+
                 row.appendChild(cell);
             });
 
+            let actionCell = createTableCell({
+                class: ["field--table-header-cell", "field--table-header-cell--action"]
+            }, "Action");
+
+            row.appendChild(actionCell);
+
             this.header.appendChild(row);
+
+            StyleHandler(this.header, header.style);
+
             this.table.appendChild(this.header);
         }
 
@@ -245,7 +257,23 @@ const BaseTableField = {
                 }
             });
 
+            StyleHandler(this.body, body.style);
+
             this.table.appendChild(this.body);
+        }
+
+        if (!isHTMLElement(this.btnAdd)) {
+            let render = ContentHandler.call(this, addSchema);
+            this.btnAdd = createButton({
+                class: ["btn", "field--table__button"],
+                dataset: {
+                    "nature": "field-component",
+                    "id": this.id,
+                    "action": "add"
+                }
+            }, render);
+
+            fragment.appendChild(this.btnAdd);
         }
 
         if (this.source.hasValue()) {
@@ -317,24 +345,9 @@ const BaseTableField = {
     },
     refresh() {
         if (this.hasValue()) {
-            if (this.btnAdd) {
-                hide(this.btnAdd);
-            }
+            this.table.classList.remove("empty");
         } else {
-            if (!isHTMLElement(this.btnAdd)) {
-                let render = ContentHandler.call(this, addSchema);
-                this.btnAdd = createButton({
-                    class: ["btn", "field--table__button"],
-                    dataset: {
-                        "nature": "field-component",
-                        "id": this.id,
-                        "action": "add"
-                    }
-                }, render);
-                this.element.appendChild(this.btnAdd);
-            }
-
-            show(this.btnAdd);
+            this.table.classList.add("empty");
         }
 
         if (this.hasChanges()) {
@@ -357,20 +370,25 @@ const BaseTableField = {
         return this.source.createElement();
     },
     addRow(concept) {
-        const { body } = this.template;
+        const { body = {} } = this.template;
 
-        var row = createTableRow({
+        const index = valOrDefault(concept.index, this.table.rows.length);
+        const elementId = nextRowId();
+
+        const row = createTableRow({
             class: ["field--table-row"],
             tabindex: -1,
             dataset: {
                 nature: "field-component",
                 view: "table",
                 id: this.id,
-                index: valOrDefault(concept.index, this.table.rows.length)
+                index: index,
+                elementId: elementId
             }
         });
+        this.elements.set(elementId, row);
 
-        body.forEach(schema => {
+        body.cell.forEach(schema => {
             const { style, content } = schema;
 
             var render = ContentHandler.call(this, content, concept);
@@ -390,47 +408,42 @@ const BaseTableField = {
         });
 
         var actionCell = createTableCell({
-            class: ["field--table__cell-action"],
-            tabindex: -1,
+            class: ["field--table__cell-action"]
         });
 
-        var addRender = ContentHandler.call(this, addRowSchema);
-        addRender.dataset.action = "add";
-
         var removeRender = ContentHandler.call(this, removeRowSchema);
-        removeRender.dataset.action = "remove";
 
-        appendChildren(actionCell, [addRender, removeRender]);
-
-        actionCell.addEventListener('click', (event) => {
-            const { target } = event;
-
-            const actionTarget = findAncestor(target, (element) => element.parentElement === actionCell);
-
-            if (actionTarget.dataset.action) {
-                const { action } = actionTarget.dataset;
-
-                if (action === "add") {
-                    this.createElement();
-                }
-                if (action === "remove") {
-                    this.delete(actionCell.parentElement);
-                }
+        var btnRemove = createButton({
+            class: ["btn", "field--table__button"],
+            dataset: {
+                "nature": "field-component",
+                "id": this.id,
+                "action": "remove",
+                "rowId": elementId
             }
-        }, true);
+        }, removeRender);
+
+        actionCell.append(btnRemove);
 
         row.appendChild(actionCell);
 
         this.body.appendChild(row);
     },
     removeRow(value) {
-        let row = this.body.rows.item(value.index);
+        console.log(value);
+        var row = this.body.rows.item(value.index);
         if (!isHTMLElement(row)) {
             throw new Error("Table error: Row not found");
         }
 
         removeChildren(row);
         row.remove();
+
+        for (let i = value.index; i < this.body.rows.length; i++) {
+            const row = this.body.rows.item(i);
+            const { index } = row.dataset;
+            row.dataset.index = +index - 1;
+        }
     },
     removeElement(element) {
         return this.source.removeElement(element);
@@ -453,25 +466,31 @@ const BaseTableField = {
             shake(target);
         }
     },
+
     bindEvents() {
         this.element.addEventListener('click', (event) => {
             const { target } = event;
 
             const fieldComponent = resolveFieldComponent(target);
 
-            if (fieldComponent.dataset.id !== this.id) {
+            if (!isHTMLElement(fieldComponent)) {
                 return;
             }
 
-            if (fieldComponent.dataset.action) {
-                const { action } = fieldComponent.dataset;
+            const { id, action } = fieldComponent.dataset;
 
-                if (action === "add") {
-                    this.createElement();
-                }
+            if (id !== this.id) {
+                return;
+            }
+
+            if (action === "add") {
+                this.createElement();
+            } else if (action === "remove") {
+                const { rowId } = fieldComponent.dataset;
+                let row = this.elements.get(rowId);
+                this.delete(row);
             }
         }, true);
-
     }
 };
 

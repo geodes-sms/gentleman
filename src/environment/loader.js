@@ -1,13 +1,12 @@
 import {
     createDocFragment, createDiv, createInput, createUnorderedList, createListItem,
-    findAncestor, appendChildren, removeChildren, isHTMLElement, isNullOrUndefined, isFunction,
+    findAncestor, removeChildren, isHTMLElement, isNullOrUndefined, isFunction,
 } from 'zenkai';
 import { show, hide } from '@utils/index.js';
-import { MetaModel } from '@model/index.js';
+import { ConceptModelManager } from '@model/index.js';
 
 
 const loaders = [];
-
 
 export const LoaderFactory = {
     /** @returns {Loader} */
@@ -59,7 +58,7 @@ export const Loader = {
         }
 
         try {
-            const metamodel = MetaModel.create(metamodelSchema);
+            const metamodel = ConceptModelManager.createModel(metamodelSchema);
 
             if (isFunction(this.afterLoadMetaModel)) {
                 this.afterLoadMetaModel(metamodel);
@@ -138,7 +137,7 @@ export const Loader = {
                 }
             }, "Create a model");
 
-            appendChildren(this.options, [metamodelOption, modelOption]);
+            this.options.append(metamodelOption, modelOption);
 
             fragment.appendChild(this.options);
         }

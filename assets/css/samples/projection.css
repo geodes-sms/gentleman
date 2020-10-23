@@ -1,0 +1,712 @@
+.model-projection {
+    position: relative;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+    .model-projection-header {
+        padding: 8px 12px;
+        width: 100%;
+        box-sizing: border-box;
+        border-top-left-radius: 4px; border-top-right-radius: 4px;
+        color: #fff;
+        background-color: #bd0f58;
+    }
+
+    .model-projection-header .field--textbox__input {
+        font-size: 1.4rem;
+        border: 1px solid #fff;
+    }
+
+        .model-projection-header .field--textbox__input::placeholder {
+            color: #f5f5f5;
+        }
+        .model-projection-header .field--textbox__input:focus {
+            border-color: #3573dd;
+            box-shadow: 0 1px 0 0 #296ee4;
+        }
+
+    .model-projection-body {
+        padding: 4px 8px 6px;
+        width: 100%;
+        border: 2px solid #bd0f58;
+        border-bottom-left-radius: 2px; border-bottom-right-radius: 2px;
+    }
+
+.layout-choice {
+    display: flex;
+    flex-direction: row;
+}
+
+    .layout-choice-option {
+        margin-right: 4px;
+        padding: 4px 8px;
+        font-size: 1em;
+        background-color: #fff;
+        box-shadow: 0 1px 2px #c0c0c0;
+    }
+        .layout-choice-option:hover,
+        .layout-choice-option:focus,
+        .layout-choice-option:active {
+            box-shadow: 0 2px 4px #999;
+            transform: scale(1.02);
+        }
+        .layout-choice-option.selected {
+            font-weight: 600;
+            background-color: #ffd300;
+            box-shadow: 0 1px 2px -1px #555;
+        }
+
+
+.field-choice {
+    display: flex;
+    flex-direction: row;
+}
+
+    .field-choice-option {
+        margin-right: 4px;
+        padding: 4px 8px;
+        font-size: 1em;
+        background-color: #fff;
+        box-shadow: 0 1px 2px #c0c0c0;
+    }
+        .field-choice-option:hover,
+        .field-choice-option:focus,
+        .field-choice-option:active {
+            box-shadow: 0 2px 4px #999;
+            transform: scale(1.02);
+        }
+        .field-choice-option.selected {
+            font-weight: 600;
+            background-color: #ffd300;
+            box-shadow: 0 1px 2px -1px #555;
+        }
+
+
+.template-choice {
+    display: flex;
+    flex-direction: row;
+}
+
+    .template-choice-option {
+        margin-right: 4px;
+        padding: 4px 8px;
+        font-size: 1em;
+        background-color: #fff;
+        box-shadow: 0 1px 2px #c0c0c0;
+    }
+        .template-choice-option:hover,
+        .template-choice-option:focus,
+        .template-choice-option:active {
+            box-shadow: 0 2px 4px #999;
+            transform: scale(1.02);
+        }
+        .template-choice-option.selected {
+            font-weight: 600;
+            background-color: #ffd300;
+            box-shadow: 0 1px 2px -1px #555;
+        }
+
+.layout-element-list-item {
+    margin-right: 4px; margin-bottom: 4px;
+    border-radius: 4px;
+}
+
+.layout-element-list__btn-add {
+    width: 36px; 
+    height: 36px;
+    text-align: center;
+    line-height: 28px;
+    color: #fff;
+    font-size: 3em; font-weight: 500;
+    border-radius: 50%;
+    background-color: #232425;
+    background: radial-gradient(#262624, #232425);
+    box-shadow: 0 1px 3px -1px #1b1b1b;
+    cursor: default;
+}
+.layout-element-list__btn-add:hover {
+    box-shadow: 0 1px 1px #000;
+}
+    .layout-element-list__btn-add:hover .layout-element-list__btn-add-content {
+        transform: scale(1.2)
+    }
+.layout-element-list__btn-add:focus {
+    box-shadow: none;
+}
+
+.layout-element-list-item.active-parent {
+    padding: 4px 8px;
+    background-color: #f0f0f0;
+}
+
+.element-choice {
+    display: flex;
+    flex-direction: row;
+}
+
+.element-choice-option {
+    margin-right: 4px;
+    font-size: 1em;
+    box-sizing: border-box;
+    color: #fff;
+    background-color: #555;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px #c0c0c0;
+}
+    .element-choice-option:not(.selected):hover {
+        background-color: #222;
+    }
+    .element-choice-option.selected {
+        font-weight: 600;
+        color: #222;
+        background-color: #ffd300;
+        box-shadow: 0 1px 2px -1px #555;
+    }
+
+
+.stack-layout {
+    width: 100%;
+    border: 1px solid #d5d5d5;
+}
+
+    .stack-layout-header {
+        width: 100%;
+        padding: 4px 12px;
+        box-sizing: border-box;
+        background-color: #f5f5f5;
+    }
+
+    .stack-layout-body {
+        width: 100%;
+        padding: 4px 12px;
+        box-sizing: border-box;
+        box-shadow: inset 0 2px 2px #999;
+    }
+
+.orientation-choice {
+    display: flex; flex-direction: row;
+}
+
+    .orientation-choice-option {
+        margin-right: 4px;
+        padding: 4px 8px;
+        font-size: 1em;
+        background-color: #fff;
+        text-transform: capitalize;
+        box-shadow: 0 1px 2px #c0c0c0;
+        transition: .2s;
+    }
+
+    .orientation-choice-option:hover,
+    .orientation-choice-option:focus,
+    .orientation-choice-option:active {
+        background-color: #ffe45c;
+    }
+    .orientation-choice-option.selected {
+        font-weight: 600;
+        background-color: #ffd300;
+        box-shadow: 0 1px 2px -1px #555;
+    }
+
+.text-element.active-parent,
+.text-element.active {
+    padding: 8px 12px;
+    background-color: #fff;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px -1px #c0c0c0;
+}
+
+.text-element.active {
+    outline: none;
+    box-shadow: 0 2px 4px #555;
+}
+
+.badge--alt {
+    position: absolute;
+    top: 0; left: calc(100% + 2px);
+    width: 12px; height: 12px;
+    border-radius: 2px;
+    background-color: #5F4B8B;
+    box-shadow: 4px 4px 0 #271C40;
+    opacity: 0;
+    transition: .2s;
+}
+
+.active-parent:hover > .badge--alt {
+    opacity: 0.5;
+    transform: scale(0.8);
+}
+
+.active > .badge--alt {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.field-config-container {
+    padding: 4px 6px 8px;
+    box-shadow: inset 0 1px 2px #555;
+    background: linear-gradient(to bottom, #f5f5f5, #fff);
+    border-radius: 4px;
+}
+
+.field-state-properties {
+    display: flex;
+    width: 100%;
+    padding: 4px 6px;
+}
+
+.field-state-properties .field--checkbox__label {
+    text-transform: capitalize;
+}
+
+.field-state-properties > .field:not(:last-child) {
+    margin-right: 6px;
+}
+
+.textfield--concept__label {
+    margin-right: 4px;
+    font-weight: 500;
+    color: #555;
+}
+
+.textfield--concept__input {
+    font-size: 1.4rem;
+    border-bottom: 1px solid #a9a9a9;
+    background-color: #f0f0f0;
+}
+
+    .textfield--concept__input:focus {
+        border-color: #3573dd;
+        box-shadow: 0 1px 0 0 #296ee4;
+    }
+
+.textfield--placeholder {
+    align-items: center;
+}
+
+    .textfield--placeholder__label {
+        font-weight: 500;
+        color: #555;
+    }
+
+    .textfield--placeholder__input {
+        margin-left: 4px;
+        border: 1px solid #d5d5d5;
+        background-color: #fefefe;
+        font-size: 1.4rem;
+        border-radius: 4px;
+    }
+
+.textfield--label {
+    align-items: center;
+}
+
+    .textfield--label__label {
+        font-weight: 500;
+        color: #555;
+    }
+
+    .textfield--label__input {
+        margin-left: 4px;
+        border: 1px solid #d5d5d5;
+        background-color: #fefefe;
+        font-size: 1.4rem;
+        border-radius: 4px;
+    }
+
+.textfield--template {
+    align-items: center;
+}
+
+    .textfield--template__label {
+        font-weight: 500;
+        color: #555;
+        width: 150px;
+    }
+
+    .textfield--template__input {
+        margin-left: 4px;
+        border: 1px solid #d5d5d5;
+        font-size: 1.4rem;
+        border-radius: 4px;
+    }
+
+.projection-option {
+    padding: 4px;
+    cursor: default;
+    border-radius: 2px;
+}
+.projection-option--tags {
+    margin-top: 4px; margin-left: 4px; margin-bottom: 6px;
+    padding: 6px 12px;
+    color: #fff;
+    background-color: #f7277e;
+}
+
+.field-option {
+    padding: 4px;
+    cursor: default;
+    border-radius: 2px;
+}
+
+.field-option--label {
+    margin-top: 4px; margin-left: 4px; margin-bottom: 6px;
+    padding: 4px 8px;
+    color: #fff;
+    background-color: #f7277e;
+}
+
+.field-option--style {
+    margin: 12px auto 4px;
+    padding: 10px 8px;
+    width: 100%; max-width: 300px;
+    text-align: center;
+    color: #fff;
+    background-color: #09b54d;
+    cursor: default;
+    transition: .2s;
+}
+    .field-option--style:hover {
+        background-color: #0ac253;
+        transform: scale(1.05);
+    }
+
+
+.table-section-title {
+    display: block;
+    margin-top: 4px;
+    font-size: 1.4em; font-weight: 800;
+    color: #555;
+}
+
+.attribute-option {
+    padding: 4px;
+    cursor: default;
+    border-radius: 2px;
+}
+
+.attribute-option--tag {
+    margin: 4px auto;
+    width: 80%;
+    padding: 4px 8px;
+    font-size: 1.3rem; font-weight: 500;
+    text-align: center;
+    color: #fff;
+    background-color: #f7277e;
+}
+
+.attribute-element {
+    display: flex;
+    background-color: #f0f0f0;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.attribute-element .attribute-option--tag {
+    width: 80px;
+}
+
+.textfield--attribute__input {
+    border: 1px solid #d5d5d5;
+    background-color: #fff;
+    font-size: 1.4rem;
+    border-radius: 4px;
+}
+
+.textfield--tag {
+    width: 120px;
+}
+
+.textfield--tag.active {
+    box-shadow: 0 1px 2px #888;
+}
+
+.textfield--tag__input {
+    background-color: #fefefe;
+}
+
+.textfield--value__input {
+    border: 1px solid #d5d5d5;
+    background-color: #fff;
+    font-size: 1.4rem;
+    border-radius: 4px;
+}
+
+.projection-style-container {
+    margin-top: 4px;
+    width: 100%;
+    padding: 24px 6px 4px;
+    max-width: 500px;
+    border: 2px dashed #0ac253;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+
+/*
+    CSS list
+-----------------------------------------------------------------------------*/
+
+.css-list-container {
+    display: flex;
+    flex-direction: column;
+}
+
+    .css-list-container .field--list__add {
+        position: relative;
+        width: 64px!important; 
+        height: 64px!important;
+        align-self: flex-end;
+        line-height: 64px!important;
+        font-size: 1.4rem!important; font-weight: bold!important;
+        text-align: center;
+        color: #fff;
+        border-radius: 50%;
+        padding: 6px;
+        background-color: #09b54d;
+        cursor: default;
+    }
+
+.css-list-item {
+    display: inline-flex;
+    margin-right: 6px; margin-bottom: 6px;
+    align-items: center;
+    border-radius: 2px;
+    width: 150px;
+    border: 1px solid #555;
+}
+
+    .css-list-item .field {
+        display: inline-flex;
+    }
+
+    .css-list-item .btn-remove {
+        position: relative;
+        height: 100%;
+        background-color: #555;
+        order: 2;
+        padding: 4px 6px;
+        font-size: 0.9em; font-weight: 600;
+        z-index: 5;
+    }
+        .css-list-item .btn-remove:before {
+            content: "✖";
+            display: block;
+            padding: 2px 2px 2px 1px;
+            width: 20px;
+            height: 20px;
+            box-sizing: border-box;
+            border-radius: 50%;
+            color: #fff;
+            transition: .4s;
+        }
+        .css-list-item .btn-remove:hover {
+            background-color: rgb(225, 65, 65);
+        }
+
+
+/*
+    Cell list
+-----------------------------------------------------------------------------*/
+
+.cell-list-container {
+    display: flex;
+    flex-direction: column;
+}
+
+    .cell-list-container .field--list__add {
+        position: relative;
+        align-self: flex-end;
+        margin-top: 4px;
+        width: 48px; 
+        height: 48px;
+        line-height: 48px;
+        font-size: 1.4rem; font-weight: bold;
+        text-align: center;
+        color: #fff;
+        border-radius: 50%;
+        background-color: #09b54d;
+        cursor: default;
+    }
+        
+.cell-list-item {
+    display: inline-flex;
+    align-items: center;
+    width: 180px;
+    border: 1px solid #555;
+}
+
+    .cell-list-item .field {
+        display: inline-flex;
+        font-size: 0.9em;
+    }
+
+    .cell-list-item .btn-remove {
+        position: relative;
+        height: 100%;
+        background-color: #555;
+        order: 2;
+        padding: 4px 6px;
+        font-size: 0.9em; font-weight: 600;
+        z-index: 5;
+    }
+        .cell-list-item .btn-remove:before {
+            content: "✖";
+            display: block;
+            padding: 2px 2px 2px 1px;
+            width: 20px;
+            height: 20px;
+            box-sizing: border-box;
+            border-radius: 50%;
+            color: #fff;
+            transition: .4s;
+        }
+        .cell-list-item .btn-remove:hover {
+            background-color: rgb(225, 65, 65);
+        }
+
+
+/*
+    Tag list
+-----------------------------------------------------------------------------*/
+
+.tag-list-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+}
+
+    .tag-list-title {
+        margin-bottom: 4px;
+        font-size: 1.2em; font-weight: 500;
+    }
+
+    .tag-list-container .field--list__add {
+        position: relative;
+        align-self: flex-end;
+        margin-top: 4px;
+        width: 48px; 
+        height: 48px;
+        line-height: 48px;
+        font-size: 1.4rem; font-weight: bold;
+        text-align: center;
+        color: #fff;
+        border-radius: 50%;
+        background-color: #09b54d;
+        outline: none;
+        cursor: default;
+    }
+
+    .tag-list-container.empty .field--list__add {
+        width: 120px; 
+        height: 48px;
+        align-self: center;
+        line-height: 48px;
+        font-size: 1.6rem; font-weight: bold;
+        border-radius: 4px;
+    }
+        
+.tag-list-item {
+    display: inline-flex;
+    margin-right: 6px; margin-bottom: 6px;
+    align-items: center;
+    border-radius: 2px;
+    width: 150px;
+    border: 1px solid #555;
+}
+
+    .tag-list-item .field {
+        display: inline-flex;
+        font-size: 0.9em;
+    }
+
+    .tag-list-item .btn-remove {
+        position: relative;
+        height: 100%;
+        background-color: #555;
+        order: 2;
+        padding: 4px 6px;
+        font-size: 0.9em; font-weight: 600;
+        z-index: 5;
+    }
+        .tag-list-item .btn-remove:before {
+            content: "✖";
+            display: block;
+            padding: 2px 2px 2px 1px;
+            width: 20px;
+            height: 20px;
+            box-sizing: border-box;
+            border-radius: 50%;
+            color: #fff;
+            transition: .4s;
+        }
+        .tag-list-item .btn-remove:hover {
+            background-color: rgb(225, 65, 65);
+        }
+
+/*
+    Element list
+-----------------------------------------------------------------------------*/
+
+.element-list-container {
+    display: flex;
+    flex-direction: column;
+}
+
+    .element-list-container .field--list__add {
+        position: relative;
+        width: 48px; 
+        height: 48px;
+        align-self: flex-end;
+        line-height: 40px;
+        font-size: 4rem; font-weight: 300;
+        text-align: center;
+        color: #fff;
+        border-radius: 50%;
+        background-color: #f7277e;
+        cursor: default;
+    }
+
+.element-list-item {
+    display: inline-flex; flex-direction: column;
+    margin-right: 6px; margin-bottom: 6px;
+    align-items: center;
+    border-radius: 2px;
+    border: 1px solid #c0c0c0;
+}
+
+.element-list-item.active-parent {
+    border-color: royalblue;
+}
+
+    .element-list-item .field {
+        order: 2;
+        padding: 4px 6px;
+        background-color: rgba(250, 250, 250, 0.1);
+    }
+
+    .element-list-item .btn-remove {
+        position: relative;
+        order: 1; align-self: flex-end;
+        color: #555;
+        background-color: #d5d5d5;
+        order: 2;
+        padding: 4px 6px;
+        font-size: 0.9em; font-weight: 600;
+        z-index: 5;
+    }
+        .element-list-item .btn-remove:before {
+            content: "✖";
+            display: block;
+            padding: 2px 2px 2px 1px;
+            width: 20px;
+            height: 20px;
+            box-sizing: border-box;
+            border-radius: 50%;
+            transition: .4s;
+        }
+        .element-list-item .btn-remove:hover {
+            color: #fff;
+            background-color: #555;
+        }

@@ -1,5 +1,5 @@
 import {
-    isNode, isHTMLElement, isNullOrUndefined, hasOwn, valOrDefault, isEmpty, createI, isIterable, isString,
+    isNode, isHTMLElement, isNullOrUndefined, hasOwn, valOrDefault, isEmpty, createI, isIterable, isString, isNullOrWhitespace,
 } from "zenkai";
 import { deepCopy } from "@utils/index.js";
 import { ProjectionFactory } from "./projection.js";
@@ -37,6 +37,23 @@ export const ProjectionModel = {
 
     createProjection(concept, tag) {
         const schema = this.getModelProjection(concept, tag);
+
+        if (isEmpty(schema)) {
+            console.warn(concept, schema, tag);
+        }
+
+        var projection = ProjectionFactory.createProjection(this, schema, concept, this.environment);
+
+        this.addProjection(projection);
+
+        return projection;
+    },
+    createGlobalProjection(concept) {
+        const schema = this.getGlobalModelProjection(concept);
+
+        if (isEmpty(schema)) {
+            console.warn(concept, schema);
+        }
 
         var projection = ProjectionFactory.createProjection(this, schema, concept, this.environment);
 
@@ -90,15 +107,31 @@ export const ProjectionModel = {
     },
     /**
      * Gets a value indicating whether this projection is defined in the model
-     * @param {string} name 
+     * @param {string|*} concept 
+     * @param {string} tag 
      * @returns {boolean}
      */
     hasConceptProjection(concept, tag) {
+        const hasConcept = (projection) => projection.concept.name === concept.name;
+
+        const hasTag = (p) => Array.isArray(p.tags) && p.tags.includes(tag);
+
         if (isNullOrUndefined(tag)) {
-            return this.schema.findIndex(p => p.concept.name === concept.name && p.concept.accept === concept.accept) !== -1;
+            return this.schema.findIndex(p => hasConcept(p)) !== -1;
         }
 
-        return this.schema.findIndex(p => p.concept.name === concept.name && p.concept.accept === concept.accept && p.tags.includes(tag)) !== -1;
+        return this.schema.findIndex(p => hasConcept(p) && hasTag(p)) !== -1;
+    },
+    /**
+     * Gets a value indicating whether this projection is defined in the model
+     * @param {string|*} concept 
+     * @param {string} tag 
+     * @returns {boolean}
+     */
+    hasGlobalProjection(concept) {
+        const hasConcept = (projection) => projection.concept.name === concept.name;
+
+        return this.schema.findIndex(p => hasConcept(p) && p.global) !== -1;
     },
     getModelProjection(concept, tag) {
         var projection = null;
@@ -106,14 +139,25 @@ export const ProjectionModel = {
         if (isString(concept)) {
             projection = this.schema.filter(p => p.concept.name === concept);
         } else if (concept.name) {
-            projection = this.schema.filter(p => p.concept.name === concept.name && p.concept.accept === concept.accept);
+            projection = this.schema.filter(p => p.concept.name === concept.name);
         }
 
-        if (isIterable(tag)) {
+        if (isIterable(tag) && !isEmpty(tag)) {
             projection = projection.filter(p => p.tags && p.tags.includes(tag));
         }
 
         return projection;
+    },
+    getGlobalModelProjection(concept) {
+        var projection = null;
+
+        if (isString(concept)) {
+            projection = this.schema.filter(p => p.concept.name === concept);
+        } else if (concept.name) {
+            projection = this.schema.filter(p => p.concept.name === concept.name);
+        }
+
+        return projection.filter(p => p.global);
     },
     getModelProjectionTemplate(concept, name, type, tag) {
         var projection = this.getModelProjection(concept, tag);
@@ -122,7 +166,7 @@ export const ProjectionModel = {
             return [];
         }
 
-        projection = projection.filter(p => p.type === "template" && p.template === type).find(p => p.name === name);
+        projection = projection.filter(p => p.type === "template" && p.projection.type === type).find(p => p.name === name);
 
         return projection;
     },
@@ -146,146 +190,21 @@ export const ProjectionModel = {
     },
 };
 
+const validAccept = (concept, schema) => {
+    const { accept = "" } = concept;
 
-
-const getAttr = (concept, name) => concept.getAttributeByName(name).target;
-
-const getName = (concept) => getAttr(concept, 'name').getValue().toLowerCase();
-
-
-/**
- * Build projection schema
- * @param {*[]} projections 
- */
-function buildProjection(projections) {
-    if (!Array.isArray(projections)) {
-        return [];
+    if (isNullOrWhitespace(accept)) {
+        return true;
     }
 
-    var projectionSchema = [];
-
-    projections.filter(proto => proto.hasValue()).forEach(proto => {
-        const projection = proto.getValue();
-
-        /** @type {*[]} */
-        const elements = getAttr(projection, "elements").getValue();
-        /** @type {*[]} */
-        const tags = getAttr(projection, "tags").getValue();
-
-        var schema = {};
-
-        if (projection.isAttributeCreated("readonly")) {
-            schema.readonly = getAttr(projection, 'readonly').getValue();
-        }
-        if (projection.isAttributeCreated("visible")) {
-            schema.visible = getAttr(projection, 'visible').getValue();
-        }
-
-        schema.layout = buildLayout(projection, elements);
-
-        projectionSchema.push(schema);
-    });
-
-    return projectionSchema;
-}
-
-function buildLayout(layout, elements) {
-    var schema = {};
-    var disposition = [];
-
-    if (layout.name === "stack_projection") {
-        schema.type = "stack";
-        schema.orientation = getAttr(layout, 'orientation').getValue();
-
-        elements.filter(proto => proto.hasValue()).forEach(proto => {
-            const element = proto.getValue();
-            disposition.push(buildElement(element));
-        });
+    if(isNullOrUndefined(schema)) {
+        return false;
     }
-    else if (layout.name === "wrap_projection") {
-        schema.type = "wrap";
-        elements.filter(proto => proto.hasValue()).forEach(proto => {
-            const element = proto.getValue();
-            disposition.push(buildElement(element));
-        });
+    
+    if (isString(accept)) {
+        return accept === schema || accept === schema.name;
     }
-    else if (layout.name === "table_projection") {
-        // TODO
-    }
-
-    schema.disposition = disposition;
-
-    return schema;
-}
-
-function buildElement(element) {
-    if (element.name === "text_element") {
-        return getAttr(element, "value").getValue();
-    }
-    else if (element.name === "attribute_element") {
-        let attr = getAttr(element, 'value').getValue();
-
-        return `#${getName(attr)}:attribute`;
-    }
-    else if (element.name === "component_element") {
-        let comp = getAttr(element, 'value').getValue();
-
-        return `#${getName(comp)}:component`;
-    }
-
-    return null;
-}
-
-function buildField(field) {
-    var schema = {
-        type: "field"
-    };
-
-    if (field.isAttributeCreated("readonly")) {
-        schema.readonly = getAttr(field, 'readonly').getValue();
-    }
-
-    if (field.isAttributeCreated("disabled")) {
-        schema.disabled = getAttr(field, 'disabled').getValue();
-    }
-
-    if (field.isAttributeCreated("visible")) {
-        schema.visible = getAttr(field, 'visible').getValue();
-    }
-
-    if (field.name === "text_field") {
-        if (field.isAttributeCreated("placeholder")) {
-            schema.placeholder = getAttr(field, 'placeholder').getValue();
-        }
-        schema.type = "text";
-    }
-    else if (field.name === "check_field") {
-        if (field.isAttributeCreated("label")) {
-            schema.label = getAttr(field, 'label').getValue();
-        }
-        schema.type = "binary";
-    }
-    else if (field.name === "choice_field") {
-        schema.type = "choice";
-    }
-    else if (field.name === "link_field") {
-        if (field.isAttributeCreated("placeholder")) {
-            schema.placeholder = getAttr(field, 'placeholder').getValue();
-        }
-        if (field.isAttributeCreated("value")) {
-            schema.value = getAttr(field, 'value').getValue();
-        }
-        if (field.isAttributeCreated("choice")) {
-            schema.choice = getAttr(field, 'choice').getValue();
-        }
-        schema.type = "link";
-    }
-    else if (field.name === "list_field") {
-        if (field.isAttributeCreated("orientation")) {
-            schema.orientation = getAttr(field, 'orientation').getValue();
-        }
-        schema.type = "list";
-    }
-
-    return schema;
-}
+    
+    console.log(accept == schema, accept, schema);
+    return accept == schema;
+};

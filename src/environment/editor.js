@@ -1,24 +1,480 @@
 import {
     createDocFragment, createDiv, createH2, createUnorderedList, createListItem,
-    createParagraph, createButton, createHeader, createAnchor, createInput, createSpan,
-    getElement, getElements, appendChildren, removeChildren, isHTMLElement, hasOwn,
-    isNullOrWhitespace, isNullOrUndefined, isNull, copytoClipboard, cloneObject,
-    valOrDefault, isEmpty, createI, findAncestor,
+    createParagraph, createButton, createHeader, createAnchor, createSpan,
+    createInput, createLabel, createI, getElement, getElements, removeChildren,
+    isHTMLElement, isNullOrWhitespace, isNullOrUndefined, isEmpty, hasOwn,
+    copytoClipboard, cloneObject, valOrDefault, findAncestor, createSection,
 } from 'zenkai';
 import { Events, hide, show, Key } from '@utils/index.js';
-import { ConceptModel, ConceptModelManager } from '@model/index.js';
+import { ConceptModelManager } from '@model/index.js';
 import { createProjectionModel } from '@projection/index.js';
-import { Loader, LoaderFactory } from './loader.js';
-import { State } from './state.js';
 
 
-const MODEL_GENTLEMAN_CONCEPT = require('@samples/gentleman_model.json');
-
+const MODEL_GENTLEMAN_CONCEPT = require('@include/gentleman_model.json');
+const MODEL_GENTLEMAN_PROJECTION = require('@include/gentleman_projection.json');
 
 // Allow responsive design
 const MQL = window.matchMedia('(max-width: 800px)');
 
+/**
+ * @returns {HTMLElement}
+ */
+function createEditorHeader() {
+    this.header = createDiv({
+        class: ["editor-header"],
+    });
+
+    let title = createSpan({
+        class: ["editor-header-title"],
+    }, "Editor");
+
+    this.selectorList = createUnorderedList({
+        class: ["bare-list", "editor-selector"],
+    }, ["model", "concept"].map(item => createListItem({
+        class: ["editor-selector-item"],
+        tabindex: 0,
+        dataset: {
+            "value": item,
+            "action": `selector-${item}`
+        }
+    }, item)));
+    this.selectorItem = this.selectorList.children[0];
+    this.selectorItem.classList.add("selected");
+    this.selectorValue = this.selectorItem.dataset.value;
+
+
+    let btnClose = createButton({
+        class: ["btn", "btn-close"],
+        dataset: {
+            action: "close"
+        }
+    });
+
+    let btnNew = createButton({
+        class: ["btn", "btn-new"],
+        dataset: {
+            action: "new"
+        }
+    });
+
+    let btnStyle = createButton({
+        class: ["btn", "btn-style", "hidden"],
+        dataset: {
+            action: "style"
+        }
+    });
+
+    let toolbar = createDiv({
+        class: ["editor-toolbar"],
+    }, [btnStyle, btnNew, btnClose]);
+
+    let menu = createDiv({
+        class: ["editor-header-menu"]
+    }, [title, this.selectorList, toolbar]);
+
+    this.headerBody = createDiv({
+        class: ["editor-header-main"],
+    });
+
+    this.header.append(menu, this.headerBody);
+
+    return this.header;
+}
+
+/**
+ * @returns {HTMLElement}
+ */
+function createEditorMenu(options) {
+    const menu = createDiv({
+        class: ["menu"],
+        draggable: true,
+        title: "Click to access the import, export and build actions"
+    });
+
+    const title = createSpan({
+        class: ["menu-title"],
+        dataset: {
+            "ignore": "all",
+        }
+    }, "Menu");
+
+    const btnExport = createButton({
+        class: ["btn", "btn-export"],
+        dataset: {
+            "context": "model",
+            "action": "export",
+        }
+    }, "Export");
+
+    const btnImport = createButton({
+        class: ["btn", "btn-import"],
+        dataset: {
+            "context": "model",
+            "action": "import"
+        }
+    }, "Import");
+
+    const btnBuild = createButton({
+        class: ["btn", "btn-build"],
+        dataset: {
+            "context": "model",
+            "action": "build"
+        }
+    }, "Build");
+
+    menu.append(title, btnExport, btnImport, btnBuild);
+
+    menu.addEventListener('click', (event) => {
+        menu.classList.toggle("open");
+    });
+
+    return menu;
+}
+
+/**
+ * @returns {HTMLElement}
+ */
+function createHome() {
+    const container = createSection({
+        class: ["editor-home"]
+    });
+
+    var header = createHeader({
+        class: ["menu-header"]
+    });
+
+    var title = createH2({
+        class: ["editor-home__title"]
+    }, "Editor");
+
+    var content = createParagraph({
+        class: ["menu-content"],
+        html: "Welcome to Gentleman's editor.<br>To begin, please load a model or continue with a previous instance."
+    });
+
+    header.append(title, content);
+
+    var body = createDiv({
+        class: ["loader-container"],
+        tabindex: -1
+    });
+
+
+    var modelOptions = createDiv({
+        class: ["loader-options"]
+    });
+
+    var modelOptionsTitle = createH2({
+        class: ["loader-options-title"]
+    }, "Concept");
+
+    var modelOptionsContent = createParagraph({
+        class: ["loader-options-content"],
+        html: "Create or edit a model."
+    });
+
+    var modelOptionsAction = createDiv({
+        class: ["loader-options-action"]
+    });
+
+    var btnCreateMetaModel = createButton({
+        class: ["btn", "loader-option", "loader-option--new"],
+        dataset: {
+            action: "create-metamodel",
+        }
+    }, [
+        createSpan({
+            class: ["loader-option__action"],
+            dataset: {
+                ignore: "all",
+            }
+        }, "New"),
+        createSpan({
+            class: ["loader-option__type"],
+            dataset: {
+                ignore: "all",
+            }
+        }, "metamodel")
+    ]);
+
+    var btnOpenModel = createButton({
+        class: ["btn", "loader-option", "loader-option--open"],
+        dataset: {
+            action: "open-model",
+        },
+    }, [
+        createSpan({
+            class: ["loader-option__action"],
+            dataset: {
+                ignore: "all",
+            }
+        }, "Open"),
+        createSpan({
+            class: ["loader-option__type"],
+            dataset: {
+                ignore: "all",
+            }
+        }, "model")
+    ]);
+
+    modelOptionsAction.append(btnCreateMetaModel, btnOpenModel);
+
+    modelOptions.append(modelOptionsTitle, modelOptionsContent, modelOptionsAction);
+
+
+    var projectionOptions = createDiv({
+        class: ["loader-options"]
+    });
+
+    var projectionOptionsTitle = createH2({
+        class: ["loader-options-title"]
+    }, "Projection");
+
+    var projectionOptionsContent = createParagraph({
+        class: ["loader-options-content"],
+        html: "Create or edit a projection."
+    });
+
+    var projectionOptionsAction = createDiv({
+        class: ["loader-options-action"]
+    });
+
+    var btnCreateProjection = createButton({
+        class: ["btn", "loader-option", "loader-option--new"],
+        dataset: {
+            action: "create-projection",
+        }
+    }, [
+        createSpan({
+            class: ["loader-option__action"],
+            dataset: {
+                ignore: "all",
+            }
+        }, "New"),
+        createSpan({
+            class: ["loader-option__type"],
+            dataset: {
+                ignore: "all",
+            }
+        }, "projection")
+    ]);
+
+    var btnOpenProjection = createButton({
+        class: ["btn", "loader-option", "loader-option--open"],
+        dataset: {
+            action: "open-projection",
+        }
+    }, [
+        createSpan({
+            class: ["loader-option__action"],
+            dataset: {
+                ignore: "all",
+            }
+        }, "Open"),
+        createSpan({
+            class: ["loader-option__type"],
+            dataset: {
+                ignore: "all",
+            }
+        }, "projection")
+    ]);
+
+    projectionOptionsAction.append(btnCreateProjection, btnOpenProjection);
+
+    projectionOptions.append(projectionOptionsTitle, projectionOptionsContent, projectionOptionsAction);
+
+    body.append(modelOptions, projectionOptions);
+
+    container.append(header, body);
+
+    return container;
+}
+
+function createWidthControl() {
+    /** @type {HTMLElement} */
+    const controlWrapper = createDiv({
+        class: ["control-wrapper", "control-wrapper--width"]
+    });
+
+    /** @type {HTMLLabelElement} */
+    const labelWR = createLabel({
+        class: ["style-label"],
+    }, "Width");
+
+    /** @type {HTMLElement} */
+    const iconWR = createI({
+        class: ["material-icons"],
+    }, "height");
+
+    /** @type {HTMLElement} */
+    const inputWrapper = createDiv({
+        class: ["input-wrapper"]
+    });
+
+    /** @type {HTMLInputElement} */
+    const rangeWR = createInput({
+        class: ["style-input", "style-input--range"],
+        type: "range",
+        min: 0,
+        max: 100,
+        step: 1
+    });
+
+    /** @type {HTMLInputElement} */
+    const numberWR = createInput({
+        class: ["style-input", "style-input--number"],
+        type: "number",
+        min: 0,
+        max: 100
+    });
+
+    inputWrapper.append(rangeWR, numberWR);
+
+    controlWrapper.append(labelWR, iconWR, inputWrapper);
+
+    controlWrapper.addEventListener('input', (event) => {
+        const { target } = event;
+
+        this.container.style.width = `calc(300px + ${target.value}%)`;
+        numberWR.value = target.value;
+        rangeWR.value = target.value;
+    });
+
+    controlWrapper.addEventListener('focusin', (event) => {
+        this.container.style.border = "1px solid blue";
+    });
+
+    controlWrapper.addEventListener('focusout', (event) => {
+        this.container.style.border = null;
+    });
+
+    return controlWrapper;
+}
+
+function createSizeControl() {
+    /** @type {HTMLElement} */
+    const controlWrapper = createDiv({
+        class: ["control-wrapper", "control-wrapper--size"]
+    });
+
+    /** @type {HTMLLabelElement} */
+    const labelWR = createLabel({
+        class: ["style-label"],
+    }, "Size");
+
+    /** @type {HTMLElement} */
+    const iconWR = createI({
+        class: ["material-icons"],
+    }, "format_size");
+
+    /** @type {HTMLElement} */
+    const inputWrapper = createDiv({
+        class: ["input-wrapper"]
+    });
+
+    /** @type {HTMLInputElement} */
+    const rangeWR = createInput({
+        class: ["style-input", "style-input--range"],
+        type: "range",
+        min: 0,
+        max: 50,
+        step: 1
+    });
+
+    /** @type {HTMLInputElement} */
+    const numberWR = createInput({
+        class: ["style-input", "style-input--number"],
+        type: "number",
+        min: 0,
+        max: 50
+    });
+
+    inputWrapper.append(rangeWR, numberWR);
+
+    controlWrapper.append(labelWR, iconWR, inputWrapper);
+
+    controlWrapper.addEventListener('input', (event) => {
+        const { target } = event;
+
+        this.container.style.fontSize = `${target.value}px`;
+        numberWR.value = target.value;
+        rangeWR.value = target.value;
+    });
+
+    controlWrapper.addEventListener('focusin', (event) => {
+        this.container.style.border = "1px solid blue";
+    });
+
+    controlWrapper.addEventListener('focusout', (event) => {
+        this.container.style.border = null;
+    });
+
+    return controlWrapper;
+}
+
+function createSpaceControl() {
+    /** @type {HTMLElement} */
+    const controlWrapper = createDiv({
+        class: ["control-wrapper", "control-wrapper--space"]
+    });
+
+    /** @type {HTMLLabelElement} */
+    const labelWR = createLabel({
+        class: ["style-label"],
+    }, "Space");
+
+    /** @type {HTMLElement} */
+    const iconWR = createI({
+        class: ["material-icons"],
+    }, "format_size");
+
+    /** @type {HTMLElement} */
+    const inputWrapper = createDiv({
+        class: ["input-wrapper"]
+    });
+
+    /** @type {HTMLInputElement} */
+    const rangeWR = createInput({
+        class: ["style-input", "style-input--range"],
+        type: "range",
+        min: 0,
+        max: 50,
+        step: 1
+    });
+
+    /** @type {HTMLInputElement} */
+    const numberWR = createInput({
+        class: ["style-input", "style-input--number"],
+        type: "number",
+        min: 0,
+        max: 50
+    });
+
+    inputWrapper.append(rangeWR, numberWR);
+
+    controlWrapper.append(labelWR, iconWR, inputWrapper);
+
+    controlWrapper.addEventListener('input', (event) => {
+        const { target } = event;
+
+        this.container.style.fontSize = `${target.value}px`;
+        numberWR.value = target.value;
+        rangeWR.value = target.value;
+    });
+
+    controlWrapper.addEventListener('focusin', (event) => {
+        this.container.style.border = "1px solid blue";
+    });
+
+    controlWrapper.addEventListener('focusout', (event) => {
+        this.container.style.border = null;
+    });
+
+    return controlWrapper;
+}
+
 export const Editor = {
+    _initialized: false,
     /** @type {Model} */
     conceptModel: null,
     /** @type {Concept} */
@@ -33,15 +489,20 @@ export const Editor = {
     /** @type {HTMLElement} */
     header: null,
     /** @type {HTMLElement} */
+    headerBody: null,
+    /** @type {HTMLElement} */
     body: null,
     /** @type {HTMLElement} */
+    home: null,
+    /** @type {HTMLElement} */
     footer: null,
+
     /** @type {HTMLElement} */
-    metamodelSelector: null,
+    selectorList: null,
     /** @type {HTMLElement} */
-    modelSelector: null,
-    /** @type {HTMLElement} */
-    conceptSelector: null,
+    selectorItem: null,
+    /** @type {string} */
+    selectorValue: null,
 
     /** @type {Map} */
     fields: null,
@@ -52,46 +513,55 @@ export const Editor = {
     /** @type {Concept} */
     activeConcept: null,
 
-    /** @type {HTMLButtonElement} */
-    btnExport: null,
-    /** @type {HTMLButtonElement} */
-    btnImport: null,
-    /** @type {HTMLButtonElement} */
-    btnBuild: null,
+    /** @type {HTMLElement} */
+    menu: null,
     /** @type {HTMLAnchorElement} */
     btnPrint: null,
     /** @type {HTMLInputElement} */
     input: null,
-    /** @type {Loader} */
-    loader: null,
+
+    /** @type {string} */
+    buildTarget: null,
 
     /** @type {boolean} */
     active: false,
 
-    init(model, concept) {
-        // this.model =  model ? model : this.metamodel.createModel().init(model);
-        const { concept: conceptModel, projection: projectionModel, editor } = MODEL_GENTLEMAN_CONCEPT;
-        this.conceptModel = ConceptModelManager.createModel(conceptModel).init();
-        this.projectionModel = createProjectionModel(projectionModel, this).init();
+    init(conceptModel, projectionModel, valueModel) {
+        if (conceptModel) {
+            this.conceptModel = ConceptModelManager.createModel(conceptModel).init(valueModel);
+        }
 
-        this.state = State.create();
+        if (projectionModel) {
+            this.projectionModel = createProjectionModel(projectionModel, this).init();
+        }
+
         this.fields = new Map();
 
-        // this.loader = LoaderFactory.create({
-        //     afterLoadMetaModel: (metamodel) => {
-        //         this.init(metamodel);
-        //     }
-        // }).init(this);
-
         this.render();
+
+        this._initialized = true;
 
         return this;
     },
 
     changeModel(modelSchema) {
-        var model = Loader.loadModel(modelSchema);
+        const { concept, projection, values, editor } = modelSchema;
 
-        model.render();
+        if (concept) {
+            this.conceptModel = ConceptModelManager.createModel(concept, projection).init(values);
+        }
+
+        if (projection) {
+            this.projectionModel = createProjectionModel(projection, this).init();
+        }
+
+        if (editor) {
+            this.buildTarget = editor.build;
+        }
+
+        this.manager.refresh();
+
+        this.clear().refresh();
     },
 
     registerField(field) {
@@ -181,14 +651,8 @@ export const Editor = {
             this.btnPrint.disabled = false;
         }, 1500);
     },
-    preview() {
 
-    },
-    build() {
-        console.log(this.conceptModel.build());
-
-        return;
-
+    build(download = false) {
         const MIME_TYPE = 'application/json';
         window.URL = window.webkitURL || window.URL;
 
@@ -200,7 +664,28 @@ export const Editor = {
             window.URL.revokeObjectURL(link.href);
         }
 
-        var bb = new Blob([this.conceptModel.build()], { type: MIME_TYPE });
+        var result = null;
+        if (this.buildTarget === "gentleman_concept") {
+            try {
+                result = this.conceptModel.build();
+            } catch (error) {
+                console.error(error);
+                this.notify("The model is not valid. Please review before the next build.", "error");
+
+                return;
+            }
+        } else if (this.buildTarget === "gentleman_projection") {
+            try {
+                result = this.conceptModel.buildProjection();
+            } catch (error) {
+                console.error(error);
+                this.notify("The projection are not valid. Please review before the next build.", "error");
+
+                return;
+            }
+        }
+
+        var bb = new Blob([result], { type: MIME_TYPE });
         Object.assign(link, {
             download: `model.json`,
             href: window.URL.createObjectURL(bb),
@@ -209,13 +694,58 @@ export const Editor = {
         this.notify("The model has been successfully built. Please download the model.");
 
         link.dataset.downloadurl = [MIME_TYPE, link.download, link.href].join(':');
-        link.click();
+        if (download) {
+            link.click();
+        }
 
         // Need a small delay for the revokeObjectURL to work properly.
         setTimeout(() => {
             window.URL.revokeObjectURL(link.href);
             link.remove();
         }, 1500);
+
+        return JSON.parse(result);
+    },
+    export(copy = false) {
+        const MIME_TYPE = 'application/json';
+        window.URL = window.webkitURL || window.URL;
+
+        /** @type {HTMLAnchorElement} */
+        var link = createAnchor({});
+        this.container.appendChild(link);
+
+        if (!isNullOrWhitespace(link.href)) {
+            window.URL.revokeObjectURL(link.href);
+        }
+
+        const result = {
+            "concept": this.conceptModel.schema,
+            "projection": this.projectionModel.schema
+            // "values": this.conceptModel.export()
+        };
+
+        var bb = new Blob([JSON.stringify(result)], { type: MIME_TYPE });
+        Object.assign(link, {
+            download: `model.json`,
+            href: window.URL.createObjectURL(bb),
+        });
+
+        link.dataset.downloadurl = [MIME_TYPE, link.download, link.href].join(':');
+        if (copy) {
+            copytoClipboard(JSON.stringify(result));
+            this.notify("Export has been copied to clipboard");
+        } else {
+            link.click();
+            this.notify("The model has been successfully built. Please download the model.");
+        }
+
+        // Need a small delay for the revokeObjectURL to work properly.
+        setTimeout(() => {
+            window.URL.revokeObjectURL(link.href);
+            link.remove();
+        }, 1500);
+
+        return result;
     },
 
     open() {
@@ -242,7 +772,14 @@ export const Editor = {
     clear() {
         this.fields.clear();
 
-        removeChildren(this.body);
+        if (this.conceptSection) {
+            removeChildren(this.conceptSection);
+        }
+
+        if (this.home) {
+            removeChildren(this.home);
+            hide(this.home);
+        }
 
         this.activeField = null;
         this.activeElement = null;
@@ -251,6 +788,20 @@ export const Editor = {
         Events.emit('editor.clear');
 
         return this;
+    },
+    openStyle() {
+        /** @type {HTMLElement} */
+        const container = createDiv({
+            class: ["style-container"]
+        });
+
+        const widthControl = createWidthControl.call(this);
+        // const heightControl = createWidthControl.call(this);
+        const sizeControl = createSizeControl.call(this);
+
+        container.append(widthControl, sizeControl);
+
+        this.container.after(container);
     },
 
     notify(message, type) {
@@ -262,9 +813,13 @@ export const Editor = {
             this.container.appendChild(notify);
         }
         notify.textContent = message;
-        notify.classList.add('open');
+        notify.classList.remove("error");
+        if (type) {
+            notify.classList.add(type);
+        }
+        notify.classList.add("open");
         setTimeout(() => {
-            notify.classList.remove('open');
+            notify.classList.remove("open");
         }, 3000);
     },
     display(message, title) {
@@ -281,58 +836,16 @@ export const Editor = {
         }, message));
         dialog.classList.add('open');
     },
-    append(element) {
-        this.body.appendChild(element);
 
-        return this;
-    },
-
+    /**
+     * Renders the editor in the DOM inside an optional container
+     * @param {HTMLElement} [container] 
+     */
     render(container) {
         const fragment = createDocFragment();
 
         if (!isHTMLElement(this.header)) {
-            this.header = createDiv({
-                class: ["editor-header"],
-                tabindex: 0,
-            });
-
-            this.modelSelector = createDiv({
-                class: ["editor-selector-model"],
-                tabindex: 0,
-            });
-
-            this.metamodelSelector = createDiv({
-                class: ["editor-selector-metamodel"],
-                tabindex: 0,
-            });
-
-            this.conceptSelector = createDiv({
-                class: ["editor-selector-concept"],
-                tabindex: 0,
-            });
-
-            let selector = createDiv({
-                class: ["editor-selector"],
-                tabindex: 0,
-            }, [this.modelSelector, this.metamodelSelector, this.conceptSelector]);
-
-            let btnClose = createButton({
-                class: ["btn", "btn-close"],
-                dataset: {
-                    action: "close"
-                }
-            });
-            let btnNew = createButton({
-                class: ["btn", "btn-new"],
-                dataset: {
-                    action: "new"
-                }
-            });
-            let toolbar = createDiv({
-                class: ["editor-toolbar"],
-            }, [btnNew, btnClose]);
-
-            appendChildren(this.header, [selector, toolbar]);
+            createEditorHeader.call(this);
 
             fragment.appendChild(this.header);
         }
@@ -362,57 +875,24 @@ export const Editor = {
         }
 
         if (!isHTMLElement(this.menu)) {
-            this.menu = createDiv({
-                class: ["menu"]
-            });
-
-            if (!isHTMLElement(this.btnExport)) {
-                this.btnExport = createButton({
-                    id: "btnExportModel",
-                    class: ["btn", "btn-export", "hidden"],
-                    draggable: true,
-                    dataset: {
-                        "context": "model",
-                        "action": "export",
-                    }
-                }, "Export");
-
-                this.menu.appendChild(this.btnExport);
-            }
-
-            if (!isHTMLElement(this.btnImport)) {
-                this.btnImport = createButton({
-                    id: "btnImportModel",
-                    class: ["btn", "btn-import", "hidden"],
-                    draggable: true,
-                    dataset: {
-                        "context": "model",
-                        "action": "import"
-                    }
-                }, "Import");
-
-                this.menu.appendChild(this.btnImport);
-            }
-
-            if (!isHTMLElement(this.btnBuild)) {
-                this.btnBuild = createButton({
-                    id: "btnBuildModel",
-                    class: ["btn", "btn-build"],
-                    draggable: true,
-                    dataset: {
-                        "context": "model",
-                        "action": "build"
-                    }
-                }, "Build");
-
-                this.menu.appendChild(this.btnBuild);
-            }
+            this.menu = createEditorMenu();
 
             fragment.appendChild(this.menu);
         }
 
+        if (!isHTMLElement(this.input)) {
+            this.input = createInput({
+                type: "file",
+                class: ["hidden"],
+                accept: '.json'
+            });
+
+            fragment.appendChild(this.input);
+        }
+
         if (fragment.hasChildNodes()) {
             this.container.appendChild(fragment);
+
             this.bindEvents();
         }
 
@@ -423,42 +903,38 @@ export const Editor = {
         // TODO: Add support for saved projection
         // TODO  HINT: Add getProjection to Model (lookup passed value, saved model)
 
-        if (this.projection) {
-            this.clear().append(this.projection.render());
-        }
-
         this.refresh();
 
         return this.container;
     },
     refresh() {
-        if (!this.conceptModel) {
+        if (isNullOrUndefined(this.conceptModel)) {
+            hide(this.selectorList);
+            hide(this.headerBody);
+
             this.container.classList.add("empty");
 
-            var header = createHeader({
-                class: ["menu-header"]
-            });
-            var title = createH2({
-                class: ["menu-title"]
-            }, "Editor");
-            var content = createParagraph({
-                class: ["menu-content"]
-            }, "Welcome to Gentleman's editor. To begin, please load a model or continue with a previous instance.");
-            appendChildren(header, [title, content]);
+            this.home = createHome();
+            show(this.home);
 
-            appendChildren(this.body, [header, this.loader.render()]);
+            hide(this.menu);
+            this.body.append(this.home);
 
-            this.loader.open();
+            this._initialized = false;
 
             return;
         }
+
+        show(this.menu);
+        show(this.selectorList);
+        show(this.headerBody);
 
         this.container.classList.remove("empty");
 
         var modelConceptList = createUnorderedList({
             class: ["bare-list", "selector-model-concepts", "font-ui"]
         });
-        const concreteConcepts = this.conceptModel.schema.filter((concept) => this.projectionModel.hasConceptProjection(concept, "editor"));
+        const concreteConcepts = this.conceptModel.schema.filter((concept) => this.projectionModel.hasGlobalProjection(concept));
 
         concreteConcepts.forEach(concept => {
             var conceptItem = createListItem({
@@ -470,7 +946,33 @@ export const Editor = {
             }, concept.name);
 
             modelConceptList.appendChild(conceptItem);
+
+
+            if (!this._initialized) {
+                const created = this.conceptModel.getConcepts(concept.name);
+                created.forEach(c => {
+                    let projection = this.projectionModel.createGlobalProjection(c).init();
+                    let btnDelete = createButton({
+                        class: ["btn", "model-concept-list-item__btn-delete"]
+                    }, `Delete ${name.toLowerCase()}`);
+
+                    var modelConceptListItem = createListItem({
+                        class: ["model-concept-list-item"],
+                    }, [btnDelete, projection.render()]);
+
+                    btnDelete.addEventListener('click', (event) => {
+                        if (c.delete(true)) {
+                            removeChildren(modelConceptListItem);
+                            modelConceptListItem.remove();
+                        }
+                    });
+
+                    this.conceptSection.appendChild(modelConceptListItem);
+                });
+            }
         });
+
+        this._initialized = true;
 
         modelConceptList.addEventListener("click", (event) => {
             const { target } = event;
@@ -478,15 +980,23 @@ export const Editor = {
             if (hasOwn(target.dataset, "concept")) {
                 const { concept: name } = target.dataset;
 
-                let concept = this.conceptModel.createConcept(name);
-                let projection = this.projectionModel.createProjection(concept, "editor").init();
+                let concept = this.conceptModel.createConcept({ name: name });
+                let projection = this.projectionModel.createGlobalProjection(concept).init();
                 let btnDelete = createButton({
-                    class: ["btn", "model-concept-list-item__btn-delete"]
-                }, "Delete concept");
+                    class: ["btn", "model-concept-list-item__btn-delete"],
+                    title: `Delete ${name.toLowerCase()}`
+                });
+                let btnMaximize = createButton({
+                    class: ["btn", "model-concept-list-item__btn-maximize"],
+                    title: `Maximize ${name.toLowerCase()}`
+                });
 
                 var modelConceptListItem = createListItem({
                     class: ["model-concept-list-item"],
-                }, [btnDelete, projection.render()]);
+                    dataset: {
+                        nature: "concept-container"
+                    }
+                }, [btnMaximize, btnDelete, projection.render()]);
 
                 btnDelete.addEventListener('click', (event) => {
                     if (concept.delete(true)) {
@@ -494,12 +1004,15 @@ export const Editor = {
                         modelConceptListItem.remove();
                     }
                 });
+                btnMaximize.addEventListener('click', (event) => {
+                    modelConceptListItem.classList.toggle('focus');
+                });
 
                 this.conceptSection.appendChild(modelConceptListItem);
             }
         });
 
-        removeChildren(this.metamodelSelector).appendChild(modelConceptList);
+        removeChildren(this.headerBody).appendChild(modelConceptList);
 
         // const { name } = this.conceptModel;
 
@@ -557,6 +1070,10 @@ export const Editor = {
                 parent.classList.add("active-parent");
             }
 
+            if (nature === "concept-container") {
+                parent.classList.add("active-parent");
+            }
+
             parent = parent.parentElement;
         }
 
@@ -573,41 +1090,103 @@ export const Editor = {
 
         return this;
     },
+    updateSelector(evalue) {
+        const { value } = evalue.dataset;
+        // let editor = this.manager.createEditor();
+        // editor.init(MODEL_GENTLEMAN_CONCEPT).open();
+        if (this.selectorValue === value) {
+            return;
+        }
+
+        if (evalue.parentElement !== this.selectorList) {
+            return;
+        }
+
+        this.selectorItem.classList.remove("selected");
+        this.selectorValue = value;
+        this.selectorItem = evalue;
+        this.selectorItem.classList.add("selected");
+
+        this.refresh();
+    },
 
     bindEvents() {
         var lastKey = null;
+        var fileHandler = null;
 
         this.container.addEventListener('click', (event) => {
-            var target = event.target;
-            var object = target.dataset['object'];
+            var target = getEventTarget(event.target);
 
-            if (target.dataset.action === "close") {
+            const { action } = target.dataset;
+
+            if (this.activeField) {
+                this.activeField.clickHandler(target);
+            }
+
+            if (action === "close") {
                 this.close();
                 this.manager.deleteEditor(this);
                 target.blur();
-            }
-            if (target.dataset.action === "new") {
-                console.trace("someone clicked");
+            } else if (action === "new") {
                 let editor = this.manager.createEditor().init().open();
                 target.blur();
-            }
-            if (target.dataset.action === "import") {
-                console.warn("Function import not implemented");
+            } else if (action === "style") {
+                this.openStyle();
                 target.blur();
-            }
-            if (target.dataset.action === "export") {
-                copytoClipboard(this.conceptModel.export());
-                this.notify("Export has been copied to clipboard");
-            }
-            if (target.dataset.action === "build") {
-                this.btnBuild.addEventListener('click', (event) => {
-                    this.build();
+            } else if (action === "import") {
+                let event = new MouseEvent('click', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
                 });
-            }
-        });
+                fileHandler = this.changeModel;
 
-        this.body.addEventListener('dblclick', (event) => {
-            // TODO: Give element main focus    
+                this.input.dispatchEvent(event);
+            } else if (action === "export") {
+                this.export();
+            } else if (action === "build") {
+                this.build(true);
+            } else if (action === "open-model") {
+                let event = new MouseEvent('click', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
+                });
+                fileHandler = this.changeModel;
+
+                this.input.dispatchEvent(event);
+            } else if (action === "create-metamodel") {
+                this.changeModel(MODEL_GENTLEMAN_CONCEPT);
+            } else if (action === "create-projection") {
+                this.changeModel(MODEL_GENTLEMAN_PROJECTION);
+            } else if (action === "selector-model") {
+                this.updateSelector(target);
+
+                event.preventDefault();
+            } else if (action === "selector-concept") {
+                this.updateSelector(target);
+
+                event.preventDefault();
+            } else if (action === "selector-projection") {
+                this.updateSelector(target);
+
+                event.preventDefault();
+            }
+        }, true);
+
+        this.input.addEventListener('change', (event) => {
+            var file = this.input.files[0];
+
+            if (!file.name.endsWith('.json')) {
+                this.notify("This file is not supported. Please use a .json file");
+            }
+
+            var reader = new FileReader();
+            reader.onload = (e) => {
+                fileHandler.call(this, JSON.parse(reader.result));
+                fileHandler = null;
+            };
+            reader.readAsText(file);
         });
 
         /**
@@ -652,8 +1231,9 @@ export const Editor = {
                 case Key.enter:
                     if (this.activeField) {
                         this.activeField.enterHandler(target);
+                    } else {
+                        event.preventDefault();
                     }
-                    event.preventDefault();
 
                     break;
                 case Key.right_arrow:
@@ -718,22 +1298,28 @@ export const Editor = {
 
             const { nature } = target.dataset;
 
-            if (lastKey == event.key) lastKey = -1;
-
             switch (event.key) {
                 case Key.spacebar:
-                    if (lastKey == Key.ctrl) {
+                    if (lastKey === Key.ctrl) {
                         if (this.activeField) {
                             this.activeField.spaceHandler(target);
                         }
                     }
                     break;
                 case Key.delete:
-                    if (lastKey == Key.ctrl) {
+                    if (lastKey === Key.ctrl) {
                         if (this.activeField) {
                             this.activeField.delete(target);
                         }
                     }
+                    break;
+                case Key.ctrl:
+                    if (lastKey === Key.ctrl) {
+                        if (this.activeField) {
+                            this.activeField.controlHandler(target);
+                        }
+                    }
+
                     break;
                 case Key.alt:
 
@@ -741,6 +1327,8 @@ export const Editor = {
                 default:
                     break;
             }
+
+            lastKey = -1;
         }, false);
 
         this.body.addEventListener('focusin', (event) => {
@@ -763,7 +1351,6 @@ export const Editor = {
             if (parentProjection) {
                 this.updateActiveElement(parentProjection);
             }
-
         });
 
         const focusinHandler = {
@@ -831,6 +1418,21 @@ export const Editor = {
 };
 
 /**
+ * Gets an event real target
+ * @param {HTMLElement} element 
+ * @returns {HTMLElement}
+ */
+function getEventTarget(element) {
+    const isValid = (el) => !hasOwn(el.dataset, "ignore");
+
+    if (isValid(element)) {
+        return element;
+    }
+
+    return findAncestor(element, isValid, 10);
+}
+
+/**
  * Creates a selector between a root concept and the active concept
  * @param {Concept!} rootConcept 
  * @param {Concept} [activeConcept] 
@@ -849,13 +1451,13 @@ function conceptSelectorHandler(rootConcept, activeConcept) {
      * @returns {HTMLElement}
      */
     const createSelectorItem = (type, concept, source = false) => {
-        const { name, alias, object, refname, reftype } = concept;
+        const { name, alias, object, ref } = concept;
 
         const typeHandler = {
             "root": `${valOrDefault(alias, name)}`,
             "parent": `${valOrDefault(alias, name)}`,
             "ancestor": `${valOrDefault(alias, name)}`,
-            "active": `${valOrDefault(refname, name)}`,
+            "active": `${valOrDefault(ref.name, name)}`,
         };
 
         const fragment = createDocFragment();
@@ -908,19 +1510,7 @@ function conceptSelectorHandler(rootConcept, activeConcept) {
         let parent = activeParent;
         let parentItem = null;
 
-        if (activeParent.object === "component") {
-            parent = activeParent.getParent();
-
-            parentItem = createSelectorItem("parent", parent);
-
-            let componentItem = createDiv({
-                class: ["selector-concept__component", "source"]
-            }, `${valOrDefault(activeParent.alias, activeParent.name)}`);
-
-            parentItem.appendChild(componentItem);
-        } else {
-            parentItem = createSelectorItem("parent", activeParent, true);
-        }
+        parentItem = createSelectorItem("parent", activeParent, true);
 
         let ancestor = parent.getAncestor().filter(val => val.object === "concept" && val.nature !== "primitive" && val !== rootConcept);
 

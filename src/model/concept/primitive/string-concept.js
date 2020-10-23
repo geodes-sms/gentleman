@@ -1,4 +1,4 @@
-import { isNullOrWhitespace, isNullOrUndefined, isObject, isEmpty, isString } from "zenkai";
+import { isNullOrWhitespace, valOrDefault, isNullOrUndefined, isObject, isEmpty } from "zenkai";
 import { Concept } from "./../concept.js";
 
 
@@ -30,9 +30,23 @@ function responseHandler(code) {
 }
 
 const _StringConcept = {
-    name: 'string',
     nature: 'primitive',
 
+    init(args = {}) {
+        this.parent = args.parent;
+        this.ref = args.ref;
+        this.values = valOrDefault(this.schema.values, []);
+        this.alias = this.schema.alias;
+        this.description = this.schema.description;
+        this.min = valOrDefault(this.schema.min, 0);
+        this.max = this.schema.max;
+
+        this.initObserver();
+        this.initAttribute();
+        this.initValue(args.value);
+
+        return this;
+    },
     initValue(args) {
         if (isNullOrUndefined(args)) {
             this.value = "";
@@ -48,6 +62,7 @@ const _StringConcept = {
 
         return this;
     },
+
     hasValue() {
         return !isNullOrWhitespace(this.value);
     },
@@ -82,6 +97,7 @@ const _StringConcept = {
                 value.type = "value";
             }
         });
+        console.log(this);
 
         return this.values;
     },
@@ -93,12 +109,20 @@ const _StringConcept = {
         return true;
     },
 
-    validate(value = "") {
+    validate(value) {
+        if (isNullOrWhitespace(value)) {
+            return ResponseCode.SUCCESS;
+        }
+
+        if(this.min && value.length < this.min) {
+            return ResponseCode.MINLENGTH_ERROR;
+        }
+
         if(this.max && value.length > this.max) {
             return ResponseCode.MAXLENGTH_ERROR;
         }
 
-        if (isNullOrWhitespace(value) || isEmpty(this.values)) {
+        if (isEmpty(this.values)) {
             return ResponseCode.SUCCESS;
         }
 
@@ -119,13 +143,17 @@ const _StringConcept = {
         return ResponseCode.SUCCESS;
     },
 
+    build() {
+        return this.getValue();
+    },
     export() {
         return {
             id: this.id,
             name: this.name,
-            value: this.value
+            root: this.isRoot(),
+            value: this.getValue()
         };
-    },
+    }, 
     toString() {
         return this.value;
     }

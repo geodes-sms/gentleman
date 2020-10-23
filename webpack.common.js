@@ -15,6 +15,7 @@ module.exports = {
             '@bin': path.resolve(__dirname, 'bin'),
             '@samples': path.resolve(__dirname, 'samples'),
             '@environment': path.resolve(__dirname, 'src/environment'),
+            '@include': path.resolve(__dirname, 'src/include'),
             '@model': path.resolve(__dirname, 'src/model'),
             '@concept': path.resolve(__dirname, 'src/model/concept'),
             '@structure': path.resolve(__dirname, 'src/model/structure'),
@@ -28,10 +29,10 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
+                test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/i,
                 loader: 'url-loader',
                 options: {
-                    limit: 10000
+                    limit: 8192
                 }
             }
         ]

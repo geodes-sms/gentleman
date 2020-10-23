@@ -105,21 +105,16 @@ const BasePrototypeConcept = {
     },
 
     createConcept(name, value) {
-        var concept = null;
-
-        var options = {
+        const options = {
             parent: this.parent,
-            refname: this.refname,
-            reftype: this.reftype,
+            ref: this.ref,
         };
 
         if (value) {
             options.value = value;
         }
 
-        if (isString(name)) {
-            concept = this.model.createConcept(name, options);
-        }
+        const concept = this.model.createConcept({ name: name }, options);
 
         concept.prototype = this;
 
@@ -151,11 +146,12 @@ const BasePrototypeConcept = {
         return ResponseCode.SUCCESS;
     },
     export() {
-        if (!this.hasValue()) {
-            return null;
-        }
-
-        return this.value.export();
+        return {
+            id: this.id,
+            name: this.name,
+            root: this.isRoot(),
+            value: this.getValue().name
+        };
     },
 };
 

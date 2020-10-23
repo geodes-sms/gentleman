@@ -24,9 +24,20 @@ function responseHandler(code) {
 }
 
 const _BooleanConcept = {
-    name: 'boolean',
     nature: 'primitive',
 
+    init(args = {}) {
+        this.parent = args.parent;
+        this.ref = args.ref;
+        this.alias = this.schema.alias;
+        this.description = this.schema.description;
+
+        this.initObserver();
+        this.initAttribute();
+        this.initValue(args.value);
+
+        return this;
+    },
     initValue(args) {
         if (isNullOrUndefined(args)) {
             this.value = true;
@@ -103,12 +114,17 @@ const _BooleanConcept = {
 
         return ResponseCode.SUCCESS;
     },
+    
 
+    build() {
+        return this.getValue();
+    },
     export() {
         return {
             id: this.id,
             name: this.name,
-            value: this.value
+            root: this.isRoot(),
+            value: this.getValue()
         };
     },
 };

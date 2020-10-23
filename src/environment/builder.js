@@ -1,7 +1,7 @@
 import {
     createDocFragment, createDiv, createH2, createUnorderedList, createListItem,
     createParagraph, createButton, createHeader, createAnchor, createInput, createSpan,
-    getElement, getElements, appendChildren, removeChildren, isHTMLElement, hasOwn,
+    getElement, getElements, removeChildren, isHTMLElement, hasOwn,
     isNullOrWhitespace, isNullOrUndefined, isNull, copytoClipboard, cloneObject,
     valOrDefault, isEmpty, createI, findAncestor,
 } from 'zenkai';
@@ -275,7 +275,7 @@ export const Builder = {
             class: ["bare-list", "builder-selector-list"]
         }, [stackSelector, wrapSelector, tableSelector]);
 
-        appendChildren(fragment, [heading, selectors]);
+        fragment.append(heading, selectors);
 
         selectors.addEventListener('click', (event) => {
             const target = event.target;
@@ -319,7 +319,7 @@ export const Builder = {
             selectors.appendChild(item);
         });
 
-        appendChildren(fragment, [heading, selectors]);
+        fragment.append(heading, selectors);
 
         /**
          * Get the choice element

@@ -1,13 +1,15 @@
 import {
     createDocFragment, createSpan, createDiv, createI, createUnorderedList,
-    createListItem, findAncestor, isHTMLElement, removeChildren, isNullOrWhitespace,
-    isEmpty, valOrDefault,
+    createTextArea, createLabel, createInput, createListItem, createButton,
+    findAncestor, removeChildren, isHTMLElement, isNullOrWhitespace, isEmpty, valOrDefault,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler } from "./../content-handler.js";
 import { Field } from "./field.js";
 
+
+const isInputOrTextarea = (element) => isHTMLElement(element, ["input", "textarea"]);
 
 function resolveValue(object) {
     if (object.object === "concept") {
@@ -135,26 +137,194 @@ function getItemValue(item) {
 }
 
 const BaseTextField = {
-    /** @type {HTMLElement} */
+    /** @type {HTMLInputElement|HTMLTextAreaElement} */
     input: null,
+    /** @type {HTMLLabelElement} */
+    label: null,
     /** @type {HTMLElement} */
     choice: null,
+    /** @type {HTMLElement} */
+    toolbar: null,
+    /** @type {HTMLElement} */
+    body: null,
     /** @type {string} */
     value: "",
     /** @type {string} */
     placeholder: "Enter a value",
+    /** @type {boolean} */
+    multiline: false,
 
     init() {
         this.source.register(this);
         this.placeholder = resolvePlaceholder.call(this);
+        this.multiline = valOrDefault(this.schema.multiline, false);
 
         return this;
     },
 
+    /**
+     * Updates the text field on source change
+     * @param {string} message
+     * @param {*} value 
+     */
+    update(message, value) {
+        switch (message) {
+            case "value.changed":
+                this.setValue(value);
+                break;
+            default:
+                console.warn(`The message '${message}' was not handled for text field`);
+                break;
+        }
+
+        this.refresh();
+    },
+
+    focusIn() {
+        this.focused = true;
+        this.value = this.input.textContent;
+        this.element.classList.add("active");
+        this.element.classList.add("focus");
+
+        return this;
+    },
+    focusOut() {
+        if (this.hasChanges()) {
+            this.setValue(this.getValue(), true);
+        }
+
+        if (isNullOrWhitespace(this.getValue())) {
+            this.input.textContent = "";
+        }
+
+        if (this.messageElement) {
+            hide(this.messageElement);
+            removeChildren(this.messageElement);
+        }
+
+        if (this.choice) {
+            hide(this.choice);
+        }
+
+        this.input.blur();
+        this.element.classList.remove("active");
+        this.element.classList.remove("focus");
+
+        this.refresh();
+        this.focused = false;
+
+        return this;
+    },
+    /**
+     * Verifies that the field has a changes
+     * @returns {boolean}
+     */
+    hasChanges() {
+        return this.value !== this.getValue();
+    },
+    /**
+     * Verifies that the field has a value
+     * @returns {boolean}
+     */
+    hasValue() {
+        return !isEmpty(this.getValue());
+    },
+    /**
+     * Gets the input value
+     * @returns {string}
+     */
+    getValue() {
+        if (isInputOrTextarea(this.input)) {
+            return this.input.value;
+        }
+
+        return this.input.textContent;
+    },
+    setValue(value, update = false) {
+        var response = null;
+
+        if (update) {
+            response = this.source.setValue(value);
+        } else {
+            response = {
+                success: true
+            };
+        }
+
+        this.errors = [];
+        if (!response.success) {
+            this.environment.notify(response.message, "error");
+            this.errors.push(...response.errors);
+        }
+
+        // this.attached.filter(element => !element.active).forEach(element => element.hide());
+
+        if (isInputOrTextarea(this.input)) {
+            this.input.value = value;
+        } else {
+            this.input.textContent = value;
+        }
+
+        this.value = value;
+
+        this.refresh();
+    },
+    getCandidates() {
+        return this.source.getCandidates();
+    },
+    enable() {
+        this.input.disabled = false;
+        this.input.tabIndex = 0;
+        this.disabled = false;
+        this.element.classList.add("disabled");
+
+        return this;
+    },
+    disable() {
+        this.input.disabled = true;
+        this.input.tabIndex = -1;
+        this.disabled = true;
+        this.element.classList.remove("disabled");
+
+        return this;
+    },
+    
+    refresh() {
+        if (this.hasValue()) {
+            this.input.classList.remove("empty");
+            this.element.classList.remove("empty");
+        } else {
+            this.input.classList.add("empty");
+            this.element.classList.add("empty");
+        }
+
+        if (this.hasChanges()) {
+            this.statusElement.classList.add("change");
+        } else {
+            this.statusElement.classList.remove("change");
+        }
+
+        removeChildren(this.statusElement);
+
+        if (this.hasError) {
+            this.element.classList.add("error");
+            this.input.classList.add("error");
+            this.statusElement.classList.add("error");
+            this.statusElement.appendChild(createNotificationMessage(NotificationType.ERROR, this.errors));
+        } else {
+            this.element.classList.remove("error");
+            this.input.classList.remove("error");
+            this.statusElement.classList.remove("error");
+        }
+
+        if (this.choice) {
+            this.filterChoice(this.getValue());
+        }
+    },  
     render() {
         const fragment = createDocFragment();
 
-        const { before = {}, input, after = {} } = this.schema;
+        const { before = {}, label, input = {}, after = {} } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createDiv({
@@ -208,22 +378,54 @@ const BaseTextField = {
             fragment.appendChild(content);
         }
 
-        if (!isHTMLElement(this.input)) {
-            this.input = createSpan({
-                class: ["field--textbox__input", "empty"],
-                tabindex: 0,
-                editable: !this.readonly,
+        if (label) {
+            const { style, value } = label;
+
+            this.label = createLabel({
+                class: ["field--textbox__label"],
                 dataset: {
                     nature: "field-component",
                     view: "text",
                     id: this.id,
-                    placeholder: this.placeholder
                 }
-            });
+            }, value);
+
+            StyleHandler(this.label, style);
+
+            fragment.appendChild(this.label);
+        }
+
+        if (!isHTMLElement(this.input)) {
+            const { style, type } = input;
+
+            if (this.multiline) {
+                this.input = createTextArea({
+                    class: ["field--textbox__input", "field--textbox__input--multiline"],
+                    tabindex: 0,
+                    placeholder: this.placeholder,
+                    dataset: {
+                        nature: "field-component",
+                        view: "text",
+                        id: this.id,
+                    }
+                });
+            } else {
+                this.input = createInput({
+                    type: valOrDefault(type, "text"),
+                    class: ["field--textbox__input"],
+                    tabindex: 0,
+                    placeholder: this.placeholder,
+                    dataset: {
+                        nature: "field-component",
+                        view: "text",
+                        id: this.id,
+                    }
+                });
+            }
 
             if (this.readonly) {
                 this.input.classList.add("readonly");
-                this.input.contentEditable = false;
+                this.input.disabled = true;
             }
 
             let value = resolveValue(this.source);
@@ -232,8 +434,6 @@ const BaseTextField = {
                 this.input.textContent = value;
                 this.value = value;
             }
-
-            const { projection, style } = valOrDefault(input, {});
 
             StyleHandler(this.input, style);
 
@@ -252,148 +452,15 @@ const BaseTextField = {
             this.bindEvents();
         }
 
+        if (this.source.hasValue()) {
+            this.setValue(this.source.getValue());
+        }
+
         this.refresh();
 
         return this.element;
     },
 
-    /**
-     * Updates the text field on source change
-     * @param {string} message
-     * @param {*} value 
-     */
-    update(message, value) {
-        switch (message) {
-            case "value.changed":
-                this.input.textContent = value;
-                break;
-            default:
-                console.warn(`The message '${message}' was not handled for text field`);
-                break;
-        }
-        this.refresh();
-    },
-
-    focusIn() {
-        this.focused = true;
-        this.value = this.input.textContent;
-        this.element.classList.add("active");
-        this.element.classList.add("focus");
-
-        return this;
-    },
-    focusOut() {
-        if (this.readonly) {
-            return;
-        }
-
-        if (this.hasChanges()) {
-            this.setValue(this.getValue());
-        }
-
-        if (isNullOrWhitespace(this.getValue())) {
-            this.input.textContent = "";
-        }
-
-        if (this.messageElement) {
-            hide(this.messageElement);
-            removeChildren(this.messageElement);
-        }
-
-        if (this.choice) {
-            hide(this.choice);
-        }
-
-        this.input.blur();
-        this.element.classList.remove("active");
-        this.element.classList.remove("focus");
-
-        this.refresh();
-        this.focused = false;
-
-        return this;
-    },
-    /**
-     * Verifies that the field has a changes
-     * @returns {boolean}
-     */
-    hasChanges() {
-        return this.value !== this.input.textContent;
-    },
-    /**
-     * Verifies that the field has a value
-     * @returns {boolean}
-     */
-    hasValue() {
-        return !isEmpty(this.input.textContent);
-    },
-    /**
-     * Gets the input value
-     * @returns {string}
-     */
-    getValue() {
-        return this.input.textContent;
-    },
-    setValue(value) {
-        var response = this.source.setValue(value);
-
-        if (!response.success) {
-            this.environment.notify(response.message);
-            this.errors.push(...response.errors);
-        } else {
-            this.errors = [];
-        }
-
-        // this.attached.filter(element => !element.active).forEach(element => element.hide());
-
-        this.input.textContent = value;
-        this.value = value;
-
-        this.refresh();
-    },
-    getCandidates() {
-        return this.source.getCandidates();
-    },
-    enable() {
-        this.input.contentEditable = true;
-        this.input.tabIndex = 0;
-        this.disabled = false;
-    },
-    disable() {
-        this.input.contentEditable = false;
-        this.input.tabIndex = -1;
-        this.disabled = true;
-    },
-    refresh() {
-        if (this.hasValue()) {
-            this.input.classList.remove("empty");
-        } else {
-            this.input.classList.add("empty");
-        }
-
-        if (this.hasChanges()) {
-            this.statusElement.classList.add("change");
-        } else {
-            this.statusElement.classList.remove("change");
-        }
-
-        removeChildren(this.statusElement);
-
-        if (this.hasError) {
-            this.element.classList.add("error");
-            this.input.classList.add("error");
-            this.statusElement.classList.add("error");
-            this.statusElement.appendChild(createNotificationMessage(NotificationType.ERROR, this.errors));
-        } else {
-            this.element.classList.remove("error");
-            this.input.classList.remove("error");
-            this.statusElement.classList.remove("error");
-        }
-
-        if (this.choice) {
-            this.filterChoice(this.getValue());
-        }
-    },
     /**
      * Filters the list of choice using a query
      * @param {string} query 
@@ -409,7 +476,6 @@ const BaseTextField = {
 
             return true;
         }
-
 
         for (let i = 0; i < children.length; i++) {
             const item = children[i];
@@ -434,7 +500,7 @@ const BaseTextField = {
 
         const value = getItemValue(item);
 
-        this.setValue(value);
+        this.setValue(value, true);
         this.input.focus();
         hide(this.choice);
 
@@ -510,8 +576,10 @@ const BaseTextField = {
 
         if (item) {
             this.selectChoice(item);
+        } else if (this.multiline) {
+            // TODO
         } else if (target === this.input) {
-            this.setValue(this.getValue());
+            this.setValue(this.getValue(), true);
         }
     },
     /**
@@ -525,18 +593,50 @@ const BaseTextField = {
             this.input.focus();
         }
     },
+    /**
+     * Handles the `click` command
+     * @param {HTMLElement} target 
+     */
+    clickHandler(target) {
+        const item = getItem.call(this, target);
+
+        if (isHTMLElement(item)) {
+            this.selectChoice(item);
+        }
+    },
+    /**
+     * Handles the `control` command
+     * @param {HTMLElement} target 
+     */
+    controlHandler(target) {
+        if (this.toolbar) {
+            this.toolbar.remove();
+        }
+
+        // this.toolbar = createDiv({
+        //     class: ["field-toolbar"],
+        //     dataset: {
+        //         nature: "field-component",
+        //         view: "text",
+        //         id: this.id,
+        //     }
+        // });
+
+        // this.body = createDiv({
+        //     class: ["field-body"],
+        //     dataset: {
+        //         nature: "field-component",
+        //         view: "text",
+        //         id: this.id,
+        //     }
+        // });
+        // this.body.append(...this.element.childNodes);
+
+        // this.element.append(this.toolbar, this.body);
+        // this.element.classList.add("control");
+    },
 
     bindEvents() {
-        this.element.addEventListener('click', (event) => {
-            const target = event.target;
-
-            const item = getItem.call(this, target);
-
-            if (isHTMLElement(item)) {
-                this.selectChoice(item);
-            }
-        });
-
         this.element.addEventListener('input', (event) => {
             this.refresh();
         });

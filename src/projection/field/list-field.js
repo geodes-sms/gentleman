@@ -11,25 +11,15 @@ import { Field } from "./field.js";
 
 const actionDefaultSchema = {
     add: {
-        layout: {
-            "type": "layout",
-            "layout": {
-                "type": "wrap",
-                "disposition": [
-                    { "type": "text", "content": "Add" }
-                ]
-            }
+        projection: {
+            "type": "text",
+            "content": "Add"
         }
     },
     remove: {
-        layout: {
-            "type": "layout",
-            "layout": {
-                "type": "wrap",
-                "disposition": [
-                    { "type": "text", "content": "Remove" }
-                ]
-            }
+        projection: {
+            "type": "text",
+            "content": "Remove"
         }
     }
 };
@@ -57,9 +47,9 @@ function createMessageElement() {
  * @this {BaseListField}
  */
 function createListFieldItem(object) {
-    const { before = {}, style, projection, after = {} } = valOrDefault(this.schema.item, {});
+    const { action = {} } = this.schema;
 
-    const actionSchema = Object.assign({}, actionDefaultSchema, valOrDefault(this.schema.action, {}));
+    const { before = {}, style, projection, after = {} } = valOrDefault(this.schema.list.item, {});
 
     const container = createListItem({
         class: ["field--list-item"],
@@ -74,9 +64,7 @@ function createListFieldItem(object) {
         }
     });
 
-    const { layout: removeLayout } = actionSchema.remove;
-
-    console.log(removeLayout);
+    var { projection: removeLayout, style: removeStyle } = valOrDefault(action.remove, actionDefaultSchema.remove);
 
     var btnRemoveProjection = ContentHandler.call(this, removeLayout);
 
@@ -92,6 +80,8 @@ function createListFieldItem(object) {
         }
     }, btnRemoveProjection);
 
+    StyleHandler(btnRemove, removeStyle);
+
     container.appendChild(btnRemove);
 
     if (before.projection) {
@@ -101,7 +91,7 @@ function createListFieldItem(object) {
         container.appendChild(content);
     }
 
-    var itemProjection = this.model.createProjection(object);
+    var itemProjection = this.model.createProjection(object, "list-item");
 
     container.appendChild(itemProjection.init().render());
 
@@ -165,6 +155,7 @@ function assertCondition(cond) {
     return result;
 }
 
+
 const NotificationType = {
     INFO: "info",
     ERROR: "error"
@@ -204,6 +195,10 @@ const BaseListField = {
         this.orientation = valOrDefault(this.schema.orientation, "horizontal");
         this.items = new Map();
 
+        if (!hasOwn(this.schema, "list")) {
+            this.schema.list = {};
+        }
+
         return this;
     },
 
@@ -234,7 +229,7 @@ const BaseListField = {
     render() {
         const fragment = createDocFragment();
 
-        const { before = {}, list = {}, after = {} } = this.schema;
+        const { before = {}, list = {}, after = {}, action = {} } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createDiv({
@@ -280,6 +275,7 @@ const BaseListField = {
         }
 
         if (before.projection) {
+            console.log(before);
             let content = ContentHandler.call(this, before.projection);
             content.classList.add("field--list__before");
 
@@ -311,11 +307,9 @@ const BaseListField = {
             this.list.appendChild(item);
         });
 
-        const actionSchema = Object.assign({}, actionDefaultSchema, valOrDefault(this.schema.action, {}));
+        var { projection: addLayout, style: addStyle, position = "after" } = valOrDefault(action.add, actionDefaultSchema.add);
 
-        var { projection: addLayout, style: addStyle, position = "last" } = actionSchema.add;
-
-        var addProjection = ContentHandler.call(this, addLayout);
+        var addProjection = ContentHandler.call(this, addLayout, null, { focusable: false });
 
         const createAdd = ["first", "last"].includes(position) ? createListItem : createDiv;
 
@@ -415,8 +409,10 @@ const BaseListField = {
     },
     refresh() {
         if (this.hasValue()) {
+            this.element.classList.remove("empty");
             this.list.classList.remove("empty");
         } else {
+            this.element.classList.add("empty");
             this.list.classList.add("empty");
         }
 
@@ -445,9 +441,10 @@ const BaseListField = {
         return this.items.get(id);
     },
     addItem(value) {
-        var item = createListFieldItem.call(this, value);
+        const item = createListFieldItem.call(this, value);
+
         if (value.index) {
-            this.list.insertBefore(item, this.list.children[value.index - 1]);
+            this.list.children[value.index - 1].after(item);
         } else {
             this.list.appendChild(item);
         }
@@ -455,13 +452,22 @@ const BaseListField = {
     },
     removeItem(value) {
         let item = this.getItem(value.id);
+
         if (!isHTMLElement(item)) {
             throw new Error("List error: Item not found");
         }
 
+        const index = +item.dataset.index;
+
         this.items.delete(value.id);
         removeChildren(item);
         item.remove();
+
+        for (let i = index; i < this.list.children.length; i++) {
+            const item = this.list.children[i];
+            const { index } = item.dataset;
+            item.dataset.index = +index - 1;
+        }
     },
     /**
      * Appends an element to the field container
@@ -528,28 +534,45 @@ const BaseListField = {
      */
     backspaceHandler(target) {
     },
+    /**
+     * Handles the `click` command
+     * @param {HTMLElement} target 
+     */
+    clickHandler(target) {
 
-    bindEvents() {
-        const isValid = (element) => element.dataset.id === this.id && ["add", "remove"].includes(element.dataset.action);
+        const isValid = (element) => {
+            const { nature, id } = element.dataset;
 
-        const getItem = (element) => isValid(element) ? element : findAncestor(element, (el) => isValid(el), 5);
+            return nature === "field-component" && id === this.id;
+        };
 
-        this.element.addEventListener('click', (event) => {
-            const item = getItem(event.target);
-
-            if (item) {
-                const { action, index, name } = item.dataset;
-
-                if (action === "add") {
-                    this.selection = item;
-                    this.createElement();
-                } else if (action === "remove") {
-                    this.selection = item.parentElement;
-                    this.delete(item.parentElement);
-                }
+        const getComponent = (element) => {
+            if (isValid(element)) {
+                return element;
             }
 
-        });
+            return findAncestor(element, (el) => isValid(el), 5);
+        };
+
+        const component = getComponent(target);
+
+        if (isNullOrUndefined(component)) {
+            return;
+        }
+
+        const { action, index, name } = component.dataset;
+
+        if (action === "add") {
+            this.selection = component;
+            this.createElement();
+        } else if (action === "remove") {
+            this.selection = component.parentElement;
+            this.delete(component.parentElement);
+        }
+    },
+
+    bindEvents() {
+
     }
 };
 

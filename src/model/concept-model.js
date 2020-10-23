@@ -12,10 +12,21 @@ export const ConceptModel = {
     /** @type {*[]} */
     watchers: null,
 
-    init() {
+    init(values, type) {
         this.concepts = [];
         this.listeners = [];
         this.watchers = [];
+
+        if (Array.isArray(values)) {
+            values.forEach(value => {
+                var concept = this.createConcept({
+                    "name": value.name
+                }, {
+                    "value": value
+                });
+                this.addConcept(concept);
+            });
+        }
 
         return this;
     },
@@ -52,7 +63,8 @@ export const ConceptModel = {
     createConcept(name, args) {
         const schema = this.getCompleteModelConcept(name);
 
-        var concept = ConceptFactory.createConcept(name, this, schema, args);
+
+        var concept = ConceptFactory.createConcept(this, schema, args);
 
         this.addConcept(concept);
 
@@ -66,6 +78,9 @@ export const ConceptModel = {
         }
 
         return this.concepts.slice();
+    },
+    getConceptsByPrototype(prototype) {
+        return this.concepts.filter((concept) => concept.schema.prototype === prototype);
     },
     /**
      * Returns a concept with matching id from the list of concepts held by the model
@@ -163,7 +178,7 @@ export const ConceptModel = {
      * @param {string} name 
      */
     getConceptSchema(name) {
-        const concept = this.schema.find(concept => concept.name === name);
+        const concept = getSchema(this.schema, name);
 
         if (isNullOrUndefined(concept)) {
             return undefined;
@@ -171,24 +186,22 @@ export const ConceptModel = {
 
         return deepCopy(concept);
     },
-    getCompleteModelConcept(name) {
-        const conceptSchema = this.getConceptSchema(name);
+    getCompleteModelConcept(concept) {
+        const conceptSchema = this.getConceptSchema(concept.name);
 
         if (isNullOrUndefined(conceptSchema)) {
             return undefined;
         }
 
+        Object.assign(conceptSchema, concept);
+
         if (!hasOwn(conceptSchema, 'attribute')) {
-            conceptSchema.attribute = {};
-        }
-        if (!hasOwn(conceptSchema, 'component')) {
-            conceptSchema.component = {};
+            conceptSchema.attribute = [];
         }
 
         const baseSchema = getConceptBaseSchema.call(this, conceptSchema.prototype);
 
-        Object.assign(conceptSchema.attribute, baseSchema.attribute);
-        Object.assign(conceptSchema.component, baseSchema.component);
+        conceptSchema.attribute.push(...baseSchema.attribute);
 
         return conceptSchema;
     },
@@ -225,42 +238,137 @@ export const ConceptModel = {
     build() {
         const concepts = [];
 
-        this.getConcepts(["prototype_concept", "concrete_concept"]).forEach(concept => {
-            var attributes = [];
-            if (concept.isAttributeCreated("attributes")) {
-                attributes = getAttr(concept, 'attributes').getValue();
-            }
-
-            var components = [];
-            if (concept.isAttributeCreated("components")) {
-                components = getAttr(concept, 'components').getValue();
-            }
-
+        this.getConcepts(["prototype concept", "concrete concept", "derivative concept"]).forEach(concept => {
             const ConceptNature = {
-                "concrete_concept": "concrete",
-                "prototype_concept": "prototype",
+                "concrete concept": "concrete",
+                "prototype concept": "prototype",
+                "derivative concept": "derivative",
             };
 
             let schema = {
-                "nature": ConceptNature[concept.name],
-                "prototype": concept.isAttributeCreated("prototype") ? getAttr(concept, 'prototype').getValue() : null,
-                "name": getName(concept),
                 "id": concept.id,
-                "attribute": buildAttribute(attributes),
-                "component": buildComponent(components),
+                "name": getName(concept),
+                "nature": ConceptNature[concept.name],
+                "attribute": concept.isAttributeCreated("attributes") ? buildAttribute(getValue(concept, 'attributes')) : [],
             };
+
+            if (concept.isAttributeCreated("prototype") && hasValue(concept, "prototype")) {
+                schema.prototype = getName(getReference(concept, 'prototype'));
+            }
+
+            if (concept.name === "derivative concept") {
+                const primitive = getValue(concept, "base");
+
+                schema.base = nameMap[primitive.name](primitive);
+
+                if (primitive.isAttributeCreated("accept")) {
+                    let accept = getValue(primitive, "accept");
+                    schema["accept"] = nameMap[accept.name](accept);
+                }
+
+                ["min", "max"].forEach(attr => {
+                    if (primitive.isAttributeCreated(attr) && hasValue(primitive, attr)) {
+                        schema[attr] = +getValue(primitive, attr);
+                    }
+                });
+            }
 
             concepts.push(schema);
         });
 
-        console.log(concepts);
+        return JSON.stringify(concepts);
+    },
+    buildProjection() {
+        const projections = [
+            {
+                "concept": { "name": "set" },
+                "type": "field",
+                "tags": [],
+                "projection": {
+                    "type": "list"
+                }
+            },
+            {
+                "concept": { "name": "string" },
+                "type": "field",
+                "tags": [],
+                "projection": {
+                    "type": "text"
+                }
+            },
+            {
+                "concept": { "name": "boolean" },
+                "type": "field",
+                "tags": [],
+                "projection": {
+                    "type": "binary"
+                }
+            },
+            {
+                "concept": { "name": "number" },
+                "type": "field",
+                "tags": [],
+                "projection": {
+                    "type": "text"
+                }
+            },
+            {
+                "concept": { "name": "reference" },
+                "type": "field",
+                "tags": [],
+                "projection": {
+                    "type": "link"
+                }
+            },
+            {
+                "concept": { "name": "prototype" },
+                "type": "field",
+                "tags": [],
+                "projection": {
+                    "type": "choice"
+                }
+            }
+        ];
 
-        return JSON.stringify({
-            "concepts": concepts
+        const ProjectionType = {
+            "layout projection": "layout",
+            "field projection": "field",
+            "template projection": "template",
+        };
+
+        const ProjectionHandler = {
+            "layout projection": (concept) => buildLayout(getValue(concept, "layout")),
+            "field projection": (concept) => buildField(getValue(concept, "field")),
+            "template projection": (concept) => buildTemplate(getValue(concept, "template")),
+        };
+
+        this.getConcepts(["layout projection", "field projection", "template projection"]).forEach(concept => {
+            let schema = {
+                "id": concept.id,
+                "concept": { "name": getValue(concept, "concept").toLowerCase() },
+                "type": ProjectionType[concept.name],
+                "global": getValue(concept, "global"),
+                "tags": concept.isAttributeCreated("tags") ? getAttr(concept, 'tags').build() : [],
+                "projection": ProjectionHandler[concept.name](concept),
+            };
+
+            if (concept.name === "template projection") {
+                schema.name = getName(concept);
+            }
+
+            projections.push(schema);
         });
+
+        return JSON.stringify(projections);
     },
     export() {
-        return JSON.stringify(this.root.export());
+        const values = [];
+
+        this.getConcepts().forEach(concept => {
+            values.push(concept.export());
+        });
+
+        return values;
     },
     toString() {
         return JSON.stringify({
@@ -271,101 +379,99 @@ export const ConceptModel = {
 
 const getAttr = (concept, name) => concept.getAttributeByName(name).target;
 
-const getName = (concept) => getAttr(concept, 'name').getValue().toLowerCase();
+const getReference = (concept, attr) => getAttr(concept, attr).getReference();
+
+const getValue = (concept, attr) => getAttr(concept, attr).getValue();
+
+const hasValue = (concept, attr) => getAttr(concept, attr).hasValue();
+
+const getName = (concept) => getValue(concept, 'name').toLowerCase();
 
 const nameMap = {
-    string_primitive: (concept) => "string",
-    number_primitive: (concept) => "number",
-    boolean_primitive: (concept) => "boolean",
-    reference_primitive: (concept) => "reference",
-    set_primitive: (concept) => "set",
-    concept_primitive: (concept) => getAttr(concept, 'concept').getValue(),
+    "string primitive": (concept) => "string",
+    "number primitive": (concept) => "number",
+    "boolean primitive": (concept) => "boolean",
+    "reference primitive": (concept) => "reference",
+    "set primitive": (concept) => "set",
+    "concept primitive": (concept) => getName(getReference(concept, 'concept')),
 };
 
 
+/**
+ * 
+ * @param {*[]} attributes 
+ */
 function buildAttribute(attributes) {
     if (!Array.isArray(attributes)) {
-        return {};
+        throw new TypeError("Bad argument");
     }
 
-    var attributeSchema = {};
+    const result = [];
 
     attributes.forEach(attribute => {
-        var schema = {};
+        var schema = {
+            "name": getName(attribute)
+        };
 
-        const primitive = getAttr(attribute, "target").getValue();
+        const primitive = getValue(attribute, "target");
 
-        schema.target = nameMap[primitive.name](primitive);
+        schema.target = {
+            "name": nameMap[primitive.name](primitive)
+        };
 
         if (primitive.isAttributeCreated("accept")) {
-            schema.accept = getAttr(primitive, "accept").getValue();
+            let accept = getValue(primitive, "accept");
+            schema.target["accept"] = {
+                "name": nameMap[accept.name](accept)
+            };
         }
 
-        if (primitive.isAttributeCreated("min")) {
-            schema.min = getAttr(primitive, 'min').getValue();
-        }
-
-        if (primitive.isAttributeCreated("max")) {
-            schema.max = getAttr(primitive, "max").getValue();
-        }
-
-        if (attribute.isAttributeCreated("alias")) {
-            schema.alias = getAttr(attribute, "alias").getValue();
-        }
-
-        if (attribute.isAttributeCreated("description")) {
-            schema.alias = getAttr(attribute, "description").getValue();
-        }
-
-        if (attribute.isAttributeCreated("required")) {
-            schema.required = getAttr(attribute, "required").getValue();
-        }
-
-        Object.assign(attributeSchema, {
-            [getName(attribute)]: schema
+        ["min", "max"].forEach(attr => {
+            if (primitive.isAttributeCreated(attr) && hasValue(primitive, attr)) {
+                schema.target[attr] = +getValue(primitive, attr);
+            }
         });
+
+        ["alias", "description", "required"].forEach(attr => {
+            if (attribute.isAttributeCreated(attr) && hasValue(attribute, attr)) {
+                schema[attr] = getValue(attribute, attr);
+            }
+        });
+
+        result.push(schema);
     });
 
-    return attributeSchema;
+    return result;
 }
 
-function buildComponent(components) {
-    if (!Array.isArray(components)) {
-        return {};
+/**
+ * 
+ * @param {*[]} attributes 
+ */
+function buildProperty(properties) {
+    if (!Array.isArray(properties)) {
+        throw new TypeError("Bad argument");
     }
 
-    var componentSchema = {};
+    const result = [];
 
-    components.forEach(component => {
-        var schema = {};
+    properties.forEach(property => {
+        var schema = {
+            "name": getName(property),
+            "value": getValue(property, "value").build()
+        };
 
-        if (component.isAttributeCreated("alias")) {
-            schema.alias = getAttr(component, "alias").getValue();
-        }
-
-        if (component.isAttributeCreated("description")) {
-            schema.alias = getAttr(component, "description").getValue();
-        }
-
-        if (component.isAttributeCreated("required")) {
-            schema.required = getAttr(component, "required").getValue();
-        }
-
-        var attributes = [];
-        if (component.isAttributeCreated("attributes")) {
-            attributes = getAttr(component, 'attributes').getValue();
-        }
-
-        schema.attribute = buildAttribute(attributes);
-
-        Object.assign(componentSchema, {
-            [getName(component)]: schema,
+        ["alias", "description"].forEach(attr => {
+            if (property.isAttributeCreated(attr)) {
+                schema[attr] = getValue(property, attr);
+            }
         });
+
+        result.push(schema);
     });
 
-    return componentSchema;
+    return result;
 }
-
 
 /**
  * Gets the concept base schema
@@ -376,16 +482,14 @@ function getConceptBaseSchema(protoName) {
     var prototype = protoName;
 
     const baseSchema = {
-        attribute: {},
-        component: {},
+        attribute: [],
     };
 
     while (!isNullOrUndefined(prototype)) {
         let schema = this.getConceptSchema(prototype);
 
         if (schema) {
-            Object.assign(baseSchema.attribute, schema.attribute);
-            Object.assign(baseSchema.component, schema.component);
+            baseSchema.attribute.push(...schema.attribute);
             prototype = schema['prototype'];
         } else {
             prototype = null;
@@ -393,4 +497,197 @@ function getConceptBaseSchema(protoName) {
     }
 
     return baseSchema;
+}
+
+const primitives = [
+    { "name": "string", "nature": "primitive" },
+    { "name": "number", "nature": "primitive" },
+    { "name": "boolean", "nature": "primitive" },
+    { "name": "reference", "nature": "primitive" },
+    { "name": "set", "nature": "primitive" },
+];
+
+function getSchema(schema, name) {
+    var result = schema.find(concept => concept.name === name);
+
+    if (isNullOrUndefined(result)) {
+        result = primitives.find(concept => concept.name === name);
+    }
+
+    return result;
+}
+
+function buildLayout(layout) {
+    var schema = {};
+    var disposition = [];
+
+    if (layout.name === "stack layout") {
+        schema.type = "stack";
+        schema.orientation = getAttr(layout, 'orientation').getValue();
+
+        getValue(layout, "elements").filter(proto => proto.hasValue()).forEach(proto => {
+            const element = proto.getValue();
+            disposition.push(buildElement(element));
+        });
+    } else if (layout.name === "wrap layout") {
+        schema.type = "wrap";
+        getValue(layout, "elements").filter(proto => proto.hasValue()).forEach(proto => {
+            const element = proto.getValue();
+            disposition.push(buildElement(element));
+        });
+    } else if (layout.name === "table layout") {
+        // TODO
+    }
+
+    if (layout.isAttributeCreated("style")) {
+        schema.style = buildStyle(getAttr(layout, 'style'));
+    }
+
+    schema.disposition = disposition;
+
+    return schema;
+}
+
+function buildElement(element) {
+    if (element.name === "text element") {
+        let schema = { type: "text", content: getValue(element, "value") };
+
+        if (element.isAttributeCreated("style")) {
+            schema.style = buildStyle(getAttr(element, 'style'));
+        }
+
+        return schema;
+    }
+
+    if (element.name === "attribute element") {
+        let schema = { type: "attribute", name: getValue(element, "value") };
+
+        if (element.isAttributeCreated("tag")) {
+            schema.tag = getValue(element, "tag");
+        }
+
+        return schema;
+    }
+
+    if (element.name === "layout element") {
+        return { type: "layout", layout: buildLayout(getValue(element, "value")) };
+    }
+
+    return null;
+}
+
+function buildStyle(style) {
+    if (style.isAttributeCreated("css")) {
+        return {
+            css: getAttr(style, 'css').build()
+        };
+    }
+
+    return null;
+}
+
+function buildField(field) {
+    var schema = {};
+
+    if (field.isAttributeCreated("readonly")) {
+        schema.readonly = getAttr(field, 'readonly').getValue();
+    }
+
+    if (field.isAttributeCreated("disabled")) {
+        schema.disabled = getAttr(field, 'disabled').getValue();
+    }
+
+    if (field.isAttributeCreated("style")) {
+        schema.style = buildStyle(getAttr(field, 'style'));
+    }
+
+    if (field.name === "text field") {
+        if (field.isAttributeCreated("placeholder")) {
+            schema.placeholder = getAttr(field, 'placeholder').getValue();
+        }
+
+        if (field.isAttributeCreated("label")) {
+            schema.label = getAttr(field, 'label').getValue();
+        }
+
+        schema.type = "text";
+    } else if (field.name === "binary field") {
+        if (field.isAttributeCreated("label")) {
+            schema.label = getAttr(field, 'label').getValue();
+        }
+
+        schema.type = "binary";
+    } else if (field.name === "choice field") {
+        schema.type = "choice";
+    } else if (field.name === "link field") {
+        if (field.isAttributeCreated("placeholder")) {
+            schema.placeholder = getAttr(field, 'placeholder').getValue();
+        }
+
+        if (field.isAttributeCreated("value")) {
+            schema.value = getAttr(field, 'value').getValue();
+        }
+
+        if (field.isAttributeCreated("choice")) {
+            schema.choice = getAttr(field, 'choice').getValue();
+        }
+
+        schema.type = "link";
+    } else if (field.name === "list field") {
+        if (field.isAttributeCreated("orientation")) {
+            schema.orientation = getAttr(field, 'orientation').getValue();
+        }
+
+        schema.type = "list";
+    } else if (field.name === "table field") {
+        let template = {};
+
+        if (field.isAttributeCreated("template")) {
+            template.name = getAttr(field, 'template').getValue();
+        }
+        if (field.isAttributeCreated("concept")) {
+            template.concept = getAttr(field, 'concept').getValue();
+        }
+
+        schema.template = template;
+
+        schema.type = "table";
+    }
+
+    return schema;
+}
+
+function buildTemplate(tpl) {
+    var schema = {};
+
+    if (tpl.name === "table template") {
+        let hcells = [];
+        let bcells = [];
+
+        getValue(tpl, "header").forEach(cell => {
+            const element = getAttr(cell, "projection");
+            hcells.push({
+                "content": buildElement(element)
+            });
+        });
+
+        getValue(tpl, "body").forEach(cell => {
+            const element = getAttr(cell, "projection");
+            bcells.push({
+                "content": buildElement(element)
+            });
+        });
+
+        Object.assign(schema, {
+            type: "table",
+            header: {
+                "cell": hcells
+            },
+            body: {
+                "cell": bcells
+            }
+        });
+    }
+
+    return schema;
 }

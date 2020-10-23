@@ -1,5 +1,5 @@
 import {
-    createButton, appendChildren, removeChildren, insertAfterElement, insertBeforeElement,
+    createButton, removeChildren, insertAfterElement, insertBeforeElement,
     isNode, isHTMLElement, isNullOrUndefined, hasOwn, valOrDefault, isEmpty, createI,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
@@ -103,6 +103,7 @@ const Projection = {
             return;
         }
 
+
         if (message === "delete") {
             this.concept.unregister(this);
             this.concept = null;
@@ -117,22 +118,20 @@ const Projection = {
             return;
         }
 
-        if (!(/(attribute|component).(added|removed)/gi).test(message)) {
+        if (!(/attribute.(added|removed)/gi).test(message)) {
             console.warn(`Projection does not support message ${message}`);
             return;
         }
 
         const [type, action] = message.split('.');
+
         var structure = null;
 
         if (type === "attribute") {
-            structure = this.attributes.find((attr) => attr.name === value.name);
+            structure = this.attributes.filter((attr) => attr.name === value.name);
         }
-        if (type === "component") {
-            console.log(value);
-            structure = this.components.find((comp) => comp.name === value.name);
-        }
-        if (isNullOrUndefined(structure)) {
+
+        if (isEmpty(structure)) {
             console.warn(`${type} not found in projection`);
             return;
         }
@@ -141,27 +140,30 @@ const Projection = {
 
         switch (action) {
             case "added":
-                var projection = this.model.createProjection(target).init();
-                projection.parent = this;
+                structure.forEach(struct => {
+                    const { schema, name } = struct;
 
-                var render = projection.render();
-                var btnDelete = createButton({
-                    class: ["btn", "btn-delete"],
-                }, "Delete");
-                btnDelete.addEventListener('click', (e) => {
-                    target.delete();
+                    const projection = this.model.createProjection(target, schema.tag).init();
+                    projection.parent = this;
+                    projection.optional = true;
+
+                    /** @type {HTMLElement} */
+                    const render = projection.render();
+
+                    struct.element = render;
+                    struct.optional.after(render);
+
+                    hide(struct.optional);
                 });
-                render.prepend(btnDelete);
-                structure.element = render;
-                structure.optional.after(render);
 
-                hide(structure.optional);
 
                 break;
             case "removed":
-                structure.element = null;
+                structure.forEach(struct => {
+                    struct.element = null;
 
-                show(structure.optional);
+                    show(struct.optional);
+                });
 
                 break;
             default:
@@ -174,7 +176,7 @@ const Projection = {
     render() {
         const schema = this.getSchema();
 
-        const { type, element, style, constraint, projection } = schema;
+        const { type, projection } = schema;
 
         /** @type {HTMLElement} */
         var container = null;
@@ -194,21 +196,35 @@ const Projection = {
         }
 
         if (!isNode(container)) {
-            console.log(schema);
             throw new Error("Projection element container could not be created");
         }
 
-        container.tabIndex = -1;
         Object.assign(container.dataset, {
             "projection": this.id,
             "object": this.concept.object,
             "alt": this.schema.length
         });
 
+        if (this.optional) {
+            /** @type {HTMLElement} */
+            let btnDelete = createButton({
+                class: ["btn", "structure__btn-delete"],
+                title: `Delete ${this.concept.ref.name.toLowerCase()}`
+            });
+
+            btnDelete.addEventListener('click', (event) => {
+                this.concept.delete();
+            });
+
+            container.classList.add("has-toolbar");
+            container.prepend(btnDelete);
+        }
+
         if (this.schema.length > 1) {
             let altBadge = createI({
                 class: ["badge", "badge--alt"]
             });
+
             container.prepend(altBadge);
         }
 
@@ -239,10 +255,11 @@ const Projection = {
             currentContainer.classList.remove("swap-left");
             container.classList.add("fade-in");
             container.focus();
-        }, 800);
+        }, 600);
 
         return this;
     },
+
     bindEvents() {
         if (this.schema.length > 1) {
             if (!isHTMLElement(this.btnPrev)) {
@@ -291,7 +308,7 @@ const Projection = {
                 this.btnNext.disabled = this.index >= this.schema.length - 1;
             });
 
-            appendChildren(this.container, [this.btnNext, this.btnPrev]);
+            this.container.append(this.btnNext, this.btnPrev);
         }
     }
 };

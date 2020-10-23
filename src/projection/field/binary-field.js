@@ -179,7 +179,7 @@ const BaseBinaryField = {
         }
 
         if (before.projection) {
-            let content = ContentHandler.call(this, before.projection);
+            let content = ContentHandler.call(this.projection, before.projection);
             content.classList.add("field--binary__before");
 
             fragment.appendChild(content);
