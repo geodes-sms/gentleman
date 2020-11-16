@@ -1,15 +1,12 @@
 import {
     createDocFragment, createInput, createSpan, createDiv, createParagraph, createButton,
-    getElement, removeChildren, isHTMLElement, isNullOrWhitespace, isNullOrUndefined,
+    getElement, isHTMLElement, isNullOrWhitespace, isNullOrUndefined,
     isString, isEmpty,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
-import { Builder, Editor } from './index.js';
-import { Explorer } from "./explorer.js";
-import { Loader } from "./loader.js";
+import { Explorer, Editor } from './index.js';
 
 
-const builders = [];
 const editors = [];
 const explorers = [];
 
@@ -57,8 +54,6 @@ export const Manager = {
         if (fragment.hasChildNodes()) {
             this.container.appendChild(fragment);
         }
-
-
 
         this.refresh();
 
@@ -129,25 +124,10 @@ export const Manager = {
             // }
         });
 
-        input.addEventListener('change', (event) => {
-            var file = input.files[0];
-
-            var reader = new FileReader();
-            reader.onload = (e) => {
-                const metamodel = Loader.loadMetaModel(JSON.parse(reader.result));
-                const model = metamodel.createModel().init();
-
-                const Editor = this.getEditor().init(metamodel, model).open();
-                removeChildren(this.homeContainer);
-                this.homeContainer.remove();
-            };
-            reader.readAsText(file);
-        });
-
         this.container.appendChild(this.homeContainer);
     },
     refresh() {
-        if ([editors, builders, explorers].every((env) => isEmpty(env))) {
+        if ([editors, explorers].every((env) => isEmpty(env))) {
             this.home();
         } else {
             hide(this.homeContainer);
@@ -181,7 +161,7 @@ export const Manager = {
         return editor;
     },
     /**
-     * Creates a new Builder
+     * Creates a new `Editor`
      * @returns {Editor}
      */
     createEditor(model) {
@@ -221,33 +201,6 @@ export const Manager = {
 
         return true;
     },
-    /** @returns {Builder} */
-    getBuilder(id) {
-        var builder = getEnvironment.call({ environments: builders }, id);
-
-        return builder;
-    },
-    /**
-     * Creates a new Builder
-     * @returns {Builder}
-     */
-    createBuilder() {
-        var builder = Object.create(Builder, {
-            object: { value: "environment" },
-            name: { value: "builder" },
-            type: { value: "builder" },
-            id: { value: nextId() },
-            manager: { value: this },
-            container: { value: createContainer("builder") },
-        });
-        this.container.appendChild(builder.container);
-
-        builders.push(builder);
-
-        this.refresh();
-
-        return builder;
-    },
     /** @returns {Explorer} */
     getExplorer(id) {
         var explorer = getEnvironment.call({ environments: explorers }, id);
@@ -255,7 +208,7 @@ export const Manager = {
         return explorer;
     },
     /**
-     * Creates a new Builder
+     * Creates a new `Explorer`
      * @returns {Explorer}
      */
     createExplorer() {

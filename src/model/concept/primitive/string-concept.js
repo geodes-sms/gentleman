@@ -7,6 +7,7 @@ const ResponseCode = {
     INVALID_VALUE: 401,
     MINLENGTH_ERROR: 402,
     MAXLENGTH_ERROR: 403,
+    PATTERN_ERROR: 404,
 };
 
 function responseHandler(code) {
@@ -26,11 +27,18 @@ function responseHandler(code) {
                 success: false,
                 message: `The length of the value is beneath the minimum allowed: ${this.min}.`
             };
+        case ResponseCode.PATTERN_ERROR:
+            return {
+                success: false,
+                message: `The value does not match the valid pattern.`
+            };
     }
 }
 
 const _StringConcept = {
     nature: 'primitive',
+    /** @type {string} */
+    pattern: null,
 
     init(args = {}) {
         this.parent = args.parent;
@@ -40,6 +48,8 @@ const _StringConcept = {
         this.description = this.schema.description;
         this.min = valOrDefault(this.schema.min, 0);
         this.max = this.schema.max;
+        this.pattern = this.schema.pattern;
+        this.history = [];
 
         this.initObserver();
         this.initAttribute();
@@ -82,7 +92,9 @@ const _StringConcept = {
             };
         }
 
+        this.history.push(value);
         this.value = value;
+
         this.notify("value.changed", value);
 
         return {
@@ -97,7 +109,6 @@ const _StringConcept = {
                 value.type = "value";
             }
         });
-        console.log(this);
 
         return this.values;
     },
@@ -120,6 +131,10 @@ const _StringConcept = {
 
         if(this.max && value.length > this.max) {
             return ResponseCode.MAXLENGTH_ERROR;
+        }
+
+        if(this.pattern && !(new RegExp(this.pattern, "gi")).test(value)) {
+            return ResponseCode.PATTERN_ERROR;
         }
 
         if (isEmpty(this.values)) {

@@ -4,16 +4,6 @@
     transition: .2s;
 }
 
-.text {
-    font-size: 1.4em;
-}
-
-.text .text,
-li .text, p .text,
-td .text, th .text {
-    font-size: 1em;
-}
-
 .btn-collapse {
     position: absolute;
     top: 0; left: -24px;
@@ -63,28 +53,15 @@ td .text, th .text {
 .structure__btn-delete {
     position: absolute;
     top: 0; right: 0;
-    padding: 4px 6px;
-    font-size: 0.9em; font-weight: 600;
+    width: 24px; height: 24px;
+    font-weight: 600;
     z-index: 5;
 }
     .structure__btn-delete:before {
         content: "✖";
         display: block;
-        padding: 2px 2px 2px 1px;
-        width: 20px;
-        height: 20px;
-        box-sizing: border-box;
-        border-radius: 50%;
-        background-color: #e5e5e5;
-        transition: .4s;
+        transition: .2s;
     }
-    .structure__btn-delete:hover:before {
-        background-color: #d5d5d5;
-    }
-    .structure__btn-delete:hover + .layout-container {
-        opacity: 0.5;
-    }
-    
 
 .layout-container .btn-edit {
     position: absolute;

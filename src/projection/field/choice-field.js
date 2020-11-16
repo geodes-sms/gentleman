@@ -1,7 +1,7 @@
 import {
     createDocFragment, createSpan, createDiv, createI, createUnorderedList,
     createListItem, findAncestor, isHTMLElement, removeChildren,
-    isNullOrUndefined, isNullOrWhitespace, isObject, valOrDefault, createInput, hasOwn
+    isNullOrUndefined, isNullOrWhitespace, isObject, valOrDefault, createInput, hasOwn, capitalizeFirstLetter
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
@@ -75,6 +75,8 @@ const BaseChoiceField = {
         this.source.register(this);
         this.items = new Map();
 
+        // TODO: Add group support
+
         if (!hasOwn(this.schema, "choice")) {
             this.schema.choice = {};
         }
@@ -88,7 +90,7 @@ const BaseChoiceField = {
                 if (value.object === "concept") {
                     let projection = this.model.createProjection(value, "choice-selection").init();
                     this.setChoice(value.name);
-                    removeChildren(this.selectionElement).appendChild(projection.render());
+                    this.setSelection(projection.render());
                 } else {
                     this.setChoice(value);
                 }
@@ -262,9 +264,10 @@ const BaseChoiceField = {
             this.element.appendChild(fragment);
             this.bindEvents();
         }
-        
+
         if (this.source.hasValue()) {
             let value = this.source.getValue();
+
             if (value.object === "concept") {
                 let projection = this.model.createProjection(value, "choice-selection").init();
                 this.setChoice(value.name);
@@ -387,7 +390,7 @@ const BaseChoiceField = {
             }
         });
 
-        const { before = {}, style, projection, after = {} } = valOrDefault(this.schema.choice.option, {});
+        const { before = {}, style, template, after = {} } = valOrDefault(this.schema.choice.option, {});
 
         if (before.projection) {
             let content = ContentHandler.call(this, before.projection, { focusable: false });
@@ -397,7 +400,15 @@ const BaseChoiceField = {
         }
 
         if (isObject(value)) {
-            let choiceProjection = this.model.createProjection(value, "choice").init(this.source);
+            let choiceProjection = this.model.createProjection(value, valOrDefault(template, "choice")).init(this.source);
+            const { context } = choiceProjection.getSchema();
+            
+            if (context) {
+                for (const key in context) {
+                    const value = context[key];
+                    container.dataset[`choice${capitalizeFirstLetter(key)}`] = value;
+                }
+            }
 
             container.append(choiceProjection.render());
         } else {
@@ -436,6 +447,9 @@ const BaseChoiceField = {
         }
 
         return this;
+    },
+    setSelection(element) {
+        removeChildren(this.selectionElement).appendChild(element);
     },
 
     /**
@@ -495,11 +509,10 @@ const BaseChoiceField = {
      * @param {HTMLElement} target 
      */
     clickHandler(target) {
-        console.log(target);
         const item = getItem.call(this, target);
-        const value = getItemValue(item);
 
-        if (isHTMLElement(item)) {
+        if (isHTMLElement(item) && this.selection !== item) {
+            let value = getItemValue(item);
             this.setValue(value);
         }
     },

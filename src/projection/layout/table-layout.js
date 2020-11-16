@@ -1,18 +1,71 @@
 import {
     createDocFragment, createTable, createTableRow, createTableCell,
-    isObject, isString, hasOwn, isEmpty, createButton, isIterable
+    isObject, isString, hasOwn, isHTMLElement, createDiv, valOrDefault,
 } from "zenkai";
 import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler } from "./../content-handler.js";
 
 
 export const TableLayout = {
-    init() {
+    /** @type {HTMLElement} */
+    container: null,
+    /** @type {boolean} */
+    focusable: null,
+
+    init(args) {
+        this.orientation = valOrDefault(this.schema.orientation, "row");
+        this.collapsible = valOrDefault(this.schema.collapsible, false);
+        this.focusable = valOrDefault(this.schema.focusable, true);
+
+        Object.assign(this, valOrDefault(args, {}));
+
         return this;
     },
     render() {
+        const { disposition, style } = this.schema;
 
-    }
+        if (!Array.isArray(disposition)) {
+            throw new SyntaxError("Bad disposition");
+        }
+
+        const fragment = createDocFragment();
+
+        if (!isHTMLElement(this.container)) {
+            this.container = createDiv({
+                class: ["layout-container"],
+                dataset: {
+                    nature: "layout",
+                    layout: "table",
+                }
+            });
+        }
+
+        if (this.focusable) {
+            this.container.tabIndex = -1;
+        } else {
+            this.container.dataset.ignore = "all";
+        }
+
+
+        for (let i = 0; i < disposition.length; i++) {
+            let render = ContentHandler.call(this, disposition[i]);
+
+            fragment.appendChild(render);
+        }
+
+        StyleHandler.call(this, this.container, style);
+
+        if (fragment.hasChildNodes()) {
+            this.container.appendChild(fragment);
+            this.bindEvents();
+        }
+
+        // this.container.style.display = "inline-block";
+
+        this.refresh();
+
+        return this.container;
+    },
 };
 
 

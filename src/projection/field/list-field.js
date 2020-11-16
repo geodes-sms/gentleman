@@ -49,7 +49,7 @@ function createMessageElement() {
 function createListFieldItem(object) {
     const { action = {} } = this.schema;
 
-    const { before = {}, style, projection, after = {} } = valOrDefault(this.schema.list.item, {});
+    const { before = {}, style, template, projection, after = {} } = valOrDefault(this.schema.list.item, {});
 
     const container = createListItem({
         class: ["field--list-item"],
@@ -91,7 +91,7 @@ function createListFieldItem(object) {
         container.appendChild(content);
     }
 
-    var itemProjection = this.model.createProjection(object, "list-item");
+    var itemProjection = this.model.createProjection(object, valOrDefault(template, "list-item"));
 
     container.appendChild(itemProjection.init().render());
 

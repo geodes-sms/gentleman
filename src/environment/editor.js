@@ -13,8 +13,6 @@ import { createProjectionModel } from '@projection/index.js';
 const MODEL_GENTLEMAN_CONCEPT = require('@include/gentleman_model.json');
 const MODEL_GENTLEMAN_PROJECTION = require('@include/gentleman_projection.json');
 
-// Allow responsive design
-const MQL = window.matchMedia('(max-width: 800px)');
 
 /**
  * @returns {HTMLElement}
@@ -856,8 +854,8 @@ export const Editor = {
                 tabindex: 0,
             });
 
-            this.conceptSection = createUnorderedList({
-                class: ["bare-list", "model-concept-list"],
+            this.conceptSection = createSection({
+                class: ["model-concept-section"],
             });
 
             this.body.appendChild(this.conceptSection);
@@ -950,13 +948,14 @@ export const Editor = {
 
             if (!this._initialized) {
                 const created = this.conceptModel.getConcepts(concept.name);
+
                 created.forEach(c => {
                     let projection = this.projectionModel.createGlobalProjection(c).init();
                     let btnDelete = createButton({
                         class: ["btn", "model-concept-list-item__btn-delete"]
                     }, `Delete ${name.toLowerCase()}`);
 
-                    var modelConceptListItem = createListItem({
+                    var modelConceptListItem = createDiv({
                         class: ["model-concept-list-item"],
                     }, [btnDelete, projection.render()]);
 
@@ -981,34 +980,99 @@ export const Editor = {
                 const { concept: name } = target.dataset;
 
                 let concept = this.conceptModel.createConcept({ name: name });
+
                 let projection = this.projectionModel.createGlobalProjection(concept).init();
+
+                let btnBuild = createButton({
+                    class: ["btn", "editor-concept-toolbar__btn-build"],
+                    title: `Build ${name.toLowerCase()}`
+                });
+
                 let btnDelete = createButton({
-                    class: ["btn", "model-concept-list-item__btn-delete"],
+                    class: ["btn", "editor-concept-toolbar__btn-delete"],
                     title: `Delete ${name.toLowerCase()}`
                 });
+
                 let btnMaximize = createButton({
-                    class: ["btn", "model-concept-list-item__btn-maximize"],
+                    class: ["btn", "editor-concept-toolbar__btn-maximize"],
                     title: `Maximize ${name.toLowerCase()}`
                 });
 
-                var modelConceptListItem = createListItem({
-                    class: ["model-concept-list-item"],
+                let toolbar = createDiv({
+                    class: ["editor-concept-toolbar"],
+                }, [btnBuild, btnMaximize, btnDelete]);
+
+                var modelConceptContainer = createDiv({
+                    class: ["editor-concept"],
+                    draggable: true,
                     dataset: {
                         nature: "concept-container"
                     }
-                }, [btnMaximize, btnDelete, projection.render()]);
+                }, [toolbar, projection.render()]);
+
+                btnBuild.addEventListener('click', (event) => {
+                    var result;
+
+                    if (this.buildTarget === "gentleman_concept") {
+                        try {
+                            result = this.conceptModel.build();
+                        } catch (error) {
+                            console.error(error);
+                            this.notify("The model is not valid. Please review before the next build.", "error");
+
+                            return;
+                        }
+                    } else if (this.buildTarget === "gentleman_projection") {
+                        try {
+                            result = this.conceptModel.buildAProjection(concept);
+
+                            let cmodel = ConceptModelManager.createModel([
+                                {
+                                    "name": "person",
+                                    "nature": "concrete",
+                                    "attribute": [
+                                        {
+                                            "name": "name",
+                                            "target": { "name": "string", "min": 2 },
+                                            "required": true
+                                        },
+                                    ]
+                                },
+                            ]).init();
+                            let pmodel = ConceptModelManager.createModel(result).init();
+
+                            let concept = cmodel.createConcept({ name: "person" });
+
+                            let projection = pmodel.createGlobalProjection(concept).init();
+
+                            this.body.appendChild(createDiv({
+                                class: ["editor-concept-preview"]
+                            }, projection.render()));
+                        } catch (error) {
+                            let errorContainer = createParagraph({
+                                class: ["editor-concept-footer"]
+                            }, error);
+                            modelConceptContainer.appendChild(errorContainer);
+
+                            this.notify("The projection is not valid. Please review before the next build.", "error");
+
+                            return;
+                        }
+                    }
+                });
 
                 btnDelete.addEventListener('click', (event) => {
                     if (concept.delete(true)) {
-                        removeChildren(modelConceptListItem);
-                        modelConceptListItem.remove();
+                        removeChildren(modelConceptContainer);
+                        modelConceptContainer.remove();
                     }
                 });
+
                 btnMaximize.addEventListener('click', (event) => {
-                    modelConceptListItem.classList.toggle('focus');
+                    modelConceptContainer.classList.toggle('focus');
                 });
 
-                this.conceptSection.appendChild(modelConceptListItem);
+                this.conceptSection.appendChild(modelConceptContainer);
             }
         });
 
@@ -1114,6 +1178,17 @@ export const Editor = {
         var lastKey = null;
         var fileHandler = null;
 
+        /**
+         * Get the choice element
+         * @param {HTMLElement} element 
+         */
+        function getProjection(element) {
+            if (hasOwn(element.dataset, 'projection')) {
+                return element;
+            }
+            return findAncestor(element, (el) => hasOwn(el.dataset, 'projection'));
+        }
+
         this.container.addEventListener('click', (event) => {
             var target = getEventTarget(event.target);
 
@@ -1188,17 +1263,6 @@ export const Editor = {
             };
             reader.readAsText(file);
         });
-
-        /**
-         * Get the choice element
-         * @param {HTMLElement} element 
-         */
-        function getProjection(element) {
-            if (hasOwn(element.dataset, 'projection')) {
-                return element;
-            }
-            return findAncestor(element, (el) => hasOwn(el.dataset, 'projection'));
-        }
 
         this.body.addEventListener('keydown', (event) => {
             const { target } = event;
@@ -1333,16 +1397,19 @@ export const Editor = {
 
         this.body.addEventListener('focusin', (event) => {
             const target = event.target;
+            console.log(target);
 
             const { nature } = target.dataset;
 
             var handler = focusinHandler[nature];
+
             if (handler) {
                 handler.call(this, target);
             } else {
                 if (this.activeField) {
                     this.activeField.focusOut();
                 }
+
                 this.activeField = null;
             }
 
@@ -1350,6 +1417,10 @@ export const Editor = {
             let parentProjection = getProjection(target);
             if (parentProjection) {
                 this.updateActiveElement(parentProjection);
+            }
+
+            if (target.href) {
+                this.fields.get("field1").focusIn();
             }
         });
 
@@ -1410,10 +1481,6 @@ export const Editor = {
         Events.on('model.change', (from) => {
             this.save();
         });
-
-        const handleWidthChange = (mql) => this.resize(mql);
-
-        MQL.addListener(handleWidthChange);
     }
 };
 

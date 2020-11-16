@@ -124,29 +124,92 @@
             "prototype": "primitive",
             "attribute": [
                 {
+                    "name": "default",
+                    "target": {
+                        "name": "string"
+                    },
+                    "description": "Default value."
+                },
+                {
+                    "name": "length",
+                    "target": {
+                        "name": "number constraint"
+                    }
+                },
+                {
+                    "name": "pattern",
+                    "target": {
+                        "name": "string"
+                    },
+                    "description": "Regular expression."
+                },
+                {
                     "name": "values",
                     "target": {
                         "name": "set",
-                        "accept": { "name": "string", "alias": "value" },
+                        "accept": { "name": "string" },
                         "min": 0
                     },
                     "description": "The list of string values accepted by the string instance."
-                },
+                }
+            ]
+        },
+        {
+            "name": "number constraint",
+            "nature": "prototype",
+            "attribute": []
+        },
+        {
+            "name": "number value",
+            "nature": "concrete",
+            "prototype": "number constraint",
+            "attribute": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "number"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "range",
+            "nature": "concrete",
+            "prototype": "number constraint",
+            "attribute": [
                 {
                     "name": "min",
                     "target": {
-                        "name": "number"
+                        "name": "range value"
                     },
-                    "alias": "Minimum length",
                     "description": "Defines the minimum number of characters the user must input. This must be an integer value 0 or higher. If no minlength is specified, or an invalid value is specified, the input has no minimum length."
                 },
                 {
                     "name": "max",
                     "target": {
+                        "name": "range value"
+                    },
+                    "description": "Defines the maximum number of characters the user can input. This must be an integer value 0 or higher. If no maxlength is specified, or an invalid value is specified, the input has no maximum length."
+                }
+            ]
+        },
+        {
+            "name": "range value",
+            "nature": "concrete",
+            "attribute": [
+                {
+                    "name": "value",
+                    "target": {
                         "name": "number"
                     },
-                    "alias": "Maximum length",
-                    "description": "Defines the maximum number of characters the user can input. This must be an integer value 0 or higher. If no maxlength is specified, or an invalid value is specified, the input has no maximum length."
+                    "description": "Value of a range"
+                },
+                {
+                    "name": "included",
+                    "target": {
+                        "name": "boolean"
+                    },
+                    "description": "Value is included in the range"
                 }
             ]
         },
@@ -156,28 +219,22 @@
             "prototype": "primitive",
             "attribute": [
                 {
-                    "name": "min",
+                    "name": "default",
                     "target": {
                         "name": "number"
-                    },
-                    "alias": "Minimum",
-                    "required": true,
-                    "description": "Defines the minimum value the user may input. This must be a positive integer lower or equal to the minimum value if specified. If no minimum is specified, or an invalid value is specified, the number has no minimum value restriction."
+                    }
                 },
                 {
-                    "name": "max",
+                    "name": "range",
                     "target": {
-                        "name": "number"
-                    },
-                    "alias": "Maximum",
-                    "required": true,
-                    "description": "Defines the maximum value the user may input. This must be positive integer greater or equal to the minimum value if specified. If no minimum is specified, or an invalid value is specified, the number has no minimum value restriction."
+                        "name": "range"
+                    }
                 },
                 {
                     "name": "values",
                     "target": {
                         "name": "set",
-                        "accept": { "name": "number", "alias": "number" }
+                        "accept": { "name": "number" }
                     },
                     "required": false
                 }
@@ -186,7 +243,15 @@
         {
             "name": "boolean primitive",
             "nature": "concrete",
-            "prototype": "primitive"
+            "prototype": "primitive",
+            "attribute": [
+                {
+                    "name": "default",
+                    "target": {
+                        "name": "boolean"
+                    }
+                }
+            ]
         },
         {
             "name": "reference primitive",
@@ -215,21 +280,10 @@
                     "required": true
                 },
                 {
-                    "name": "min",
+                    "name": "cardinality",
                     "target": {
-                        "name": "number"
+                        "name": "number constraint"
                     },
-                    "alias": "Minimum",
-                    "description": "Defines the minimum number of elements for the set. This must be a positive integer lower or equal to the maximum value if specified. If no minimum is specified, or an invalid value is specified, the set will use a minimum of 1",
-                    "required": true
-                },
-                {
-                    "name": "max",
-                    "target": {
-                        "name": "number"
-                    },
-                    "alias": "Maximum",
-                    "description": "Defines the maximum number of elements for the set. This must be positive integer greater or equal to the minimum value if specified. If no minimum is specified, or an invalid value is specified, the set has no maximum value restriction.",
                     "required": true
                 }
             ]
@@ -250,6 +304,7 @@
             ]
         }
     ],
+    
 
     "projection": [
         {
@@ -431,7 +486,11 @@
             "projection": {
                 "type": "wrap",
                 "disposition": [
-                    { "type": "attribute", "name": "name", "tag": "readonly-string" }
+                    { 
+                        "type": "attribute", 
+                        "name": "name", 
+                        "tag": "readonly-string" 
+                    }
                 ]
             }
         },
@@ -446,8 +505,15 @@
                     "css": ["link-choice", "link-choice--concrete"]
                 },
                 "disposition": [
-                    { "type": "text", "content": "Concrete concept" },
-                    { "type": "attribute", "name": "name", "tag": "readonly-string" }
+                    { 
+                        "type": "text", 
+                        "content": "Concrete concept" 
+                    },
+                    { 
+                        "type": "attribute", 
+                        "name": "name", 
+                        "tag": "readonly-string" 
+                    }
                 ]
             }
         },
@@ -474,11 +540,14 @@
                                 {
                                     "type": "text",
                                     "style": {
-                                        "css": "model-concept-header__title"
+                                        "css": ["model-concept-header__title"]
                                     },
                                     "content": "DERIVATIVE CONCEPT "
                                 },
-                                { "type": "attribute", "name": "name" }
+                                { 
+                                    "type": "attribute", 
+                                    "name": "name" 
+                                }
                             ]
                         }
                     },
@@ -491,8 +560,15 @@
                                 "css": ["model-concept-body", "derivative-concept-body"]
                             },
                             "disposition": [
-                                { "type": "attribute", "name": "description", "tag": "description-string" },
-                                { "type": "attribute", "name": "base" }
+                                { 
+                                    "type": "attribute", 
+                                    "name": "description", 
+                                    "tag": "description-string" 
+                                },
+                                { 
+                                    "type": "attribute", 
+                                    "name": "base" 
+                                }
                             ]
                         }
                     }
@@ -506,8 +582,15 @@
             "projection": {
                 "type": "wrap",
                 "disposition": [
-                    { "type": "text", "content": "Derivative" },
-                    { "type": "attribute", "name": "name", "tag": "readonly-string" }
+                    { 
+                        "type": "text", 
+                        "content": "Derivative" 
+                    },
+                    { 
+                        "type": "attribute", 
+                        "name": "name", 
+                        "tag": "readonly-string" 
+                    }
                 ]
             }
         },
@@ -522,8 +605,15 @@
                     "css": ["link-choice", "link-choice--derivative"]
                 },
                 "disposition": [
-                    { "type": "text", "content": "Derivative concept" },
-                    { "type": "attribute", "name": "name", "tag": "readonly-string" }
+                    { 
+                        "type": "text", 
+                        "content": "Derivative concept" 
+                    },
+                    { 
+                        "type": "attribute", 
+                        "name": "name", 
+                        "tag": "readonly-string" 
+                    }
                 ]
             }
         },
@@ -537,17 +627,17 @@
                 "type": "table",
                 "table": {
                     "style": {
-                        "css": "attribute-table"
+                        "css": ["attribute-table"]
                     }
                 },
                 "header": {
                     "style": {
-                        "css": "attribute-table-header"
+                        "css": ["attribute-table-header"]
                     },
                     "cell": [
                         {
                             "style": {
-                                "css": "attribute-table__header-cell"
+                                "css": ["attribute-table__header-cell"]
                             },
                             "content": {
                                 "type": "text",
@@ -556,7 +646,7 @@
                         },
                         {
                             "style": {
-                                "css": "attribute-table__header-cell"
+                                "css": ["attribute-table__header-cell"]
                             },
                             "content": {
                                 "type": "text",
@@ -565,7 +655,7 @@
                         },
                         {
                             "style": {
-                                "css": "attribute-table__header-cell"
+                                "css": ["attribute-table__header-cell"]
                             },
                             "content": {
                                 "type": "text",
@@ -576,26 +666,36 @@
                 },
                 "body": {
                     "style": {
-                        "css": "attribute-table-body"
+                        "css": ["attribute-table-body"]
                     },
                     "cell": [
                         {
                             "style": {
                                 "css": ["attribute-table__body-cell", "tbl-attribute__cell--required"]
                             },
-                            "content": { "type": "attribute", "name": "required", "tag": "required-boolean" }
+                            "content": { 
+                                "type": "attribute", 
+                                "name": "required", 
+                                "tag": "required-boolean" 
+                            }
                         },
                         {
                             "style": {
-                                "css": "attribute-table__body-cell"
+                                "css": ["attribute-table__body-cell"]
                             },
-                            "content": { "type": "attribute", "name": "name" }
+                            "content": { 
+                                "type": "attribute", 
+                                "name": "name" 
+                            }
                         },
                         {
                             "style": {
-                                "css": "attribute-table__body-cell"
+                                "css": ["attribute-table__body-cell"]
                             },
-                            "content": { "type": "attribute", "name": "target" }
+                            "content": { 
+                                "type": "attribute", 
+                                "name": "target" 
+                            }
                         }
                     ]
                 }
@@ -608,7 +708,10 @@
             "projection": {
                 "type": "wrap",
                 "disposition": [
-                    { "type": "attribute", "name": "name" }
+                    { 
+                        "type": "attribute", 
+                        "name": "name" 
+                    }
                 ]
             }
         },
@@ -621,11 +724,11 @@
                 "type": "choice",
                 "choice": {
                     "style": {
-                        "css": "target-choices"
+                        "css": ["target-choices"]
                     },
                     "option": {
                         "style": {
-                            "css": "target-choice"
+                            "css": ["target-choice"]
                         }
                     }
                 }
@@ -647,17 +750,24 @@
                         },
                         "content": "Constraints"
                     },
-                    {
-                        "type": "layout",
-                        "layout": {
-                            "type": "wrap",
-                            "disposition": [
-                                { "type": "attribute", "name": "min", "tag": "min-number" },
-                                { "type": "attribute", "name": "max", "tag": "max-number" }
-                            ]
-                        }
+                    { 
+                        "type": "attribute", 
+                        "name": "default",
+                        "tag": "default-string"
                     },
-                    { "type": "attribute", "name": "values", "tag": "value-set" }
+                    { 
+                        "type": "attribute", 
+                        "name": "pattern"
+                    },
+                    { 
+                        "type": "attribute", 
+                        "name": "length"
+                    },
+                    { 
+                        "type": "attribute", 
+                        "name": "values", 
+                        "tag": "value-set" 
+                    }
                 ]
             }
         },
@@ -669,7 +779,110 @@
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { "type": "text", "content": "String" }
+                    { 
+                        "type": "text", 
+                        "content": "String" 
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "number constraint" },
+            "type": "field",
+            "tags": [],
+            "projection": {
+                "type": "choice",
+                "choice": {
+                    "style": {
+                        "css": ["target-choices"]
+                    },
+                    "option": {
+                        "style": {
+                            "css": ["target-choice"]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "number value" },
+            "type": "layout",
+            "tags": ["choice-selection"],
+            "projection": {
+                "type": "stack",
+                "orientation": "horizontal",
+                "disposition": [
+                    { 
+                        "type": "attribute", 
+                        "name": "value"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "number value" },
+            "type": "layout",
+            "tags": ["choice"],
+            "projection": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    { 
+                        "type": "text", 
+                        "content": "Value" 
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "range" },
+            "type": "layout",
+            "tags": ["choice-selection"],
+            "projection": {
+                "type": "stack",
+                "orientation": "horizontal",
+                "disposition": [
+                    { 
+                        "type": "attribute", 
+                        "name": "min"
+                    },
+                    { 
+                        "type": "attribute", 
+                        "name": "max"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "range" },
+            "type": "layout",
+            "tags": ["choice"],
+            "projection": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    { 
+                        "type": "text", 
+                        "content": "Range" 
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "range value" },
+            "type": "layout",
+            "tags": [],
+            "projection": {
+                "type": "wrap",
+                "disposition": [
+                    { 
+                        "type": "attribute", 
+                        "name": "value"
+                    },
+                    { 
+                        "type": "attribute", 
+                        "name": "included"
+                    }
                 ]
             }
         },
@@ -693,8 +906,16 @@
                         "layout": {
                             "type": "wrap",
                             "disposition": [
-                                { "type": "attribute", "name": "min", "tag": "min-number" },
-                                { "type": "attribute", "name": "max", "tag": "max-number" }
+                                { 
+                                    "type": "attribute", 
+                                    "name": "min", 
+                                    "tag": "min-number" 
+                                },
+                                { 
+                                    "type": "attribute", 
+                                    "name": "max", 
+                                    "tag": "max-number" 
+                                }
                             ]
                         }
                     }
@@ -709,7 +930,10 @@
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { "type": "text", "content": "Number" }
+                    { 
+                        "type": "text", 
+                        "content": "Number" 
+                    }
                 ]
             }
         },
@@ -730,7 +954,10 @@
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { "type": "text", "content": "Boolean" }
+                    { 
+                        "type": "text", 
+                        "content": "Boolean" 
+                    }
                 ]
             }
         },
@@ -749,7 +976,10 @@
                         },
                         "content": "Reference target"
                     },
-                    { "type": "attribute", "name": "accept" }
+                    { 
+                        "type": "attribute", 
+                        "name": "accept" 
+                    }
                 ]
             }
         },
@@ -761,7 +991,10 @@
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { "type": "text", "content": "Reference" }
+                    { 
+                        "type": "text", 
+                        "content": "Reference" 
+                    }
                 ]
             }
         },
@@ -780,7 +1013,10 @@
                         },
                         "content": "Set target"
                     },
-                    { "type": "attribute", "name": "accept" },
+                    { 
+                        "type": "attribute", 
+                        "name": "accept" 
+                    },
                     {
                         "type": "text",
                         "style": {
@@ -793,8 +1029,16 @@
                         "layout": {
                             "type": "wrap",
                             "disposition": [
-                                { "type": "attribute", "name": "min", "tag": "min-number" },
-                                { "type": "attribute", "name": "max", "tag": "max-number" }
+                                { 
+                                    "type": "attribute", 
+                                    "name": "min", 
+                                    "tag": "min-number" 
+                                },
+                                { 
+                                    "type": "attribute", 
+                                    "name": "max", 
+                                    "tag": "max-number" 
+                                }
                             ]
                         }
                     }
@@ -809,7 +1053,10 @@
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { "type": "text", "content": "Set" }
+                    { 
+                        "type": "text", 
+                        "content": "Set" 
+                    }
                 ]
             }
         },
@@ -836,12 +1083,117 @@
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { "type": "text", "content": "Custom" }
+                    { 
+                        "type": "text", 
+                        "content": "Custom" 
+                    }
                 ]
             }
         },
 
 
+
+        {
+            "concept": { "name": "boolean" },
+            "type": "field",
+            "tags": [],
+            "projection": {   
+                "type": "binary"
+            }
+        },
+        {
+            "concept": { "name": "boolean" },
+            "type": "field",
+            "tags": ["required-boolean"],
+            "projection": {
+                "type": "binary",
+                "label": false
+            }
+        },
+
+        {
+            "concept": { "name": "number" },
+            "type": "field",
+            "tags": [],
+            "projection": {
+                "type": "text"
+            }
+        },
+        {
+            "concept": { "name": "number" },
+            "type": "field",
+            "tags": ["min-number", "max-number"],
+            "projection": {
+                "type": "text",
+                "style": {
+                    "css": ["textfield--number"]
+                }
+            }
+        },
+
+        {
+            "concept": { "name": "reference" },
+            "type": "field",
+            "tags": [],
+            "projection": {
+                "type": "link"
+            }
+        },
+        {
+            "concept": { "name": "reference" },
+            "type": "field",
+            "tags": ["prototype-reference"],
+            "projection": {
+                "type": "link",
+                "placeholder": "Select a prototype",
+                "choice": {
+                    "style": {
+                        "css": ["link--prototype__choices"]
+                    },
+                    "option": {
+                        "style": {
+                            "css": ["link--prototype__choice"]
+                        }
+                    }
+                },
+                "style": {
+                    "css": ["link--prototype"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "reference" },
+            "type": "field",
+            "tags": ["concept-reference"],
+            "projection": {
+                "type": "link",
+                "placeholder": "Select a concept",
+                "choice": {
+                    "style": {
+                        "css": ["link--concept__choices"]
+                    },
+                    "option": {
+                        "style": {
+                            "css": ["link--concept__choice"]
+                        }
+                    }
+                },
+                "style": {
+                    "css": ["link--concept"]
+                }
+            }
+        },
+
+        {
+            "concept": { "name": "prototype" },
+            "type": "field",
+            "tags": [],
+            "projection": {
+                "type": "choice"
+            }
+        },
+
+        
         {
             "concept": { "name": "set" },
             "type": "field",
@@ -863,10 +1215,13 @@
                         "layout": {
                             "type": "wrap",
                             "style": {
-                                "css": "heading"
+                                "css": ["heading"]
                             },
                             "disposition": [
-                                { "type": "text", "content": "Attributes" }
+                                { 
+                                    "type": "text", 
+                                    "content": "Attributes" 
+                                }
                             ]
                         }
                     }
@@ -885,7 +1240,7 @@
                 "type": "list",
                 "orientation": "horizontal",
                 "style": {
-                    "css": "attribute-list-container"
+                    "css": ["attribute-list-container"]
                 },
                 "before": {
                     "projection": {
@@ -893,10 +1248,13 @@
                         "layout": {
                             "type": "wrap",
                             "style": {
-                                "css": "heading"
+                                "css": ["heading"]
                             },
                             "disposition": [
-                                { "type": "text", "content": "Attributes" }
+                                { 
+                                    "type": "text", 
+                                    "content": "Attributes" 
+                                }
                             ]
                         }
                     }
@@ -948,13 +1306,13 @@
                 "type": "list",
                 "orientation": "horizontal",
                 "style": {
-                    "css": "value-list-container"
+                    "css": ["value-list-container"]
                 },
                 "before": {
                     "projection": { 
                         "type": "text",
                         "style": {
-                            "css": "tag-list-title"
+                            "css": ["tag-list-title"]
                         },
                         "content": "Restricted values"
                     }
@@ -971,27 +1329,22 @@
                 },
                 "action": {
                     "add": {
-                        "projection": {
-                            "type": "layout",
-                            "layout": {
-                                "type": "wrap",
-                                "disposition": [
-                                    { "type": "text", "help": "Add a value", "content": "Add" }
-                                ]
+                        "projection": { 
+                            "type": "text", 
+                            "help": "Add a value", 
+                            "content": "Add",
+                            "style": {
+                                "css": ["css-list__btn-add"]
                             }
                         }
                     },
                     "remove": {
-                        "projection": {
-                            "type": "layout",
-                            "layout": {
-                                "type": "wrap",
-                                "style": {
-                                    "css": "css-list__btn-remove"
-                                },
-                                "disposition": [
-                                    { "type": "text", "help": "Remove value", "content": "" }
-                                ]
+                        "projection": { 
+                            "type": "text", 
+                            "help": "Remove value", 
+                            "content": "",
+                            "style": {
+                                "css": ["css-list__btn-remove"]
                             }
                         }
                     }
@@ -1017,14 +1370,9 @@
                 },
                 "action": {
                     "add": {
-                        "projection": {
-                            "type": "layout",
-                            "layout": {
-                                "type": "wrap",
-                                "disposition": [
-                                    { "type": "text", "content": "Add a value" }
-                                ]
-                            }
+                        "projection": { 
+                            "type": "text", 
+                            "content": "Add a value" 
                         }
                     }
                 }
@@ -1065,108 +1413,23 @@
                 "placeholder": "Description",
                 "multiline": true,
                 "style": {
-                    "css": "textfield--description"
+                    "css": ["textfield--description"]
                 }
             }
         },
-
         {
-            "concept": { "name": "boolean" },
+            "concept": { "name": "string" },
             "type": "field",
-            "tags": [],
-            "projection": {   
-                "type": "binary"
-            }
-        },
-        {
-            "concept": { "name": "boolean" },
-            "type": "field",
-            "tags": ["required-boolean"],
-            "projection": {
-                "type": "binary",
-                "label": false
-            }
-        },
-
-        {
-            "concept": { "name": "number" },
-            "type": "field",
-            "tags": [],
-            "projection": {
-                "type": "text"
-            }
-        },
-        {
-            "concept": { "name": "number" },
-            "type": "field",
-            "tags": ["min-number", "max-number"],
+            "tags": ["default-string"],
             "projection": {
                 "type": "text",
-                "style": {
-                    "css": "textfield--number"
-                }
-            }
-        },
-
-        {
-            "concept": { "name": "reference" },
-            "type": "field",
-            "tags": [],
-            "projection": {
-                "type": "link"
-            }
-        },
-        {
-            "concept": { "name": "reference" },
-            "type": "field",
-            "tags": ["prototype-reference"],
-            "projection": {
-                "type": "link",
-                "placeholder": "Select a prototype",
-                "choice": {
-                    "style": {
-                        "css": "link--prototype__choices"
-                    },
-                    "option": {
-                        "style": {
-                            "css": "link--prototype__choice"
-                        }
-                    }
+                "label": "Default value",
+                "input": {
+                    "placeholder": "default value"
                 },
                 "style": {
-                    "css": ["link--prototype"]
+                    "css": ["textfield--outlined"]
                 }
-            }
-        },
-        {
-            "concept": { "name": "reference" },
-            "type": "field",
-            "tags": ["concept-reference"],
-            "projection": {
-                "type": "link",
-                "placeholder": "Select a concept",
-                "choice": {
-                    "style": {
-                        "css": "link--concept__choices"
-                    },
-                    "option": {
-                        "style": {
-                            "css": "link--concept__choice"
-                        }
-                    }
-                },
-                "style": {
-                    "css": ["link--concept"]
-                }
-            }
-        },
-
-        {
-            "concept": { "name": "prototype" },
-            "type": "field",
-            "tags": [],
-            "projection": {
-                "type": "choice"
             }
         }
     ],

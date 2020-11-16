@@ -1,7 +1,7 @@
 import {
     createDocFragment, createSpan, createDiv, createI, createUnorderedList,
-    createTextArea, createLabel, createInput, createListItem, createButton,
-    findAncestor, removeChildren, isHTMLElement, isNullOrWhitespace, isEmpty, valOrDefault,
+    createTextArea, createInput, createListItem, createButton, findAncestor,
+    removeChildren, isHTMLElement, isNullOrWhitespace, isEmpty, valOrDefault, hasOwn,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
@@ -11,17 +11,7 @@ import { Field } from "./field.js";
 
 const isInputOrTextarea = (element) => isHTMLElement(element, ["input", "textarea"]);
 
-function resolveValue(object) {
-    if (object.object === "concept") {
-        if (object.hasValue()) {
-            return object.getValue();
-        }
 
-        return "";
-    }
-
-    return object;
-}
 
 function createMessageElement() {
     if (!isHTMLElement(this.messageElement)) {
@@ -107,9 +97,9 @@ function createNotificationMessage(type, message) {
  * Resolves the value of the placeholder
  * @returns {string}
  */
-function resolvePlaceholder() {
-    if (this.schema.placeholder) {
-        return this.schema.placeholder;
+function resolvePlaceholder(value) {
+    if (value) {
+        return value;
     }
 
     if (this.source.object === "concept") {
@@ -117,6 +107,18 @@ function resolvePlaceholder() {
     }
 
     return "Enter a value";
+}
+
+/**
+ * Resolves the value
+ * @returns {string}
+ */
+function resolveValue(object) {
+    if (object.type === "property") {
+        return this.getProperty(object.value);
+    }
+
+    return object;
 }
 
 /**
@@ -139,25 +141,26 @@ function getItemValue(item) {
 const BaseTextField = {
     /** @type {HTMLInputElement|HTMLTextAreaElement} */
     input: null,
-    /** @type {HTMLLabelElement} */
-    label: null,
     /** @type {HTMLElement} */
     choice: null,
-    /** @type {HTMLElement} */
-    toolbar: null,
-    /** @type {HTMLElement} */
-    body: null,
+
     /** @type {string} */
     value: "",
     /** @type {string} */
-    placeholder: "Enter a value",
+    placeholder: null,
     /** @type {boolean} */
     multiline: false,
 
     init() {
         this.source.register(this);
-        this.placeholder = resolvePlaceholder.call(this);
         this.multiline = valOrDefault(this.schema.multiline, false);
+
+        if (!hasOwn(this.schema, "choice")) {
+            this.schema.choice = {};
+        }
+        if (!hasOwn(this.schema, "input")) {
+            this.schema.input = {};
+        }
 
         return this;
     },
@@ -182,9 +185,10 @@ const BaseTextField = {
 
     focusIn() {
         this.focused = true;
-        this.value = this.input.textContent;
+        this.value = this.getValue();
         this.element.classList.add("active");
         this.element.classList.add("focus");
+        this.input.focus();
 
         return this;
     },
@@ -288,15 +292,14 @@ const BaseTextField = {
 
         return this;
     },
-    
+
     refresh() {
         if (this.hasValue()) {
-            this.input.classList.remove("empty");
             this.element.classList.remove("empty");
         } else {
-            this.input.classList.add("empty");
             this.element.classList.add("empty");
         }
+        this.element.dataset.value = this.value;
 
         if (this.hasChanges()) {
             this.statusElement.classList.add("change");
@@ -320,21 +323,23 @@ const BaseTextField = {
         if (this.choice) {
             this.filterChoice(this.getValue());
         }
-    },  
+    },
     render() {
         const fragment = createDocFragment();
 
-        const { before = {}, label, input = {}, after = {} } = this.schema;
+        const { before = {}, input, after = {} } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createDiv({
                 id: this.id,
                 class: ["field", "field--textbox"],
-                tabindex: -1,
                 dataset: {
                     nature: "field",
                     view: "text",
                     id: this.id,
+                    disabled: this.disabled,
+                    readonly: this.readonly,
+                    value: "",
                 }
             });
 
@@ -378,31 +383,27 @@ const BaseTextField = {
             fragment.appendChild(content);
         }
 
-        if (label) {
-            const { style, value } = label;
-
-            this.label = createLabel({
-                class: ["field--textbox__label"],
-                dataset: {
-                    nature: "field-component",
-                    view: "text",
-                    id: this.id,
-                }
-            }, value);
-
-            StyleHandler(this.label, style);
-
-            fragment.appendChild(this.label);
-        }
 
         if (!isHTMLElement(this.input)) {
-            const { style, type } = input;
+            const { placeholder, style, type } = input;
 
-            if (this.multiline) {
+            let inputPlaceholder = resolvePlaceholder.call(this, placeholder);
+
+            if (this.readonly) {
+                this.input = createSpan({
+                    class: ["field--textbox__input", "readonly"],
+                    tabindex: 0,
+                    dataset: {
+                        nature: "field-component",
+                        view: "text",
+                        id: this.id,
+                    }
+                });
+            } else if (this.multiline) {
                 this.input = createTextArea({
                     class: ["field--textbox__input", "field--textbox__input--multiline"],
                     tabindex: 0,
-                    placeholder: this.placeholder,
+                    placeholder: inputPlaceholder,
                     dataset: {
                         nature: "field-component",
                         view: "text",
@@ -414,7 +415,7 @@ const BaseTextField = {
                     type: valOrDefault(type, "text"),
                     class: ["field--textbox__input"],
                     tabindex: 0,
-                    placeholder: this.placeholder,
+                    placeholder: inputPlaceholder,
                     dataset: {
                         nature: "field-component",
                         view: "text",
@@ -423,12 +424,15 @@ const BaseTextField = {
                 });
             }
 
-            if (this.readonly) {
-                this.input.classList.add("readonly");
+            if (this.disabled) {
+                this.element.classList.add("disabled");
                 this.input.disabled = true;
             }
 
-            let value = resolveValue(this.source);
+            let value = "";
+            if (this.source.hasValue()) {
+                value = this.source.getValue();
+            }
 
             if (!isNullOrWhitespace(value)) {
                 this.input.textContent = value;

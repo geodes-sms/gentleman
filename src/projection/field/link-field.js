@@ -146,7 +146,7 @@ function resolvePlaceholder() {
     }
 
     if (this.source.object === "concept") {
-        return `Link to a '${this.source.accept}' concept`;
+        return `Link to a '${this.source.getAcceptedValues()}' concept`;
     }
 
     return "Link to an element";

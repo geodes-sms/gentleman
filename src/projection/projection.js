@@ -15,7 +15,7 @@ export const ProjectionFactory = {
         var projection = Object.create(Projection, {
             id: { value: valOrDefault(schema.id, nextId()) },
             model: { value: model },
-            schema: { value: schema },
+            schema: { value: schema, writable: true },
             environment: { value: env },
         });
 

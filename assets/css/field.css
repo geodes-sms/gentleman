@@ -15,7 +15,6 @@
     
         .field.active.has-toolbar { 
             padding: 30px 12px 8px;
-            background-color: #f0f0f0;
             border-radius: 6px;
             outline: none;
         }
@@ -168,7 +167,6 @@
     font-size: 1em; font-family: Arial, Helvetica, sans-serif;
     color: inherit;
     border: 0 none;
-    border-top-left-radius: 2px; border-top-right-radius: 2px;
     background-color: transparent;
     outline: none;
     resize: none;
@@ -178,7 +176,7 @@
         border-color: #dd4124!important;
         background-color: rgba(191, 25, 50, 0.2)!important;
     }
-    .field--textbox__input.empty {
+    .field--textbox__input:empty {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

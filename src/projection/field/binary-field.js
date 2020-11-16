@@ -154,7 +154,7 @@ const BaseBinaryField = {
     render() {
         const fragment = createDocFragment();
 
-        const { before = {}, input, after = {} } = this.schema;
+        const { before = {}, input = {}, after = {} } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createFieldElement(this.id);
@@ -197,7 +197,7 @@ const BaseBinaryField = {
                 this.input.disabled = true;
             }
 
-            const { before, projection, after, style } = valOrDefault(input, {});
+            const { before, projection, after, style } = input;
 
             if (this.label) {
                 const { style, projection, value } = this.label;
@@ -214,7 +214,7 @@ const BaseBinaryField = {
                             view: "binary",
                             id: this.id,
                         }
-                    }, value || this.label);
+                    }, value || this.source.getAlias());
                 }
 
                 let labelElement = createLabel({
@@ -229,9 +229,9 @@ const BaseBinaryField = {
                 StyleHandler(labelElement, style);
                 fragment.appendChild(labelElement);
             } else {
-                StyleHandler(this.input, style);
                 fragment.appendChild(this.input);
             }
+            StyleHandler(this.input, style);
         }
 
         if (after.projection) {
@@ -358,6 +358,12 @@ const BaseBinaryField = {
             this.statusElement.classList.add("change");
         } else {
             this.statusElement.classList.remove("change");
+        }
+
+        if (this.input.checked) {
+            this.element.dataset.state = "on";
+        } else {
+            this.element.dataset.state = "off";
         }
 
         removeChildren(this.statusElement);

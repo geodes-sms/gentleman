@@ -37,6 +37,8 @@ const _Concept = {
     action: null,
     /** Concept shadow list */
     shadows: null,
+    /** Concept value history list */
+    history: null,
     kind: "concept",
 
     init(args = {}) {
@@ -74,7 +76,7 @@ const _Concept = {
     },
 
     getAcceptedValues() {
-        if (!isIterable(this.accept) && isNullOrUndefined(this.accept.type)) {
+        if (!isIterable(this.accept) && isNullOrUndefined(this.accept.name)) {
             return "";
         }
 
@@ -82,8 +84,8 @@ const _Concept = {
             return this.accept;
         }
 
-        if (hasOwn(this.accept, "type")) {
-            return this.accept.type;
+        if (hasOwn(this.accept, "name")) {
+            return this.accept.name;
         }
 
         if (Array.isArray(this.accept)) {
@@ -101,6 +103,16 @@ const _Concept = {
     },
     getStructure() {
         return [...this.listAttributes()];
+    },
+    /**
+     * Gets the value of a property
+     * @param {string} prop 
+     */
+    getProperty(prop) {
+        if (prop === "name") {
+            return this.getName();
+        }
+        return this.schema[prop];
     },
 
     /**
@@ -158,7 +170,7 @@ const _Concept = {
         var prototype = this.model.getConceptSchema(this.schema.prototype);
 
         while (!isNullOrUndefined(prototype)) {
-            if(prototype.name === name) {
+            if (prototype.name === name) {
                 return true;
             }
 
@@ -277,7 +289,7 @@ const _Concept = {
         this.attributes.forEach(attr => {
             Object.assign(output, attr.toString());
         });
-        
+
         return output;
     },
 };

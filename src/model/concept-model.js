@@ -1,4 +1,4 @@
-import { isString, isObject, isNullOrUndefined, isEmpty, hasOwn, isIterable } from "zenkai";
+import { isString, isObject, isNullOrUndefined, isEmpty, hasOwn, isIterable, valOrDefault, isNullOrWhitespace } from "zenkai";
 import { deepCopy } from "@utils/index.js";
 import { ConceptFactory } from "./concept/factory.js";
 import { ObserverHandler } from "./structure/index.js";
@@ -62,7 +62,6 @@ export const ConceptModel = {
      */
     createConcept(name, args) {
         const schema = this.getCompleteModelConcept(name);
-
 
         var concept = ConceptFactory.createConcept(this, schema, args);
 
@@ -210,11 +209,27 @@ export const ConceptModel = {
      * Gets a list of concepts based on a prototype
      * @param {string} prototype 
      */
-    getConcreteConcepts(prototype) {
+    getConcreteConcepts($prototype) {
+        const hasPrototype = (concept) => {
+            var prototype = concept.prototype;
+
+            while (!isNullOrUndefined(prototype)) {
+                if (prototype === $prototype) {
+                    return true;
+                }
+
+                const schema = valOrDefault(getSchema(this.schema, prototype), {});
+
+                prototype = schema['prototype'];
+            }
+
+            return false;
+        };
+
         const concepts = this.schema.filter(concept => concept.nature === "concrete");
 
-        if (prototype) {
-            return concepts.filter(concept => concept.prototype === prototype);
+        if ($prototype) {
+            return concepts.filter(concept => hasPrototype(concept));
         }
 
         return concepts;
@@ -361,6 +376,93 @@ export const ConceptModel = {
 
         return JSON.stringify(projections);
     },
+    buildAProjection(concept) {
+        const projections = [
+            {
+                "concept": { "name": "set" },
+                "type": "field",
+                "tags": [],
+                "projection": {
+                    "type": "list"
+                }
+            },
+            {
+                "concept": { "name": "string" },
+                "type": "field",
+                "tags": [],
+                "projection": {
+                    "type": "text"
+                }
+            },
+            {
+                "concept": { "name": "boolean" },
+                "type": "field",
+                "tags": [],
+                "projection": {
+                    "type": "binary"
+                }
+            },
+            {
+                "concept": { "name": "number" },
+                "type": "field",
+                "tags": [],
+                "projection": {
+                    "type": "text"
+                }
+            },
+            {
+                "concept": { "name": "reference" },
+                "type": "field",
+                "tags": [],
+                "projection": {
+                    "type": "link"
+                }
+            },
+            {
+                "concept": { "name": "prototype" },
+                "type": "field",
+                "tags": [],
+                "projection": {
+                    "type": "choice"
+                }
+            }
+        ];
+
+        const ProjectionType = {
+            "layout projection": "layout",
+            "field projection": "field",
+            "template projection": "template",
+        };
+
+        const ProjectionHandler = {
+            "layout projection": (concept) => buildLayout(getValue(concept, "layout")),
+            "field projection": (concept) => buildField(getValue(concept, "field")),
+            "template projection": (concept) => buildTemplate(getValue(concept, "template")),
+        };
+
+        const SCHEMA_CONCEPT = buildConcept(getAttr(concept, "concept"));
+
+        if (isNullOrWhitespace(SCHEMA_CONCEPT.name)) {
+            throw new Error("Missing concept's name");
+        }
+
+        let schema = {
+            "id": concept.id,
+            "concept": SCHEMA_CONCEPT,
+            "type": ProjectionType[concept.name],
+            "global": getValue(concept, "global"),
+            "tags": concept.isAttributeCreated("tags") ? getAttr(concept, 'tags').build() : [],
+            "projection": ProjectionHandler[concept.name](concept),
+        };
+
+        if (concept.name === "template projection") {
+            schema.name = getName(concept);
+        }
+
+        projections.push(schema);
+
+        return JSON.stringify(projections);
+    },
     export() {
         const values = [];
 
@@ -481,22 +583,42 @@ function buildProperty(properties) {
 function getConceptBaseSchema(protoName) {
     var prototype = protoName;
 
-    const baseSchema = {
-        attribute: [],
+    const attributes = [];
+
+    const appendAttributes = ($attributes) => {
+        if (!Array.isArray($attributes)) {
+            return;
+        }
+
+        $attributes.forEach($attr => {
+            const attribute = attributes.find((attr => attr.name === $attr.name));
+
+            if (isNullOrUndefined(attribute)) {
+                attributes.push($attr);
+                return;
+            }
+
+            if ($attr.required) {
+                attribute.required = $attr.required;
+            }
+
+            if ($attr.description) {
+                attribute.required = $attr.description;
+            }
+        });
     };
 
     while (!isNullOrUndefined(prototype)) {
-        let schema = this.getConceptSchema(prototype);
+        const schema = valOrDefault(this.getConceptSchema(prototype), {});
 
-        if (schema) {
-            baseSchema.attribute.push(...schema.attribute);
-            prototype = schema['prototype'];
-        } else {
-            prototype = null;
-        }
+        appendAttributes(schema.attribute);
+
+        prototype = schema['prototype'];
     }
 
-    return baseSchema;
+    return {
+        attribute: attributes,
+    };
 }
 
 const primitives = [
@@ -512,6 +634,23 @@ function getSchema(schema, name) {
 
     if (isNullOrUndefined(result)) {
         result = primitives.find(concept => concept.name === name);
+    }
+
+    return result;
+}
+
+function buildConcept(concept) {
+    const result = {};
+
+    const PROP_NAME = "name";
+    const PROP_PROTOTYPE = "prototype";
+
+    if (concept.isAttributeCreated(PROP_NAME)) {
+        result[PROP_NAME] = getValue(concept, PROP_NAME);
+    }
+
+    if (concept.isAttributeCreated(PROP_PROTOTYPE)) {
+        result[PROP_PROTOTYPE] = getValue(concept, PROP_PROTOTYPE);
     }
 
     return result;
