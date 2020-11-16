@@ -1,12 +1,11 @@
 import {
-    createDocFragment, createSpan, createDiv, createI, createInput,
-    isHTMLElement, removeChildren, isDerivedOf, isEmpty, valOrDefault, createLabel, hasOwn,
+    createDocFragment, createSpan, createDiv, createI, createInput, createLabel,
+    removeChildren, isHTMLElement, valOrDefault, hasOwn,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
-import { Concept } from "@concept/index.js";
-import { Field } from "./field.js";
 import { StyleHandler } from "../style-handler.js";
-import { ProjectionManager } from "../projection.js";
+import { ContentHandler } from "./../content-handler.js";
+import { Field } from "./field.js";
 
 
 /**
@@ -16,7 +15,7 @@ import { ProjectionManager } from "../projection.js";
 function createFieldElement(id) {
     var element = createDiv({
         id: id,
-        class: ["field", "field--checkbox"],
+        class: ["field", "field--binary"],
         tabindex: -1,
         dataset: {
             nature: "field",
@@ -70,7 +69,7 @@ function createFieldInput(id) {
     /** @type {HTMLElement} */
     var input = createInput({
         type: "checkbox",
-        class: ["field--checkbox__input"],
+        class: ["field--binary__input"],
         tabindex: 0,
         dataset: {
             nature: "field-component",
@@ -110,7 +109,7 @@ function createNotificationMessage(type, message) {
  * @param {*} object 
  */
 function resolveValue(object) {
-    if (isDerivedOf(object, Concept)) {
+    if (object.object === "concept") {
         if (object.hasValue()) {
             return object.getValue();
         }
@@ -128,7 +127,7 @@ function resolveLabel() {
         return this.schema.label;
     }
 
-    if (isDerivedOf(this.source, Concept)) {
+    if (this.source.object === "concept") {
         return this.source.getAlias();
     }
 
@@ -155,7 +154,7 @@ const BaseBinaryField = {
     render() {
         const fragment = createDocFragment();
 
-        const { before, input, after } = this.schema;
+        const { before = {}, input = {}, after = {} } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createFieldElement(this.id);
@@ -179,10 +178,13 @@ const BaseBinaryField = {
             this.notification.appendChild(this.statusElement);
         }
 
-        if (before) {
-            let projection = ProjectionManager.createProjection(before.projection, this.source, this.editor).init();
-            fragment.appendChild(projection.render());
+        if (before.projection) {
+            let content = ContentHandler.call(this.projection, before.projection);
+            content.classList.add("field--binary__before");
+
+            fragment.appendChild(content);
         }
+
 
         if (!isHTMLElement(this.input)) {
             this.input = createFieldInput(this.id);
@@ -195,15 +197,15 @@ const BaseBinaryField = {
                 this.input.disabled = true;
             }
 
-            const { before, projection, after, style } = valOrDefault(input, {});
+            const { before, projection, after, style } = input;
 
             if (this.label) {
                 const { style, projection, value } = this.label;
 
                 let labelText = null;
-                
+
                 if (projection) {
-                    labelText = ProjectionManager.createProjection(this.label.projection, this.source, this.editor).init().render();
+                    labelText = ContentHandler.call(this.label.projection, this.source);
                 } else {
                     labelText = createSpan({
                         class: ["field--checkbox__label-text"],
@@ -212,7 +214,7 @@ const BaseBinaryField = {
                             view: "binary",
                             id: this.id,
                         }
-                    }, value || this.label);
+                    }, value || this.source.getAlias());
                 }
 
                 let labelElement = createLabel({
@@ -227,14 +229,16 @@ const BaseBinaryField = {
                 StyleHandler(labelElement, style);
                 fragment.appendChild(labelElement);
             } else {
-                StyleHandler(this.input, style);
                 fragment.appendChild(this.input);
             }
+            StyleHandler(this.input, style);
         }
 
-        if (after) {
-            let projection = ProjectionManager.createProjection(after.projection, this.source, this.editor).init();
-            fragment.appendChild(projection.render());
+        if (after.projection) {
+            let content = ContentHandler.call(this, after.projection);
+            content.classList.add("field--binary__after");
+
+            fragment.appendChild(content);
         }
 
         if (fragment.hasChildNodes()) {
@@ -322,13 +326,13 @@ const BaseBinaryField = {
         var response = this.source.setValue(value);
 
         if (!response.success) {
-            this.editor.notify(response.message);
+            this.environment.notify(response.message);
             this.errors.push(...response.errors);
         } else {
             this.errors = [];
         }
 
-        this.attached.filter(element => !element.active).forEach(element => element.hide());
+        // this.attached.filter(element => !element.active).forEach(element => element.hide());
 
         this.input.checked = value;
         this.value = value;
@@ -354,6 +358,12 @@ const BaseBinaryField = {
             this.statusElement.classList.add("change");
         } else {
             this.statusElement.classList.remove("change");
+        }
+
+        if (this.input.checked) {
+            this.element.dataset.state = "on";
+        } else {
+            this.element.dataset.state = "off";
         }
 
         removeChildren(this.statusElement);
@@ -403,9 +413,10 @@ const BaseBinaryField = {
     enterHandler(target) {
         this.setValue(!this.input.checked);
     },
+
     bindEvents() {
         this.element.addEventListener('change', (event) => {
-            this.setValue(this.input.checked);
+            this.setValue(this.getValue());
         });
     },
 };

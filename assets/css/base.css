@@ -25,6 +25,7 @@ th { text-align: center; }
     background: none;
     font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
     text-decoration: none; text-align: center;
+    cursor: default;
 }
 
 [contenteditable=true] { outline: none; }
@@ -69,8 +70,8 @@ th { text-align: center; }
 
 /* width */
 ::-webkit-scrollbar {
-    width: calc(2px + 1%);
-    max-width: 10px;
+    width: calc(2px + 1%); max-width: 10px;
+    height: calc(2px + 1%); max-height: 10px;
 }
   
 /* Track */
@@ -91,4 +92,16 @@ th { text-align: center; }
 /* Handle on active */
 ::-webkit-scrollbar-thumb:active {
     background: #808080;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }

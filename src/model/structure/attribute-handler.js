@@ -1,4 +1,4 @@
-import { isNullOrUndefined, isEmpty, valOrDefault, hasOwn, isNullOrWhitespace, cloneObject } from "zenkai";
+import { isNullOrUndefined, isEmpty, valOrDefault, isNullOrWhitespace, cloneObject } from "zenkai";
 import { Attribute } from "./attribute";
 
 
@@ -48,7 +48,7 @@ export const AttributeHandler = {
             throw new Error(`Attribute '${name}' does not exist`);
         }
 
-        return cloneObject(this.attributeSchema[name]);
+        return cloneObject(this.attributeSchema.find(attr => attr.name === name));
     },
     /**
      * Returns an attribute with the given name
@@ -92,12 +92,9 @@ export const AttributeHandler = {
             throw new Error(`Attribute not found: The concept ${this.name} does not contain an attribute named ${name}`);
         }
 
-        const schema = Object.assign(this.attributeSchema[name], {
-            name: name
-        });
+        const schema = this.attributeSchema.find(attr => attr.name === name);
 
         var attribute = Attribute.create(this, schema).init(value);
-        // attribute.id = this.id;
 
         this.addAttribute(attribute);
 
@@ -125,7 +122,7 @@ export const AttributeHandler = {
      * @returns {boolean}
      */
     hasAttributes() {
-        return !isEmpty(Object.keys(this.attributeSchema)) || !isEmpty(this.attributes);
+        return !isEmpty(this.attributeSchema) || !isEmpty(this.attributes);
     },
     /**
      * Returns a value indicating whether the concept has an attribute
@@ -133,7 +130,7 @@ export const AttributeHandler = {
      * @returns {boolean}
      */
     hasAttribute(name) {
-        return hasOwn(this.attributeSchema, name);
+        return this.attributeSchema.findIndex(attr => attr.name === name) !== -1;
     },
     /**
      * Returns a value indicating whether the attribute is required
@@ -141,7 +138,9 @@ export const AttributeHandler = {
      * @returns {boolean}
      */
     isAttributeRequired(name) {
-        return valOrDefault(this.attributeSchema[name].required, true);
+        const attribute = this.attributeSchema.find(attr => attr.name === name);
+
+        return valOrDefault(attribute.required, true);
     },
     /**
      * Returns a value indicating whether the attribute has been created
@@ -151,38 +150,21 @@ export const AttributeHandler = {
     isAttributeCreated(name) {
         return this.attributes._created.has(name);
     },
-    getOptionalAttributes() {
-        if (isNullOrUndefined(this.attributeSchema)) {
-            return [];
-        }
-
-        var optionalAttributes = [];
-
-        for (const attrName in this.attributeSchema) {
-            if (!this.isAttributeRequired(attrName) && !this.isAttributeCreated(attrName)) {
-                optionalAttributes.push(attrName);
-            }
-        }
-
-        return optionalAttributes;
-    },
     listAttributes() {
         const attributes = [];
 
-        for (const name in this.attributeSchema) {
-            let attribute = this.attributeSchema[name];
-
+        this.attributeSchema.forEach(attribute => {
             attributes.push({
                 type: "attribute",
-                name: name,
-                alias: attribute['alias'],
-                description: attribute['description'],
-                target: attribute['target'],
-                accept: attribute['accept'],
+                name: attribute["name"],
+                alias: attribute["alias"],
+                description: attribute["description"],
+                target: attribute["target"],
+                accept: attribute["accept"],
                 required: this.isAttributeRequired(name),
                 created: this.isAttributeCreated(name)
             });
-        }
+        });
 
         return attributes;
     },

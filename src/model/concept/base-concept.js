@@ -34,15 +34,28 @@ const _BaseConcept  = {
                 case "attribute":
                     this.createAttribute(name, element);
                     break;
-                case "component":
-                    this.createComponent(name, element);
-                    break;
                 default:
                     break;
             }
         }
 
         return true;
+    },
+
+    build() {
+        const ConceptNature = {
+            "concrete_concept": "concrete",
+            "prototype_concept": "prototype",
+        };
+
+        // let schema = {
+        //     "name": getName(concept),
+        //     "nature": ConceptNature[concept.name],
+        //     "prototype": concept.isAttributeCreated("prototype") ? getValue(concept, 'prototype') : null,
+        //     "id": concept.id,
+        //     "attribute": concept.isAttributeCreated("attributes") ? buildAttribute(getValue(concept, 'attributes')) : null,
+        //     "property": concept.isAttributeCreated("properties") ? buildProperty(getValue(concept, 'properties')) : null,
+        // };
     }
 };
 

@@ -1,0 +1,473 @@
+{
+    "concept": [
+        {
+            "name": "person",
+            "nature": "prototype",
+            "attribute": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string",
+                        "min": 2
+                    },
+                    "required": true
+                },
+                {
+                    "name": "age",
+                    "target": {
+                        "name": "number",
+                        "min": 18
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "name": "speaker",
+            "nature": "concrete",
+            "prototype": "person",
+            "attribute": [
+                {
+                    "name": "title",
+                    "target": {
+                        "name": "string",
+                        "values": ["Professor", "Student", "Professional"]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "talk",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "talk"
+                        }
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "name": "talk",
+            "nature": "concrete",
+            "attribute": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string",
+                        "min": 2
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "name": "conference",
+            "nature": "concrete",
+            "attribute": [
+                {
+                    "name": "speakers",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "speaker"
+                        }
+                    },
+                    "required": true
+                },
+                {
+                    "name": "talks",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "talk"
+                        }
+                    },
+                    "required": true
+                }
+            ]
+        }
+    ],
+
+
+    "projection": [
+        {
+            "concept": {
+                "name": "set"
+            },
+            "type": "field",
+            "tags": [],
+            "projection": {
+                "type": "list",
+                "list": {}
+            }
+        },
+        {
+            "concept": {
+                "name": "string"
+            },
+            "type": "field",
+            "tags": [],
+            "projection": {
+                "type": "text"
+            }
+        },
+        {
+            "concept": {
+                "name": "boolean"
+            },
+            "type": "field",
+            "tags": [],
+            "projection": {
+                "type": "binary"
+            }
+        },
+        {
+            "concept": {
+                "name": "number"
+            },
+            "type": "field",
+            "tags": [],
+            "projection": {
+                "type": "text"
+            }
+        },
+        {
+            "concept": {
+                "name": "reference"
+            },
+            "type": "field",
+            "tags": [],
+            "projection": {
+                "type": "link"
+            }
+        },
+        {
+            "concept": {
+                "name": "prototype"
+            },
+            "type": "field",
+            "tags": [],
+            "projection": {
+                "type": "choice"
+            }
+        },
+        {
+            "concept": { "name": "conference" },
+            "type": "layout",
+            "global": true,
+            "tags": [],
+            "projection": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    { 
+                        "type": "text", 
+                        "style": {
+                            "css": "title"
+                        }, 
+                        "content": "Conference" 
+                    },
+                    { "type": "attribute", "name": "speakers", "tag": "speaker-set" },
+                    { "type": "attribute", "name": "talks", "tag": "talk-set" }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "speaker" },
+            "type": "layout",
+            "global": false,
+            "tags": ["list-item"],
+            "projection": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "text",
+                        "content": "Speaker",
+                        "style": {
+                            "css": ["speaker-title"]
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                { "type": "attribute", "name": "title" },
+                                { "type": "attribute", "name": "name" },
+                                { "type": "attribute", "name": "age" },
+                                { "type": "attribute", "name": "talk", "tag": "talk-reference" }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "speaker" },
+            "type": "layout",
+            "global": false,
+            "tags": [
+                "list-item"
+            ],
+            "projection": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "content": "DEFINE SPEAKER AS"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "title"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "content": "Full name: "
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "name"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "content": "Age:"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "age"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "talk" },
+            "type": "layout",
+            "global": false,
+            "tags": ["list-item"],
+            "projection": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "text",
+                        "content": "Talk",
+                        "style": {
+                            "css": ["speaker-title"]
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                { "type": "attribute", "name": "name" }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "talk" },
+            "type": "layout",
+            "tags": ["reference-value"],
+            "projection": {
+                "type": "wrap",
+                "disposition": [
+                    { "type": "attribute", "name": "name" }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "talk" },
+            "type": "layout",
+            "tags": ["reference-choice"],
+            "projection":  {
+                "type": "wrap",
+                "focusable": false,
+                "style": {
+                    "css": ["link-choice", "link-choice--prototype"]
+                },
+                "disposition": [
+                    { "type": "text", "content": "Talk" },
+                    { "type": "attribute", "name": "name" }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "reference" },
+            "type": "field",
+            "tags": ["talk-reference"],
+            "projection": {
+                "type": "link",
+                "placeholder": "Select a talk",
+                "choice": {
+                    "style": {
+                        "css": "link--concept__choices"
+                    },
+                    "option": {
+                        "style": {
+                            "css": "link--concept__choice"
+                        }
+                    }
+                },
+                "style": {
+                    "css": ["link--concept"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "type": "field",
+            "tags": ["speaker-set"],
+            "projection": {
+                "type": "list",
+                "orientation": "horizontal",
+                "style": {
+                    "css": "attribute-list-container"
+                },
+                "before": {
+                    "projection": {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "style": {
+                                "css": "heading"
+                            },
+                            "disposition": [
+                                { "type": "text", "content": "Speakers" }
+                            ]
+                        }
+                    }
+                },
+                "list": {
+                    "style": {
+                        "css": ["speaker-list"]
+                    },
+                    "item": {
+                        "style": {
+                            "css": ["speaker-list-item"]
+                        }
+                    }
+                },
+                "action": {
+                    "add": {
+                        "projection": {
+                            "type": "layout",
+                            "layout": {
+                                "type": "wrap",
+                                "disposition": [
+                                    { "type": "text", "help": "Add an speaker", "content": "Add" }
+                                ]
+                            }
+                        }
+                    },
+                    "remove": {
+                        "projection": {
+                            "type": "layout",
+                            "layout": {
+                                "type": "wrap",
+                                "style": {
+                                    "css": "speaker-list__btn-remove"
+                                },
+                                "disposition": [
+                                    { "type": "text", "help": "Remove speaker", "content": "Remove" }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "type": "field",
+            "tags": ["talk-set"],
+            "projection": {
+                "type": "list",
+                "orientation": "horizontal",
+                "style": {
+                    "css": "attribute-list-container"
+                },
+                "before": {
+                    "projection": {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "style": {
+                                "css": "heading"
+                            },
+                            "disposition": [
+                                { "type": "text", "content": "Talks" }
+                            ]
+                        }
+                    }
+                },
+                "list": {
+                    "style": {
+                        "css": ["talk-list"]
+                    },
+                    "item": {
+                        "style": {
+                            "css": ["talk-list-item"]
+                        }
+                    }
+                },
+                "action": {
+                    "add": {
+                        "projection": {
+                            "type": "layout",
+                            "layout": {
+                                "type": "wrap",
+                                "disposition": [
+                                    { "type": "text", "help": "Add a talk", "content": "Add" }
+                                ]
+                            }
+                        }
+                    },
+                    "remove": {
+                        "projection": {
+                            "type": "layout",
+                            "layout": {
+                                "type": "wrap",
+                                "style": {
+                                    "css": "talk-list__btn-remove"
+                                },
+                                "disposition": [
+                                    { "type": "text", "help": "Remove talk", "content": "Remove" }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

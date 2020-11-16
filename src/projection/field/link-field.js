@@ -1,13 +1,12 @@
 import {
-    createDocFragment, createUnorderedList, createListItem, createAnchor, createInput,
-    createSpan, createDiv, createI, removeChildren, isHTMLElement, findAncestor,
-    valOrDefault, isDerivedOf, isNullOrWhitespace, isNullOrUndefined, isEmpty
+    createDocFragment, createUnorderedList, createListItem, createInput, createI,
+    createSpan, createDiv, removeChildren, isHTMLElement, findAncestor,
+    isNullOrWhitespace, isNullOrUndefined, isEmpty, valOrDefault, hasOwn
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
-import { Concept } from "@concept/index.js";
-import { Field } from "./field.js";
 import { StyleHandler } from "./../style-handler.js";
-import { ProjectionManager } from "./../projection.js";
+import { ContentHandler } from "./../content-handler.js";
+import { Field } from "./field.js";
 
 
 function createMessageElement() {
@@ -49,10 +48,17 @@ function createElement() {
 /**
  * Get the choice element
  * @param {HTMLElement} element 
+ * @returns {HTMLElement}
  * @this {BaseLinkField}
  */
 function getItem(element) {
-    return element.parentElement === this.choices ? element : findAncestor(element, (el) => el.parentElement === this.choices, 3);
+    const isValid = (el) => el.parentElement === this.choices;
+
+    if (isValid(element)) {
+        return element;
+    }
+
+    return findAncestor(element, isValid, 5);
 }
 
 /**
@@ -64,33 +70,35 @@ function getItemValue(item) {
     return item.dataset.value;
 }
 
+/**
+ * Creates a choice item
+ * @param {*} object 
+ * @returns {HTMLElement}
+ */
 function createChoice(object) {
-    const { choice } = this.schema;
+    const { before = {}, style, after = {} } = valOrDefault(this.schema.choice.option, {});
 
-    var item = createListItem({
+    const item = createListItem({
         class: ["field--link__choice"],
         tabindex: 0,
         dataset: {
             nature: "field-component",
+            component: "choice",
             id: this.id,
             value: resolveChoiceValue(object)
         }
     });
 
-    var projection = null;
     var concept = null;
     if (object.type === "concept") {
         concept = object.value;
     }
 
-    if (choice) {
-        projection = ProjectionManager.createProjection(choice.projection, concept, this.editor).init();
-    } else {
-        let schema = concept.schema.projection.filter(projection => projection.tags && projection.tags.includes("choice"));
-        projection = ProjectionManager.createProjection(schema, concept, this.editor).init();
-    }
+    const projection = this.model.createProjection(concept, "reference-choice");
 
-    item.appendChild(projection.render());
+    item.appendChild(projection.init().render());
+
+    StyleHandler(item, style);
 
     return item;
 }
@@ -138,32 +146,40 @@ function resolvePlaceholder() {
     }
 
     if (this.source.object === "concept") {
-        return `Search for ${this.source.accept}`;
+        return `Link to a '${this.source.getAcceptedValues()}' concept`;
     }
 
-    return "Search for an element";
+    return "Link to an element";
 }
 
 
 const BaseLinkField = {
-    /** @type {string} */
-    placeholder: null,
     /** @type {HTMLElement} */
     input: null,
     /** @type {HTMLElement} */
+    selector: null,
+    /** @type {string} */
+    placeholder: null,
+    /** @type {HTMLElement} */
     choices: null,
+    /** @type {HTMLElement} */
+    selectionElement: null,
+
     value: null,
-    scope: null,
 
     init() {
         this.source.register(this);
         this.placeholder = resolvePlaceholder.call(this);
 
+        if (!hasOwn(this.schema, "choice")) {
+            this.schema.choice = {};
+        }
+
         return this;
     },
 
     render() {
-        const { before = {}, input, after = {} } = this.schema;
+        const { before = {}, input, choice, after = {} } = this.schema;
 
         const fragment = createDocFragment();
 
@@ -183,7 +199,8 @@ const BaseLinkField = {
                     id: this.id,
                 }
             });
-            fragment.appendChild(this.notification);
+
+            fragment.append(this.notification);
         }
 
         if (!isHTMLElement(this.statusElement)) {
@@ -195,7 +212,22 @@ const BaseLinkField = {
                     id: this.id,
                 }
             });
-            this.notification.appendChild(this.statusElement);
+            this.notification.append(this.statusElement);
+        }
+
+        if (!isHTMLElement(this.selector)) {
+            this.selector = createDiv({
+                class: ["field--link__placeholder"],
+                tabindex: -1,
+                dataset: {
+                    nature: "field-component",
+                    component: "selector",
+                    view: "link",
+                    id: this.id,
+                }
+            }, this.placeholder);
+
+            fragment.append(this.selector);
         }
 
         if (!isHTMLElement(this.input)) {
@@ -205,17 +237,37 @@ const BaseLinkField = {
                 class: ["field--link__input"],
                 dataset: {
                     nature: "field-component",
+                    component: "input",
                     view: "link",
                     id: this.id,
                 }
             });
+
             fragment.appendChild(this.input);
         }
 
         if (!isHTMLElement(this.choices)) {
+            const { style } = choice;
+
             this.choices = createUnorderedList({
                 class: ["bare-list", "field--link__choices"],
                 tabindex: -1,
+                dataset: {
+                    nature: "field-component",
+                    component: "choices",
+                    view: "link",
+                    id: this.id
+                }
+            });
+
+            StyleHandler(this.choices, style);
+
+            fragment.appendChild(this.choices);
+        }
+
+        if (!isHTMLElement(this.selectionElement)) {
+            this.selectionElement = createDiv({
+                class: ["field--link__selection"],
                 dataset: {
                     nature: "field-component",
                     view: "link",
@@ -223,25 +275,29 @@ const BaseLinkField = {
                 }
             });
 
-            fragment.appendChild(this.choices);
+            fragment.appendChild(this.selectionElement);
         }
 
         if (before.projection) {
-            let projection = ProjectionManager.createProjection(before.projection, this.source, this.editor).init();
-            fragment.appendChild(projection.render());
+            let content = ContentHandler.call(this, before.projection);
+            content.classList.add("field--link__before");
+
+            fragment.appendChild(content);
         }
 
         if (this.source.hasValue()) {
             let concept = this.getValue();
 
-            var projectionSchema = valOrDefault(this.value.projection, concept.schema.projection);
-            var projection = ProjectionManager.createProjection(projectionSchema, concept, this.editor).init();
-            this.element.appendChild(projection.render());
+            var projection = this.model.createProjection(concept);
+
+            this.element.appendChild(projection.init().render());
         }
 
         if (after.projection) {
-            let projection = ProjectionManager.createProjection(after.projection, this.source, this.editor).init();
-            fragment.appendChild(projection.render());
+            let content = ContentHandler.call(this, after.projection);
+            content.classList.add("field--link__after");
+
+            fragment.appendChild(content);
         }
 
         if (fragment.hasChildNodes()) {
@@ -263,14 +319,9 @@ const BaseLinkField = {
                     this.value = null;
                     this.clear();
                 } else {
-                    if (this.schema.value) {
-                        projection = ProjectionManager.createProjection(this.schema.value.projection, value, this.editor).init();
-                    } else {
-                        let schema = value.schema.projection.filter(projection => projection.tags && projection.tags.includes("choice"));
-                        projection = ProjectionManager.createProjection(schema, value, this.editor).init();
-                    }
+                    projection = this.model.createProjection(value, "reference-value").init();
 
-                    this.element.appendChild(projection.render());
+                    removeChildren(this.selectionElement).appendChild(projection.render());
                     this.value = value.id;
                 }
                 break;
@@ -307,7 +358,7 @@ const BaseLinkField = {
         var response = this.source.setValue(value);
 
         if (!response.success) {
-            this.editor.notify(response.message);
+            this.environment.notify(response.message);
             this.errors.push(...response.errors);
         } else {
             this.errors = [];
@@ -336,7 +387,8 @@ const BaseLinkField = {
             hide(this.input);
             hide(this.choices);
         } else {
-            show(this.input);
+            show(this.selector);
+            hide(this.input);
             show(this.choices);
         }
 
@@ -347,6 +399,7 @@ const BaseLinkField = {
         }
 
         removeChildren(this.statusElement);
+
         if (this.hasError) {
             this.element.classList.add("error");
             this.input.classList.add("error");
@@ -387,6 +440,30 @@ const BaseLinkField = {
 
         this.refresh();
         this.focused = false;
+    },
+    openChoice() {
+        removeChildren(this.choices);
+
+        createMessageElement.call(this);
+
+        removeChildren(this.messageElement);
+
+        const values = this.source.getCandidates();
+
+        if (isEmpty(values)) {
+            this.messageElement.appendChild(createNotificationMessage(NotificationType.INFO, "There are currently no valid references."));
+            show(this.messageElement);
+            return;
+        }
+
+        values.forEach(value => {
+            var choice = createChoice.call(this, value);
+            this.choices.appendChild(choice);
+        });
+
+
+        show(this.choices);
+        this.choices.focus();
     },
     filterChoice(query) {
         const { children } = this.choices;
@@ -440,7 +517,7 @@ const BaseLinkField = {
         }
 
         if (this.choices) {
-            hide(this.choice);
+            hide(this.choices);
         }
     },
     spaceHandler() {
@@ -463,19 +540,6 @@ const BaseLinkField = {
             this.choices.appendChild(choice);
         });
 
-        if (this.source.accept === "concept") {
-            ["string", "number", "set", "reference"].forEach(value => {
-                this.choices.appendChild(createListItem({
-                    class: ["field--link__choice"],
-                    tabindex: 0,
-                    dataset: {
-                        nature: "field-component",
-                        id: this.id,
-                        value: value
-                    }
-                }, value));
-            });
-        }
 
         show(this.choices);
         this.choices.focus();
@@ -502,22 +566,25 @@ const BaseLinkField = {
             this.input.focus();
         }
     },
+    /**
+     * Handles the `click` command
+     * @param {HTMLElement} target 
+     */
+    clickHandler(target) {
+        const { component } = target.dataset;
 
-    bindEvents() {
-        /**
-         * Get the choice element
-         * @param {HTMLElement} element 
-         */
-        const getItem = (element) => element.parentElement === this.choices ? element : findAncestor(element, (el) => el.parentElement === this.choices);
-
-        this.choices.addEventListener('click', (event) => {
-            const item = getItem(event.target);
+        if (component === "selector") {
+            this.openChoice();
+        } else {
+            const item = getItem.call(this, target);
 
             if (isHTMLElement(item)) {
                 this.selectChoice(item);
             }
-        });
+        }
+    },
 
+    bindEvents() {
         this.element.addEventListener('input', (event) => {
             this.filterChoice(this.input.value);
         });

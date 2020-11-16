@@ -5,7 +5,7 @@ import {
     capitalize, valOrDefault,
 } from 'zenkai';
 import { show, hide, Key, Events } from '@utils/index.js';
-import { ProjectionManager } from '@projection/index.js';
+import { ProjectionFactory } from '@projection/index.js';
 
 
 function getModelConcepts() {
@@ -220,7 +220,7 @@ export const Explorer = {
 
             getModelConcepts.call(this).forEach(concept => {
                 var projectionSchema = this.metamodel.getProjectionSchema(concept.name).filter((p) => p.environment === "explorer");
-                var projection = ProjectionManager.createProjection(projectionSchema, concept, this).init();
+                var projection = ProjectionFactory.createProjection(projectionSchema, concept, this).init();
                 var item = createListItem({
                     class: ["explorer-selector", "explorer-selector--concept"],
                     dataset: {

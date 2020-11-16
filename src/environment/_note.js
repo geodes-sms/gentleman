@@ -1,7 +1,7 @@
 import {
     createParagraph, createSpan, createAside, createAnchor, createDocFragment,
     createH3, createH4, createListItem, createLineBreak, createUnorderedList,
-    getElement, appendChildren, removeChildren, hasOwn, isString, isNullOrWhitespace
+    getElement, removeChildren, hasOwn, isString, isNullOrWhitespace
 } from 'zenkai';
 import { EventType, Events } from '@utils/index.js';
 
@@ -122,10 +122,10 @@ function updateNote(projection) {
     var error = createParagraph({ class: NOTE_SECTION });
     if (projection.hasError) {
         error.classList.add('note-error');
-        appendChildren(error, [
+        error.append(
             createSpan({ html: "You seem to have an error on that attribute:" }), BR(),
             createSpan({ html: projection.error })
-        ]);
+        );
         fragment.appendChild(error);
     } else {
         error.classList.add('note-error--valid');
@@ -139,8 +139,8 @@ function updateNote(projection) {
     var iValue = createInfoItem("Value", isNullOrWhitespace(projection.value) ? '&mdash;' : projection.value);
     var iPath = createInfoItem("Path", friendlyPath(projection.modelAttribute.path));
 
-    appendChildren(info, [iName, iValue, iPath]);
-    appendChildren(fragment, [infoTitle, info]);
+    info.append(iName, iValue, iPath);
+    fragment.append(infoTitle, info);
 
     if (projection.type == 'ID') {
         var dependency = createParagraph({ class: [NOTE_SECTION, 'note-dependency'] });

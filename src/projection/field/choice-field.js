@@ -1,13 +1,12 @@
 import {
     createDocFragment, createSpan, createDiv, createI, createUnorderedList,
     createListItem, findAncestor, isHTMLElement, removeChildren,
-    isNullOrUndefined, isNullOrWhitespace, isDerivedOf, valOrDefault, createInput,
+    isNullOrUndefined, isNullOrWhitespace, isObject, valOrDefault, createInput, hasOwn, capitalizeFirstLetter
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
-import { Concept } from "@concept/index.js";
-import { Field } from "./field.js";
 import { StyleHandler } from "./../style-handler.js";
-import { ProjectionManager } from "./../projection.js";
+import { ContentHandler } from "./../content-handler.js";
+import { Field } from "./field.js";
 
 
 const NotificationType = {
@@ -34,46 +33,18 @@ function createNotificationMessage(type, message) {
 }
 
 /**
- * Resolves the value of the choice list
- * @param {*} object 
- */
-function resolveValue(object) {
-    if (isDerivedOf(object, Concept)) {
-        if (object.hasValue()) {
-            return object.getValue();
-        }
-
-        return "";
-    }
-
-    return object;
-}
-
-/**
- * Resolves the value of a choice item
- * @param {*} object 
- */
-function resolveChoiceValue(object) {
-    if (object.type === "concept") {
-        return object.name;
-    } else if (object.type === "concept-metamodel") {
-        return object.value;
-    } else if (object.type === "concept-model") {
-        return object.name;
-    } else if (object.type === "value") {
-        return object.value;
-    }
-
-    return object;
-}
-
-/**
  * Get the choice element
  * @param {HTMLElement} element 
  * @this {BaseChoiceField}
  */
 function getItem(element) {
-    return element.parentElement === this.choices ? element : findAncestor(element, (el) => el.parentElement === this.choices, 5);
+    const isValid = (el) => el.parentElement === this.choices;
+
+    if (isValid(element)) {
+        return element;
+    }
+
+    return findAncestor(element, isValid, 5);
 }
 
 /**
@@ -99,12 +70,16 @@ const BaseChoiceField = {
     selection: null,
     /** @type {HTMLElement} */
     selectionElement: null,
-    /** @type {string} */
-    kind: "choice",
 
     init() {
         this.source.register(this);
         this.items = new Map();
+
+        // TODO: Add group support
+
+        if (!hasOwn(this.schema, "choice")) {
+            this.schema.choice = {};
+        }
 
         return this;
     },
@@ -113,10 +88,11 @@ const BaseChoiceField = {
         switch (message) {
             case "value.changed":
                 if (value.object === "concept") {
-                    let schema = value.schema.projection.filter(p => p.tags.includes("choice-selection"));
-                    let projection = ProjectionManager.createProjection(schema, value, this.editor).init();
+                    let projection = this.model.createProjection(value, "choice-selection").init();
                     this.setChoice(value.name);
-                    removeChildren(this.selectionElement).appendChild(projection.render());
+                    this.setSelection(projection.render());
+                } else {
+                    this.setChoice(value);
                 }
                 break;
             default:
@@ -149,7 +125,7 @@ const BaseChoiceField = {
         var response = this.source.setValue(value);
 
         if (!response.success) {
-            this.editor.notify(response.message);
+            this.environment.notify(response.message);
             this.errors.push(...response.errors);
         } else {
             this.errors = [];
@@ -163,7 +139,7 @@ const BaseChoiceField = {
     render() {
         const fragment = createDocFragment();
 
-        const { before, input, after } = this.schema;
+        const { before = {}, choice, after = {} } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createDiv({
@@ -182,13 +158,14 @@ const BaseChoiceField = {
 
         if (!isHTMLElement(this.notification)) {
             this.notification = createDiv({
-                class: ["field-notification"],
+                class: ["field-notification", "hidden"],
                 dataset: {
                     nature: "field-component",
                     view: "choice",
                     id: this.id,
                 }
             });
+
             fragment.appendChild(this.notification);
         }
 
@@ -228,15 +205,20 @@ const BaseChoiceField = {
                     id: this.id,
                 }
             });
+
             fragment.appendChild(this.input);
         }
 
-        if (before) {
-            let projection = ProjectionManager.createProjection(before.projection, this.source, this.editor).init();
-            fragment.appendChild(projection.render());
+        if (before.projection) {
+            let content = ContentHandler.call(this, before.projection, { focusable: false });
+            content.classList.add("field--choice__before");
+
+            fragment.appendChild(content);
         }
 
         if (!isHTMLElement(this.choices)) {
+            const { style } = choice;
+
             this.choices = createUnorderedList({
                 class: ["bare-list", "field--choice__choices"],
                 tabindex: -1,
@@ -247,21 +229,16 @@ const BaseChoiceField = {
                 }
             });
 
+            StyleHandler(this.choices, style);
+
             fragment.appendChild(this.choices);
         }
 
         removeChildren(this.choices);
 
         this.source.getCandidates().forEach(value => {
-            this.choices.appendChild(this.createChoice(value));
+            this.choices.appendChild(this.createChoiceOption(value));
         });
-        if (this.source.hasValue()) {
-            let concept = resolveValue(this.source);
-            concept.schema.projection = concept.schema.projection.filter(p => p.layout.view === "editor");
-            let projection = ProjectionManager.createProjection(concept.schema.projection, concept, this.editor).init();
-
-            this.element.appendChild(projection.render());
-        }
 
         if (!isHTMLElement(this.selectionElement)) {
             this.selectionElement = createDiv({
@@ -276,14 +253,28 @@ const BaseChoiceField = {
             fragment.appendChild(this.selectionElement);
         }
 
-        if (after) {
-            let projection = ProjectionManager.createProjection(after.projection, this.source, this.editor).init();
-            fragment.appendChild(projection.render());
+        if (after.projection) {
+            let content = ContentHandler.call(this, after.projection, { focusable: false });
+            content.classList.add("field--choice__after");
+
+            fragment.appendChild(content);
         }
 
         if (fragment.hasChildNodes()) {
             this.element.appendChild(fragment);
             this.bindEvents();
+        }
+
+        if (this.source.hasValue()) {
+            let value = this.source.getValue();
+
+            if (value.object === "concept") {
+                let projection = this.model.createProjection(value, "choice-selection").init();
+                this.setChoice(value.name);
+                removeChildren(this.selectionElement).appendChild(projection.render());
+            } else {
+                this.setChoice(value);
+            }
         }
 
         this.refresh();
@@ -337,7 +328,7 @@ const BaseChoiceField = {
         } else {
             this.element.classList.add("empty");
         }
-        
+
         if (this.hasChanges()) {
             this.statusElement.classList.add("change");
         } else {
@@ -345,6 +336,7 @@ const BaseChoiceField = {
         }
 
         removeChildren(this.statusElement);
+
         if (this.hasError) {
             this.element.classList.add("error");
             this.input.classList.add("error");
@@ -386,36 +378,52 @@ const BaseChoiceField = {
 
         return true;
     },
-    createChoice(value) {
-        var container = createListItem({
+    createChoiceOption(value) {
+        const container = createListItem({
             class: ["field--choice__choice"],
             tabindex: 0,
             dataset: {
                 nature: "field-component",
                 view: "choice",
                 id: this.id,
-                value: resolveChoiceValue(value)
+                value: value.name || value
             }
         });
 
-        const { before, style, projection, after } = valOrDefault(this.schema.choice, {});
+        const { before = {}, style, template, after = {} } = valOrDefault(this.schema.choice.option, {});
 
-        if (before) {
-            let projection = ProjectionManager.createProjection(before.projection, this.source, this.editor).init();
-            container.appendChild(projection.render());
+        if (before.projection) {
+            let content = ContentHandler.call(this, before.projection, { focusable: false });
+            content.classList.add("field--choice__option__before");
+
+            container.appendChild(content);
         }
 
-        const defSchema = value.schema.projection.filter(p => p.tags && p.tags.includes("choice"));
-        const projectionSchema = valOrDefault(projection, defSchema);
+        if (isObject(value)) {
+            let choiceProjection = this.model.createProjection(value, valOrDefault(template, "choice")).init(this.source);
+            const { context } = choiceProjection.getSchema();
+            
+            if (context) {
+                for (const key in context) {
+                    const value = context[key];
+                    container.dataset[`choice${capitalizeFirstLetter(key)}`] = value;
+                }
+            }
 
-        var choiceProjection = ProjectionManager.createProjection(projectionSchema, this.source, this.editor).init();
-        container.appendChild(choiceProjection.render());
+            container.append(choiceProjection.render());
+        } else {
+            container.append(value.toString());
+        }
+
         StyleHandler(container, style);
 
-        if (after) {
-            let projection = ProjectionManager.createProjection(after.projection, this.source, this.editor).init();
-            container.appendChild(projection.render());
+        if (after.projection) {
+            let content = ContentHandler.call(this, after.projection, { focusable: false });
+            content.classList.add("field--choice__option__after");
+
+            container.appendChild(content);
         }
+
 
         this.items.set(value.name, container);
 
@@ -427,21 +435,23 @@ const BaseChoiceField = {
         for (let i = 0; i < children.length; i++) {
             /** @type {HTMLElement} */
             const item = children[i];
+
             if (getItemValue(item) === value) {
                 item.classList.add("selected");
                 item.dataset.selected = "selected";
-                show(item);
                 this.selection = item;
             } else {
                 item.classList.remove("selected");
                 delete item.dataset.selected;
-                // hide(item);
-                item.dataset.selected = "selected";
             }
         }
 
         return this;
     },
+    setSelection(element) {
+        removeChildren(this.selectionElement).appendChild(element);
+    },
+
     /**
      * Handles the `space` command
      * @param {HTMLElement} target 
@@ -450,7 +460,7 @@ const BaseChoiceField = {
         const fragment = createDocFragment();
 
         this.source.getCandidates().forEach(value => {
-            fragment.appendChild(this.createChoice(value));
+            fragment.appendChild(this.createChoiceOption(value));
         });
 
         removeChildren(this.choices).appendChild(fragment);
@@ -494,19 +504,20 @@ const BaseChoiceField = {
             this.input.focus();
         }
     },
+    /**
+     * Handles the `click` command
+     * @param {HTMLElement} target 
+     */
+    clickHandler(target) {
+        const item = getItem.call(this, target);
+
+        if (isHTMLElement(item) && this.selection !== item) {
+            let value = getItemValue(item);
+            this.setValue(value);
+        }
+    },
 
     bindEvents() {
-        this.choices.addEventListener('click', (event) => {
-            const target = event.target;
-
-            const item = getItem.call(this, target);
-            const value = getItemValue(item);
-
-            if (isHTMLElement(item)) {
-                this.setValue(value);
-            }
-        });
-
         this.element.addEventListener('input', (event) => {
             this.filterChoice(this.input.value);
         });

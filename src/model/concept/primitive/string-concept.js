@@ -1,4 +1,4 @@
-import { isNullOrWhitespace, isNullOrUndefined, isObject, isEmpty, isString } from "zenkai";
+import { isNullOrWhitespace, valOrDefault, isNullOrUndefined, isObject, isEmpty } from "zenkai";
 import { Concept } from "./../concept.js";
 
 
@@ -7,6 +7,7 @@ const ResponseCode = {
     INVALID_VALUE: 401,
     MINLENGTH_ERROR: 402,
     MAXLENGTH_ERROR: 403,
+    PATTERN_ERROR: 404,
 };
 
 function responseHandler(code) {
@@ -26,13 +27,36 @@ function responseHandler(code) {
                 success: false,
                 message: `The length of the value is beneath the minimum allowed: ${this.min}.`
             };
+        case ResponseCode.PATTERN_ERROR:
+            return {
+                success: false,
+                message: `The value does not match the valid pattern.`
+            };
     }
 }
 
 const _StringConcept = {
-    name: 'string',
     nature: 'primitive',
+    /** @type {string} */
+    pattern: null,
 
+    init(args = {}) {
+        this.parent = args.parent;
+        this.ref = args.ref;
+        this.values = valOrDefault(this.schema.values, []);
+        this.alias = this.schema.alias;
+        this.description = this.schema.description;
+        this.min = valOrDefault(this.schema.min, 0);
+        this.max = this.schema.max;
+        this.pattern = this.schema.pattern;
+        this.history = [];
+
+        this.initObserver();
+        this.initAttribute();
+        this.initValue(args.value);
+
+        return this;
+    },
     initValue(args) {
         if (isNullOrUndefined(args)) {
             this.value = "";
@@ -48,6 +72,7 @@ const _StringConcept = {
 
         return this;
     },
+
     hasValue() {
         return !isNullOrWhitespace(this.value);
     },
@@ -67,7 +92,9 @@ const _StringConcept = {
             };
         }
 
+        this.history.push(value);
         this.value = value;
+
         this.notify("value.changed", value);
 
         return {
@@ -93,12 +120,24 @@ const _StringConcept = {
         return true;
     },
 
-    validate(value = "") {
+    validate(value) {
+        if (isNullOrWhitespace(value)) {
+            return ResponseCode.SUCCESS;
+        }
+
+        if(this.min && value.length < this.min) {
+            return ResponseCode.MINLENGTH_ERROR;
+        }
+
         if(this.max && value.length > this.max) {
             return ResponseCode.MAXLENGTH_ERROR;
         }
 
-        if (isNullOrWhitespace(value) || isEmpty(this.values)) {
+        if(this.pattern && !(new RegExp(this.pattern, "gi")).test(value)) {
+            return ResponseCode.PATTERN_ERROR;
+        }
+
+        if (isEmpty(this.values)) {
             return ResponseCode.SUCCESS;
         }
 
@@ -119,13 +158,17 @@ const _StringConcept = {
         return ResponseCode.SUCCESS;
     },
 
+    build() {
+        return this.getValue();
+    },
     export() {
         return {
             id: this.id,
             name: this.name,
-            value: this.value
+            root: this.isRoot(),
+            value: this.getValue()
         };
-    },
+    }, 
     toString() {
         return this.value;
     }

@@ -1,17 +1,12 @@
 import {
-    createSpan, createDiv, createParagraph, createButton,
-    getElement, isHTMLElement, isNullOrWhitespace, isNullOrUndefined, removeChildren, createInput, createDocFragment, isString, isEmpty,
+    createDocFragment, createInput, createSpan, createDiv, createParagraph, createButton,
+    getElement, isHTMLElement, isNullOrWhitespace, isNullOrUndefined,
+    isString, isEmpty,
 } from "zenkai";
-import { Builder, Editor } from './index.js';
-import { Explorer } from "./explorer.js";
-import { Loader } from "./loader.js";
+import { hide, show } from "@utils/index.js";
+import { Explorer, Editor } from './index.js';
 
 
-// const METAMODEL_GENTLEMAN = require('@samples/gentleman.json');
-// const METAMODEL_MINDMAP = require('@samples/mindmap.json');
-// const METAMODEL_RELIS = require('@samples/relis.json');
-
-const builders = [];
 const editors = [];
 const explorers = [];
 
@@ -22,7 +17,13 @@ export const Manager = {
     /** @type {HTMLElement} */
     container: null,
     /** @type {HTMLElement} */
+    homeContainer: null,
+    /** @type {HTMLElement} */
     menu: null,
+    /** @type {HTMLElement} */
+    homePage: null,
+    /** @type {HTMLButtonElement} */
+    btnBuild: null,
 
     init(container) {
         var result = resolveContainer(container);
@@ -46,9 +47,15 @@ export const Manager = {
             fragment.appendChild(this.menu);
         }
 
+        if (isNullOrUndefined(this.btnBuild.parentElement)) {
+            fragment.appendChild(this.btnBuild);
+        }
+
         if (fragment.hasChildNodes()) {
             this.container.appendChild(fragment);
         }
+
+        this.refresh();
 
         return this.container;
     },
@@ -80,7 +87,7 @@ export const Manager = {
         });
 
         /** @type {HTMLElement} */
-        const homeContainer = createDiv({
+        this.homeContainer = createDiv({
             class: ["home-container"]
         }, [
             homeContent,
@@ -95,7 +102,7 @@ export const Manager = {
             input,
         ]);
 
-        homeContainer.addEventListener('click', (event) => {
+        this.homeContainer.addEventListener('click', (event) => {
             const target = event.target;
 
             // if (target === btnCreateMetaModel) {
@@ -117,26 +124,32 @@ export const Manager = {
             // }
         });
 
-        input.addEventListener('change', (event) => {
-            var file = input.files[0];
-
-            var reader = new FileReader();
-            reader.onload = (e) => {
-                const metamodel = Loader.loadMetaModel(JSON.parse(reader.result));
-                const model = metamodel.createModel().init();
-
-                const Editor = this.getEditor().init(metamodel, model).open();
-                removeChildren(homeContainer);
-                homeContainer.remove();
-            };
-            reader.readAsText(file);
-        });
-
-        this.container.appendChild(homeContainer);
+        this.container.appendChild(this.homeContainer);
     },
     refresh() {
-        if([editors, builders, explorers].every((env) => isEmpty(env))) {
+        if ([editors, explorers].every((env) => isEmpty(env))) {
             this.home();
+        } else {
+            hide(this.homeContainer);
+        }
+
+        let conceptEditor = false;
+        let projectionEditor = false;
+
+        for (let i = 0; i < editors.length; i++) {
+            const editor = editors[i];
+            if (editor.buildTarget === "gentleman_concept") {
+                conceptEditor = true;
+            }
+            if (editor.buildTarget === "gentleman_projection") {
+                projectionEditor = true;
+            }
+        }
+
+        if (conceptEditor && projectionEditor) {
+            show(this.btnBuild);
+        } else {
+            hide(this.btnBuild);
         }
 
         return this;
@@ -148,16 +161,17 @@ export const Manager = {
         return editor;
     },
     /**
-     * Creates a new Builder
+     * Creates a new `Editor`
      * @returns {Editor}
      */
-    createEditor() {
+    createEditor(model) {
         var editor = Object.create(Editor, {
             object: { value: "environment" },
             name: { value: "editor" },
             type: { value: "editor" },
             id: { value: nextId() },
             manager: { value: this },
+            model: { value: model },
             container: { value: createContainer("editor") },
         });
         this.container.appendChild(editor.container);
@@ -187,33 +201,6 @@ export const Manager = {
 
         return true;
     },
-    /** @returns {Builder} */
-    getBuilder(id) {
-        var builder = getEnvironment.call({ environments: builders }, id);
-
-        return builder;
-    },
-    /**
-     * Creates a new Builder
-     * @returns {Builder}
-     */
-    createBuilder() {
-        var builder = Object.create(Builder, {
-            object: { value: "environment" },
-            name: { value: "builder" },
-            type: { value: "builder" },
-            id: { value: nextId() },
-            manager: { value: this },
-            container: { value: createContainer("builder") },
-        });
-        this.container.appendChild(builder.container);
-
-        builders.push(builder);
-
-        this.refresh();
-
-        return builder;
-    },
     /** @returns {Explorer} */
     getExplorer(id) {
         var explorer = getEnvironment.call({ environments: explorers }, id);
@@ -221,7 +208,7 @@ export const Manager = {
         return explorer;
     },
     /**
-     * Creates a new Builder
+     * Creates a new `Explorer`
      * @returns {Explorer}
      */
     createExplorer() {
@@ -247,10 +234,38 @@ export const Manager = {
                 class: ["manager-menu", "hidden"]
             }, "MENU");
         }
+
+        if (!isHTMLElement(this.btnBuild)) {
+            this.btnBuild = createButton({
+                id: "btnBuildModel",
+                class: ["btn", "manager__btn-build", "hidden"],
+                draggable: true,
+            }, "Build");
+        }
     },
     bindEvents() {
         this.menu.addEventListener("click", (event) => {
             console.log("SHOW MENU");
+        });
+
+        this.btnBuild.addEventListener('click', (event) => {
+            var json = [];
+
+            for (let i = 0; i < editors.length; i++) {
+                const editor = editors[i];
+
+                if (editor.buildTarget === "gentleman_concept") {
+                    json.push(editor.build());
+                }
+
+                if (editor.buildTarget === "gentleman_projection") {
+                    json.push(editor.build());
+                }
+            }
+
+            const [concept, projection] = json;
+            console.log(concept, projection);
+            this.createEditor("gentleman_concept").init(concept, projection).open();
         });
     }
 };

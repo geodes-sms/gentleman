@@ -1,4 +1,4 @@
-import { isNullOrWhitespace, isObject, isEmpty, isNullOrUndefined } from "zenkai";
+import { isNullOrWhitespace, isObject, isEmpty, isNullOrUndefined, valOrDefault } from "zenkai";
 import { Concept } from "./../concept.js";
 
 
@@ -36,9 +36,23 @@ function responseHandler(code) {
 }
 
 const _NumberConcept = {
-    name: 'number',
     nature: 'primitive',
 
+    init(args = {}) {
+        this.parent = args.parent;
+        this.ref = args.ref;
+        this.values = valOrDefault(this.schema.values, []);
+        this.alias = this.schema.alias;
+        this.description = this.schema.description;
+        this.min = this.schema.min;
+        this.max = this.schema.max;
+
+        this.initObserver();
+        this.initAttribute();
+        this.initValue(args.value);
+
+        return this;
+    },
     initValue(args) {
         if (isNullOrUndefined(args)) {
             this.value = "";
@@ -94,7 +108,7 @@ const _NumberConcept = {
     getChildren(name) {
         return [];
     },
-    
+
     update(message, value) {
         return true;
     },
@@ -103,7 +117,11 @@ const _NumberConcept = {
             return ResponseCode.INVALID_NUMBER;
         }
 
-        if(this.max && value > this.max) {
+        if (this.min && value < this.min) {
+            return ResponseCode.MIN_ERROR;
+        }
+
+        if (this.max && value > this.max) {
             return ResponseCode.MAX_ERROR;
         }
 
@@ -128,11 +146,15 @@ const _NumberConcept = {
         return ResponseCode.SUCCESS;
     },
 
+    build() {
+        return this.getValue();
+    },
     export() {
         return {
             id: this.id,
             name: this.name,
-            value: this.value
+            root: this.isRoot(),
+            value: this.hasValue() ? +this.getValue() : null
         };
     },
 };

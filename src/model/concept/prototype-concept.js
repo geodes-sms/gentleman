@@ -78,13 +78,7 @@ const BasePrototypeConcept = {
     getCandidates() {
         var candidates = resolveAccept.call(this, this.accept);
 
-        var values = candidates.map((candidate) => ({
-            type: "concept-metamodel",
-            value: candidate.name,
-            schema: candidate
-        }));
-
-        return values;
+        return candidates;
     },
     /**
      * Gets the concept parent if exist
@@ -111,21 +105,16 @@ const BasePrototypeConcept = {
     },
 
     createConcept(name, value) {
-        var concept = null;
-
-        var options = {
+        const options = {
             parent: this.parent,
-            refname: this.refname,
-            reftype: this.reftype,
+            ref: this.ref,
         };
 
         if (value) {
             options.value = value;
         }
 
-        if (isString(name)) {
-            concept = this.model.createConcept(name, options);
-        }
+        const concept = this.model.createConcept({ name: name }, options);
 
         concept.prototype = this;
 
@@ -157,16 +146,18 @@ const BasePrototypeConcept = {
         return ResponseCode.SUCCESS;
     },
     export() {
-        if (!this.hasValue()) {
-            return null;
-        }
-
-        return this.value.export();
+        return {
+            id: this.id,
+            name: this.name,
+            root: this.isRoot(),
+            value: this.getValue().name
+        };
     },
 };
 
 function resolveAccept(accept) {
-    var candidates = this.metamodel.getConcreteConcepts(this.name);
+    const candidates = this.model.getConcreteConcepts(this.name);
+
     if (isNullOrUndefined(accept)) {
         return candidates;
     }

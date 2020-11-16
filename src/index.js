@@ -1,19 +1,16 @@
 /* eslint-disable indent */
 import { Manager } from '@environment/index.js';
-import { Loader } from '@environment/loader.js';
 import './stylesheets.js';
-import '@css/model/gentleman.css';
+import '@css/samples/gentleman.css';
+import '@css/samples/projection.css';
 
-const METAMODEL_GENTLEMAN = require('@samples/gentleman_model.json');
-// const METAMODEL_MINDMAP = require('@samples/mindmap.json');
-// const METAMODEL_RELIS = require('@samples/relis.json');
+const MODEL_GENTLEMAN_PROJECTION = require('@include/gentleman_projection.json');
+const { concept, projection, editor } = MODEL_GENTLEMAN_PROJECTION;
 
 const Environment = Manager.init();
 Environment.render();
 
-const metamodel = Loader.loadMetaModel(METAMODEL_GENTLEMAN);
-const model = metamodel.createModel().init();
-
-const Editor = Environment.createEditor()      
-                          .init(metamodel)
-                          .open();         
+const ConceptEditor = Environment.createEditor().init(concept, projection).open();
+if (editor) {
+    ConceptEditor.buildTarget = editor.build;
+}

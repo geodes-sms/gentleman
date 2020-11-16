@@ -1,6 +1,5 @@
-import { createI, hasOwn, cloneObject, valOrDefault } from "zenkai";
-import { ProjectionManager } from "./projection.js";
-import { contentHandler } from "./content-handler.js";
+import { createI, valOrDefault } from "zenkai";
+import { ContentHandler } from "./content-handler.js";
 
 
 /**
@@ -16,12 +15,13 @@ export function AttributeHandler(schema, concept) {
 
     let attr = {
         name: name,
+        schema: schema,
         required: true,
         optional: null,
         element: null,
     };
 
-    this.attributes.push(attr);
+    this.projection.attributes.push(attr);
 
     var render = null;
 
@@ -29,7 +29,7 @@ export function AttributeHandler(schema, concept) {
         const { alias, description } = concept.getAttributeSchema(name);
 
         if (optional) {
-            render = contentHandler.call(this, optional);
+            render = ContentHandler.call(this, optional, concept);
         } else {
             render = createI({
                 class: ["projection-element", "projection-element--optional"],
@@ -47,81 +47,14 @@ export function AttributeHandler(schema, concept) {
         attr.required = false;
         attr.optional = render;
     } else {
-        let { target, description } = concept.getAttributeByName(name);
-        let { projection: schemaProjection } = cloneObject(target.schema);
+        let { target, description, schema } = concept.getAttributeByName(name);
 
-        if (tag) {
-            schemaProjection = schemaProjection.filter(p => p.tags.includes(tag));
-            console.log(schemaProjection);
-        }
+        var projection = this.projection.model.createProjection(target, tag).init();
 
-        schemaProjection.forEach(schema => {
-            if (!hasOwn(schema, 'readonly')) {
-                schema['readonly'] = this.isReadOnly();
-            }
-        });
-
-        var projection = ProjectionManager.createProjection(schemaProjection, target, this.editor).init();
-        projection.parent = this;
+        projection.parent = this.projection;
 
         render = projection.render();
         attr.element = render;
-    }
-
-    return render;
-}
-
-/**
- * Resolve and render component projection
- * @param {string} name 
- */
-export function ComponentHandler(schema, concept) {
-    const { name, optional } = schema;
-
-    if (!concept.hasComponent(name)) {
-        throw new Error(`Component '${name}' does not exist in the concept '${concept.name}'`);
-    }
-
-    let comp = {
-        name: name,
-        required: true,
-        optional: null,
-        element: null,
-    };
-
-    this.components.push(comp);
-
-    var render = null;
-
-    if (!(concept.isComponentCreated(name) || concept.isComponentRequired(name))) {
-        const { alias, description } = concept.getComponentSchema(name);
-
-        if (optional) {
-            render = contentHandler.call(this, optional);
-        } else {
-            render = createI({
-                class: ["projection-element", "projection-element--optional"],
-                dataset: {
-                    object: "component",
-                    id: name
-                },
-            }, `Add ${valOrDefault(alias, name)}`);
-        }
-
-        render.addEventListener('click', (event) => {
-            concept.createComponent(name);
-        });
-
-        comp.required = false;
-        comp.optional = render;
-    } else {
-        let component = concept.getComponentByName(name);
-        let projection = ProjectionManager.createProjection(component.schema.projection, component, this.editor).init();
-
-        projection.parent = this;
-
-        render = projection.render();
-        comp.element = render;
     }
 
     return render;

@@ -1,26 +1,8 @@
-import { isString, valOrDefault, hasOwn, isNullOrUndefined, isIterable, isEmpty, isFunction, isObject, isNullOrWhitespace } from "zenkai";
-import { AttributeHandler, ComponentHandler, ObserverHandler } from "@structure/index.js";
+import { isString, valOrDefault, hasOwn, isNullOrUndefined, isIterable, isObject, isNullOrWhitespace } from "zenkai";
+import { AttributeHandler, ObserverHandler } from "@structure/index.js";
 
 
 const _Concept = {
-    /**
-     * Creates a concept
-     * @param {Model} args 
-     * @param {*} schema 
-     * @returns {Concept}
-     */
-    create(model, schema) {
-        const instance = Object.create(this);
-
-        instance.model = model;
-        instance.metamodel = model.metamodel;
-        instance.schema = schema;
-
-        instance.references = [];
-
-        return instance;
-    },
-
     /** Reference to parent model */
     model: null,
     /** Cache of the schema describing the concept */
@@ -35,10 +17,8 @@ const _Concept = {
     description: null,
     /** @type {string} */
     alias: null,
-    /** @type {string} */
-    refname: null,
-    /** @type {string} */
-    reftype: null,
+    /** @type {*} */
+    ref: null,
     /** @type {string[]} */
     actions: null,
     /** @type {string[]} */
@@ -57,33 +37,24 @@ const _Concept = {
     action: null,
     /** Concept shadow list */
     shadows: null,
-    /** Object nature */
-    object: "concept",
+    /** Concept value history list */
+    history: null,
     kind: "concept",
 
     init(args = {}) {
         this.accept = args.accept;
         this.parent = args.parent;
-        this.refname = args.refname;
-        this.reftype = args.reftype;
+        this.ref = args.ref;
         this.values = valOrDefault(args.values, valOrDefault(this.schema.values, []));
         this.alias = valOrDefault(args.alias, this.schema.alias);
         this.description = valOrDefault(args.description, this.schema.description);
         this.min = valOrDefault(args.min, valOrDefault(this.schema.min, 1));
         this.max = valOrDefault(args.max, this.schema.max);
 
-        if (args.projection) {
-            this.schema.projection = args.projection;
-        }
 
         this.initObserver();
         this.initAttribute();
-        this.initComponent();
         this.initValue(args.value);
-
-        if (isFunction(this.init.post)) {
-            this.init.post(args);
-        }
 
         return this;
     },
@@ -94,7 +65,7 @@ const _Concept = {
      * @returns {string}
      */
     getName() {
-        return valOrDefault(this.refname, this.name);
+        return valOrDefault(this.ref.name, this.name);
     },
     /**
      * Gets the alias or the name
@@ -105,7 +76,7 @@ const _Concept = {
     },
 
     getAcceptedValues() {
-        if (!isIterable(this.accept) && isNullOrUndefined(this.accept.type)) {
+        if (!isIterable(this.accept) && isNullOrUndefined(this.accept.name)) {
             return "";
         }
 
@@ -113,8 +84,8 @@ const _Concept = {
             return this.accept;
         }
 
-        if (hasOwn(this.accept, "type")) {
-            return this.accept.type;
+        if (hasOwn(this.accept, "name")) {
+            return this.accept.name;
         }
 
         if (Array.isArray(this.accept)) {
@@ -131,7 +102,17 @@ const _Concept = {
         return this.values;
     },
     getStructure() {
-        return [...this.listAttributes(), ...this.listComponents()];
+        return [...this.listAttributes()];
+    },
+    /**
+     * Gets the value of a property
+     * @param {string} prop 
+     */
+    getProperty(prop) {
+        if (prop === "name") {
+            return this.getName();
+        }
+        return this.schema[prop];
     },
 
     /**
@@ -155,17 +136,54 @@ const _Concept = {
             return this.parent;
         }
 
-        var parent = this.parent;
+        const parent = this.parent;
 
-        while (parent) {
-            if (parent.name === name) {
-                return parent;
-            }
-
-            parent = parent.getParent();
+        if (parent.name === name) {
+            return parent;
         }
 
-        return null;
+        return parent.getParent(name);
+    },
+    /**
+     * Gets the concept parent if exist
+     * @param {string} [name]
+     * @returns {Concept}
+     */
+    getParentWith(prototype) {
+        if (this.isRoot()) {
+            return null;
+        }
+
+        if (isNullOrWhitespace(prototype)) {
+            return this.parent;
+        }
+
+        const parent = this.parent;
+
+        if (parent.hasPrototype(prototype)) {
+            return parent;
+        }
+
+        return parent.getParentWith(prototype);
+    },
+    hasPrototype(name) {
+        var prototype = this.model.getConceptSchema(this.schema.prototype);
+
+        while (!isNullOrUndefined(prototype)) {
+            if (prototype.name === name) {
+                return true;
+            }
+
+            let schema = this.model.getConceptSchema(prototype);
+
+            if (schema) {
+                prototype = schema['prototype'];
+            } else {
+                prototype = null;
+            }
+        }
+
+        return false;
     },
     /**
      * Gets the concept ancestor
@@ -173,13 +191,9 @@ const _Concept = {
      * @returns {Concept[]}
      */
     getAncestor(name) {
-        if (this.isRoot()) {
-            return null;
-        }
-
         const parents = [];
 
-        var parent = this.parent;
+        var parent = this.getParent(name);
 
         while (parent) {
             parents.push(parent);
@@ -200,9 +214,6 @@ const _Concept = {
             this.getAttributes().forEach(attr => {
                 children.push(attr.target);
             });
-            this.getComponents().forEach(comp => {
-                children.push(...comp.getChildren());
-            });
         } else {
             this.getAttributes().forEach(attr => {
                 if (attr.target.name === name) {
@@ -210,9 +221,6 @@ const _Concept = {
                 } else {
                     children.push(...attr.target.getChildren(name));
                 }
-            });
-            this.getComponents().forEach(comp => {
-                children.push(...comp.getChildren(name));
             });
         }
 
@@ -234,31 +242,9 @@ const _Concept = {
         return descendants;
     },
 
-    /**
-     * Verifies that a child concept can be deleted
-     * @param {string} name 
-     * @returns {boolean}
-     */
-    canDelete(name) {
-        if (isNullOrUndefined(name)) {
-            return isEmpty(this.references) && this.getParent().canDelete(this.refname);
-        }
-
-        return !this.isAttributeRequired(name);
-    },
-    /**
-     * Removes a child concept
-     * @param {Concept} concept 
-     * @returns {boolean} Value indicating the success of the operation
-     */
-    remove(concept) {
-        const result = this.removeAttribute(concept.refname);
-
-        return result;
-    },
     delete(force = false) {
         if (!force) {
-            const result = this.getParent().remove(this);
+            const result = this.getParent().removeAttribute(this.ref.name);
 
             if (!result.success) {
                 return result;
@@ -281,21 +267,18 @@ const _Concept = {
 
     /** @returns {boolean} */
     isRoot() {
-        return this.parent === null;
+        return isNullOrUndefined(this.parent);
     },
 
     export() {
         var output = {
             id: this.id,
+            root: this.isRoot(),
             name: this.name
         };
 
-        this.attributes.forEach(attr => {
+        this.getAttributes().forEach(attr => {
             Object.assign(output, attr.export());
-        });
-
-        this.components.forEach(comp => {
-            Object.assign(output, comp.export());
         });
 
         return output;
@@ -306,12 +289,6 @@ const _Concept = {
         this.attributes.forEach(attr => {
             Object.assign(output, attr.toString());
         });
-        this.components.forEach(comp => {
-            Object.assign(output, {
-                // [`${comp.name}@component`]: comp.toString()
-                [`component.${comp.name}`]: comp.toString()
-            });
-        });
 
         return output;
     },
@@ -320,10 +297,8 @@ const _Concept = {
 export const Concept = Object.assign(
     _Concept,
     ObserverHandler,
-    AttributeHandler,
-    ComponentHandler
+    AttributeHandler
 );
 
 
 Object.defineProperty(Concept, 'attributeSchema', { get() { return this.schema.attribute; } });
-Object.defineProperty(Concept, 'componentSchema', { get() { return this.schema.component; } });

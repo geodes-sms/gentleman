@@ -1,16 +1,3 @@
-.projection {
-    position: relative;
-    border: 1px solid #d5d5d5; border-radius: 1px;
-}
-
-.projection-wrapper {
-    position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-}
-
-
 /*
  * General field style
 -----------------------------------------------------------------------------*/
@@ -19,16 +6,29 @@
     position: relative;
     box-sizing: border-box;
     z-index: 1;
+    padding: 8px 4px 2px;
 }
 
-    .field.active {
-        z-index: 20;
-        opacity: 1;
+    .field.has-toolbar { padding-top: 30px; }
+
+    .field.active { z-index: 20; opacity: 1; }
+    
+        .field.active.has-toolbar { 
+            padding: 30px 12px 8px;
+            border-radius: 6px;
+            outline: none;
+        }
+
+    .field.focus { z-index: 50; opacity: 1; }
+
+    .field.control {
+        display: inline-flex;
+        flex-direction: column;
     }
 
-    .field:hover > .field-notification .field-status {
-        opacity: 0.4;
-    }
+        .field:hover > .field-notification .field-status {
+            opacity: 0.4;
+        }
 
         .field.active > .field-notification .field-status {
             opacity: 1;
@@ -42,26 +42,44 @@
 
         .field.active .notification-message {
             opacity: 1;
-            z-index: 1;
+            z-index: 100;
         }
         .field.active .notification-message--error {
             background-color: #db3b1f;
         }
 
+    .field-toolbar {
+        padding: 4px 6px;
+        color: #fff;
+        border-radius: 2px 2px 0 0 ;
+        background-color: #d5d5d5;
+    }
+
+    .field-toolbar__button {
+        font-size: 1.3rem;
+        padding: 4px 6px 5px;
+        color: #fff;
+        border-radius: 2px;
+        background-color: #232425;
+    }
+
+    .field-body {
+        padding: 4px 6px;
+        background-color: #fff;
+    }
 
     .field-notification {
         position: absolute;
-        bottom: 100%; right: 0;
+        top: -4px; right: 0;
         display: flex;
         justify-content: flex-end;
         min-width: 100%;
-        padding-bottom: 2px;
         z-index: 20;
     }
 
         .field-notification .notification-message {
             position: absolute;
-            top: 100%; left: calc(100% + 2px);
+            top: calc(100% + 4px); left: calc(100% + 2px);
             display: block;
             padding: 5px;
             box-sizing: border-box;
@@ -101,11 +119,11 @@
         }
 
     .field-message {
-        height: 10px; width: 10px;
         margin-left: 5px;
+        height: 10px; width: 10px;
+        font-style: normal;
         border-radius: 50%;
         background-color: #555;
-        font-style: normal;
         transition: .2s;
     }
 
@@ -126,6 +144,7 @@
 .field--checkbox__label {
     display: flex;
     align-items: center;
+    text-transform: capitalize;
 }
 
     .field--checkbox__label-text {
@@ -136,105 +155,35 @@
  * Field: Text
 -----------------------------------------------------------------------------*/
 
-.field--label + .field--textbox,
-.field--label + .field--textbox__input,
-.field--textbox + .field--textbox {
-    margin-left: 3px;
-}
-
 .field--textbox {
-    display: inline-block;
     display: inline-flex;
-}
-
-.field--textbox__before {
-    width: auto;
-}
-
-.field--textbox__before + .field--textbox__input {
-    margin-left: 4px;
 }
 
 .field--textbox__input {
     display: inline-block;
-    padding: 2px 5px 1px;
-    font-size: 1.3em;
-    border-style: solid; border-radius: 1px;
-    overflow: hidden;
-    color: #333;
+    padding: 4px 6px;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1em; font-family: Arial, Helvetica, sans-serif;
+    color: inherit;
+    border: 0 none;
+    background-color: transparent;
     outline: none;
+    resize: none;
     z-index: 5;
 }
-    .field--textbox__input:before {
-        content: attr(data-placeholder);
-        transition: .2s;
-    }
-
     .field--textbox__input.error {
+        border-color: #dd4124!important;
         background-color: rgba(191, 25, 50, 0.2)!important;
-        border-color: #DD4124!important;
     }
-
-    .field--textbox__input.empty {
-        max-width: 150px;
-        border-color: #ffd300;
-        background-color: #fffff0;
+    .field--textbox__input:empty {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
-
     .field--textbox__input.readonly {
-        border: none!important;
-        background: transparent!important;
-        box-shadow: none!important;
+        padding: 0;
     }
-        .field--textbox__input.readonly:before {
-            content: "";
-            display: none;
-        }
-
-        .field--textbox__input.empty:before {
-            color: #555;
-        }
-        .field--textbox__input.empty:not(:focus) {
-            box-shadow: 0 -1px 2px -1px #c0c0c0;
-        }
-        .field--textbox__input:not(.empty) {
-            background-color: #f5f5f5;
-            border-color: #555;
-            font-size: 1em;
-        }
-            .field--textbox__input:not(.empty):before {
-                position: absolute;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                font-size: 1.2em;
-                color: #777;
-                transform: translate(-5px, -100%);
-                transition: transform .2s;
-                z-index: 10;
-            }
-            .field--textbox__input:not(.empty):focus {
-                background-color: #fefefe;
-            }
-                .field--textbox__input:not(.empty):focus:before {
-                    padding: 1px 2px;
-                    font-size: 0.95em; font-weight: 600;
-                    color: #222;
-                    background: rgba(255, 255, 255, 0.8);
-                    z-index: 20;
-                }
-    .field--textbox__input:focus {
-        border-width: 1px; border-radius: 2px;
-    }
-        .field--textbox__input:not(:focus) {
-            border-width: 0 0 2px;
-        }
-            .field--textbox__input:not(:focus):hover {
-                box-shadow: 0 -1px 2px #c0c0c0;
-            }
 
 .field--textbox__choices {
     position: absolute;
@@ -242,20 +191,22 @@
     min-width: 150px;
     font-size: 1em;
     box-shadow: 0 1px 2px #999;
+    background-color: #fff;
     z-index: 20;
     cursor: default;
 }
 
-.field--textbox__choice {
-    padding: 5px 1%;
-    box-sizing: border-box;
-    font-size: 0.9em;
-}
-    .field--textbox__choice:hover,
-    .field--textbox__choice:focus,
-    .field--textbox__choice:active {
-        background-color: #ffd300;
+    .field--textbox__choice {
+        padding: 5px 1%;
+        box-sizing: border-box;
+        font-size: 0.9em;
     }
+        .field--textbox__choice:hover,
+        .field--textbox__choice:focus,
+        .field--textbox__choice:active {
+            background-color: #ffd300;
+        }
+
 
 /*
  * Field: List
@@ -287,15 +238,11 @@
         display: flex;
         box-sizing: border-box;
         font-size: 1em;
-        transition: .2s;
     }
 
 
     .field--list-item .btn-remove {
-        position: absolute;
-        bottom: 100%; right: 1px;
         font-size: 0.9em;
-        font-weight: 600;
         z-index: 10;
     }
 
@@ -313,51 +260,19 @@
         border: 0 none;
     }
 
-    .field--table-row:hover 
-
     .field--table-cell {
         position: relative;
         box-sizing: border-box;
     }
 
-    .field--table__cell-action {
-        position: relative;
-        min-width: 24px;
-        border: 0 none;
+    .field--table__btn-add {
+        cursor: default;
     }
 
     .field--table-row:hover .field--table__btn-add {
         opacity: 1;
         transform: translateY(50%);
     }
-
-    .field--table__btn-add {
-        position: absolute;
-        bottom: 0;
-        height: 24px;
-        width: 24px;
-        line-height: 20px;
-        font-size: 1.5em;
-        color: #fff;
-        border-radius: 50%;
-        text-align: center;
-        transform: translateY(50%) scale(0.5) translateX(-50%);
-        background-color: #232425;
-        opacity: 0.2;
-        transition: .2s;
-        cursor: pointer;
-    }
-
-    .field--table__button {
-        display: block;
-        margin: 4px auto;
-        width: 80%;
-        padding: 6px 12px;
-        color: #fff;
-        border-radius: 180px;
-        background-color: royalblue;
-    }
-
 
 /*
  * Field: Choice
@@ -382,7 +297,7 @@
 
     .field--choice__input.error {
         background-color: rgba(191, 25, 50, 0.2)!important;
-        border-color: #DD4124!important;
+        border-color: #dd4124!important;
     }
 
     .field--choice__input:empty {
@@ -415,7 +330,6 @@
 
     .field--choice__choices {
         position: relative;
-        font-size: 10px;
         z-index: 2;
         cursor: pointer;
     }
@@ -440,7 +354,7 @@
 }
 
     .field--link__input {
-        font-size: 1.3em;
+        font-size: 1em;
     }
 
     .field--link__choices {

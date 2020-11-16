@@ -1,11 +1,28 @@
-import { hasOwn, isNullOrUndefined, isString, isEmpty } from "zenkai";
+import { hasOwn, isNullOrUndefined, isString, isEmpty, valOrDefault } from "zenkai";
 import { Concept } from "./../concept.js";
 
 
 const _SetConcept = {
-    name: 'set',
     nature: 'primitive',
 
+    init(args = {}) {
+        this.parent = args.parent;
+        this.ref = args.ref;
+        this.accept = this.schema.accept;
+        this.path = this.schema.path;
+        this.values = valOrDefault(this.schema.values, []);
+        this.alias = this.schema.alias;
+        this.description = this.schema.description;
+        this.min = valOrDefault(this.schema.min, 0);
+        this.max = this.schema.max;
+
+
+        this.initObserver();
+        this.initAttribute();
+        this.initValue(args.value);
+
+        return this;
+    },
     initValue(args) {
         this.value = [];
 
@@ -137,6 +154,12 @@ const _SetConcept = {
 
         this.value.splice(index, 1);
 
+        const values = this.getValue();
+        for (let i = index; i < values.length; i++) {
+            const concept = values[i];
+            concept.index = i;
+        }
+
         this.notify("value.removed", concept);
 
         return {
@@ -156,39 +179,17 @@ const _SetConcept = {
         return this;
     },
     createElement(value) {
-        var concept = null;
-
-        var options = {
+        const options = {
             value: value,
             parent: this,
-            refname: this.name,
-            reftype: "element",
+            ref: this,
         };
 
-        if (isString(this.accept)) {
-            concept = this.model.createConcept(this.accept, options);
-        }
-
-        if (hasOwn(this.accept, "name")) {
-            let { name, accept, alias, action } = this.accept;
-
-            concept = this.model.createConcept(name, Object.assign(options, {
-                accept: accept,
-                action: action,
-                alias: alias
-            }));
-        }
-
-        if (Array.isArray(this.accept)) {
-            // TODO: Add support for multiple concept
-        }
+        const concept = this.model.createConcept(this.accept, options);
 
         this.addElement(concept);
 
         return concept;
-    },
-    canDelete() {
-        return this.value.length > this.min;
     },
 
     getCandidates() {
@@ -215,17 +216,15 @@ const _SetConcept = {
         return concepts.filter(concept => concept.name === name);
     },
 
+    build() {
+        return this.getValue().map(concept => concept.build());
+    },
     export() {
-        var output = [];
-        this.value.forEach(val => {
-            var concept = this.model.getConcept(val);
-            output.push(concept.export());
-        });
-
         return {
             id: this.id,
             name: this.name,
-            value: output
+            root: this.isRoot(),
+            value: this.getValue().map(concept => concept.id)
         };
     },
     toString() {
@@ -241,7 +240,7 @@ const _SetConcept = {
 
 
 function resolveAccept(accept) {
-    var candidates = this.metamodel.getConceptSchema(accept);
+    var candidates = this.model.getConceptSchema(accept);
 
     return candidates;
 }

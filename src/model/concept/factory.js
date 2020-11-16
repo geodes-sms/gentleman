@@ -1,107 +1,46 @@
-import { isNullOrUndefined, cloneObject, hasOwn } from 'zenkai';
+import { isNullOrUndefined } from 'zenkai';
 import { UUID } from '@utils/uuid.js';
-import {
-    StringConcept,
-    SetConcept,
-    BooleanConcept,
-    NumberConcept,
-    ReferenceConcept,
-    BaseConcept,
-    PrototypeConcept
-} from "./index.js";
+import { StringConcept, SetConcept, BooleanConcept, NumberConcept, ReferenceConcept, BaseConcept, PrototypeConcept, MetaConcept } from "./index.js";
 
 
-const DefaultSchema = {
-    set: {
-        projection: [
-            {
-                type: "field",
-                view: "list",
-            }
-        ]
-    },
-    string: {
-        projection: [
-            {
-                type: "field",
-                view: "text"
-            }
-        ]
-    },
-    boolean: {
-        projection: [
-            {
-                type: "field",
-                view: "binary"
-            }
-        ]
-    },
-    number: {
-        projection: [
-            {
-                type: "field",
-                view: "text"
-            }
-        ]
-    },
-    reference: {
-        projection: [
-            {
-                type: "field",
-                view: "link"
-            }
-        ]
-    },
-    prototype: {
-        projection: [
-            {
-                type: "field",
-                view: "choice"
-            }
-        ]
-    }
-};
+function init(model, schema) {
+    return {
+        object: { value: "concept" },
+        model: { value: model },
+        name: { value: schema.name },
+        schema: { value: schema, writable: true },
+    };
+}
 
-const resolveSchema = (conceptName, customSchema) => {
-    if (isNullOrUndefined(customSchema)) {
-        return cloneObject(DefaultSchema[conceptName]);
-    }
-
-    var schema = cloneObject(customSchema);
-    if (schema && !hasOwn(schema, 'projection')) {
-        schema.projection = cloneObject(DefaultSchema[conceptName].projection);
-    }
-
-    return schema;
+const PrimitiveHandler = {
+    string: (model, schema) => Object.create(StringConcept, init(model, schema)),
+    number: (model, schema) => Object.create(NumberConcept, init(model, schema)),
+    boolean: (model, schema) => Object.create(BooleanConcept, init(model, schema)),
+    set: (model, schema) => Object.create(SetConcept, init(model, schema)),
+    reference: (model, schema) => Object.create(ReferenceConcept, init(model, schema)),
+    meta: (model, schema) => Object.create(MetaConcept, init(model, schema)),
 };
 
 const Handler = {
-    // Primitive
-    string: (model, schema) => StringConcept.create(model, resolveSchema('string', schema)),
-    number: (model, schema) => NumberConcept.create(model, resolveSchema('number', schema)),
-    boolean: (model, schema) => BooleanConcept.create(model, resolveSchema('boolean', schema)),
-    set: (model, schema) => SetConcept.create(model, resolveSchema('set', schema)),
-    reference: (model, schema) => ReferenceConcept.create(model, resolveSchema('reference', schema)),
-    // Complex
-    prototype: (model, schema) => PrototypeConcept.create(model, resolveSchema('prototype', schema)),
-    concrete: (model, schema) => BaseConcept.create(model, schema),
-    derivative: (model, schema) => Handler[schema.base](model, schema),
+    primitive: (model, schema) => PrimitiveHandler[schema.name](model, schema),
+    prototype: (model, schema) => Object.create(PrototypeConcept, init(model, schema)),
+    concrete: (model, schema) => Object.create(BaseConcept, init(model, schema)),
+    derivative: (model, schema) => PrimitiveHandler[schema.base](model, schema),
 };
 
 export const ConceptFactory = {
-    createConcept(name, model, schema, args) {
-        var handler = Handler[name] || Handler[schema.nature];
+    createConcept(model, schema, args) {
+        const handler = Handler[schema.nature];
 
         if (isNullOrUndefined(handler)) {
             throw new Error(`Missing handler: The '${name}' concept could not be handled`);
         }
 
-        var concept = handler(model, schema);
+        const concept = handler(model, schema);
         if (isNullOrUndefined(concept)) {
             throw new Error(`Bad request: The '${name}' concept could not be created`);
         }
 
-        concept.name = name;
         concept.init(args);
 
         if (isNullOrUndefined(concept.id)) {
