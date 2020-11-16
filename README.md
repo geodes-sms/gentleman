@@ -6,7 +6,7 @@ Gentleman aims to **to close the gap between models and domain experts**.
 
 | Concept defintion        | Projection definition           |
 |:-------------:|:-------------:|
-| ![Gentleman Screenshot](https://geodes-sms.github.io/gentleman/assets/images/concept.png "Concept definition")  | ![Gentleman Screenshot](https://geodes-sms.github.io/gentleman/assets/images/concept.png "projection definition") |
+| ![Gentleman Screenshot](https://geodes-sms.github.io/gentleman/assets/images/concept.png "Concept definition")  | ![Gentleman Screenshot](https://geodes-sms.github.io/gentleman/assets/images/projection.png "projection definition") |
 
 > **Projectional-editing?**
 > 1. No parser needed: the user manipulates the AST directly (though projections)
