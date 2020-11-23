@@ -34,7 +34,7 @@ Gentleman aims to **to close the gap between models and domain experts**.
 
 Take a look at the [demonstration (MODELS 2020) and see the tool in action](https://youtu.be/wJ4hVZjmrv4).
 
-⭐⭐⭐ **[Play with it](https://geodes-sms.github.io/gentleman/demo)** ⭐⭐⭐
+⭐⭐⭐ **[Play with it](https://geodes-sms.github.io/gentleman/demo/index.html)** ⭐⭐⭐
 
 
 ## Integration
