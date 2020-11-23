@@ -13,35 +13,19 @@ var inc = 0;
 const nextRowId = () => `row${inc++}`;
 const nextCellId = () => `cell${inc++}`;
 
-const addSchema = {
-    "type": "layout",
-    "layout": {
-        "type": "wrap",
-        "style": {
-            "css": "field--table__btn-add-row"
-        },
-        "disposition": [
-            { "type": "text", "content": "Add row" }
-        ]
+const actionDefaultSchema = {
+    add: {
+        projection: {
+            "type": "text",
+            "content": "Add"
+        }
+    },
+    remove: {
+        projection: {
+            "type": "text",
+            "content": "Remove"
+        }
     }
-};
-
-const addRowSchema = {
-    "type": "layout",
-    "layout": {
-        "type": "wrap",
-        "style": {
-            "css": "field--table__btn-add"
-        },
-        "disposition": [
-            { "type": "text", "content": "+" }
-        ]
-    }
-};
-
-const removeRowSchema = { 
-    "type": "text", 
-    "content": "Remove" 
 };
 
 
@@ -123,7 +107,7 @@ const BaseTableField = {
     },
 
     render() {
-        const { before = {}, after = {} } = this.schema;
+        const { action = {}, before = {}, after = {} } = this.schema;
         const { table = {}, header = {}, body = {}, footer = {} } = this.template;
 
         const fragment = createDocFragment();
@@ -263,7 +247,9 @@ const BaseTableField = {
         }
 
         if (!isHTMLElement(this.btnAdd)) {
-            let render = ContentHandler.call(this, addSchema);
+            let { projection: addLayout, style: addStyle } = valOrDefault(action.add, actionDefaultSchema.add);
+
+            let render = ContentHandler.call(this, addLayout, null, { focusable: false });
             this.btnAdd = createButton({
                 class: ["btn", "field--table__button"],
                 dataset: {
@@ -272,6 +258,8 @@ const BaseTableField = {
                     "action": "add"
                 }
             }, render);
+
+            StyleHandler(this.btnAdd, addStyle);
 
             fragment.appendChild(this.btnAdd);
         }
@@ -370,6 +358,7 @@ const BaseTableField = {
         return this.source.createElement();
     },
     addRow(concept) {
+        const { action = {}, before = {}, after = {} } = this.schema;
         const { body = {} } = this.template;
 
         const index = valOrDefault(concept.index, this.table.rows.length);
@@ -411,7 +400,9 @@ const BaseTableField = {
             class: ["field--table__cell-action"]
         });
 
-        var removeRender = ContentHandler.call(this, removeRowSchema);
+        var { projection: removeLayout, style: removeStyle } = valOrDefault(action.remove, actionDefaultSchema.remove);
+
+        var removeRender = ContentHandler.call(this, removeLayout);
 
         var btnRemove = createButton({
             class: ["btn", "field--table__button"],
@@ -422,6 +413,8 @@ const BaseTableField = {
                 "rowId": elementId
             }
         }, removeRender);
+
+        StyleHandler(btnRemove, removeStyle);        
 
         actionCell.append(btnRemove);
 

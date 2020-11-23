@@ -7,9 +7,7 @@
                 {
                     "name": "name",
                     "target": {
-                        "name": "string",
-                        "min": 2,
-                        "max": 100
+                        "name": "name"
                     },
                     "required": true
                 },
@@ -37,6 +35,16 @@
                     },
                     "required": false,
                     "description": "The list of attributes of your concept."
+                },
+                {
+                    "name": "properties",
+                    "target": {
+                        "name": "set",
+                        "accept": { "name": "property" },
+                        "min": 1
+                    },
+                    "required": false,
+                    "description": "The list of properties of your concept."
                 },
                 {
                     "name": "prototype",
@@ -112,6 +120,21 @@
                 }
             ]
         },
+        {
+            "name": "property",
+            "nature": "concrete",
+            "prototype": "structure",
+            "attribute": [
+                {
+                    "name": "target",
+                    "target": {
+                        "name": "value"
+                    },
+                    "required": true,
+                    "description": "The target concept of the property structure."
+                }
+            ]
+        },
 
         {
             "name": "primitive",
@@ -137,19 +160,13 @@
                     }
                 },
                 {
-                    "name": "pattern",
-                    "target": {
-                        "name": "string"
-                    },
-                    "description": "Regular expression."
-                },
-                {
                     "name": "values",
                     "target": {
                         "name": "set",
                         "accept": { "name": "string" },
-                        "min": 0
+                        "min": 1
                     },
+                    "required": false,
                     "description": "The list of string values accepted by the string instance."
                 }
             ]
@@ -160,7 +177,7 @@
             "attribute": []
         },
         {
-            "name": "number value",
+            "name": "number constraint value",
             "nature": "concrete",
             "prototype": "number constraint",
             "attribute": [
@@ -173,28 +190,28 @@
             ]
         },
         {
-            "name": "range",
+            "name": "number constraint range",
             "nature": "concrete",
             "prototype": "number constraint",
             "attribute": [
                 {
                     "name": "min",
                     "target": {
-                        "name": "range value"
+                        "name": "number constraint range value"
                     },
                     "description": "Defines the minimum number of characters the user must input. This must be an integer value 0 or higher. If no minlength is specified, or an invalid value is specified, the input has no minimum length."
                 },
                 {
                     "name": "max",
                     "target": {
-                        "name": "range value"
+                        "name": "number constraint range value"
                     },
                     "description": "Defines the maximum number of characters the user can input. This must be an integer value 0 or higher. If no maxlength is specified, or an invalid value is specified, the input has no maximum length."
                 }
             ]
         },
         {
-            "name": "range value",
+            "name": "number constraint range value",
             "nature": "concrete",
             "attribute": [
                 {
@@ -225,16 +242,17 @@
                     }
                 },
                 {
-                    "name": "range",
+                    "name": "value",
                     "target": {
-                        "name": "range"
+                        "name": "number constraint"
                     }
                 },
                 {
                     "name": "values",
                     "target": {
                         "name": "set",
-                        "accept": { "name": "number" }
+                        "accept": { "name": "number" },
+                        "min": 1
                     },
                     "required": false
                 }
@@ -302,9 +320,63 @@
                     "required": true
                 }
             ]
+        },
+
+        {
+            "name": "value",
+            "nature": "prototype",
+            "attribute": []
+        },
+        {
+            "name": "string value",
+            "nature": "concrete",
+            "prototype": "value",
+            "attribute": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "number value",
+            "nature": "concrete",
+            "prototype": "value",
+            "attribute": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "number"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "boolean value",
+            "nature": "concrete",
+            "prototype": "value",
+            "attribute": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "boolean"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "name",
+            "nature": "derivative",
+            "base": "string",
+            "min": 2,
+            "max": 100
         }
     ],
     
+
+
 
     "projection": [
         {
@@ -332,7 +404,7 @@
                                     "style": {
                                         "css": "model-concept-header__title"
                                     },
-                                    "content": "PROTOTYPE CONCEPT "
+                                    "content": "Prototype concept "
                                 },
                                 { "type": "attribute", "name": "name" }
                             ]
@@ -423,7 +495,7 @@
                                     "style": {
                                         "css": "model-concept-header__title"
                                     },
-                                    "content": "CONCRETE CONCEPT "
+                                    "content": "Concrete concept "
                                 },
                                 { "type": "attribute", "name": "name" }
                             ]
@@ -456,21 +528,51 @@
                                         }
                                     }
                                 },
-                                { 
-                                    "type": "attribute", 
-                                    "name": "attributes", 
-                                    "tag": "attribute-set",
-                                    "optional": {
-                                        "type": "layout",
-                                        "layout": {
-                                            "type": "wrap",
-                                            "style": {
-                                                "css": ["model-concept-option", "model-concept-option--attributes"]
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "wrap",
+                                        "style": {
+                                            "css": ["model-concept-structure"]
+                                        },
+                                        "disposition": [
+                                            { 
+                                                "type": "attribute", 
+                                                "name": "attributes", 
+                                                "tag": "attribute-set",
+                                                "optional": {
+                                                    "type": "layout",
+                                                    "layout": {
+                                                        "type": "wrap",
+                                                        "help": "Define concept-specific attributes",
+                                                        "style": {
+                                                            "css": ["model-concept-option", "model-concept-option--attributes"]
+                                                        },
+                                                        "disposition": [
+                                                            { "type": "text", "content": "Attributes" }
+                                                        ]
+                                                    }
+                                                }
                                             },
-                                            "disposition": [
-                                                { "type": "text", "content": "Define concept-specific attributes" }
-                                            ]
-                                        }
+                                            { 
+                                                "type": "attribute", 
+                                                "name": "properties", 
+                                                "tag": "property-set",
+                                                "optional": {
+                                                    "type": "layout",
+                                                    "layout": {
+                                                        "type": "wrap",
+                                                        "help": "Define concept-specific properties",
+                                                        "style": {
+                                                            "css": ["model-concept-option", "model-concept-option--properties"]
+                                                        },
+                                                        "disposition": [
+                                                            { "type": "text", "content": "Properties" }
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        ]
                                     }
                                 }
                             ]
@@ -619,7 +721,7 @@
         },
 
         {
-            "name": "simple-table",
+            "name": "attribute-table",
             "concept": { "name": "attribute" },
             "type": "template",
             "tags": [],
@@ -702,6 +804,70 @@
             }
         },
         {
+            "name": "property-table",
+            "concept": { "name": "property" },
+            "type": "template",
+            "tags": [],
+            "projection": {
+                "type": "table",
+                "table": {
+                    "style": {
+                        "css": ["attribute-table"]
+                    }
+                },
+                "header": {
+                    "style": {
+                        "css": ["attribute-table-header"]
+                    },
+                    "cell": [
+                        {
+                            "style": {
+                                "css": ["attribute-table__header-cell"]
+                            },
+                            "content": {
+                                "type": "text",
+                                "content": "Name"
+                            }
+                        },
+                        {
+                            "style": {
+                                "css": ["attribute-table__header-cell"]
+                            },
+                            "content": {
+                                "type": "text",
+                                "content": "Target"
+                            }
+                        }
+                    ]
+                },
+                "body": {
+                    "style": {
+                        "css": ["attribute-table-body"]
+                    },
+                    "cell": [
+                        {
+                            "style": {
+                                "css": ["attribute-table__body-cell"]
+                            },
+                            "content": { 
+                                "type": "attribute", 
+                                "name": "name" 
+                            }
+                        },
+                        {
+                            "style": {
+                                "css": ["attribute-table__body-cell"]
+                            },
+                            "content": { 
+                                "type": "attribute", 
+                                "name": "target" 
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
             "concept": { "name": "attribute" },
             "type": "layout",
             "tags": ["list-item"],
@@ -722,13 +888,16 @@
             "tags": [],
             "projection": {
                 "type": "choice",
+                "style": {
+                    "css": ["target-choice"]
+                },
                 "choice": {
                     "style": {
-                        "css": ["target-choices"]
+                        "css": ["target-choice-list"]
                     },
                     "option": {
                         "style": {
-                            "css": ["target-choice"]
+                            "css": ["target-choice-option"]
                         }
                     }
                 }
@@ -742,31 +911,59 @@
                 "type": "stack",
                 "orientation": "vertical",
                 "disposition": [
-                    {
-                        "type": "text",
-                        "style": {
-                            "css": "title",
-                            "text": { "bold": 600 }
-                        },
-                        "content": "Constraints"
-                    },
                     { 
                         "type": "attribute", 
                         "name": "default",
                         "tag": "default-string"
                     },
-                    { 
-                        "type": "attribute", 
-                        "name": "pattern"
+                    {
+                        "type": "text",
+                        "style": {
+                            "css": ["title", "target__title"]
+                        },
+                        "content": "Constraints"
                     },
-                    { 
-                        "type": "attribute", 
-                        "name": "length"
-                    },
-                    { 
-                        "type": "attribute", 
-                        "name": "values", 
-                        "tag": "value-set" 
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "style": {
+                                "css": ["target-constraint"]
+                            },
+                            "disposition": [
+                                {
+                                    "type": "text",
+                                    "style": {
+                                        "css": ["title", "target-constraint__title"]
+                                    },
+                                    "content": "Length"
+                                },
+                                { 
+                                    "type": "attribute", 
+                                    "name": "length"
+                                },
+                                { 
+                                    "type": "attribute", 
+                                    "name": "values", 
+                                    "tag": "value-set",
+                                    "optional": {
+                                        "type": "layout",
+                                        "layout": {
+                                            "type": "wrap",
+                                            "style": {
+                                                "css": ["string-primitive-option", "string-primitive-option--values"]
+                                            },
+                                            "disposition": [
+                                                {
+                                                    "type": "text",
+                                                    "content": "Restrict accepted values"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             }
@@ -792,20 +989,23 @@
             "tags": [],
             "projection": {
                 "type": "choice",
+                "style": {
+                    "css": ["constraint-choice"]
+                },
                 "choice": {
                     "style": {
-                        "css": ["target-choices"]
+                        "css": ["constraint-choice-list"]
                     },
                     "option": {
                         "style": {
-                            "css": ["target-choice"]
+                            "css": ["constraint-choice-option"]
                         }
                     }
                 }
             }
         },
         {
-            "concept": { "name": "number value" },
+            "concept": { "name": "number constraint value" },
             "type": "layout",
             "tags": ["choice-selection"],
             "projection": {
@@ -820,7 +1020,7 @@
             }
         },
         {
-            "concept": { "name": "number value" },
+            "concept": { "name": "number constraint value" },
             "type": "layout",
             "tags": ["choice"],
             "projection": {
@@ -835,7 +1035,7 @@
             }
         },
         {
-            "concept": { "name": "range" },
+            "concept": { "name": "number constraint range" },
             "type": "layout",
             "tags": ["choice-selection"],
             "projection": {
@@ -854,7 +1054,7 @@
             }
         },
         {
-            "concept": { "name": "range" },
+            "concept": { "name": "number constraint range" },
             "type": "layout",
             "tags": ["choice"],
             "projection": {
@@ -869,7 +1069,7 @@
             }
         },
         {
-            "concept": { "name": "range value" },
+            "concept": { "name": "number constraint range value" },
             "type": "layout",
             "tags": [],
             "projection": {
@@ -894,10 +1094,14 @@
                 "type": "stack",
                 "orientation": "vertical",
                 "disposition": [
+                    { 
+                        "type": "attribute", 
+                        "name": "default"
+                    },
                     {
                         "type": "text",
                         "style": {
-                            "text": { "bold": 600 }
+                            "css": ["title", "target__title"]
                         },
                         "content": "Constraints"
                     },
@@ -905,16 +1109,33 @@
                         "type": "layout",
                         "layout": {
                             "type": "wrap",
+                            "style": {
+                                "css": ["target-constraint"]
+                            },
                             "disposition": [
                                 { 
                                     "type": "attribute", 
-                                    "name": "min", 
-                                    "tag": "min-number" 
+                                    "name": "value"
                                 },
                                 { 
                                     "type": "attribute", 
-                                    "name": "max", 
-                                    "tag": "max-number" 
+                                    "name": "values", 
+                                    "tag": "value-set",
+                                    "optional": {
+                                        "type": "layout",
+                                        "layout": {
+                                            "type": "wrap",
+                                            "style": {
+                                                "css": ["string-primitive-option", "string-primitive-option--values"]
+                                            },
+                                            "disposition": [
+                                                {
+                                                    "type": "text",
+                                                    "content": "Restrict accepted values"
+                                                }
+                                            ]
+                                        }
+                                    }
                                 }
                             ]
                         }
@@ -943,7 +1164,12 @@
             "tags": ["choice-selection"],
             "projection": {
                 "type": "wrap",
-                "disposition": []
+                "disposition": [
+                    { 
+                        "type": "attribute", 
+                        "name": "default"
+                    }
+                ]
             }
         },
         {
@@ -1008,10 +1234,10 @@
                 "disposition": [
                     {
                         "type": "text",
+                        "content": "Element target",
                         "style": {
-                            "text": { "bold": 600 }
-                        },
-                        "content": "Set target"
+                            "css": ["title", "set-primitive__title"]
+                        }
                     },
                     { 
                         "type": "attribute", 
@@ -1020,7 +1246,7 @@
                     {
                         "type": "text",
                         "style": {
-                            "text": { "bold": 600 }
+                            "css": ["title", "target__title"]
                         },
                         "content": "Constraints"
                     },
@@ -1028,16 +1254,13 @@
                         "type": "layout",
                         "layout": {
                             "type": "wrap",
+                            "style": {
+                                "css": ["target-constraint"]
+                            },
                             "disposition": [
                                 { 
                                     "type": "attribute", 
-                                    "name": "min", 
-                                    "tag": "min-number" 
-                                },
-                                { 
-                                    "type": "attribute", 
-                                    "name": "max", 
-                                    "tag": "max-number" 
+                                    "name": "cardinality"
                                 }
                             ]
                         }
@@ -1091,6 +1314,115 @@
             }
         },
 
+        {
+            "concept": { "name": "value" },
+            "type": "field",
+            "tags": [],
+            "projection": {
+                "type": "choice",
+                "choice": {
+                    "style": {
+                        "css": ["target-choices"]
+                    },
+                    "option": {
+                        "style": {
+                            "css": ["target-choice"]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "number value" },
+            "type": "layout",
+            "tags": ["choice-selection"],
+            "projection": {
+                "type": "stack",
+                "orientation": "horizontal",
+                "disposition": [
+                    { 
+                        "type": "attribute", 
+                        "name": "value"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "number value" },
+            "type": "layout",
+            "tags": ["choice"],
+            "projection": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    { 
+                        "type": "text", 
+                        "content": "Number" 
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string value" },
+            "type": "layout",
+            "tags": ["choice-selection"],
+            "projection": {
+                "type": "stack",
+                "orientation": "horizontal",
+                "disposition": [
+                    { 
+                        "type": "attribute", 
+                        "name": "value"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string value" },
+            "type": "layout",
+            "tags": ["choice"],
+            "projection": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    { 
+                        "type": "text", 
+                        "content": "String" 
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "boolean value" },
+            "type": "layout",
+            "tags": ["choice-selection"],
+            "projection": {
+                "type": "stack",
+                "orientation": "horizontal",
+                "disposition": [
+                    { 
+                        "type": "attribute", 
+                        "name": "value"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "boolean value" },
+            "type": "layout",
+            "tags": ["choice"],
+            "projection": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    { 
+                        "type": "text", 
+                        "content": "Boolean" 
+                    }
+                ]
+            }
+        },
+
 
 
         {
@@ -1116,17 +1448,12 @@
             "type": "field",
             "tags": [],
             "projection": {
-                "type": "text"
-            }
-        },
-        {
-            "concept": { "name": "number" },
-            "type": "field",
-            "tags": ["min-number", "max-number"],
-            "projection": {
                 "type": "text",
+                "input": {
+                    "type": "number"
+                },
                 "style": {
-                    "css": ["textfield--number"]
+                    "css": ["textfield--outlined"]
                 }
             }
         },
@@ -1226,9 +1553,58 @@
                         }
                     }
                 },
+                "action": {
+                    "add": {
+                        "projection": {
+                            "type": "text",
+                            "help": "Add an attribute",
+                            "content": "Add"
+                        }
+                    },
+                    "remove": {
+                        "style": {
+                            "css": "cell-list__btn-remove"
+                        },
+                        "projection": {
+                            "type": "text",
+                            "help": "Remove attribute",
+                            "content": "Remove"
+                        }
+                    }
+                },
                 "template": {
                     "concept": "attribute",
-                    "name": "simple-table"
+                    "name": "attribute-table"
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "type": "field",
+            "tags": ["property-set"],
+            "projection": {
+                "type": "table",
+                "orientation": "column",
+                "before": {
+                    "projection": {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "style": {
+                                "css": ["heading"]
+                            },
+                            "disposition": [
+                                { 
+                                    "type": "text", 
+                                    "content": "Properties" 
+                                }
+                            ]
+                        }
+                    }
+                },
+                "template": {
+                    "concept": "property",
+                    "name": "property-table"
                 }
             }
         },
@@ -1379,6 +1755,15 @@
             }
         },
 
+     
+        {
+            "concept": { "name": "name" },
+            "type": "field",
+            "tags": [],
+            "projection": {
+                "type": "text"
+            }
+        },
         {
             "concept": { "name": "string" },
             "type": "field",

@@ -1,10 +1,15 @@
 const webpack = require('webpack');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const common = require('./webpack.common');
+const path = require('path');
 const CleanCssPlugin = require('./clean-css-plugin');
 
 module.exports = merge(common, {
     mode: 'production',
+    output: {
+        filename: 'gentleman.js',
+        path: path.resolve(__dirname, 'dist')
+    },
     module: {
         rules: [
             {
@@ -26,6 +31,6 @@ module.exports = merge(common, {
                 NODE_ENV: JSON.stringify(process.env.NODE_ENV)
             }
         }),
-        new CleanCssPlugin({ filename: "bundle" })
+        new CleanCssPlugin({ filename: "gentleman" })
     ]
 });
