@@ -9,7 +9,7 @@ Gentleman aims to **to close the gap between models and domain experts**.
 | ![Gentleman Screenshot](https://geodes-sms.github.io/gentleman/assets/images/concept.png "Concept definition")  | ![Gentleman Screenshot](https://geodes-sms.github.io/gentleman/assets/images/projection.png "projection definition") |
 
 > **Projectional-editing?**
-> 1. No parser needed: the user manipulates the AST directly (though projections)
+> 1. No parser needed: the user manipulates the AST directly (through projections)
 > 2. Support of various notations: tables, math formulas, graphics...
 > 3. Composition of any language without introducing syntactic ambiguities
 
@@ -33,6 +33,9 @@ Gentleman aims to **to close the gap between models and domain experts**.
 ### 👉 Demonstration
 
 Take a look at the [demonstration (MODELS 2020) and see the tool in action](https://youtu.be/wJ4hVZjmrv4).
+
+⭐⭐⭐ **[Play with it](https://geodes-sms.github.io/gentleman/demo)** ⭐⭐⭐
+
 
 ## Integration
 
@@ -61,7 +64,7 @@ editor.init(MODEL, PROJETION)
 
 # Installation
 
-⚠️ **Please, be informed that Gentleman is currently in alpha. Proceed with caution.**
+⚠️ **Gentleman is currently in alpha.**
 
 ## Building the Code
 
@@ -74,15 +77,10 @@ To build the code, follow these steps.
 $ npm install
 ```
 
-## Running the Tests
 
-```
-$ npm run test
-```
+<!-- # Documentation
 
-# Documentation
-
-You can read the documentation for Gentleman [here](https://geodes-sms.github.io/gentleman/docs). If you would like to help improve this documentation, the source for many of the docs can be found in the doc folder within this repository.
+You can read the documentation for Gentleman [here](https://geodes-sms.github.io/gentleman/docs). If you would like to help improve this documentation, the source for many of the docs can be found in the doc folder within this repository. -->
 
 # Publication
 

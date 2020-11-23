@@ -22,7 +22,7 @@ export const WrapLayout = {
     },
 
     render() {
-        const { disposition, style } = this.schema;
+        const { disposition, style, help } = this.schema;
 
         if (!Array.isArray(disposition)) {
             throw new SyntaxError("Bad disposition");
@@ -33,6 +33,7 @@ export const WrapLayout = {
         if (!isHTMLElement(this.container)) {
             this.container = createDiv({
                 class: ["layout-container"],
+                title: help,
                 dataset: {
                     nature: "layout",
                     layout: "wrap",

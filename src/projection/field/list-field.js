@@ -311,7 +311,7 @@ const BaseListField = {
 
         var addProjection = ContentHandler.call(this, addLayout, null, { focusable: false });
 
-        const createAdd = ["first", "last"].includes(position) ? createListItem : createDiv;
+        const createAdd = ["first", "last"].includes(position) ? createListItem : createButton;
 
         var addElement = createAdd({
             class: ["field--list__add"],

@@ -169,14 +169,13 @@
     border: 0 none;
     background-color: transparent;
     outline: none;
-    resize: none;
     z-index: 5;
 }
     .field--textbox__input.error {
         border-color: #dd4124!important;
         background-color: rgba(191, 25, 50, 0.2)!important;
     }
-    .field--textbox__input:empty {
+    .field--textbox__input.empty {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -338,10 +337,6 @@
         position: relative;
         padding: 2px 5px 3px;
         box-sizing: border-box;
-    }
-
-    .field--choice__selection {
-        margin-top: 8px;
     }
 
 
