@@ -6,6 +6,7 @@ import { WrapLayout } from "./wrap-layout.js";
 var inc = 0;
 const nextId = () => `layout${inc++}`;
 
+
 const Handler = {
     'stack': (model, schema, projection) => Object.create(StackLayout, {
         object: { value: "layout" },
@@ -30,6 +31,7 @@ const Handler = {
 export const LayoutFactory = {
     createLayout(model, schema, projection) {
         const { type } = schema;
+
         const handler = Handler[type];
 
         if (isNullOrUndefined(handler)) {

@@ -188,6 +188,12 @@
                     }
                 },
                 {
+                    "name": "label",
+                    "target": {
+                        "name": "input label"
+                    }
+                },
+                {
                     "name": "multiline",
                     "target": {
                         "name": "boolean"
@@ -224,6 +230,19 @@
                         "name": "static element"
                     },
                     "required": false
+                }
+            ]
+        },
+        {
+            "name": "input label",
+            "nature": "concrete",
+            "prototype": "render",
+            "attribute": [
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "string"
+                    }
                 }
             ]
         },
@@ -420,6 +439,23 @@
                         "name": "set",
                         "accept": {
                             "name": "row"
+                        },
+                        "min": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "relative layout",
+            "nature": "concrete",
+            "prototype": "layout",
+            "attribute": [
+                {
+                    "name": "elements",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "element"
                         },
                         "min": 1
                     }
@@ -2092,6 +2128,25 @@
                 ]
             }
         },
+        {
+            "concept": { "name": "relative layout" },
+            "type": "layout",
+            "tags": ["choice"],
+            "projection": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "type": "text",
+                        "help": "Wrap Layout",
+                        "content": "Relative"
+                    }
+                ]
+            }
+        },
+
+
+
         {
             "concept": { "name": "template" },
             "type": "field",

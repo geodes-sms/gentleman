@@ -52,8 +52,15 @@ const _SetConcept = {
     hasValue() {
         return !isEmpty(this.value);
     },
-    getValue() {
-        return this.value.map(id => this.model.getConcept(id));
+    getValue(deep = false) {
+        const concepts = this.value.map(id => this.model.getConcept(id));
+
+        if (deep) {
+            console.log(concepts);
+            return concepts.map(concept => concept.getValue());
+        }
+
+        return concepts;
     },
     setValue(value) {
         if (!Array.isArray(value)) {

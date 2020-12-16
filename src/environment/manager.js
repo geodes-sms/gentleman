@@ -24,6 +24,8 @@ export const Manager = {
     homePage: null,
     /** @type {HTMLButtonElement} */
     btnBuild: null,
+    /** @type {HTMLButtonElement} */
+    btnNew: null,
 
     init(container) {
         var result = resolveContainer(container);
@@ -44,11 +46,11 @@ export const Manager = {
         const fragment = createDocFragment();
 
         if (isNullOrUndefined(this.menu.parentElement)) {
-            fragment.appendChild(this.menu);
+            fragment.append(this.menu);
         }
 
         if (isNullOrUndefined(this.btnBuild.parentElement)) {
-            fragment.appendChild(this.btnBuild);
+            this.menu.append(this.btnNew, this.btnBuild);
         }
 
         if (fragment.hasChildNodes()) {
@@ -127,10 +129,10 @@ export const Manager = {
         this.container.appendChild(this.homeContainer);
     },
     refresh() {
-        if ([editors, explorers].every((env) => isEmpty(env))) {
-            this.home();
-        } else {
-            hide(this.homeContainer);
+        if (this.isEmpty()) {
+            this.createEditor().init().open();
+
+            return this;
         }
 
         let conceptEditor = false;
@@ -146,11 +148,11 @@ export const Manager = {
             }
         }
 
-        if (conceptEditor && projectionEditor) {
-            show(this.btnBuild);
-        } else {
-            hide(this.btnBuild);
-        }
+        // if (conceptEditor && projectionEditor) {
+        //     show(this.btnBuild);
+        // } else {
+        //     hide(this.btnBuild);
+        // }
 
         return this;
     },
@@ -159,6 +161,9 @@ export const Manager = {
         var editor = getEnvironment.call({ environments: editors }, id);
 
         return editor;
+    },
+    isEmpty() {
+        return !this.hasEditor() && !this.hasExplorer();
     },
     /**
      * Creates a new `Editor`
@@ -201,6 +206,9 @@ export const Manager = {
 
         return true;
     },
+    hasEditor() {
+        return !isEmpty(editors);
+    },
     /** @returns {Explorer} */
     getExplorer(id) {
         var explorer = getEnvironment.call({ environments: explorers }, id);
@@ -228,24 +236,37 @@ export const Manager = {
 
         return explorer;
     },
+    hasExplorer() {
+        return !isEmpty(explorers);
+    },
     bindDOM() {
         if (!isHTMLElement(this.menu)) {
             this.menu = createDiv({
-                class: ["manager-menu", "hidden"]
-            }, "MENU");
+                class: ["manager-menu"]
+            });
         }
 
         if (!isHTMLElement(this.btnBuild)) {
             this.btnBuild = createButton({
                 id: "btnBuildModel",
-                class: ["btn", "manager__btn-build", "hidden"],
-                draggable: true,
+                class: ["btn", "manager__button", "manager__btn-build"]
             }, "Build");
+
+        }
+
+        if (!isHTMLElement(this.btnNew)) {
+            this.btnNew = createButton({
+                id: "btnNewEditor",
+                class: ["btn", "manager__button", "manager__btn-new"]
+            }, "New");
         }
     },
     bindEvents() {
         this.menu.addEventListener("click", (event) => {
-            console.log("SHOW MENU");
+            const { target }  =  event;
+            if (target === this.btnNew) {
+                this.createEditor().init().open();
+            }
         });
 
         this.btnBuild.addEventListener('click', (event) => {

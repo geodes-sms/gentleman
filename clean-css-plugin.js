@@ -16,7 +16,16 @@ class CleanCssPlugin {
             var bundle = new CleanCSS({
                 sourceMap: true,
                 rebaseTo: `./dist/${this.options.filename}.min.css`
-            }).minify(sources);
+            }).minify([
+                './assets/css/normalize.css',
+                './assets/css/base.css',
+                './assets/css/layout.css',
+                './assets/css/field.css',
+                './assets/css/effect.css',
+                './assets/css/manager.css',
+                './assets/css/loader.css',
+                './assets/css/editor.css',
+            ]);
 
             // log bundle result
             outputFeedback(bundle.errors, true);

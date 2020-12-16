@@ -1,17 +1,52 @@
-.manager-menu {
-    position: fixed;
-    bottom: 0; left: 0;
-    width: 64px;
-    height: 64px;
-    text-align: center;
-    line-height: 64px;
-    color: #fff;
-    background-color: #232425;
-    box-shadow: 1px -1px 2px #000;
-    opacity: 0.8;
-    z-index: 100;
+[data-gentleman] {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    height: 100%;
+    padding: 60px 12px 12px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    background-color: #e5e5e5;
+    overflow: auto;
 }
 
-.manager-menu:hover {
-    opacity: 1;
+    .env {
+        border-radius: 1px 1px 2px 2px;
+        overflow: hidden;
+        min-width: 300px;
+    }
+
+    .env + .env {
+        margin-left: 12px;
+    }
+
+
+.manager-menu {
+    position: absolute;
+    top: 0; right: 0; left: 0;
+    padding-left: 1%;
+    display: flex; align-items: center;
+    height: 48px;
+    background: #f2f1f0;
+    border-bottom: 1px solid #e5e4e2;
+    box-shadow: 0 1px 2px -1px rgba(100, 100, 100, 0.95);
+    z-index: 100;
 }
+    .manager-menu:after {
+        content: "";
+        position: absolute;
+        top: 0; right: 0; left: 0; bottom: 0;
+        background-color: #fff;
+        opacity: 0.8;
+        z-index: -1;
+    }
+
+    .manager__button {
+        margin-right: 6px;
+        font-size: 1.4em; font-weight: 500;
+        padding: 6px 12px 7px;
+        background-color: #E3E4E6;
+        color: #222;
+        box-shadow: 0 1px 2px -1px #555;
+        border-radius: 2px 2px 4px 4px;
+    }

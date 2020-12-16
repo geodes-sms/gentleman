@@ -16,13 +16,14 @@ const MODEL_GENTLEMAN_PROJECTION = require('@include/gentleman_projection.json')
 
 /**
  * @returns {HTMLElement}
+ * @this {Editor}
  */
 function createEditorHeader() {
     this.header = createDiv({
         class: ["editor-header"],
     });
 
-    let title = createSpan({
+    this.headerTitle = createSpan({
         class: ["editor-header-title"],
     }, "Editor");
 
@@ -48,13 +49,6 @@ function createEditorHeader() {
         }
     });
 
-    let btnNew = createButton({
-        class: ["btn", "btn-new"],
-        dataset: {
-            action: "new"
-        }
-    });
-
     let btnStyle = createButton({
         class: ["btn", "btn-style", "hidden"],
         dataset: {
@@ -64,11 +58,11 @@ function createEditorHeader() {
 
     let toolbar = createDiv({
         class: ["editor-toolbar"],
-    }, [btnStyle, btnNew, btnClose]);
+    }, [btnStyle, btnClose]);
 
     let menu = createDiv({
         class: ["editor-header-menu"]
-    }, [title, this.selectorList, toolbar]);
+    }, [this.headerTitle, this.selectorList, toolbar]);
 
     this.headerBody = createDiv({
         class: ["editor-header-main"],
@@ -281,7 +275,10 @@ function createHome() {
 
     projectionOptions.append(projectionOptionsTitle, projectionOptionsContent, projectionOptionsAction);
 
-    body.append(modelOptions, projectionOptions);
+    body.append(
+        modelOptions
+        // , projectionOptions
+    );
 
     container.append(header, body);
 
@@ -487,6 +484,8 @@ export const Editor = {
     /** @type {HTMLElement} */
     header: null,
     /** @type {HTMLElement} */
+    headerTitle: null,
+    /** @type {HTMLElement} */
     headerBody: null,
     /** @type {HTMLElement} */
     body: null,
@@ -520,11 +519,13 @@ export const Editor = {
 
     /** @type {string} */
     buildTarget: null,
+    /** @type {*} */
+    config: null,
 
     /** @type {boolean} */
     active: false,
 
-    init(conceptModel, projectionModel, valueModel) {
+    init(conceptModel, projectionModel, valueModel) {        
         if (conceptModel) {
             this.conceptModel = ConceptModelManager.createModel(conceptModel).init(valueModel);
         }
@@ -554,6 +555,7 @@ export const Editor = {
         }
 
         if (editor) {
+            this.config = editor;
             this.buildTarget = editor.build;
         }
 
@@ -926,6 +928,10 @@ export const Editor = {
         show(this.menu);
         show(this.selectorList);
         show(this.headerBody);
+
+        if(hasOwn(this.config, "name")) {
+            this.headerTitle.textContent = `Editor: ${this.config["name"]}`;
+        }
 
         this.container.classList.remove("empty");
 

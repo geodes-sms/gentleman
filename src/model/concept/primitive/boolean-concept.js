@@ -84,13 +84,7 @@ const _BooleanConcept = {
         return true;
     },
     getCandidates() {
-        this.values.forEach(value => {
-            if (isObject(value)) {
-                value.type = "value";
-            }
-        });
-
-        return this.values;
+        return [true, false];
     },
     getChildren(name) {
         return [];

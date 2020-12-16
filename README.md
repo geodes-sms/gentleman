@@ -13,7 +13,7 @@ Gentleman aims to **to close the gap between models and domain experts**.
 > 2. Support of various notations: tables, math formulas, graphics...
 > 3. Composition of any language without introducing syntactic ambiguities
 
-## Worflow
+## Workflow
 
 1. **Language enginneer**
    1. Define a model for your DSL concepts or import and Ecore model
@@ -34,7 +34,7 @@ Gentleman aims to **to close the gap between models and domain experts**.
 
 Take a look at the [demonstration (MODELS 2020) and see the tool in action](https://youtu.be/wJ4hVZjmrv4).
 
-⭐⭐⭐ **[Play with it](https://geodes-sms.github.io/gentleman/demo)** ⭐⭐⭐
+⭐⭐⭐ **[Play with it](https://geodes-sms.github.io/gentleman/demo/index.html)** ⭐⭐⭐
 
 
 ## Integration

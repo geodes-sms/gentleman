@@ -1,5 +1,6 @@
 import { createI, valOrDefault } from "zenkai";
 import { ContentHandler } from "./content-handler.js";
+import { StyleHandler } from "./style-handler.js";
 
 
 /**
@@ -7,7 +8,7 @@ import { ContentHandler } from "./content-handler.js";
  * @param {string} name 
  */
 export function AttributeHandler(schema, concept) {
-    const { name, optional, tag } = schema;
+    const { name, optional, style, tag } = schema;
 
     if (!concept.hasAttribute(name)) {
         throw new Error(`Attribute '${name}' does not exist in the concept '${concept.name}'`);
@@ -54,6 +55,9 @@ export function AttributeHandler(schema, concept) {
         projection.parent = this.projection;
 
         render = projection.render();
+
+        StyleHandler(render, style);
+
         attr.element = render;
     }
 

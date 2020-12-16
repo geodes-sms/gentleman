@@ -3,45 +3,50 @@ import { StyleHandler } from './style-handler.js';
 import { AttributeHandler } from './structure-handler.js';
 import { LayoutFactory } from "./layout/index.js";
 import { FieldFactory } from "./field/index.js";
+import { StaticFactory } from "./static/index.js";
 
 
-export function ContentHandler(value, concept, args) {
+export function ContentHandler(schema, concept, args) {
 
     const contentConcept = valOrDefault(concept, this.projection.concept);
-    if (value.type === "layout") {
-        let layout = LayoutFactory.createLayout(this.model, value.layout, this.projection).init(args);
+
+    if (schema.type === "layout") {
+        let layout = LayoutFactory.createLayout(this.model, schema.layout, this.projection).init(args);
         layout.parent = this;
 
         return layout.render();
-    } else if (value.type === "field") {
-        let field = FieldFactory.createField(this.model, value, concept).init(args);
+    } else if (schema.type === "field") {
+        let field = FieldFactory.createField(this.model, schema, concept).init(args);
         field.model = this.model;
 
         return field.render();
-    } else if (value.type === "static") {
-        let field = FieldFactory.createField(this.model, value, concept).init(args);
-        field.model = this.model;
+    } else if (schema.type === "static") {
+        let staticContent = StaticFactory.createStatic(this.model, schema.static, this.projection).init(args);
+        staticContent.parent = this;
 
-        return field.render();
-    } else if (value.type === "attribute") {
-        return AttributeHandler.call(this, value, contentConcept);
-    } else if (value.type === "property") {
-        return PropertyHandler.call(this, value, contentConcept);
-    } else if (value.type === "text") {
-        return TextHandler(value, this.projection);
-    } else if (value.type === "projection") {
+        return staticContent.render();
+    } else if (schema.type === "attribute") {
+        return AttributeHandler.call(this, schema, contentConcept);
+    } else if (schema.type === "property") {
+        return PropertyHandler.call(this, schema, contentConcept);
+    } else if (schema.type === "text") {
+        return TextHandler(schema, this.projection);
+    } else if (schema.type === "projection") {
+        const { tag, style } = schema;
+
+        /** @type {number} */
+        const index = this.projection.schema.findIndex((x) => x.tags.includes(tag));
+
         /** @type {HTMLElement} */
         const element = createButton({
-            class: ["text"],
-            dataset: {
-                property: name,
-                ignore: "all",
-            }
-        }, ContentHandler.call(this, value.content, concept, args));
+            class: ["btn"],
+        }, ContentHandler.call(this, schema.content, concept, args));
 
         element.addEventListener('click', () => {
-            this.projection.changeView();
+            this.projection.changeView(index);
         });
+
+        StyleHandler(element, style);
 
         return element;
     }

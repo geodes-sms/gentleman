@@ -263,6 +263,7 @@ export const ConceptModel = {
             let schema = {
                 "id": concept.id,
                 "name": getName(concept),
+                "description": getDescription(concept),
                 "nature": ConceptNature[concept.name],
                 "attribute": concept.isAttributeCreated("attributes") ? buildAttribute(getValue(concept, 'attributes')) : [],
             };
@@ -483,11 +484,13 @@ const getAttr = (concept, name) => concept.getAttributeByName(name).target;
 
 const getReference = (concept, attr) => getAttr(concept, attr).getReference();
 
-const getValue = (concept, attr) => getAttr(concept, attr).getValue();
+const getValue = (concept, attr, deep = false) => getAttr(concept, attr).getValue(deep);
 
 const hasValue = (concept, attr) => getAttr(concept, attr).hasValue();
 
 const getName = (concept) => getValue(concept, 'name').toLowerCase();
+
+const getDescription = (concept) => getValue(concept, 'description');
 
 const nameMap = {
     "string primitive": (concept) => "string",
@@ -512,7 +515,8 @@ function buildAttribute(attributes) {
 
     attributes.forEach(attribute => {
         var schema = {
-            "name": getName(attribute)
+            "name": getName(attribute),
+            "description": getDescription(attribute),
         };
 
         const primitive = getValue(attribute, "target");
@@ -528,11 +532,19 @@ function buildAttribute(attributes) {
             };
         }
 
-        ["min", "max"].forEach(attr => {
-            if (primitive.isAttributeCreated(attr) && hasValue(primitive, attr)) {
-                schema.target[attr] = +getValue(primitive, attr);
-            }
-        });
+        if (primitive.isAttributeCreated("default") && hasValue(primitive, "default")) {
+            schema.target["default"] = getValue(primitive, "default");
+        }
+
+        if (primitive.isAttributeCreated("values") && hasValue(primitive, "values")) {
+            schema.target["values"] = getValue(primitive, "values", true);
+        }
+
+        // ["min", "max"].forEach(attr => {
+        //     if (primitive.isAttributeCreated(attr) && hasValue(primitive, attr)) {
+        //         schema.target[attr] = +getValue(primitive, attr);
+        //     }
+        // });
 
         ["alias", "description", "required"].forEach(attr => {
             if (attribute.isAttributeCreated(attr) && hasValue(attribute, attr)) {
@@ -545,6 +557,7 @@ function buildAttribute(attributes) {
 
     return result;
 }
+
 
 /**
  * 
