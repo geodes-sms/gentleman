@@ -5,6 +5,7 @@ import {
 import { hide, show } from "@utils/index.js";
 import { LayoutFactory } from "./layout/index.js";
 import { FieldFactory } from "./field/index.js";
+import { StyleHandler } from "./style-handler.js";
 
 
 var inc = 0;
@@ -149,6 +150,7 @@ const Projection = {
 
                     /** @type {HTMLElement} */
                     const render = projection.render();
+                    StyleHandler(render, schema.style);
 
                     struct.element = render;
                     struct.optional.after(render);
@@ -247,15 +249,20 @@ const Projection = {
             container = this.render();
         }
 
-        currentContainer.classList.remove("fade-in");
-        currentContainer.classList.add("swap-left");
+        currentContainer.replaceWith(container);
+        container.focus();
 
-        setTimeout(() => {
-            currentContainer.replaceWith(container);
-            currentContainer.classList.remove("swap-left");
-            container.classList.add("fade-in");
-            container.focus();
-        }, 600);
+        // Animated transition
+
+        // currentContainer.classList.remove("fade-in");
+        // currentContainer.classList.add("swap-left");
+
+        // setTimeout(() => {
+        //     currentContainer.replaceWith(container);
+        //     currentContainer.classList.remove("swap-left");
+        //     container.classList.add("fade-in");
+        //     container.focus();
+        // }, 600);
 
         return this;
     },

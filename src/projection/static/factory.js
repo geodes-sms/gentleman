@@ -1,76 +1,73 @@
 import { isNullOrUndefined, valOrDefault } from 'zenkai';
-import { BinaryField } from './binary-field.js';
-import { ChoiceField } from './choice-field.js';
-import { LinkField } from './link-field.js';
-import { TextField } from './text-field.js';
+import { TextStatic } from './text-static.js';
 
-
-const Handler = {
-    'audio': (model, schema, concept) => Object.create(BinaryField, {
-        object: { value: "field" },
-        name: { value: "binary-field" },
-        type: { value: "binary" },
-        id: { value: nextId() },
-        model: { value: model },
-        schema: { value: schema },
-        source: { value: concept },
-    }),
-    'image': (model, schema, concept) => Object.create(ChoiceField, {
-        object: { value: "field" },
-        name: { value: "choice-field" },
-        type: { value: "choice" },
-        id: { value: nextId() },
-        model: { value: model },
-        schema: { value: schema },
-        source: { value: concept },
-    }),
-    'link': (model, schema, concept) => Object.create(LinkField, {
-        object: { value: "field" },
-        name: { value: "link-field" },
-        type: { value: "link" },
-        id: { value: nextId() },
-        model: { value: model },
-        schema: { value: schema },
-        source: { value: concept },
-    }),
-    'text': (model, schema, concept) => Object.create(TextField, {
-        object: { value: "field" },
-        name: { value: "text-field" },
-        type: { value: "text" },
-        id: { value: nextId() },
-        model: { value: model },
-        schema: { value: schema },
-        source: { value: concept },
-    }),
-};
 
 var inc = 0;
 const nextId = () => `static${inc++}`;
 
+
+const Handler = {
+    'audio': (model, schema, projection) => Object.create(TextStatic, {
+        object: { value: "static" },
+        name: { value: "audio-static" },
+        type: { value: "audio" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+    }),
+    'image': (model, schema, projection) => Object.create(TextStatic, {
+        object: { value: "static" },
+        name: { value: "image-static" },
+        type: { value: "image" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+    }),
+    'link': (model, schema, projection) => Object.create(TextStatic, {
+        object: { value: "field" },
+        name: { value: "image-static" },
+        type: { value: "image" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+    }),
+    'text': (model, schema, projection) => Object.create(TextStatic, {
+        object: { value: "static" },
+        name: { value: "text-static" },
+        type: { value: "text" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+    }),
+};
+
 export const StaticFactory = {
-    createField(model, schema, concept) {
+    createStatic(model, schema, projection) {
         const { type } = schema;
 
         const handler = Handler[type];
 
         if (isNullOrUndefined(handler)) {
-            throw new Error(`Missing handler: The '${name}' field could not be handled`);
+            throw new Error(`Missing handler: The '${type}' static could not be handled`);
         }
 
-        var field = handler(model, schema, concept);
+        var staticElement = handler(model, schema, projection);
 
-        if (isNullOrUndefined(field)) {
-            throw new Error(`Bad request: The '${name}' field could not be created`);
+        if (isNullOrUndefined(staticElement)) {
+            throw new Error(`Bad request: The '${type}' static could not be created`);
         }
 
-        field.errors = [];
-        field.readonly = valOrDefault(schema.readonly, false);
-        field.initObserver();
+        staticElement.errors = [];
+        staticElement.initObserver();
 
-        if (isNullOrUndefined(field.id)) {
-            field.id = nextId();
+        if (isNullOrUndefined(staticElement.id)) {
+            staticElement.id = nextId();
         }
 
-        return field;
+        return staticElement;
     }
 };

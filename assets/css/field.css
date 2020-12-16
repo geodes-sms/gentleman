@@ -4,17 +4,17 @@
 
 .field {
     position: relative;
+    padding: 8px 4px 2px;
     box-sizing: border-box;
     z-index: 1;
-    padding: 8px 4px 2px;
 }
 
-    .field.has-toolbar { padding-top: 30px; }
+    .field.has-toolbar { padding-top: 24px; }
 
     .field.active { z-index: 20; opacity: 1; }
     
         .field.active.has-toolbar { 
-            padding: 30px 12px 8px;
+            padding: 24px 12px 8px;
             border-radius: 6px;
             outline: none;
         }

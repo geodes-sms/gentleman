@@ -13,7 +13,7 @@ Gentleman aims to **to close the gap between models and domain experts**.
 > 2. Support of various notations: tables, math formulas, graphics...
 > 3. Composition of any language without introducing syntactic ambiguities
 
-## Worflow
+## Workflow
 
 1. **Language enginneer**
    1. Define a model for your DSL concepts or import and Ecore model

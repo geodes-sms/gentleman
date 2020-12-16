@@ -414,9 +414,29 @@ const BaseTableField = {
             }
         }, removeRender);
 
-        StyleHandler(btnRemove, removeStyle);        
+        var btnUp = createButton({
+            class: ["btn", "field--table__button"],
+            dataset: {
+                "nature": "field-component",
+                "id": this.id,
+                "action": "move-up",
+                "rowId": elementId
+            }
+        }, "Move up");
 
-        actionCell.append(btnRemove);
+        var btnDown = createButton({
+            class: ["btn", "field--table__button"],
+            dataset: {
+                "nature": "field-component",
+                "id": this.id,
+                "action": "move-down",
+                "rowId": elementId
+            }
+        }, "Move down");
+
+        StyleHandler(btnRemove, removeStyle);
+
+        actionCell.append(btnRemove, btnUp, btnDown);
 
         row.appendChild(actionCell);
 
@@ -482,6 +502,22 @@ const BaseTableField = {
                 const { rowId } = fieldComponent.dataset;
                 let row = this.elements.get(rowId);
                 this.delete(row);
+            } else if (action === "move-up") {
+                const { rowId } = fieldComponent.dataset;
+                /** @type {HTMLTableRowElement} */
+                let row = this.elements.get(rowId);
+                let prevRow = row.previousElementSibling;
+                if (prevRow) {
+                    prevRow.before(row);
+                }
+            }else if (action === "move-down") {
+                const { rowId } = fieldComponent.dataset;
+                /** @type {HTMLTableRowElement} */
+                let row = this.elements.get(rowId);
+                let nextRow = row.nextElementSibling;
+                if (nextRow) {
+                    nextRow.after(row);
+                }
             }
         }, true);
     }
