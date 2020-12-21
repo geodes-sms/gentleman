@@ -492,6 +492,7 @@ export const Editor = {
         show(this.menu);
         show(this.selectorList);
         show(this.headerBody);
+        this.projectionWindow.show();
 
         if (hasOwn(this.config, "name")) {
             this.headerTitle.textContent = `Editor: ${this.config["name"]}`;

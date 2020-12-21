@@ -59,7 +59,7 @@ export const ProjectionWindow = {
 
         if (!isHTMLElement(this.container)) {
             this.container = createDiv({
-                class: ["projection-window"],
+                class: ["projection-window", "hidden"],
                 draggable: true,
                 title: "Click to handle projection"
             });
