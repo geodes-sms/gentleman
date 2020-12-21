@@ -55,7 +55,7 @@ const _NumberConcept = {
     },
     initValue(args) {
         if (isNullOrUndefined(args)) {
-            this.value = "";
+            this.value = null;
             return this;
         }
 
@@ -69,10 +69,14 @@ const _NumberConcept = {
         return this;
     },
     hasValue() {
-        return !isNullOrWhitespace(this.value);
+        return !(isNullOrWhitespace(this.value) || isNaN(this.value));
     },
     getValue() {
-        return this.value;
+        if(!this.hasValue()) {
+            return null;
+        }
+        
+        return +this.value;
     },
     setValue(value) {
         var result = this.validate(value);

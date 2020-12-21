@@ -13,11 +13,11 @@ function init(model, schema) {
 }
 
 const PrimitiveHandler = {
-    string: (model, schema) => Object.create(StringConcept, init(model, schema)),
-    number: (model, schema) => Object.create(NumberConcept, init(model, schema)),
     boolean: (model, schema) => Object.create(BooleanConcept, init(model, schema)),
-    set: (model, schema) => Object.create(SetConcept, init(model, schema)),
+    number: (model, schema) => Object.create(NumberConcept, init(model, schema)),
     reference: (model, schema) => Object.create(ReferenceConcept, init(model, schema)),
+    set: (model, schema) => Object.create(SetConcept, init(model, schema)),
+    string: (model, schema) => Object.create(StringConcept, init(model, schema)),
     meta: (model, schema) => Object.create(MetaConcept, init(model, schema)),
 };
 

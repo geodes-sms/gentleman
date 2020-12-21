@@ -1,7 +1,7 @@
 import {
     createDocFragment, createTable, createTableHeader, createTableBody, createTableRow,
     createTableCell, createTableHeaderCell, createSpan, createDiv, createI, createButton,
-    removeChildren, isHTMLElement, valOrDefault, findAncestor,
+    removeChildren, isHTMLElement, valOrDefault, findAncestor, createTableFooter,
 } from "zenkai";
 import { hide, show, shake } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
@@ -27,7 +27,6 @@ const actionDefaultSchema = {
         }
     }
 };
-
 
 const NotificationType = {
     INFO: "info",
@@ -83,7 +82,7 @@ const BaseTableField = {
         this.elements = new Map();
 
         const { concept, name } = this.schema.template;
-        this.template = this.model.getModelProjectionTemplate(concept, name, "table").projection;
+        this.template = this.model.getModelProjectionTemplate(concept, "table").projection;
 
         return this;
     },
@@ -107,8 +106,8 @@ const BaseTableField = {
     },
 
     render() {
-        const { action = {}, before = {}, after = {} } = this.schema;
-        const { table = {}, header = {}, body = {}, footer = {} } = this.template;
+        const { table = {}, action = {}, before = {}, after = {} } = this.schema;
+        const { row } = this.template;
 
         const fragment = createDocFragment();
 
@@ -163,6 +162,8 @@ const BaseTableField = {
         }
 
         if (!isHTMLElement(this.table)) {
+            const { style, header, body = {}, footer } = table;
+
             this.table = createTable({
                 class: ["field--table__table"],
                 tabindex: 0,
@@ -174,22 +175,64 @@ const BaseTableField = {
                 }
             });
 
-            StyleHandler(this.table, table.style);
+            if (header) {
+                const { style } = header;
+
+                this.header = createTableHeader({
+                    class: ["field--table-header"],
+                    dataset: {
+                        nature: "field-component",
+                        view: "table",
+                        id: this.id,
+                    }
+                });
+
+                StyleHandler(this.header, style);
+
+                this.table.append(this.header);
+            }
+
+            if (body) {
+                const { style } = body;
+
+                this.body = createTableBody({
+                    class: ["field--table-body"],
+                    dataset: {
+                        nature: "field-component",
+                        view: "table",
+                        id: this.id,
+                    }
+                });
+
+                StyleHandler(this.body, style);
+
+                this.table.append(this.body);
+            }
+
+            if (footer) {
+                const { style } = footer;
+
+                this.footer = createTableFooter({
+                    class: ["field--table-footer"],
+                    dataset: {
+                        nature: "field-component",
+                        view: "table",
+                        id: this.id,
+                    }
+                });
+
+                StyleHandler(this.footer, style);
+
+                this.table.append(this.footer);
+            }
+
+            StyleHandler(this.table, style);
 
             fragment.appendChild(this.table);
         }
 
-        if (Array.isArray(header.cell)) {
-            this.header = createTableHeader({
-                class: ["field--table-header"],
-                dataset: {
-                    nature: "field-component",
-                    view: "table",
-                    id: this.id,
-                }
-            });
-
-            let row = createTableRow({
+        if (table.header) {
+            let tableRow = createTableRow({
                 class: ["field--table-header-row"],
                 tabindex: -1,
                 dataset: {
@@ -199,8 +242,10 @@ const BaseTableField = {
                 }
             });
 
-            header.cell.forEach(value => {
-                var { style, content } = value;
+            row.forEach(cellDef => {
+                const { header } = cellDef;
+
+                const { style, content } = header;
 
                 var render = ContentHandler.call(this, content);
 
@@ -215,35 +260,16 @@ const BaseTableField = {
 
                 StyleHandler(cell, style);
 
-                row.appendChild(cell);
+                tableRow.appendChild(cell);
             });
 
             let actionCell = createTableCell({
                 class: ["field--table-header-cell", "field--table-header-cell--action"]
             }, "Action");
 
-            row.appendChild(actionCell);
+            tableRow.appendChild(actionCell);
 
-            this.header.appendChild(row);
-
-            StyleHandler(this.header, header.style);
-
-            this.table.appendChild(this.header);
-        }
-
-        if (!isHTMLElement(this.body)) {
-            this.body = createTableBody({
-                class: ["field--table-body"],
-                dataset: {
-                    nature: "field-component",
-                    view: "table",
-                    id: this.id,
-                }
-            });
-
-            StyleHandler(this.body, body.style);
-
-            this.table.appendChild(this.body);
+            this.header.appendChild(tableRow);
         }
 
         if (!isHTMLElement(this.btnAdd)) {
@@ -359,12 +385,12 @@ const BaseTableField = {
     },
     addRow(concept) {
         const { action = {}, before = {}, after = {} } = this.schema;
-        const { body = {} } = this.template;
+        const { row } = this.template;
 
         const index = valOrDefault(concept.index, this.table.rows.length);
         const elementId = nextRowId();
 
-        const row = createTableRow({
+        const tableRow = createTableRow({
             class: ["field--table-row"],
             tabindex: -1,
             dataset: {
@@ -375,10 +401,12 @@ const BaseTableField = {
                 elementId: elementId
             }
         });
-        this.elements.set(elementId, row);
+        this.elements.set(elementId, tableRow);
 
-        body.cell.forEach(schema => {
-            const { style, content } = schema;
+        row.forEach(cellDef => {
+            const { body } = cellDef;
+
+            const { style, content } = body;
 
             var render = ContentHandler.call(this, content, concept);
 
@@ -393,7 +421,7 @@ const BaseTableField = {
 
             StyleHandler(cell, style);
 
-            row.appendChild(cell);
+            tableRow.appendChild(cell);
         });
 
         var actionCell = createTableCell({
@@ -438,9 +466,9 @@ const BaseTableField = {
 
         actionCell.append(btnRemove, btnUp, btnDown);
 
-        row.appendChild(actionCell);
+        tableRow.appendChild(actionCell);
 
-        this.body.appendChild(row);
+        this.body.appendChild(tableRow);
     },
     removeRow(value) {
         console.log(value);
@@ -510,7 +538,7 @@ const BaseTableField = {
                 if (prevRow) {
                     prevRow.before(row);
                 }
-            }else if (action === "move-down") {
+            } else if (action === "move-down") {
                 const { rowId } = fieldComponent.dataset;
                 /** @type {HTMLTableRowElement} */
                 let row = this.elements.get(rowId);

@@ -8,59 +8,65 @@ import { TextField } from './text-field.js';
 
 
 const Handler = {
-    'binary': (model, schema, concept) => Object.create(BinaryField, {
+    'binary': (model, schema, projection) => Object.create(BinaryField, {
         object: { value: "field" },
         name: { value: "binary-field" },
         type: { value: "binary" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
-        source: { value: concept },
+        projection: { value: projection },
+        source: { value: projection.concept },
     }),
-    'choice': (model, schema, concept) => Object.create(ChoiceField, {
+    'choice': (model, schema, projection) => Object.create(ChoiceField, {
         object: { value: "field" },
         name: { value: "choice-field" },
         type: { value: "choice" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
-        source: { value: concept },
+        projection: { value: projection },
+        source: { value: projection.concept },
     }),
-    'link': (model, schema, concept) => Object.create(LinkField, {
+    'link': (model, schema, projection) => Object.create(LinkField, {
         object: { value: "field" },
         name: { value: "link-field" },
         type: { value: "link" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
-        source: { value: concept },
+        projection: { value: projection },
+        source: { value: projection.concept },
     }),
-    'list': (model, schema, concept) => Object.create(ListField, {
+    'list': (model, schema, projection) => Object.create(ListField, {
         object: { value: "field" },
         name: { value: "list-field" },
         type: { value: "list" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
-        source: { value: concept },
+        projection: { value: projection },
+        source: { value: projection.concept },
     }),
-    'table': (model, schema, concept) => Object.create(TableField, {
+    'table': (model, schema, projection) => Object.create(TableField, {
         object: { value: "field" },
         name: { value: "table-field" },
         type: { value: "table" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
-        source: { value: concept },
+        projection: { value: projection },
+        source: { value: projection.concept },
     }),
-    'text': (model, schema, concept) => Object.create(TextField, {
+    'text': (model, schema, projection) => Object.create(TextField, {
         object: { value: "field" },
         name: { value: "text-field" },
         type: { value: "text" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
-        source: { value: concept },
+        projection: { value: projection },
+        source: { value: projection.concept },
     }),
 };
 
@@ -68,7 +74,7 @@ var inc = 0;
 const nextId = () => `field${inc++}`;
 
 export const FieldFactory = {
-    createField(model, schema, concept) {
+    createField(model, schema, projection) {
         const { type } = schema;
 
         const handler = Handler[type];
@@ -77,7 +83,7 @@ export const FieldFactory = {
             throw new Error(`Missing handler: The '${name}' field could not be handled`);
         }
 
-        var field = handler(model, schema, concept);
+        var field = handler(model, schema, projection);
 
         if (isNullOrUndefined(field)) {
             throw new Error(`Bad request: The '${name}' field could not be created`);

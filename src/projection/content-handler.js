@@ -16,7 +16,7 @@ export function ContentHandler(schema, concept, args) {
 
         return layout.render();
     } else if (schema.type === "field") {
-        let field = FieldFactory.createField(this.model, schema, concept).init(args);
+        let field = FieldFactory.createField(this.model, schema, this.projection).init(args);
         field.model = this.model;
 
         return field.render();

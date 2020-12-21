@@ -105,6 +105,19 @@ const _Concept = {
         return [...this.listAttributes()];
     },
     /**
+     * Gets the value of a build property
+     * @param {string} prop 
+     */
+    getBuildProperty(prop) {
+        const { build } = this.schema;
+
+        if (isNullOrUndefined(build) || !hasOwn(build, prop)) {
+            return null;
+        }
+
+        return build[prop];
+    },
+    /**
      * Gets the value of a property
      * @param {string} prop 
      */
@@ -112,6 +125,7 @@ const _Concept = {
         if (prop === "name") {
             return this.getName();
         }
+
         return this.schema[prop];
     },
 

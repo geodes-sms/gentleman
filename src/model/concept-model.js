@@ -4,6 +4,67 @@ import { ConceptFactory } from "./concept/factory.js";
 import { ObserverHandler } from "./structure/index.js";
 
 
+const projections = [
+    {
+        "concept": { "name": "set" },
+        "type": "field",
+        "tags": [],
+        "projection": {
+            "type": "list"
+        }
+    },
+    {
+        "concept": { "name": "string" },
+        "type": "field",
+        "tags": [],
+        "projection": {
+            "type": "text"
+        }
+    },
+    {
+        "concept": { "name": "boolean" },
+        "type": "field",
+        "tags": [],
+        "projection": {
+            "type": "binary"
+        }
+    },
+    {
+        "concept": { "name": "number" },
+        "type": "field",
+        "tags": [],
+        "projection": {
+            "type": "text"
+        }
+    },
+    {
+        "concept": { "name": "reference" },
+        "type": "field",
+        "tags": [],
+        "projection": {
+            "type": "link"
+        }
+    },
+    {
+        "concept": { "name": "prototype" },
+        "type": "field",
+        "tags": [],
+        "projection": {
+            "type": "choice"
+        }
+    }
+];
+
+const PROP_NATURE = "nature";
+const ATTR_ATTRIBUTES = "attributes";
+const ATTR_BASE = "base";
+const ATTR_DESCRIPTION = "description";
+const ATTR_NAME = "name";
+const ATTR_REQUIRED = "required";
+const ATTR_PROPERTIES = "properties";
+const ATTR_PROTOTYPE = "prototype";
+
+
 export const ConceptModel = {
     /** @type {Concept[]} */
     concepts: null,
@@ -294,57 +355,118 @@ export const ConceptModel = {
 
         return JSON.stringify(concepts);
     },
-    buildProjection() {
-        const projections = [
-            {
-                "concept": { "name": "set" },
-                "type": "field",
-                "tags": [],
-                "projection": {
-                    "type": "list"
-                }
-            },
-            {
-                "concept": { "name": "string" },
-                "type": "field",
-                "tags": [],
-                "projection": {
-                    "type": "text"
-                }
-            },
-            {
-                "concept": { "name": "boolean" },
-                "type": "field",
-                "tags": [],
-                "projection": {
-                    "type": "binary"
-                }
-            },
-            {
-                "concept": { "name": "number" },
-                "type": "field",
-                "tags": [],
-                "projection": {
-                    "type": "text"
-                }
-            },
-            {
-                "concept": { "name": "reference" },
-                "type": "field",
-                "tags": [],
-                "projection": {
-                    "type": "link"
-                }
-            },
-            {
-                "concept": { "name": "prototype" },
-                "type": "field",
-                "tags": [],
-                "projection": {
-                    "type": "choice"
-                }
+    buildConcept(concept) {
+        const PROP_NATURE = "nature";
+        const ATTR_PROTOTYPE = "prototype";
+        const ATTR_BASE = "base";
+        const ATTR_ATTRIBUTES = "attributes";
+
+        const concepts = [];
+
+        this.getConcepts(["prototype concept", "concrete concept", "derivative concept"]).forEach(concept => {
+            let schema = {
+                "id": concept.id,
+                "name": getName(concept),
+                "description": getDescription(concept),
+                "nature": concept.getBuildProperty(PROP_NATURE),
+                "attribute": concept.isAttributeCreated("attributes") ? buildAttribute(getValue(concept, 'attributes')) : [],
+            };
+
+            if (concept.isAttributeCreated(ATTR_PROTOTYPE) && hasValue(concept, ATTR_PROTOTYPE)) {
+                schema.prototype = getName(getReference(concept, ATTR_PROTOTYPE));
             }
-        ];
+
+            if (concept.isAttributeCreated(ATTR_BASE) && hasValue(concept, ATTR_BASE)) {
+                const primitive = getValue(concept, ATTR_BASE);
+
+                schema.base = nameMap[primitive.name](primitive);
+
+                if (primitive.isAttributeCreated("accept")) {
+                    let accept = getValue(primitive, "accept");
+                    schema["accept"] = nameMap[accept.name](accept);
+                }
+
+                ["min", "max"].forEach(attr => {
+                    if (primitive.isAttributeCreated(attr) && hasValue(primitive, attr)) {
+                        schema[attr] = +getValue(primitive, attr);
+                    }
+                });
+            }
+
+            concepts.push(schema);
+        });
+
+        return JSON.stringify(concepts);
+    },
+    buildSingleConcept(concept) {
+        const errors = [];
+
+        const name = getName(concept);
+        const description = getDescription(concept);
+        const attributes = [];
+        const properties = [];
+
+        if (isNullOrWhitespace(name)) {
+            errors.push("The concept's 'name' is missing a value.");
+        }
+
+        if (concept.isAttributeCreated(ATTR_ATTRIBUTES)) {
+            getValue(concept, ATTR_ATTRIBUTES).forEach(attribute => {
+                const result = buildAttribute(attribute);
+
+                if (!result.success) {
+                    errors.push(...result.errors);
+                } else {
+                    attributes.push(result.message);
+                }
+            });
+        }
+
+        if (concept.isAttributeCreated(ATTR_PROPERTIES)) {
+            getValue(concept, ATTR_PROPERTIES).forEach(property => {
+                const result = buildProperty(property);
+
+                if (!result.success) {
+                    errors.push(...result.errors);
+                } else {
+                    properties.push(result.message);
+                }
+            });
+        }
+
+        if (!isEmpty(errors)) {
+            return {
+                success: false,
+                message: "Validation failed: The concept could not be built.",
+                errors: errors,
+            };
+        }
+
+        let schema = {
+            "id": concept.id,
+            "name": name,
+            "description": description,
+            "nature": concept.getBuildProperty(PROP_NATURE),
+            "attributes": attributes,
+            "properties": properties,
+        };
+
+        if (concept.isAttributeCreated(ATTR_PROTOTYPE) && hasValue(concept, ATTR_PROTOTYPE)) {
+            schema.prototype = getName(getReference(concept, ATTR_PROTOTYPE));
+        }
+
+        if (concept.isAttributeCreated(ATTR_BASE) && hasValue(concept, ATTR_BASE)) {
+            const base = getValue(concept, ATTR_BASE);
+
+            schema.base = buildTarget(base);
+        }
+
+        return {
+            success: true,
+            message: JSON.stringify(schema),
+        };
+    },
+    buildProjection() {
 
         const ProjectionType = {
             "layout projection": "layout",
@@ -377,58 +499,7 @@ export const ConceptModel = {
 
         return JSON.stringify(projections);
     },
-    buildAProjection(concept) {
-        const projections = [
-            {
-                "concept": { "name": "set" },
-                "type": "field",
-                "tags": [],
-                "projection": {
-                    "type": "list"
-                }
-            },
-            {
-                "concept": { "name": "string" },
-                "type": "field",
-                "tags": [],
-                "projection": {
-                    "type": "text"
-                }
-            },
-            {
-                "concept": { "name": "boolean" },
-                "type": "field",
-                "tags": [],
-                "projection": {
-                    "type": "binary"
-                }
-            },
-            {
-                "concept": { "name": "number" },
-                "type": "field",
-                "tags": [],
-                "projection": {
-                    "type": "text"
-                }
-            },
-            {
-                "concept": { "name": "reference" },
-                "type": "field",
-                "tags": [],
-                "projection": {
-                    "type": "link"
-                }
-            },
-            {
-                "concept": { "name": "prototype" },
-                "type": "field",
-                "tags": [],
-                "projection": {
-                    "type": "choice"
-                }
-            }
-        ];
-
+    buildSingleProjection(concept) {
         const ProjectionType = {
             "layout projection": "layout",
             "field projection": "field",
@@ -488,9 +559,11 @@ const getValue = (concept, attr, deep = false) => getAttr(concept, attr).getValu
 
 const hasValue = (concept, attr) => getAttr(concept, attr).hasValue();
 
-const getName = (concept) => getValue(concept, 'name').toLowerCase();
+const hasAttr = (concept, name) => concept.isAttributeCreated(name);
 
-const getDescription = (concept) => getValue(concept, 'description');
+const getName = (concept) => getValue(concept, ATTR_NAME).toLowerCase();
+
+const getDescription = (concept) => getValue(concept, ATTR_DESCRIPTION);
 
 const nameMap = {
     "string primitive": (concept) => "string",
@@ -503,89 +576,139 @@ const nameMap = {
 
 
 /**
- * 
- * @param {*[]} attributes 
+ * Build a concept attribute
+ * @param {*} attributes 
  */
-function buildAttribute(attributes) {
-    if (!Array.isArray(attributes)) {
-        throw new TypeError("Bad argument");
+function buildAttribute(attribute) {
+    const name = getName(attribute);
+    const description = getDescription(attribute);
+    const required = hasAttr(attribute, ATTR_REQUIRED) && hasValue(attribute, ATTR_REQUIRED) ? getValue(attribute, ATTR_REQUIRED) : true;
+
+    const errors = [];
+
+    if (isNullOrWhitespace(name)) {
+        errors.push("The attribute's 'name' is missing a value.");
     }
 
-    const result = [];
+    if (!(hasAttr(attribute, "target") && hasValue(attribute, "target"))) {
+        errors.push(`The attribute '${name}' 'target' is missing a value.`);
+    }
 
-    attributes.forEach(attribute => {
-        var schema = {
-            "name": getName(attribute),
-            "description": getDescription(attribute),
+    if (!isEmpty(errors)) {
+        return {
+            success: false,
+            message: "Validation failed: The concept could not be built.",
+            errors: errors,
         };
+    }
 
-        const primitive = getValue(attribute, "target");
+    const schema = {
+        "name": name,
+        "description": description,
+        "required": required,
+        "target": buildTarget(getValue(attribute, "target")),
+    };
 
-        schema.target = {
-            "name": nameMap[primitive.name](primitive)
-        };
+    return {
+        success: true,
+        message: schema,
+    };
+}
 
-        if (primitive.isAttributeCreated("accept")) {
-            let accept = getValue(primitive, "accept");
-            schema.target["accept"] = {
-                "name": nameMap[accept.name](accept)
-            };
-        }
+function buildTarget(target) {
+    const result = {
+        "name": nameMap[target.name](target)
+    };
 
-        if (primitive.isAttributeCreated("default") && hasValue(primitive, "default")) {
-            schema.target["default"] = getValue(primitive, "default");
-        }
+    if (target.isAttributeCreated("accept")) {
+        let accept = getValue(target, "accept");
 
-        if (primitive.isAttributeCreated("values") && hasValue(primitive, "values")) {
-            schema.target["values"] = getValue(primitive, "values", true);
-        }
+        result["accept"] = buildTarget(accept);
+    }
 
-        // ["min", "max"].forEach(attr => {
-        //     if (primitive.isAttributeCreated(attr) && hasValue(primitive, attr)) {
-        //         schema.target[attr] = +getValue(primitive, attr);
-        //     }
-        // });
+    if (hasAttr(target, "default") && hasValue(target, "default")) {
+        result["default"] = getValue(target, "default");
+    }
 
-        ["alias", "description", "required"].forEach(attr => {
-            if (attribute.isAttributeCreated(attr) && hasValue(attribute, attr)) {
-                schema[attr] = getValue(attribute, attr);
+    ["length", "value", "cardinality"].forEach(prop => {
+        if (hasAttr(target, prop) && hasValue(target, prop)) {
+            let constraint = getValue(target, prop);
+
+            let rules = {};
+
+            if (constraint.name === "number constraint value") {
+                if (hasValue(constraint, "value")) {
+                    rules["value"] = getValue(constraint, "value");
+                }
+            } else if (constraint.name === "number constraint range") {
+                let min = getAttr(constraint, "min");
+                if (hasValue(min, "value")) {
+                    rules["min"] = {
+                        "value": getValue(min, "value"),
+                        "included": getValue(min, "included"),
+                    };
+                }
+
+                let max = getAttr(constraint, "max");
+                if (hasValue(max, "value")) {
+                    rules["max"] = {
+                        "value": getValue(max, "value"),
+                        "included": getValue(max, "included"),
+                    };
+                }
             }
-        });
 
-        result.push(schema);
+            result[prop] = rules;
+        }
     });
+
+
+    if (hasAttr(target, "values") && hasValue(target, "values")) {
+        result["values"] = getValue(target, "values", true);
+    }
 
     return result;
 }
-
 
 /**
  * 
  * @param {*[]} attributes 
  */
-function buildProperty(properties) {
-    if (!Array.isArray(properties)) {
-        throw new TypeError("Bad argument");
+function buildProperty(property) {
+    const errors = [];
+
+    const name = getName(property);
+    const description = getDescription(property);
+
+
+    if (isNullOrWhitespace(name)) {
+        errors.push("The property's 'name' is missing a value.");
     }
 
-    const result = [];
+    if (!(hasAttr(property, "target") && hasValue(property, "target"))) {
+        errors.push(`The property '${name}' 'target' is missing a value.`);
+    }
 
-    properties.forEach(property => {
-        var schema = {
-            "name": getName(property),
-            "value": getValue(property, "value").build()
+    var target = getValue(property, "target");
+
+    if (!isEmpty(errors)) {
+        return {
+            success: false,
+            message: "Validation failed: The concept could not be built.",
+            errors: errors,
         };
+    }
 
-        ["alias", "description"].forEach(attr => {
-            if (property.isAttributeCreated(attr)) {
-                schema[attr] = getValue(property, attr);
-            }
-        });
+    var schema = {
+        "name": getName(property),
+        "description": description,
+        "value": getValue(target, "value"),
+    };
 
-        result.push(schema);
-    });
-
-    return result;
+    return {
+        success: true,
+        message: schema,
+    };
 }
 
 /**

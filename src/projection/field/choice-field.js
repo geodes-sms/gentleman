@@ -90,6 +90,7 @@ const BaseChoiceField = {
                 if (value.object === "concept") {
                     let projection = this.model.createProjection(value, "choice-selection").init();
                     this.setChoice(value.name);
+                    
                     this.setSelection(projection.render());
                 } else {
                     this.setChoice(value);
@@ -106,6 +107,10 @@ const BaseChoiceField = {
      */
     hasChanges() {
         return this.value !== this.selected;
+    },
+    reset() {
+        // TODO: Get initial value
+        this.setValue(null);
     },
     /**
      * Verifies that the field has a value

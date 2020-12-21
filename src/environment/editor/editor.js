@@ -5,468 +5,19 @@ import {
     isHTMLElement, isNullOrWhitespace, isNullOrUndefined, isEmpty, hasOwn,
     copytoClipboard, cloneObject, valOrDefault, findAncestor, createSection,
 } from 'zenkai';
-import { Events, hide, show, Key } from '@utils/index.js';
+import { Events, hide, show, Key, getEventTarget } from '@utils/index.js';
 import { ConceptModelManager } from '@model/index.js';
 import { createProjectionModel } from '@projection/index.js';
+import { ProjectionWindow } from '../projection-window.js';
+import { StyleWindow } from '../style-window.js';
+import { createHome } from './home.js';
+import { createEditorMenu } from './editor-menu.js';
+import { createEditorHeader } from './editor-header.js';
 
 
 const MODEL_GENTLEMAN_CONCEPT = require('@include/gentleman_model.json');
 const MODEL_GENTLEMAN_PROJECTION = require('@include/gentleman_projection.json');
 
-
-/**
- * @returns {HTMLElement}
- * @this {Editor}
- */
-function createEditorHeader() {
-    this.header = createDiv({
-        class: ["editor-header"],
-    });
-
-    this.headerTitle = createSpan({
-        class: ["editor-header-title"],
-    }, "Editor");
-
-    this.selectorList = createUnorderedList({
-        class: ["bare-list", "editor-selector"],
-    }, ["model", "concept"].map(item => createListItem({
-        class: ["editor-selector-item"],
-        tabindex: 0,
-        dataset: {
-            "value": item,
-            "action": `selector-${item}`
-        }
-    }, item)));
-    this.selectorItem = this.selectorList.children[0];
-    this.selectorItem.classList.add("selected");
-    this.selectorValue = this.selectorItem.dataset.value;
-
-
-    let btnClose = createButton({
-        class: ["btn", "btn-close"],
-        dataset: {
-            action: "close"
-        }
-    });
-
-    let btnStyle = createButton({
-        class: ["btn", "btn-style", "hidden"],
-        dataset: {
-            action: "style"
-        }
-    });
-
-    let toolbar = createDiv({
-        class: ["editor-toolbar"],
-    }, [btnStyle, btnClose]);
-
-    let menu = createDiv({
-        class: ["editor-header-menu"]
-    }, [this.headerTitle, this.selectorList, toolbar]);
-
-    this.headerBody = createDiv({
-        class: ["editor-header-main"],
-    });
-
-    this.header.append(menu, this.headerBody);
-
-    return this.header;
-}
-
-/**
- * @returns {HTMLElement}
- */
-function createEditorMenu(options) {
-    const menu = createDiv({
-        class: ["menu"],
-        draggable: true,
-        title: "Click to access the import, export and build actions"
-    });
-
-    const title = createSpan({
-        class: ["menu-title"],
-        dataset: {
-            "ignore": "all",
-        }
-    }, "Menu");
-
-    const btnExport = createButton({
-        class: ["btn", "btn-export"],
-        dataset: {
-            "context": "model",
-            "action": "export",
-        }
-    }, "Export");
-
-    const btnImport = createButton({
-        class: ["btn", "btn-import"],
-        dataset: {
-            "context": "model",
-            "action": "import"
-        }
-    }, "Import");
-
-    const btnBuild = createButton({
-        class: ["btn", "btn-build"],
-        dataset: {
-            "context": "model",
-            "action": "build"
-        }
-    }, "Build");
-
-    menu.append(title, btnExport, btnImport, btnBuild);
-
-    menu.addEventListener('click', (event) => {
-        menu.classList.toggle("open");
-    });
-
-    return menu;
-}
-
-/**
- * @returns {HTMLElement}
- */
-function createHome() {
-    const container = createSection({
-        class: ["editor-home"]
-    });
-
-    var header = createHeader({
-        class: ["menu-header"]
-    });
-
-    var title = createH2({
-        class: ["editor-home__title"]
-    }, "Editor");
-
-    var content = createParagraph({
-        class: ["menu-content"],
-        html: "Welcome to Gentleman's editor.<br>To begin, please load a model or continue with a previous instance."
-    });
-
-    header.append(title, content);
-
-    var body = createDiv({
-        class: ["loader-container"],
-        tabindex: -1
-    });
-
-
-    var modelOptions = createDiv({
-        class: ["loader-options"]
-    });
-
-    var modelOptionsTitle = createH2({
-        class: ["loader-options-title"]
-    }, "Concept");
-
-    var modelOptionsContent = createParagraph({
-        class: ["loader-options-content"],
-        html: "Create or edit a model."
-    });
-
-    var modelOptionsAction = createDiv({
-        class: ["loader-options-action"]
-    });
-
-    var btnCreateMetaModel = createButton({
-        class: ["btn", "loader-option", "loader-option--new"],
-        dataset: {
-            action: "create-metamodel",
-        }
-    }, [
-        createSpan({
-            class: ["loader-option__action"],
-            dataset: {
-                ignore: "all",
-            }
-        }, "New"),
-        createSpan({
-            class: ["loader-option__type"],
-            dataset: {
-                ignore: "all",
-            }
-        }, "metamodel")
-    ]);
-
-    var btnOpenModel = createButton({
-        class: ["btn", "loader-option", "loader-option--open"],
-        dataset: {
-            action: "open-model",
-        },
-    }, [
-        createSpan({
-            class: ["loader-option__action"],
-            dataset: {
-                ignore: "all",
-            }
-        }, "Open"),
-        createSpan({
-            class: ["loader-option__type"],
-            dataset: {
-                ignore: "all",
-            }
-        }, "model")
-    ]);
-
-    modelOptionsAction.append(btnCreateMetaModel, btnOpenModel);
-
-    modelOptions.append(modelOptionsTitle, modelOptionsContent, modelOptionsAction);
-
-
-    var projectionOptions = createDiv({
-        class: ["loader-options"]
-    });
-
-    var projectionOptionsTitle = createH2({
-        class: ["loader-options-title"]
-    }, "Projection");
-
-    var projectionOptionsContent = createParagraph({
-        class: ["loader-options-content"],
-        html: "Create or edit a projection."
-    });
-
-    var projectionOptionsAction = createDiv({
-        class: ["loader-options-action"]
-    });
-
-    var btnCreateProjection = createButton({
-        class: ["btn", "loader-option", "loader-option--new"],
-        dataset: {
-            action: "create-projection",
-        }
-    }, [
-        createSpan({
-            class: ["loader-option__action"],
-            dataset: {
-                ignore: "all",
-            }
-        }, "New"),
-        createSpan({
-            class: ["loader-option__type"],
-            dataset: {
-                ignore: "all",
-            }
-        }, "projection")
-    ]);
-
-    var btnOpenProjection = createButton({
-        class: ["btn", "loader-option", "loader-option--open"],
-        dataset: {
-            action: "open-projection",
-        }
-    }, [
-        createSpan({
-            class: ["loader-option__action"],
-            dataset: {
-                ignore: "all",
-            }
-        }, "Open"),
-        createSpan({
-            class: ["loader-option__type"],
-            dataset: {
-                ignore: "all",
-            }
-        }, "projection")
-    ]);
-
-    projectionOptionsAction.append(btnCreateProjection, btnOpenProjection);
-
-    projectionOptions.append(projectionOptionsTitle, projectionOptionsContent, projectionOptionsAction);
-
-    body.append(
-        modelOptions
-        // , projectionOptions
-    );
-
-    container.append(header, body);
-
-    return container;
-}
-
-function createWidthControl() {
-    /** @type {HTMLElement} */
-    const controlWrapper = createDiv({
-        class: ["control-wrapper", "control-wrapper--width"]
-    });
-
-    /** @type {HTMLLabelElement} */
-    const labelWR = createLabel({
-        class: ["style-label"],
-    }, "Width");
-
-    /** @type {HTMLElement} */
-    const iconWR = createI({
-        class: ["material-icons"],
-    }, "height");
-
-    /** @type {HTMLElement} */
-    const inputWrapper = createDiv({
-        class: ["input-wrapper"]
-    });
-
-    /** @type {HTMLInputElement} */
-    const rangeWR = createInput({
-        class: ["style-input", "style-input--range"],
-        type: "range",
-        min: 0,
-        max: 100,
-        step: 1
-    });
-
-    /** @type {HTMLInputElement} */
-    const numberWR = createInput({
-        class: ["style-input", "style-input--number"],
-        type: "number",
-        min: 0,
-        max: 100
-    });
-
-    inputWrapper.append(rangeWR, numberWR);
-
-    controlWrapper.append(labelWR, iconWR, inputWrapper);
-
-    controlWrapper.addEventListener('input', (event) => {
-        const { target } = event;
-
-        this.container.style.width = `calc(300px + ${target.value}%)`;
-        numberWR.value = target.value;
-        rangeWR.value = target.value;
-    });
-
-    controlWrapper.addEventListener('focusin', (event) => {
-        this.container.style.border = "1px solid blue";
-    });
-
-    controlWrapper.addEventListener('focusout', (event) => {
-        this.container.style.border = null;
-    });
-
-    return controlWrapper;
-}
-
-function createSizeControl() {
-    /** @type {HTMLElement} */
-    const controlWrapper = createDiv({
-        class: ["control-wrapper", "control-wrapper--size"]
-    });
-
-    /** @type {HTMLLabelElement} */
-    const labelWR = createLabel({
-        class: ["style-label"],
-    }, "Size");
-
-    /** @type {HTMLElement} */
-    const iconWR = createI({
-        class: ["material-icons"],
-    }, "format_size");
-
-    /** @type {HTMLElement} */
-    const inputWrapper = createDiv({
-        class: ["input-wrapper"]
-    });
-
-    /** @type {HTMLInputElement} */
-    const rangeWR = createInput({
-        class: ["style-input", "style-input--range"],
-        type: "range",
-        min: 0,
-        max: 50,
-        step: 1
-    });
-
-    /** @type {HTMLInputElement} */
-    const numberWR = createInput({
-        class: ["style-input", "style-input--number"],
-        type: "number",
-        min: 0,
-        max: 50
-    });
-
-    inputWrapper.append(rangeWR, numberWR);
-
-    controlWrapper.append(labelWR, iconWR, inputWrapper);
-
-    controlWrapper.addEventListener('input', (event) => {
-        const { target } = event;
-
-        this.container.style.fontSize = `${target.value}px`;
-        numberWR.value = target.value;
-        rangeWR.value = target.value;
-    });
-
-    controlWrapper.addEventListener('focusin', (event) => {
-        this.container.style.border = "1px solid blue";
-    });
-
-    controlWrapper.addEventListener('focusout', (event) => {
-        this.container.style.border = null;
-    });
-
-    return controlWrapper;
-}
-
-function createSpaceControl() {
-    /** @type {HTMLElement} */
-    const controlWrapper = createDiv({
-        class: ["control-wrapper", "control-wrapper--space"]
-    });
-
-    /** @type {HTMLLabelElement} */
-    const labelWR = createLabel({
-        class: ["style-label"],
-    }, "Space");
-
-    /** @type {HTMLElement} */
-    const iconWR = createI({
-        class: ["material-icons"],
-    }, "format_size");
-
-    /** @type {HTMLElement} */
-    const inputWrapper = createDiv({
-        class: ["input-wrapper"]
-    });
-
-    /** @type {HTMLInputElement} */
-    const rangeWR = createInput({
-        class: ["style-input", "style-input--range"],
-        type: "range",
-        min: 0,
-        max: 50,
-        step: 1
-    });
-
-    /** @type {HTMLInputElement} */
-    const numberWR = createInput({
-        class: ["style-input", "style-input--number"],
-        type: "number",
-        min: 0,
-        max: 50
-    });
-
-    inputWrapper.append(rangeWR, numberWR);
-
-    controlWrapper.append(labelWR, iconWR, inputWrapper);
-
-    controlWrapper.addEventListener('input', (event) => {
-        const { target } = event;
-
-        this.container.style.fontSize = `${target.value}px`;
-        numberWR.value = target.value;
-        rangeWR.value = target.value;
-    });
-
-    controlWrapper.addEventListener('focusin', (event) => {
-        this.container.style.border = "1px solid blue";
-    });
-
-    controlWrapper.addEventListener('focusout', (event) => {
-        this.container.style.border = null;
-    });
-
-    return controlWrapper;
-}
 
 export const Editor = {
     _initialized: false,
@@ -493,6 +44,8 @@ export const Editor = {
     home: null,
     /** @type {HTMLElement} */
     footer: null,
+    /** @type {ProjectionWindow} */
+    projectionWindow: null,
 
     /** @type {HTMLElement} */
     selectorList: null,
@@ -507,6 +60,8 @@ export const Editor = {
     activeField: null,
     /** @type {HTMLElement} */
     activeElement: null,
+    /** @type {HTMLElement} */
+    activeProjection: null,
     /** @type {Concept} */
     activeConcept: null,
 
@@ -525,7 +80,7 @@ export const Editor = {
     /** @type {boolean} */
     active: false,
 
-    init(conceptModel, projectionModel, valueModel) {        
+    init(conceptModel, projectionModel, valueModel) {
         if (conceptModel) {
             this.conceptModel = ConceptModelManager.createModel(conceptModel).init(valueModel);
         }
@@ -795,9 +350,9 @@ export const Editor = {
             class: ["style-container"]
         });
 
-        const widthControl = createWidthControl.call(this);
+        const widthControl = StyleWindow.createWidthControl.call(this);
         // const heightControl = createWidthControl.call(this);
-        const sizeControl = createSizeControl.call(this);
+        const sizeControl = StyleWindow.createSizeControl.call(this);
 
         container.append(widthControl, sizeControl);
 
@@ -806,14 +361,17 @@ export const Editor = {
 
     notify(message, type) {
         var notify = getElement('.notify:not(.open)', this.container);
+
         if (!isHTMLElement(notify)) {
             notify = createParagraph({
                 class: ["notify"]
             });
             this.container.appendChild(notify);
         }
+
         notify.textContent = message;
         notify.classList.remove("error");
+
         if (type) {
             notify.classList.add(type);
         }
@@ -874,8 +432,14 @@ export const Editor = {
             fragment.appendChild(this.footer);
         }
 
+        if (!isHTMLElement(this.projectionWindow)) {
+            this.projectionWindow = Object.create(ProjectionWindow);
+
+            fragment.appendChild(this.projectionWindow.render());
+        }
+
         if (!isHTMLElement(this.menu)) {
-            this.menu = createEditorMenu();
+            this.menu = createEditorMenu.call(this);
 
             fragment.appendChild(this.menu);
         }
@@ -928,8 +492,9 @@ export const Editor = {
         show(this.menu);
         show(this.selectorList);
         show(this.headerBody);
+        this.projectionWindow.show();
 
-        if(hasOwn(this.config, "name")) {
+        if (hasOwn(this.config, "name")) {
             this.headerTitle.textContent = `Editor: ${this.config["name"]}`;
         }
 
@@ -1021,16 +586,30 @@ export const Editor = {
 
                     if (this.buildTarget === "gentleman_concept") {
                         try {
-                            result = this.conceptModel.build();
+                            result = this.conceptModel.buildSingleConcept(concept);
+
+                            if (!result.success) {
+                                console.log('%c Concept is not valid', 'padding: 4px 6px; color: #fff; font-weight: bold; background: #DC143C;');
+                                
+                                result.errors.forEach(error => console.error(error));
+
+                                this.notify("The concept is not valid.", "error");
+                            } else {
+                                const value = JSON.parse(result.message);
+                                
+                                console.log(`%c Concept '${value.name}' is valid`, 'padding: 4px 6px; color: #fff; font-weight: bold; background: #00AB66;');
+                                console.log(value);
+
+                                this.notify("The concept is valid.");
+                            }
                         } catch (error) {
                             console.error(error);
-                            this.notify("The model is not valid. Please review before the next build.", "error");
 
-                            return;
+                            this.notify("The model is not valid. Please review before the next build.", "error");
                         }
                     } else if (this.buildTarget === "gentleman_projection") {
                         try {
-                            result = this.conceptModel.buildAProjection(concept);
+                            result = this.conceptModel.buildSingleProjection(concept);
 
                             let cmodel = ConceptModelManager.createModel([
                                 {
@@ -1108,10 +687,6 @@ export const Editor = {
 
         return this;
     },
-    // TODO: adapt UI to smaller screen
-    resize() {
-
-    },
     /**
      * Updates the active HTML Element
      * @param {HTMLElement} element 
@@ -1146,6 +721,8 @@ export const Editor = {
 
             parent = parent.parentElement;
         }
+
+        this.projectionWindow.setProjection(this.projectionModel.getProjection(element.dataset.projection));
 
         return this;
     },
@@ -1424,10 +1001,6 @@ export const Editor = {
             if (parentProjection) {
                 this.updateActiveElement(parentProjection);
             }
-
-            if (target.href) {
-                this.fields.get("field1").focusIn();
-            }
         });
 
         const focusinHandler = {
@@ -1489,21 +1062,6 @@ export const Editor = {
         });
     }
 };
-
-/**
- * Gets an event real target
- * @param {HTMLElement} element 
- * @returns {HTMLElement}
- */
-function getEventTarget(element) {
-    const isValid = (el) => !hasOwn(el.dataset, "ignore");
-
-    if (isValid(element)) {
-        return element;
-    }
-
-    return findAncestor(element, isValid, 10);
-}
 
 /**
  * Creates a selector between a root concept and the active concept

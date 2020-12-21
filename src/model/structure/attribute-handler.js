@@ -89,7 +89,7 @@ export const AttributeHandler = {
      */
     createAttribute(name, value) {
         if (!this.hasAttribute(name)) {
-            throw new Error(`Attribute not found: The concept ${this.name} does not contain an attribute named ${name}`);
+            throw new Error(`Attribute not found: The concept '${this.name}' does not contain an attribute named ${name}`);
         }
 
         const schema = this.attributeSchema.find(attr => attr.name === name);
