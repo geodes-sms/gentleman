@@ -49,15 +49,16 @@ const Projection = {
     parent: null,
     /** @type {HTMLElement[]} */
     containers: null,
+    /** @type {HTMLElement[]} */
+    element: null,
     /** @type {string[]} */
     attributes: null,
     /** @type {string[]} */
     components: null,
     /** @type {number} */
     index: 0,
-    isReadOnly() {
-        return valOrDefault(this.getSchema().readonly, false);
-    },
+    get hasMultipleViews() { return this.schema.length > 1; },
+    get isReadOnly() { return valOrDefault(this.getSchema().readonly, false); },
     getSchema() {
         return this.schema[this.index];
     },
@@ -65,19 +66,6 @@ const Projection = {
         const { style } = this.getSchema();
 
         return style;
-    },
-    getElement(name, schema) {
-        const { element } = valOrDefault(schema, this.getSchema());
-
-        if (isNullOrUndefined(element)) {
-            throw new Error(`Projection error: schema has no elements`);
-        }
-
-        if (!hasOwn(element, name)) {
-            throw new Error(`Projection error: element '${name}' not found`);
-        }
-
-        return element[name];
     },
     remove() {
         var parent = this.container.parentElement;
@@ -172,9 +160,7 @@ const Projection = {
                 break;
         }
     },
-    delete() {
 
-    },
     render() {
         const schema = this.getSchema();
 
@@ -184,18 +170,14 @@ const Projection = {
         var container = null;
 
         if (type === "layout") {
-            let layout = LayoutFactory.createLayout(this.model, projection, this).init();
-
-            container = layout.render();
+            this.element = LayoutFactory.createLayout(this.model, projection, this).init();
         } else if (type === "field") {
-            let field = FieldFactory.createField(this.model, projection, this.concept).init();
+            this.element = FieldFactory.createField(this.model, projection, this).init();
 
-            field.projection = this;
-
-            this.environment.registerField(field);
-
-            container = field.render();
+            this.environment.registerField(this.element);
         }
+
+        container = this.element.render();
 
         if (!isNode(container)) {
             throw new Error("Projection element container could not be created");
@@ -222,7 +204,7 @@ const Projection = {
             container.prepend(btnDelete);
         }
 
-        if (this.schema.length > 1) {
+        if (this.hasMultipleViews) {
             let altBadge = createI({
                 class: ["badge", "badge--alt"]
             });

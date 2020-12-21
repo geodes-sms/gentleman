@@ -59,13 +59,21 @@
             "name": "prototype concept",
             "description": "A prototype creates a base skeleton to provide reusability and extension to concepts of the model. Any concept can reuse a prototype and would inherit its structure.",
             "nature": "concrete",
-            "prototype": "model concept"
+            "prototype": "model concept",
+
+            "build": {
+                "nature": "prototype"
+            }
         },
         {
             "name": "concrete concept",
             "description": "A concrete concept represents the model's actual concepts. Projections can be defined against its structure.",
             "nature": "concrete",
-            "prototype": "model concept"
+            "prototype": "model concept",
+
+            "build": {
+                "nature": "concrete"
+            }
         },
         {
             "name": "derivative concept",
@@ -80,7 +88,11 @@
                     },
                     "required": true
                 }
-            ]
+            ],
+
+            "build": {
+                "nature": "derivative"
+            }
         },
         {
             "name": "structure",
@@ -502,11 +514,14 @@
                             },
                             "disposition": [
                                 {
-                                    "type": "text",
-                                    "style": {
-                                        "css": "model-concept-header__title"
-                                    },
-                                    "content": "Concrete concept "
+                                    "type": "static",
+                                    "static":  {
+                                        "type": "text",
+                                        "style": {
+                                            "css": "model-concept-header__title"
+                                        },
+                                        "content": "Concrete concept "
+                                    }
                                 },
                                 { 
                                     "type": "attribute", 
@@ -656,11 +671,14 @@
                             },
                             "disposition": [
                                 {
-                                    "type": "text",
-                                    "style": {
-                                        "css": ["model-concept-header__title"]
-                                    },
-                                    "content": "DERIVATIVE CONCEPT "
+                                    "type": "static",
+                                    "static":  {
+                                        "type": "text",
+                                        "style": {
+                                            "css": "model-concept-header__title"
+                                        },
+                                        "content": "Derivative concept "
+                                    }
                                 },
                                 { 
                                     "type": "attribute", 
@@ -682,6 +700,16 @@
                                     "type": "attribute", 
                                     "name": "description", 
                                     "tag": "description-string" 
+                                },
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text", 
+                                        "content": "Base",
+                                        "style": {
+                                            "css": ["title", "model-concept-structure__title", "model-concept-structure__title--properties"]
+                                        }
+                                    }
                                 },
                                 { 
                                     "type": "attribute", 
@@ -742,19 +770,12 @@
             "concept": { "name": "attribute" },
             "type": "template",
             "tags": [],
+            "template": "table",
             "projection": {
-                "type": "table",
-                "table": {
-                    "style": {
-                        "css": ["attribute-table"]
-                    }
-                },
-                "header": {
-                    "style": {
-                        "css": ["attribute-table-header"]
-                    },
-                    "cell": [
-                        {
+                "type": "row",
+                "row": [
+                    {
+                        "header": {
                             "style": {
                                 "css": ["attribute-table__header-cell"]
                             },
@@ -766,88 +787,19 @@
                                 }
                             }
                         },
-                        {
+                        "body": {
                             "style": {
-                                "css": ["attribute-table__header-cell"]
-                            },
-                            "content": {
-                                "type": "static",
-                                "static": {
-                                    "type": "text", 
-                                    "content": "Name"
-                                }
-                            }
-                        },
-                        {
-                            "style": {
-                                "css": ["attribute-table__header-cell"]
-                            },
-                            "content": {
-                                "type": "static",
-                                "static": {
-                                    "type": "text", 
-                                    "content": "Target"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "body": {
-                    "style": {
-                        "css": ["attribute-table-body"]
-                    },
-                    "cell": [
-                        {
-                            "style": {
-                                "css": ["attribute-table__body-cell", "tbl-attribute__cell--required"]
+                                "css": ["attribute-table__body-cell", "attribute-table__body-cell--required"]
                             },
                             "content": { 
                                 "type": "attribute", 
                                 "name": "required", 
                                 "tag": "required-boolean" 
                             }
-                        },
-                        {
-                            "style": {
-                                "css": ["attribute-table__body-cell"]
-                            },
-                            "content": { 
-                                "type": "attribute", 
-                                "name": "name",
-                                "tag": "textfield-outlined"
-                            }
-                        },
-                        {
-                            "style": {
-                                "css": ["attribute-table__body-cell"]
-                            },
-                            "content": { 
-                                "type": "attribute", 
-                                "name": "target" 
-                            }
                         }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "property-table",
-            "concept": { "name": "property" },
-            "type": "template",
-            "tags": [],
-            "projection": {
-                "type": "table",
-                "table": {
-                    "style": {
-                        "css": ["attribute-table"]
-                    }
-                },
-                "header": {
-                    "style": {
-                        "css": ["attribute-table-header"]
                     },
-                    "cell": [
-                        {
+                    {
+                        "header": {
                             "style": {
                                 "css": ["attribute-table__header-cell"]
                             },
@@ -859,7 +811,19 @@
                                 }
                             }
                         },
-                        {
+                        "body": {
+                            "style": {
+                                "css": ["attribute-table__body-cell"]
+                            },
+                            "content": { 
+                                "type": "attribute", 
+                                "name": "name",
+                                "tag": "textfield-outlined"
+                            }
+                        }
+                    },
+                    {
+                        "header": {
                             "style": {
                                 "css": ["attribute-table__header-cell"]
                             },
@@ -870,25 +834,8 @@
                                     "content": "Target"
                                 }
                             }
-                        }
-                    ]
-                },
-                "body": {
-                    "style": {
-                        "css": ["attribute-table-body"]
-                    },
-                    "cell": [
-                        {
-                            "style": {
-                                "css": ["attribute-table__body-cell"]
-                            },
-                            "content": { 
-                                "type": "attribute", 
-                                "name": "name",
-                                "tag": "textfield-outlined"
-                            }
                         },
-                        {
+                        "body": {
                             "style": {
                                 "css": ["attribute-table__body-cell"]
                             },
@@ -897,24 +844,90 @@
                                 "name": "target" 
                             }
                         }
-                    ]
-                }
-            }
-        },
-        {
-            "concept": { "name": "attribute" },
-            "type": "layout",
-            "tags": ["list-item"],
-            "projection": {
-                "type": "wrap",
-                "disposition": [
-                    { 
-                        "type": "attribute", 
-                        "name": "name" 
                     }
                 ]
             }
         },
+        {
+            "name": "attribute-list",
+            "concept": { "name": "attribute" },
+            "type": "template",
+            "template": "list",
+            "tags": [],
+            "projection": {
+                "type": "layout",
+                "layout": {
+                    "type": "wrap",
+                    "disposition": [
+                        { 
+                            "type": "attribute", 
+                            "name": "name" 
+                        }
+                    ]
+                }
+            }
+        },
+
+        {
+            "name": "property-table",
+            "concept": { "name": "property" },
+            "type": "template",
+            "tags": [],
+            "template": "table",
+            "projection": {
+                "type": "row",
+                "row": [
+                    {
+                        "header": {
+                            "style": {
+                                "css": ["property-table__header-cell"]
+                            },
+                            "content": {
+                                "type": "static",
+                                "static": {
+                                    "type": "text", 
+                                    "content": "Name"
+                                }
+                            }
+                        },
+                        "body": {
+                            "style": {
+                                "css": ["property-table__body-cell"]
+                            },
+                            "content": { 
+                                "type": "attribute", 
+                                "name": "name",
+                                "tag": "textfield-outlined"
+                            }
+                        }
+                    },
+                    {
+                        "header": {
+                            "style": {
+                                "css": ["property-table__header-cell"]
+                            },
+                            "content": {
+                                "type": "static",
+                                "static": {
+                                    "type": "text", 
+                                    "content": "Target"
+                                }
+                            }
+                        },
+                        "body": {
+                            "style": {
+                                "css": ["property-table__body-cell"]
+                            },
+                            "content": { 
+                                "type": "attribute", 
+                                "name": "target" 
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+
 
         {
             "concept": { "name": "primitive" },
@@ -1953,12 +1966,33 @@
             "projection": {
                 "type": "table",
                 "orientation": "column",
+                "table": {
+                    "header": {
+                        "style": {
+                            "css": ["attribute-table-header"]
+                        }
+                    },
+                    "body": {
+                        "style": {
+                            "css": ["attribute-table-body"]
+                        }
+                    },
+                    "style": {
+                        "css": ["attribute-table"]
+                    }
+                },
+                "template": {
+                    "concept": "attribute"
+                },
                 "action": {
                     "add": {
                         "projection": {
-                            "type": "text",
-                            "help": "Add an attribute",
-                            "content": "Add"
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "help": "Add an attribute",
+                                "content": "Add"
+                            }
                         }
                     },
                     "remove": {
@@ -1966,28 +2000,14 @@
                             "css": "cell-list__btn-remove"
                         },
                         "projection": {
-                            "type": "text",
-                            "help": "Remove attribute",
-                            "content": "Remove"
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "help": "Remove attribute",
+                                "content": "Remove"
+                            }                        
                         }
                     }
-                },
-                "template": {
-                    "concept": "attribute",
-                    "name": "attribute-table"
-                }
-            }
-        },
-        {
-            "concept": { "name": "set" },
-            "type": "field",
-            "tags": ["property-set"],
-            "projection": {
-                "type": "table",
-                "orientation": "column",
-                "template": {
-                    "concept": "property",
-                    "name": "property-table"
                 }
             }
         },
@@ -1998,6 +2018,9 @@
             "projection": {
                 "type": "list",
                 "orientation": "horizontal",
+                "template": {
+                    "concept": "attribute"
+                },
                 "list": {
                     "style": {
                         "css": ["attribute-list"]
@@ -2015,7 +2038,14 @@
                             "layout": {
                                 "type": "wrap",
                                 "disposition": [
-                                    { "type": "text", "help": "Add an attribute", "content": "Add" }
+                                    {
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "help": "Add an attribute",
+                                             "content": "Add"
+                                        }                        
+                                    }
                                 ]
                             }
                         }
@@ -2029,7 +2059,14 @@
                                     "css": "attribute-list__btn-remove"
                                 },
                                 "disposition": [
-                                    { "type": "text", "help": "Remove attribute", "content": "" }
+                                    {
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "help": "Remove attribute",
+                                            "content": ""
+                                        }                        
+                                    }
                                 ]
                             }
                         }
@@ -2040,6 +2077,61 @@
                 }
             }
         },
+
+        {
+            "concept": { "name": "set" },
+            "type": "field",
+            "tags": ["property-set"],
+            "projection": {
+                "type": "table",
+                "orientation": "column",
+                "table": {
+                    "header": {
+                        "style": {
+                            "css": ["attribute-table-header"]
+                        }
+                    },
+                    "body": {
+                        "style": {
+                            "css": ["attribute-table-body"]
+                        }
+                    },
+                    "style": {
+                        "css": ["attribute-table"]
+                    }
+                },
+                "template": {
+                    "concept": "property",
+                    "name": "property-table"
+                },
+                "action": {
+                    "add": {
+                        "projection": {
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "help": "Add a property",
+                                "content": "Add"
+                            }
+                        }
+                    },
+                    "remove": {
+                        "style": {
+                            "css": "cell-list__btn-remove"
+                        },
+                        "projection": {
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "help": "Remove property",
+                                "content": "Remove"
+                            }                        
+                        }
+                    }
+                }
+            }
+        },
+     
         {
             "concept": { "name": "set" },
             "type": "field",
@@ -2074,22 +2166,28 @@
                 },
                 "action": {
                     "add": {
-                        "projection": { 
-                            "type": "text", 
-                            "help": "Add a value", 
-                            "content": "Add",
-                            "style": {
-                                "css": ["css-list__btn-add"]
+                        "projection":  { 
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "help": "Add a value", 
+                                "content": "Add",
+                                "style": {
+                                    "css": ["css-list__btn-add"]
+                                }
                             }
                         }
                     },
                     "remove": {
                         "projection": { 
-                            "type": "text", 
-                            "help": "Remove value", 
-                            "content": "",
-                            "style": {
-                                "css": ["css-list__btn-remove"]
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "help": "Remove value", 
+                                "content": "",
+                                "style": {
+                                    "css": ["css-list__btn-remove"]
+                                }
                             }
                         }
                     }
@@ -2116,8 +2214,15 @@
                 "action": {
                     "add": {
                         "projection": { 
-                            "type": "text", 
-                            "content": "Add a value" 
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "help": "Add a value", 
+                                "content": "Add",
+                                "style": {
+                                    "css": ["string-list__btn-add"]
+                                }
+                            }
                         }
                     }
                 }
@@ -2148,7 +2253,6 @@
             "tags": ["textfield-outlined"],
             "projection": {
                 "type": "text",
-                "label": "Default value",
                 "style": {
                     "css": ["textfield--outlined"]
                 }
@@ -2185,7 +2289,9 @@
             "tags": ["description-string"],
             "projection": {
                 "type": "text",
-                "placeholder": "Description",
+                "input": {
+                    "placeholder": "Description"
+                },
                 "multiline": true,
                 "style": {
                     "css": ["textfield--description"]

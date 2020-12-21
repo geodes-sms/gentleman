@@ -630,7 +630,8 @@
 .menu {
     position: absolute;
     bottom: 5%; right: 5%;
-    height: 72px; width: 72px;
+    height: 72px; 
+    width: 72px;
     padding: 0;
     line-height: 72px;
     font-size: 1rem;
@@ -642,46 +643,74 @@
     z-index: 50;
     transition: .2s;
 } 
-.menu-title {
-    display: block;
-    font-size: 1.4em; font-weight: 600;
-    text-align: center;
-}
 
-.menu.open .btn {
-    opacity: 1;
-}
+    .menu-title {
+        display: block;
+        font-size: 1.4em; font-weight: 600;
+        text-align: center;
+    }
 
-.menu.open .btn:nth-child(2) {
-    transform: scale(1) translateY(-80px);
-}
+    .menu.open .btn {
+        opacity: 1;
+    }
+        .menu.open .btn:nth-child(2) { transform: scale(1) translateY(-80px); }
+        .menu.open .btn:nth-child(3) { transform: scale(1) translateY(-150px); }
+        .menu.open .btn:nth-child(4) { transform: scale(1) translateY(-220px); }
 
-.menu.open .btn:nth-child(3) {
-    transform: scale(1) translateY(-150px);
-}
+    .btn-import, 
+    .btn-export,
+    .btn-build {
+        position: absolute;
+        bottom: 0; left: 8px;
+        height: 60px; width: 60px;
+        padding: 0;
+        line-height: 60px;
+        font-size: 1.4em; font-weight: 500;
+        color: #fff;
+        background-color: royalblue;
+        border-radius: 50%;
+        box-shadow: 0 1px 5px -1px #1b1b1b;
+        z-index: 50;
+        opacity: 0; transform: scale(0);
+        transition: .2s;
+    }
 
-.menu.open .btn:nth-child(4) {
-    transform: scale(1) translateY(-220px);
-}
-
-.btn-import, 
-.btn-export,
-.btn-build {
+.projection-window {
     position: absolute;
-    bottom: 0; left: 8px;
-    height: 60px; width: 60px;
-    padding: 0;
-    line-height: 60px;
-    font-size: 1.4em; font-weight: 500;
+    top: 100px; right: 5%;
+    padding: 6px 12px 8px;
     color: #fff;
     background-color: royalblue;
-    border-radius: 50%;
-    box-shadow: 0 1px 5px -1px #1b1b1b;
+    border-radius: 4px; 
+    box-shadow: 1px 2px 6px -1px #0d0d0d;
     z-index: 50;
-    opacity: 0; transform: scale(0);
     transition: .2s;
 }
 
+.projection-window-title {
+    display: block;
+    font-size: 1.4em; font-weight: 300;
+    margin-bottom: 6px;
+}
+
+.projection-window-button {
+    margin-right: 12px;
+    height: 60px; width: 60px;
+    padding: 0;
+    line-height: 60px;
+    font-size: 1.3em; font-weight: 500;
+    color: #fff;
+    background-color: #5F84F4;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px -1px #555;
+    transition: .2s;
+}
+
+.projection-window-button:disabled {
+    background-color: #555;
+    transform: scale(0.9);
+    opacity: 0.5;
+}
 
 /* SCREEN SIZE: Narrow */
 @media screen and (max-width: 44.99em) {

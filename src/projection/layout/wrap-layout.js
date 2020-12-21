@@ -9,12 +9,15 @@ import { ContentHandler } from './../content-handler.js';
 export const WrapLayout = {
     /** @type {HTMLElement} */
     container: null,
+    /** @type {HTMLElement[]} */
+    elements: null,
     /** @type {boolean} */
     focusable: null,
 
     init(args) {
         this.collapsible = valOrDefault(this.schema.collapsible, false);
         this.focusable = valOrDefault(this.schema.focusable, true);
+        this.elements = [];
 
         Object.assign(this, valOrDefault(args, {}));
 
@@ -54,6 +57,8 @@ export const WrapLayout = {
 
         for (let i = 0; i < disposition.length; i++) {
             let render = ContentHandler.call(this, disposition[i]);
+
+            this.elements.push(render);
 
             fragment.appendChild(render);
         }

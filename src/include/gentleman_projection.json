@@ -155,6 +155,8 @@
                 }
             ]
         },
+
+
         {
             "name": "field",
             "nature": "prototype",
@@ -360,6 +362,16 @@
             "prototype": "field",
             "attribute": [
                 {
+                    "name": "orientation",
+                    "target": {
+                        "name": "string",
+                        "values": [
+                            "column",
+                            "row"
+                        ]
+                    }
+                },
+                {
                     "name": "template",
                     "target": {
                         "name": "reference",
@@ -369,13 +381,43 @@
                     }
                 },
                 {
-                    "name": "concept",
+                    "name": "table",
                     "target": {
-                        "name": "string"
+                        "name": "table"
                     }
                 }
             ]
         },
+        {
+            "name": "table",
+            "nature": "concrete",
+            "prototype": "render",
+            "attribute": [
+                {
+                    "name": "header",
+                    "target": {
+                        "name": "style"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "body",
+                    "target": {
+                        "name": "style"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "footer",
+                    "target": {
+                        "name": "style"
+                    },
+                    "required": false
+                }
+            ]
+        },
+
+
         {
             "name": "element",
             "nature": "prototype",
@@ -518,27 +560,7 @@
             "prototype": "template",
             "attribute": [
                 {
-                    "name": "orientation",
-                    "target": {
-                        "name": "string"
-                    },
-                    "values": [
-                        "row",
-                        "column"
-                    ]
-                },
-                {
-                    "name": "header",
-                    "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "table header cell"
-                        },
-                        "min": 1
-                    }
-                },
-                {
-                    "name": "body",
+                    "name": "row",
                     "target": {
                         "name": "set",
                         "accept": {
@@ -550,53 +572,50 @@
             ]
         },
         {
-            "name": "table header cell",
+            "name": "table cell",
             "nature": "concrete",
             "attribute": [
                 {
-                    "name": "projection",
+                    "name": "header",
                     "target": {
-                        "name": "text element"
+                        "name": "static element"
                     }
                 },
                 {
-                    "name": "span",
+                    "name": "body",
                     "target": {
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "style",
-                    "target": {
-                        "name": "style"
+                        "name": "attribute element"
                     }
                 }
             ]
         },
         {
-            "name": "table cell",
+            "name": "table header cell",
             "nature": "concrete",
+            "prototype": "render",
             "attribute": [
                 {
-                    "name": "projection",
+                    "name": "content",
                     "target": {
-                        "name": "attribute element"
-                    }
-                },
-                {
-                    "name": "span",
-                    "target": {
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "style",
-                    "target": {
-                        "name": "style"
+                        "name": "static element"
                     }
                 }
             ]
         },
+        {
+            "name": "table body cell",
+            "nature": "concrete",
+            "prototype": "render",
+            "attribute": [
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "attribute element"
+                    }
+                }
+            ]
+        },
+
         {
             "name": "static element",
             "nature": "prototype",
@@ -730,6 +749,8 @@
             ]
         }
     ],
+
+
 
 
     "projection": [

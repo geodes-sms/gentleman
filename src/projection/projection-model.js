@@ -48,6 +48,13 @@ export const ProjectionModel = {
 
         return projection;
     },
+    createProjectionX(concept, schema, tag) {
+        var projection = ProjectionFactory.createProjection(this, schema, concept, this.environment);
+
+        this.addProjection(projection);
+
+        return projection;
+    },
     createGlobalProjection(concept) {
         const schema = this.getGlobalModelProjection(concept);
 
@@ -159,16 +166,16 @@ export const ProjectionModel = {
 
         return projection.filter(p => p.global);
     },
-    getModelProjectionTemplate(concept, name, type, tag) {
+    getModelProjectionTemplate(concept, type, tag) {
         var projection = this.getModelProjection(concept, tag);
 
         if (!Array.isArray(projection)) {
             return [];
         }
 
-        projection = projection.filter(p => p.type === "template" && p.projection.type === type).find(p => p.name === name);
+        projection = projection.filter(p => p.type === "template" && p.template === type);
 
-        return projection;
+        return projection[0];
     },
     getModelProjectionLayout(concept, name, tag) {
         var projection = this.getModelProjection(concept, tag);
