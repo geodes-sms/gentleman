@@ -157,7 +157,7 @@ export function createHome() {
 
     body.append(
         modelOptions
-        // , projectionOptions
+        ,projectionOptions
     );
 
     container.append(header, body);

@@ -56,6 +56,7 @@ const projections = [
 ];
 
 const PROP_NATURE = "nature";
+const PROP_TYPE = "type";
 const ATTR_ATTRIBUTES = "attributes";
 const ATTR_BASE = "base";
 const ATTR_DESCRIPTION = "description";
@@ -521,7 +522,7 @@ export const ConceptModel = {
         let schema = {
             "id": concept.id,
             "concept": SCHEMA_CONCEPT,
-            "type": ProjectionType[concept.name],
+            "type": concept.getBuildProperty(PROP_TYPE),
             "global": getValue(concept, "global"),
             "tags": concept.isAttributeCreated("tags") ? getAttr(concept, 'tags').build() : [],
             "projection": ProjectionHandler[concept.name](concept),

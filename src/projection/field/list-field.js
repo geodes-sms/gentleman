@@ -49,7 +49,7 @@ function createMessageElement() {
 function createListFieldItem(object) {
     const { action = {} } = this.schema;
 
-    const { before = {}, style, projection, after = {} } = valOrDefault(this.schema.list.item, {});
+    const { before = {}, style, template, after = {} } = this.schema.list.item;
 
     const container = createListItem({
         class: ["field--list-item"],
@@ -91,7 +91,7 @@ function createListFieldItem(object) {
         container.appendChild(content);
     }
 
-    var itemProjection = this.model.createProjectionX(object, [this.template]);
+    var itemProjection = this.model.createProjection(object, template.tag);
 
     container.appendChild(itemProjection.init().render());
 
@@ -195,13 +195,6 @@ const BaseListField = {
         this.orientation = valOrDefault(this.schema.orientation, "horizontal");
         this.items = new Map();
 
-        const { concept, name } = this.schema.template;
-        this.template = this.model.getModelProjectionTemplate(concept, "list").projection;
-
-        if (!hasOwn(this.schema, "list")) {
-            this.schema.list = {};
-        }
-
         return this;
     },
 
@@ -232,7 +225,7 @@ const BaseListField = {
     render() {
         const fragment = createDocFragment();
 
-        const { before = {}, list = {}, after = {}, action = {} } = this.schema;
+        const { before = {}, list, after = {}, action = {} } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createDiv({
