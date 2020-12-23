@@ -56,13 +56,17 @@ const projections = [
 ];
 
 const PROP_NATURE = "nature";
+const PROP_TYPE = "type";
 const ATTR_ATTRIBUTES = "attributes";
 const ATTR_BASE = "base";
 const ATTR_DESCRIPTION = "description";
+const ATTR_GLOBAL = "global";
 const ATTR_NAME = "name";
 const ATTR_REQUIRED = "required";
+const ATTR_PROJECTION = "projection";
 const ATTR_PROPERTIES = "properties";
 const ATTR_PROTOTYPE = "prototype";
+const ATTR_TAGS = "tags";
 
 
 export const ConceptModel = {
@@ -356,44 +360,11 @@ export const ConceptModel = {
         return JSON.stringify(concepts);
     },
     buildConcept(concept) {
-        const PROP_NATURE = "nature";
-        const ATTR_PROTOTYPE = "prototype";
-        const ATTR_BASE = "base";
-        const ATTR_ATTRIBUTES = "attributes";
-
         const concepts = [];
 
         this.getConcepts(["prototype concept", "concrete concept", "derivative concept"]).forEach(concept => {
-            let schema = {
-                "id": concept.id,
-                "name": getName(concept),
-                "description": getDescription(concept),
-                "nature": concept.getBuildProperty(PROP_NATURE),
-                "attribute": concept.isAttributeCreated("attributes") ? buildAttribute(getValue(concept, 'attributes')) : [],
-            };
 
-            if (concept.isAttributeCreated(ATTR_PROTOTYPE) && hasValue(concept, ATTR_PROTOTYPE)) {
-                schema.prototype = getName(getReference(concept, ATTR_PROTOTYPE));
-            }
-
-            if (concept.isAttributeCreated(ATTR_BASE) && hasValue(concept, ATTR_BASE)) {
-                const primitive = getValue(concept, ATTR_BASE);
-
-                schema.base = nameMap[primitive.name](primitive);
-
-                if (primitive.isAttributeCreated("accept")) {
-                    let accept = getValue(primitive, "accept");
-                    schema["accept"] = nameMap[accept.name](accept);
-                }
-
-                ["min", "max"].forEach(attr => {
-                    if (primitive.isAttributeCreated(attr) && hasValue(primitive, attr)) {
-                        schema[attr] = +getValue(primitive, attr);
-                    }
-                });
-            }
-
-            concepts.push(schema);
+            concepts.push(this.buildSingleConcept(concept).message);
         });
 
         return JSON.stringify(concepts);
@@ -463,77 +434,63 @@ export const ConceptModel = {
 
         return {
             success: true,
-            message: JSON.stringify(schema),
+            message: schema,
         };
     },
     buildProjection() {
+        const result = [...projections];
 
-        const ProjectionType = {
-            "layout projection": "layout",
-            "field projection": "field",
-            "template projection": "template",
-        };
-
-        const ProjectionHandler = {
-            "layout projection": (concept) => buildLayout(getValue(concept, "layout")),
-            "field projection": (concept) => buildField(getValue(concept, "field")),
-            "template projection": (concept) => buildTemplate(getValue(concept, "template")),
-        };
-
-        this.getConcepts(["layout projection", "field projection", "template projection"]).forEach(concept => {
-            let schema = {
-                "id": concept.id,
-                "concept": { "name": getValue(concept, "concept").toLowerCase() },
-                "type": ProjectionType[concept.name],
-                "global": getValue(concept, "global"),
-                "tags": concept.isAttributeCreated("tags") ? getAttr(concept, 'tags').build() : [],
-                "projection": ProjectionHandler[concept.name](concept),
-            };
-
-            if (concept.name === "template projection") {
-                schema.name = getName(concept);
-            }
-
-            projections.push(schema);
+        this.getConcepts(["concept projection", "template projection"]).forEach(concept => {
+            result.push(this.buildSingleProjection(concept).message);
         });
 
-        return JSON.stringify(projections);
+        return JSON.stringify(result);
     },
     buildSingleProjection(concept) {
-        const ProjectionType = {
-            "layout projection": "layout",
-            "field projection": "field",
-            "template projection": "template",
-        };
+        const errors = [];
+
+        const global = hasAttr(concept, ATTR_GLOBAL) && hasValue(concept, ATTR_GLOBAL) ? getValue(concept, ATTR_GLOBAL) : false;
+        const tags = hasAttr(concept, ATTR_TAGS) ? getAttr(concept, ATTR_TAGS).build() : [];
 
         const ProjectionHandler = {
-            "layout projection": (concept) => buildLayout(getValue(concept, "layout")),
-            "field projection": (concept) => buildField(getValue(concept, "field")),
-            "template projection": (concept) => buildTemplate(getValue(concept, "template")),
+            "layout": (concept) => buildLayout(getValue(concept, "layout")),
+            "field": (concept) => buildField(getValue(concept, "field")),
+            "template": (concept) => buildTemplate(getValue(concept, "template")),
         };
 
-        const SCHEMA_CONCEPT = buildConcept(getAttr(concept, "concept"));
+        if (!hasValue(concept, ATTR_PROJECTION)) {
+            errors.push("The projection's 'type' is missing a value.");
+        }
 
-        if (isNullOrWhitespace(SCHEMA_CONCEPT.name)) {
-            throw new Error("Missing concept's name");
+        const projection = getValue(concept, "projection");
+
+        const type = projection.getBuildProperty(PROP_TYPE);
+
+        if (!isEmpty(errors)) {
+            return {
+                success: false,
+                message: "Validation failed: The concept could not be built.",
+                errors: errors,
+            };
         }
 
         let schema = {
             "id": concept.id,
-            "concept": SCHEMA_CONCEPT,
-            "type": ProjectionType[concept.name],
-            "global": getValue(concept, "global"),
-            "tags": concept.isAttributeCreated("tags") ? getAttr(concept, 'tags').build() : [],
-            "projection": ProjectionHandler[concept.name](concept),
+            "concept": buildConcept(getAttr(concept, "concept")),
+            "type": type,
+            "global": global,
+            "tags": tags,
+            "projection": ProjectionHandler[type](projection),
         };
 
-        if (concept.name === "template projection") {
+        if (hasAttr(concept, ATTR_NAME) && hasValue(concept, ATTR_NAME)) {
             schema.name = getName(concept);
         }
 
-        projections.push(schema);
-
-        return JSON.stringify(projections);
+        return {
+            success: true,
+            message: schema,
+        };
     },
     export() {
         const values = [];
@@ -778,15 +735,12 @@ function getSchema(schema, name) {
 function buildConcept(concept) {
     const result = {};
 
-    const PROP_NAME = "name";
-    const PROP_PROTOTYPE = "prototype";
-
-    if (concept.isAttributeCreated(PROP_NAME)) {
-        result[PROP_NAME] = getValue(concept, PROP_NAME);
+    if (hasAttr(concept, ATTR_NAME)) {
+        result[ATTR_NAME] = getValue(concept, ATTR_NAME);
     }
 
-    if (concept.isAttributeCreated(PROP_PROTOTYPE)) {
-        result[PROP_PROTOTYPE] = getValue(concept, PROP_PROTOTYPE);
+    if (hasAttr(concept, ATTR_PROTOTYPE)) {
+        result[ATTR_PROTOTYPE] = getValue(concept, ATTR_PROTOTYPE);
     }
 
     return result;
@@ -824,12 +778,14 @@ function buildLayout(layout) {
 }
 
 function buildElement(element) {
-    if (element.name === "text element") {
-        let schema = { type: "text", content: getValue(element, "value") };
+    const contentType = element.getBuildProperty("contentType");
+    const elementType = element.getBuildProperty("elementType");
 
-        if (element.isAttributeCreated("style")) {
-            schema.style = buildStyle(getAttr(element, 'style'));
-        }
+    if (contentType === "static") {
+        let schema = {
+            type: contentType,
+            static: buildStatic(element, elementType)
+        };
 
         return schema;
     }
@@ -849,6 +805,22 @@ function buildElement(element) {
     }
 
     return null;
+}
+
+function buildStatic(element, type) {
+    let schema = {
+        type: type
+    };
+
+    if (type === "text") {
+        schema.content = getValue(element, "content");
+
+        if (hasAttr(element, "style")) {
+            schema.style = buildStyle(getAttr(element, 'style'));
+        }
+    }
+
+    return schema;
 }
 
 function buildStyle(style) {

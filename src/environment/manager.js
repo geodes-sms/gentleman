@@ -1,9 +1,7 @@
 import {
     createDocFragment, createInput, createSpan, createDiv, createParagraph, createButton,
-    getElement, isHTMLElement, isNullOrWhitespace, isNullOrUndefined,
-    isString, isEmpty,
+    getElement, isHTMLElement, isNullOrWhitespace, isNullOrUndefined, isString, isEmpty,
 } from "zenkai";
-import { hide, show } from "@utils/index.js";
 import { Explorer, Editor } from './index.js';
 
 

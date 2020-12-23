@@ -90,6 +90,7 @@ export const Editor = {
         }
 
         this.fields = new Map();
+        this.config = {};
 
         this.render();
 
@@ -222,7 +223,7 @@ export const Editor = {
         var result = null;
         if (this.buildTarget === "gentleman_concept") {
             try {
-                result = this.conceptModel.build();
+                result = this.conceptModel.buildConcept();
             } catch (error) {
                 console.error(error);
                 this.notify("The model is not valid. Please review before the next build.", "error");
@@ -582,21 +583,19 @@ export const Editor = {
                 }, [toolbar, projection.render()]);
 
                 btnBuild.addEventListener('click', (event) => {
-                    var result;
-
                     if (this.buildTarget === "gentleman_concept") {
                         try {
-                            result = this.conceptModel.buildSingleConcept(concept);
+                            const result = this.conceptModel.buildSingleConcept(concept);
 
                             if (!result.success) {
                                 console.log('%c Concept is not valid', 'padding: 4px 6px; color: #fff; font-weight: bold; background: #DC143C;');
-                                
+
                                 result.errors.forEach(error => console.error(error));
 
                                 this.notify("The concept is not valid.", "error");
                             } else {
                                 const value = JSON.parse(result.message);
-                                
+
                                 console.log(`%c Concept '${value.name}' is valid`, 'padding: 4px 6px; color: #fff; font-weight: bold; background: #00AB66;');
                                 console.log(value);
 
@@ -609,30 +608,26 @@ export const Editor = {
                         }
                     } else if (this.buildTarget === "gentleman_projection") {
                         try {
-                            result = this.conceptModel.buildSingleProjection(concept);
+                            const result = this.conceptModel.buildSingleProjection(concept);
 
-                            let cmodel = ConceptModelManager.createModel([
-                                {
-                                    "name": "person",
-                                    "nature": "concrete",
-                                    "attribute": [
-                                        {
-                                            "name": "name",
-                                            "target": { "name": "string", "min": 2 },
-                                            "required": true
-                                        },
-                                    ]
-                                },
-                            ]).init();
-                            let pmodel = ConceptModelManager.createModel(result).init();
+                            if (!result.success) {
+                                console.log('%c Projection is not valid', 'padding: 4px 6px; color: #fff; font-weight: bold; background: #DC143C;');
 
-                            let concept = cmodel.createConcept({ name: "person" });
+                                result.errors.forEach(error => console.error(error));
 
-                            let projection = pmodel.createGlobalProjection(concept).init();
+                                this.notify("The projection is not valid.", "error");
+                            } else {
+                                const value = JSON.parse(result.message);
 
-                            this.body.appendChild(createDiv({
-                                class: ["editor-concept-preview"]
-                            }, projection.render()));
+                                console.log(`%c Projection '${value.name}' is valid`, 'padding: 4px 6px; color: #fff; font-weight: bold; background: #00AB66;');
+                                console.log(value);
+
+                                this.notify("The projection is valid.");
+                            }
+
+                            // this.body.appendChild(createDiv({
+                            //     class: ["editor-concept-preview"]
+                            // }, projection.render()));
                         } catch (error) {
                             let errorContainer = createParagraph({
                                 class: ["editor-concept-footer"]

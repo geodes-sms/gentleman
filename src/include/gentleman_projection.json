@@ -85,7 +85,11 @@
                         "name": "layout"
                     }
                 }
-            ]
+            ],
+
+            "build": {
+                "type": "layout"
+            }
         },
         {
             "name": "field component",
@@ -98,8 +102,13 @@
                         "name": "field"
                     }
                 }
-            ]
+            ],
+
+            "build": {
+                "type": "field"
+            }
         },
+
         {
             "name": "concept",
             "nature": "concrete",
@@ -457,10 +466,7 @@
                     "name": "orientation",
                     "target": {
                         "name": "string",
-                        "values": [
-                            "horizontal",
-                            "vertical"
-                        ]
+                        "values": ["horizontal", "vertical"]
                     }
                 }
             ]
@@ -639,7 +645,12 @@
             "name": "static text",
             "nature": "concrete",
             "prototype": "atomic element",
-            "attribute": []
+            "attribute": [],
+            
+            "build": {
+                "contentType": "static",
+                "elementType": "text"
+            }
         },
         {
             "name": "static image",
@@ -664,13 +675,23 @@
                         "name": "string"
                     }
                 }
-            ]
+            ],
+            
+            "build": {
+                "contentType": "static",
+                "elementType": "image"
+            }
         },
         {
             "name": "static HTML",
             "nature": "concrete",
             "prototype": "atomic element",
-            "attribute": []
+            "attribute": [],
+            
+            "build": {
+                "contentType": "static",
+                "elementType": "HTML"
+            }
         },
         {
             "name": "static link",
@@ -710,7 +731,12 @@
                         "name": "string"
                     }
                 }
-            ]
+            ],
+            
+            "build": {
+                "contentType": "static",
+                "elementType": "link"
+            }
         },
         {
             "name": "attribute element",
@@ -775,12 +801,14 @@
                             },
                             "disposition": [
                                 {
-                                    "type": "text",
-                                    "style": {
-                                        "css": ["model-projection-header__title"]
-                                    },
-                                    "content": "Global"
-                                }
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Global",
+                                        "style": {
+                                            "css": ["model-projection-header__title"]
+                                        }                                        
+                                }}
                             ]
                         }
                     },
@@ -821,17 +849,18 @@
                         "layout": {
                             "type": "wrap",
                             "style": {
-                                "css": [
-                                    "model-projection-header"
-                                ]
+                                "css": ["model-projection-header"]
                             },
                             "disposition": [
                                 {
-                                    "type": "text",
-                                    "style": {
-                                        "css": "model-projection-header__title"
-                                    },
-                                    "content": "Template Projection"
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Template Projection",
+                                        "style": {
+                                            "css": ["model-projection-header__title"]
+                                        }
+                                    }
                                 },
                                 {
                                     "type": "attribute",
@@ -866,8 +895,11 @@
                                             },
                                             "disposition": [
                                                 {
-                                                    "type": "text",
-                                                    "content": "Define tags"
+                                                    "type": "static",
+                                                    "static": {
+                                                        "type": "text",
+                                                        "content": "Define tags"
+                                                    }
                                                 }
                                             ]
                                         }
@@ -904,11 +936,14 @@
                             },
                             "disposition": [
                                 {
-                                    "type": "text",
-                                    "style": {
-                                        "css": ["model-projection-header__title"]
-                                    },
-                                    "content": "Concept projection"
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Concept projection",
+                                        "style": {
+                                            "css": ["model-projection-header__title"]
+                                        }
+                                    }
                                 },
                                 {
                                     "type": "attribute",
@@ -1052,7 +1087,6 @@
             }
         },
 
-     
    
         {
             "concept": { "name": "concept" },
@@ -1745,7 +1779,7 @@
                 "type": "stack",
                 "orientation": "vertical",
                 "style": {
-                    "css": "stack-layout"
+                    "css": ["stack-layout"]
                 },
                 "disposition": [
                     {
@@ -1753,7 +1787,7 @@
                         "layout": {
                             "type": "wrap",
                             "style": {
-                                "css": "stack-layout-header"
+                                "css": ["stack-layout-header"]
                             },
                             "disposition": [
                                 {
@@ -1769,7 +1803,7 @@
                         "layout": {
                             "type": "wrap",
                             "style": {
-                                "css": "stack-layout-body"
+                                "css": ["stack-layout-body"]
                             },
                             "disposition": [
                                 {
@@ -1785,15 +1819,15 @@
                                         "layout": {
                                             "type": "wrap",
                                             "style": {
-                                                "css": [
-                                                    "field-option",
-                                                    "field-option--style"
-                                                ]
+                                                "css": ["field-option", "field-option--style"]
                                             },
                                             "disposition": [
                                                 {
-                                                    "type": "text",
-                                                    "content": "Define style properties"
+                                                    "type": "static",
+                                                    "static": {
+                                                        "type": "text",
+                                                        "content": "Define style properties"
+                                                    }
                                                 }
                                             ]
                                         }
@@ -2993,6 +3027,9 @@
                         "css": ["element-list"]
                     },
                     "item": {
+                        "template": {
+                            "tag": "list-item"
+                        },
                         "style": {
                             "css": ["element-list-item"]
                         }
@@ -3001,20 +3038,26 @@
                 "action": {
                     "add": {
                         "projection": {
-                            "type": "text",
-                            "style": {
-                                "css": ["element-list__btn-add"]
-                            },
-                            "content": "+"
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "style": {
+                                    "css": ["element-list__btn-add"]
+                                },
+                                "content": "+"
+                            }
                         }
                     },
                     "remove": {
                         "projection": {
-                            "type": "text",
-                            "style": {
-                                "css": ["element-list__btn-remove"]
-                            },
-                            "content": ""
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "style": {
+                                    "css": ["element-list__btn-remove"]
+                                },
+                                "content": ""
+                            }
                         }
                     }
                 }
@@ -3109,8 +3152,8 @@
             "tags": ["tag-string"],
             "projection": {
                 "type": "text",
-                "placeholder": "Tag",
                 "input": {
+                    "placeholder": "Tag",
                     "style": {
                         "css": ["textfield--tag__input"]
                     }
@@ -3154,11 +3197,14 @@
                 "type": "text",
                 "before": {
                     "projection": {
-                        "type": "text",
-                        "style": {
-                            "css": ["textfield--placeholder__label"]
-                        },
-                        "content": "Placeholder"
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "style": {
+                                "css": ["textfield--placeholder__label"]
+                            },
+                            "content": "Placeholder"
+                        }
                     }
                 },
                 "input": {
@@ -3179,11 +3225,14 @@
                 "type": "text",
                 "before": {
                     "projection": {
-                        "type": "text",
-                        "style": {
-                            "css": ["textfield--label__label"]
-                        },
-                        "content": "Label"
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Label",
+                            "style": {
+                                "css": ["textfield--label__label"]
+                            }
+                        }
                     }
                 },
                 "input": {
@@ -3204,11 +3253,14 @@
                 "type": "text",
                 "before": {
                     "projection": {
-                        "type": "text",
-                        "style": {
-                            "css": ["textfield--template__label"]
-                        },
-                        "content": "Table template"
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Table template",
+                            "style": {
+                                "css": ["textfield--template__label"]
+                            }
+                        }
                     }
                 },
                 "input": {
@@ -3229,11 +3281,14 @@
                 "type": "text",
                 "before": {
                     "projection": {
-                        "type": "text",
-                        "style": {
-                            "css": ["textfield--template__label"]
-                        },
-                        "content": "Table concept"
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Table concept",
+                            "style": {
+                                "css": ["textfield--template__label"]
+                            }
+                        }
                     }
                 },
                 "input": {
