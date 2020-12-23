@@ -85,7 +85,11 @@
                         "name": "layout"
                     }
                 }
-            ]
+            ],
+
+            "build": {
+                "type": "layout"
+            }
         },
         {
             "name": "field component",
@@ -98,8 +102,13 @@
                         "name": "field"
                     }
                 }
-            ]
+            ],
+
+            "build": {
+                "type": "field"
+            }
         },
+
         {
             "name": "concept",
             "nature": "concrete",
@@ -457,10 +466,7 @@
                     "name": "orientation",
                     "target": {
                         "name": "string",
-                        "values": [
-                            "horizontal",
-                            "vertical"
-                        ]
+                        "values": ["horizontal", "vertical"]
                     }
                 }
             ]
@@ -639,7 +645,12 @@
             "name": "static text",
             "nature": "concrete",
             "prototype": "atomic element",
-            "attribute": []
+            "attribute": [],
+            
+            "build": {
+                "contentType": "static",
+                "elementType": "text"
+            }
         },
         {
             "name": "static image",
@@ -664,13 +675,23 @@
                         "name": "string"
                     }
                 }
-            ]
+            ],
+            
+            "build": {
+                "contentType": "static",
+                "elementType": "image"
+            }
         },
         {
             "name": "static HTML",
             "nature": "concrete",
             "prototype": "atomic element",
-            "attribute": []
+            "attribute": [],
+            
+            "build": {
+                "contentType": "static",
+                "elementType": "HTML"
+            }
         },
         {
             "name": "static link",
@@ -710,7 +731,12 @@
                         "name": "string"
                     }
                 }
-            ]
+            ],
+            
+            "build": {
+                "contentType": "static",
+                "elementType": "link"
+            }
         },
         {
             "name": "attribute element",
