@@ -1,6 +1,6 @@
 {
   "name": "gentleman",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Gentleman is a web-based projectionnal editor generator. It allows you to express and interact with your DSL.",
   "private": true,
   "directories": {
@@ -9,7 +9,9 @@
   },
   "scripts": {
     "prebuild": "rimraf dist/*",
-    "build": "cross-env NODE_ENV=production webpack --config webpack.prod.js",
+    "build": "npm-run-all build:*",
+    "build:css": "node scripts/build.js",
+    "build:js": "cross-env NODE_ENV=production webpack --config webpack.prod.js",
     "start": "cross-env NODE_ENV=development webpack serve --config webpack.dev.js",
     "test": "cross-env NODE_ENV=test nyc mocha --config .mocharc.yml",
     "test:browser": "cross-env NODE_ENV=test nyc mocha test/**/*.spec.js",
