@@ -18,7 +18,12 @@ const projections = [
         "type": "field",
         "tags": [],
         "projection": {
-            "type": "text"
+            "type": "text",
+            "content": [
+                {
+                    "type": "input"
+                }
+            ]
         }
     },
     {
@@ -259,13 +264,13 @@ export const ConceptModel = {
 
         Object.assign(conceptSchema, concept);
 
-        if (!hasOwn(conceptSchema, 'attribute')) {
-            conceptSchema.attribute = [];
+        if (!hasOwn(conceptSchema, 'attributes')) {
+            conceptSchema.attributes = [];
         }
 
         const baseSchema = getConceptBaseSchema.call(this, conceptSchema.prototype);
 
-        conceptSchema.attribute.push(...baseSchema.attribute);
+        conceptSchema.attributes.push(...baseSchema.attributes);
 
         return conceptSchema;
     },
@@ -330,7 +335,7 @@ export const ConceptModel = {
                 "name": getName(concept),
                 "description": getDescription(concept),
                 "nature": ConceptNature[concept.name],
-                "attribute": concept.isAttributeCreated("attributes") ? buildAttribute(getValue(concept, 'attributes')) : [],
+                "attributes": concept.isAttributeCreated("attributes") ? buildAttribute(getValue(concept, 'attributes')) : [],
             };
 
             if (concept.isAttributeCreated("prototype") && hasValue(concept, "prototype")) {
@@ -359,7 +364,7 @@ export const ConceptModel = {
 
         return JSON.stringify(concepts);
     },
-    buildConcept(concept) {
+    buildConcept() {
         const concepts = [];
 
         this.getConcepts(["prototype concept", "concrete concept", "derivative concept"]).forEach(concept => {
@@ -462,10 +467,6 @@ export const ConceptModel = {
             errors.push("The projection's 'type' is missing a value.");
         }
 
-        const projection = getValue(concept, "projection");
-
-        const type = projection.getBuildProperty(PROP_TYPE);
-
         if (!isEmpty(errors)) {
             return {
                 success: false,
@@ -473,6 +474,10 @@ export const ConceptModel = {
                 errors: errors,
             };
         }
+
+        const projection = getValue(concept, "projection");
+
+        const type = projection.getBuildProperty(PROP_TYPE);
 
         let schema = {
             "id": concept.id,
@@ -688,6 +693,7 @@ function getConceptBaseSchema(protoName) {
 
             if (isNullOrUndefined(attribute)) {
                 attributes.push($attr);
+                
                 return;
             }
 
@@ -696,7 +702,7 @@ function getConceptBaseSchema(protoName) {
             }
 
             if ($attr.description) {
-                attribute.required = $attr.description;
+                attribute.description = $attr.description;
             }
         });
     };
@@ -704,13 +710,13 @@ function getConceptBaseSchema(protoName) {
     while (!isNullOrUndefined(prototype)) {
         const schema = valOrDefault(this.getConceptSchema(prototype), {});
 
-        appendAttributes(schema.attribute);
+        appendAttributes(schema.attributes);
 
         prototype = schema['prototype'];
     }
 
     return {
-        attribute: attributes,
+        attributes: attributes,
     };
 }
 
@@ -736,11 +742,11 @@ function buildConcept(concept) {
     const result = {};
 
     if (hasAttr(concept, ATTR_NAME)) {
-        result[ATTR_NAME] = getValue(concept, ATTR_NAME);
+        result[ATTR_NAME] = hasValue(concept, ATTR_NAME) ? getValue(concept, ATTR_NAME) : null;
     }
 
     if (hasAttr(concept, ATTR_PROTOTYPE)) {
-        result[ATTR_PROTOTYPE] = getValue(concept, ATTR_PROTOTYPE);
+        result[ATTR_PROTOTYPE] = hasValue(concept, ATTR_PROTOTYPE) ? getValue(concept, ATTR_PROTOTYPE) : null;
     }
 
     return result;
@@ -752,7 +758,7 @@ function buildLayout(layout) {
 
     if (layout.name === "stack layout") {
         schema.type = "stack";
-        schema.orientation = getAttr(layout, 'orientation').getValue();
+        schema.orientation = getValue(layout, 'orientation');
 
         getValue(layout, "elements").filter(proto => proto.hasValue()).forEach(proto => {
             const element = proto.getValue();
@@ -760,12 +766,15 @@ function buildLayout(layout) {
         });
     } else if (layout.name === "wrap layout") {
         schema.type = "wrap";
+
         getValue(layout, "elements").filter(proto => proto.hasValue()).forEach(proto => {
             const element = proto.getValue();
             disposition.push(buildElement(element));
         });
     } else if (layout.name === "table layout") {
-        // TODO
+        schema.type = "table";
+    } else if (layout.name === "relative layout") {
+        schema.type = "relative";
     }
 
     if (layout.isAttributeCreated("style")) {
@@ -790,8 +799,15 @@ function buildElement(element) {
         return schema;
     }
 
-    if (element.name === "attribute element") {
-        let schema = { type: "attribute", name: getValue(element, "value") };
+    if (contentType === "dynamic") {
+        return buildDynamic(element, elementType);
+    }
+
+    if (contentType === "attribute") {
+        let schema = {
+            type: contentType,
+            name: getValue(element, "value")
+        };
 
         if (element.isAttributeCreated("tag")) {
             schema.tag = getValue(element, "tag");
@@ -800,8 +816,11 @@ function buildElement(element) {
         return schema;
     }
 
-    if (element.name === "layout element") {
-        return { type: "layout", layout: buildLayout(getValue(element, "value")) };
+    if (contentType === "layout") {
+        return {
+            type: contentType,
+            layout: buildLayout(element)
+        };
     }
 
     return null;
@@ -814,78 +833,154 @@ function buildStatic(element, type) {
 
     if (type === "text") {
         schema.content = getValue(element, "content");
+        schema.contentType = getValue(element, "content type");
+    } else if (type === "image") {
+        schema.url = getValue(element, "url");
+        schema.alt = getValue(element, "alternative text");
+        schema.width = getValue(element, "width");
+        schema.height = getValue(element, "height");
+    } else if (type === "html") {
+        schema.selector = getValue(element, "selector");
+    } else if (type === "link") {
+        schema.url = getValue(element, "url");
+        schema.urlType = getValue(element, "url type");
+        schema.content = [];
 
-        if (hasAttr(element, "style")) {
-            schema.style = buildStyle(getAttr(element, 'style'));
-        }
+        getValue(element, "content").filter(proto => proto.hasValue()).forEach(proto => {
+            const element = proto.getValue();
+            schema.content.push(buildElement(element));
+        });
+    }
+
+    if (hasAttr(element, "style")) {
+        schema.style = buildStyle(getAttr(element, 'style'));
     }
 
     return schema;
 }
 
-function buildStyle(style) {
-    if (style.isAttributeCreated("css")) {
-        return {
-            css: getAttr(style, 'css').build()
-        };
+function buildDynamic(element, type) {
+    let schema = {
+        type: type
+    };
+
+    if (type === "input") {
+        schema.placeholder = getValue(element, "placeholder");
+    } else if (type === "checkbox") {
+        schema.label = getValue(element, "label");
+    } else if (type === "list") {
+        schema.selector = getValue(element, "item");
     }
 
-    return null;
+    if (hasAttr(element, "style")) {
+        schema.style = buildStyle(getAttr(element, 'style'));
+    }
+
+    return schema;
 }
 
+
 function buildField(field) {
-    var schema = {};
-
-    if (field.isAttributeCreated("readonly")) {
-        schema.readonly = getAttr(field, 'readonly').getValue();
-    }
-
-    if (field.isAttributeCreated("disabled")) {
-        schema.disabled = getAttr(field, 'disabled').getValue();
-    }
+    var schema = {
+        readonly: getValue(field, "readonly"),
+        disabled: getValue(field, "disabled"),
+    };
 
     if (field.isAttributeCreated("style")) {
-        schema.style = buildStyle(getAttr(field, 'style'));
+        schema.style = buildStyle(getAttr(field, "style"));
     }
 
     if (field.name === "text field") {
-        if (field.isAttributeCreated("placeholder")) {
-            schema.placeholder = getAttr(field, 'placeholder').getValue();
-        }
-
-        if (field.isAttributeCreated("label")) {
-            schema.label = getAttr(field, 'label').getValue();
-        }
-
         schema.type = "text";
-    } else if (field.name === "binary field") {
-        if (field.isAttributeCreated("label")) {
-            schema.label = getAttr(field, 'label').getValue();
-        }
+        schema.multiline = getValue(field, "multiline");
 
+        schema.content = [];
+
+        getValue(field, "content").filter(proto => proto.hasValue()).forEach(proto => {
+            const element = proto.getValue();
+            schema.content.push(buildElement(element));
+        });
+    } else if (field.name === "binary field") {
         schema.type = "binary";
+        schema.state = [];
+
+        getValue(field, "content").forEach(state => {
+            if (hasAttr(state, "state")) {
+                schema.state.push({
+                    "rule": {
+                        "type": "eq",
+                        "eq": [{ "prop": "value" }, getValue(state, "state")]
+                    },
+                    "result": {
+                        "label": {
+                            "projection": buildElement(getValue(state, "content"))
+                        }
+                    }
+                });
+            } else {
+                schema.label = {
+                    "projection": buildElement(getValue(state, "content"))
+                };
+            }
+        });
     } else if (field.name === "choice field") {
         schema.type = "choice";
+
+        let choice = getAttr(field, "choice template");
+        let selection = getAttr(field, "selection template");
+
+        schema.choice = {
+            "option": {
+                "template": {
+                    "tag": getValue(choice, "tag"),
+                    "name": getValue(choice, "name"),
+                }
+            },
+            "selection": {
+                "template": {
+                    "tag": getValue(selection, "tag"),
+                    "name": getValue(selection, "name"),
+                }
+            }
+        };
     } else if (field.name === "link field") {
-        if (field.isAttributeCreated("placeholder")) {
-            schema.placeholder = getAttr(field, 'placeholder').getValue();
-        }
-
-        if (field.isAttributeCreated("value")) {
-            schema.value = getAttr(field, 'value').getValue();
-        }
-
-        if (field.isAttributeCreated("choice")) {
-            schema.choice = getAttr(field, 'choice').getValue();
-        }
-
         schema.type = "link";
+
+        let choice = getAttr(field, "choice template");
+        let value = getAttr(field, "value template");
+
+        schema.choice = {
+            "option": {
+                "template": {
+                    "tag": getValue(choice, "tag"),
+                    "name": getValue(choice, "name"),
+                }
+            },
+            "selection": {
+                "template": {
+                    "tag": getValue(value, "tag"),
+                    "name": getValue(value, "name"),
+                }
+            }
+        };
+
     } else if (field.name === "list field") {
-        if (field.isAttributeCreated("orientation")) {
-            schema.orientation = getAttr(field, 'orientation').getValue();
+        schema.type = "list";
+
+        if (hasAttr("orientation")) {
+            schema.orientation = getValue(field, 'orientation');
         }
 
-        schema.type = "list";
+        let item = getAttr(field, "item template");
+
+        schema.list = {
+            "item": {
+                "template": {
+                    "tag": getValue(item, "tag"),
+                    "name": getValue(item, "name"),
+                }
+            }
+        };
     } else if (field.name === "table field") {
         let template = {};
 
@@ -902,6 +997,17 @@ function buildField(field) {
     }
 
     return schema;
+}
+
+
+function buildStyle(style) {
+    if (style.isAttributeCreated("css")) {
+        return {
+            css: getAttr(style, 'css').build()
+        };
+    }
+
+    return null;
 }
 
 function buildTemplate(tpl) {

@@ -315,4 +315,4 @@ export const Concept = Object.assign(
 );
 
 
-Object.defineProperty(Concept, 'attributeSchema', { get() { return this.schema.attribute; } });
+Object.defineProperty(Concept, 'attributeSchema', { get() { return this.schema.attributes; } });

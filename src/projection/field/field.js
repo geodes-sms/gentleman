@@ -103,6 +103,9 @@ const BaseField = {
     clickHandler(target) {
         console.warn("CLICK_HANDLER NOT IMPLEMENTED");
     },
+    arrowHandler(target) {
+        console.warn("ARROW_HANDLER NOT IMPLEMENTED");
+    },
 };
 
 

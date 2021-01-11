@@ -1,7 +1,7 @@
 import {
     createDocFragment, createSpan, createDiv, createI, createUnorderedList,
     createTextArea, createInput, createListItem, createButton, findAncestor,
-    removeChildren, isHTMLElement, isNullOrWhitespace, isEmpty, valOrDefault, hasOwn,
+    removeChildren, isHTMLElement, isNullOrWhitespace, isEmpty, valOrDefault, hasOwn, getPreviousElementSibling, getNextElementSibling,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
@@ -154,12 +154,10 @@ const BaseTextField = {
     init() {
         this.source.register(this);
         this.multiline = valOrDefault(this.schema.multiline, false);
+        this.focusable = valOrDefault(this.schema.focusable, true);
 
         if (!hasOwn(this.schema, "choice")) {
             this.schema.choice = {};
-        }
-        if (!hasOwn(this.schema, "input")) {
-            this.schema.input = {};
         }
 
         return this;
@@ -188,7 +186,6 @@ const BaseTextField = {
         this.value = this.getValue();
         this.element.classList.add("active");
         this.element.classList.add("focus");
-        this.input.focus();
 
         return this;
     },
@@ -327,7 +324,11 @@ const BaseTextField = {
     render() {
         const fragment = createDocFragment();
 
-        const { before = {}, input, after = {} } = this.schema;
+        const { content, style } = this.schema;
+
+        if (!Array.isArray(content)) {
+            throw new Error("Empty content for textfield");
+        }
 
         if (!isHTMLElement(this.element)) {
             this.element = createDiv({
@@ -376,83 +377,81 @@ const BaseTextField = {
             this.notification.appendChild(this.statusElement);
         }
 
-        if (before.projection) {
-            let content = ContentHandler.call(this, before.projection);
-            content.classList.add("field--textbox__before");
+        content.forEach(element => {
+            if (element.type === "input") {
+                const { placeholder, style, type } = valOrDefault(element.input, {});
 
-            fragment.appendChild(content);
-        }
+                let inputPlaceholder = resolvePlaceholder.call(this, placeholder);
 
+                if (this.readonly) {
+                    this.input = createSpan({
+                        class: ["field--textbox__input", "readonly"],
+                        dataset: {
+                            nature: "field-component",
+                            view: "text",
+                            id: this.id,
+                        }
+                    });
+                } else if (this.multiline) {
+                    this.input = createTextArea({
+                        class: ["field--textbox__input", "field--textbox__input--multiline"],
+                        placeholder: inputPlaceholder,
+                        dataset: {
+                            nature: "field-component",
+                            view: "text",
+                            id: this.id,
+                        }
+                    });
+                } else {
+                    this.input = createInput({
+                        type: valOrDefault(type, "text"),
+                        class: ["field--textbox__input"],
+                        placeholder: inputPlaceholder,
+                        dataset: {
+                            nature: "field-component",
+                            view: "text",
+                            id: this.id,
+                        }
+                    });
+                }
 
-        if (!isHTMLElement(this.input)) {
-            const { placeholder, style, type } = input;
+                if (this.disabled) {
+                    this.element.classList.add("disabled");
+                    this.input.disabled = true;
+                }
 
-            let inputPlaceholder = resolvePlaceholder.call(this, placeholder);
+                if (this.focusable) {
+                    this.input.tabIndex = 0;
+                } else {
+                    this.element.dataset.ignore = "all";
+                    this.input.dataset.ignore = "all";
+                }
 
-            if (this.readonly) {
-                this.input = createSpan({
-                    class: ["field--textbox__input", "readonly"],
-                    tabindex: 0,
-                    dataset: {
-                        nature: "field-component",
-                        view: "text",
-                        id: this.id,
-                    }
-                });
-            } else if (this.multiline) {
-                this.input = createTextArea({
-                    class: ["field--textbox__input", "field--textbox__input--multiline"],
-                    tabindex: 0,
-                    placeholder: inputPlaceholder,
-                    dataset: {
-                        nature: "field-component",
-                        view: "text",
-                        id: this.id,
-                    }
-                });
+                let value = "";
+                if (this.source.hasValue()) {
+                    value = this.source.getValue();
+                }
+
+                if (!isNullOrWhitespace(value)) {
+                    this.input.textContent = value;
+                    this.value = value;
+                }
+
+                StyleHandler(this.input, style);
+
+                fragment.appendChild(this.input);
             } else {
-                this.input = createInput({
-                    type: valOrDefault(type, "text"),
-                    class: ["field--textbox__input"],
-                    tabindex: 0,
-                    placeholder: inputPlaceholder,
-                    dataset: {
-                        nature: "field-component",
-                        view: "text",
-                        id: this.id,
-                    }
-                });
+                let content = ContentHandler.call(this, element);
+
+                fragment.appendChild(content);
             }
+        });
 
-            if (this.disabled) {
-                this.element.classList.add("disabled");
-                this.input.disabled = true;
-            }
-
-            let value = "";
-            if (this.source.hasValue()) {
-                value = this.source.getValue();
-            }
-
-            if (!isNullOrWhitespace(value)) {
-                this.input.textContent = value;
-                this.value = value;
-            }
-
-            StyleHandler(this.input, style);
-
-            fragment.appendChild(this.input);
-        }
-
-        if (after.projection) {
-            let content = ContentHandler.call(this, after.projection);
-            content.classList.add("field--textbox__after");
-
-            fragment.appendChild(content);
-        }
+        StyleHandler(this.element, style);
 
         if (fragment.hasChildNodes()) {
             this.element.appendChild(fragment);
+
             this.bindEvents();
         }
 
@@ -475,20 +474,29 @@ const BaseTextField = {
         if (isNullOrWhitespace(query)) {
             for (let i = 0; i < children.length; i++) {
                 const item = children[i];
+
                 show(item);
+                item.hidden = false;
             }
 
             return true;
         }
 
+        let parts = query.trim().toLowerCase().replace(/\s+/g, " ").split(' ');
+
         for (let i = 0; i < children.length; i++) {
             const item = children[i];
             const { value } = item.dataset;
 
-            let parts = query.trim().replace(/\s+/g, " ").split(' ');
-            let match = parts.some(q => value.includes(q));
+            let match = parts.some(q => value.toLowerCase().includes(q));
 
-            match ? show(item) : hide(item);
+            if (match) {
+                show(item);
+                item.hidden = false;
+            } else {
+                hide(item);
+                item.hidden = true;
+            }
         }
 
         return true;
@@ -606,6 +614,28 @@ const BaseTextField = {
 
         if (isHTMLElement(item)) {
             this.selectChoice(item);
+        }
+    },
+    /**
+     * Handles the `arrow` command
+     * @param {HTMLElement} target 
+     */
+    arrowHandler(dir, target) {
+        /** @type {HTMLElement} */
+        const item = getItem.call(this, target);
+
+        if (isHTMLElement(item)) {
+            let $item = null;
+            if (dir === "up") {
+                $item = getPreviousElementSibling(item, (el) => !el.hidden);
+
+            } else if (dir === "down") {
+                $item = getNextElementSibling(item, (el) => !el.hidden);
+            }
+
+            if (isHTMLElement($item)) {
+                $item.focus();
+            }
         }
     },
     /**

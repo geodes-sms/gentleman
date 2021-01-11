@@ -3,7 +3,7 @@
         {
             "name": "model element",
             "nature": "prototype",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "name",
                     "target": {
@@ -25,7 +25,7 @@
             "description": "A prototype of a concept.",
             "nature": "prototype",
             "prototype": "model element",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "attributes",
                     "target": {
@@ -80,7 +80,7 @@
             "description": "A derivative concept represents...",
             "nature": "concrete",
             "prototype": "model concept",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "base",
                     "target": {
@@ -98,7 +98,7 @@
             "name": "structure",
             "nature": "prototype",
             "prototype": "model element",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "alias",
                     "target": {
@@ -113,7 +113,7 @@
             "name": "attribute",
             "nature": "concrete",
             "prototype": "structure",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "required",
                     "target": {
@@ -136,7 +136,7 @@
             "name": "property",
             "nature": "concrete",
             "prototype": "structure",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "target",
                     "target": {
@@ -151,13 +151,13 @@
         {
             "name": "primitive",
             "nature": "prototype",
-            "attribute": []
+            "attributes": []
         },
         {
             "name": "string primitive",
             "nature": "concrete",
             "prototype": "primitive",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "default",
                     "target": {
@@ -187,13 +187,13 @@
         {
             "name": "number constraint",
             "nature": "prototype",
-            "attribute": []
+            "attributes": []
         },
         {
             "name": "number constraint value",
             "nature": "concrete",
             "prototype": "number constraint",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "value",
                     "target": {
@@ -206,7 +206,7 @@
             "name": "number constraint range",
             "nature": "concrete",
             "prototype": "number constraint",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "min",
                     "target": {
@@ -226,7 +226,7 @@
         {
             "name": "number constraint range value",
             "nature": "concrete",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "value",
                     "target": {
@@ -247,7 +247,7 @@
             "name": "number primitive",
             "nature": "concrete",
             "prototype": "primitive",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "default",
                     "target": {
@@ -276,7 +276,7 @@
             "name": "boolean primitive",
             "nature": "concrete",
             "prototype": "primitive",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "default",
                     "target": {
@@ -289,7 +289,7 @@
             "name": "reference primitive",
             "nature": "concrete",
             "prototype": "$primitive",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "accept",
                     "target": {
@@ -303,7 +303,7 @@
             "name": "set primitive",
             "nature": "concrete",
             "prototype": "primitive",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "accept",
                     "target": {
@@ -331,7 +331,7 @@
             "name": "concept primitive",
             "nature": "concrete",
             "prototype": "primitive",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "concept",
                     "target": {
@@ -346,13 +346,13 @@
         {
             "name": "value",
             "nature": "prototype",
-            "attribute": []
+            "attributes": []
         },
         {
             "name": "string value",
             "nature": "concrete",
             "prototype": "value",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "value",
                     "target": {
@@ -365,7 +365,7 @@
             "name": "number value",
             "nature": "concrete",
             "prototype": "value",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "value",
                     "target": {
@@ -378,7 +378,7 @@
             "name": "boolean value",
             "nature": "concrete",
             "prototype": "value",
-            "attribute": [
+            "attributes": [
                 {
                     "name": "value",
                     "target": {
@@ -556,9 +556,12 @@
                                                 "css": ["model-concept-option", "model-concept-option--prototype"]
                                             },
                                             "disposition": [
-                                                { 
-                                                    "type": "text", 
-                                                    "content": "Use a prototype" 
+                                                {
+                                                    "type": "static",
+                                                    "static": { 
+                                                        "type": "text", 
+                                                        "content": "Use a prototype" 
+                                                    }
                                                 }
                                             ]
                                         }
@@ -638,8 +641,11 @@
                 },
                 "disposition": [
                     { 
-                        "type": "text", 
-                        "content": "Concrete concept" 
+                        "type": "static",
+                        "static": {
+                            "type": "text", 
+                            "content": "Concrete concept" 
+                        }
                     },
                     { 
                         "type": "attribute", 
@@ -728,9 +734,12 @@
             "projection": {
                 "type": "wrap",
                 "disposition": [
-                    { 
-                        "type": "text", 
-                        "content": "Derivative" 
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text", 
+                            "content": "Derivative" 
+                        }
                     },
                     { 
                         "type": "attribute", 
@@ -752,8 +761,11 @@
                 },
                 "disposition": [
                     { 
-                        "type": "text", 
-                        "content": "Derivative concept" 
+                        "type": "static",
+                        "static": {
+                            "type": "text", 
+                            "content": "Derivative concept" 
+                        }
                     },
                     { 
                         "type": "attribute", 
@@ -967,8 +979,11 @@
                         "type": "projection",
                         "tag": "choice-selection-full",
                         "content": {
-                            "type": "text",
-                            "content": "Show constraints"
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "content": "Show constraints"
+                            }
                         },
                         "style": {
                             "css": ["projection-constraints", "projection-constraints--show"]
@@ -1002,8 +1017,11 @@
                                     "type": "projection",
                                     "tag": "choice-selection-base",
                                     "content": {
-                                        "type": "text",
-                                        "content": "Hide"
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "content": "Hide"
+                                        }
                                     },
                                     "style": {
                                         "css": ["projection-constraints", "projection-constraints--hide"]
@@ -1070,8 +1088,11 @@
                 "focusable": false,
                 "disposition": [
                     { 
-                        "type": "text", 
-                        "content": "String" 
+                        "type": "static",
+                        "static": {
+                            "type": "text", 
+                            "content": "String" 
+                        }
                     }
                 ]
             }
@@ -1220,8 +1241,11 @@
                 "focusable": false,
                 "disposition": [
                     { 
-                        "type": "text", 
-                        "content": "Fixed value" 
+                        "type": "static",
+                        "static": {
+                            "type": "text", 
+                            "content": "Fixed value" 
+                        }
                     }
                 ]
             }
@@ -1254,8 +1278,11 @@
                 "focusable": false,
                 "disposition": [
                     { 
-                        "type": "text", 
-                        "content": "Range" 
+                        "type": "static",
+                        "static": {
+                            "type": "text", 
+                            "content": "Range" 
+                        }
                     }
                 ]
             }
@@ -1295,8 +1322,11 @@
                         "type": "projection",
                         "tag": "choice-selection-full",
                         "content": {
-                            "type": "text",
-                            "content": "Show constraints"
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "content": "Show constraints"
+                            }
                         },
                         "style": {
                             "css": ["projection-constraints", "projection-constraints--show"]
@@ -1330,8 +1360,11 @@
                                     "type": "projection",
                                     "tag": "choice-selection-base",
                                     "content": {
-                                        "type": "text",
-                                        "content": "Hide"
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "content": "Hide"
+                                        }
                                     },
                                     "style": {
                                         "css": ["projection-constraints", "projection-constraints--hide"]
@@ -1398,8 +1431,11 @@
                 "focusable": false,
                 "disposition": [
                     { 
-                        "type": "text", 
-                        "content": "Number" 
+                        "type": "static",
+                        "static": {
+                            "type": "text", 
+                            "content": "Number" 
+                        }
                     }
                 ]
             }
@@ -1428,8 +1464,11 @@
                 "focusable": false,
                 "disposition": [
                     { 
-                        "type": "text", 
-                        "content": "Boolean" 
+                        "type": "static",
+                        "static": {
+                            "type": "text", 
+                            "content": "Boolean" 
+                        }
                     }
                 ]
             }
@@ -1458,8 +1497,11 @@
                 "focusable": false,
                 "disposition": [
                     { 
-                        "type": "text", 
-                        "content": "Reference" 
+                        "type": "static",
+                        "static": {
+                            "type": "text", 
+                            "content": "Reference" 
+                        }
                     }
                 ]
             }
@@ -1486,10 +1528,13 @@
                             },
                             "disposition": [
                                 {
-                                    "type": "text",
-                                    "content": "Element target",
-                                    "style": {
-                                        "css": ["title", "target-accept-title"]
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Element target",
+                                        "style": {
+                                            "css": ["title", "target-accept-title"]
+                                        }
                                     }
                                 },
                                 { 
@@ -1503,8 +1548,11 @@
                         "type": "projection",
                         "tag": "choice-selection-full",
                         "content": {
-                            "type": "text",
-                            "content": "Show constraints"
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "content": "Show constraints"
+                            }
                         },
                         "style": {
                             "css": ["projection-constraints", "projection-constraints--show"]
@@ -1534,10 +1582,13 @@
                             },
                             "disposition": [
                                 {
-                                    "type": "text",
-                                    "content": "Element target",
-                                    "style": {
-                                        "css": ["title", "target-accept-title"]
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Element target",
+                                        "style": {
+                                            "css": ["title", "target-accept-title"]
+                                        }
                                     }
                                 },
                                 { 
@@ -1559,8 +1610,11 @@
                                     "type": "projection",
                                     "tag": "choice-selection-base",
                                     "content": {
-                                        "type": "text",
-                                        "content": "Hide"
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "content": "Hide"
+                                        }
                                     },
                                     "style": {
                                         "css": ["projection-constraints", "projection-constraints--hide"]
@@ -1609,8 +1663,11 @@
                 "focusable": false,
                 "disposition": [
                     { 
-                        "type": "text", 
-                        "content": "Set" 
+                        "type": "static",
+                        "static": {
+                            "type": "text", 
+                            "content": "Set" 
+                        }
                     }
                 ]
             }
@@ -1695,8 +1752,11 @@
                 "focusable": false,
                 "disposition": [
                     { 
-                        "type": "text", 
-                        "content": "Number" 
+                        "type": "static",
+                        "static": {
+                            "type": "text", 
+                            "content": "Number" 
+                        }
                     }
                 ]
             }
@@ -1726,8 +1786,11 @@
                 "focusable": false,
                 "disposition": [
                     { 
-                        "type": "text", 
-                        "content": "String" 
+                        "type": "static",
+                        "static": {
+                            "type": "text", 
+                            "content": "String" 
+                        }
                     }
                 ]
             }
@@ -1757,8 +1820,11 @@
                 "focusable": false,
                 "disposition": [
                     { 
-                        "type": "text", 
-                        "content": "Boolean" 
+                        "type": "static",
+                        "static": {
+                            "type": "text", 
+                            "content": "Boolean" 
+                        }
                     }
                 ]
             }
@@ -1771,7 +1837,13 @@
             "type": "field",
             "tags": [],
             "projection": {   
-                "type": "binary"
+                "type": "binary",
+                "label": {
+                    "projection": {
+                        "type": "property",
+                        "name": "name"
+                    }
+                }
             }
         },
         {
@@ -1844,9 +1916,14 @@
             "tags": [],
             "projection": {
                 "type": "text",
-                "input": {
-                    "type": "number"
-                },
+                "content": [
+                    {
+                        "type": "input",
+                        "input": {
+                            "type": "number"
+                        }
+                    }
+                ],
                 "style": {
                     "css": ["textfield--outlined"]
                 }
@@ -1858,12 +1935,8 @@
             "tags": ["default-number"],
             "projection": {
                 "type": "text",
-                "input": {
-                    "placeholder": "default value",
-                    "type": "number"
-                },
-                "before": {
-                    "projection": { 
+                "content": [
+                    { 
                         "type": "static",
                         "static": {
                             "type": "text",
@@ -1872,8 +1945,15 @@
                                 "css": ["textfield--outlined__label", "label"]
                             }
                         }
+                    },
+                    {
+                        "type": "input",
+                        "input": {
+                            "placeholder": "default value",
+                            "type": "number"
+                        }
                     }
-                },
+                ],
                 "style": {
                     "css": ["textfield--outlined"]
                 }
@@ -1884,7 +1964,15 @@
             "type": "field",
             "tags": ["list-item"],
             "projection": {
-                "type": "text"
+                "type": "text",
+                "content": [
+                    {
+                        "type": "input",
+                        "input": {
+                            "type": "number"
+                        }
+                    }
+                ]
             }
         },
 
@@ -1902,7 +1990,13 @@
             "tags": ["prototype-reference"],
             "projection": {
                 "type": "link",
-                "placeholder": "Select a prototype",
+                "placeholder": {
+                    "type": "static",
+                    "static": {
+                        "type": "text",
+                        "content": "Select a prototype"
+                    }
+                },
                 "choice": {
                     "style": {
                         "css": ["link--prototype__choices"]
@@ -1924,7 +2018,13 @@
             "tags": ["concept-reference"],
             "projection": {
                 "type": "link",
-                "placeholder": "Select a concept",
+                "placeholder": {
+                    "type": "static",
+                    "static": {
+                        "type": "text",
+                        "content": "Select a concept"
+                    }
+                },
                 "choice": {
                     "style": {
                         "css": ["link--concept__choices"]
@@ -2159,6 +2259,9 @@
                         "css": ["value-list"]
                     },
                     "item": {
+                        "template": {
+                            "tag": "list-item"
+                        },
                         "style": {
                             "css": ["value-list-item"]
                         }
@@ -2206,6 +2309,9 @@
                         "css": ["string-list"]
                     },
                     "item": {
+                        "template": {
+                            "tag": "list-item"
+                        },
                         "style": {
                             "css": ["string-list-item"]
                         }
@@ -2235,7 +2341,12 @@
             "type": "field",
             "tags": [],
             "projection": {
-                "type": "text"
+                "type": "text",
+                "content": [
+                    {
+                        "type": "input"
+                    }
+                ]
             }
         },
         {
@@ -2244,6 +2355,11 @@
             "tags": ["readonly-string"],
             "projection": {
                 "type": "text",
+                "content": [
+                    {
+                        "type": "input"
+                    }
+                ],
                 "readonly": true
             }
         },
@@ -2253,6 +2369,11 @@
             "tags": ["textfield-outlined"],
             "projection": {
                 "type": "text",
+                "content": [
+                    {
+                        "type": "input"
+                    }
+                ],
                 "style": {
                     "css": ["textfield--outlined"]
                 }
@@ -2263,7 +2384,12 @@
             "type": "field",
             "tags": [],
             "projection": {
-                "type": "text"
+                "type": "text",
+                "content": [
+                    {
+                        "type": "input"
+                    }
+                ]
             }
         },
         {
@@ -2272,7 +2398,12 @@
             "tags": ["readonly-string"],
             "projection": {
                 "type": "text",
-                "readonly": true
+                "readonly": true,
+                "content": [
+                    {
+                        "type": "input"
+                    }
+                ]
             }
         },
         {
@@ -2280,7 +2411,12 @@
             "type": "field",
             "tags": ["list-item"],
             "projection": {
-                "type": "text"
+                "type": "text",
+                "content": [
+                    {
+                        "type": "input"
+                    }
+                ]
             }
         },
         {
@@ -2289,9 +2425,14 @@
             "tags": ["description-string"],
             "projection": {
                 "type": "text",
-                "input": {
-                    "placeholder": "Description"
-                },
+                "content": [
+                    {
+                        "type": "input",
+                        "input": {
+                            "placeholder": "Description"
+                        }
+                    }
+                ],
                 "multiline": true,
                 "style": {
                     "css": ["textfield--description"]
@@ -2304,8 +2445,8 @@
             "tags": ["default-string"],
             "projection": {
                 "type": "text",
-                "before": {
-                    "projection": { 
+                "content": [
+                    { 
                         "type": "static",
                         "static": {
                             "type": "text",
@@ -2314,11 +2455,14 @@
                                 "css": ["textfield--outlined__label", "label"]
                             }
                         }
+                    },
+                    {
+                        "type": "input",
+                        "input": {
+                            "placeholder": "default value"
+                        }
                     }
-                },
-                "input": {
-                    "placeholder": "default value"
-                },
+                ],
                 "style": {
                     "css": ["textfield--outlined"]
                 }
@@ -2330,6 +2474,11 @@
             "tags": ["outlined-string"],
             "projection": {
                 "type": "text",
+                "content": [
+                    {
+                        "type": "input"
+                    }
+                ],
                 "style": {
                     "css": ["textfield--outlined"]
                 }

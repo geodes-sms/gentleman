@@ -12,14 +12,20 @@ import { Field } from "./field.js";
 const actionDefaultSchema = {
     add: {
         projection: {
-            "type": "text",
-            "content": "Add"
+            "type": "static",
+            "static": {
+                "type": "text",
+                "content": "Add"
+            }
         }
     },
     remove: {
         projection: {
-            "type": "text",
-            "content": "Remove"
+            "type": "static",
+            "static": {
+                "type": "text",
+                "content": "Remove"
+            }
         }
     }
 };
@@ -92,6 +98,7 @@ function createListFieldItem(object) {
     }
 
     var itemProjection = this.model.createProjection(object, template.tag);
+    console.log(itemProjection.schema);
 
     container.appendChild(itemProjection.init().render());
 
@@ -181,8 +188,6 @@ function createNotificationMessage(type, message) {
 
 
 const BaseListField = {
-    /** @type {string} */
-    orientation: null,
     /** @type {HTMLElement} */
     list: null,
     /** @type {Map} */
@@ -192,7 +197,6 @@ const BaseListField = {
 
     init() {
         this.source.register(this);
-        this.orientation = valOrDefault(this.schema.orientation, "horizontal");
         this.items = new Map();
 
         return this;
@@ -225,7 +229,7 @@ const BaseListField = {
     render() {
         const fragment = createDocFragment();
 
-        const { before = {}, list, after = {}, action = {} } = this.schema;
+        const { before = {}, list = {}, after = {}, action = {} } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createDiv({
@@ -280,12 +284,11 @@ const BaseListField = {
 
         if (!isHTMLElement(this.list)) {
             this.list = createUnorderedList({
-                class: ["bare-list", "field--list__list", this.orientation],
+                class: ["bare-list", "field--list__list"],
                 dataset: {
                     nature: "field-component",
                     view: "list",
-                    id: this.id,
-                    orientation: this.orientation
+                    id: this.id
                 }
             });
 
@@ -305,7 +308,7 @@ const BaseListField = {
 
         var { projection: addLayout, style: addStyle, position = "after" } = valOrDefault(action.add, actionDefaultSchema.add);
 
-        var addProjection = ContentHandler.call(this, addLayout, null, { focusable: false });
+        var addProjection = ContentHandler.call(this, addLayout, null);
 
         const createAdd = ["first", "last"].includes(position) ? createListItem : createButton;
 
@@ -564,6 +567,94 @@ const BaseListField = {
         } else if (action === "remove") {
             this.selection = component.parentElement;
             this.delete(component.parentElement);
+        }
+    },
+    /**
+     * Handles the `arrow` command
+     * @param {HTMLElement} target 
+     */
+    arrowHandler(dir, target) {
+        /** @type {HTMLElement} */
+        const item = target;
+
+        if (!isHTMLElement(item)) {
+            return;
+        }
+
+        const items = this.list.children;
+
+        const { top: top1, right: right1, bottom: bottom1, left: left1 } = item.getBoundingClientRect();
+
+        let otherItem = null;
+
+        let vdist = 99999;
+        let hdist = 99999;
+
+        if (dir === "up") {
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+
+                const { bottom: bottom2, left: left2 } = item.getBoundingClientRect();
+
+                let $vdist = Math.abs(top1 - bottom2);
+                let $hdist = Math.abs(left1 - left2);
+
+                if (top1 > bottom2 && ($vdist < vdist || $hdist < hdist)) {
+                    otherItem = item;
+                    vdist = $vdist;
+                    hdist = $hdist;
+                }
+            }
+
+        } else if (dir === "down") {
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+
+                const { top: top2, left: left2 } = item.getBoundingClientRect();
+
+                let $vdist = Math.abs(bottom1 - top2);
+                let $hdist = Math.abs(left1 - left2);
+
+                if (bottom1 < top2 && ($vdist < vdist || $hdist < hdist)) {
+                    otherItem = item;
+                    vdist = $vdist;
+                    hdist = $hdist;
+                }
+            }
+        } else if (dir === "left") {
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+
+                const { top: top2, right: right2 } = item.getBoundingClientRect();
+
+                let $vdist = Math.abs(top1 - top2);
+                let $hdist = Math.abs(right1 - right2);
+
+                if (left1 > right2 && ($vdist < vdist || $hdist < hdist)) {
+                    otherItem = item;
+                    vdist = $vdist;
+                    hdist = $hdist;
+                }
+            }
+        } else if (dir === "right") {
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+
+                const { top: top2, left: left2 } = item.getBoundingClientRect();
+
+                let $vdist = Math.abs(top1 - top2);
+                let $hdist = Math.abs(left1 - left2);
+
+                if (right1 < left2 && ($vdist < vdist || $hdist < hdist)) {
+                    otherItem = item;
+                    vdist = $vdist;
+                    hdist = $hdist;
+                }
+            }
+        }
+
+        if (isHTMLElement(otherItem)) {
+            otherItem.focus();
         }
     },
 

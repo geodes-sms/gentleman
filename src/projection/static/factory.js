@@ -1,4 +1,8 @@
-import { isNullOrUndefined, valOrDefault } from 'zenkai';
+import { isNullOrUndefined } from 'zenkai';
+import { AudioStatic } from './audio-static.js';
+import { HTMLStatic } from './html-static.js';
+import { ImageStatic } from './image-static.js';
+import { LinkStatic } from './link-static.js';
 import { TextStatic } from './text-static.js';
 
 
@@ -7,7 +11,7 @@ const nextId = () => `static${inc++}`;
 
 
 const Handler = {
-    'audio': (model, schema, projection) => Object.create(TextStatic, {
+    'audio': (model, schema, projection) => Object.create(AudioStatic, {
         object: { value: "static" },
         name: { value: "audio-static" },
         type: { value: "audio" },
@@ -16,7 +20,7 @@ const Handler = {
         schema: { value: schema },
         projection: { value: projection },
     }),
-    'image': (model, schema, projection) => Object.create(TextStatic, {
+    'image': (model, schema, projection) => Object.create(ImageStatic, {
         object: { value: "static" },
         name: { value: "image-static" },
         type: { value: "image" },
@@ -25,7 +29,7 @@ const Handler = {
         schema: { value: schema },
         projection: { value: projection },
     }),
-    'link': (model, schema, projection) => Object.create(TextStatic, {
+    'link': (model, schema, projection) => Object.create(LinkStatic, {
         object: { value: "field" },
         name: { value: "image-static" },
         type: { value: "image" },
@@ -38,6 +42,15 @@ const Handler = {
         object: { value: "static" },
         name: { value: "text-static" },
         type: { value: "text" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+    }),
+    'html': (model, schema, projection) => Object.create(HTMLStatic, {
+        object: { value: "static" },
+        name: { value: "html-static" },
+        type: { value: "html" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },

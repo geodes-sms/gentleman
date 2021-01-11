@@ -45,6 +45,7 @@ const BaseStatic = {
 
     show() {
         show(this.element);
+
         this.visible = true;
         this.active = true;
 
@@ -52,33 +53,24 @@ const BaseStatic = {
     },
     hide() {
         hide(this.element);
+        
         this.visible = false;
 
         return this;
     },
     focus() {
-        this.element.contentEditable = false;
         this.element.focus();
         this.focused = true;
+        this.active = true;
 
         return this;
     },
-    enable() {
-        this.disabled = false;
-
-        return this;
-    },
-    disable() {
-        this.disabled = true;
-
-        return this;
-    },
-
     clear() {
         return true;
     },
     delete() {
         this.clear();
+
         removeChildren(this.element);
         this.element.remove();
     }

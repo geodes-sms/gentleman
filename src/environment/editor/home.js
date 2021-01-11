@@ -1,5 +1,6 @@
 import {
-    createDiv, createH2, createParagraph, createButton, createHeader, createSpan, createSection,
+    createDiv, createH2, createParagraph, createButton, createHeader, createSpan, 
+    createSection,
 } from 'zenkai';
 
 
@@ -7,18 +8,22 @@ import {
  * @returns {HTMLElement}
  */
 export function createHome() {
+    /** @type {HTMLElement} */
     const container = createSection({
         class: ["editor-home"]
     });
 
-    var header = createHeader({
+    /** @type {HTMLElement} */
+    const header = createHeader({
         class: ["menu-header"]
     });
 
+    /** @type {HTMLElement} */
     var title = createH2({
         class: ["editor-home__title"]
     }, "Editor");
 
+    /** @type {HTMLElement} */
     var content = createParagraph({
         class: ["menu-content"],
         html: "Welcome to Gentleman's editor.<br>To begin, please load a model or continue with a previous instance."
@@ -26,29 +31,34 @@ export function createHome() {
 
     header.append(title, content);
 
-    var body = createDiv({
+    /** @type {HTMLElement} */
+    const body = createDiv({
         class: ["loader-container"],
         tabindex: -1
     });
 
-
+    /** @type {HTMLElement} */
     var modelOptions = createDiv({
         class: ["loader-options"]
     });
 
+    /** @type {HTMLElement} */
     var modelOptionsTitle = createH2({
         class: ["loader-options-title"]
     }, "Concept");
 
+    /** @type {HTMLElement} */
     var modelOptionsContent = createParagraph({
         class: ["loader-options-content"],
         html: "Create or edit a model."
     });
 
+    /** @type {HTMLElement} */
     var modelOptionsAction = createDiv({
         class: ["loader-options-action"]
     });
 
+    /** @type {HTMLElement} */
     var btnCreateMetaModel = createButton({
         class: ["btn", "loader-option", "loader-option--new"],
         dataset: {
@@ -69,6 +79,7 @@ export function createHome() {
         }, "metamodel")
     ]);
 
+    /** @type {HTMLElement} */
     var btnOpenModel = createButton({
         class: ["btn", "loader-option", "loader-option--open"],
         dataset: {

@@ -2,7 +2,7 @@ import {
     createDocFragment, createDiv, createButton, createSpan, removeChildren,
     isHTMLElement, isNullOrUndefined, hasOwn, findAncestor
 } from 'zenkai';
-import {  hide, show,  getEventTarget } from '@utils/index.js';
+import { hide, show, getEventTarget } from '@utils/index.js';
 
 
 /**
@@ -19,6 +19,14 @@ export const ProjectionWindow = {
     /** @type {HTMLButtonElement} */
     btnSearch: null,
 
+    init(editor) {
+        if (editor) {
+            this.editor = editor;
+        }
+
+        return this;
+    },
+    
     setProjection(projection) {
         if (this.projection !== projection) {
             this.projection = projection;
@@ -47,7 +55,7 @@ export const ProjectionWindow = {
         return this;
     },
     show() {
-        show(this.container);
+        // show(this.container);
         return this;
     },
     hide() {

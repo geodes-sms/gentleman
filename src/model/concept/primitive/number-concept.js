@@ -158,7 +158,7 @@ const _NumberConcept = {
             id: this.id,
             name: this.name,
             root: this.isRoot(),
-            value: this.hasValue() ? +this.getValue() : null
+            value: this.getValue()
         };
     },
 };
