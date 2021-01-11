@@ -8,7 +8,7 @@ Gentleman aims to **to close the gap between models and domain experts**.
 |:-------------:|:-------------:|
 | ![Gentleman Screenshot](https://geodes-sms.github.io/gentleman/assets/images/concept.png "Concept definition")  | ![Gentleman Screenshot](https://geodes-sms.github.io/gentleman/assets/images/projection.png "projection definition") |
 
-> **Projectional-editing?**
+> **Projectional-editing**
 > 1. No parser needed: the user manipulates the AST directly (through projections)
 > 2. Support of various notations: tables, math formulas, graphics...
 > 3. Composition of any language without introducing syntactic ambiguities
@@ -64,7 +64,7 @@ editor.init(MODEL, PROJETION)
 
 # Installation
 
-⚠️ **Gentleman is currently in alpha.**
+⚠️ **Gentleman is currently in alpha.** ⚠️
 
 ## Building the Code
 
@@ -77,11 +77,58 @@ To build the code, follow these steps.
 $ npm install
 ```
 
+# Documentation
 
-<!-- # Documentation
+<!-- You can read the documentation for Gentleman [here](https://geodes-sms.github.io/gentleman/docs). If you would like to help improve this documentation, the source for many of the docs can be found in the doc folder within this repository.  -->
 
-You can read the documentation for Gentleman [here](https://geodes-sms.github.io/gentleman/docs). If you would like to help improve this documentation, the source for many of the docs can be found in the doc folder within this repository. -->
+## Projection
 
+A projection is a representation of a concept that can be visualized and interacted with in the graphical user interface (GUI).
+Multiple projections may be defined for a single concept so as to allow different representation and level of granularity.
+
+> **Example**  
+> Consider the concept `Person` with attributes such as `name`, `age`, `height`, `shape`, and `type`.  
+To manipulate a collection of `Person`, a *Table* is a highly efficient notation to make changes, but does not offer
+enough flexibility for viewing purposes. However, a *List* which is less rigid in both structure and presentation
+fit perfectly with this scenario.  
+Therefore, a good strategy would be to define a projection per use cases:  
+**(1)** Edit a *Person* and view all their attributes `->` Table projection  
+**(2)** Enumerate all the defined *Person* showing only their *name* `->` List projection
+
+Every projection is a composition of *layout*, *field* and *static* elements; all rendered as HTML elements.
+They can be customized, individually or globally, directly with *style* rules or though external *CSS*.
+
+### Layout
+
+A layout element is used to organize elements presented in the GUI.
+Predefined layouts:
+
+- Wrap
+- Stack
+- Relative
+- Table
+
+### Field
+
+A field element is used to receive and process input and output
+
+- Text
+- Binary
+- Choice
+- Link
+- List
+- Table
+
+### Static
+
+A static element is used to add element that do not accept any input and may only react to changes in the environment.
+
+- Text
+- Image
+- Link
+- Audio
+- HTML
+  
 # Publication
 
 [1] L-E Lafontant, E. Syriani. *Gentleman: a light-weight web-based projectional editor generator* [PDF](https://dl.acm.org/doi/pdf/10.1145/3417990.3421998)
@@ -89,6 +136,7 @@ You can read the documentation for Gentleman [here](https://geodes-sms.github.io
 # Distribution
 
 This distribution contains the following files and folders:
+
 - src: the source code
 - demo: contains some metamodels
 - doc: the source code documentation

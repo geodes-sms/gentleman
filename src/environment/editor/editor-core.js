@@ -1,9 +1,9 @@
 import {
-    createDocFragment, createDiv, createH2, createUnorderedList, createListItem,
-    createParagraph, createButton, createHeader, createAnchor, createSpan,
-    createInput, createLabel, createI, getElement, getElements, removeChildren,
-    isHTMLElement, isNullOrWhitespace, isNullOrUndefined, isEmpty, hasOwn,
-    copytoClipboard, cloneObject, valOrDefault, findAncestor, createSection,
+    createDocFragment, createDiv, createSpan, createUnorderedList, createListItem,
+    createParagraph, createButton, createAnchor, createInput, createI, createSection,
+    getElement, getElements, removeChildren, isHTMLElement, findAncestor,
+    isNullOrWhitespace, isNullOrUndefined, isEmpty, hasOwn, valOrDefault,
+    cloneObject, copytoClipboard
 } from 'zenkai';
 import { Events, hide, show, Key, getEventTarget } from '@utils/index.js';
 import { ConceptModelManager } from '@model/index.js';
@@ -12,8 +12,33 @@ import { ProjectionWindow } from '../projection-window.js';
 import { StyleWindow } from '../style-window.js';
 import { createHome } from './home.js';
 import { createEditorMenu } from './editor-menu.js';
-import { createEditorHeader } from './editor-header.js';
+import { EditorSection } from './editor-section.js';
 
+
+/**
+ * Creates an editor's header
+ * @returns {EditorHeader}
+ */
+function createEditorHeader() {
+    return Object.create(EditorSection, {
+        object: { value: "environment" },
+        name: { value: "editor-header" },
+        editor: { value: this }
+    });
+}
+
+/**
+ * Creates a projection window
+ * @returns {ProjectionWindow}
+ */
+function createProjectionWindow() {
+    return Object.create(ProjectionWindow, {
+        object: { value: "environment" },
+        name: { value: "projection-window" },
+        type: { value: "window" },
+        editor: { value: this }
+    });
+}
 
 const MODEL_GENTLEMAN_CONCEPT = require('@include/gentleman_model.json');
 const MODEL_GENTLEMAN_PROJECTION = require('@include/gentleman_projection.json');
@@ -21,7 +46,8 @@ const MODEL_GENTLEMAN_PROJECTION = require('@include/gentleman_projection.json')
 
 export const Editor = {
     _initialized: false,
-    /** @type {Model} */
+
+    /** @type {ConceptModel} */
     conceptModel: null,
     /** @type {Concept} */
     concept: null,
@@ -32,12 +58,8 @@ export const Editor = {
 
     /** @type {HTMLElement} */
     container: null,
-    /** @type {HTMLElement} */
+    /** @type {EditorHeader} */
     header: null,
-    /** @type {HTMLElement} */
-    headerTitle: null,
-    /** @type {HTMLElement} */
-    headerBody: null,
     /** @type {HTMLElement} */
     body: null,
     /** @type {HTMLElement} */
@@ -80,9 +102,9 @@ export const Editor = {
     /** @type {boolean} */
     active: false,
 
-    init(conceptModel, projectionModel, valueModel) {
+    init(conceptModel, projectionModel) {
         if (conceptModel) {
-            this.conceptModel = ConceptModelManager.createModel(conceptModel).init(valueModel);
+            this.conceptModel = ConceptModelManager.createModel(conceptModel).init();
         }
 
         if (projectionModel) {
@@ -91,6 +113,12 @@ export const Editor = {
 
         this.fields = new Map();
         this.config = {};
+
+        if (this.config) {
+            this.header = createEditorHeader.call(this).init();
+        }
+
+        this.projectionWindow = createProjectionWindow.call(this).init();
 
         this.render();
 
@@ -276,8 +304,8 @@ export const Editor = {
 
         const result = {
             "concept": this.conceptModel.schema,
-            "projection": this.projectionModel.schema
-            // "values": this.conceptModel.export()
+            "projection": this.projectionModel.schema,
+            "values": this.conceptModel.export(),
         };
 
         var bb = new Blob([JSON.stringify(result)], { type: MIME_TYPE });
@@ -403,10 +431,8 @@ export const Editor = {
     render(container) {
         const fragment = createDocFragment();
 
-        if (!isHTMLElement(this.header)) {
-            createEditorHeader.call(this);
-
-            fragment.appendChild(this.header);
+        if (!isHTMLElement(this.header.container)) {
+            fragment.appendChild(this.header.render());
         }
 
         if (!isHTMLElement(this.body)) {
@@ -433,9 +459,7 @@ export const Editor = {
             fragment.appendChild(this.footer);
         }
 
-        if (!isHTMLElement(this.projectionWindow)) {
-            this.projectionWindow = Object.create(ProjectionWindow);
-
+        if (!isHTMLElement(this.projectionWindow.container)) {
             fragment.appendChild(this.projectionWindow.render());
         }
 
@@ -474,8 +498,7 @@ export const Editor = {
     },
     refresh() {
         if (isNullOrUndefined(this.conceptModel)) {
-            hide(this.selectorList);
-            hide(this.headerBody);
+            this.header.hide();
 
             this.container.classList.add("empty");
 
@@ -491,13 +514,8 @@ export const Editor = {
         }
 
         show(this.menu);
-        show(this.selectorList);
-        show(this.headerBody);
+        this.header.show();
         this.projectionWindow.show();
-
-        if (hasOwn(this.config, "name")) {
-            this.headerTitle.textContent = `Editor: ${this.config["name"]}`;
-        }
 
         this.container.classList.remove("empty");
 
@@ -617,22 +635,15 @@ export const Editor = {
 
                                 this.notify("The projection is not valid.", "error");
                             } else {
-                                const value = JSON.parse(result.message);
+                                const value = result.message;
 
                                 console.log(`%c Projection '${value.name}' is valid`, 'padding: 4px 6px; color: #fff; font-weight: bold; background: #00AB66;');
                                 console.log(value);
 
                                 this.notify("The projection is valid.");
                             }
-
-                            // this.body.appendChild(createDiv({
-                            //     class: ["editor-concept-preview"]
-                            // }, projection.render()));
                         } catch (error) {
-                            let errorContainer = createParagraph({
-                                class: ["editor-concept-footer"]
-                            }, error);
-                            modelConceptContainer.appendChild(errorContainer);
+                            console.error(error);
 
                             this.notify("The projection is not valid. Please review before the next build.", "error");
 
@@ -656,7 +667,7 @@ export const Editor = {
             }
         });
 
-        removeChildren(this.headerBody).appendChild(modelConceptList);
+        removeChildren(this.header.body).appendChild(modelConceptList);
 
         // const { name } = this.conceptModel;
 
@@ -699,6 +710,7 @@ export const Editor = {
 
 
         var parent = this.activeElement.parentElement;
+
         while (parent) {
             const { nature, view } = parent.dataset;
 
@@ -878,11 +890,39 @@ export const Editor = {
                     }
 
                     break;
+                case Key.up_arrow:
+                    if (this.activeField) {
+                        this.activeField.arrowHandler("up", target);
+
+                        event.preventDefault();
+                    }
+
+                    break;
+                case Key.down_arrow:
+                    if (this.activeField) {
+                        this.activeField.arrowHandler("down", target);
+
+                        event.preventDefault();
+                    }
+
+                    break;
                 case Key.right_arrow:
+                    if (this.activeField) {
+                        this.activeField.arrowHandler("right", target);
+
+                        event.preventDefault();
+                    }
+
+                    break;
+                case Key.left_arrow:
+                    if (this.activeField) {
+                        this.activeField.arrowHandler("left", target);
+
+                        event.preventDefault();
+                    }
 
                     break;
                 case Key.escape:
-                    rememberKey = false;
                     if (this.activeField) {
                         this.activeField.escapeHandler(target);
                     }
@@ -923,7 +963,6 @@ export const Editor = {
                     if (lastKey == Key.ctrl) {
                         event.preventDefault();
                     }
-                    rememberKey = false;
                     break;
                 default:
                     break;
@@ -975,7 +1014,6 @@ export const Editor = {
 
         this.body.addEventListener('focusin', (event) => {
             const target = event.target;
-            console.log(target);
 
             const { nature } = target.dataset;
 

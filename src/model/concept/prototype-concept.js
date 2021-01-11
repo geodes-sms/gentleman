@@ -150,7 +150,7 @@ const BasePrototypeConcept = {
             id: this.id,
             name: this.name,
             root: this.isRoot(),
-            value: this.getValue().name
+            value: this.hasValue() ? this.getValue().name : null
         };
     },
 };

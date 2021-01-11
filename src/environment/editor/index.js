@@ -1,1 +1,1 @@
-export * from './editor.js';
+export * from './editor-core.js';

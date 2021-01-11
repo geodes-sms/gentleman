@@ -1,12 +1,16 @@
+require('module-alias/register');
+
 // require jsdom-global
-var jsdom = require('jsdom-global');
-var fs = require('fs');
+const jsdom = require('jsdom-global');
+const fs = require('fs');
 
 // require chai for BDD
-var expect = require('chai').expect;
+const expect = require('chai').expect;
+// import { expect } from 'chai';
 
 // import the library under test
-const { Manager } = require('@environment/manager.js');
+// import { Manager } from '@environment/manager.js';
+const Manager = require('@environment/manager.js').Manager;
 
 describe('DOM query helpers', function () {
     before('initialize DOM', function () {
@@ -23,7 +27,7 @@ describe('DOM query helpers', function () {
         });
     });
 
-    
+
     after(function () {
         this.jsdom();
     });

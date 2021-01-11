@@ -56,7 +56,6 @@ const _SetConcept = {
         const concepts = this.value.map(id => this.model.getConcept(id));
 
         if (deep) {
-            console.log(concepts);
             return concepts.map(concept => concept.getValue());
         }
 

@@ -29,8 +29,6 @@ export function ContentHandler(schema, concept, args) {
         return AttributeHandler.call(this, schema, contentConcept);
     } else if (schema.type === "property") {
         return PropertyHandler.call(this, schema, contentConcept);
-    } else if (schema.type === "text") {
-        return TextHandler(schema, this.projection);
     } else if (schema.type === "projection") {
         const { tag, style } = schema;
 
@@ -50,6 +48,8 @@ export function ContentHandler(schema, concept, args) {
 
         return element;
     }
+
+    console.error(schema);
 
     throw new TypeError("Bad argument: The type is not recognized");
 }

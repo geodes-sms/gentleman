@@ -514,9 +514,14 @@
     overflow: hidden;
 }
 
+    .boolean-choice > input {
+        display: none;
+    }
+
     .boolean-choice-option {
         flex: 1 1;
 
+        display: block!important;
         width: 100px; 
         padding: 4px 8px;
         font-weight: 500;
@@ -560,8 +565,13 @@
     display: flex; flex-direction: row;
 }
 
+.target-choice > input {
+    display: none;
+}
+
     .target-choice-option {
         flex: 1 1;
+        display: block!important;
         text-align: center;
         margin-right: 6px;
         padding: 4px 8px;
@@ -726,9 +736,14 @@
     overflow: hidden;
 }
 
+.constraint-choice > input {
+    display: none;
+}
+
     .constraint-choice-option {
         flex: 1 1;
 
+        display: block!important;
         width: 100px; 
         padding: 4px 8px;
         font-weight: 500;

@@ -136,30 +136,11 @@ function resolveChoiceValue(choice) {
     return choice;
 }
 
-/**
- * Resolves the value of the placeholder
- * @returns {string}
- */
-function resolvePlaceholder() {
-    if (this.schema.placeholder) {
-        return this.schema.placeholder;
-    }
-
-    if (this.source.object === "concept") {
-        return `Link to a '${this.source.getAcceptedValues()}' concept`;
-    }
-
-    return "Link to an element";
-}
-
-
 const BaseLinkField = {
     /** @type {HTMLElement} */
     input: null,
     /** @type {HTMLElement} */
     selector: null,
-    /** @type {string} */
-    placeholder: null,
     /** @type {HTMLElement} */
     choices: null,
     /** @type {HTMLElement} */
@@ -169,7 +150,6 @@ const BaseLinkField = {
 
     init() {
         this.source.register(this);
-        this.placeholder = resolvePlaceholder.call(this);
 
         if (!hasOwn(this.schema, "choice")) {
             this.schema.choice = {};
@@ -179,7 +159,7 @@ const BaseLinkField = {
     },
 
     render() {
-        const { before = {}, input, choice, after = {} } = this.schema;
+        const { placeholder, before = {}, input, choice, after = {} } = this.schema;
 
         const fragment = createDocFragment();
 
@@ -225,7 +205,7 @@ const BaseLinkField = {
                     view: "link",
                     id: this.id,
                 }
-            }, this.placeholder);
+            }, ContentHandler.call(this, placeholder));
 
             fragment.append(this.selector);
         }
@@ -233,7 +213,6 @@ const BaseLinkField = {
         if (!isHTMLElement(this.input)) {
             this.input = createInput({
                 type: "text",
-                placeholder: this.placeholder,
                 class: ["field--link__input"],
                 dataset: {
                     nature: "field-component",
@@ -270,6 +249,7 @@ const BaseLinkField = {
                 class: ["field--link__selection"],
                 dataset: {
                     nature: "field-component",
+                    component: "selection",
                     view: "link",
                     id: this.id
                 }
@@ -384,6 +364,7 @@ const BaseLinkField = {
     },
     refresh() {
         if (this.hasValue()) {
+            hide(this.selector);
             hide(this.input);
             hide(this.choices);
         } else {
@@ -451,6 +432,7 @@ const BaseLinkField = {
         const values = this.source.getCandidates();
 
         if (isEmpty(values)) {
+            
             this.messageElement.appendChild(createNotificationMessage(NotificationType.INFO, "There are currently no valid references."));
             show(this.messageElement);
             return;
@@ -573,7 +555,7 @@ const BaseLinkField = {
     clickHandler(target) {
         const { component } = target.dataset;
 
-        if (component === "selector") {
+        if (component === "selector" || component === "selection") {
             this.openChoice();
         } else {
             const item = getItem.call(this, target);

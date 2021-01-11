@@ -1,12 +1,13 @@
 import {
-    createDocFragment, createInput, createSpan, createDiv, createParagraph, createButton,
-    getElement, isHTMLElement, isNullOrWhitespace, isNullOrUndefined, isString, isEmpty,
+    createDocFragment, createDiv, createParagraph, createButton, getElement, 
+    isHTMLElement, isNullOrWhitespace, isNullOrUndefined, isString, isFunction, isEmpty,
 } from "zenkai";
 import { Explorer, Editor } from './index.js';
 
+const ENV_EDITOR = "editor";
+const ENV_EXPLORER = "explorer";
 
-const editors = [];
-const explorers = [];
+const environments = [];
 
 var inc = 0;
 const nextId = () => `GE${inc++}`;
@@ -25,14 +26,26 @@ export const Manager = {
     /** @type {HTMLButtonElement} */
     btnNew: null,
 
-    init(container) {
-        var result = resolveContainer(container);
+    get editors() { return environments.filter(env => env.type === ENV_EDITOR); },
+    get explorers() { return environments.filter(env => env.type === ENV_EXPLORER); },
+    get hasEnvironment() { return !isEmpty(environments); },
+    get hasEditor() { return environments.some(env => env.type === ENV_EDITOR); },
+    get hasExplorer() { return environments.some(env => env.type === ENV_EXPLORER); },
 
-        if (!isHTMLElement(result)) {
+
+    /**
+     * Initiliazes the manager
+     * @param {string|HTMLElement} _container
+     * @returns {Manager}
+     */
+    init(_container) {
+        const container = resolveContainer(_container);
+
+        if (!isHTMLElement(container)) {
             throw new TypeError("Bad argument: The container argument could not be resolved to an HTML Element.");
         }
 
-        this.container = result;
+        this.container = container;
         this.container.tabIndex = -1;
 
         this.bindDOM();
@@ -59,75 +72,8 @@ export const Manager = {
 
         return this.container;
     },
-    home() {
-        /** @type {HTMLButtonElement} */
-        const btnCreateMetaModel = createButton({
-            type: "button",
-            class: ["btn", "btn-home", "btn-create-metamodel"]
-        }, "DESIGN");
-        /** @type {HTMLButtonElement} */
-        const btnCreateModel = createButton({
-            type: "button",
-            class: ["btn", "btn-home", "btn-create-model"]
-        }, "MODEL");
-        /** @type {HTMLButtonElement} */
-        const homeContent = createParagraph({
-            class: ["home-content"]
-        }, [
-            createSpan({
-                class: ["home-content-title", "font-gentleman"]
-            }, "Gentleman")
-        ]);
-
-
-        var input = createInput({
-            type: "file",
-            class: ["loader-option__input", "hidden"],
-            accept: '.json'
-        });
-
-        /** @type {HTMLElement} */
-        this.homeContainer = createDiv({
-            class: ["home-container"]
-        }, [
-            homeContent,
-            btnCreateMetaModel,
-            createSpan({
-                class: ["btn-home__help"]
-            }, "Create a new Gentleman Model"),
-            btnCreateModel,
-            createSpan({
-                class: ["btn-home__help"]
-            }, "Create a new Model instance"),
-            input,
-        ]);
-
-        this.homeContainer.addEventListener('click', (event) => {
-            const target = event.target;
-
-            // if (target === btnCreateMetaModel) {
-            //     const metamodel = Loader.loadMetaModel(METAMODEL_GENTLEMAN);
-            //     const model = metamodel.createModel().init();
-
-            //     const Editor = this.getEditor().init(metamodel, model).open();
-            //     removeChildren(homeContainer);
-            //     homeContainer.remove();
-            // }
-            // if (target === btnCreateModel) {
-            //     let event = new MouseEvent('click', {
-            //         view: window,
-            //         bubbles: true,
-            //         cancelable: true,
-            //     });
-
-            //     input.dispatchEvent(event);
-            // }
-        });
-
-        this.container.appendChild(this.homeContainer);
-    },
     refresh() {
-        if (this.isEmpty()) {
+        if (!this.hasEnvironment) {
             this.createEditor().init().open();
 
             return this;
@@ -136,8 +82,8 @@ export const Manager = {
         let conceptEditor = false;
         let projectionEditor = false;
 
-        for (let i = 0; i < editors.length; i++) {
-            const editor = editors[i];
+        for (let i = 0; i < this.editors.length; i++) {
+            const editor = this.editors[i];
             if (editor.buildTarget === "gentleman_concept") {
                 conceptEditor = true;
             }
@@ -146,23 +92,38 @@ export const Manager = {
             }
         }
 
-        // if (conceptEditor && projectionEditor) {
-        //     show(this.btnBuild);
-        // } else {
-        //     hide(this.btnBuild);
-        // }
+        this.btnBuild.disabled = !(conceptEditor && projectionEditor);
 
         return this;
     },
-    /** @returns {Editor} */
-    getEditor(id) {
-        var editor = getEnvironment.call({ environments: editors }, id);
 
-        return editor;
+    /**
+     * Gets the list of `Editor`
+     * @param {Function} pred Predicate
+     * @returns {Editor[]} 
+     */
+    getEditors(pred) {
+        const editors = this.editors;
+
+        if (isFunction(pred)) {
+            return this.editors.filter(env => pred(env));
+        }
+
+        return editors.filter(env => !env.active);
     },
-    isEmpty() {
-        return !this.hasEditor() && !this.hasExplorer();
+    /**
+     * Gets an `Editor`
+     * @param {string} id
+     * @returns {Editor}
+     */
+    getEditor(id) {
+        if (id) {
+            return environments(env => env.id === id);
+        }
+
+        return this.editors.find(env => !env.active);
     },
+
     /**
      * Creates a new `Editor`
      * @returns {Editor}
@@ -170,16 +131,17 @@ export const Manager = {
     createEditor(model) {
         var editor = Object.create(Editor, {
             object: { value: "environment" },
-            name: { value: "editor" },
             type: { value: "editor" },
+            name: { value: "editor" },
             id: { value: nextId() },
             manager: { value: this },
             model: { value: model },
             container: { value: createContainer("editor") },
         });
+        
         this.container.appendChild(editor.container);
 
-        editors.push(editor);
+        environments.push(editor);
 
         this.refresh();
 
@@ -189,54 +151,57 @@ export const Manager = {
         var index = -1;
 
         if (isString(id)) {
-            index = editors.findIndex(p => p.id === id);
+            index = environments.findIndex(p => p.id === id);
         } else {
-            index = editors.indexOf(id);
+            index = environments.indexOf(id);
         }
 
         if (index === -1) {
             return false;
         }
 
-        editors.splice(index, 1);
+        environments.splice(index, 1);
 
         this.refresh();
 
         return true;
     },
-    hasEditor() {
-        return !isEmpty(editors);
-    },
-    /** @returns {Explorer} */
-    getExplorer(id) {
-        var explorer = getEnvironment.call({ environments: explorers }, id);
 
-        return explorer;
+    /**
+     * Gets an explorer
+     * @param {string} id
+     * @returns {Explorer}
+     */
+    getExplorer(id) {
+        if (id) {
+            return environments(env => env.id === id);
+        }
+
+        return this.explorers.find(env => !env.active);
     },
     /**
      * Creates a new `Explorer`
      * @returns {Explorer}
      */
     createExplorer() {
-        var explorer = Object.create(Explorer, {
+        const explorer = Object.create(Explorer, {
             object: { value: "environment" },
-            name: { value: "explorer" },
             type: { value: "explorer" },
+            name: { value: "explorer" },
             id: { value: nextId() },
             manager: { value: this },
             container: { value: createContainer("explorer") },
         });
+        
         this.container.appendChild(explorer.container);
 
-        explorers.push(explorer);
+        environments.push(explorer);
 
         this.refresh();
 
         return explorer;
     },
-    hasExplorer() {
-        return !isEmpty(explorers);
-    },
+
     bindDOM() {
         if (!isHTMLElement(this.menu)) {
             this.menu = createDiv({
@@ -261,7 +226,7 @@ export const Manager = {
     },
     bindEvents() {
         this.menu.addEventListener("click", (event) => {
-            const { target }  =  event;
+            const { target } = event;
             if (target === this.btnNew) {
                 this.createEditor().init().open();
             }
@@ -270,8 +235,8 @@ export const Manager = {
         this.btnBuild.addEventListener('click', (event) => {
             var json = [];
 
-            for (let i = 0; i < editors.length; i++) {
-                const editor = editors[i];
+            for (let i = 0; i < this.editors.length; i++) {
+                const editor = this.editors[i];
 
                 if (editor.buildTarget === "gentleman_concept") {
                     json.push(editor.build());
@@ -282,28 +247,13 @@ export const Manager = {
                 }
             }
 
-            const [concept, projection] = json;
-            console.log(concept, projection);
+            const [concept, projection] = json; console.log(concept, projection);
+
             this.createEditor("gentleman_concept").init(concept, projection).open();
         });
     }
 };
 
-/**
- * Gets or creates an environment if not found
- * @param {*[]} lkpList Lookup List
- * @param {Function} createEnvCb Create Environment callback
- * @returns {Environment}
- */
-function getEnvironment(id) {
-    if (id) {
-        return this.environments.find((env) => env.id === id);
-    }
-
-    var environment = this.environments.find((env) => !env.active);
-
-    return environment;
-}
 
 /**
  * Resolves the container

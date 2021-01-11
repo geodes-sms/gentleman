@@ -1,10 +1,11 @@
 import {
     createDocFragment, createSpan, createDiv, createI, createInput, createLabel,
-    removeChildren, isHTMLElement, valOrDefault, hasOwn,
+    removeChildren, isHTMLElement, valOrDefault, hasOwn, isEmpty, isObject, isFunction,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
 import { StyleHandler } from "../style-handler.js";
 import { ContentHandler } from "./../content-handler.js";
+import { StateHandler } from "./../state-handler.js";
 import { Field } from "./field.js";
 
 
@@ -68,6 +69,7 @@ function createFieldStatusElement(id) {
 function createFieldInput(id) {
     /** @type {HTMLElement} */
     var input = createInput({
+        id: `checkbox${id}`,
         type: "checkbox",
         class: ["field--binary__input"],
         tabindex: 0,
@@ -80,6 +82,7 @@ function createFieldInput(id) {
 
     return input;
 }
+
 
 const NotificationType = {
     INFO: "info",
@@ -118,35 +121,21 @@ function resolveValue(object) {
     return false;
 }
 
-/**
- * Resolves the value of the placeholder
- * @returns {string}
- */
-function resolveLabel() {
-    if (hasOwn(this.schema, 'label')) {
-        return this.schema.label;
-    }
-
-    if (this.source.object === "concept") {
-        return this.source.getAlias();
-    }
-
-    return "";
-}
 
 const BaseBinaryField = {
     /** @type {HTMLInputElement} */
     input: null,
+    /** @type {HTMLLabelElement} */
+    label: null,
     /** @type {boolean} */
     checked: false,
     /** @type {string} */
     value: "",
-    /** @type {string} */
-    label: "",
+    /** @type {*} */
+    state: null,
 
     init() {
         this.source.register(this);
-        this.label = resolveLabel.call(this);
 
         return this;
     },
@@ -154,7 +143,7 @@ const BaseBinaryField = {
     render() {
         const fragment = createDocFragment();
 
-        const { before = {}, input = {}, after = {} } = this.schema;
+        const { before = {}, label = {}, input = {}, after = {} } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createFieldElement(this.id);
@@ -179,14 +168,15 @@ const BaseBinaryField = {
         }
 
         if (before.projection) {
-            let content = ContentHandler.call(this.projection, before.projection);
+            let content = ContentHandler.call(this, before.projection);
             content.classList.add("field--binary__before");
 
             fragment.appendChild(content);
         }
 
-
         if (!isHTMLElement(this.input)) {
+            const { before, projection, after, style } = input;
+
             this.input = createFieldInput(this.id);
             this.input.checked = resolveValue(this.source);
             this.checked = this.input.checked;
@@ -197,41 +187,33 @@ const BaseBinaryField = {
                 this.input.disabled = true;
             }
 
-            const { before, projection, after, style } = input;
-
-            if (this.label) {
-                const { style, projection, value } = this.label;
-
-                let labelText = null;
-
-                if (projection) {
-                    labelText = ContentHandler.call(this.label.projection, this.source);
-                } else {
-                    labelText = createSpan({
-                        class: ["field--checkbox__label-text"],
-                        dataset: {
-                            nature: "field-component",
-                            view: "binary",
-                            id: this.id,
-                        }
-                    }, value || this.source.getAlias());
-                }
-
-                let labelElement = createLabel({
-                    class: ["field--checkbox__label"],
-                    dataset: {
-                        nature: "field-component",
-                        view: "binary",
-                        id: this.id,
-                    }
-                }, [this.input, labelText]);
-
-                StyleHandler(labelElement, style);
-                fragment.appendChild(labelElement);
-            } else {
-                fragment.appendChild(this.input);
-            }
             StyleHandler(this.input, style);
+
+            fragment.appendChild(this.input);
+        }
+
+        if (!isHTMLElement(this.label)) {
+            const { style, projection, value } = label;
+
+            this.label = createLabel({
+                class: ["field--checkbox__label"],
+                for: this.input.id,
+                tabindex: 0,
+                dataset: {
+                    nature: "field-component",
+                    view: "binary",
+                    id: this.id,
+                }
+            });
+            this.label.htmlFor = this.input.id;
+
+            if (projection) {
+                this.label.append(ContentHandler.call(this, projection));
+            }
+
+            StyleHandler(this.label, style);
+
+            fragment.appendChild(this.label);
         }
 
         if (after.projection) {
@@ -354,10 +336,30 @@ const BaseBinaryField = {
         this.disabled = true;
     },
     refresh() {
+        StateHandler.call(this, this.schema.state);
+
         if (this.hasChanges()) {
             this.statusElement.classList.add("change");
         } else {
             this.statusElement.classList.remove("change");
+        }
+
+        const state = valOrDefault(this.state, this.schema);
+
+        if (state) {
+            const { label } = state;
+
+            removeChildren(this.label);
+
+            if (label) {
+                const { style, projection, value } = label;
+
+                if (projection) {
+                    this.label.append(ContentHandler.call(this, projection));
+                }
+
+                StyleHandler(this.label, style);
+            } 
         }
 
         if (this.input.checked) {

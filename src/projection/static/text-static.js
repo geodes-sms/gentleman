@@ -1,5 +1,6 @@
 import {
-    createDocFragment, createSpan, removeChildren, isHTMLElement, valOrDefault, hasOwn, isNullOrWhitespace, isNullOrUndefined,
+    createDocFragment, createSpan, removeChildren, isHTMLElement,
+    valOrDefault, hasOwn, isNullOrWhitespace, isNullOrUndefined, htmlToElement,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
 import { StyleHandler } from "../style-handler.js";
@@ -24,7 +25,11 @@ function resolveValue(object) {
 
 
 const BaseTextStatic = {
+    contentType: null,
     init() {
+        const { contentType = "text" } = this.schema;
+
+        this.contentType = contentType;
 
         return this;
     },
@@ -40,7 +45,13 @@ const BaseTextStatic = {
                 dataset: {
                     ignore: "all",
                 }
-            }, content);
+            });
+
+            if (this.contentType === "html") {
+                this.element.append(htmlToElement(content));
+            } else {
+                this.element.textContent = content;
+            }
         }
 
         if (!isNullOrUndefined(help)) {
