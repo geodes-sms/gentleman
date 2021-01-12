@@ -77,6 +77,8 @@ const ATTR_TAGS = "tags";
 export const ConceptModel = {
     /** @type {Concept[]} */
     concepts: null,
+    /** @type {Concept[]} */
+    values: null,
     /** @type {*[]} */
     listeners: null,
     /** @type {*[]} */
@@ -86,15 +88,17 @@ export const ConceptModel = {
         this.concepts = [];
         this.listeners = [];
         this.watchers = [];
+        this.values = [];
 
         if (Array.isArray(values)) {
-            values.forEach(value => {
-                var concept = this.createConcept({
+            this.values = values;
+
+            values.filter(value => value.root).forEach(value => {
+                this.createConcept({
                     "name": value.name
                 }, {
                     "value": value
                 });
-                this.addConcept(concept);
             });
         }
 
@@ -162,6 +166,17 @@ export const ConceptModel = {
         }
 
         return this.concepts.find(concept => concept.id === id);
+    },
+    getValue(arg) {
+        if (isNullOrUndefined(arg)) {
+            return null;
+        }
+
+        if (hasOwn(arg, "id")) {
+            return this.values.find(value => value.id === arg.id);
+        }
+
+        return this.values.find(value => value.id === arg);
     },
     /**
      * Adds a concept to the list of concepts held by the model
@@ -693,7 +708,7 @@ function getConceptBaseSchema(protoName) {
 
             if (isNullOrUndefined(attribute)) {
                 attributes.push($attr);
-                
+
                 return;
             }
 

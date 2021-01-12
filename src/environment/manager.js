@@ -25,6 +25,8 @@ export const Manager = {
     btnBuild: null,
     /** @type {HTMLButtonElement} */
     btnNew: null,
+    /** @type {HTMLButtonElement} */
+    btnStyle: null,
 
     get editors() { return environments.filter(env => env.type === ENV_EDITOR); },
     get explorers() { return environments.filter(env => env.type === ENV_EXPLORER); },
@@ -61,7 +63,7 @@ export const Manager = {
         }
 
         if (isNullOrUndefined(this.btnBuild.parentElement)) {
-            this.menu.append(this.btnNew, this.btnBuild);
+            this.menu.append(this.btnNew, this.btnBuild, this.btnStyle);
         }
 
         if (fragment.hasChildNodes()) {
@@ -223,7 +225,15 @@ export const Manager = {
                 class: ["btn", "manager__button", "manager__btn-new"]
             }, "New");
         }
+
+        if (!isHTMLElement(this.btnStyle)) {
+            this.btnStyle = createButton({
+                id: "btnStyleEditor",
+                class: ["btn", "manager__button", "manager__btn-style", "hidden"]
+            }, "Style");
+        }
     },
+
     bindEvents() {
         this.menu.addEventListener("click", (event) => {
             const { target } = event;
@@ -250,6 +260,10 @@ export const Manager = {
             const [concept, projection] = json; console.log(concept, projection);
 
             this.createEditor("gentleman_concept").init(concept, projection).open();
+        });
+
+        this.btnStyle.addEventListener('click', (event) => {
+            console.log("change style");
         });
     }
 };

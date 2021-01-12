@@ -98,7 +98,7 @@ function createListFieldItem(object) {
     }
 
     var itemProjection = this.model.createProjection(object, template.tag);
-    console.log(itemProjection.schema);
+    itemProjection.parent = this.projection;
 
     container.appendChild(itemProjection.init().render());
 
