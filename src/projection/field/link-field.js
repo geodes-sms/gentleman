@@ -95,6 +95,7 @@ function createChoice(object) {
     }
 
     const projection = this.model.createProjection(concept, "reference-choice");
+    projection.parent = this.projection;
 
     item.appendChild(projection.init().render());
 
@@ -269,6 +270,7 @@ const BaseLinkField = {
             let concept = this.getValue();
 
             var projection = this.model.createProjection(concept);
+            projection.parent = this.projection;
 
             this.element.appendChild(projection.init().render());
         }
@@ -300,6 +302,7 @@ const BaseLinkField = {
                     this.clear();
                 } else {
                     projection = this.model.createProjection(value, "reference-value").init();
+                    projection.parent = this.projection;
 
                     removeChildren(this.selectionElement).appendChild(projection.render());
                     this.value = value.id;

@@ -91,6 +91,8 @@ const BaseChoiceField = {
             case "value.changed":
                 if (value.object === "concept") {
                     let projection = this.model.createProjection(value, "choice-selection").init();
+                    projection.parent = this.projection;
+
                     this.setChoice(value.name);
 
                     this.setSelection(projection.render());
@@ -314,6 +316,8 @@ const BaseChoiceField = {
 
             if (value.object === "concept") {
                 let projection = this.model.createProjection(value, "choice-selection").init();
+                projection.parent = this.projection;
+
                 this.setChoice(value.name);
                 removeChildren(this.selectionElement).appendChild(projection.render());
             } else {
@@ -467,6 +471,8 @@ const BaseChoiceField = {
 
         if (isObject(value)) {
             let choiceProjection = this.model.createProjection(value, valOrDefault(template, "choice")).init(this.source);
+            choiceProjection.parent = this.projection;
+
             const { context } = choiceProjection.getSchema();
 
             if (context) {

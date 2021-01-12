@@ -60,8 +60,10 @@ const _StringConcept = {
     initValue(args) {
         if (isNullOrUndefined(args)) {
             this.value = "";
+            
             return this;
         }
+        
 
         if (isObject(args)) {
             this.id = args.id;

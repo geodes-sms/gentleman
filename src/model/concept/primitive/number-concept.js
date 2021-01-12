@@ -56,6 +56,7 @@ const _NumberConcept = {
     initValue(args) {
         if (isNullOrUndefined(args)) {
             this.value = null;
+            
             return this;
         }
 

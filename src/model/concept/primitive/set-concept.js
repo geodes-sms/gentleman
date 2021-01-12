@@ -184,7 +184,9 @@ const _SetConcept = {
 
         return this;
     },
-    createElement(value) {
+    createElement(_value) {
+        let value = this.model.getValue(_value);
+
         const options = {
             value: value,
             parent: this,

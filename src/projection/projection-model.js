@@ -29,7 +29,7 @@ export const ProjectionModel = {
     /** @type {Projection[]} */
     projections: null,
 
-    init() {
+    init(views) {
         this.projections = [];
 
         return this;
@@ -48,13 +48,6 @@ export const ProjectionModel = {
 
         return projection;
     },
-    createProjectionX(concept, schema, tag) {
-        var projection = ProjectionFactory.createProjection(this, schema, concept, this.environment);
-
-        this.addProjection(projection);
-
-        return projection;
-    },
     createGlobalProjection(concept) {
         const schema = this.getGlobalModelProjection(concept);
 
@@ -67,6 +60,9 @@ export const ProjectionModel = {
         this.addProjection(projection);
 
         return projection;
+    },
+    getProjections() {
+        return this.projections.slice();
     },
     /**
      * 
@@ -194,6 +190,16 @@ export const ProjectionModel = {
             .find(p => p.name === name);
 
         return projection;
+    },
+    
+    export() {
+        const views = [];
+
+        this.getProjections().forEach(projection => {
+            views.push(projection.export());
+        });
+
+        return views;
     },
 };
 

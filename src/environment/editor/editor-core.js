@@ -40,6 +40,112 @@ function createProjectionWindow() {
     });
 }
 
+/**
+ * Create a projection in the editor
+ * @param {*} concept 
+ * @this {Editor}
+ */
+function createProjection(concept) {
+    let projection = this.projectionModel.createGlobalProjection(concept).init();
+
+    let btnBuild = createButton({
+        class: ["btn", "editor-concept-toolbar__btn-build"],
+        title: `Build ${name.toLowerCase()}`
+    });
+
+    let btnDelete = createButton({
+        class: ["btn", "editor-concept-toolbar__btn-delete"],
+        title: `Delete ${name.toLowerCase()}`
+    });
+
+    let btnMaximize = createButton({
+        class: ["btn", "editor-concept-toolbar__btn-maximize"],
+        title: `Maximize ${name.toLowerCase()}`
+    });
+
+    let toolbar = createDiv({
+        class: ["editor-concept-toolbar"],
+    }, [btnBuild, btnMaximize, btnDelete]);
+
+    var modelConceptContainer = createDiv({
+        class: ["editor-concept"],
+        draggable: true,
+        dataset: {
+            nature: "concept-container"
+        }
+    }, [toolbar, projection.render()]);
+
+
+
+    btnBuild.addEventListener('click', (event) => {
+        if (this.buildTarget === "gentleman_concept") {
+            try {
+                const result = this.conceptModel.buildSingleConcept(concept);
+
+                if (!result.success) {
+                    console.log('%c Concept is not valid', 'padding: 4px 6px; color: #fff; font-weight: bold; background: #DC143C;');
+
+                    result.errors.forEach(error => console.error(error));
+
+                    modelConceptContainer.classList.remove("valid");
+                    modelConceptContainer.classList.add("not-valid");
+                } else {
+                    const value = JSON.parse(result.message);
+
+                    console.log(`%c Concept '${value.name}' is valid`, 'padding: 4px 6px; color: #fff; font-weight: bold; background: #00AB66;');
+
+                    modelConceptContainer.classList.remove("not-valid");
+                    modelConceptContainer.classList.add("valid");
+                }
+            } catch (error) {
+                console.error(error);
+
+                this.notify("There was an unexpected error", "error");
+            }
+        } else if (this.buildTarget === "gentleman_projection") {
+            try {
+                const result = this.conceptModel.buildSingleProjection(concept);
+
+                if (!result.success) {
+                    console.log('%c Projection is not valid', 'padding: 4px 6px; color: #fff; font-weight: bold; background: #DC143C;');
+
+                    result.errors.forEach(error => console.error(error));
+
+                    modelConceptContainer.classList.remove("valid");
+                    modelConceptContainer.classList.add("not-valid");
+                } else {
+                    const value = result.message;
+
+                    console.log(`%c Projection '${value.name}' is valid`, 'padding: 4px 6px; color: #fff; font-weight: bold; background: #00AB66;');
+                    console.log(value);
+
+                    modelConceptContainer.classList.remove("not-valid");
+                    modelConceptContainer.classList.add("valid");
+                }
+            } catch (error) {
+                console.error(error);
+
+                this.notify("There was an unexpected error", "error");
+
+                return;
+            }
+        }
+    });
+
+    btnDelete.addEventListener('click', (event) => {
+        if (concept.delete(true)) {
+            removeChildren(modelConceptContainer);
+            modelConceptContainer.remove();
+        }
+    });
+
+    btnMaximize.addEventListener('click', (event) => {
+        modelConceptContainer.classList.toggle('focus');
+    });
+
+    return modelConceptContainer;
+}
+
 const MODEL_GENTLEMAN_CONCEPT = require('@include/gentleman_model.json');
 const MODEL_GENTLEMAN_PROJECTION = require('@include/gentleman_projection.json');
 
@@ -75,6 +181,8 @@ export const Editor = {
     selectorItem: null,
     /** @type {string} */
     selectorValue: null,
+    /** @type {HTMLElement} */
+    downloadList: null,
 
     /** @type {Map} */
     fields: null,
@@ -128,14 +236,14 @@ export const Editor = {
     },
 
     changeModel(modelSchema) {
-        const { concept, projection, values, editor } = modelSchema;
+        const { concept, projection, values = [], views = [], editor } = modelSchema;
 
         if (concept) {
             this.conceptModel = ConceptModelManager.createModel(concept, projection).init(values);
         }
 
         if (projection) {
-            this.projectionModel = createProjectionModel(projection, this).init();
+            this.projectionModel = createProjectionModel(projection, this).init(views);
         }
 
         if (editor) {
@@ -146,6 +254,14 @@ export const Editor = {
         this.manager.refresh();
 
         this.clear().refresh();
+
+        views.filter(v => v.root).forEach(view => {
+            const { id, name } = view.concept;
+
+            const concept = this.conceptModel.getConcept(id);
+
+            this.conceptSection.appendChild(createProjection.call(this, concept));
+        });
     },
 
     registerField(field) {
@@ -236,19 +352,21 @@ export const Editor = {
         }, 1500);
     },
 
-    build(download = false) {
+    build() {
         const MIME_TYPE = 'application/json';
         window.URL = window.webkitURL || window.URL;
 
         /** @type {HTMLAnchorElement} */
-        var link = createAnchor({});
-        this.container.appendChild(link);
+        var link = createAnchor({
+            class: ["bare-link", "download-item__link"]
+        }, `Build ${this.footer.childElementCount + 1}`);
 
-        if (!isNullOrWhitespace(link.href)) {
-            window.URL.revokeObjectURL(link.href);
-        }
+        // if (!isNullOrWhitespace(link.href)) {
+        //     window.URL.revokeObjectURL(link.href);
+        // }
 
         var result = null;
+
         if (this.buildTarget === "gentleman_concept") {
             try {
                 result = this.conceptModel.buildConcept();
@@ -278,15 +396,18 @@ export const Editor = {
         this.notify("The model has been successfully built. Please download the model.");
 
         link.dataset.downloadurl = [MIME_TYPE, link.download, link.href].join(':');
-        if (download) {
-            link.click();
-        }
 
-        // Need a small delay for the revokeObjectURL to work properly.
-        setTimeout(() => {
-            window.URL.revokeObjectURL(link.href);
-            link.remove();
-        }, 1500);
+        let item = createListItem({
+            class: ["download-item", "download-item--build"]
+        }, link);
+
+        this.downloadList.append(item);
+
+        // // Need a small delay for the revokeObjectURL to work properly.
+        // setTimeout(() => {
+        //     window.URL.revokeObjectURL(link.href);
+        //     link.remove();
+        // }, 1500);
 
         return JSON.parse(result);
     },
@@ -306,6 +427,7 @@ export const Editor = {
             "concept": this.conceptModel.schema,
             "projection": this.projectionModel.schema,
             "values": this.conceptModel.export(),
+            "views": this.projectionModel.export(),
         };
 
         var bb = new Blob([JSON.stringify(result)], { type: MIME_TYPE });
@@ -378,14 +500,25 @@ export const Editor = {
         const container = createDiv({
             class: ["style-container"]
         });
+        
+        let btnClose = createButton({
+            class: ["btn", "btn-close"]
+        });
 
         const widthControl = StyleWindow.createWidthControl.call(this);
         // const heightControl = createWidthControl.call(this);
         const sizeControl = StyleWindow.createSizeControl.call(this);
 
-        container.append(widthControl, sizeControl);
+        container.append(btnClose, widthControl, sizeControl);
 
-        this.container.after(container);
+        btnClose.addEventListener('click', (event) => {
+            removeChildren(container);
+            container.remove();
+            this.container.classList.remove("busy");
+        });
+
+        this.container.append(container);
+        this.container.classList.add("busy");
     },
 
     notify(message, type) {
@@ -456,6 +589,12 @@ export const Editor = {
                 tabindex: 0,
             });
 
+            this.downloadList = createUnorderedList({
+                class: ["bare-list", "download-list"]
+            });
+
+            this.footer.append(this.downloadList);
+
             fragment.appendChild(this.footer);
         }
 
@@ -522,6 +661,7 @@ export const Editor = {
         var modelConceptList = createUnorderedList({
             class: ["bare-list", "selector-model-concepts", "font-ui"]
         });
+
         const concreteConcepts = this.conceptModel.schema.filter((concept) => this.projectionModel.hasGlobalProjection(concept));
 
         concreteConcepts.forEach(concept => {
@@ -534,31 +674,6 @@ export const Editor = {
             }, concept.name);
 
             modelConceptList.appendChild(conceptItem);
-
-
-            if (!this._initialized) {
-                const created = this.conceptModel.getConcepts(concept.name);
-
-                created.forEach(c => {
-                    let projection = this.projectionModel.createGlobalProjection(c).init();
-                    let btnDelete = createButton({
-                        class: ["btn", "model-concept-list-item__btn-delete"]
-                    }, `Delete ${name.toLowerCase()}`);
-
-                    var modelConceptListItem = createDiv({
-                        class: ["model-concept-list-item"],
-                    }, [btnDelete, projection.render()]);
-
-                    btnDelete.addEventListener('click', (event) => {
-                        if (c.delete(true)) {
-                            removeChildren(modelConceptListItem);
-                            modelConceptListItem.remove();
-                        }
-                    });
-
-                    this.conceptSection.appendChild(modelConceptListItem);
-                });
-            }
         });
 
         this._initialized = true;
@@ -571,99 +686,7 @@ export const Editor = {
 
                 let concept = this.conceptModel.createConcept({ name: name });
 
-                let projection = this.projectionModel.createGlobalProjection(concept).init();
-
-                let btnBuild = createButton({
-                    class: ["btn", "editor-concept-toolbar__btn-build"],
-                    title: `Build ${name.toLowerCase()}`
-                });
-
-                let btnDelete = createButton({
-                    class: ["btn", "editor-concept-toolbar__btn-delete"],
-                    title: `Delete ${name.toLowerCase()}`
-                });
-
-                let btnMaximize = createButton({
-                    class: ["btn", "editor-concept-toolbar__btn-maximize"],
-                    title: `Maximize ${name.toLowerCase()}`
-                });
-
-                let toolbar = createDiv({
-                    class: ["editor-concept-toolbar"],
-                }, [btnBuild, btnMaximize, btnDelete]);
-
-                var modelConceptContainer = createDiv({
-                    class: ["editor-concept"],
-                    draggable: true,
-                    dataset: {
-                        nature: "concept-container"
-                    }
-                }, [toolbar, projection.render()]);
-
-                btnBuild.addEventListener('click', (event) => {
-                    if (this.buildTarget === "gentleman_concept") {
-                        try {
-                            const result = this.conceptModel.buildSingleConcept(concept);
-
-                            if (!result.success) {
-                                console.log('%c Concept is not valid', 'padding: 4px 6px; color: #fff; font-weight: bold; background: #DC143C;');
-
-                                result.errors.forEach(error => console.error(error));
-
-                                this.notify("The concept is not valid.", "error");
-                            } else {
-                                const value = JSON.parse(result.message);
-
-                                console.log(`%c Concept '${value.name}' is valid`, 'padding: 4px 6px; color: #fff; font-weight: bold; background: #00AB66;');
-                                console.log(value);
-
-                                this.notify("The concept is valid.");
-                            }
-                        } catch (error) {
-                            console.error(error);
-
-                            this.notify("The model is not valid. Please review before the next build.", "error");
-                        }
-                    } else if (this.buildTarget === "gentleman_projection") {
-                        try {
-                            const result = this.conceptModel.buildSingleProjection(concept);
-
-                            if (!result.success) {
-                                console.log('%c Projection is not valid', 'padding: 4px 6px; color: #fff; font-weight: bold; background: #DC143C;');
-
-                                result.errors.forEach(error => console.error(error));
-
-                                this.notify("The projection is not valid.", "error");
-                            } else {
-                                const value = result.message;
-
-                                console.log(`%c Projection '${value.name}' is valid`, 'padding: 4px 6px; color: #fff; font-weight: bold; background: #00AB66;');
-                                console.log(value);
-
-                                this.notify("The projection is valid.");
-                            }
-                        } catch (error) {
-                            console.error(error);
-
-                            this.notify("The projection is not valid. Please review before the next build.", "error");
-
-                            return;
-                        }
-                    }
-                });
-
-                btnDelete.addEventListener('click', (event) => {
-                    if (concept.delete(true)) {
-                        removeChildren(modelConceptContainer);
-                        modelConceptContainer.remove();
-                    }
-                });
-
-                btnMaximize.addEventListener('click', (event) => {
-                    modelConceptContainer.classList.toggle('focus');
-                });
-
-                this.conceptSection.appendChild(modelConceptContainer);
+                this.conceptSection.appendChild(createProjection.call(this, concept));
             }
         });
 
@@ -693,6 +716,7 @@ export const Editor = {
 
         return this;
     },
+
     /**
      * Updates the active HTML Element
      * @param {HTMLElement} element 

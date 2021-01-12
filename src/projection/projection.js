@@ -59,6 +59,12 @@ const Projection = {
     index: 0,
     get hasMultipleViews() { return this.schema.length > 1; },
     get isReadOnly() { return valOrDefault(this.getSchema().readonly, false); },
+
+    /** @returns {boolean} */
+    isRoot() {
+        return isNullOrUndefined(this.parent);
+    },
+
     getSchema() {
         return this.schema[this.index];
     },
@@ -247,6 +253,16 @@ const Projection = {
         // }, 600);
 
         return this;
+    },
+
+    export() {
+        var output = {
+            id: this.id,
+            root: this.isRoot(),
+            concept: { id: this.concept.id, name: this.concept.name }
+        };
+
+        return output;
     },
 
     bindEvents() {

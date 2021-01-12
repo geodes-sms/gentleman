@@ -87,13 +87,15 @@ export const AttributeHandler = {
      * @param {string} name 
      * @returns {Attribute}
      */
-    createAttribute(name, value) {
+    createAttribute(name, _value) {
         if (!this.hasAttribute(name)) {
             throw new Error(`Attribute not found: The concept '${this.name}' does not contain an attribute named ${name}`);
         }
 
         const schema = this.attributeSchema.find(attr => attr.name === name);
 
+        let value = this.model.getValue(_value);
+        
         var attribute = Attribute.create(this, schema).init(value);
 
         this.addAttribute(attribute);
