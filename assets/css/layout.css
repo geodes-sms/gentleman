@@ -1,6 +1,5 @@
 .layout-container {
     position: relative;
-    box-sizing: border-box;
     transition: .2s;
 }
 
@@ -96,7 +95,6 @@
     top: 0; left: calc(100% + 2px);
     padding: 20px 12px 8px;
     min-width: 300px;
-    box-sizing: border-box;
     font-size: 1rem;
     color: #fff;
     background-color: #232425;

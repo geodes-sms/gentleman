@@ -1,10 +1,9 @@
 import {
-    createDocFragment, createSpan, createDiv, createI, createUnorderedList,
-    createListItem, findAncestor, isHTMLElement, removeChildren,
-    getPreviousElementSibling, getNextElementSibling,
-    isNullOrUndefined, isNullOrWhitespace, isObject, valOrDefault, createInput, hasOwn, capitalizeFirstLetter
+    createDocFragment, createSpan, createDiv, createI, createInput, createUnorderedList,
+    createListItem, findAncestor, isHTMLElement, removeChildren, isNullOrUndefined,
+    isNullOrWhitespace, isObject, valOrDefault, hasOwn, capitalizeFirstLetter
 } from "zenkai";
-import { hide, show } from "@utils/index.js";
+import { getElementBottom, getElementLeft, getElementRight, getElementTop, hide, isHidden, show } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler } from "./../content-handler.js";
 import { Field } from "./field.js";
@@ -51,11 +50,11 @@ function getItem(element) {
 
 /**
  * Get the choice element value
- * @param {HTMLElement} element
+ * @param {HTMLElement} item
  * @returns {string} 
  */
 function getItemValue(item) {
-    return item.dataset.value;
+    return item.textContent;
 }
 
 
@@ -64,7 +63,7 @@ const BaseChoiceField = {
     value: null,
     /** @type {HTMLElement} */
     choices: null,
-    /** @type {HTMLElement} */
+    /** @type {HTMLInputElement} */
     input: null,
     /** @type {Map} */
     items: null,
@@ -72,11 +71,14 @@ const BaseChoiceField = {
     selection: null,
     /** @type {HTMLElement} */
     selectionElement: null,
+    /** @type {*[]} */
+    content: null,
+
 
     init() {
         this.source.register(this);
         this.items = new Map();
-
+        this.content = this.schema.content;
         // TODO: Add group support
 
         if (!hasOwn(this.schema, "choice")) {
@@ -99,6 +101,11 @@ const BaseChoiceField = {
                 } else {
                     this.setChoice(value);
                 }
+                break;
+            case "value.deleted":
+                removeChildren(this.selectionElement);
+                this.selection = null;
+
                 break;
             default:
                 console.warn(`The message '${message}' was not handled for choice field`);
@@ -148,7 +155,7 @@ const BaseChoiceField = {
     render() {
         const fragment = createDocFragment();
 
-        const { before = {}, choice, selection = {}, after = {}, input = {}, style } = this.schema;
+        const { choice, content, selection = {}, input = {}, style } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createDiv({
@@ -205,57 +212,62 @@ const BaseChoiceField = {
             this.notification.appendChild(this.messageElement);
         }
 
-        if (before.projection) {
-            let content = ContentHandler.call(this, before.projection);
-            content.classList.add("field--choice__before");
+        if (content) {
 
-            fragment.appendChild(content);
-        }
+            content.forEach(element => {
+                if (element.type === "input") {
+                    const { placeholder, style, type } = valOrDefault(element.input, {});
 
-        if (!isHTMLElement(this.input)) {
-            const { before = {}, after = {}, style } = input;
-
-            // let wrapper = createDiv({
-            //     class: ["field--choice__input-wrapper"],
-            //     tabindex: -1,
-            //     dataset: {
-            //         nature: "field-component",
-            //         view: "choice",
-            //         id: this.id,
-            //     }
-            // });
-
-            // if (before.projection) {
-            //     let content = ContentHandler.call(this, before.projection);
-            //     content.classList.add("field--choice__input--before");
-
-            //     wrapper.append(content);
-            // }
+                    this.input = createInput({
+                        type: valOrDefault(type, "text"),
+                        class: ["field--choice__input"],
+                        placeholder: placeholder,
+                        dataset: {
+                            nature: "field-component",
+                            view: "choice",
+                            id: this.id,
+                        }
+                    });
 
 
-            // wrapper.append(this.input);
+                    if (this.disabled) {
+                        this.element.classList.add("disabled");
+                        this.input.disabled = true;
+                    }
 
-            // if (after.projection) {
-            //     let content = ContentHandler.call(this, after.projection);
-            //     content.classList.add("field--choice__input--after");
+                    if (this.focusable) {
+                        this.input.tabIndex = 0;
+                    } else {
+                        this.element.dataset.ignore = "all";
+                        this.input.dataset.ignore = "all";
+                    }
 
-            //     wrapper.append(content);
-            // }
+                    StyleHandler(this.input, style);
 
+                    fragment.append(this.input);
+                } else if (element.type === "choice") {
+                    const { style } = valOrDefault(element.choice, {});
 
-            this.input = createInput({
-                type: "text",
-                class: ["field--choice__input"],
-                dataset: {
-                    nature: "field-component",
-                    view: "choice",
-                    id: this.id,
+                    this.choices = createUnorderedList({
+                        class: ["bare-list", "field--choice__choices"],
+                        tabindex: -1,
+                        dataset: {
+                            nature: "field-component",
+                            view: "choice",
+                            id: this.id
+                        }
+                    });
+
+                    StyleHandler(this.choices, style);
+
+                    fragment.appendChild(this.choices);
+                } else {
+                    let content = ContentHandler.call(this, element);
+
+                    fragment.appendChild(content);
                 }
             });
 
-            StyleHandler(this.input, style);
-
-            fragment.append(this.input);
         }
 
         if (!isHTMLElement(this.choices)) {
@@ -293,13 +305,6 @@ const BaseChoiceField = {
             fragment.appendChild(this.selectionElement);
         }
 
-        if (after.projection) {
-            let content = ContentHandler.call(this, after.projection);
-            content.classList.add("field--choice__after");
-
-            fragment.appendChild(content);
-        }
-
         if (fragment.hasChildNodes()) {
             this.element.appendChild(fragment);
             this.bindEvents();
@@ -329,9 +334,25 @@ const BaseChoiceField = {
 
         return this.element;
     },
+    focus(target) {
+        if (this.input && !isHidden(this.input)) {
+            this.input.focus();
+        }
+
+        return this;
+    },
     focusIn() {
         this.focused = true;
         this.element.classList.add("active");
+
+        // requery
+        // const fragment = createDocFragment();
+
+        // this.source.getCandidates().forEach(value => {
+        //     fragment.appendChild(this.createChoiceOption(value));
+        // });
+
+        // removeChildren(this.choices).appendChild(fragment);
 
         return this;
     },
@@ -340,7 +361,7 @@ const BaseChoiceField = {
             return;
         }
 
-        if (isNullOrWhitespace(this.input.value)) {
+        if (this.input && isNullOrWhitespace(this.input.value)) {
             this.input.value = "";
         }
 
@@ -349,13 +370,29 @@ const BaseChoiceField = {
             removeChildren(this.messageElement);
         }
 
-        this.input.blur();
+        if (this.input) {
+            this.input.blur();
+        }
         this.element.classList.remove("active");
         this.element.classList.remove("querying");
 
         if (isHTMLElement(this.selection)) {
-            show(this.selection);
-            this.input.value = "";
+            const { children } = this.choices;
+
+            for (let i = 0; i < children.length; i++) {
+                /** @type {HTMLElement} */
+                const item = children[i];
+
+                if (item === this.selection) {
+                    show(item);
+                    item.hidden = false;
+                } else {
+                    hide(item);
+                    item.hidden = true;
+                }
+            }
+
+            this.input.value = getItemValue(this.selection);
         }
 
         this.focused = false;
@@ -395,12 +432,16 @@ const BaseChoiceField = {
 
         if (this.hasError) {
             this.element.classList.add("error");
-            this.input.classList.add("error");
+            if (this.input) {
+                this.input.classList.add("error");
+            }
             this.statusElement.classList.add("error");
             this.statusElement.appendChild(createNotificationMessage(NotificationType.ERROR, this.errors));
         } else {
             this.element.classList.remove("error");
-            this.input.classList.remove("error");
+            if (this.input) {
+                this.input.classList.remove("error");
+            }
             this.statusElement.classList.remove("error");
         }
 
@@ -418,7 +459,7 @@ const BaseChoiceField = {
         if (isNullOrWhitespace(query)) {
             for (let i = 0; i < children.length; i++) {
                 const item = children[i];
-                
+
                 show(item);
                 item.hidden = false;
             }
@@ -432,11 +473,11 @@ const BaseChoiceField = {
 
         for (let i = 0; i < children.length; i++) {
             const item = children[i];
-            const { value } = item.dataset;
+
+            let value = getItemValue(item);
 
             let match = parts.some(q => value.toLowerCase().includes(q));
 
-            
             if (match) {
                 show(item);
                 item.hidden = false;
@@ -456,21 +497,15 @@ const BaseChoiceField = {
                 nature: "field-component",
                 view: "choice",
                 id: this.id,
-                value: value.name || value
+                value: value.id || value.name || value
             }
         });
 
-        const { before = {}, style, template, after = {} } = valOrDefault(this.schema.choice.option, {});
-
-        if (before.projection) {
-            let content = ContentHandler.call(this, before.projection);
-            content.classList.add("field--choice__option__before");
-
-            container.appendChild(content);
-        }
+        const choiceSchema = this.content.find(c => c.type === "choice");
+        const { template = {}, style } = choiceSchema.choice.option;
 
         if (isObject(value)) {
-            let choiceProjection = this.model.createProjection(value, valOrDefault(template, "choice")).init(this.source);
+            let choiceProjection = this.model.createProjection(value, valOrDefault(template.tag, "choice")).init({ focusable: false });
             choiceProjection.parent = this.projection;
 
             const { context } = choiceProjection.getSchema();
@@ -489,14 +524,6 @@ const BaseChoiceField = {
 
         StyleHandler(container, style);
 
-        if (after.projection) {
-            let content = ContentHandler.call(this, after.projection);
-            content.classList.add("field--choice__option__after");
-
-            container.appendChild(content);
-        }
-
-
         this.items.set(value.name, container);
 
         return container;
@@ -504,20 +531,29 @@ const BaseChoiceField = {
     setChoice(value) {
         const { children } = this.choices;
 
+        let found = false;
         for (let i = 0; i < children.length; i++) {
             /** @type {HTMLElement} */
             const item = children[i];
 
-            if (getItemValue(item) === value) {
+            if (item.dataset.value === value) {
                 item.classList.add("selected");
                 item.dataset.selected = "selected";
                 this.selection = item;
+
                 show(item);
+
+                found = true;
             } else {
                 item.classList.remove("selected");
                 delete item.dataset.selected;
+
                 hide(item);
             }
+        }
+
+        if (found) {
+            this.input.value = value;
         }
 
         return this;
@@ -530,7 +566,7 @@ const BaseChoiceField = {
      * Handles the `space` command
      * @param {HTMLElement} target 
      */
-    spaceHandler(target) {
+    _spaceHandler(target) {
         const fragment = createDocFragment();
 
         this.source.getCandidates().forEach(value => {
@@ -550,6 +586,15 @@ const BaseChoiceField = {
      * @param {HTMLElement} target 
      */
     escapeHandler(target) {
+        if (target === this.input) {
+            let parent = findAncestor(target, (el) => el.tabIndex === 0);
+            let element = this.environment.resolveElement(parent);
+
+            element.focus(parent);
+
+            return true;
+        }
+
         this.input.focus();
 
         if (this.messageElement) {
@@ -564,8 +609,7 @@ const BaseChoiceField = {
         const item = getItem.call(this, target);
 
         if (item) {
-            const value = getItemValue(item);
-            this.setValue(value);
+            this.setValue(item.dataset.value);
         }
     },
     /**
@@ -587,12 +631,10 @@ const BaseChoiceField = {
         const item = getItem.call(this, target);
 
         if (isHTMLElement(item) && this.selection !== item) {
-            let value = getItemValue(item);
-            this.setValue(value);
+            this.setValue(item.dataset.value);
             this.focusOut();
         }
     },
-    
     /**
      * Handles the `arrow` command
      * @param {HTMLElement} target 
@@ -601,19 +643,44 @@ const BaseChoiceField = {
         /** @type {HTMLElement} */
         const item = getItem.call(this, target);
 
+
         if (isHTMLElement(item)) {
             let $item = null;
-            if (dir === "up") {
-                $item = getPreviousElementSibling(item, (el) => !el.hidden);
 
+            if (dir === "up") {
+                $item = getElementTop(item, this.choices);
             } else if (dir === "down") {
-                $item = getNextElementSibling(item, (el) => !el.hidden);
+                $item = getElementBottom(item, this.choices);
+            } else if (dir === "left") {
+                $item = getElementLeft(item, this.choices);
+            } else if (dir === "right") {
+                $item = getElementRight(item, this.choices);
             }
 
             if (isHTMLElement($item)) {
                 $item.focus();
             }
+
+            return true;
+        } else if (!isHidden(this.choices)) {
+            let $item = null;
+
+            if (dir === "down") {
+                $item = this.choices.children[0];
+            }
+
+            if (isHTMLElement($item)) {
+                $item.focus();
+            }
+
+            return true;
         }
+
+        if (this.parent) {
+            return this.parent.arrowHandler(dir, this.element);
+        }
+
+        return false;
     },
 
     bindEvents() {

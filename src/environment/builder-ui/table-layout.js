@@ -53,14 +53,14 @@ export const TableLayout = {
             this.header = createDiv({
                 class: ["layout-header", "layout-header--table"],
             });
-            fragment.appendChild(this.header);
+            fragment.append(this.header);
         }
 
         if (!isHTMLElement(this.body)) {
             this.body = createDiv({
                 class: ["layout-body", "layout-body--table"],
             });
-            fragment.appendChild(this.body);
+            fragment.append(this.body);
         }
 
         if (!isHTMLElement(this.footer)) {

@@ -28,17 +28,30 @@ const BasePrototypeConcept = {
 
         const { id, value } = args;
 
-        this.id = id;
+        // this.id = id;
 
         if (value) {
-            var concept = this.createConcept(value.name, value);
-            this.value = concept;
+            let concept = this.createConcept(value.name, value);
+            this.setValue(concept);
+        } else if (args.name) {
+            let concept = this.createConcept(args.name, args);
+            this.setValue(concept);
         }
 
         return this;
     },
     getValue() {
         return this.value;
+    },
+    exportValue() {
+        if (!this.hasValue()) {
+            return null;
+        }
+
+        let concept = this.getValue();
+
+        return concept.exportValue();
+
     },
     setValue(value) {
         var result = this.validate(value);
@@ -82,7 +95,15 @@ const BasePrototypeConcept = {
     },
 
     getCandidates() {
-        var candidates = resolveAccept.call(this, this.accept);
+        const candidates = resolveAccept.call(this, this.schema.accept).map(
+            candidate => Object.create(Concept, {
+                object: { value: "concept" },
+                nature: { value: "fake" },
+                model: { value: this.model },
+                name: { value: candidate.name },
+                schema: { value: candidate },
+            }).init(this)
+        );
 
         return candidates;
     },
@@ -113,6 +134,8 @@ const BasePrototypeConcept = {
     createConcept(name, _value) {
         let value = this.model.getValue(_value);
 
+        console.log(_value);
+
         const options = {
             parent: this.parent,
             ref: this.ref,
@@ -122,7 +145,8 @@ const BasePrototypeConcept = {
             options.value = value;
         }
 
-        const concept = this.model.createConcept({ name: name }, options);
+        const schema = this.model.getCompleteModelConcept({ name: name });
+        const concept = this._createConcept(this.model, schema, options);
 
         concept.prototype = this;
 
@@ -182,7 +206,7 @@ function resolveAccept(accept) {
     }
 
     if (Array.isArray(accept)) {
-        return candidates.filter(candidate => accept.includes(candidate.name));
+        return candidates.filter(candidate => accept.some(x => x.name === candidate.name));
     }
 
     return candidates.filter(candidate => accept === candidate.name);

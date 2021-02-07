@@ -80,14 +80,14 @@ export const ProjectionWindow = {
             }
         }, "Projection");
 
-        fragment.appendChild(title);
+        fragment.append(title);
 
         if (!isHTMLElement(this.content)) {
             this.content = createDiv({
                 class: ["projection-window-content"]
             });
 
-            fragment.appendChild(this.content);
+            fragment.append(this.content);
         }
 
         this.btnChange = createButton({
@@ -98,7 +98,7 @@ export const ProjectionWindow = {
             }
         }, "Change");
 
-        fragment.appendChild(this.btnChange);
+        fragment.append(this.btnChange);
 
         this.btnSearch = createButton({
             class: ["btn", "projection-window-button", "projection-window-button-search"],
@@ -108,11 +108,11 @@ export const ProjectionWindow = {
             }
         }, "Search");
 
-        fragment.appendChild(this.btnSearch);
+        fragment.append(this.btnSearch);
 
 
         if (fragment.hasChildNodes()) {
-            this.container.appendChild(fragment);
+            this.container.append(fragment);
 
             this.bindEvents();
         }

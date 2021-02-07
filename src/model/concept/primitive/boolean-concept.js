@@ -45,7 +45,7 @@ const _BooleanConcept = {
         }
 
         if (isObject(args)) {
-            this.id = args.id;
+            // this.id = args.id;
             this.setValue(args.value);
         } else {
             this.setValue(args);
@@ -108,10 +108,20 @@ const _BooleanConcept = {
 
         return ResponseCode.SUCCESS;
     },
-    
+
 
     build() {
         return this.getValue();
+    },
+    copy() {
+        var copy = {
+            name: this.name,
+            value: this.getValue()
+        };
+
+        this.model.addValue(copy);
+
+        return copy;
     },
     export() {
         return {
@@ -120,6 +130,9 @@ const _BooleanConcept = {
             root: this.isRoot(),
             value: this.getValue()
         };
+    },
+    toString() {
+        return this.value;
     },
 };
 

@@ -167,12 +167,6 @@ const BaseBinaryField = {
             this.notification.appendChild(this.statusElement);
         }
 
-        if (before.projection) {
-            let content = ContentHandler.call(this, before.projection);
-            content.classList.add("field--binary__before");
-
-            fragment.appendChild(content);
-        }
 
         if (!isHTMLElement(this.input)) {
             const { before, projection, after, style } = input;
@@ -216,13 +210,6 @@ const BaseBinaryField = {
             fragment.appendChild(this.label);
         }
 
-        if (after.projection) {
-            let content = ContentHandler.call(this, after.projection);
-            content.classList.add("field--binary__after");
-
-            fragment.appendChild(content);
-        }
-
         if (fragment.hasChildNodes()) {
             this.element.appendChild(fragment);
             this.bindEvents();
@@ -241,6 +228,8 @@ const BaseBinaryField = {
         switch (message) {
             case "value.changed":
                 this.input.checked = value;
+                this.value = value;
+                this.checked = value;
                 break;
             default:
                 console.warn(`The message '${message}' was not handled for check field`);
@@ -414,6 +403,17 @@ const BaseBinaryField = {
      */
     enterHandler(target) {
         this.setValue(!this.input.checked);
+    },
+    /**
+     * Handles the `arrow` command
+     * @param {HTMLElement} target 
+     */
+    arrowHandler(dir, target) {
+        if(this.parent) {
+            return this.parent.arrowHandler(dir, this.element);
+        }
+
+        return false;
     },
 
     bindEvents() {

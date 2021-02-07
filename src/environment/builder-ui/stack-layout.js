@@ -54,21 +54,21 @@ export const StackLayout = {
             this.header = createDiv({
                 class: ["layout-header", "layout-header--stack"],
             });
-            fragment.appendChild(this.header);
+            fragment.append(this.header);
         }
 
         if (!isHTMLElement(this.body)) {
             this.body = createDiv({
                 class: ["layout-body", "layout-body--stack"],
             });
-            fragment.appendChild(this.body);
+            fragment.append(this.body);
         }
 
         if (!isHTMLElement(this.footer)) {
             this.footer = createDiv({
                 class: ["layout-footer", "layout-footer--stack"],
             });
-            fragment.appendChild(this.footer);
+            fragment.append(this.footer);
         }
 
         if (!isHTMLElement(this.orientationElement)) {
@@ -99,7 +99,7 @@ export const StackLayout = {
                 }, [radioHorizontal, "Horizontal"]),
             ]);
 
-            this.header.appendChild(this.orientationElement);
+            this.header.append(this.orientationElement);
         }
 
         this.placeholder = createDiv({
@@ -108,10 +108,10 @@ export const StackLayout = {
                 nature: "layout-part",
             }
         }, "Add a field or layout");
-        this.body.appendChild(this.placeholder);
+        this.body.append(this.placeholder);
 
         if (fragment.hasChildNodes()) {
-            this.container.appendChild(fragment);
+            this.container.append(fragment);
             this.bindEvents();
         }
 
@@ -123,7 +123,7 @@ export const StackLayout = {
      * @param {HTMLElement} element 
      */
     append(element) {
-        this.body.appendChild(element);
+        this.body.append(element);
 
         return this;
     },

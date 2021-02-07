@@ -5,6 +5,7 @@ import {
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
+import { StateHandler } from "./../state-handler.js";
 import { ContentHandler } from "./../content-handler.js";
 import { Field } from "./field.js";
 
@@ -160,7 +161,7 @@ const BaseLinkField = {
     },
 
     render() {
-        const { placeholder, before = {}, input, choice, after = {} } = this.schema;
+        const { input, choice } = this.schema;
 
         const fragment = createDocFragment();
 
@@ -196,20 +197,22 @@ const BaseLinkField = {
             this.notification.append(this.statusElement);
         }
 
-        if (!isHTMLElement(this.selector)) {
-            this.selector = createDiv({
-                class: ["field--link__placeholder"],
-                tabindex: -1,
-                dataset: {
-                    nature: "field-component",
-                    component: "selector",
-                    view: "link",
-                    id: this.id,
-                }
-            }, ContentHandler.call(this, placeholder));
+        
 
-            fragment.append(this.selector);
-        }
+        // if (!isHTMLElement(this.selector)) {
+        //     this.selector = createDiv({
+        //         class: ["field--link__placeholder"],
+        //         tabindex: -1,
+        //         dataset: {
+        //             nature: "field-component",
+        //             component: "selector",
+        //             view: "link",
+        //             id: this.id,
+        //         }
+        //     }, ContentHandler.call(this, placeholder));
+
+        //     fragment.append(this.selector);
+        // }
 
         if (!isHTMLElement(this.input)) {
             this.input = createInput({
@@ -259,13 +262,6 @@ const BaseLinkField = {
             fragment.appendChild(this.selectionElement);
         }
 
-        if (before.projection) {
-            let content = ContentHandler.call(this, before.projection);
-            content.classList.add("field--link__before");
-
-            fragment.appendChild(content);
-        }
-
         if (this.source.hasValue()) {
             let concept = this.getValue();
 
@@ -273,13 +269,6 @@ const BaseLinkField = {
             projection.parent = this.projection;
 
             this.element.appendChild(projection.init().render());
-        }
-
-        if (after.projection) {
-            let content = ContentHandler.call(this, after.projection);
-            content.classList.add("field--link__after");
-
-            fragment.appendChild(content);
         }
 
         if (fragment.hasChildNodes()) {
@@ -366,12 +355,14 @@ const BaseLinkField = {
         this.input.textContent = "";
     },
     refresh() {
+        StateHandler.call(this, this.schema.state);
+
         if (this.hasValue()) {
-            hide(this.selector);
+            // hide(this.selector);
             hide(this.input);
             hide(this.choices);
         } else {
-            show(this.selector);
+            // show(this.selector);
             hide(this.input);
             show(this.choices);
         }
@@ -380,6 +371,24 @@ const BaseLinkField = {
             this.statusElement.classList.add("change");
         } else {
             this.statusElement.classList.remove("change");
+        }
+
+        const state = valOrDefault(this.state, this.schema);
+
+        if (state) {
+            const { content } = state;
+
+            console.log(content);
+
+            // if (label) {
+            //     const { style, projection, value } = label;
+
+            //     if (projection) {
+            //         this.label.append(ContentHandler.call(this, projection));
+            //     }
+
+            //     StyleHandler(this.label, style);
+            // } 
         }
 
         removeChildren(this.statusElement);

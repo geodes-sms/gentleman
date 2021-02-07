@@ -1,10 +1,8 @@
 .builder-container {
     position: relative;
-    display: flex;
-    flex-direction: column;
+    display: flex; flex-direction: column;
     width: 100%;
     height: calc(100% - 20px);
-    box-sizing: border-box;
     background-color: #fefefe;
     box-shadow: 0 0 1px #555;
 }
@@ -13,9 +11,7 @@
 
 .builder-header {
     position: relative;
-    display: flex;
-    justify-content: flex-end;
-    box-sizing: border-box;
+    display: flex; justify-content: flex-end;
     font-size: 1.2em;
     color: #333;
     transition: .2s;

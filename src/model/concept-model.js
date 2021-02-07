@@ -1,7 +1,16 @@
-import { isString, isObject, isNullOrUndefined, isEmpty, hasOwn, isIterable, valOrDefault, isNullOrWhitespace } from "zenkai";
+import {
+    isString, isObject, isEmpty, hasOwn, isIterable, valOrDefault,
+    isNullOrUndefined, isNullOrWhitespace
+} from "zenkai";
 import { deepCopy } from "@utils/index.js";
 import { ConceptFactory } from "./concept/factory.js";
 import { ObserverHandler } from "./structure/index.js";
+
+
+
+var inc = 0;
+
+const nextValueId = () => `value${inc++}`;
 
 
 const projections = [
@@ -62,13 +71,17 @@ const projections = [
 
 const PROP_NATURE = "nature";
 const PROP_TYPE = "type";
+const PROP_HANDLER = "handler";
+
 const ATTR_ATTRIBUTES = "attributes";
+const ATTR_ALIAS = "alias";
 const ATTR_BASE = "base";
+const ATTR_CONTENT = "content";
+const ATTR_CONCEPT = "concept";
 const ATTR_DESCRIPTION = "description";
 const ATTR_GLOBAL = "global";
 const ATTR_NAME = "name";
 const ATTR_REQUIRED = "required";
-const ATTR_PROJECTION = "projection";
 const ATTR_PROPERTIES = "properties";
 const ATTR_PROTOTYPE = "prototype";
 const ATTR_TAGS = "tags";
@@ -84,7 +97,7 @@ export const ConceptModel = {
     /** @type {*[]} */
     watchers: null,
 
-    init(values, type) {
+    init(values) {
         this.concepts = [];
         this.listeners = [];
         this.watchers = [];
@@ -105,10 +118,9 @@ export const ConceptModel = {
         return this;
     },
 
-    register(listener, watch) {
+    register(listener) {
         if (!this.listeners.includes(listener)) {
             this.listeners.push(listener);
-            this.watchers.push(watch);
         }
 
         return true;
@@ -167,17 +179,6 @@ export const ConceptModel = {
 
         return this.concepts.find(concept => concept.id === id);
     },
-    getValue(arg) {
-        if (isNullOrUndefined(arg)) {
-            return null;
-        }
-
-        if (hasOwn(arg, "id")) {
-            return this.values.find(value => value.id === arg.id);
-        }
-
-        return this.values.find(value => value.id === arg);
-    },
     /**
      * Adds a concept to the list of concepts held by the model
      * @param {Concept} concept
@@ -218,6 +219,79 @@ export const ConceptModel = {
         // console.warn("concept removed", this.concepts.length);
 
         return removedConcept;
+    },
+
+    /**
+     * Get the list of values
+     * @param {string|string[]} [name] 
+     */
+    getValues(name) {
+        if (isIterable(name)) {
+            const pred = Array.isArray(name) ? (value) => name.includes(value.name) : (value) => value.name === name;
+
+            return this.values.filter(value => pred(value));
+        }
+
+        return this.values.slice();
+    },
+    getValue(arg) {
+        if (isNullOrUndefined(arg)) {
+            return null;
+        }
+
+        const isValue = hasOwn(arg, "value") || hasOwn(arg, "attributes");
+
+        if (isValue) {
+            return arg;
+        }
+
+        if (hasOwn(arg, "id")) {
+            return this.values.find(value => value.id === arg.id);
+        }
+
+        return this.values.find(value => value.id === arg);
+    },
+    /**
+     * Adds a value to the list of values held by the model
+     * @param {*} value
+     */
+    addValue(value) {
+        if (isNullOrUndefined(value)) {
+            throw new TypeError("Bad request: The 'value' argument must be a Value");
+        }
+
+        if (this.values.some((val) => Equiv(val, value))) {
+            return this;
+        }
+
+        value.id = nextValueId();
+        this.values.push(value);
+
+        this.notify('value.added', value);
+
+        return this;
+    },
+    /**
+     * Removes a concept from the list of concepts held by the model
+     * @param {string} id
+     * @returns {Concept} The removed concept
+     */
+    removeValue(id) {
+        if (!(isObject(id) || isString(id))) {
+            throw new TypeError("Bad request: The 'id' argument must be a non-empty string");
+        }
+
+        var index = this.values.findIndex(value => value.id === id);
+
+        if (index === -1) {
+            return null;
+        }
+
+        let removedValue = this.values.splice(index, 1)[0];
+
+        this.notify('value.removed', removedValue);
+
+        return removedValue;
     },
 
     /**
@@ -335,50 +409,6 @@ export const ConceptModel = {
     },
 
 
-    build() {
-        const concepts = [];
-
-        this.getConcepts(["prototype concept", "concrete concept", "derivative concept"]).forEach(concept => {
-            const ConceptNature = {
-                "concrete concept": "concrete",
-                "prototype concept": "prototype",
-                "derivative concept": "derivative",
-            };
-
-            let schema = {
-                "id": concept.id,
-                "name": getName(concept),
-                "description": getDescription(concept),
-                "nature": ConceptNature[concept.name],
-                "attributes": concept.isAttributeCreated("attributes") ? buildAttribute(getValue(concept, 'attributes')) : [],
-            };
-
-            if (concept.isAttributeCreated("prototype") && hasValue(concept, "prototype")) {
-                schema.prototype = getName(getReference(concept, 'prototype'));
-            }
-
-            if (concept.name === "derivative concept") {
-                const primitive = getValue(concept, "base");
-
-                schema.base = nameMap[primitive.name](primitive);
-
-                if (primitive.isAttributeCreated("accept")) {
-                    let accept = getValue(primitive, "accept");
-                    schema["accept"] = nameMap[accept.name](accept);
-                }
-
-                ["min", "max"].forEach(attr => {
-                    if (primitive.isAttributeCreated(attr) && hasValue(primitive, attr)) {
-                        schema[attr] = +getValue(primitive, attr);
-                    }
-                });
-            }
-
-            concepts.push(schema);
-        });
-
-        return JSON.stringify(concepts);
-    },
     buildConcept() {
         const concepts = [];
 
@@ -442,6 +472,8 @@ export const ConceptModel = {
             "properties": properties,
         };
 
+        
+
         if (concept.isAttributeCreated(ATTR_PROTOTYPE) && hasValue(concept, ATTR_PROTOTYPE)) {
             schema.prototype = getName(getReference(concept, ATTR_PROTOTYPE));
         }
@@ -460,7 +492,7 @@ export const ConceptModel = {
     buildProjection() {
         const result = [...projections];
 
-        this.getConcepts(["concept projection", "template projection"]).forEach(concept => {
+        this.getConcepts(["projection", "template"]).forEach(concept => {
             result.push(this.buildSingleProjection(concept).message);
         });
 
@@ -469,43 +501,21 @@ export const ConceptModel = {
     buildSingleProjection(concept) {
         const errors = [];
 
-        const global = hasAttr(concept, ATTR_GLOBAL) && hasValue(concept, ATTR_GLOBAL) ? getValue(concept, ATTR_GLOBAL) : false;
-        const tags = hasAttr(concept, ATTR_TAGS) ? getAttr(concept, ATTR_TAGS).build() : [];
+        const handler = concept.getBuildProperty(PROP_HANDLER);
 
-        const ProjectionHandler = {
-            "layout": (concept) => buildLayout(getValue(concept, "layout")),
-            "field": (concept) => buildField(getValue(concept, "field")),
-            "template": (concept) => buildTemplate(getValue(concept, "template")),
-        };
-
-        if (!hasValue(concept, ATTR_PROJECTION)) {
-            errors.push("The projection's 'type' is missing a value.");
+        if (isNullOrUndefined(handler)) {
+            errors.push("The projection's is missing a build handler.");
         }
 
         if (!isEmpty(errors)) {
             return {
                 success: false,
-                message: "Validation failed: The concept could not be built.",
+                message: "The projection could not be built.",
                 errors: errors,
             };
         }
 
-        const projection = getValue(concept, "projection");
-
-        const type = projection.getBuildProperty(PROP_TYPE);
-
-        let schema = {
-            "id": concept.id,
-            "concept": buildConcept(getAttr(concept, "concept")),
-            "type": type,
-            "global": global,
-            "tags": tags,
-            "projection": ProjectionHandler[type](projection),
-        };
-
-        if (hasAttr(concept, ATTR_NAME) && hasValue(concept, ATTR_NAME)) {
-            schema.name = getName(concept);
-        }
+        const schema = ProjectionBuildHandler[handler](concept);
 
         return {
             success: true,
@@ -527,6 +537,18 @@ export const ConceptModel = {
         });
     },
 };
+
+const ProjectionBuildHandler = {
+    "projection": (concept) => buildProjection(concept),
+    "template": (concept) => buildTemplate(concept),
+};
+
+const ProjectionHandler = {
+    "layout": (concept) => buildLayout(getValue(concept, "layout")),
+    "field": (concept) => buildField(getValue(concept, "field")),
+    "element": (concept) => buildElement(getValue(concept, "element")),
+};
+
 
 const getAttr = (concept, name) => concept.getAttributeByName(name).target;
 
@@ -753,15 +775,95 @@ function getSchema(schema, name) {
     return result;
 }
 
+function buildProjection(concept) {
+    const errors = [];
+
+    const global = hasAttr(concept, ATTR_GLOBAL) ? getValue(concept, ATTR_GLOBAL) : false;
+    const tags = hasAttr(concept, ATTR_TAGS) ? getAttr(concept, ATTR_TAGS).build() : [];
+
+
+    if (!hasValue(concept, ATTR_CONTENT)) {
+        errors.push("The projection is missing a content.");
+    }
+
+    if (!isEmpty(errors)) {
+        return {
+            success: false,
+            message: "Validation failed: The projection could not be built.",
+            errors: errors,
+        };
+    }
+
+    const content = getValue(concept, ATTR_CONTENT);
+
+    const type = content.getBuildProperty(PROP_TYPE);
+
+    let schema = {
+        "id": concept.id,
+        "concept": buildConcept(getAttr(concept, ATTR_CONCEPT)),
+        "type": type,
+        "global": global,
+        "tags": tags,
+        "content": ProjectionHandler[type](content),
+    };
+
+    if (hasAttr(concept, ATTR_NAME) && hasValue(concept, ATTR_NAME)) {
+        schema.name = getName(concept);
+    }
+
+    return {
+        success: true,
+        message: schema,
+    };
+}
+
+function buildTemplate(concept) {
+    const errors = [];
+
+    const name = getName(concept);
+
+    if (isNullOrWhitespace(name)) {
+        errors.push("The template is missing a name.");
+    }
+
+    if (!hasValue(concept, ATTR_CONTENT)) {
+        errors.push("The template is missing a content.");
+    }
+
+    if (!isEmpty(errors)) {
+        return {
+            success: false,
+            message: "Validation failed: The template could not be built.",
+            errors: errors,
+        };
+    }
+
+    const content = [];
+
+    getValue(concept, ATTR_CONTENT).filter(proto => proto.hasValue()).forEach(proto => {
+        const element = proto.getValue();
+        content.push(buildElement(element));
+    });
+
+    let schema = {
+        "id": concept.id,
+        "type": "template",
+        "name": name,
+        "content": content,
+    };
+
+    return schema;
+}
+
 function buildConcept(concept) {
     const result = {};
 
     if (hasAttr(concept, ATTR_NAME)) {
-        result[ATTR_NAME] = hasValue(concept, ATTR_NAME) ? getValue(concept, ATTR_NAME) : null;
+        result[ATTR_NAME] = hasValue(concept, ATTR_NAME) ? getValue(concept, ATTR_NAME).toLowerCase() : null;
     }
 
     if (hasAttr(concept, ATTR_PROTOTYPE)) {
-        result[ATTR_PROTOTYPE] = hasValue(concept, ATTR_PROTOTYPE) ? getValue(concept, ATTR_PROTOTYPE) : null;
+        result[ATTR_PROTOTYPE] = hasValue(concept, ATTR_PROTOTYPE) ? getValue(concept, ATTR_PROTOTYPE).toLowerCase() : null;
     }
 
     return result;
@@ -786,8 +888,22 @@ function buildLayout(layout) {
             const element = proto.getValue();
             disposition.push(buildElement(element));
         });
-    } else if (layout.name === "table layout") {
+    } else if (layout.name === "cell layout") {
         schema.type = "table";
+        schema.orientation = getValue(layout, 'orientation');
+        getValue(layout, "rows").forEach(row => {
+            const cells = [];
+            getValue(row, "cells").forEach(cell => {
+                let span = getValue(cell, "span");
+                let content = getValue(cell, "content");
+                cells.push({
+                    "type": "cell",
+                    "span": span,
+                    "content": buildElement(content)
+                });
+            });
+            disposition.push(cells);
+        });
     } else if (layout.name === "relative layout") {
         schema.type = "relative";
     }
@@ -893,7 +1009,6 @@ function buildDynamic(element, type) {
 
     return schema;
 }
-
 
 function buildField(field) {
     var schema = {
@@ -1014,7 +1129,6 @@ function buildField(field) {
     return schema;
 }
 
-
 function buildStyle(style) {
     if (style.isAttributeCreated("css")) {
         return {
@@ -1025,7 +1139,7 @@ function buildStyle(style) {
     return null;
 }
 
-function buildTemplate(tpl) {
+function buildFieldTemplate(tpl) {
     var schema = {};
 
     if (tpl.name === "table template") {
@@ -1058,4 +1172,16 @@ function buildTemplate(tpl) {
     }
 
     return schema;
+}
+
+function Equiv(val1, val2) {
+    if (val1.name !== val2.name) {
+        return false;
+    }
+
+    if (val1.value) {
+        return val1.value === val2.value;
+    }
+
+    return JSON.stringify(val1.attributes) === JSON.stringify(val2.attributes);
 }

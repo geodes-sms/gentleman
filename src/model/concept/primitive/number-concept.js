@@ -56,7 +56,7 @@ const _NumberConcept = {
     initValue(args) {
         if (isNullOrUndefined(args)) {
             this.value = null;
-            
+
             return this;
         }
 
@@ -73,10 +73,10 @@ const _NumberConcept = {
         return !(isNullOrWhitespace(this.value) || isNaN(this.value));
     },
     getValue() {
-        if(!this.hasValue()) {
+        if (!this.hasValue()) {
             return null;
         }
-        
+
         return +this.value;
     },
     setValue(value) {
@@ -154,13 +154,31 @@ const _NumberConcept = {
     build() {
         return this.getValue();
     },
-    export() {
-        return {
-            id: this.id,
+    copy(save = true) {
+        if (!this.hasValue()) {
+            return null;
+        }
+
+        var copy = {
             name: this.name,
             root: this.isRoot(),
             value: this.getValue()
         };
+
+        if (save) {
+            this.model.addValue(copy);
+        }
+
+        return copy;
+    },
+    export() {
+        return {
+            name: this.name,
+            value: this.getValue()
+        };
+    },
+    toString() {
+        return this.value;
     },
 };
 

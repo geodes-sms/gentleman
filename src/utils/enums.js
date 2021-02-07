@@ -31,6 +31,7 @@ export const Key = {
     spacebar: " ",
     page_up: "PageUp",
     page_down: "PageDown",
+    insert: "Insert",
     end: "End",
     home: "Home",
     left_arrow: "ArrowLeft",

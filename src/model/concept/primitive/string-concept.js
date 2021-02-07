@@ -49,7 +49,6 @@ const _StringConcept = {
         this.min = valOrDefault(this.schema.min, 0);
         this.max = this.schema.max;
         this.pattern = this.schema.pattern;
-        this.history = [];
 
         this.initObserver();
         this.initAttribute();
@@ -60,13 +59,14 @@ const _StringConcept = {
     initValue(args) {
         if (isNullOrUndefined(args)) {
             this.value = "";
-            
+
             return this;
         }
-        
+
 
         if (isObject(args)) {
-            this.id = args.id;
+            console.warn(args);
+            // this.id = this.id || args.id;
             this.setValue(args.value);
         } else {
             this.setValue(args);
@@ -94,7 +94,6 @@ const _StringConcept = {
             };
         }
 
-        this.history.push(value);
         this.value = value;
 
         this.notify("value.changed", value);
@@ -127,15 +126,15 @@ const _StringConcept = {
             return ResponseCode.SUCCESS;
         }
 
-        if(this.min && value.length < this.min) {
+        if (this.min && value.length < this.min) {
             return ResponseCode.MINLENGTH_ERROR;
         }
 
-        if(this.max && value.length > this.max) {
+        if (this.max && value.length > this.max) {
             return ResponseCode.MAXLENGTH_ERROR;
         }
 
-        if(this.pattern && !(new RegExp(this.pattern, "gi")).test(value)) {
+        if (this.pattern && !(new RegExp(this.pattern, "gi")).test(value)) {
             return ResponseCode.PATTERN_ERROR;
         }
 
@@ -163,6 +162,22 @@ const _StringConcept = {
     build() {
         return this.getValue();
     },
+    copy(save = true) {
+        if (!this.hasValue()) {
+            return null;
+        }
+
+        var copy = {
+            name: this.name,
+            value: this.getValue()
+        };
+
+        if (save) {
+            this.model.addValue(copy);
+        }
+
+        return copy;
+    },
     export() {
         return {
             id: this.id,
@@ -170,7 +185,7 @@ const _StringConcept = {
             root: this.isRoot(),
             value: this.getValue()
         };
-    }, 
+    },
     toString() {
         return this.value;
     }

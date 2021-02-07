@@ -1,35 +1,27 @@
 import {
-    createDocFragment, createSpan, removeChildren, isHTMLElement,
-    valOrDefault, hasOwn, isNullOrWhitespace, isNullOrUndefined, htmlToElement,
+    createDocFragment, createSpan, removeChildren, isHTMLElement, isNullOrUndefined,
+    htmlToElement,
+    findAncestor,
 } from "zenkai";
-import { hide, show } from "@utils/index.js";
+import { hide, show, getCaretIndex } from "@utils/index.js";
 import { StyleHandler } from "../style-handler.js";
-import { ContentHandler } from "./../content-handler.js";
 import { Static } from "./static.js";
 
 
-
-/**
- * Resolves the value of the input
- * @param {*} object 
- */
-function resolveValue(object) {
-    if (object.object === "concept") {
-        if (object.hasValue()) {
-            return object.getValue();
-        }
-    }
-
-    return false;
-}
-
-
 const BaseTextStatic = {
+    /** @type {string} */
     contentType: null,
+    /** @type {boolean} */
+    editable: null,
+    /** @type {boolean} */
+    focusable: null,
+
     init() {
-        const { contentType = "text" } = this.schema;
+        const { contentType = "text", editable = false, focusable = true } = this.schema;
 
         this.contentType = contentType;
+        this.editable = editable;
+        this.focusable = focusable;
 
         return this;
     },
@@ -42,15 +34,23 @@ const BaseTextStatic = {
         if (!isHTMLElement(this.element)) {
             this.element = createSpan({
                 class: ["text"],
+                editable: this.editable,
                 dataset: {
+                    nature: "static",
+                    view: "text",
+                    id: this.id,
                     ignore: "all",
                 }
             });
 
+            if (this.focusable) {
+                this.element.tabIndex = 0;
+            }
+
             if (this.contentType === "html") {
                 this.element.append(htmlToElement(content));
             } else {
-                this.element.textContent = content;
+                this.element.textContent = content.trim();
             }
         }
 
@@ -90,6 +90,49 @@ const BaseTextStatic = {
 
         return this;
     },
+    getLength() {
+        return this.element.textContent.length;
+    },
+    /**
+     * Handles the `arrow` command
+     * @param {HTMLElement} target 
+     */
+    arrowHandler(dir, target) {
+        if (!this.editable) {
+            if (this.parent.object === "layout") {
+                return this.parent.arrowHandler(dir, target);
+            }
+        }
+
+        if (dir === "right") {
+            let isAtEnd = this.getLength() < getCaretIndex(this.element) + 1;
+
+            if (isAtEnd && this.parent.object === "layout") {
+                return this.parent.arrowHandler(dir, target);
+            }
+        } else if (dir === "left") {
+            let isAtStart = 0 === getCaretIndex(this.element) + 1;
+
+            if (isAtStart && this.parent.object === "layout") {
+                return this.parent.arrowHandler(dir, target);
+            }
+        } else if (this.parent.object === "layout") {
+            return this.parent.arrowHandler(dir, target);
+        }
+
+        return false;
+    },
+    
+    /**
+     * Handles the `escape` command
+     * @param {HTMLElement} target 
+     */
+    escapeHandler(target) {
+        let parent = findAncestor(target, (el) => el.tabIndex === 0);
+        let element =  this.environment.resolveElement(parent);
+        
+        element.focus(parent);
+    },
     refresh() {
         return this;
     },
@@ -97,7 +140,6 @@ const BaseTextStatic = {
     bindEvents() {
     },
 };
-
 
 export const TextStatic = Object.assign(
     Object.create(Static),

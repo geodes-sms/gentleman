@@ -28,11 +28,11 @@ const ChoiceField = {
 
         if (!isHTMLElement(this.choices)) {
             this.choices = createFieldChoice.call(this);
-            ["LAYOUT", "FIELD"].forEach(choice => this.choices.appendChild(createFieldChoiceItem.call(this, choice)));
-            fragment.appendChild(this.choices);
+            ["LAYOUT", "FIELD"].forEach(choice => this.choices.append(createFieldChoiceItem.call(this, choice)));
+            fragment.append(this.choices);
         }
 
-        this.element.appendChild(fragment);
+        this.element.append(fragment);
 
         if (unbound) {
             this.bindEvents();

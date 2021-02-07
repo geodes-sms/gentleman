@@ -21,6 +21,31 @@ export const BaseAttribute = {
         return this.target.value;
     },
 
+    copy() {
+        if (!this.target.hasValue()) {
+            return null;
+        }
+
+        const { nature } = this.target;
+        let copy = {
+            name: this.target.name,
+        };
+
+        let value = this.target.exportValue();
+
+        if (nature === "primitive") {
+            copy.value = value;
+        } else if (nature === "prototype") {
+            copy.value = {
+                name: this.target.value.name,
+                attributes: value
+            };
+        } else {
+            copy.attributes = value;
+        }
+
+        return copy;
+    },
     export() {
         var output = {
             [`${this.name}:attribute`]: {

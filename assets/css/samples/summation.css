@@ -1,0 +1,23 @@
+.summation {
+    font-size: 1.4rem;
+    width: 80px;
+}
+
+    .summation__upper {
+        margin-bottom: -4px;
+    }
+
+    .summation__upper,
+    .summation__lower {
+        font-size: 0.8em;
+        font-family: 'Math Symbol';
+    }
+
+    .summation__symbol {
+        font-size: 3em;
+        font-family: 'Math Symbol';
+    }
+
+    .summation__body {
+        display: flex;
+    }

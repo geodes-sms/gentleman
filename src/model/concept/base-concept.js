@@ -17,29 +17,39 @@ function responseHandler(code) {
     }
 }
 
-const _BaseConcept  = {
+const _BaseConcept = {
     nature: "concrete",
+
     initValue(args) {
         if (isNullOrUndefined(args)) {
             return false;
         }
 
-        this.id = args.id;
+        const { id, attributes } = args;
+        // this.id = id;
 
-        for (const key in args) {
-            const element = args[key];
-            const [name, type] = key.split(":");
-            
-            switch (type) {
-                case "attribute":
-                    this.createAttribute(name, element);
-                    break;
-                default:
-                    break;
+        attributes.forEach(attr => {
+            const { name, value } = attr;
+
+            let attribute = this.getAttributeByName(name);
+
+            if (value) {
+                attribute.target.initValue(value);
             }
-        }
+        });
 
         return true;
+    },
+    hasValue() {
+        return true;
+    },
+    getValue() {
+        return this.getAttributes().map(attr => {
+            return {
+                "name": attr.name,
+                "value": attr.copy(false)
+            };
+        });
     },
 
     build() {
@@ -47,15 +57,6 @@ const _BaseConcept  = {
             "concrete_concept": "concrete",
             "prototype_concept": "prototype",
         };
-
-        // let schema = {
-        //     "name": getName(concept),
-        //     "nature": ConceptNature[concept.name],
-        //     "prototype": concept.isAttributeCreated("prototype") ? getValue(concept, 'prototype') : null,
-        //     "id": concept.id,
-        //     "attribute": concept.isAttributeCreated("attributes") ? buildAttribute(getValue(concept, 'attributes')) : null,
-        //     "property": concept.isAttributeCreated("properties") ? buildProperty(getValue(concept, 'properties')) : null,
-        // };
     }
 };
 

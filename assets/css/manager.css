@@ -4,7 +4,6 @@
     align-items: stretch;
     height: 100%;
     padding: 60px 12px 12px;
-    box-sizing: border-box;
     font-size: 1rem;
     background-color: #e5e5e5;
     overflow: auto;

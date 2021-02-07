@@ -18,6 +18,8 @@ function responseHandler(code) {
 }
 
 const _ReferenceConcept = {
+    nature: 'primitive',
+
     reference: null,
     path: null,
 
@@ -42,7 +44,6 @@ const _ReferenceConcept = {
             return this;
         }
 
-        this.id = args.id;
         this.setValue(args.value);
 
         return this;
@@ -85,7 +86,7 @@ const _ReferenceConcept = {
             this.reference.unregister(this);
         }
 
-        this.reference = this.model.getConcept(value);
+        this.reference = this.model.getConcept(value);console.log(value, this.reference);
         this.reference.register(this);
 
         this.value = value;
@@ -111,12 +112,12 @@ const _ReferenceConcept = {
             }));
         }
 
-        var values = candidates.map((candidate) => ({
-            type: "concept",
-            value: candidate
-        }));
+        // var values = candidates.map((candidate) => ({
+        //     type: "concept",
+        //     value: candidate
+        // }));
 
-        return values;
+        return candidates;
     },
     getChildren(name) {
         if (isNullOrUndefined(this.reference)) {
@@ -159,7 +160,7 @@ const _ReferenceConcept = {
                 this.value = null;
                 this.reference = null;
 
-                this.notify("value.changed", this.reference);
+                this.notify("value.deleted", this.reference);
                 break;
 
             default:
@@ -177,6 +178,18 @@ const _ReferenceConcept = {
 
     build() {
         return this.getValue();
+    },
+    copy(save = true) {
+        var copy = {
+            name: this.name,
+            value: this.getValue()
+        };
+
+        if (save) {
+            this.model.addValue(copy);
+        }
+
+        return copy;
     },
     export() {
         return {

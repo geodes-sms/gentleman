@@ -6,7 +6,6 @@
     position: relative;
     padding: 4px;
     border-radius: 4px;
-    box-sizing: border-box;
     font-family: Consolas, 'Courier New', Courier, monospace;
 }
 
@@ -21,8 +20,10 @@
 }
 
 .model-projection .keyword {
+    display: block;
+    border: 1px solid #999;
+    white-space: nowrap;
     color: #222; 
-    text-shadow: 0 1px 0 #000;
 }
 
 .model-projection .title {
@@ -42,6 +43,7 @@
 }
     .model-projection .block__line:after {
         content: " {";
+        font-weight: bold;
     }
 
     .model-projection .keyword--open-list:after {
@@ -68,7 +70,6 @@
 
 .projection-concept-container {
     width: 100%;
-    box-sizing: border-box;
 }
 
 .global-switch-field {
@@ -99,7 +100,6 @@
     }
 
 .textfield--concept {
-    box-sizing: border-box;
     align-items: center;
     padding: 0;
 }
@@ -352,7 +352,6 @@
             padding: 2px 2px 2px 1px;
             width: 20px;
             height: 20px;
-            box-sizing: border-box;
             color: #fff;
             transition: .4s;
         }
@@ -417,8 +416,8 @@
 
 .yesno-field {
     display: flex;
-    margin-top: 4px;
     padding: 0;
+    margin-left: 4px; margin-right: 4px;
     font-size: 1.4rem;
 }
 
@@ -444,16 +443,15 @@
     }
 
     .yesno-field__value {
-        padding: 3px 6px;
+        padding: 1px 4px;
         text-transform: lowercase;
         color: #555;
-        border-radius: 1px;
         background-color: #d5d5d5;
+        border-radius: 1px;
     }
 
-        .yesno-field[data-state="on"] .binary-field-state__value {
+        .yesno-field[data-state="on"] .yesno-field__value {
             color: #fff;
-            background-color: royalblue;
             background-color: #555;
         }
 
@@ -561,7 +559,6 @@
         .tag-list-item .btn-remove:before {
             content: "✖";
             display: block;
-            box-sizing: border-box;
             transition: .4s;
         }
         .tag-list-item .btn-remove:hover {
@@ -581,3 +578,33 @@
     .textfield--tag input:focus {
         border-color: royalblue;
     }
+
+
+.row-list-container {
+    border: 1px solid #555;
+}
+
+.row-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.row-list-item {
+    border-bottom: 2px solid #999;
+    margin-bottom: 4px;
+}
+
+.cell-list {
+    display: flex;
+    flex-direction: row;
+}
+
+.cell-list-item {
+    border: 1px solid #555;
+    margin-right: 4px;
+    margin-bottom: 4px;
+}
+
+.static-text {
+    align-items: flex-start;
+}

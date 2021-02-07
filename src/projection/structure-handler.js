@@ -41,6 +41,8 @@ export function AttributeHandler(schema, concept) {
             }, `Add ${valOrDefault(alias, name)}`);
         }
 
+        render.tabIndex = 0;
+
         render.addEventListener('click', (event) => {
             concept.createAttribute(name);
         });

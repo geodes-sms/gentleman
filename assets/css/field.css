@@ -5,7 +5,6 @@
 .field {
     position: relative;
     padding: 8px 4px 2px;
-    box-sizing: border-box;
     z-index: 1;
 }
 
@@ -82,7 +81,6 @@
             top: calc(100% + 4px); left: calc(100% + 2px);
             display: block;
             padding: 5px;
-            box-sizing: border-box;
             font-size: 0.9em; font-weight: 600;
             color: #fff;
             border-radius: 2px;
@@ -161,9 +159,7 @@
 
 .field--textbox__input {
     display: inline-block;
-    padding: 4px 6px;
-    width: 100%;
-    box-sizing: border-box;
+    width: 100%; min-width: 60px;
     font-size: 1em; font-family: inherit;
     color: inherit;
     border: 0 none;
@@ -197,7 +193,6 @@
 
     .field--textbox__choice {
         padding: 5px 1%;
-        box-sizing: border-box;
         font-size: 0.9em;
     }
         .field--textbox__choice:hover,
@@ -213,7 +208,6 @@
 
 .field--list {
     position: relative;
-    box-sizing: border-box;
 }
 
 .field--list__list {
@@ -235,7 +229,6 @@
     .field--list-item {
         position: relative;
         display: flex;
-        box-sizing: border-box;
         font-size: 1em;
     }
 
@@ -261,7 +254,6 @@
 
     .field--table-cell {
         position: relative;
-        box-sizing: border-box;
     }
 
     .field--table__btn-add {
@@ -281,51 +273,22 @@
     display: inline-flex;
     flex-wrap: wrap;
     flex-direction: column;
-    padding: 0;
     font-size: 1em;
 }
 
     .field--choice__input {
-        padding: 2px 5px 1px;
         font-size: 1em;
-        border-style: solid; border-radius: 1px;
         overflow: hidden;
         outline: none;
         z-index: 5;
     }
 
-    .field--choice__input.error {
-        background-color: rgba(191, 25, 50, 0.2)!important;
-        border-color: #dd4124!important;
-    }
-
     .field--choice__input:empty {
-        max-width: 150px;
         white-space: nowrap;
         font-size: 0.9em;
         overflow: hidden;
         text-overflow: ellipsis;
     }
-    .field--choice__input:empty:not(:focus) {
-        box-shadow: 0 -1px 2px -1px #c0c0c0;
-    }
-    .field--choice__input:not(:empty) {
-        border-color: #555;
-        font-size: 1em;
-    }
-        .field--choice__input:not(:empty):focus {
-            background-color: #fefefe;
-        }
-    .field--choice__input:focus {
-        border-width: 1px; border-radius: 2px;
-    }
-        .field--choice__input:not(:focus) {
-            border-width: 0 0 2px;
-        }
-            .field--choice__input:not(:focus):hover {
-                box-shadow: 0 -1px 2px #c0c0c0;
-            }
-
 
     .field--choice__choices {
         position: relative;
@@ -335,38 +298,4 @@
 
     .field--choice__choice {
         position: relative;
-        padding: 2px 5px 3px;
-        box-sizing: border-box;
     }
-
-
-/*
- * Field: Link
------------------------------------------------------------------------------*/
-
-.field--link {
-    font-size: 1em;
-}
-
-    .field--link__input {
-        font-size: 1em;
-    }
-
-    .field--link__choices {
-        position: relative;
-        background: #fff;
-        box-shadow: 0 1px 2px #999;
-        z-index: 2;
-        cursor: pointer;
-    }
-    .field--link__choice {
-        position: relative;
-        padding: 2px 5px 3px;
-        box-sizing: border-box;
-        font-size: 0.9em;
-    }
-        .field--link__choice:hover,
-        .field--link__choice:focus,
-        .field--link__choice:active {
-            background-color: #ffd300;
-        }

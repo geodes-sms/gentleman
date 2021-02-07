@@ -1,9 +1,8 @@
 import {
-    createDocFragment, createSpan, createDiv, createI, createUnorderedList,
-    createListItem, createButton, findAncestor, removeChildren, isHTMLElement,
-    isNullOrUndefined, valOrDefault, hasOwn,
+    createDocFragment, createSpan, createDiv, createI, createListItem,
+    createButton, removeChildren, isHTMLElement, valOrDefault,
 } from "zenkai";
-import { hide, show, shake, getElementTop, getElementBottom, getElementLeft, getElementRight } from "@utils/index.js";
+import { hide, show, shake } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler } from "./../content-handler.js";
 import { Field } from "./field.js";
@@ -64,7 +63,6 @@ function createListFieldItem(object) {
         dataset: {
             nature: "field-component",
             view: "list",
-            component: "list-item",
             id: this.id,
             value: object.id,
             name: object.name,
@@ -82,7 +80,6 @@ function createListFieldItem(object) {
         dataset: {
             nature: "field-component",
             view: "list",
-            component: "action",
             id: this.id,
             action: "remove",
             index: container.dataset.index
@@ -128,24 +125,8 @@ function createNotificationMessage(type, message) {
     return element;
 }
 
-/**
- * Verifies whether this element is valid
- * @param {HTMLElement} element 
- * @returns {boolean}
- * @this {BaseListField}
- */
-function isValid(element) {
-    if (!isHTMLElement(element)) {
-        return false;
-    }
-    
-    const { nature, id } = element.dataset;
 
-    return nature === "field-component" && id === this.id;
-}
-
-
-const BaseListField = {
+const BaseGraphField = {
     /** @type {HTMLElement} */
     list: null,
     /** @type {Map} */
@@ -250,53 +231,7 @@ const BaseListField = {
             this.notification.appendChild(this.statusElement);
         }
 
-        content.forEach(element => {
-            if (element.type === "list") {
-                const { style } = valOrDefault(element.list, {});
-
-                this.list = createUnorderedList({
-                    class: ["bare-list", "field--list__list"],
-                    dataset: {
-                        nature: "field-component",
-                        view: "list",
-                        id: this.id
-                    }
-                });
-
-                if (!this.source.hasValue()) {
-                    this.list.classList.add("empty");
-                }
-
-                StyleHandler(this.list, style);
-
-                fragment.appendChild(this.list);
-            } else if (element.type === "action") {
-                var { content, style } = valOrDefault(element, actionDefaultSchema.add);
-
-                var addProjection = ContentHandler.call(this, content, null);
-
-                var addElement = createButton({
-                    class: ["field--list__add"],
-                    tabindex: 0,
-                    dataset: {
-                        nature: "field-component",
-                        view: "list",
-                        component: "action",
-                        id: this.id,
-                        action: "add",
-                    }
-                }, [addProjection]);
-
-
-                StyleHandler(addElement, style);
-
-                fragment.appendChild(addElement);
-            } else {
-                let content = ContentHandler.call(this, element);
-
-                fragment.appendChild(content);
-            }
-        });
+        content.forEach(element => { });
 
         this.source.getValue().forEach((value) => {
             var item = createListFieldItem.call(this, value);
@@ -337,47 +272,11 @@ const BaseListField = {
         this.items.clear();
         removeChildren(this.list);
     },
-
-    focus(element) {
-        if (isValid.call(this, element)) {
-            console.log(element);
-            this.focusIn(element);
-            this.selection.focus();
-        } else if (isHTMLElement(this.selection)) {
-            this.selection.focus();
-        } else if (this.hasValue()) {
-            this.list.firstElementChild.focus();
-        }
-
-        return this;
-    },
-
-    /**
-     * Element Focus in handler
-     * @param {HTMLElement} target 
-     */
     focusIn(target) {
         this.focused = true;
         this.element.classList.add("active");
-
-        const { component: name } = target.dataset;
-
-        if (name === "list-item") {
-            this.selection = target;
-        }
     },
-    /**
-     * Component Focus in handler
-     * @param {HTMLElement} target 
-     */
-    _focusIn(target) {
-        const { component: name } = target.dataset;
-
-        if (name === "list-item") {
-            this.selection = target;
-        }
-    },
-    focusOut() {
+    focusOut(target) {
         if (this.readonly) {
             return;
         }
@@ -424,10 +323,10 @@ const BaseListField = {
     createElement() {
         return this.source.createElement();
     },
-    getItem(id) {
+    getNode(id) {
         return this.items.get(id);
     },
-    addItem(value) {
+    addNode(value) {
         const item = createListFieldItem.call(this, value);
 
         if (value.index) {
@@ -437,23 +336,11 @@ const BaseListField = {
         }
 
     },
-    removeItem(value) {
+    removeNode(value) {
         let item = this.getItem(value.id);
 
         if (!isHTMLElement(item)) {
             throw new Error("List error: Item not found");
-        }
-
-        const index = +item.dataset.index;
-
-        this.items.delete(value.id);
-        removeChildren(item);
-        item.remove();
-
-        for (let i = index; i < this.list.children.length; i++) {
-            const item = this.list.children[i];
-            const { index } = item.dataset;
-            item.dataset.index = +index - 1;
         }
     },
     /**
@@ -480,58 +367,14 @@ const BaseListField = {
 
         var result = this.source.removeElementAt(+index);
 
-        if (result.success) {
+        if (result) {
             this.environment.notify("The element was successfully deleted");
-            if(this.hasValue()) {
-                let itemIndex = +index < this.list.childElementCount ? +index : this.list.childElementCount - 1;
-                this.list.children[itemIndex].focus();
-            }
         } else {
-            this.environment.notify(`This element cannot be deleted: ${result.message}`);
+            this.environment.notify("This element cannot be deleted");
             shake(target);
         }
     },
 
-    /**
-     * Handles the `ctrl+space` command
-     * @param {HTMLElement} target 
-     */
-    _spaceHandler(target) {
-        createMessageElement.call(this);
-
-        removeChildren(this.messageElement);
-        this.messageElement.appendChild(createNotificationMessage(NotificationType.INFO, "Enter any text."));
-
-        show(this.messageElement);
-    },
-
-    /**
-     * Handles the `space` command
-     * @param {HTMLElement} target 
-     */
-    spaceHandler(target) {
-        if (!isValid.call(this, target) || target.parentElement !== this.list) {
-            return false;
-        }
-
-        this.createElement();
-
-        return true;
-    },
-    /**
-     * Handles the `space` command
-     * @param {HTMLElement} target 
-     */
-    deleteHandler(target) {
-        if (!isValid.call(this, target) || target.parentElement !== this.list) {
-            return false;
-        }
-
-        this.selection = target;
-        this.delete(target);
-
-        return true;
-    },
     /**
      * Handles the `escape` command
      * @param {HTMLElement} target 
@@ -550,46 +393,6 @@ const BaseListField = {
      * @param {HTMLElement} target 
      */
     enterHandler(target) {
-        const getComponent = (element) => {
-            if (isValid.call(this, element)) {
-                return element;
-            }
-
-            return findAncestor(element, (el) => isValid.call(this, el), 5);
-        };
-
-        const component = getComponent(target);
-
-        if (isNullOrUndefined(component)) {
-            return false;
-        }
-
-        const { action, index, component: name } = component.dataset;
-
-        if (name === "list-item") {
-            let element = component.firstElementChild;
-            while (element && element.dataset.id === this.id) {
-                element = element.nextElementSibling;
-            }
-
-            let projectionElement = this.environment.resolveElement(element);
-            if (projectionElement) {
-                projectionElement.focus();
-            }
-
-            return true;
-        } else if (action === "add") {
-            this.selection = component;
-            this.createElement();
-
-            return true;
-        } else if (action === "remove") {
-            this.selection = component.parentElement;
-            this.delete(component.parentElement);
-
-            return true;
-        }
-
         return false;
     },
     /**
@@ -604,64 +407,13 @@ const BaseListField = {
      * @param {HTMLElement} target 
      */
     clickHandler(target) {
-        const getComponent = (element) => {
-            if (isValid.call(this, element)) {
-                return element;
-            }
-
-            return findAncestor(element, (el) => isValid.call(this, el), 5);
-        };
-
-        const component = getComponent(target);
-
-        if (isNullOrUndefined(component)) {
-            return;
-        }
-
-        const { action, index, name } = component.dataset;
-
-        if (action === "add") {
-            this.selection = component;
-            this.createElement();
-        } else if (action === "remove") {
-            this.selection = component.parentElement;
-            this.delete(component.parentElement);
-        }
+        return false;
     },
     /**
      * Handles the `arrow` command
      * @param {HTMLElement} target 
      */
     arrowHandler(dir, target) {
-        /** @type {HTMLElement} */
-        const item = target;
-
-        if (!isHTMLElement(item)) {
-            return false;
-        }
-
-        let closestItem = null;
-
-        if (dir === "up") {
-            closestItem = getElementTop(item, this.list);
-        } else if (dir === "down") {
-            closestItem = getElementBottom(item, this.list);
-        } else if (dir === "left") {
-            closestItem = getElementLeft(item, this.list);
-        } else if (dir === "right") {
-            closestItem = getElementRight(item, this.list);
-        }
-
-        if (isHTMLElement(closestItem)) {
-            closestItem.focus();
-
-            return true;
-        }
-
-        if (this.parent) {
-            return this.parent.arrowHandler(dir, this.element);
-        }
-
         return false;
     },
 
@@ -671,7 +423,7 @@ const BaseListField = {
 };
 
 
-export const ListField = Object.assign(
+export const GraphField = Object.assign(
     Object.create(Field),
-    BaseListField
+    BaseGraphField
 );

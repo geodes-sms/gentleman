@@ -3,7 +3,6 @@
     flex-direction: column;
     height: 180px;
     padding: 42px 5%;
-    box-sizing: border-box;
     background-color: #555;
     color: #fff;
 }
@@ -25,7 +24,6 @@
     display: flex; align-items: flex-start;
     padding: 60px 5%;
     width: 100%;
-    box-sizing: border-box;
     background-color: #3b3b3b;
 }
     .loader-container:after {
@@ -41,7 +39,6 @@
 .loader-options {
     width: 100%; max-width: 480px;
     padding: 12px 24px 18px;
-    box-sizing: border-box;
     color: #fff;
     border-radius: 10px;
     box-shadow: 1px 4px 2px -1px #1b1b1b;
@@ -63,7 +60,6 @@
     display: flex; flex-direction: column; justify-content: center; align-items: center;
     margin-right: 18px;
     width: 108px; height: 108px; 
-    box-sizing: border-box;
     font-size: 1.6em;
     text-align: center;
     color: #fff;

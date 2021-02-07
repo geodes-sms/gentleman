@@ -12,9 +12,9 @@ const MODEL_GENTLEMAN_PROJECTION = require('@include/gentleman_model.json');
 const { concept, projection, editor } = MODEL_GENTLEMAN_PROJECTION;
 
 const Environment = Manager.init();
+const ConceptEditor = Environment.createEditor().init(concept, projection).open();
 Environment.render();
 
-// const ConceptEditor = Environment.createEditor().init(concept, projection).open();
-// if (editor) {
-//     ConceptEditor.buildTarget = editor.build;
-// }
+if (editor) {
+    ConceptEditor.buildTarget = editor.build;
+}

@@ -27,14 +27,12 @@ export const ProjectionFactory = {
 };
 
 const Projection = {
-    init(concept) {
+    init(args) {
         this.containers = [];
         this.attributes = [];
         this.components = [];
 
-        if (concept) {
-            this.concept = concept;
-        }
+        this.args = valOrDefault(args, {});
 
         this.concept.register(this);
 
@@ -57,6 +55,9 @@ const Projection = {
     components: null,
     /** @type {number} */
     index: 0,
+    /** @type {boolean} */
+    editing: false,
+
     get hasMultipleViews() { return this.schema.length > 1; },
     get isReadOnly() { return valOrDefault(this.getSchema().readonly, false); },
 
@@ -68,10 +69,37 @@ const Projection = {
     getSchema() {
         return this.schema[this.index];
     },
+    getContainer() {
+        return this.containers[this.index];
+    },
     getStyle() {
         const { style } = this.getSchema();
 
         return style;
+    },
+    /**
+     * Get a the related field object
+     * @param {HTMLElement} element 
+     * @returns {Field}
+     */
+    getField(element) {
+        return this.environment.getField(element);
+    },
+    /**
+     * Get a the related static object
+     * @param {HTMLElement} element 
+     * @returns {Static}
+     */
+    getStatic(element) {
+        return this.environment.getStatic(element);
+    },
+    /**
+     * Get a the related layout object
+     * @param {HTMLElement} element 
+     * @returns {Layout}
+     */
+    getLayout(element) {
+        return this.environment.getLayout(element);
     },
     remove() {
         var parent = this.container.parentElement;
@@ -176,9 +204,11 @@ const Projection = {
         var container = null;
 
         if (type === "layout") {
-            this.element = LayoutFactory.createLayout(this.model, projection, this).init();
+            this.element = LayoutFactory.createLayout(this.model, projection, this).init(this.args);
+
+            this.environment.registerLayout(this.element);
         } else if (type === "field") {
-            this.element = FieldFactory.createField(this.model, projection, this).init();
+            this.element = FieldFactory.createField(this.model, projection, this).init(this.args);
 
             this.environment.registerField(this.element);
         }
@@ -199,7 +229,7 @@ const Projection = {
             /** @type {HTMLElement} */
             let btnDelete = createButton({
                 class: ["btn", "structure__btn-delete"],
-                title: `Delete ${this.concept.ref.name.toLowerCase()}`
+                title: `Delete`
             });
 
             btnDelete.addEventListener('click', (event) => {
@@ -210,30 +240,49 @@ const Projection = {
             container.prepend(btnDelete);
         }
 
-        if (this.hasMultipleViews) {
-            let altBadge = createI({
-                class: ["badge", "badge--alt"]
-            });
+        // if (this.hasMultipleViews) {
+        //     let altBadge = createI({
+        //         class: ["badge", "badge--alt"]
+        //     });
 
-            container.prepend(altBadge);
-        }
+        //     container.prepend(altBadge);
+        // }
 
-        this.containers.push(container);
+        this.addContainer(container);
 
         return container;
     },
+    addContainer(container) {
+        if(!isHTMLElement(container)) {
+            throw new TypeError("Bad request: Missing container");
+        }
+
+        this.containers.push(container);
+    },
+    refresh() {
+        if (this.editing) {
+            this.containers.forEach(container => {
+                container.tabIndex = 0;
+            });
+        } else {
+            this.containers.forEach(container => {
+                container.tabIndex = null;
+            });
+        }
+    },
     changeView(index) {
-        if (this.schema.length < 2) {
+        if (!this.hasMultipleViews) {
             this.environment.notify("There is no alternative projection for this concept");
+
             return;
         }
 
-        var currentContainer = this.containers[this.index];
+        var currentContainer = this.getContainer();
 
         this.index = valOrDefault(index, (this.index + 1) % this.schema.length);
-        var container = this.containers[this.index];
+        var container = this.getContainer();
 
-        if (!container) {
+        if (!isHTMLElement(container)) {
             container = this.render();
         }
 

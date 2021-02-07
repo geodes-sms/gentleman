@@ -7,22 +7,26 @@ import { StaticFactory } from "./static/index.js";
 
 
 export function ContentHandler(schema, concept, args) {
-
     const contentConcept = valOrDefault(concept, this.projection.concept);
 
     if (schema.type === "layout") {
         let layout = LayoutFactory.createLayout(this.model, schema.layout, this.projection).init(args);
         layout.parent = this;
 
+        this.projection.environment.registerLayout(layout);
+
         return layout.render();
     } else if (schema.type === "field") {
         let field = FieldFactory.createField(this.model, schema, this.projection).init(args);
         field.model = this.model;
+        field.parent = this;
 
         return field.render();
     } else if (schema.type === "static") {
         let staticContent = StaticFactory.createStatic(this.model, schema.static, this.projection).init(args);
         staticContent.parent = this;
+
+        this.projection.environment.registerStatic(staticContent);
 
         return staticContent.render();
     } else if (schema.type === "attribute") {
@@ -80,45 +84,4 @@ function PropertyHandler(value, concept) {
     StyleHandler(element, style);
 
     return element;
-}
-
-/**
- * Renders a text
- * @param {*} value 
- * @param {*} projection 
- * @returns {HTMLElement}
- */
-function TextHandler(value, projection) {
-    const { help, style, content } = value;
-
-    /** @type {HTMLElement} */
-    const text = createSpan({
-        class: ["text"],
-        dataset: {
-            ignore: "all",
-        }
-    });
-
-    if (help) {
-        text.title = help;
-    }
-
-    if (isString(content)) {
-        text.appendChild(createTextNode(content));
-    } else if (Array.isArray(content)) {
-        for (let i = 0; i < content.length; i++) {
-            const value = content[i];
-            if (isString(value)) {
-                text.appendChild(createTextNode(value));
-            } else {
-                text.appendChild(TextHandler(value, projection));
-            }
-        }
-    } else if (hasOwn(content, "content")) {
-        text.appendChild(TextHandler(content, projection));
-    }
-
-    StyleHandler(text, style);
-
-    return text;
 }
