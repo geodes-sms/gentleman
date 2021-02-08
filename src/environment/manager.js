@@ -257,7 +257,8 @@ export const Manager = {
                 }
             }
 
-            const [concept, projection] = json; console.log(concept, projection);
+            const [concept, projection] = json; 
+            console.log(concept, projection);
 
             this.createEditor("gentleman_concept").init(concept, projection).open();
         });

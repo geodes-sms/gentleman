@@ -12,6 +12,7 @@ const sources = [
     './assets/css/manager.css',
     './assets/css/loader.css',
     './assets/css/editor.css',
+    './assets/css/editor-header.css',
 ];
 
 

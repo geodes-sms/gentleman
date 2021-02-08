@@ -237,6 +237,202 @@ export const Editor = {
 
         return this;
     },
+    initProjection() {
+        // this.changeModel(MODEL_GENTLEMAN_PROJECTION);
+
+        const { concept, projection, views = [], editor } = MODEL_GENTLEMAN_PROJECTION;
+
+
+        const values = [
+            {
+                "id": "3c35664d-b3c2-4058-bd36-7c2b2057d4e3",
+                "root": true,
+                "name": "projection",
+                "attributes": [
+                    {
+                        "name": "global",
+                        "value": {
+                            "name": "boolean",
+                            "value": true
+                        }
+                    },
+                    {
+                        "name": "concept",
+                        "value": {
+                            "name": "concept",
+                            "attributes": [
+                                {
+                                    "name": "name",
+                                    "value": {
+                                        "name": "string",
+                                        "value": "okidok"
+                                    }
+                                },
+                                {
+                                    "name": "prototype",
+                                    "value": null
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "tags",
+                        "value": {
+                            "name": "set",
+                            "value": []
+                        }
+                    },
+                    {
+                        "name": "content",
+                        "value": {
+                            "name": "component",
+                            "value": {
+                                "name": "layout component",
+                                "attributes": [
+                                    {
+                                        "name": "layout",
+                                        "value": {
+                                            "name": "layout",
+                                            "value": {
+                                                "name": "wrap layout",
+                                                "attributes": [
+                                                    {
+                                                        "name": "elements",
+                                                        "value": {
+                                                            "name": "set",
+                                                            "value": [
+                                                                {
+                                                                    "name": "element",
+                                                                    "attributes": null
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "bc52a796-ded8-441a-986a-92806858e3ae",
+                "name": "boolean",
+                "root": false,
+                "value": true
+            },
+            {
+                "id": "6ed70699-54af-4a9d-a0f2-aa743308e3f0",
+                "root": false,
+                "name": "concept",
+                "attributes": [
+                    {
+                        "name": "name",
+                        "value": {
+                            "name": "string",
+                            "value": "okidok"
+                        }
+                    },
+                    {
+                        "name": "prototype",
+                        "value": {
+                            "name": "string",
+                            "value": ""
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "b7828cdf-2c17-42b9-94e6-fd0ce5520bc7",
+                "name": "string",
+                "root": false,
+                "value": "okidok"
+            },
+            {
+                "id": "89fc6c8f-4ede-476f-84ec-4fe201d08e8d",
+                "name": "string",
+                "root": false,
+                "value": ""
+            },
+            {
+                "id": "74ba8855-971c-4893-911e-c9ae998fbaf1",
+                "name": "set",
+                "root": false,
+                "value": []
+            },
+            {
+                "id": "0994d05b-7a09-4517-997c-5c404d6ada71",
+                "name": "component",
+                "root": false,
+                "value": {
+                    "id": "8c12f177-67c3-43b5-9c5d-162cd19c5bf1",
+                    "name": "layout component"
+                }
+            },
+            {
+                "id": "8621aeb6-fcc8-4264-be5d-016dbd8f29d7",
+                "name": "layout",
+                "root": false,
+                "value": {
+                    "id": "13681657-6a6f-486e-9a56-0314167e5a71",
+                    "name": "wrap layout"
+                }
+            },
+            {
+                "id": "fa33c315-c364-4e18-9c5c-8443462ce44e",
+                "name": "element",
+                "root": false,
+                "value": null
+            },
+            {
+                "id": "43ade4b5-4c75-4c5d-9e4a-c2c7f889c166",
+                "name": "set",
+                "root": false,
+                "value": [
+                    {
+                        "id": "fa33c315-c364-4e18-9c5c-8443462ce44e",
+                        "name": "element",
+                        "root": false,
+                        "value": null
+                    }
+                ]
+            }
+        ];
+
+        if (concept) {
+            this.conceptModel = ConceptModelManager.createModel(concept, projection).init(values);
+            this.conceptModel.register(this);
+        }
+
+        if (projection) {
+            this.projectionModel = createProjectionModel(projection, this).init(views);
+        }
+
+        if (editor) {
+            this.config = editor;
+            this.buildTarget = editor.build;
+        }
+
+        this.manager.refresh();
+
+        this.clear().refresh();
+
+        [{ concept: { id: "3c35664d-b3c2-4058-bd36-7c2b2057d4e3", name: "projection" } }].forEach(view => {
+            const { id, name } = view.concept;
+
+            const concept = this.conceptModel.getConcept(id);
+
+            console.log(concept);
+
+            this.conceptSection.appendChild(createProjection.call(this, concept));
+        });
+
+
+        return this;
+    },
 
     changeModel(modelSchema) {
         const { concept, projection, values = [], views = [], editor } = modelSchema;
@@ -535,7 +731,7 @@ export const Editor = {
         //     link.remove();
         // }, 1500);
 
-        return JSON.parse(result);
+        return result;
     },
     export(copy = false) {
         const MIME_TYPE = 'application/json';

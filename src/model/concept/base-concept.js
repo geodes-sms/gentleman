@@ -25,16 +25,24 @@ const _BaseConcept = {
             return false;
         }
 
-        const { id, attributes } = args;
-        // this.id = id;
+        const { id = "", attributes = [] } = args;
+        if (id.length > 10) {
+            this.id = id;
+        }
 
         attributes.forEach(attr => {
-            const { name, value } = attr;
+            const { name, id, value } = attr;
 
             let attribute = this.getAttributeByName(name);
+            console.log(id, value);
 
             if (value) {
                 attribute.target.initValue(value);
+            } else if (id) {
+                let _value = this.model.getValue(id);
+                if (_value) {
+                    attribute.target.initValue(_value);
+                }
             }
         });
 

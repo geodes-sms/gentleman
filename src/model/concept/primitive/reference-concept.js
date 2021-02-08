@@ -65,7 +65,9 @@ const _ReferenceConcept = {
 
         return this.reference;
     },
-    setValue(value) {
+    setValue(_value) {
+        let value = isObject(_value) ? _value.id : _value;
+
         var result = this.validate(value);
 
         if (result !== ResponseCode.SUCCESS) {
@@ -214,6 +216,7 @@ function resolveAccept(accept) {
 
     if (rel === "parent") {
         let parent = this.getParent(scope);
+
         return parent.getChildren(name);
     }
 

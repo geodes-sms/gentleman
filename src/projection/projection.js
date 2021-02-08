@@ -198,17 +198,17 @@ const Projection = {
     render() {
         const schema = this.getSchema();
 
-        const { type, projection } = schema;
+        const { type, projection, content } = schema;
 
         /** @type {HTMLElement} */
         var container = null;
 
         if (type === "layout") {
-            this.element = LayoutFactory.createLayout(this.model, projection, this).init(this.args);
+            this.element = LayoutFactory.createLayout(this.model, valOrDefault(projection, content), this).init(this.args);
 
             this.environment.registerLayout(this.element);
         } else if (type === "field") {
-            this.element = FieldFactory.createField(this.model, projection, this).init(this.args);
+            this.element = FieldFactory.createField(this.model, valOrDefault(projection, content), this).init(this.args);
 
             this.environment.registerField(this.element);
         }

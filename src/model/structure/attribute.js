@@ -27,6 +27,7 @@ export const BaseAttribute = {
         }
 
         const { nature } = this.target;
+
         let copy = {
             name: this.target.name,
         };
@@ -47,12 +48,26 @@ export const BaseAttribute = {
         return copy;
     },
     export() {
-        var output = {
-            [`${this.name}:attribute`]: {
-                id: this.target.id,
-                name: this.target.name
-            }
+        const { nature } = this.target;
+        
+        let output = {
+            name: this.target.name,
         };
+
+        
+        let value = this.target.exportValue();
+
+        if (nature === "primitive") {
+            output.value = value;
+        } else if (nature === "prototype") {
+            output.value = {
+                name: this.target.value.name,
+                attributes: value
+            };
+        } else {
+            output.attributes = value;
+        }
+
 
         return output;
     },

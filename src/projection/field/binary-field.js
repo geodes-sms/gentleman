@@ -201,7 +201,11 @@ const BaseBinaryField = {
             });
             this.label.htmlFor = this.input.id;
 
-            if (projection) {
+            if (Array.isArray(projection)) {
+                projection.forEach(element => {
+                    this.label.append(ContentHandler.call(this, element));
+                });
+            } else if (projection) {
                 this.label.append(ContentHandler.call(this, projection));
             }
 
@@ -343,12 +347,16 @@ const BaseBinaryField = {
             if (label) {
                 const { style, projection, value } = label;
 
-                if (projection) {
+                if (Array.isArray(projection)) {
+                    projection.forEach(element => {
+                        this.label.append(ContentHandler.call(this, element));
+                    });
+                } else if (projection) {
                     this.label.append(ContentHandler.call(this, projection));
                 }
 
                 StyleHandler(this.label, style);
-            } 
+            }
         }
 
         if (this.input.checked) {
@@ -409,7 +417,7 @@ const BaseBinaryField = {
      * @param {HTMLElement} target 
      */
     arrowHandler(dir, target) {
-        if(this.parent) {
+        if (this.parent) {
             return this.parent.arrowHandler(dir, this.element);
         }
 

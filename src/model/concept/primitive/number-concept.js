@@ -8,6 +8,7 @@ const ResponseCode = {
     INVALID_VALUE: 401,
     MIN_ERROR: 402,
     MAX_ERROR: 403,
+    FIX_ERROR: 404,
 };
 
 function responseHandler(code) {
@@ -25,12 +26,17 @@ function responseHandler(code) {
         case ResponseCode.MAX_ERROR:
             return {
                 success: false,
-                message: `The value is greater than the maximum allowed: ${this.max}.`
+                message: `The value is greater than the maximum allowed: ${this.schema.max.value}.`
             };
         case ResponseCode.MIN_ERROR:
             return {
                 success: false,
-                message: `The value is less than the minimum allowed: ${this.min}.`
+                message: `The value is less than the minimum allowed: ${this.schema.min.value}.`
+            };
+        case ResponseCode.FIX_ERROR:
+            return {
+                success: false,
+                message: `The value is different from the value allowed: ${this.schema.value.value}.`
             };
     }
 }
@@ -42,6 +48,7 @@ const _NumberConcept = {
         this.parent = args.parent;
         this.ref = args.ref;
         this.values = valOrDefault(this.schema.values, []);
+        this.default = valOrDefault(this.schema.default, null);
         this.alias = this.schema.alias;
         this.description = this.schema.description;
         this.min = this.schema.min;
@@ -55,7 +62,7 @@ const _NumberConcept = {
     },
     initValue(args) {
         if (isNullOrUndefined(args)) {
-            this.value = null;
+            this.value = this.default;
 
             return this;
         }
@@ -122,12 +129,30 @@ const _NumberConcept = {
             return ResponseCode.INVALID_NUMBER;
         }
 
-        if (this.min && value < this.min) {
-            return ResponseCode.MIN_ERROR;
-        }
+        
+        if (this.schema.value) {
+            const { min, max } = this.schema.value;
+            if (this.length.value && value.length !== this.length.value) {
+                return ResponseCode.FIX_ERROR;
+            }
 
-        if (this.max && value > this.max) {
-            return ResponseCode.MAX_ERROR;
+            if (min) {
+                if (min.included && value.length < min.value) {
+                    return ResponseCode.MIN_ERROR;
+                }
+                if (!min.included && value.length <= min.value) {
+                    return ResponseCode.MIN_ERROR;
+                }
+            }
+
+            if (max) {
+                if (max.included && value.length > max.value) {
+                    return ResponseCode.MAX_ERROR;
+                }
+                if (!max.included && value.length >= max.value) {
+                    return ResponseCode.MAX_ERROR;
+                }
+            }
         }
 
         if (isNullOrWhitespace(value) || isEmpty(this.values)) {

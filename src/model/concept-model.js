@@ -85,6 +85,7 @@ const ATTR_REQUIRED = "required";
 const ATTR_PROPERTIES = "properties";
 const ATTR_PROTOTYPE = "prototype";
 const ATTR_TAGS = "tags";
+const ATTR_VALUE = "value";
 
 
 export const ConceptModel = {
@@ -417,7 +418,7 @@ export const ConceptModel = {
             concepts.push(this.buildSingleConcept(concept).message);
         });
 
-        return JSON.stringify(concepts);
+        return concepts;
     },
     buildSingleConcept(concept) {
         const errors = [];
@@ -496,7 +497,7 @@ export const ConceptModel = {
             result.push(this.buildSingleProjection(concept).message);
         });
 
-        return JSON.stringify(result);
+        return result;
     },
     buildSingleProjection(concept) {
         const errors = [];
@@ -627,6 +628,14 @@ function buildTarget(target) {
 
     if (hasAttr(target, "default") && hasValue(target, "default")) {
         result["default"] = getValue(target, "default");
+    }
+
+    if (hasAttr(target, "ordered") && hasValue(target, "ordered")) {
+        result["ordered"] = getValue(target, "ordered");
+    }
+    
+    if (hasAttr(target, "pattern") && hasValue(target, "pattern")) {
+        result["pattern"] = getValue(target, "pattern");
     }
 
     ["length", "value", "cardinality"].forEach(prop => {
@@ -811,10 +820,7 @@ function buildProjection(concept) {
         schema.name = getName(concept);
     }
 
-    return {
-        success: true,
-        message: schema,
-    };
+    return schema;
 }
 
 function buildTemplate(concept) {
@@ -952,6 +958,15 @@ function buildElement(element) {
             type: contentType,
             layout: buildLayout(element)
         };
+    }
+    
+    if (contentType === "template") {
+        let schema = {
+            type: contentType,
+            name: getName(getReference(element, ATTR_VALUE))
+        };
+
+        return schema;
     }
 
     return null;

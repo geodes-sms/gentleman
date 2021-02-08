@@ -8,6 +8,8 @@
     z-index: 1;
 }
 
+    .field.readonly { padding: 0; }
+
     .field.has-toolbar { padding-top: 24px; }
 
     .field.active { z-index: 20; opacity: 1; }

@@ -314,9 +314,15 @@ const _Concept = {
             name: this.name
         };
 
+        var attributes = [];
         this.getAttributes().forEach(attr => {
-            Object.assign(output, attr.export());
+            attributes.push({
+                "name": attr.name,
+                "value": attr.export()
+            });
         });
+
+        output.attributes = attributes;
 
         return output;
     },

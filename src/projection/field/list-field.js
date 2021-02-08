@@ -79,6 +79,7 @@ function createListFieldItem(object) {
     var btnRemove = createButton({
         class: ["btn", "btn-remove"],
         tabindex: -1,
+        title: "Remove",
         dataset: {
             nature: "field-component",
             view: "list",

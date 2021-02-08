@@ -11,7 +11,6 @@
 
 .model-projection .line {
     display: flex; flex-direction: row;
-    padding-left: 4px;
     font-size: 1.4rem;
 }
 
@@ -21,7 +20,6 @@
 
 .model-projection .keyword {
     display: block;
-    border: 1px solid #999;
     white-space: nowrap;
     color: #222; 
 }
@@ -38,7 +36,6 @@
 }
 
 .model-projection .block__line {
-    padding-left: 4px;
     font-size: 1.4rem;
 }
     .model-projection .block__line:after {
@@ -52,7 +49,6 @@
 
     .model-projection .block__content {
         display: flex; flex-direction: column;
-        padding-left: 4px;
         font-size: 1.4rem;
     }
     .model-projection .block__content:after {
@@ -114,6 +110,99 @@
     }
         .textfield--concept.empty .textfield--concept__input { font-style: italic; }
         .textfield--concept__input:focus { border-color: royalblue; box-shadow: 0 1px 0 royalblue; }
+
+
+.name-field--textual + .name-field--textual {
+    margin-top: 3px;
+}
+
+
+.bracket-choice {
+    display: flex; flex-direction: row;
+    padding: 0;
+    /* width: 100%; */
+    font-size: 1.4rem;
+}
+    .bracket-choice.empty:not(.querying) > .bracket-choice__list {
+        display: none;
+    }
+
+    .bracket-choice__list {
+        display: flex; flex-direction: row; align-items: center;
+    }
+        .bracket-choice.active > .bracket-choice__list:before {
+            content: "[";
+            font-weight: bold;
+            transform: scale(1.1);
+        }
+        .bracket-choice.active > .bracket-choice__list:after {
+            content: "]";
+            font-weight: bold;
+            transform: scale(1.1);
+        }
+
+    .bracket-choice__input {
+        border: 0 none;
+        border-bottom: 1px solid #555;
+    }
+        
+        .bracket-choice__input:focus { 
+            border-color: royalblue; 
+            box-shadow: 0 1px 0 royalblue; 
+        }
+
+    .bracket-choice > .keyword + .bracket-choice__input {
+        margin-left: 4px;
+    }
+
+    .bracket-choice.active > .bracket-choice__list {
+        margin-left: 4px;
+        z-index: 10;
+    }
+
+    .bracket-choice.active > .bracket-choice__list .bracket-choice__list-option.selected {
+        color: #222;
+        background-color: #ffd300;
+    }
+
+    .bracket-choice:not(.active) > .bracket-choice__list .bracket-choice__list-option:not(.selected) { display: none; }
+
+    .bracket-choice:not(.active) > .bracket-choice__list .bracket-choice__list-option.selected { 
+        margin: 0;
+        padding: 0; 
+        width: 100%;
+        font-size: 1.1em; 
+        border-bottom: 2px solid currentColor;
+    }
+
+    .bracket-choice:not(.active):not(.empty) > .bracket-choice__input { display: none; }
+
+    .bracket-choice:not(.active).empty > .bracket-choice__input { font-style: italic; }
+    
+        
+    .bracket-choice__list-option {
+        font-size: 0.95em;
+        padding-left: 4px; padding-right: 4px;
+        border-radius: 1px;
+        transition: transform .2s;
+    }
+    
+    .bracket-choice__list-option:not(:last-child) {
+        margin-right: 4px;
+    }
+    
+    .bracket-choice.active .bracket-choice__list-option:hover,
+    .bracket-choice.active .bracket-choice__list-option:focus {
+        background-color: rgba(205, 205, 205, 0.85);
+        transform: scale(1.05);
+    }
+    
+    .bracket-choice__list-option.selected {
+        font-weight: bold;
+    }
+
+    .bracket-choice__selection { width: 100%; padding-top: 6px; }
+
 
  
 .component-choice {
@@ -319,16 +408,18 @@
 .element-list {
     display: flex; align-items: flex-start;
     margin-bottom: 12px;
-    padding: 12px;
+    /* padding: 12px; */
     border-radius: 3px;
-    background-color: #e1e2e3;
 }
 
+    .element-list-item .element-list {
+        padding-left: 12px;
+    }
+
     .element-list-item {
-        margin-right: 12px; margin-bottom: 12px;
-        padding-bottom: 6px; padding-right: 24px;
+        margin-right: 6px; margin-bottom: 6px;
         border-radius: 2px;
-        background-color: #fff;
+        box-shadow: inset 1px 1px 2px #c0c0c0;
     }
 
     .element-list-item:focus {
@@ -338,7 +429,7 @@
     .element-list-item > .btn-remove {
         position: absolute;
         top: 0; right: 0;
-        background-color: #a9a9a9;
+        color: #555;
         order: 2;
         border-radius: 0 0 0 2px;
         padding: 2px 3px;
@@ -349,15 +440,11 @@
         .element-list-item > .btn-remove:before {
             content: "✖";
             display: block;
-            padding: 2px 2px 2px 1px;
-            width: 20px;
-            height: 20px;
-            color: #fff;
             transition: .4s;
         }
 
         .element-list-item > .btn-remove:hover {
-            background-color: #777;
+            color: #111;
         }
 
 
@@ -455,9 +542,6 @@
             background-color: #555;
         }
 
-.field-config {
-    padding-left: 12px;
-}
 
 /*
     Tag list

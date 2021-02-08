@@ -107,13 +107,15 @@ const BaseTextStatic = {
         if (dir === "right") {
             let isAtEnd = this.getLength() < getCaretIndex(this.element) + 1;
 
-            if (isAtEnd && this.parent.object === "layout") {
+            if (isAtEnd && this.parent) {
                 return this.parent.arrowHandler(dir, target);
             }
         } else if (dir === "left") {
-            let isAtStart = 0 === getCaretIndex(this.element) + 1;
+            let isAtStart = 0 === getCaretIndex(this.element);
+            
+            console.log(isAtStart, getCaretIndex(this.element));
 
-            if (isAtStart && this.parent.object === "layout") {
+            if (isAtStart && this.parent) {
                 return this.parent.arrowHandler(dir, target);
             }
         } else if (this.parent.object === "layout") {

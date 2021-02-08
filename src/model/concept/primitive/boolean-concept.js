@@ -1,4 +1,4 @@
-import { isObject, isNullOrUndefined, toBoolean, isString } from "zenkai";
+import { isObject, isNullOrUndefined, toBoolean, isString, valOrDefault } from "zenkai";
 import { Concept } from "./../concept.js";
 
 
@@ -30,6 +30,7 @@ const _BooleanConcept = {
         this.parent = args.parent;
         this.ref = args.ref;
         this.alias = this.schema.alias;
+        this.default = valOrDefault(this.schema.default, true);
         this.description = this.schema.description;
 
         this.initObserver();
@@ -40,7 +41,8 @@ const _BooleanConcept = {
     },
     initValue(args) {
         if (isNullOrUndefined(args)) {
-            this.value = true;
+            this.value = this.default;
+            
             return this;
         }
 

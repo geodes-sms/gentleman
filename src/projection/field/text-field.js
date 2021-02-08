@@ -403,6 +403,7 @@ const BaseTextField = {
                     this.input = createSpan({
                         class: ["field--textbox__input"],
                         editable: !this.readonly,
+                        title: inputPlaceholder,
                         dataset: {
                             placeholder: inputPlaceholder,
                             nature: "field-component",
@@ -414,6 +415,7 @@ const BaseTextField = {
                     this.input = createTextArea({
                         class: ["field--textbox__input", "field--textbox__input--multiline"],
                         placeholder: inputPlaceholder,
+                        title: inputPlaceholder,
                         dataset: {
                             nature: "field-component",
                             view: "text",
@@ -425,6 +427,7 @@ const BaseTextField = {
                         type: valOrDefault(type, "text"),
                         class: ["field--textbox__input"],
                         placeholder: inputPlaceholder,
+                        title: inputPlaceholder,
                         dataset: {
                             nature: "field-component",
                             view: "text",

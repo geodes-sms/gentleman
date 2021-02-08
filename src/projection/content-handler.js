@@ -1,4 +1,4 @@
-import { createSpan, createTextNode, isString, hasOwn, valOrDefault, createButton } from "zenkai";
+import { createSpan, createTextNode, isString, hasOwn, valOrDefault, createButton, createDocFragment } from "zenkai";
 import { StyleHandler } from './style-handler.js';
 import { AttributeHandler } from './structure-handler.js';
 import { LayoutFactory } from "./layout/index.js";
@@ -31,6 +31,15 @@ export function ContentHandler(schema, concept, args) {
         return staticContent.render();
     } else if (schema.type === "attribute") {
         return AttributeHandler.call(this, schema, contentConcept);
+    } else if (schema.type === "template") {
+        let template = this.model.getModelTemplate(schema.name);
+        console.log(template);
+        const fragment = createDocFragment();
+        template.content.forEach(element => {
+            fragment.append(ContentHandler.call(this, element, concept, args));
+        });
+
+        return fragment;
     } else if (schema.type === "property") {
         return PropertyHandler.call(this, schema, contentConcept);
     } else if (schema.type === "projection") {

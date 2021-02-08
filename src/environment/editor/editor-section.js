@@ -97,7 +97,7 @@ export const EditorSection = {
             class: ["bare-list", "editor-selector"],
         });
 
-        this.modelSelector = createSelector("model");
+        this.modelSelector = createSelector("concept");
         this.modelConceptNotification = createI({
             class: ["editor-selector__notification", "hidden"],
         });
@@ -294,8 +294,8 @@ export const EditorSection = {
             } else if (action === "delete") {
                 this.editor.conceptModel.removeValue(id);
             } else if (action === "edit") {
-                this.editor.manager.createEditor().init().open();
-            } else if (type === "concept") {
+                this.editor.manager.createEditor().init().initProjection().open();
+            } else if (action === "create") {
                 this.editor.addConcept(concept);
             }
         });
@@ -313,8 +313,7 @@ export const EditorSection = {
 };
 
 const SelectorHandler = {
-    "model": SelectorModelHandler,
-    "concept": SelectorConceptHandler,
+    "concept": SelectorModelHandler,
     "projection": SelectorProjectionHandler,
     "value": SelectorValueHandler,
 };
@@ -336,6 +335,35 @@ function SelectorModelHandler() {
     removeChildren(this.modelConceptList);
 
     concreteConcepts.forEach(concept => {
+        let content = createDiv({
+            class: ["selector-model-value__content"]
+        });
+
+        let title = createH4({
+            class: ["selector-model-value__title"],
+            editable: true
+        }, `${concept.name}`);
+
+        let preview = createDiv({
+            class: ["selector-model-value__preview"]
+        });
+
+        content.append(title, preview);
+
+        let actionBar = createDiv({
+            class: ["selector-model-value__action-bar"]
+        });
+
+        let btnCreate = createButton({
+            class: ["btn", "selector-model-value__action-bar-button", "selector-model-value__action-bar-button--clone"],
+            dataset: {
+                action: "create",
+                concept: concept.name
+            }
+        }, "Create");
+
+        actionBar.append(btnCreate);
+
         var conceptItem = createListItem({
             class: ["selector-model-concept", "font-ui"],
             title: concept.description,
@@ -344,7 +372,7 @@ function SelectorModelHandler() {
                 type: "concept",
                 concept: concept.name
             }
-        }, concept.name);
+        }, [content, actionBar]);
 
         this.modelConceptList.appendChild(conceptItem);
     });
@@ -370,7 +398,7 @@ function SelectorProjectionHandler() {
         return null;
     }
 
-    const projections = projectionModel.schema.slice();
+    const projections = projectionModel.schema.filter(p => p.type !== "template");
 
     removeChildren(this.modelProjectionList);
 
@@ -435,7 +463,7 @@ function SelectorProjectionHandler() {
             }
         }, "Delete");
 
-        actionBar.append(chkGlobal, btnDelete, btnClone);
+        actionBar.append(btnDelete, btnClone);
 
         var projectionItem = createListItem({
             class: ["selector-model-projection", "font-ui"],

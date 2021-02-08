@@ -141,7 +141,7 @@ export const ProjectionModel = {
     hasGlobalProjection(concept) {
         const hasConcept = (projection) => projection.concept.name === concept.name;
 
-        return this.schema.findIndex(p => hasConcept(p) && p.global) !== -1;
+        return this.schema.findIndex(p => p.type !== "template" && hasConcept(p) && p.global) !== -1;
     },
     /**
      * Gets the projection matching a concept and optionnally a tag
@@ -155,7 +155,7 @@ export const ProjectionModel = {
 
         var projection = null;
 
-        const hasName = (name) => name && name === concept.name; // TODO: change to look for base (include self)
+        const hasName = (name) => name && (name === concept.name || name === concept.schema.base); // TODO: change to look for base (include self)
         // const hasPrototype = (prototype) => !!(prototype && concept.hasPrototype(prototype));
         const hasPrototype = (prototype) => {
             if (isNullOrUndefined(prototype) || concept.nature === "prototype") {
@@ -166,9 +166,9 @@ export const ProjectionModel = {
         };
 
         if (isString(concept)) {
-            projection = this.schema.filter(p => p.concept.name === concept);
+            projection = this.schema.filter(p => p.type !== "template" && p.concept.name === concept);
         } else {
-            projection = this.schema.filter(p => hasName(p.concept.name) || hasPrototype(p.concept.prototype));
+            projection = this.schema.filter(p => p.type !== "template" && (hasName(p.concept.name) || hasPrototype(p.concept.prototype)));
         }
 
         if (isIterable(tag) && !isEmpty(tag)) {
@@ -177,13 +177,16 @@ export const ProjectionModel = {
 
         return projection;
     },
+    getModelTemplate(name, tag) {
+        return this.schema.find(p => p.type === "template" && p.name === name);
+    },
     getGlobalModelProjection(concept) {
         var projection = null;
 
         if (isString(concept)) {
-            projection = this.schema.filter(p => p.concept.name === concept);
+            projection = this.schema.filter(p => p.type !== "template" && p.concept.name === concept);
         } else if (concept.name) {
-            projection = this.schema.filter(p => p.concept.name === concept.name);
+            projection = this.schema.filter(p => p.type !== "template" && p.concept.name === concept.name);
         }
 
         return projection.filter(p => p.global);

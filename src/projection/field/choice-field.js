@@ -61,6 +61,8 @@ function getItemValue(item) {
 const BaseChoiceField = {
     /** @type {string} */
     value: null,
+    /** @type {string} */
+    values: null,
     /** @type {HTMLElement} */
     choices: null,
     /** @type {HTMLInputElement} */
@@ -84,6 +86,9 @@ const BaseChoiceField = {
         if (!hasOwn(this.schema, "choice")) {
             this.schema.choice = {};
         }
+        if (!hasOwn(this.schema, "selection")) {
+            this.schema.selection = {};
+        }
 
         return this;
     },
@@ -92,10 +97,11 @@ const BaseChoiceField = {
         switch (message) {
             case "value.changed":
                 if (value.object === "concept") {
-                    let projection = this.model.createProjection(value, "choice-selection").init();
+                    const { template = {} } = this.schema.selection;
+                    let projection = this.model.createProjection(value, valOrDefault(template.tag, "choice-selection")).init();
                     projection.parent = this.projection;
 
-                    this.setChoice(value.name);
+                    this.setChoice(value);
 
                     this.setSelection(projection.render());
                 } else {
@@ -128,7 +134,7 @@ const BaseChoiceField = {
      * @returns {boolean}
      */
     hasValue() {
-        return !isNullOrUndefined(this.selection);
+        return !isNullOrUndefined(this.value);
     },
     /**
      * Gets the input value
@@ -312,7 +318,8 @@ const BaseChoiceField = {
 
         removeChildren(this.choices);
 
-        this.source.getCandidates().forEach(value => {
+        this.values = this.source.getCandidates();
+        this.values.forEach(value => {
             this.choices.appendChild(this.createChoiceOption(value));
         });
 
@@ -323,7 +330,7 @@ const BaseChoiceField = {
                 let projection = this.model.createProjection(value, "choice-selection").init();
                 projection.parent = this.projection;
 
-                this.setChoice(value.name);
+                this.setChoice(value);
                 removeChildren(this.selectionElement).appendChild(projection.render());
             } else {
                 this.setChoice(value);
@@ -345,14 +352,17 @@ const BaseChoiceField = {
         this.focused = true;
         this.element.classList.add("active");
 
-        // requery
-        // const fragment = createDocFragment();
+        //requery
+        const fragment = createDocFragment();
 
-        // this.source.getCandidates().forEach(value => {
-        //     fragment.appendChild(this.createChoiceOption(value));
-        // });
+        this.source.getCandidates()
+            .filter(val => !this.values.some(value => value.id === val.id))
+            .forEach(value => {
+                fragment.append(this.createChoiceOption(value));
+                this.values.push(value);
+            });
 
-        // removeChildren(this.choices).appendChild(fragment);
+        this.choices.append(fragment);
 
         return this;
     },
@@ -490,6 +500,8 @@ const BaseChoiceField = {
         return true;
     },
     createChoiceOption(value) {
+        const isConcept = isObject(value);
+
         const container = createListItem({
             class: ["field--choice__choice"],
             tabindex: 0,
@@ -497,14 +509,15 @@ const BaseChoiceField = {
                 nature: "field-component",
                 view: "choice",
                 id: this.id,
-                value: value.id || value.name || value
+                type: isConcept ? "concept" : "value",
+                value: isConcept ? value.id : value,
             }
         });
 
         const choiceSchema = this.content.find(c => c.type === "choice");
         const { template = {}, style } = choiceSchema.choice.option;
 
-        if (isObject(value)) {
+        if (isConcept) {
             let choiceProjection = this.model.createProjection(value, valOrDefault(template.tag, "choice")).init({ focusable: false });
             choiceProjection.parent = this.projection;
 
@@ -524,19 +537,38 @@ const BaseChoiceField = {
 
         StyleHandler(container, style);
 
-        this.items.set(value.name, container);
+        this.items.set(value.id, container);
 
         return container;
     },
     setChoice(value) {
         const { children } = this.choices;
 
+        const getValue = (item) => {
+            const { type, value } = item.dataset;
+
+            if (type === "concept") {
+                return this.values.find(val => val.id === value);
+            }
+
+            if (type === "value") {
+                return value;
+            }
+        };
+
+        const isSame = (val1, val2) => {
+            if (isObject(val1)) {
+                return val1.id === val2.id;
+            }
+            return val1 === val2;
+        };
+
         let found = false;
         for (let i = 0; i < children.length; i++) {
             /** @type {HTMLElement} */
             const item = children[i];
 
-            if (item.dataset.value === value) {
+            if (isSame(getValue(item), value)) {
                 item.classList.add("selected");
                 item.dataset.selected = "selected";
                 this.selection = item;
@@ -553,7 +585,7 @@ const BaseChoiceField = {
         }
 
         if (found) {
-            this.input.value = value;
+            this.input.value = value.name;
         }
 
         return this;
@@ -608,8 +640,20 @@ const BaseChoiceField = {
     enterHandler(target) {
         const item = getItem.call(this, target);
 
-        if (item) {
-            this.setValue(item.dataset.value);
+        const getValue = (item) => {
+            const { type, value } = item.dataset;
+
+            if (type === "concept") {
+                return this.values.find(val => val.id === value);
+            }
+
+            if (type === "value") {
+                return value;
+            }
+        };
+
+        if (isHTMLElement(item) && this.selection !== item) {
+            this.setValue(getValue(item));
         }
     },
     /**
@@ -630,8 +674,20 @@ const BaseChoiceField = {
     clickHandler(target) {
         const item = getItem.call(this, target);
 
+        const getValue = (item) => {
+            const { type, value } = item.dataset;
+
+            if (type === "concept") {
+                return this.values.find(val => val.id === value);
+            }
+
+            if (type === "value") {
+                return value;
+            }
+        };
+
         if (isHTMLElement(item) && this.selection !== item) {
-            this.setValue(item.dataset.value);
+            this.setValue(getValue(item));
             this.focusOut();
         }
     },
