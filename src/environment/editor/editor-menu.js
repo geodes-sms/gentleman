@@ -35,6 +35,14 @@ export function createEditorMenu(options) {
         }
     }, "Import");
 
+    const btnAddProjection = createButton({
+        class: ["btn", "btn-expand"],
+        dataset: {
+            "context": "model",
+            "action": "import-projection"
+        }
+    }, "Expand");
+
     const btnBuild = createButton({
         class: ["btn", "btn-build"],
         dataset: {
@@ -43,7 +51,7 @@ export function createEditorMenu(options) {
         }
     }, "Build");
 
-    menu.append(title, btnExport, btnImport, btnBuild);
+    menu.append(title, btnExport, btnImport, btnAddProjection, btnBuild);
 
     menu.addEventListener('click', (event) => {
         menu.classList.toggle("open");

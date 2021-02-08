@@ -15,7 +15,7 @@ const _SetConcept = {
         this.description = this.schema.description;
         this.min = valOrDefault(this.schema.min, 0);
         this.max = this.schema.max;
-
+        this.value = [];
 
         this.initObserver();
         this.initAttribute();
@@ -24,7 +24,7 @@ const _SetConcept = {
         return this;
     },
     initValue(args) {
-        this.value = [];
+        this.removeAllElement();
 
         if (isNullOrUndefined(args)) {
             for (let i = 0; i < this.min; i++) {
@@ -35,8 +35,6 @@ const _SetConcept = {
         }
 
         const { id, value } = args;
-
-        this.id = id;
 
         for (let i = 0; i < value.length; i++) {
             this.createElement(value[i]);
@@ -53,13 +51,31 @@ const _SetConcept = {
         return !isEmpty(this.value);
     },
     getValue(deep = false) {
-        const concepts = this.value.map(id => this.model.getConcept(id));
+        const concepts = this.value.map(val => this.model.getConcept(val));
 
         if (deep) {
             return concepts.map(concept => concept.getValue());
         }
 
         return concepts;
+    },
+    exportValue() {
+        const concepts = this.value.map(id => this.model.getConcept(id));
+
+        return concepts.map(concept => {
+
+            if (concept.nature === "primitive") {
+                return {
+                    name: concept.name,
+                    "value": concept.exportValue()
+                };
+            }
+
+            return {
+                name: concept.name,
+                "attributes": concept.exportValue()
+            };
+        });
     },
     setValue(value) {
         if (!Array.isArray(value)) {
@@ -107,7 +123,14 @@ const _SetConcept = {
             return false;
         }
 
+        // if (element.type === "prototype") {
+        //     this.value.push(element);
+        // } else {
+        //     this.value.push(element.id);
+        // }
+
         this.value.push(element.id);
+
         element.index = this.value.length - 1;
 
         this.notify("value.added", element);
@@ -193,11 +216,19 @@ const _SetConcept = {
             ref: this,
         };
 
-        const concept = this.model.createConcept(this.accept, options);
+        // var element = null;
 
-        this.addElement(concept);
+        // if (this.model.isPrototype(this.accept.name)) {
+        //     element = { type: "prototype", name: this.accept.name };
+        // } else {
+        //     element = this.model.createConcept(this.accept, options);
+        // }
 
-        return concept;
+        const element = this.model.createConcept(this.accept, options);
+
+        this.addElement(element);
+
+        return element;
     },
 
     getCandidates() {
@@ -227,12 +258,24 @@ const _SetConcept = {
     build() {
         return this.getValue().map(concept => concept.build());
     },
+    copy(save = true) {
+        var copy = {
+            name: this.name,
+            value: this.exportValue()
+        };
+
+        if (save) {
+            this.model.addValue(copy);
+        }
+
+        return copy;
+    },
     export() {
         return {
             id: this.id,
             name: this.name,
             root: this.isRoot(),
-            value: this.getValue().map(concept => concept.id)
+            value: this.getValue().map(concept => concept.export())
         };
     },
     toString() {

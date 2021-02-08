@@ -30,17 +30,21 @@ const Handler = {
 
 export const ConceptFactory = {
     createConcept(model, schema, args) {
-        const handler = Handler[schema.nature];
+        const { name, nature } = schema;
+
+        const handler = Handler[nature];
 
         if (isNullOrUndefined(handler)) {
             throw new Error(`Missing handler: The '${name}' concept could not be handled`);
         }
 
         const concept = handler(model, schema);
+
         if (isNullOrUndefined(concept)) {
             throw new Error(`Bad request: The '${name}' concept could not be created`);
         }
-
+        concept._createConcept = this.createConcept;
+        
         concept.init(args);
 
         if (isNullOrUndefined(concept.id)) {

@@ -69,7 +69,7 @@ function createProjection(concept) {
 
     var modelConceptContainer = createDiv({
         class: ["editor-concept"],
-        draggable: true,
+        draggable: false,
         dataset: {
             nature: "concept-container"
         }
@@ -90,9 +90,10 @@ function createProjection(concept) {
                     modelConceptContainer.classList.remove("valid");
                     modelConceptContainer.classList.add("not-valid");
                 } else {
-                    const value = JSON.parse(result.message);
+                    const value = result.message;
 
                     console.log(`%c Concept '${value.name}' is valid`, 'padding: 4px 6px; color: #fff; font-weight: bold; background: #00AB66;');
+                    console.log(value);
 
                     modelConceptContainer.classList.remove("not-valid");
                     modelConceptContainer.classList.add("valid");
@@ -164,7 +165,7 @@ export const Editor = {
 
     /** @type {HTMLElement} */
     container: null,
-    /** @type {EditorHeader} */
+    /** @type {EditorSection} */
     header: null,
     /** @type {HTMLElement} */
     body: null,
@@ -175,17 +176,16 @@ export const Editor = {
     /** @type {ProjectionWindow} */
     projectionWindow: null,
 
-    /** @type {HTMLElement} */
-    selectorList: null,
-    /** @type {HTMLElement} */
-    selectorItem: null,
-    /** @type {string} */
-    selectorValue: null,
+
     /** @type {HTMLElement} */
     downloadList: null,
 
     /** @type {Map} */
     fields: null,
+    /** @type {Map} */
+    statics: null,
+    /** @type {Map} */
+    layouts: null,
     /** @type {Field} */
     activeField: null,
     /** @type {HTMLElement} */
@@ -213,6 +213,7 @@ export const Editor = {
     init(conceptModel, projectionModel) {
         if (conceptModel) {
             this.conceptModel = ConceptModelManager.createModel(conceptModel).init();
+            this.conceptModel.register(this);
         }
 
         if (projectionModel) {
@@ -220,6 +221,8 @@ export const Editor = {
         }
 
         this.fields = new Map();
+        this.statics = new Map();
+        this.layouts = new Map();
         this.config = {};
 
         if (this.config) {
@@ -234,12 +237,209 @@ export const Editor = {
 
         return this;
     },
+    initProjection() {
+        // this.changeModel(MODEL_GENTLEMAN_PROJECTION);
+
+        const { concept, projection, views = [], editor } = MODEL_GENTLEMAN_PROJECTION;
+
+
+        const values = [
+            {
+                "id": "3c35664d-b3c2-4058-bd36-7c2b2057d4e3",
+                "root": true,
+                "name": "projection",
+                "attributes": [
+                    {
+                        "name": "global",
+                        "value": {
+                            "name": "boolean",
+                            "value": true
+                        }
+                    },
+                    {
+                        "name": "concept",
+                        "value": {
+                            "name": "concept",
+                            "attributes": [
+                                {
+                                    "name": "name",
+                                    "value": {
+                                        "name": "string",
+                                        "value": "okidok"
+                                    }
+                                },
+                                {
+                                    "name": "prototype",
+                                    "value": null
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "tags",
+                        "value": {
+                            "name": "set",
+                            "value": []
+                        }
+                    },
+                    {
+                        "name": "content",
+                        "value": {
+                            "name": "component",
+                            "value": {
+                                "name": "layout component",
+                                "attributes": [
+                                    {
+                                        "name": "layout",
+                                        "value": {
+                                            "name": "layout",
+                                            "value": {
+                                                "name": "wrap layout",
+                                                "attributes": [
+                                                    {
+                                                        "name": "elements",
+                                                        "value": {
+                                                            "name": "set",
+                                                            "value": [
+                                                                {
+                                                                    "name": "element",
+                                                                    "attributes": null
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "bc52a796-ded8-441a-986a-92806858e3ae",
+                "name": "boolean",
+                "root": false,
+                "value": true
+            },
+            {
+                "id": "6ed70699-54af-4a9d-a0f2-aa743308e3f0",
+                "root": false,
+                "name": "concept",
+                "attributes": [
+                    {
+                        "name": "name",
+                        "value": {
+                            "name": "string",
+                            "value": "okidok"
+                        }
+                    },
+                    {
+                        "name": "prototype",
+                        "value": {
+                            "name": "string",
+                            "value": ""
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "b7828cdf-2c17-42b9-94e6-fd0ce5520bc7",
+                "name": "string",
+                "root": false,
+                "value": "okidok"
+            },
+            {
+                "id": "89fc6c8f-4ede-476f-84ec-4fe201d08e8d",
+                "name": "string",
+                "root": false,
+                "value": ""
+            },
+            {
+                "id": "74ba8855-971c-4893-911e-c9ae998fbaf1",
+                "name": "set",
+                "root": false,
+                "value": []
+            },
+            {
+                "id": "0994d05b-7a09-4517-997c-5c404d6ada71",
+                "name": "component",
+                "root": false,
+                "value": {
+                    "id": "8c12f177-67c3-43b5-9c5d-162cd19c5bf1",
+                    "name": "layout component"
+                }
+            },
+            {
+                "id": "8621aeb6-fcc8-4264-be5d-016dbd8f29d7",
+                "name": "layout",
+                "root": false,
+                "value": {
+                    "id": "13681657-6a6f-486e-9a56-0314167e5a71",
+                    "name": "wrap layout"
+                }
+            },
+            {
+                "id": "fa33c315-c364-4e18-9c5c-8443462ce44e",
+                "name": "element",
+                "root": false,
+                "value": null
+            },
+            {
+                "id": "43ade4b5-4c75-4c5d-9e4a-c2c7f889c166",
+                "name": "set",
+                "root": false,
+                "value": [
+                    {
+                        "id": "fa33c315-c364-4e18-9c5c-8443462ce44e",
+                        "name": "element",
+                        "root": false,
+                        "value": null
+                    }
+                ]
+            }
+        ];
+
+        if (concept) {
+            this.conceptModel = ConceptModelManager.createModel(concept, projection).init(values);
+            this.conceptModel.register(this);
+        }
+
+        if (projection) {
+            this.projectionModel = createProjectionModel(projection, this).init(views);
+        }
+
+        if (editor) {
+            this.config = editor;
+            this.buildTarget = editor.build;
+        }
+
+        this.manager.refresh();
+
+        this.clear().refresh();
+
+        [{ concept: { id: "3c35664d-b3c2-4058-bd36-7c2b2057d4e3", name: "projection" } }].forEach(view => {
+            const { id, name } = view.concept;
+
+            const concept = this.conceptModel.getConcept(id);
+
+            console.log(concept);
+
+            this.conceptSection.appendChild(createProjection.call(this, concept));
+        });
+
+
+        return this;
+    },
 
     changeModel(modelSchema) {
         const { concept, projection, values = [], views = [], editor } = modelSchema;
 
         if (concept) {
             this.conceptModel = ConceptModelManager.createModel(concept, projection).init(values);
+            this.conceptModel.register(this);
         }
 
         if (projection) {
@@ -263,6 +463,21 @@ export const Editor = {
             this.conceptSection.appendChild(createProjection.call(this, concept));
         });
     },
+    addConcept(name) {
+        let concept = this.conceptModel.createConcept({ name: name });
+
+        let projection = createProjection.call(this, concept);
+
+        this.conceptSection.appendChild(projection);
+    },
+    addProjection(projections) {
+        if (Array.isArray(projections)) {
+            this.projectionModel.schema.push(...projections);
+            console.log(this.projectionModel.schema);
+        }
+
+        // const { projection, values = [], views = [], editor } = modelSchema;
+    },
 
     registerField(field) {
         field.environment = this;
@@ -274,7 +489,7 @@ export const Editor = {
         var _field = this.fields.get(field.id);
 
         if (_field) {
-            _field.editor = null;
+            _field.environment = null;
             this.fields.delete(_field.id);
         }
 
@@ -304,6 +519,113 @@ export const Editor = {
         }
 
         return this.fields.get(id);
+    },
+
+    registerStatic(staticElement) {
+        staticElement.environment = this;
+        this.statics.set(staticElement.id, staticElement);
+
+        return this;
+    },
+    unregisterStatic(staticElement) {
+        var _static = this.statics.get(staticElement.id);
+
+        if (_static) {
+            _static.environment = null;
+            this.statics.delete(_static.id);
+        }
+
+        return this;
+    },
+    /**
+     * Get a the related static object
+     * @param {HTMLElement} element 
+     * @returns {Static}
+     */
+    getStatic(element) {
+        if (!isHTMLElement(element)) {
+            console.warn("Static error: Bad argument");
+            return null;
+        }
+
+        const { id, nature } = element.dataset;
+
+        if (isNullOrUndefined(id)) {
+            console.warn("Static error: Missing id attribute on field");
+            return null;
+        }
+
+        if (!["static"].includes(nature)) {
+            console.warn("Static error: Unknown nature attribute on field");
+            return null;
+        }
+
+        return this.statics.get(id);
+    },
+
+    registerLayout(layout) {
+        layout.environment = this;
+        this.layouts.set(layout.id, layout);
+
+        return this;
+    },
+    unregisterLayout(layout) {
+        var _layout = this.layouts.get(layout.id);
+
+        if (_layout) {
+            _layout.environment = null;
+            this.layouts.delete(_layout.id);
+        }
+
+        return this;
+    },
+    /**
+     * Get a the related layout object
+     * @param {HTMLElement} element 
+     * @returns {Static}
+     */
+    getLayout(element) {
+        if (!isHTMLElement(element)) {
+            console.warn("Layout error: Bad argument");
+            return null;
+        }
+
+        const { id, nature } = element.dataset;
+
+        if (isNullOrUndefined(id)) {
+            console.warn("Layout error: Missing id attribute on field");
+            return null;
+        }
+
+        if (!["layout"].includes(nature)) {
+            console.warn("Layout error: Unknown nature attribute on field");
+            return null;
+        }
+
+        return this.layouts.get(id);
+    },
+    resolveElement(element) {
+        if (!isHTMLElement(element)) {
+            return null;
+        }
+
+        const { nature } = element.dataset;
+
+        if (isNullOrUndefined(nature)) {
+            return null;
+        }
+
+        switch (nature) {
+            case "field":
+            case "field-component":
+                return this.getField(element);
+            case "layout":
+                return this.getLayout(element);
+            case "static":
+                return this.getStatic(element);
+            default:
+                return null;
+        }
     },
 
     undo() {
@@ -409,7 +731,7 @@ export const Editor = {
         //     link.remove();
         // }, 1500);
 
-        return JSON.parse(result);
+        return result;
     },
     export(copy = false) {
         const MIME_TYPE = 'application/json';
@@ -500,7 +822,7 @@ export const Editor = {
         const container = createDiv({
             class: ["style-container"]
         });
-        
+
         let btnClose = createButton({
             class: ["btn", "btn-close"]
         });
@@ -653,44 +975,46 @@ export const Editor = {
         }
 
         show(this.menu);
-        this.header.show();
+
+        this.header.refresh().show();
+
         this.projectionWindow.show();
 
         this.container.classList.remove("empty");
 
-        var modelConceptList = createUnorderedList({
-            class: ["bare-list", "selector-model-concepts", "font-ui"]
-        });
+        // var modelConceptList = createUnorderedList({
+        //     class: ["bare-list", "selector-model-concepts", "font-ui"]
+        // });
 
-        const concreteConcepts = this.conceptModel.schema.filter((concept) => this.projectionModel.hasGlobalProjection(concept));
+        // const concreteConcepts = this.conceptModel.schema.filter((concept) => this.projectionModel.hasGlobalProjection(concept));
 
-        concreteConcepts.forEach(concept => {
-            var conceptItem = createListItem({
-                class: ["selector-model-concept", "font-ui"],
-                title: concept.description,
-                dataset: {
-                    "concept": concept.name
-                }
-            }, concept.name);
+        // concreteConcepts.forEach(concept => {
+        //     var conceptItem = createListItem({
+        //         class: ["selector-model-concept", "font-ui"],
+        //         title: concept.description,
+        //         dataset: {
+        //             "concept": concept.name
+        //         }
+        //     }, concept.name);
 
-            modelConceptList.appendChild(conceptItem);
-        });
+        //     modelConceptList.appendChild(conceptItem);
+        // });
 
         this._initialized = true;
 
-        modelConceptList.addEventListener("click", (event) => {
-            const { target } = event;
+        // modelConceptList.addEventListener("click", (event) => {
+        //     const { target } = event;
 
-            if (hasOwn(target.dataset, "concept")) {
-                const { concept: name } = target.dataset;
+        //     if (hasOwn(target.dataset, "concept")) {
+        //         const { concept: name } = target.dataset;
 
-                let concept = this.conceptModel.createConcept({ name: name });
+        //         let concept = this.conceptModel.createConcept({ name: name });
 
-                this.conceptSection.appendChild(createProjection.call(this, concept));
-            }
-        });
+        //         this.conceptSection.appendChild(createProjection.call(this, concept));
+        //     }
+        // });
 
-        removeChildren(this.header.body).appendChild(modelConceptList);
+        // removeChildren(this.header.body).appendChild(modelConceptList);
 
         // const { name } = this.conceptModel;
 
@@ -716,7 +1040,26 @@ export const Editor = {
 
         return this;
     },
+    /**
+     * Updates the editor on model change
+     * @param {string} message
+     * @param {*} value 
+     */
+    update(message, value) {
+        console.log(message, value);
+        switch (message) {
+            case "value.added":
+                this.header.notify("value.added", value);
 
+                break;
+            default:
+                console.warn(`The message '${message}' was not handled for editor`);
+
+                break;
+        }
+
+        this.refresh();
+    },
     /**
      * Updates the active HTML Element
      * @param {HTMLElement} element 
@@ -768,25 +1111,7 @@ export const Editor = {
 
         return this;
     },
-    updateSelector(evalue) {
-        const { value } = evalue.dataset;
-        // let editor = this.manager.createEditor();
-        // editor.init(MODEL_GENTLEMAN_CONCEPT).open();
-        if (this.selectorValue === value) {
-            return;
-        }
 
-        if (evalue.parentElement !== this.selectorList) {
-            return;
-        }
-
-        this.selectorItem.classList.remove("selected");
-        this.selectorValue = value;
-        this.selectorItem = evalue;
-        this.selectorItem.classList.add("selected");
-
-        this.refresh();
-    },
 
     bindEvents() {
         var lastKey = null;
@@ -800,6 +1125,7 @@ export const Editor = {
             if (hasOwn(element.dataset, 'projection')) {
                 return element;
             }
+
             return findAncestor(element, (el) => hasOwn(el.dataset, 'projection'));
         }
 
@@ -835,6 +1161,15 @@ export const Editor = {
                 this.export();
             } else if (action === "build") {
                 this.build(true);
+            } else if (action === "import-projection") {
+                let event = new MouseEvent('click', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
+                });
+                fileHandler = this.addProjection;
+
+                this.input.dispatchEvent(event);
             } else if (action === "open-model") {
                 let event = new MouseEvent('click', {
                     view: window,
@@ -848,18 +1183,6 @@ export const Editor = {
                 this.changeModel(MODEL_GENTLEMAN_CONCEPT);
             } else if (action === "create-projection") {
                 this.changeModel(MODEL_GENTLEMAN_PROJECTION);
-            } else if (action === "selector-model") {
-                this.updateSelector(target);
-
-                event.preventDefault();
-            } else if (action === "selector-concept") {
-                this.updateSelector(target);
-
-                event.preventDefault();
-            } else if (action === "selector-projection") {
-                this.updateSelector(target);
-
-                event.preventDefault();
             }
         }, true);
 
@@ -881,112 +1204,172 @@ export const Editor = {
         this.body.addEventListener('keydown', (event) => {
             const { target } = event;
 
-            var projectionElement = getProjection(target);
+            const { nature } = target.dataset;
 
             var rememberKey = false;
 
             switch (event.key) {
                 case Key.backspace:
-                    if (this.activeField) {
-                        this.activeField.backspaceHandler(target);
+                    if (this.activeField && lastKey !== Key.ctrl) {
+                        const handled = this.activeField.backspaceHandler(target) === true;
+
+                        if (handled) {
+                            event.preventDefault();
+                        }
                     }
+
                     break;
                 case Key.ctrl:
                     event.preventDefault();
+
                     rememberKey = true;
                     break;
                 case Key.delete:
+                    if (this.activeField && lastKey !== Key.ctrl) {
+                        const handled = this.activeField.deleteHandler(target);
+
+                        if (handled) {
+                            event.preventDefault();
+                        }
+                    }
+
+                    break;
+                case Key.spacebar:
+                    if (this.activeField && lastKey !== Key.ctrl) {
+                        const handled = this.activeField.spaceHandler(target);
+
+                        if (handled) {
+                            event.preventDefault();
+                        }
+                    }
+
                     break;
                 case Key.alt:
                     event.preventDefault();
+
+                    var projectionElement = getProjection(target);
                     if (projectionElement) {
                         const { projection: id } = projectionElement.dataset;
                         let projection = this.projectionModel.getProjection(id);
                         projection.changeView();
                     }
+
                     rememberKey = true;
+
                     break;
                 case Key.enter:
                     if (this.activeField) {
-                        this.activeField.enterHandler(target);
+                        const handled = this.activeField.enterHandler(target) === true;
+
+                        if (handled) {
+                            event.preventDefault();
+                        }
                     } else {
-                        event.preventDefault();
-                    }
-
-                    break;
-                case Key.up_arrow:
-                    if (this.activeField) {
-                        this.activeField.arrowHandler("up", target);
-
-                        event.preventDefault();
-                    }
-
-                    break;
-                case Key.down_arrow:
-                    if (this.activeField) {
-                        this.activeField.arrowHandler("down", target);
-
-                        event.preventDefault();
-                    }
-
-                    break;
-                case Key.right_arrow:
-                    if (this.activeField) {
-                        this.activeField.arrowHandler("right", target);
-
-                        event.preventDefault();
-                    }
-
-                    break;
-                case Key.left_arrow:
-                    if (this.activeField) {
-                        this.activeField.arrowHandler("left", target);
-
                         event.preventDefault();
                     }
 
                     break;
                 case Key.escape:
                     if (this.activeField) {
-                        this.activeField.escapeHandler(target);
+                        const handled = this.activeField.escapeHandler(target) === true;
+
+                        if (handled) {
+                            event.preventDefault();
+                        }
+                    } else if (nature === "static") {
+                        let element = this.getStatic(target);
+                        const handled = element.escapeHandler(target) === true;
+
+                        if (handled) {
+                            event.preventDefault();
+                        }
                     }
 
                     break;
-                case Key.tab:
-
-                    break;
-                case 'b':
-                    if (lastKey === Key.ctrl) {
-                        let builder = this.manager.createBuilder();
-                        builder.init(this.conceptModel, this.activeConcept).open();
+                case Key.insert:
+                    if (this.activeField) {
+                        console.log("Insert value");
 
                         event.preventDefault();
                     }
-                    break;
-                case 'e':
-                    if (lastKey === Key.ctrl) {
-                        let explorer = this.manager.createExplorer();
-                        explorer.init(this.conceptModel, this.activeConcept).open();
 
-                        event.preventDefault();
-                    }
                     break;
-                case 'i':
-                    if (lastKey === Key.ctrl) {
-                        let editor = this.manager.createEditor();
-                        editor.init(this.conceptModel, this.activeConcept).open();
+                case Key.up_arrow:
+                    if (this.activeField) {
+                        const handled = this.activeField.arrowHandler("up", target) === true;
 
-                        event.preventDefault();
+                        if (handled) {
+                            event.preventDefault();
+                        }
+                    } else if (nature === "static") {
+                        let element = this.getStatic(target);
+                        const handled = element.arrowHandler("up", target) === true;
+
+                        if (handled) {
+                            event.preventDefault();
+                        }
                     }
+
                     break;
-                case "g":
-                case "q":
-                case "p":
+                case Key.down_arrow:
+                    if (this.activeField) {
+                        const handled = this.activeField.arrowHandler("down", target) === true;
+
+                        if (handled) {
+                            event.preventDefault();
+                        }
+                    } else if (nature === "static") {
+                        let element = this.getStatic(target);
+                        const handled = element.arrowHandler("down", target) === true;
+
+                        if (handled) {
+                            event.preventDefault();
+                        }
+                    }
+
+                    break;
+                case Key.right_arrow:
+                    if (this.activeField) {
+                        const handled = this.activeField.arrowHandler("right", target) === true;
+
+                        if (handled) {
+                            event.preventDefault();
+                        }
+                    } else if (nature === "static") {
+                        let element = this.getStatic(target);
+                        const handled = element.arrowHandler("right", target) === true;
+
+                        if (handled) {
+                            event.preventDefault();
+                        }
+                    }
+
+                    break;
+                case Key.left_arrow:
+                    if (this.activeField) {
+                        const handled = this.activeField.arrowHandler("left", target) === true;
+
+                        if (handled) {
+                            event.preventDefault();
+                        }
+                    } else if (nature === "static") {
+                        let element = this.getStatic(target);
+                        const handled = element.arrowHandler("left", target) === true;
+
+                        if (handled) {
+                            event.preventDefault();
+                        }
+                    }
+
+                    break;
+
                 case "s":
-                case "z":
-                    if (lastKey == Key.ctrl) {
+                    if (lastKey === Key.ctrl) {
+                        this.activeConcept.copy();
+
                         event.preventDefault();
                     }
+
                     break;
                 default:
                     break;
@@ -1001,15 +1384,14 @@ export const Editor = {
         this.body.addEventListener('keyup', (event) => {
             var target = event.target;
 
-            const { nature } = target.dataset;
-
             switch (event.key) {
                 case Key.spacebar:
                     if (lastKey === Key.ctrl) {
                         if (this.activeField) {
-                            this.activeField.spaceHandler(target);
+                            this.activeField._spaceHandler(target);
                         }
                     }
+
                     break;
                 case Key.delete:
                     if (lastKey === Key.ctrl) {
@@ -1017,6 +1399,7 @@ export const Editor = {
                             this.activeField.delete(target);
                         }
                     }
+
                     break;
                 case Key.ctrl:
                     if (lastKey === Key.ctrl) {
@@ -1047,7 +1430,19 @@ export const Editor = {
                 handler.call(this, target);
             } else {
                 if (this.activeField) {
-                    this.activeField.focusOut();
+                    this.activeField.focusOut(target);
+                }
+
+                let projectionElement = getProjection(target);
+
+                if (projectionElement) {
+                    const { projection: id } = projectionElement.dataset;
+                    let projection = this.projectionModel.getProjection(id);
+
+                    // update active concept
+                    if (projection.concept) {
+                        this.updateActiveConcept(projection.concept);
+                    }
                 }
 
                 this.activeField = null;
@@ -1073,12 +1468,16 @@ export const Editor = {
                 this.activeField = null;
             }
 
-            if (isNullOrUndefined(field)) {
+            if (isNullOrUndefined(field) || field === this.activeField) {
+                if (this.activeField) {
+                    this.activeField._focusIn(target);
+                }
+
                 return;
             }
 
             this.activeField = field;
-            this.activeField.focusIn();
+            this.activeField.focusIn(target);
 
             // update active concept
             let conceptParent = this.activeField.source.getParent();

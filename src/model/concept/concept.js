@@ -53,8 +53,11 @@ const _Concept = {
 
 
         this.initObserver();
-        this.initAttribute();
-        this.initValue(args.value);
+
+        if (this.nature !== "fake") {
+            this.initAttribute();
+            this.initValue(args.value);
+        }
 
         return this;
     },
@@ -104,6 +107,9 @@ const _Concept = {
     getStructure() {
         return [...this.listAttributes()];
     },
+    exportValue() {
+        return this.getValue();
+    },
     /**
      * Gets the value of a build property
      * @param {string} prop 
@@ -122,8 +128,8 @@ const _Concept = {
      * @param {string} prop 
      */
     getProperty(prop) {
-        if (prop === "name") {
-            return this.getName();
+        if (prop === "refname") {
+            return this.ref.name;
         }
 
         return this.schema[prop];
@@ -181,20 +187,18 @@ const _Concept = {
         return parent.getParentWith(prototype);
     },
     hasPrototype(name) {
-        var prototype = this.model.getConceptSchema(this.schema.prototype);
+        if (isNullOrUndefined(this.schema.prototype)) {
+            return false;
+        }
+
+        let prototype = this.model.getConceptSchema(this.schema.prototype);
 
         while (!isNullOrUndefined(prototype)) {
             if (prototype.name === name) {
                 return true;
             }
 
-            let schema = this.model.getConceptSchema(prototype);
-
-            if (schema) {
-                prototype = schema['prototype'];
-            } else {
-                prototype = null;
-            }
+            prototype = this.model.getConceptSchema(prototype.prototype);
         }
 
         return false;
@@ -284,6 +288,25 @@ const _Concept = {
         return isNullOrUndefined(this.parent);
     },
 
+    copy() {
+        var copy = {
+            name: this.name
+        };
+
+        var attributes = [];
+        this.getAttributes().forEach(attr => {
+            attributes.push({
+                "name": attr.name,
+                "value": attr.copy(false)
+            });
+        });
+
+        copy.attributes = attributes;
+
+        this.model.addValue(copy);
+
+        return copy;
+    },
     export() {
         var output = {
             id: this.id,
@@ -291,9 +314,15 @@ const _Concept = {
             name: this.name
         };
 
+        var attributes = [];
         this.getAttributes().forEach(attr => {
-            Object.assign(output, attr.export());
+            attributes.push({
+                "name": attr.name,
+                "value": attr.export()
+            });
         });
+
+        output.attributes = attributes;
 
         return output;
     },
@@ -316,3 +345,4 @@ export const Concept = Object.assign(
 
 
 Object.defineProperty(Concept, 'attributeSchema', { get() { return this.schema.attributes; } });
+Object.defineProperty(Concept, '_prototype', { get() { return this.schema.prototype; } });

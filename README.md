@@ -105,8 +105,7 @@ Predefined layouts:
 
 - Wrap
 - Stack
-- Relative
-- Table
+- Cell
 
 ### Field
 
@@ -115,7 +114,6 @@ A field element is used to receive and process input and output
 - Text
 - Binary
 - Choice
-- Link
 - List
 - Table
 
@@ -126,7 +124,6 @@ A static element is used to add element that do not accept any input and may onl
 - Text
 - Image
 - Link
-- Audio
 - HTML
   
 # Publication

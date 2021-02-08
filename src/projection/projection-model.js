@@ -37,12 +37,19 @@ export const ProjectionModel = {
 
     createProjection(concept, tag) {
         const schema = this.getModelProjection(concept, tag);
-
         if (isEmpty(schema)) {
             console.warn(concept, schema, tag);
         }
 
-        var projection = ProjectionFactory.createProjection(this, schema, concept, this.environment);
+        // if (schema.length > 1) {
+        //     console.warn(concept.name, tag);
+        //     console.log(schema);
+        // }
+
+        // console.warn(concept.name, tag);
+        // console.log(schema);
+
+        const projection = ProjectionFactory.createProjection(this, schema, concept, this.environment);
 
         this.addProjection(projection);
 
@@ -134,30 +141,52 @@ export const ProjectionModel = {
     hasGlobalProjection(concept) {
         const hasConcept = (projection) => projection.concept.name === concept.name;
 
-        return this.schema.findIndex(p => hasConcept(p) && p.global) !== -1;
+        return this.schema.findIndex(p => p.type !== "template" && hasConcept(p) && p.global) !== -1;
     },
+    /**
+     * Gets the projection matching a concept and optionnally a tag
+     * @param {*} concept 
+     * @param {string} tag 
+     */
     getModelProjection(concept, tag) {
+        if (isNullOrUndefined(concept)) {
+            throw new TypeError("Bad parameter: concept");
+        }
+
         var projection = null;
 
+        const hasName = (name) => name && (name === concept.name || name === concept.schema.base); // TODO: change to look for base (include self)
+        // const hasPrototype = (prototype) => !!(prototype && concept.hasPrototype(prototype));
+        const hasPrototype = (prototype) => {
+            if (isNullOrUndefined(prototype) || concept.nature === "prototype") {
+                return false;
+            }
+
+            return concept.hasPrototype(prototype);
+        };
+
         if (isString(concept)) {
-            projection = this.schema.filter(p => p.concept.name === concept);
-        } else if (concept.name) {
-            projection = this.schema.filter(p => p.concept.name === concept.name);
+            projection = this.schema.filter(p => p.type !== "template" && p.concept.name === concept);
+        } else {
+            projection = this.schema.filter(p => p.type !== "template" && (hasName(p.concept.name) || hasPrototype(p.concept.prototype)));
         }
 
         if (isIterable(tag) && !isEmpty(tag)) {
-            projection = projection.filter(p => p.tags && p.tags.includes(tag));
+            return projection.filter(p => p.tags && p.tags.includes(tag));
         }
 
         return projection;
+    },
+    getModelTemplate(name, tag) {
+        return this.schema.find(p => p.type === "template" && p.name === name);
     },
     getGlobalModelProjection(concept) {
         var projection = null;
 
         if (isString(concept)) {
-            projection = this.schema.filter(p => p.concept.name === concept);
+            projection = this.schema.filter(p => p.type !== "template" && p.concept.name === concept);
         } else if (concept.name) {
-            projection = this.schema.filter(p => p.concept.name === concept.name);
+            projection = this.schema.filter(p => p.type !== "template" && p.concept.name === concept.name);
         }
 
         return projection.filter(p => p.global);
@@ -191,7 +220,7 @@ export const ProjectionModel = {
 
         return projection;
     },
-    
+
     export() {
         const views = [];
 
@@ -210,14 +239,14 @@ const validAccept = (concept, schema) => {
         return true;
     }
 
-    if(isNullOrUndefined(schema)) {
+    if (isNullOrUndefined(schema)) {
         return false;
     }
-    
+
     if (isString(accept)) {
         return accept === schema || accept === schema.name;
     }
-    
+
     console.log(accept == schema, accept, schema);
     return accept == schema;
 };

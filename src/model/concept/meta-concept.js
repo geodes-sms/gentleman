@@ -26,7 +26,6 @@ const _MetaConcept = {
             return this;
         }
 
-        this.id = args.id;
         this.setValue(args.value);
 
         return this;

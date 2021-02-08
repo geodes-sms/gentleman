@@ -67,7 +67,7 @@ export const Manager = {
         }
 
         if (fragment.hasChildNodes()) {
-            this.container.appendChild(fragment);
+            this.container.append(fragment);
         }
 
         this.refresh();
@@ -141,7 +141,7 @@ export const Manager = {
             container: { value: createContainer("editor") },
         });
         
-        this.container.appendChild(editor.container);
+        this.container.append(editor.container);
 
         environments.push(editor);
 
@@ -195,7 +195,7 @@ export const Manager = {
             container: { value: createContainer("explorer") },
         });
         
-        this.container.appendChild(explorer.container);
+        this.container.append(explorer.container);
 
         environments.push(explorer);
 
@@ -257,7 +257,8 @@ export const Manager = {
                 }
             }
 
-            const [concept, projection] = json; console.log(concept, projection);
+            const [concept, projection] = json; 
+            console.log(concept, projection);
 
             this.createEditor("gentleman_concept").init(concept, projection).open();
         });

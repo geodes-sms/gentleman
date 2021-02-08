@@ -167,12 +167,6 @@ const BaseBinaryField = {
             this.notification.appendChild(this.statusElement);
         }
 
-        if (before.projection) {
-            let content = ContentHandler.call(this, before.projection);
-            content.classList.add("field--binary__before");
-
-            fragment.appendChild(content);
-        }
 
         if (!isHTMLElement(this.input)) {
             const { before, projection, after, style } = input;
@@ -207,20 +201,17 @@ const BaseBinaryField = {
             });
             this.label.htmlFor = this.input.id;
 
-            if (projection) {
+            if (Array.isArray(projection)) {
+                projection.forEach(element => {
+                    this.label.append(ContentHandler.call(this, element));
+                });
+            } else if (projection) {
                 this.label.append(ContentHandler.call(this, projection));
             }
 
             StyleHandler(this.label, style);
 
             fragment.appendChild(this.label);
-        }
-
-        if (after.projection) {
-            let content = ContentHandler.call(this, after.projection);
-            content.classList.add("field--binary__after");
-
-            fragment.appendChild(content);
         }
 
         if (fragment.hasChildNodes()) {
@@ -241,6 +232,8 @@ const BaseBinaryField = {
         switch (message) {
             case "value.changed":
                 this.input.checked = value;
+                this.value = value;
+                this.checked = value;
                 break;
             default:
                 console.warn(`The message '${message}' was not handled for check field`);
@@ -354,12 +347,16 @@ const BaseBinaryField = {
             if (label) {
                 const { style, projection, value } = label;
 
-                if (projection) {
+                if (Array.isArray(projection)) {
+                    projection.forEach(element => {
+                        this.label.append(ContentHandler.call(this, element));
+                    });
+                } else if (projection) {
                     this.label.append(ContentHandler.call(this, projection));
                 }
 
                 StyleHandler(this.label, style);
-            } 
+            }
         }
 
         if (this.input.checked) {
@@ -414,6 +411,17 @@ const BaseBinaryField = {
      */
     enterHandler(target) {
         this.setValue(!this.input.checked);
+    },
+    /**
+     * Handles the `arrow` command
+     * @param {HTMLElement} target 
+     */
+    arrowHandler(dir, target) {
+        if (this.parent) {
+            return this.parent.arrowHandler(dir, this.element);
+        }
+
+        return false;
     },
 
     bindEvents() {

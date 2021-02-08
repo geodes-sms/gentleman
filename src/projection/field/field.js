@@ -59,12 +59,19 @@ const BaseField = {
 
         return this;
     },
-    focus() {
+    focus(target) {
         this.element.contentEditable = false;
         this.element.focus();
         this.focused = true;
 
         return this;
+    },
+    /**
+     * Component Focus in handler
+     * @param {HTMLElement} target 
+     */
+    _focusIn(target) {
+        return false;
     },
     enable() {
         this.disabled = false;
@@ -82,7 +89,7 @@ const BaseField = {
     },
     delete() {
         var result = this.source.delete();
-        
+
         if (result.success) {
             this.source.unregister(this);
             this.clear();
@@ -94,18 +101,78 @@ const BaseField = {
         }
     },
 
+    /**
+     * Handles the `space` command
+     * @param {HTMLElement} target 
+     */
+    spaceHandler(target) {
+        console.warn(`SPACE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+
+        return false;
+    },
+
+    /**
+     * Handles the `space` command
+     * @param {HTMLElement} target 
+     */
+    _spaceHandler(target) {
+        console.warn(`CTRL_SPACE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+
+        return false;
+    },
+    /**
+     * Handles the `escape` command
+     * @param {HTMLElement} target 
+     */
+    escapeHandler(target) {
+        console.warn(`ESCAPE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+
+        return false;
+    },
+    /**
+     * Handles the `enter` command
+     * @param {HTMLElement} target 
+     */
     enterHandler(target) {
         this.focusOut();
     },
+    /**
+     * Handles the `delete` command
+     * @param {HTMLElement} target 
+     */
+    deleteHandler(target) {
+        console.warn(`DELETE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+
+        this.focusOut();
+    },
+    /**
+     * Handles the `backspace` command
+     * @param {HTMLElement} target 
+     */
     backspaceHandler(target) {
         console.warn("BACKSPACE_HANDLER NOT IMPLEMENTED");
+
+        return false;
     },
+    /**
+     * Handles the `arrow` command
+     * @param {string} dir 
+     * @param {HTMLElement} target 
+     */
+    arrowHandler(dir, target) {
+        console.warn("ARROW_HANDLER NOT IMPLEMENTED");
+
+        return false;
+    },
+    /**
+     * Handles the `click` command
+     * @param {HTMLElement} target 
+     */
     clickHandler(target) {
         console.warn("CLICK_HANDLER NOT IMPLEMENTED");
-    },
-    arrowHandler(target) {
-        console.warn("ARROW_HANDLER NOT IMPLEMENTED");
-    },
+
+        return false;
+    }
 };
 
 

@@ -1,10 +1,12 @@
 import {
     createDocFragment, createSpan, createDiv, createI, createUnorderedList,
     createTextArea, createInput, createListItem, createButton, findAncestor,
-    removeChildren, isHTMLElement, isNullOrWhitespace, isEmpty, valOrDefault, hasOwn, getPreviousElementSibling, getNextElementSibling,
+    removeChildren, isHTMLElement, isNullOrWhitespace, isEmpty, valOrDefault,
+    hasOwn, getPreviousElementSibling, getNextElementSibling,
 } from "zenkai";
-import { hide, show } from "@utils/index.js";
+import { hide, show, getCaretIndex, isHidden } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
+import { StateHandler } from "./../state-handler.js";
 import { ContentHandler } from "./../content-handler.js";
 import { Field } from "./field.js";
 
@@ -150,11 +152,18 @@ const BaseTextField = {
     placeholder: null,
     /** @type {boolean} */
     multiline: false,
+    /** @type {boolean} */
+    resizable: false,
+    /** @type {*[]} */
+    content: null,
+
 
     init() {
         this.source.register(this);
         this.multiline = valOrDefault(this.schema.multiline, false);
         this.focusable = valOrDefault(this.schema.focusable, true);
+        this.resizable = valOrDefault(this.schema.resizable, false);
+        this.content = this.schema.content;
 
         if (!hasOwn(this.schema, "choice")) {
             this.schema.choice = {};
@@ -181,6 +190,11 @@ const BaseTextField = {
         this.refresh();
     },
 
+    focus(target) {
+        this.input.focus();
+
+        return this;
+    },
     focusIn() {
         this.focused = true;
         this.value = this.getValue();
@@ -291,6 +305,8 @@ const BaseTextField = {
     },
 
     refresh() {
+        StateHandler.call(this, this.schema.state);
+
         if (this.hasValue()) {
             this.element.classList.remove("empty");
         } else {
@@ -383,10 +399,13 @@ const BaseTextField = {
 
                 let inputPlaceholder = resolvePlaceholder.call(this, placeholder);
 
-                if (this.readonly) {
+                if (this.readonly || this.resizable) {
                     this.input = createSpan({
-                        class: ["field--textbox__input", "readonly"],
+                        class: ["field--textbox__input"],
+                        editable: !this.readonly,
+                        title: inputPlaceholder,
                         dataset: {
+                            placeholder: inputPlaceholder,
                             nature: "field-component",
                             view: "text",
                             id: this.id,
@@ -396,6 +415,7 @@ const BaseTextField = {
                     this.input = createTextArea({
                         class: ["field--textbox__input", "field--textbox__input--multiline"],
                         placeholder: inputPlaceholder,
+                        title: inputPlaceholder,
                         dataset: {
                             nature: "field-component",
                             view: "text",
@@ -407,6 +427,7 @@ const BaseTextField = {
                         type: valOrDefault(type, "text"),
                         class: ["field--textbox__input"],
                         placeholder: inputPlaceholder,
+                        title: inputPlaceholder,
                         dataset: {
                             nature: "field-component",
                             view: "text",
@@ -536,7 +557,7 @@ const BaseTextField = {
      * Handles the `space` command
      * @param {HTMLElement} target 
      */
-    spaceHandler(target) {
+    _spaceHandler(target) {
         const candidates = this.getCandidates();
 
         if (!Array.isArray(candidates)) {
@@ -569,15 +590,30 @@ const BaseTextField = {
      * @param {HTMLElement} target 
      */
     escapeHandler(target) {
-        this.input.focus();
+        let exit = true;
 
-        if (this.messageElement) {
+        if (this.messageElement && !isHidden(this.messageElement)) {
             hide(this.messageElement);
+
+            exit = false;
         }
 
-        if (this.choice) {
+        if (this.choice && !isHidden(this.choice)) {
             hide(this.choice);
+
+            exit = false;
         }
+
+        if (exit) {
+            let parent = findAncestor(target, (el) => el.tabIndex === 0);
+            let element = this.environment.resolveElement(parent);
+
+            element.focus(parent);
+
+            return true;
+        }
+
+        this.input.focus();
     },
     /**
      * Handles the `enter` command
@@ -592,6 +628,7 @@ const BaseTextField = {
             // TODO
         } else if (target === this.input) {
             this.setValue(this.getValue(), true);
+            return true;
         }
     },
     /**
@@ -636,7 +673,30 @@ const BaseTextField = {
             if (isHTMLElement($item)) {
                 $item.focus();
             }
+
+            return true;
         }
+
+        if (dir === "up" && this.parent) {
+            return this.parent.arrowHandler(dir, this.element);
+        } else if (dir === "down" && this.parent) {
+            return this.parent.arrowHandler(dir, this.element);
+        } else if (dir === "right") {
+            let isAtEnd = this.getValue().length < getCaretIndex(this.input) + 1;
+
+            if (isAtEnd && this.parent) {
+                return this.parent.arrowHandler(dir, this.element);
+            }
+        } else if (dir === "left") {
+            let isAtStart = 0 === getCaretIndex(this.input);
+
+            if (isAtStart && this.parent) {
+                return this.parent.arrowHandler(dir, this.element);
+            }
+        }
+
+
+        return false;
     },
     /**
      * Handles the `control` command

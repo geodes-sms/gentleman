@@ -7,7 +7,8 @@ const ResponseCode = {
     INVALID_VALUE: 401,
     MINLENGTH_ERROR: 402,
     MAXLENGTH_ERROR: 403,
-    PATTERN_ERROR: 404,
+    FIXLENGTH_ERROR: 404,
+    PATTERN_ERROR: 405,
 };
 
 function responseHandler(code) {
@@ -20,12 +21,17 @@ function responseHandler(code) {
         case ResponseCode.MAXLENGTH_ERROR:
             return {
                 success: false,
-                message: `The length of the value exceeds the maximum allowed: ${this.max}.`
+                message: `The length of the value exceeds the maximum allowed: ${this.length.max.value}.`
             };
         case ResponseCode.MINLENGTH_ERROR:
             return {
                 success: false,
-                message: `The length of the value is beneath the minimum allowed: ${this.min}.`
+                message: `The length of the value is beneath the minimum allowed: ${this.length.min.value}.`
+            };
+        case ResponseCode.FIXLENGTH_ERROR:
+            return {
+                success: false,
+                message: `The length of the value is different from the fixed value: ${this.length.value}.`
             };
         case ResponseCode.PATTERN_ERROR:
             return {
@@ -45,11 +51,10 @@ const _StringConcept = {
         this.ref = args.ref;
         this.values = valOrDefault(this.schema.values, []);
         this.alias = this.schema.alias;
+        this.default = valOrDefault(this.schema.default, "");
         this.description = this.schema.description;
-        this.min = valOrDefault(this.schema.min, 0);
-        this.max = this.schema.max;
+        this.length = this.schema.length;
         this.pattern = this.schema.pattern;
-        this.history = [];
 
         this.initObserver();
         this.initAttribute();
@@ -59,14 +64,14 @@ const _StringConcept = {
     },
     initValue(args) {
         if (isNullOrUndefined(args)) {
-            this.value = "";
-            
+            this.value = this.default;
+
             return this;
         }
-        
+
 
         if (isObject(args)) {
-            this.id = args.id;
+            // this.id = this.id || args.id;
             this.setValue(args.value);
         } else {
             this.setValue(args);
@@ -94,7 +99,6 @@ const _StringConcept = {
             };
         }
 
-        this.history.push(value);
         this.value = value;
 
         this.notify("value.changed", value);
@@ -127,15 +131,32 @@ const _StringConcept = {
             return ResponseCode.SUCCESS;
         }
 
-        if(this.min && value.length < this.min) {
-            return ResponseCode.MINLENGTH_ERROR;
+        if (this.length) {
+            const { min, max } = this.length;
+            if (this.length.value && value.length !== this.length.value) {
+                return ResponseCode.FIXLENGTH_ERROR;
+            }
+
+            if (min) {
+                if (min.included && value.length < min.value) {
+                    return ResponseCode.MINLENGTH_ERROR;
+                }
+                if (!min.included && value.length <= min.value) {
+                    return ResponseCode.MINLENGTH_ERROR;
+                }
+            }
+
+            if (max) {
+                if (max.included && value.length > max.value) {
+                    return ResponseCode.MAXLENGTH_ERROR;
+                }
+                if (!max.included && value.length >= max.value) {
+                    return ResponseCode.MAXLENGTH_ERROR;
+                }
+            }
         }
 
-        if(this.max && value.length > this.max) {
-            return ResponseCode.MAXLENGTH_ERROR;
-        }
-
-        if(this.pattern && !(new RegExp(this.pattern, "gi")).test(value)) {
+        if (this.pattern && !(new RegExp(this.pattern, "gi")).test(value)) {
             return ResponseCode.PATTERN_ERROR;
         }
 
@@ -163,6 +184,22 @@ const _StringConcept = {
     build() {
         return this.getValue();
     },
+    copy(save = true) {
+        if (!this.hasValue()) {
+            return null;
+        }
+
+        var copy = {
+            name: this.name,
+            value: this.getValue()
+        };
+
+        if (save) {
+            this.model.addValue(copy);
+        }
+
+        return copy;
+    },
     export() {
         return {
             id: this.id,
@@ -170,7 +207,7 @@ const _StringConcept = {
             root: this.isRoot(),
             value: this.getValue()
         };
-    }, 
+    },
     toString() {
         return this.value;
     }

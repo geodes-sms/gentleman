@@ -2,6 +2,7 @@ import {
     createDocFragment, createDiv, createButton, createInput, createLabel,
     isHTMLElement, isEmpty, valOrDefault,
 } from "zenkai";
+import { getElementTop, getElementBottom, getElementLeft, getElementRight } from "@utils/index.js";
 import { StyleHandler } from './../style-handler.js';
 import { ContentHandler } from './../content-handler.js';
 
@@ -15,19 +16,21 @@ export const StackLayout = {
     elements: null,
     /** @type {boolean} */
     focusable: null,
+    /** @type {boolean} */
     edit: false,
     /** @type {HTMLElement} */
     btnEdit: false,
     /** @type {HTMLElement} */
     menu: false,
 
-    init(args) {
-        this.orientation = valOrDefault(this.schema.orientation, "horizontal");
-        this.collapsible = valOrDefault(this.schema.collapsible, false);
-        this.focusable = valOrDefault(this.schema.focusable, true);
+    init(args = {}) {
+        const { orientation = "horizontal", focusable = false } = this.schema;
+
+        this.orientation = orientation;
+        this.focusable = focusable;
         this.elements = [];
 
-        Object.assign(this, valOrDefault(args, {}));
+        Object.assign(this, args);
 
         return this;
     },
@@ -45,11 +48,32 @@ export const StackLayout = {
         this.schema.style = style;
         StyleHandler.call(this, this.container, style);
     },
+    /**
+     * Get a the related field object
+     * @param {HTMLElement} element 
+     */
+    getField(element) {
+        return this.projection.getField(element);
+    },
+    /**
+     * Get a the related static object
+     * @param {HTMLElement} element 
+     */
+    getStatic(element) {
+        return this.projection.getStatic(element);
+    },
+    /**
+     * Get a the related static object
+     * @param {HTMLElement} element 
+     */
+    getLayout(element) {
+        return this.environment.getLayout(element);
+    },
 
     render() {
-        const { disposition, style } = this.schema;
+        const { disposition, style, help } = this.schema;
 
-        if (!Array.isArray(disposition) || isEmpty(disposition)) {
+        if (!Array.isArray(disposition)) {
             throw new SyntaxError("Bad disposition");
         }
 
@@ -58,9 +82,11 @@ export const StackLayout = {
         if (!isHTMLElement(this.container)) {
             this.container = createDiv({
                 class: ["layout-container"],
+                title: help,
                 dataset: {
                     nature: "layout",
                     layout: "stack",
+                    id: this.id,
                 }
             });
         }
@@ -77,6 +103,11 @@ export const StackLayout = {
 
         for (let i = 0; i < disposition.length; i++) {
             let render = ContentHandler.call(this, disposition[i]);
+         
+            let element = this.environment.resolveElement(render);
+            if (element) {
+                element.parent = this;
+            }
 
             this.elements.push(render);
 
@@ -91,7 +122,6 @@ export const StackLayout = {
         }
 
         this.container.style.display = "flex";
-        this.container.style.alignItems = "flex-start";
 
         this.refresh();
 
@@ -116,6 +146,7 @@ export const StackLayout = {
 
         return this;
     },
+
     openMenu() {
         if (!isHTMLElement(this.menu)) {
             this.menu = createDiv({
@@ -141,6 +172,64 @@ export const StackLayout = {
             this.menu.before(this.btnEdit);
         }, 200);
     },
+    focus(element) {
+        if (this.focusable) {
+            this.container.focus();
+        } else {
+            let projectionElement = this.environment.resolveElement(valOrDefault(element, this.elements[0]));
+            if (projectionElement) {
+                projectionElement.focus();
+            }
+        }
+    },
+
+    /**
+     * Handles the `arrow` command
+     * @param {string} dir direction 
+     * @param {HTMLElement} target target element
+     */
+    arrowHandler(dir, target) {
+        if (!this.elements.includes(target)) {
+            console.log(this.elements, target);
+            return false;
+        }
+
+        let closestElement = null;
+
+        if (dir === "up") {
+            closestElement = getElementTop(target, this.container);
+        } else if (dir === "down") {
+            closestElement = getElementBottom(target, this.container);
+        } else if (dir === "left") {
+            closestElement = getElementLeft(target, this.container);
+        } else if (dir === "right") {
+            closestElement = getElementRight(target, this.container);
+        }
+
+        if (isHTMLElement(closestElement)) {
+            const { nature } = closestElement.dataset;
+
+            if (nature === "field") {
+                let field = this.getField(closestElement);
+                field.focus();
+            } else if (nature === "static") {
+                let $static = this.getStatic(closestElement);
+                $static.focus();
+            } else if (nature === "layout") {
+                let layout = this.getLayout(closestElement);
+                layout.focus();
+            }
+
+            return true;
+        }
+
+        if (this.parent) {
+            return this.parent.arrowHandler(dir, this.container);
+        }
+
+        return false;
+    },
+
     bindEvents() {
         // this.btnEdit.addEventListener('click', (event) => {
         //     this.edit = !this.edit;

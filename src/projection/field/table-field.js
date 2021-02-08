@@ -97,6 +97,14 @@ const BaseTableField = {
                 this.removeRow(value);
 
                 break;
+            case "value.changed":
+                removeChildren(this.body);
+
+                this.source.getValue().forEach(concept => {
+                    this.addRow(concept);
+                });
+
+                break;
             default:
                 console.warn(`The message '${message}' was not handled for table field`);
                 break;
@@ -106,7 +114,7 @@ const BaseTableField = {
     },
 
     render() {
-        const { table = {}, action = {}, before = {}, after = {} } = this.schema;
+        const { table = {}, action = {} } = this.schema;
         const { row } = this.template;
 
         const fragment = createDocFragment();
@@ -152,13 +160,6 @@ const BaseTableField = {
                 }
             });
             this.notification.appendChild(this.statusElement);
-        }
-
-        if (before.projection) {
-            let content = ContentHandler.call(this, before.projection);
-            content.classList.add("field--table__before");
-
-            fragment.appendChild(content);
         }
 
         if (!isHTMLElement(this.table)) {
@@ -294,13 +295,6 @@ const BaseTableField = {
             this.source.getValue().forEach(concept => {
                 this.addRow(concept);
             });
-        }
-
-        if (after.projection) {
-            let content = ContentHandler.call(this, after.projection);
-            content.classList.add("field--table__after");
-
-            fragment.appendChild(content);
         }
 
         if (fragment.hasChildNodes()) {

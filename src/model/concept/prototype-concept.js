@@ -1,3 +1,4 @@
+import { UUID } from "@utils/uuid.js";
 import { isString, isNullOrUndefined, isObject, isNullOrWhitespace, isEmpty } from "zenkai";
 import { Concept } from "./concept.js";
 
@@ -28,11 +29,15 @@ const BasePrototypeConcept = {
 
         const { id, value } = args;
 
-        this.id = id;
+        // this.id = id;
 
         if (value) {
-            var concept = this.createConcept(value.name, value);
-            this.value = concept;
+            return;
+            let concept = this.createConcept(value.name, value);
+            this.setValue(concept);
+        } else if (args.name) {
+            let concept = this.createConcept(args.name, args);
+            this.setValue(concept);
         }
 
         return this;
@@ -40,8 +45,20 @@ const BasePrototypeConcept = {
     getValue() {
         return this.value;
     },
-    setValue(value) {
-        var result = this.validate(value);
+    exportValue() {
+        if (!this.hasValue()) {
+            return null;
+        }
+
+        let concept = this.getValue();
+
+        return concept.exportValue();
+
+    },
+    setValue(_value) {
+        let value = isObject(_value) ? _value.name : _value;
+
+        let result = this.validate(value);
 
         if (result !== ResponseCode.SUCCESS) {
             return {
@@ -56,6 +73,9 @@ const BasePrototypeConcept = {
         var concept = value;
         if (isString(value)) {
             concept = this.createConcept(value);
+            if(isObject(_value)) {
+                concept.id = _value.id;
+            }
         }
 
         if (this.value) {
@@ -82,9 +102,22 @@ const BasePrototypeConcept = {
     },
 
     getCandidates() {
-        var candidates = resolveAccept.call(this, this.accept);
+        if (this.candidates) {
+            return this.candidates;
+        }
 
-        return candidates;
+        this.candidates = resolveAccept.call(this, this.schema.accept).map(
+            candidate => Object.create(Concept, {
+                object: { value: "concept" },
+                nature: { value: "fake" },
+                model: { value: this.model },
+                id: { value: UUID.generate() },
+                name: { value: candidate.name },
+                schema: { value: candidate },
+            }).init(this)
+        );
+
+        return this.candidates;
     },
     /**
      * Gets the concept parent if exist
@@ -122,7 +155,8 @@ const BasePrototypeConcept = {
             options.value = value;
         }
 
-        const concept = this.model.createConcept({ name: name }, options);
+        const schema = this.model.getCompleteModelConcept({ name: name });
+        const concept = this._createConcept(this.model, schema, options);
 
         concept.prototype = this;
 
@@ -182,7 +216,7 @@ function resolveAccept(accept) {
     }
 
     if (Array.isArray(accept)) {
-        return candidates.filter(candidate => accept.includes(candidate.name));
+        return candidates.filter(candidate => accept.some(x => x.name === candidate.name));
     }
 
     return candidates.filter(candidate => accept === candidate.name);
