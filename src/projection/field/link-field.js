@@ -378,8 +378,6 @@ const BaseLinkField = {
         if (state) {
             const { content } = state;
 
-            console.log(content);
-
             // if (label) {
             //     const { style, projection, value } = label;
 

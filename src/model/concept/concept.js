@@ -1,4 +1,4 @@
-import { isString, valOrDefault, hasOwn, isNullOrUndefined, isIterable, isObject, isNullOrWhitespace } from "zenkai";
+import { isString, valOrDefault, hasOwn, isNullOrUndefined, isIterable, isObject, isNullOrWhitespace, toBoolean } from "zenkai";
 import { AttributeHandler, ObserverHandler } from "@structure/index.js";
 
 
@@ -125,14 +125,35 @@ const _Concept = {
     },
     /**
      * Gets the value of a property
-     * @param {string} prop 
+     * @param {string} name 
      */
-    getProperty(prop) {
-        if (prop === "refname") {
+    getProperty(name) {
+        if (name === "refname") {
             return this.ref.name;
         }
 
-        return this.schema[prop];
+        let propSchema = valOrDefault(this.schema.properties, []);
+        let property = propSchema.find(prop => prop.name === name);
+
+        if (isNullOrUndefined(property)) {
+            return undefined;
+        }
+
+        const { type, value } = property;
+
+        if (type === "string") {
+            return value.toString();
+        }
+
+        if (type === "number") {
+            return +value;
+        }
+        
+        if (type === "boolean") {
+            return toBoolean(value);
+        }
+
+        return value;
     },
 
     /**

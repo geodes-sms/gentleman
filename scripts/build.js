@@ -6,13 +6,13 @@ var CleanCSS = require('clean-css');
 const sources = [
     './assets/css/normalize.css',
     './assets/css/base.css',
-    './assets/css/layout.css',
-    './assets/css/field.css',
     './assets/css/effect.css',
-    './assets/css/manager.css',
-    './assets/css/loader.css',
-    './assets/css/editor.css',
-    './assets/css/editor-header.css',
+    './assets/css/app/layout.css',
+    './assets/css/app/field.css',
+    './assets/css/app/manager.css',
+    './assets/css/app/loader.css',
+    './assets/css/app/editor.css',
+    './assets/css/app/editor-header.css',
 ];
 
 

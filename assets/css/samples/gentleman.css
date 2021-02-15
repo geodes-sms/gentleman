@@ -151,7 +151,10 @@
             color: #FA6A5A;
             border: 2px solid currentColor;
         }
-
+/* 
+*[data-projection].active {
+    box-shadow: 0 0 0 1px #1f75fe;
+} */
 
 .model-concept {
     position: relative;
@@ -758,6 +761,10 @@
     display: flex;
 }
 
+/* 
+    Attribute list
+-----------------------------------------------------------------------------*/
+
 .attribute-list--textual {
     padding: 0;
     padding-right: 6px;
@@ -817,6 +824,72 @@
     .attribute-list-item-container {
         width: 100%;
     }
+
+
+/* 
+    Property list
+-----------------------------------------------------------------------------*/
+
+.property-list--textual {
+    padding: 0;
+    padding-right: 6px;
+}
+
+.property-list--textual__list {
+    display: flex; flex-direction: column;
+    max-width: 720px;
+}
+
+.property-list--textual__list-item {
+    padding-top: 6px;
+    padding-left: 4px;
+    padding-right: 24px;
+}
+
+    .property-list--textual__list-item:before {
+        content: "";
+        position: absolute;
+        top: 0; bottom: 0; left: 0;
+        width: 3px;
+        border-radius: 180px;
+        background-color: #d5d5d5;
+    }
+    .property-list--textual__list-item:after {
+        content: "";
+        position: absolute;
+        top: 24px; bottom: 0; right: 12px;
+        border-right: 1px dashed #c0c0c0;
+    }
+
+    .property-list--textual__list-item:not(:last-child) {
+        margin-bottom: 12px;
+    }
+
+    .property-list--textual__list-item > .btn-remove {
+        position: absolute;
+        top: 0; right: 0;
+        width: 24px; height: 24px;
+        font-size: 1.8em; font-weight: 300;
+        color: #999;
+        padding: 0;
+        border: 1px solid #c0c0c0;
+        border-radius: 50%;
+        transition: .2s;
+        transform: scale(0.7);
+    }
+        .property-list--textual__list-item > .btn-remove:hover {
+            color: #555;
+            border-color: #a9a9a9;
+            transform: scale(1);
+        }
+        .property-list--textual__list-item > .btn-remove:before {
+            content: "✖";
+        }
+        
+    .property-list-item-container {
+        width: 100%;
+    }
+
 
 
 .name-field--textual {
@@ -969,7 +1042,7 @@
     }
 
     .target-choice--textual__list {
-        display: flex; flex-direction: row; align-items: center;
+        display: inline-flex; flex-direction: row; align-items: center;
     }
         .target-choice--textual.active > .target-choice--textual__list:before {
             content: "[";
@@ -1039,6 +1112,7 @@
     }
 
     .target-choice--textual > .field--choice__selection { width: 100%; padding-top: 6px; padding-left: 12px; }
+
 
 .model-concept .primitive-constraint__title {
     font-size: 1.1em;

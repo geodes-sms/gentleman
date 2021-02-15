@@ -57,6 +57,12 @@ function getItemValue(item) {
     return item.textContent;
 }
 
+const isSame = (val1, val2) => {
+    if (isObject(val1)) {
+        return val1.id === val2.id;
+    }
+    return val1 === val2;
+};
 
 const BaseChoiceField = {
     /** @type {string} */
@@ -78,7 +84,6 @@ const BaseChoiceField = {
 
 
     init() {
-        this.source.register(this);
         this.items = new Map();
         this.content = this.schema.content;
         // TODO: Add group support
@@ -93,31 +98,6 @@ const BaseChoiceField = {
         return this;
     },
 
-    update(message, value) {
-        switch (message) {
-            case "value.changed":
-                if (value.object === "concept") {
-                    const { template = {} } = this.schema.selection;
-                    let projection = this.model.createProjection(value, valOrDefault(template.tag, "choice-selection")).init();
-                    projection.parent = this.projection;
-
-                    this.setChoice(value);
-
-                    this.setSelection(projection.render());
-                } else {
-                    this.setChoice(value);
-                }
-                break;
-            case "value.deleted":
-                removeChildren(this.selectionElement);
-                this.selection = null;
-
-                break;
-            default:
-                console.warn(`The message '${message}' was not handled for choice field`);
-                break;
-        }
-    },
     /**
      * Verifies that the field has a changes
      * @returns {boolean}
@@ -127,7 +107,7 @@ const BaseChoiceField = {
     },
     reset() {
         // TODO: Get initial value
-        this.setValue(null);
+        this.setValue(null, true);
     },
     /**
      * Verifies that the field has a value
@@ -143,14 +123,37 @@ const BaseChoiceField = {
     getValue() {
         return this.selection;
     },
-    setValue(value) {
-        var response = this.source.setValue(value);
+    setValue(value, update = false) {
+        var response = null;
 
-        if (!response.success) {
-            this.environment.notify(response.message);
-            this.errors.push(...response.errors);
+        if (update) {
+            response = this.source.setValue(value);
         } else {
-            this.errors = [];
+            if (isNullOrUndefined(value)) {
+                removeChildren(this.selectionElement);
+                this.selection = null;
+            } else if (value.object === "concept") {
+                const { template = {} } = this.schema.selection;
+
+                let projection = this.model.createProjection(value, valOrDefault(template.tag, "choice-selection")).init();
+                projection.parent = this.projection;
+
+                this.setChoice(value);
+
+                this.setSelection(projection.render());
+            } else {
+                this.setChoice(value);
+            }
+
+            response = {
+                success: true
+            };
+        }
+
+        this.errors = [];
+        if (!response.success) {
+            this.environment.notify(response.message, "error");
+            this.errors.push(...response.errors);
         }
 
         this.value = value;
@@ -324,17 +327,7 @@ const BaseChoiceField = {
         });
 
         if (this.source.hasValue()) {
-            let value = this.source.getValue();
-
-            if (value.object === "concept") {
-                let projection = this.model.createProjection(value, "choice-selection").init();
-                projection.parent = this.projection;
-
-                this.setChoice(value);
-                removeChildren(this.selectionElement).appendChild(projection.render());
-            } else {
-                this.setChoice(value);
-            }
+            this.setValue(this.source.getValue());
         }
 
         this.refresh();
@@ -344,6 +337,8 @@ const BaseChoiceField = {
     focus(target) {
         if (this.input && !isHidden(this.input)) {
             this.input.focus();
+        } else if (this.selection) {
+            this.selection.focus();
         }
 
         return this;
@@ -556,13 +551,6 @@ const BaseChoiceField = {
             }
         };
 
-        const isSame = (val1, val2) => {
-            if (isObject(val1)) {
-                return val1.id === val2.id;
-            }
-            return val1 === val2;
-        };
-
         let found = false;
         for (let i = 0; i < children.length; i++) {
             /** @type {HTMLElement} */
@@ -653,7 +641,7 @@ const BaseChoiceField = {
         };
 
         if (isHTMLElement(item) && this.selection !== item) {
-            this.setValue(getValue(item));
+            this.setValue(getValue(item), true);
         }
     },
     /**
@@ -687,7 +675,7 @@ const BaseChoiceField = {
         };
 
         if (isHTMLElement(item) && this.selection !== item) {
-            this.setValue(getValue(item));
+            this.setValue(getValue(item), true);
             this.focusOut();
         }
     },
@@ -696,40 +684,50 @@ const BaseChoiceField = {
      * @param {HTMLElement} target 
      */
     arrowHandler(dir, target) {
-        /** @type {HTMLElement} */
-        const item = getItem.call(this, target);
-
-
-        if (isHTMLElement(item)) {
-            let $item = null;
+        if (target.parentElement === this.choices) {
+            let closestItem = null;
 
             if (dir === "up") {
-                $item = getElementTop(item, this.choices);
+                closestItem = getElementTop(target, this.choices);
             } else if (dir === "down") {
-                $item = getElementBottom(item, this.choices);
+                closestItem = getElementBottom(target, this.choices);
             } else if (dir === "left") {
-                $item = getElementLeft(item, this.choices);
+                closestItem = getElementLeft(target, this.choices);
             } else if (dir === "right") {
-                $item = getElementRight(item, this.choices);
+                closestItem = getElementRight(target, this.choices);
             }
 
-            if (isHTMLElement($item)) {
-                $item.focus();
+            if (isHTMLElement(closestItem)) {
+                closestItem.focus();
+
+                return true;
             }
 
-            return true;
-        } else if (!isHidden(this.choices)) {
-            let $item = null;
+            return this.arrowHandler(dir, target.parentElement);
+        } else if (target.parentElement === this.element) {
+            let closestItem = null;
 
-            if (dir === "down") {
-                $item = this.choices.children[0];
+            if (dir === "up") {
+                closestItem = getElementTop(target, this.element);
+            } else if (dir === "down") {
+                closestItem = getElementBottom(target, this.element);
+            } else if (dir === "left") {
+                closestItem = getElementLeft(target, this.element);
+            } else if (dir === "right") {
+                closestItem = getElementRight(target, this.element);
             }
 
-            if (isHTMLElement($item)) {
-                $item.focus();
-            }
+            if (isHTMLElement(closestItem)) {
+                if (closestItem === this.choices && this.choices.hasChildNodes()) {
+                    closestItem.children[0].focus();
+                } else if (closestItem === this.selectionElement) {
+                    closestItem.children[0].focus();
+                } else {
+                    closestItem.focus();
+                }
 
-            return true;
+                return true;
+            }
         }
 
         if (this.parent) {

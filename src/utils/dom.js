@@ -106,12 +106,16 @@ export function getElementTop(source, container) {
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
 
+        if (isHidden(item) || item === source) {
+            continue;
+        }
+
         const { bottom: bottom2, left: left2 } = item.getBoundingClientRect();
 
         let $vdist = Math.abs(top1 - bottom2);
         let $hdist = Math.abs(left1 - left2);
 
-        if (top1 >= (bottom2 - 1) && ($vdist < vdist || $hdist < hdist)) {
+        if (top1 >= (bottom2 - 1) && ($vdist < vdist || ($vdist === vdist && $hdist < hdist))) {
             closest = item;
             vdist = $vdist;
             hdist = $hdist;
@@ -143,12 +147,16 @@ export function getElementLeft(source, container) {
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
 
+        if (isHidden(item) || item === source) {
+            continue;
+        }
+
         const { top: top2, right: right2 } = item.getBoundingClientRect();
 
         let $vdist = Math.abs(top1 - top2);
         let $hdist = Math.abs(left1 - right2);
 
-        if (left1 >= (right2 - 1) && ($vdist < vdist || $hdist < hdist)) {
+        if (left1 >= (right2 - 1) && ($hdist < hdist || ($hdist === hdist && $vdist < vdist))) {
             closest = item;
             vdist = $vdist;
             hdist = $hdist;
@@ -180,12 +188,16 @@ export function getElementRight(source, container) {
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
 
+        if (isHidden(item) || item === source) {
+            continue;
+        }
+
         const { top: top2, left: left2 } = item.getBoundingClientRect();
 
         let $vdist = Math.abs(top1 - top2);
         let $hdist = Math.abs(right1 - left2);
 
-        if (right1 <= (left2 + 1) && ($vdist < vdist || $hdist < hdist)) {
+        if (right1 <= (left2 + 1) && ($hdist < hdist || ($hdist === hdist && $vdist < vdist))) {
             closest = item;
             vdist = $vdist;
             hdist = $hdist;
@@ -217,12 +229,181 @@ export function getElementBottom(source, container) {
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
 
+        if (isHidden(item) || item === source) {
+            continue;
+        }
+
         const { top: top2, left: left2 } = item.getBoundingClientRect();
 
         let $vdist = Math.abs(bottom1 - top2);
         let $hdist = Math.abs(left1 - left2);
 
-        if (bottom1 <= (top2 + 1) && ($vdist < vdist || $hdist < hdist)) {
+        if (bottom1 <= (top2 + 1) && ($vdist < vdist || ($vdist === vdist && $hdist < hdist))) {
+            closest = item;
+            vdist = $vdist;
+            hdist = $hdist;
+        }
+    }
+
+    return closest;
+}
+
+
+/**
+ * Returns the closest element to the top of its parent container
+ * @param {HTMLElement} container 
+ * @returns {HTMLElement|null} The closest element to the top.
+ */
+export function getTopElement(container) {
+    const items = container.children;
+
+    const { top: top1, left: left1 } = container.getBoundingClientRect();
+
+    if (items.length === 0) {
+        return null;
+    }
+
+    let closest = null;
+
+    let vdist = 99999;
+    let hdist = 99999;
+
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+
+        if (isHidden(item)) {
+            continue;
+        }
+
+        const { top: top2, left: left2 } = item.getBoundingClientRect();
+
+        let $vdist = Math.abs(top1 - top2);
+        let $hdist = Math.abs(left1 - left2);
+
+        if (top1 <= (top2 + 1) && ($vdist < vdist || ($vdist === vdist && $hdist < hdist))) {
+            closest = item;
+            vdist = $vdist;
+            hdist = $hdist;
+        }
+    }
+
+    return closest;
+}
+
+/**
+ * Returns the closest element to the left side of its parent container
+ * @param {HTMLElement} container 
+ * @returns {HTMLElement|null} The closest element to the left side.
+ */
+export function getLeftElement(container) {
+    const items = container.children;
+
+    const { top: top1, left: left1 } = container.getBoundingClientRect();
+
+    if (items.length === 0) {
+        return null;
+    }
+
+    let closest = null;
+
+    let vdist = 99999;
+    let hdist = 99999;
+
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+
+        if (isHidden(item)) {
+            continue;
+        }
+
+        const { top: top2, left: left2 } = item.getBoundingClientRect();
+
+        let $vdist = Math.abs(top1 - top2);
+        let $hdist = Math.abs(left1 - left2);
+
+        if (left1 <= (left2 + 1) && ($hdist < hdist || ($hdist === hdist && $vdist < vdist))) {
+            closest = item;
+            vdist = $vdist;
+            hdist = $hdist;
+        }
+    }
+
+    return closest;
+}
+
+/**
+ * Returns the closest element to the right side of its parent container
+ * @param {HTMLElement} container 
+ * @returns {HTMLElement|null} The closest element to the right side.
+ */
+export function getRightElement(container) {
+    const items = container.children;
+
+    const { top: top1, right: right1 } = container.getBoundingClientRect();
+
+    if (items.length === 0) {
+        return null;
+    }
+
+    let closest = null;
+
+    let vdist = 99999;
+    let hdist = 99999;
+
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+
+        if (isHidden(item)) {
+            continue;
+        }
+
+        const { top: top2, right: right2 } = item.getBoundingClientRect();
+
+        let $vdist = Math.abs(top1 - top2);
+        let $hdist = Math.abs(right1 - right2);
+
+        if (right1 >= (right2 - 1) && ($hdist < hdist || ($hdist === hdist && $vdist < vdist))) {
+            closest = item;
+            vdist = $vdist;
+            hdist = $hdist;
+        }
+    }
+
+    return closest;
+}
+
+/**
+ * Returns the closest element to the bottom of its parent container
+ * @param {HTMLElement} container 
+ * @returns {HTMLElement|null} The closest element to the bottom.
+ */
+export function getBottomElement(container) {
+    const items = container.children;
+
+    const { bottom: bottom1, left: left1 } = container.getBoundingClientRect();
+
+    if (items.length === 0) {
+        return null;
+    }
+
+    let closest = null;
+
+    let vdist = 99999;
+    let hdist = 99999;
+
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+
+        if (isHidden(item)) {
+            continue;
+        }
+
+        const { bottom: bottom2, left: left2 } = item.getBoundingClientRect();
+
+        let $vdist = Math.abs(bottom1 - bottom2);
+        let $hdist = Math.abs(left1 - left2);
+
+        if (bottom1 >= (bottom2 - 1) && ($vdist < vdist || ($vdist === vdist && $hdist < hdist))) {
             closest = item;
             vdist = $vdist;
             hdist = $hdist;

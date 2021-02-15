@@ -3,7 +3,7 @@ import {
     createListItem, createButton, findAncestor, removeChildren, isHTMLElement,
     isNullOrUndefined, valOrDefault, hasOwn,
 } from "zenkai";
-import { hide, show, shake, getElementTop, getElementBottom, getElementLeft, getElementRight } from "@utils/index.js";
+import { hide, show, shake, getElementTop, getElementBottom, getElementLeft, getElementRight, getTopElement } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler } from "./../content-handler.js";
 import { Field } from "./field.js";
@@ -139,7 +139,7 @@ function isValid(element) {
     if (!isHTMLElement(element)) {
         return false;
     }
-    
+
     const { nature, id } = element.dataset;
 
     return nature === "field-component" && id === this.id;
@@ -158,45 +158,10 @@ const BaseListField = {
 
 
     init() {
-        this.source.register(this);
         this.items = new Map();
         this.content = this.schema.content;
 
         return this;
-    },
-
-    update(message, value) {
-        switch (message) {
-            case "value.added":
-                this.addItem(value);
-
-                break;
-            case "value.removed":
-                this.removeItem(value);
-
-                break;
-            case "value.changed":
-                removeChildren(this.list);
-
-                this.source.getValue().forEach((value) => {
-                    var item = createListFieldItem.call(this, value);
-                    this.list.appendChild(item);
-                });
-
-                break;
-            case "delete":
-                this.source.unregister(this);
-
-                removeChildren(this.element);
-                this.element.remove();
-
-                break;
-            default:
-                console.warn(`The message '${message}' was not handled for list field`);
-                break;
-        }
-
-        this.refresh();
     },
 
     render() {
@@ -304,6 +269,8 @@ const BaseListField = {
             this.list.appendChild(item);
         });
 
+        StyleHandler(this.element, style);
+
         if (fragment.hasChildNodes()) {
             this.element.appendChild(fragment);
             this.bindEvents();
@@ -321,19 +288,40 @@ const BaseListField = {
         return false;
     },
     /**
-     * Gets the input value
-     * @returns {*[]}
-     */
-    getValue() {
-        return this.list.children;
-    },
-    /**
      * Verifies that the field has a value
      * @returns {boolean}
      */
     hasValue() {
         return this.items.size > 0;
     },
+    /**
+     * Gets the input value
+     * @returns {*[]}
+     */
+    getValue() {
+        return this.list.children;
+    },
+    setValue(value, update = false) {
+        var response = null;
+
+        if (update) {
+            response = this.source.setValue(value);
+        } else {
+            response = {
+                success: true
+            };
+        }
+
+        removeChildren(this.list);
+
+        value.forEach((val) => {
+            var item = createListFieldItem.call(this, val);
+            this.list.appendChild(item);
+        });
+
+        this.refresh();
+    },
+
     clear() {
         this.items.clear();
         removeChildren(this.list);
@@ -341,14 +329,28 @@ const BaseListField = {
 
     focus(element) {
         if (isValid.call(this, element)) {
-            console.log(element);
             this.focusIn(element);
             this.selection.focus();
         } else if (isHTMLElement(this.selection)) {
             this.selection.focus();
         } else if (this.hasValue()) {
             this.list.firstElementChild.focus();
+        } else {
+            let target = getTopElement(this.element);
+            if (!isHTMLElement(target)) {
+                return this;
+            }
+            if (target === this.list) {
+                if (this.list.hasChildNodes()) {
+                    target.children[0].focus();
+                } else {
+                    return this.arrowHandler("down", this.list);
+                }
+            } else {
+                target.focus();
+            }
         }
+
 
         return this;
     },
@@ -437,6 +439,7 @@ const BaseListField = {
             this.list.appendChild(item);
         }
 
+        this.refresh();
     },
     removeItem(value) {
         let item = this.getItem(value.id);
@@ -456,6 +459,8 @@ const BaseListField = {
             const { index } = item.dataset;
             item.dataset.index = +index - 1;
         }
+
+        this.refresh();
     },
     /**
      * Appends an element to the field container
@@ -483,7 +488,7 @@ const BaseListField = {
 
         if (result.success) {
             this.environment.notify("The element was successfully deleted");
-            if(this.hasValue()) {
+            if (this.hasValue()) {
                 let itemIndex = +index < this.list.childElementCount ? +index : this.list.childElementCount - 1;
                 this.list.children[itemIndex].focus();
             }
@@ -634,29 +639,57 @@ const BaseListField = {
      * @param {HTMLElement} target 
      */
     arrowHandler(dir, target) {
-        /** @type {HTMLElement} */
-        const item = target;
-
-        if (!isHTMLElement(item)) {
+        if (!isHTMLElement(target)) {
             return false;
         }
 
-        let closestItem = null;
+        if (target.parentElement === this.list) {
+            let closestItem = null;
 
-        if (dir === "up") {
-            closestItem = getElementTop(item, this.list);
-        } else if (dir === "down") {
-            closestItem = getElementBottom(item, this.list);
-        } else if (dir === "left") {
-            closestItem = getElementLeft(item, this.list);
-        } else if (dir === "right") {
-            closestItem = getElementRight(item, this.list);
-        }
+            if (dir === "up") {
+                closestItem = getElementTop(target, this.list);
+            } else if (dir === "down") {
+                closestItem = getElementBottom(target, this.list);
+            } else if (dir === "left") {
+                closestItem = getElementLeft(target, this.list);
+            } else if (dir === "right") {
+                closestItem = getElementRight(target, this.list);
+            }
 
-        if (isHTMLElement(closestItem)) {
-            closestItem.focus();
+            if (isHTMLElement(closestItem)) {
+                closestItem.focus();
+                this.selection = closestItem;
 
-            return true;
+                return true;
+            }
+
+            return this.arrowHandler(dir, target.parentElement);
+        } else if (target.parentElement === this.element) {
+            let closestItem = null;
+
+            if (dir === "up") {
+                closestItem = getElementTop(target, this.element);
+            } else if (dir === "down") {
+                closestItem = getElementBottom(target, this.element);
+            } else if (dir === "left") {
+                closestItem = getElementLeft(target, this.element);
+            } else if (dir === "right") {
+                closestItem = getElementRight(target, this.element);
+            }
+
+            if (isHTMLElement(closestItem)) {
+                if (closestItem === this.list) {
+                    if (this.list.hasChildNodes()) {
+                        closestItem.children[0].focus();
+                    } else {
+                        return this.arrowHandler(dir, this.list);
+                    }
+                } else {
+                    closestItem.focus();
+                }
+
+                return true;
+            }
         }
 
         if (this.parent) {

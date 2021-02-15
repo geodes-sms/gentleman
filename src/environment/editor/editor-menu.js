@@ -1,61 +1,145 @@
+
 import {
-    createDiv, createButton, createHeader, createAnchor, createSpan
+    createDocFragment, createDiv, createButton, createSpan, removeChildren,
+    isHTMLElement, isNullOrUndefined, valOrDefault, createUnorderedList, createListItem,
 } from 'zenkai';
+import { hide, show } from '@utils/index.js';
+
+
 
 /**
  * @returns {HTMLElement}
  */
-export function createEditorMenu(options) {
-    const menu = createDiv({
-        class: ["menu"],
-        draggable: true,
-        title: "Click to access the import, export and build actions"
-    });
+export const EditorMenu = {
+    /** @type {HTMLElement} */
+    container: null,
+    /** @type {HTMLElement} */
+    actionList: null,
+    /** @type {*} */
+    schema: null,
+    /** @type {boolean} */
+    isOpen: false,
+    /** @type {boolean} */
+    visible: true,
 
-    const title = createSpan({
-        class: ["menu-title"],
-        dataset: {
-            "ignore": "all",
+    init(schema) {
+        if (schema) {
+            this.schema = schema;
         }
-    }, "Menu");
 
-    const btnExport = createButton({
-        class: ["btn", "btn-export"],
-        dataset: {
-            "context": "model",
-            "action": "export",
+        return this;
+    },
+
+    show() {
+        show(this.container);
+        this.isVisible = true;
+
+        return this;
+    },
+    hide() {
+        hide(this.container);
+        this.isVisible = false;
+
+        return this;
+    },
+    open() {
+        this.container.classList.add("open");
+        this.isOpen = true;
+
+        return this;
+    },
+    close() {
+        this.container.classList.remove("open");
+        this.isOpen = false;
+
+        return this;
+    },
+
+    clear() {
+        removeChildren(this.container);
+
+        return this;
+    },
+    update(schema) {
+        if (isNullOrUndefined(schema)) {
+            return this;
         }
-    }, "Export");
 
-    const btnImport = createButton({
-        class: ["btn", "btn-import"],
-        dataset: {
-            "context": "model",
-            "action": "import"
+        const { actions } = schema;
+
+        const fragment = createDocFragment();
+
+        actions.filter(action => valOrDefault(action.default, true))
+            .forEach(action => {
+                const { name, content, downloadable, handler } = action;
+
+                let button = createButton({
+                    class: ["btn", "menu-action__button"],
+                    dataset: {
+                        "action": name,
+                        "downloadable": downloadable,
+                        "handler": true
+                    }
+                }, valOrDefault(content, name));
+
+                let item = createListItem({
+                    class: ["menu-action-list-item"]
+                }, button);
+
+                fragment.append(item);
+            });
+
+        removeChildren(this.actionList).append(fragment);
+
+        this.schema = schema;
+    },
+    render() {
+        const fragment = createDocFragment();
+
+        if (!isHTMLElement(this.container)) {
+            this.container = createDiv({
+                class: ["menu"],
+                draggable: true,
+                title: "Click to access the editor actions"
+            });
         }
-    }, "Import");
 
-    const btnAddProjection = createButton({
-        class: ["btn", "btn-expand"],
-        dataset: {
-            "context": "model",
-            "action": "import-projection"
+        const title = createSpan({
+            class: ["menu-title"],
+            dataset: {
+                "ignore": "all",
+            }
+        }, "Menu");
+
+        fragment.append(title);
+
+        if (!isHTMLElement(this.actionList)) {
+            this.actionList = createUnorderedList({
+                class: ["bare-list", "menu-action-list"]
+            });
+
+            fragment.append(this.actionList);
         }
-    }, "Expand");
 
-    const btnBuild = createButton({
-        class: ["btn", "btn-build"],
-        dataset: {
-            "context": "model",
-            "action": "build"
+
+        if (fragment.hasChildNodes()) {
+            this.container.append(fragment);
+
+            this.bindEvents();
         }
-    }, "Build");
 
-    menu.append(title, btnExport, btnImport, btnAddProjection, btnBuild);
+        this.refresh();
 
-    menu.addEventListener('click', (event) => {
-        menu.classList.toggle("open");
-    });
+        return this.container;
+    },
+    refresh() {
 
-    return menu;
-}
+        return this;
+    },
+
+    bindEvents() {
+        this.container.addEventListener('click', (event) => {
+            this.isOpen ? this.close() : this.open();
+        });
+    }
+};

@@ -1,5 +1,5 @@
 import {
-    isNode, isHTMLElement, isNullOrUndefined, hasOwn, valOrDefault, isEmpty, createI, isIterable, isString, isNullOrWhitespace,
+    isNullOrUndefined, hasOwn, valOrDefault, isEmpty,  isIterable, isString
 } from "zenkai";
 import { deepCopy } from "@utils/index.js";
 import { ProjectionFactory } from "./projection.js";
@@ -14,7 +14,7 @@ const models = [];
  * @returns {ProjectionModel}
  */
 export function createProjectionModel(schema, environment) {
-    var model = Object.create(ProjectionModel, {
+    const model = Object.create(ProjectionModel, {
         schema: { value: schema },
         environment: { value: environment },
     });
@@ -23,7 +23,6 @@ export function createProjectionModel(schema, environment) {
 
     return model;
 }
-
 
 export const ProjectionModel = {
     /** @type {Projection[]} */
@@ -41,28 +40,10 @@ export const ProjectionModel = {
             console.warn(concept, schema, tag);
         }
 
-        // if (schema.length > 1) {
-        //     console.warn(concept.name, tag);
-        //     console.log(schema);
-        // }
-
         // console.warn(concept.name, tag);
         // console.log(schema);
 
         const projection = ProjectionFactory.createProjection(this, schema, concept, this.environment);
-
-        this.addProjection(projection);
-
-        return projection;
-    },
-    createGlobalProjection(concept) {
-        const schema = this.getGlobalModelProjection(concept);
-
-        if (isEmpty(schema)) {
-            console.warn(concept, schema);
-        }
-
-        var projection = ProjectionFactory.createProjection(this, schema, concept, this.environment);
 
         this.addProjection(projection);
 
@@ -105,6 +86,21 @@ export const ProjectionModel = {
         this.projections.splice(index, 1);
 
         return true;
+    },
+
+    /**
+     * Get the metadata of a projection
+     * @param {string} projectionId 
+     * @returns {string} Metadata
+     */
+    getMetadata(projectionId) {
+        let target = this.schema.find(p => p.id === projectionId);
+        
+        if (target) {
+            return target.metadata;
+        }
+
+        return null;
     },
 
     /**
@@ -230,23 +226,4 @@ export const ProjectionModel = {
 
         return views;
     },
-};
-
-const validAccept = (concept, schema) => {
-    const { accept = "" } = concept;
-
-    if (isNullOrWhitespace(accept)) {
-        return true;
-    }
-
-    if (isNullOrUndefined(schema)) {
-        return false;
-    }
-
-    if (isString(accept)) {
-        return accept === schema || accept === schema.name;
-    }
-
-    console.log(accept == schema, accept, schema);
-    return accept == schema;
 };

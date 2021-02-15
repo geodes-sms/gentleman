@@ -27,6 +27,8 @@ export function StateHandler(states) {
     }
 
     this.state = out;
+
+    return out;
 }
 
 const ruleHandler = {
@@ -75,11 +77,11 @@ function negationHandler(terms) {
 }
 
 function conjunctionHandler(terms) {
-    return validateRule(terms[0]) && validateRule(terms[1]);
+    return validateRule.call(this, terms[0]) && validateRule.call(this, terms[1]);
 }
 
 function disjunctionHandler(terms) {
-    return validateRule(terms[0]) || validateRule(terms[1]);
+    return validateRule.call(this, terms[0]) || validateRule.call(this, terms[1]);
 }
 
 /**

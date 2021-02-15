@@ -40,10 +40,6 @@
     display: none;
 }        
 
-.has-toolbar {
-    padding-top: 40px;
-}
-
 .active > .btn-delete {
     opacity: 0.8;
     z-index: 10;

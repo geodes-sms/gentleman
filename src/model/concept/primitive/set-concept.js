@@ -13,8 +13,7 @@ const _SetConcept = {
         this.values = valOrDefault(this.schema.values, []);
         this.alias = this.schema.alias;
         this.description = this.schema.description;
-        this.min = valOrDefault(this.schema.min, 0);
-        this.max = this.schema.max;
+        this.cardinality = this.schema.cardinality;
         this.value = [];
 
         this.initObserver();
@@ -27,8 +26,12 @@ const _SetConcept = {
         this.removeAllElement();
 
         if (isNullOrUndefined(args)) {
-            for (let i = 0; i < this.min; i++) {
-                this.createElement();
+            if (this.cardinality) {
+                const { min = 0 } = this.cardinality;
+
+                for (let i = 0; i < min; i++) {
+                    this.createElement();
+                }
             }
 
             return this;
@@ -40,10 +43,15 @@ const _SetConcept = {
             this.createElement(value[i]);
         }
 
-        var remaining = this.min - value.length;
-        for (let i = 0; i < remaining; i++) {
-            this.createElement();
+        if (this.cardinality) {
+            const { min = 0 } = this.cardinality;
+
+            let remaining = min - value.length;
+            for (let i = 0; i < remaining; i++) {
+                this.createElement();
+            }
         }
+    
 
         return this;
     },
@@ -67,13 +75,24 @@ const _SetConcept = {
             if (concept.nature === "primitive") {
                 return {
                     name: concept.name,
-                    "value": concept.exportValue()
+                    value: concept.exportValue()
+                };
+            }
+
+            if (concept.nature === "prototype") {
+                let value = concept.exportValue();
+                return {
+                    name: concept.name,
+                    value: {
+                        name: concept.value.name,
+                        attributes: value
+                    }
                 };
             }
 
             return {
                 name: concept.name,
-                "attributes": concept.exportValue()
+                attributes: concept.exportValue()
             };
         });
     },

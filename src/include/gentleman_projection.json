@@ -5,14 +5,6 @@
             "nature": "concrete",
             "attributes": [
                 {
-                    "name": "global",
-                    "target": {
-                        "name": "boolean"
-                    },
-                    "value": false,
-                    "required": true
-                },
-                {
                     "name": "concept",
                     "target": {
                         "name": "concept"
@@ -149,22 +141,6 @@
             ]
         },
         {
-            "name": "global",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "tags",
-                    "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "tag"
-                        }
-                    }
-                }
-            ],
-            "unique": true
-        },
-        {
             "name": "tag",
             "nature": "derivative",
             "base": "string",
@@ -193,16 +169,16 @@
                 {
                     "name": "readonly",
                     "target": {
-                        "name": "boolean"
-                    },
-                    "value": false
+                        "name": "boolean",
+                        "default": false
+                    }
                 },
                 {
                     "name": "disabled",
                     "target": {
-                        "name": "boolean"
-                    },
-                    "value": false
+                        "name": "boolean",
+                        "default": false
+                    }
                 }
             ]
         },
@@ -224,9 +200,9 @@
                 {
                     "name": "multiline",
                     "target": {
-                        "name": "boolean"
-                    },
-                    "value": false
+                        "name": "boolean",
+                        "default": false
+                    }
                 }
             ],
 
@@ -1071,13 +1047,19 @@
                             },
                             "disposition": [
                                 {
-                                    "type": "template",
-                                    "name": "define"
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Define projection as",
+                                        "style": {
+                                            "css": ["keyword"]
+                                        }
+                                    }
                                 },
                                 {
                                     "type": "attribute",
-                                    "name": "global",
-                                    "tag": "global-boolean"
+                                    "name": "name",
+                                    "tag": "simple-string"
                                 }
                             ]
                         }
@@ -1122,27 +1104,21 @@
         },
         {
             "type": "template",
-            "name": "define",
+            "name": "style section",
             "content": [
                 {
                     "type": "static",
                     "static": {
                         "type": "text",
-                        "content": "Define projection as",
+                        "content": "Define style",
                         "style": {
                             "css": ["keyword"]
                         }
                     }
                 },
                 {
-                    "type": "static",
-                    "static": {
-                        "type": "text",
-                        "content": "Follow up",
-                        "style": {
-                            "css": ["keyword"]
-                        }
-                    }
+                    "type": "attribute",
+                    "name": "style"
                 }
             ]
         },
@@ -1422,6 +1398,47 @@
                         "type": "attribute",
                         "name": "content",
                         "tag": "element-set"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "style",
+                        "state": [
+                            {
+                                "rule": {
+                                    "type": "and",
+                                    "and": [
+                                        {
+                                            "type": "eq",
+                                            "eq": [{ "prop": "required" }, false]
+                                        }, 
+                                        {
+                                            "type": "eq",
+                                            "eq": [{ "prop": "created" }, false]
+                                        }
+                                    ]
+                                },
+                                "result": {
+                                    "content": {
+                                        "type": "layout",
+                                        "layout": {
+                                            "type": "wrap",
+                                            "style": {
+                                                "css": ["model-concept-option", "model-concept-option--prototype"]
+                                            },
+                                            "disposition": [
+                                                {
+                                                    "type": "static",
+                                                    "static": { 
+                                                        "type": "text", 
+                                                        "content": "Use a prototype" 
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        ]
                     }
                 ]
             }
@@ -1911,6 +1928,10 @@
                         "type": "attribute",
                         "name": "elements",
                         "tag": "element-set"
+                    },
+                    {
+                        "type": "template",
+                        "name": "style section"
                     }
                 ]
             }
@@ -2748,11 +2769,17 @@
                             "label": {
                                 "projection": [
                                     {
-                                        "type": "property",
-                                        "style": {
-                                            "css": ["label", "yesno-field__label"]
-                                        },
-                                        "name": "refname"
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "content": {
+                                                "type": "property",
+                                                "name": "refname"
+                                            },
+                                            "style": {
+                                                "css": ["label", "yesno-field__label"]
+                                            }
+                                        }
                                     },
                                     {
                                         "type": "static",
@@ -2778,11 +2805,17 @@
                             "label": {
                                 "projection": [
                                     {
-                                        "type": "property",
-                                        "style": {
-                                            "css": ["label", "yesno-field__label"]
-                                        },
-                                        "name": "refname"
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "content": {
+                                                "type": "property",
+                                                "name": "refname"
+                                            },
+                                            "style": {
+                                                "css": ["label", "yesno-field__label"]
+                                            }
+                                        }
                                     },
                                     {
                                         "type": "static",
@@ -2962,9 +2995,9 @@
                         "static": {
                             "type": "text",
                             "style": {
-                                "css": ["tag-list-title"]
+                                "css": ["title", "css-list-title"]
                             },
-                            "content": "CSS class selectors"
+                            "content": "CSS class"
                         }
                     },
                     {
@@ -2990,12 +3023,27 @@
                             "type": "static",
                             "static": {
                                 "type": "text",
-                                "content": "Add class"
+                                "content": "Add class",
+                                "focusable": false
                             }
                         }
                     }
                 ],
-
+                "action": {
+                    "remove": {
+                        "content": {
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "content": "✖",
+                                "style": {
+                                    "css": ["css-list__btn-remove"]
+                                },
+                                "focusable": false
+                            }
+                        }
+                    }
+                },
                 "style": {
                     "css": ["css-list-container"]
                 }
@@ -3299,19 +3347,20 @@
             "tags": ["css-string"],
             "projection": {
                 "type": "text",
+                "resizable": true,
                 "content": [
                     {
                         "type": "input",
                         "input": {
                             "placeholder": "class",
                             "style": {
-                                "css": ["textfield--css__input"]
+                                "css": ["textfield--labeled__input"]
                             }
                         }
                     }
                 ],
                 "style": {
-                    "css": ["textfield--css"]
+                    "css": ["textfield--labeled"]
                 }
             }
         },
@@ -3324,11 +3373,17 @@
                 "placeholder": "name",
                 "content": [
                     {
-                        "type": "property",
-                        "style": {
-                            "css": ["label", "textfield--concept__label"]
-                        },
-                        "name": "refname"
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": {
+                                "type": "property",
+                                "name": "refname"
+                            },
+                            "style": {
+                                "css": ["label", "textfield--concept__label"]
+                            }
+                        }
                     },
                     {
                         "type": "input",
@@ -3353,11 +3408,17 @@
                 "type": "text",
                 "resizable": true,
                 "content": [
-                    { 
-                        "type": "property",
-                        "name": "refname",
-                        "style": {
-                            "css": ["name-field--textual__label"]
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": {
+                                "type": "property",
+                                "name": "refname"
+                            },
+                            "style": {
+                                "css": ["name-field--textual__label"]
+                            }
                         }
                     },
                     {
@@ -3460,10 +3521,16 @@
                 "type": "text",
                 "content": [
                     {
-                        "type": "property",
-                        "name": "refname",
-                        "style": {
-                            "css": ["label", "textfield--concept__label"]
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": {
+                                "type": "property",
+                                "name": "refname"
+                            },
+                            "style": {
+                                "css": ["label", "textfield--concept__label"]
+                            }
                         }
                     },
                     {
@@ -3485,11 +3552,29 @@
 
 
 
-
     "editor": {
-        "body": {
+        "name": "Gentleman projection",
+        "header": {
+            "selectors": {},
             "css": ["model-concept-list"]
         },
-        "build": "gentleman_projection"
+        "root": ["projection", "template"],
+        "body": {
+            "concept": {
+                "actions": [
+                    { "name": "build", "triggers": ["click"] }
+                ],
+                "css": ["model-concept-list"]    
+            },
+            "css": ["model-concept-list"]
+        },
+        "menu": {
+            "actions": [
+                { "name": "build-projection",  "content": "Build", "downloadable": true },
+                { "name": "export" },
+                { "name": "import" }
+            ],
+            "css": ["model-concept-list"]
+        }
     }
 }
