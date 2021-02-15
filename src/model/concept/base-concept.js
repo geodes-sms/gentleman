@@ -26,6 +26,7 @@ const _BaseConcept = {
         }
 
         const { id = "", attributes = [] } = args;
+
         if (id.length > 10) {
             this.id = id;
         }
@@ -34,7 +35,6 @@ const _BaseConcept = {
             const { name, id, value } = attr;
 
             let attribute = this.getAttributeByName(name);
-            console.log(id, value);
 
             if (value) {
                 attribute.target.initValue(value);

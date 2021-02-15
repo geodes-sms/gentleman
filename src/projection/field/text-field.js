@@ -4,7 +4,7 @@ import {
     removeChildren, isHTMLElement, isNullOrWhitespace, isEmpty, valOrDefault,
     hasOwn, getPreviousElementSibling, getNextElementSibling,
 } from "zenkai";
-import { hide, show, getCaretIndex, isHidden } from "@utils/index.js";
+import { hide, show, getCaretIndex, isHidden, getElementLeft, getElementTop, getElementBottom, getElementRight } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { StateHandler } from "./../state-handler.js";
 import { ContentHandler } from "./../content-handler.js";
@@ -159,7 +159,6 @@ const BaseTextField = {
 
 
     init() {
-        this.source.register(this);
         this.multiline = valOrDefault(this.schema.multiline, false);
         this.focusable = valOrDefault(this.schema.focusable, true);
         this.resizable = valOrDefault(this.schema.resizable, false);
@@ -170,24 +169,6 @@ const BaseTextField = {
         }
 
         return this;
-    },
-
-    /**
-     * Updates the text field on source change
-     * @param {string} message
-     * @param {*} value 
-     */
-    update(message, value) {
-        switch (message) {
-            case "value.changed":
-                this.setValue(value);
-                break;
-            default:
-                console.warn(`The message '${message}' was not handled for text field`);
-                break;
-        }
-
-        this.refresh();
     },
 
     focus(target) {
@@ -677,22 +658,42 @@ const BaseTextField = {
             return true;
         }
 
-        if (dir === "up" && this.parent) {
-            return this.parent.arrowHandler(dir, this.element);
-        } else if (dir === "down" && this.parent) {
-            return this.parent.arrowHandler(dir, this.element);
-        } else if (dir === "right") {
-            let isAtEnd = this.getValue().length < getCaretIndex(this.input) + 1;
+        let element = null;
 
-            if (isAtEnd && this.parent) {
-                return this.parent.arrowHandler(dir, this.element);
+        if (dir === "up" && this.parent) {
+            element = getElementTop(target, this.element);
+        } else if (dir === "down" && this.parent) {
+            element = getElementBottom(target, this.element);
+        } else if (dir === "right") {
+            if (target === this.input) {
+                let isAtEnd = this.getValue().length < getCaretIndex(this.input) + 1;
+
+                if (isAtEnd && this.parent) {
+                    element = getElementRight(target, this.element);
+                }
+            } else {
+                element = getElementRight(target, this.element);
             }
         } else if (dir === "left") {
-            let isAtStart = 0 === getCaretIndex(this.input);
+            if (target === this.input) {
+                let isAtStart = 0 === getCaretIndex(this.input);
 
-            if (isAtStart && this.parent) {
-                return this.parent.arrowHandler(dir, this.element);
+                if (isAtStart) {
+                    element = getElementLeft(target, this.element);
+                }
+            } else {
+                element = getElementLeft(target, this.element);
             }
+        }
+
+        if(isHTMLElement(element)) {
+            element.focus();
+
+            return true;
+        }
+
+        if (this.parent) {
+            return this.parent.arrowHandler(dir, this.element);
         }
 
 

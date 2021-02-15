@@ -1,6 +1,6 @@
 import {
     createDocFragment, createSpan, createDiv, createI, createInput, createLabel,
-    removeChildren, isHTMLElement, valOrDefault, hasOwn, isEmpty, isObject, isFunction,
+    removeChildren, isHTMLElement, valOrDefault,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
 import { StyleHandler } from "../style-handler.js";
@@ -127,16 +127,12 @@ const BaseBinaryField = {
     input: null,
     /** @type {HTMLLabelElement} */
     label: null,
-    /** @type {boolean} */
-    checked: false,
     /** @type {string} */
     value: "",
     /** @type {*} */
     state: null,
 
     init() {
-        this.source.register(this);
-
         return this;
     },
 
@@ -173,7 +169,6 @@ const BaseBinaryField = {
 
             this.input = createFieldInput(this.id);
             this.input.checked = resolveValue(this.source);
-            this.checked = this.input.checked;
             this.value = this.input.checked;
 
             if (this.readonly) {
@@ -223,29 +218,11 @@ const BaseBinaryField = {
 
         return this.element;
     },
-    /**
-     * Updates the check field on source change
-     * @param {string} message
-     * @param {*} value 
-     */
-    update(message, value) {
-        switch (message) {
-            case "value.changed":
-                this.input.checked = value;
-                this.value = value;
-                this.checked = value;
-                break;
-            default:
-                console.warn(`The message '${message}' was not handled for check field`);
-                break;
-        }
-        this.refresh();
-    },
+
 
     focusIn() {
         this.focused = true;
         this.value = this.input.checked;
-        this.checked = this.input.checked;
         this.element.classList.add("active");
 
         return this;
@@ -297,21 +274,25 @@ const BaseBinaryField = {
     getValue() {
         return this.input.checked;
     },
-    setValue(value) {
-        var response = this.source.setValue(value);
+    setValue(value, update = false) {
+        var response = null;
 
-        if (!response.success) {
-            this.environment.notify(response.message);
-            this.errors.push(...response.errors);
+        if (update) {
+            response = this.source.setValue(value);
         } else {
-            this.errors = [];
+            response = {
+                success: true
+            };
         }
 
-        // this.attached.filter(element => !element.active).forEach(element => element.hide());
+        this.errors = [];
+        if (!response.success) {
+            this.environment.notify(response.message, "error");
+            this.errors.push(...response.errors);
+        }
 
         this.input.checked = value;
         this.value = value;
-        this.checked = value;
 
         this.refresh();
     },
@@ -410,7 +391,7 @@ const BaseBinaryField = {
      * @param {HTMLElement} target 
      */
     enterHandler(target) {
-        this.setValue(!this.input.checked);
+        this.setValue(!this.input.checked, true);
     },
     /**
      * Handles the `arrow` command
@@ -426,7 +407,7 @@ const BaseBinaryField = {
 
     bindEvents() {
         this.element.addEventListener('change', (event) => {
-            this.setValue(this.getValue());
+            this.setValue(this.getValue(), true);
         });
     },
 };

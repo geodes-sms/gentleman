@@ -33,15 +33,13 @@ export function ContentHandler(schema, concept, args) {
         return AttributeHandler.call(this, schema, contentConcept);
     } else if (schema.type === "template") {
         let template = this.model.getModelTemplate(schema.name);
-        console.log(template);
+
         const fragment = createDocFragment();
         template.content.forEach(element => {
             fragment.append(ContentHandler.call(this, element, concept, args));
         });
 
         return fragment;
-    } else if (schema.type === "property") {
-        return PropertyHandler.call(this, schema, contentConcept);
     } else if (schema.type === "projection") {
         const { tag, style } = schema;
 
@@ -65,32 +63,4 @@ export function ContentHandler(schema, concept, args) {
     console.error(schema);
 
     throw new TypeError("Bad argument: The type is not recognized");
-}
-
-/**
- * Renders a property value
- * @param {*} value 
- * @param {*} concept 
- * @returns {HTMLElement}
- */
-function PropertyHandler(value, concept) {
-    const { help, style, name } = value;
-
-    const propValue = concept.getProperty(name);
-
-    const element = createSpan({
-        class: ["text"],
-        dataset: {
-            property: name,
-            ignore: "all",
-        }
-    }, propValue);
-
-    if (help) {
-        element.title = help;
-    }
-
-    StyleHandler(element, style);
-
-    return element;
 }

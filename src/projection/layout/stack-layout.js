@@ -1,6 +1,6 @@
 import {
     createDocFragment, createDiv, createButton, createInput, createLabel,
-    isHTMLElement, isEmpty, valOrDefault,
+    isHTMLElement, isEmpty, valOrDefault, findAncestor,
 } from "zenkai";
 import { getElementTop, getElementBottom, getElementLeft, getElementRight } from "@utils/index.js";
 import { StyleHandler } from './../style-handler.js';
@@ -92,7 +92,7 @@ export const StackLayout = {
         }
 
         if (this.focusable) {
-            this.container.tabIndex = -1;
+            this.container.tabIndex = 0;
         } else {
             this.container.dataset.ignore = "all";
         }
@@ -103,7 +103,7 @@ export const StackLayout = {
 
         for (let i = 0; i < disposition.length; i++) {
             let render = ContentHandler.call(this, disposition[i]);
-         
+
             let element = this.environment.resolveElement(render);
             if (element) {
                 element.parent = this;
@@ -176,7 +176,7 @@ export const StackLayout = {
         if (this.focusable) {
             this.container.focus();
         } else {
-            let projectionElement = this.environment.resolveElement(valOrDefault(element, this.elements[0]));
+            let projectionElement = this.environment.resolveElement(valOrDefault(element, this.container.children[0]));
             if (projectionElement) {
                 projectionElement.focus();
             }
@@ -184,13 +184,39 @@ export const StackLayout = {
     },
 
     /**
+     * Handles the `enter` command
+     * @param {HTMLElement} target element
+     */
+    enterHandler(target) {
+        let projectionElement = this.environment.resolveElement(this.elements[0]);
+
+        if (projectionElement) {
+            projectionElement.focus();
+        }
+
+        return false;
+    },
+    /**
+     * Handles the `escape` command
+     * @param {HTMLElement} target 
+     */
+    escapeHandler(target) {
+        let parent = findAncestor(target, (el) => el.tabIndex === 0);
+        let element = this.environment.resolveElement(parent);
+
+        element.focus(parent);
+    },
+    /**
      * Handles the `arrow` command
      * @param {string} dir direction 
-     * @param {HTMLElement} target target element
+     * @param {HTMLElement} target element
      */
     arrowHandler(dir, target) {
-        if (!this.elements.includes(target)) {
-            console.log(this.elements, target);
+        if (target === this.container) {
+            if (this.parent) {
+                return this.parent.arrowHandler(dir, this.container);
+            }
+
             return false;
         }
 
@@ -207,17 +233,9 @@ export const StackLayout = {
         }
 
         if (isHTMLElement(closestElement)) {
-            const { nature } = closestElement.dataset;
-
-            if (nature === "field") {
-                let field = this.getField(closestElement);
-                field.focus();
-            } else if (nature === "static") {
-                let $static = this.getStatic(closestElement);
-                $static.focus();
-            } else if (nature === "layout") {
-                let layout = this.getLayout(closestElement);
-                layout.focus();
+            let element = this.environment.resolveElement(closestElement);
+            if (element) {
+                element.focus();
             }
 
             return true;
@@ -226,7 +244,7 @@ export const StackLayout = {
         if (this.parent) {
             return this.parent.arrowHandler(dir, this.container);
         }
-
+        
         return false;
     },
 

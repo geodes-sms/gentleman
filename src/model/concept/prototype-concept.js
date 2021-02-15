@@ -1,5 +1,5 @@
-import { UUID } from "@utils/uuid.js";
 import { isString, isNullOrUndefined, isObject, isNullOrWhitespace, isEmpty } from "zenkai";
+import { UUID } from "@utils/uuid.js";
 import { Concept } from "./concept.js";
 
 
@@ -32,8 +32,9 @@ const BasePrototypeConcept = {
         // this.id = id;
 
         if (value) {
-            return;
             let concept = this.createConcept(value.name, value);
+            // console.log(concept);
+            // return;
             this.setValue(concept);
         } else if (args.name) {
             let concept = this.createConcept(args.name, args);
@@ -56,7 +57,7 @@ const BasePrototypeConcept = {
 
     },
     setValue(_value) {
-        let value = isObject(_value) ? _value.name : _value;
+        let value = _value.nature === "fake" ? _value.name : _value;
 
         let result = this.validate(value);
 
@@ -73,7 +74,7 @@ const BasePrototypeConcept = {
         var concept = value;
         if (isString(value)) {
             concept = this.createConcept(value);
-            if(isObject(_value)) {
+            if (isObject(_value)) {
                 concept.id = _value.id;
             }
         }
@@ -111,7 +112,7 @@ const BasePrototypeConcept = {
                 object: { value: "concept" },
                 nature: { value: "fake" },
                 model: { value: this.model },
-                id: { value: UUID.generate() },
+                id: { value: this.hasValue() && this.value.name === candidate.name ? this.value.id : UUID.generate() },
                 name: { value: candidate.name },
                 schema: { value: candidate },
             }).init(this)

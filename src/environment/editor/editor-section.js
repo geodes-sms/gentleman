@@ -1,9 +1,10 @@
 import {
     createDocFragment, createDiv, createSpan, createUnorderedList, createListItem,
     createI, createButton, isHTMLElement, findAncestor, removeChildren, hasOwn,
-    isNullOrUndefined, isFunction, createH4, createEmphasis, createInput, toBoolean,
+    isNullOrUndefined, isFunction, createH4, createEmphasis, createInput, toBoolean, isEmpty, valOrDefault,
 } from 'zenkai';
-import { show, hide, Key } from '@utils/index.js';
+import { show, hide, Key, Events } from '@utils/index.js';
+import { createProjectionSelector } from './projection-selector.js';
 
 
 /**
@@ -11,9 +12,9 @@ import { show, hide, Key } from '@utils/index.js';
  * @param {string} type 
  * @returns {HTMLElement}
  */
-function createSelector(type) {
+function createTab(type) {
     let selector = createListItem({
-        class: ["editor-selector-item"],
+        class: ["tab", "editor-header-tab"],
         tabindex: 0,
         dataset: {
             "value": type,
@@ -22,7 +23,7 @@ function createSelector(type) {
     });
 
     let content = createSpan({
-        class: ["editor-selector-item__content"],
+        class: ["editor-header-tab__content"],
     }, type);
 
     selector.append(content);
@@ -33,38 +34,32 @@ function createSelector(type) {
 export const EditorSection = {
     /** @type {Editor} */
     editor: null,
+    /** @type {number} */
     valueCount: 0,
 
     /** @type {HTMLElement} */
     container: null,
     /** @type {HTMLElement} */
     title: null,
+
     /** @type {HTMLElement} */
-    selectorList: null,
+    tabs: null,
     /** @type {HTMLElement} */
-    modelSelector: null,
+    tabConcept: null,
     /** @type {HTMLElement} */
-    valueSelector: null,
+    tabValue: null,
     /** @type {HTMLElement} */
-    projectionSelector: null,
+    tabProjection: null,
     /** @type {HTMLElement} */
-    modelConceptNotification: null,
+    tabConceptNotification: null,
     /** @type {HTMLElement} */
-    modelValueNotification: null,
+    tabValueNotification: null,
     /** @type {HTMLElement} */
-    modelProjectionNotification: null,
+    tabProjectionNotification: null,
     /** @type {HTMLElement} */
-    selectorItem: null,
+    activeTab: null,
     /** @type {string} */
-    selectorValue: null,
-    /** @type {HTMLElement} */
-    modelConceptList: null,
-    /** @type {HTMLElement} */
-    modelValueList: null,
-    /** @type {HTMLElement} */
-    modelProjectionList: null,
-    /** @type {HTMLElement} */
-    modelActiveList: null,
+    activeTabValue: null,
     /** @type {HTMLElement} */
     menu: null,
     /** @type {HTMLElement} */
@@ -74,6 +69,18 @@ export const EditorSection = {
         if (editor) {
             this.editor = editor;
         }
+
+        this._conceptSelector = createProjectionSelector("concept", this.editor).init(
+            () => this.editor.conceptModel ? this.editor.getRoots().map(concept => this.editor.conceptModel.getCompleteModelConcept(concept)) : []
+        );
+
+        this._valueSelector = createProjectionSelector("value", this.editor).init(
+            () => this.editor.conceptModel ? this.editor.conceptModel.getValues() : []
+        );
+
+        this._projectionSelector = createProjectionSelector("projection", this.editor).init(
+            () => this.editor.projectionModel ? this.editor.projectionModel.schema.filter(p => p.type !== "template") : []
+        );
 
         return this;
     },
@@ -93,39 +100,33 @@ export const EditorSection = {
             }, "Editor");
         }
 
-        this.selectorList = createUnorderedList({
-            class: ["bare-list", "editor-selector"],
+        this.tabs = createUnorderedList({
+            class: ["bare-list", "tabs", "editor-header-tabs"],
         });
 
-        this.modelSelector = createSelector("concept");
-        this.modelConceptNotification = createI({
+        this.tabConcept = createTab("concept");
+        this.tabConceptNotification = createI({
             class: ["editor-selector__notification", "hidden"],
         });
-        this.modelSelector.prepend(this.modelConceptNotification);
+        this.tabConcept.prepend(this.tabConceptNotification);
 
-        // this.modelSelector = createSelector("concept");
-        // this.modelValueNotification = createI({
-        //     class: ["editor-selector__notification"],
-        // });
-        // this.modelSelector.prepend(this.modelConceptNotification);
-
-        this.valueSelector = createSelector("value");
-        this.modelValueNotification = createI({
+        this.tabValue = createTab("value");
+        this.tabValueNotification = createI({
             class: ["editor-selector__notification", "hidden"],
         });
-        this.valueSelector.prepend(this.modelValueNotification);
+        this.tabValue.prepend(this.tabValueNotification);
 
-        this.projectionSelector = createSelector("projection");
-        this.modelProjectionNotification = createI({
+        this.tabProjection = createTab("projection");
+        this.tabProjectionNotification = createI({
             class: ["editor-selector__notification", "hidden"],
         });
-        this.projectionSelector.prepend(this.modelProjectionNotification);
+        this.tabProjection.prepend(this.tabProjectionNotification);
 
-        this.selectorList.append(this.modelSelector, this.valueSelector, this.projectionSelector);
+        this.tabs.append(this.tabConcept, this.tabValue, this.tabProjection);
 
-        this.selectorItem = this.selectorList.children[0];
-        this.selectorItem.classList.add("selected");
-        this.selectorValue = this.selectorItem.dataset.value;
+        this.activeTab = this.tabs.children[0];
+        this.activeTab.classList.add("selected");
+        this.activeTabValue = this.activeTab.dataset.value;
 
 
         let btnClose = createButton({
@@ -149,7 +150,7 @@ export const EditorSection = {
         if (!isHTMLElement(this.menu)) {
             this.menu = createDiv({
                 class: ["editor-header-menu"]
-            }, [this.title, this.selectorList, toolbar]);
+            }, [this.title, this.tabs, toolbar]);
 
             fragment.append(this.menu);
         }
@@ -162,28 +163,16 @@ export const EditorSection = {
             fragment.append(this.body);
         }
 
-        if (!isHTMLElement(this.modelConceptList)) {
-            this.modelConceptList = createUnorderedList({
-                class: ["bare-list", "selector-model-concepts", "font-ui", "hidden"]
-            });
-
-            this.body.append(this.modelConceptList);
+        if (!isHTMLElement(this._conceptSelector.container)) {
+            this.body.append(this._conceptSelector.render());
         }
 
-        if (!isHTMLElement(this.modelValueList)) {
-            this.modelValueList = createUnorderedList({
-                class: ["bare-list", "selector-model-values", "font-ui", "hidden"]
-            });
-
-            this.body.append(this.modelValueList);
+        if (!isHTMLElement(this._valueSelector.container)) {
+            this.body.append(this._valueSelector.render());
         }
 
-        if (!isHTMLElement(this.modelProjectionList)) {
-            this.modelProjectionList = createUnorderedList({
-                class: ["bare-list", "selector-model-projections", "font-ui", "hidden"]
-            });
-
-            this.body.append(this.modelProjectionList);
+        if (!isHTMLElement(this._projectionSelector.container)) {
+            this.body.append(this._projectionSelector.render());
         }
 
         if (fragment.hasChildNodes()) {
@@ -201,17 +190,17 @@ export const EditorSection = {
             this.title.textContent = `Editor: ${this.editor.config["name"]}`;
         }
 
-        let handler = SelectorHandler[this.selectorValue];
+        let handler = SelectorHandler[this.activeTabValue];
 
         if (isFunction(handler)) {
             handler.call(this);
         }
 
         if (this.valueCount > 0) {
-            this.modelValueNotification.textContent = this.valueCount;
-            show(this.modelValueNotification);
+            this.tabValueNotification.textContent = this.valueCount;
+            show(this.tabValueNotification);
         } else {
-            hide(this.modelValueNotification);
+            hide(this.tabValueNotification);
         }
 
         return this;
@@ -223,18 +212,18 @@ export const EditorSection = {
     updateSelector(selector) {
         const { value } = selector.dataset;
 
-        if (this.selectorValue === value) {
+        if (this.activeTabValue === value) {
             return;
         }
 
-        if (selector.parentElement !== this.selectorList) {
+        if (selector.parentElement !== this.tabs) {
             return;
         }
 
-        this.selectorItem.classList.remove("selected");
-        this.selectorValue = value;
-        this.selectorItem = selector;
-        this.selectorItem.classList.add("selected");
+        this.activeTab.classList.remove("selected");
+        this.activeTabValue = value;
+        this.activeTab = selector;
+        this.activeTab.classList.add("selected");
 
         this.refresh();
     },
@@ -245,18 +234,6 @@ export const EditorSection = {
     hide() {
         hide(this.container);
     },
-    notify(message, value) {
-        switch (message) {
-            case "value.added":
-                this.valueCount++;
-
-                break;
-            default:
-                console.warn(`The message '${message}' was not handled for editor`);
-
-                break;
-        }
-    },
 
     bindEvents() {
 
@@ -265,7 +242,6 @@ export const EditorSection = {
 
             switch (event.key) {
                 case Key.enter:
-                    console.log(target);
                     target.click();
 
                     break;
@@ -274,7 +250,7 @@ export const EditorSection = {
             }
         });
 
-        this.selectorList.addEventListener('click', (event) => {
+        this.tabs.addEventListener('click', (event) => {
             const { target } = event;
 
             let selector = getSelector.call(this, target);
@@ -285,7 +261,7 @@ export const EditorSection = {
         this.body.addEventListener("click", (event) => {
             const { target } = event;
 
-            const { action, type, id, concept } = target.dataset;
+            const { action, id, concept, handler } = target.dataset;
 
             if (action === "clone") {
                 let value = this.editor.conceptModel.getValue(id);
@@ -294,26 +270,26 @@ export const EditorSection = {
             } else if (action === "delete") {
                 this.editor.conceptModel.removeValue(id);
             } else if (action === "edit") {
-                this.editor.manager.createEditor().init().initProjection().open();
+                let projection = this.editor.projectionModel.getMetadata(id);
+                this.editor.manager.createEditor().init().initProjection([JSON.parse(projection)]).open();
             } else if (action === "create") {
                 this.editor.addConcept(concept);
             }
         });
 
-        this.body.addEventListener('change', (event) => {
-            const { target } = event;
+        Events.on("value.added", (value) => {
+            this.valueCount++;
+            this.refresh();
+        });
 
-            const { action, type, id, concept } = target.dataset;
-
-            if (action === "global") {
-                let value = this.editor.projectionModel.changeProjection({ global: target.checked });
-            }
+        Events.on("value.removed", (value) => {
+            this.refresh();
         });
     }
 };
 
 const SelectorHandler = {
-    "concept": SelectorModelHandler,
+    "concept": SelectorConceptHandler,
     "projection": SelectorProjectionHandler,
     "value": SelectorValueHandler,
 };
@@ -323,174 +299,16 @@ const SelectorHandler = {
  * @returns {HTMLElement}
  * @this {EditorSection}
  */
-function SelectorModelHandler() {
-    const { conceptModel, projectionModel } = this.editor;
-
-    if (isNullOrUndefined(conceptModel)) {
-        return null;
-    }
-
-    const concreteConcepts = conceptModel.schema.filter((concept) => projectionModel.hasGlobalProjection(concept));
-
-    removeChildren(this.modelConceptList);
-
-    concreteConcepts.forEach(concept => {
-        let content = createDiv({
-            class: ["selector-model-value__content"]
-        });
-
-        let title = createH4({
-            class: ["selector-model-value__title"],
-            editable: true
-        }, `${concept.name}`);
-
-        let preview = createDiv({
-            class: ["selector-model-value__preview"]
-        });
-
-        content.append(title, preview);
-
-        let actionBar = createDiv({
-            class: ["selector-model-value__action-bar"]
-        });
-
-        let btnCreate = createButton({
-            class: ["btn", "selector-model-value__action-bar-button", "selector-model-value__action-bar-button--clone"],
-            dataset: {
-                action: "create",
-                concept: concept.name
-            }
-        }, "Create");
-
-        actionBar.append(btnCreate);
-
-        var conceptItem = createListItem({
-            class: ["selector-model-concept", "font-ui"],
-            title: concept.description,
-            tabindex: 0,
-            dataset: {
-                type: "concept",
-                concept: concept.name
-            }
-        }, [content, actionBar]);
-
-        this.modelConceptList.appendChild(conceptItem);
-    });
-
-    // update current selector
-    show(this.modelConceptList);
-    hide(this.modelConceptNotification);
-
-    // update other selectors
-    hide(this.modelValueList);
-    hide(this.modelProjectionList);
-}
-
-/**
- * Selector handler for model menu item
- * @returns {HTMLElement}
- * @this {EditorSection}
- */
-function SelectorProjectionHandler() {
-    const { projectionModel } = this.editor;
-
-    if (isNullOrUndefined(projectionModel)) {
-        return null;
-    }
-
-    const projections = projectionModel.schema.filter(p => p.type !== "template");
-
-    removeChildren(this.modelProjectionList);
-
-    projections.forEach(projection => {
-        let content = createDiv({
-            class: ["selector-model__content", "selector-model-projection__content"]
-        });
-
-        let title = createH4({
-            class: ["title", "selector-model__title", "selector-model-projection__title"],
-            editable: true
-        }, `${projection.type}`);
-
-        let preview = createDiv({
-            class: ["selector-model__preview", "selector-model-projection__preview"]
-        });
-
-        let concept = createSpan({
-            class: ["selector-model-projection__concept"]
-        }, projection.concept.name || projection.concept.prototype);
-
-        let tagList = createUnorderedList({
-            class: ["bare-list", "selector-model-projection__tags"]
-        });
-        projection.tags.forEach(tag => tagList.append(
-            createListItem({
-                class: ["selector-model-projection__tag"]
-            }, tag)
-        ));
-
-        preview.append(concept, tagList);
-
-        content.append(title, preview);
-
-        let actionBar = createDiv({
-            class: ["selector-model__action-bar", "selector-model-projection__action-bar"]
-        });
-
-        let chkGlobal = createInput({
-            type: "checkbox",
-            class: ["checkbox", "selector-model-projection__action-bar-checkbox", "selector-model-projection__action-bar-checkbox--global"],
-            checked: toBoolean(projection.global),
-            dataset: {
-                action: "global",
-                id: projection.id,
-            }
-        });
-
-        let btnClone = createButton({
-            class: ["btn", "selector-model-projection__action-bar-button", "selector-model-projection__action-bar-button", "selector-model-value__action-bar-button--clone"],
-            dataset: {
-                action: "edit",
-                id: projection.id,
-            }
-        }, "Edit");
-
-        let btnDelete = createButton({
-            class: ["btn", "selector-model-projection__action-bar-button", "selector-model-value__action-bar-button--delete"],
-            dataset: {
-                action: "delete",
-                id: projection.id,
-            }
-        }, "Delete");
-
-        actionBar.append(btnDelete, btnClone);
-
-        var projectionItem = createListItem({
-            class: ["selector-model-projection", "font-ui"],
-            title: projection.description,
-            tabindex: 0,
-            dataset: {
-                type: "projection",
-                projection: projection.id
-            }
-        }, [content, actionBar]);
-
-        this.modelProjectionList.appendChild(projectionItem);
-    });
-
-    // update current selector
-    show(this.modelProjectionList);
-    hide(this.modelProjectionNotification);
-
-    // update other selectors
-    hide(this.modelConceptList);
-    hide(this.modelValueList);
-}
-
 function SelectorConceptHandler() {
-    hide(this.modelConceptList);
-    hide(this.modelValueList);
-    hide(this.modelProjectionList);
+    this._conceptSelector.update();
+
+    // update current selector
+    this._conceptSelector.show();
+    hide(this.tabConceptNotification);
+
+    // update other selectors
+    this._valueSelector.hide();
+    this._projectionSelector.hide();
 }
 
 /**
@@ -499,129 +317,36 @@ function SelectorConceptHandler() {
  * @this {EditorSection}
  */
 function SelectorValueHandler() {
-    const { conceptModel } = this.editor;
-
-    if (isNullOrUndefined(conceptModel)) {
-        return null;
-    }
-
-    const values = conceptModel.getValues();
-
-    removeChildren(this.modelValueList);
-
-    values.forEach(value => {
-        let content = createDiv({
-            class: ["selector-model-value__content"]
-        });
-
-        let title = createH4({
-            class: ["selector-model-value__title"],
-            editable: true
-        }, `${value.name}`);
-
-        let preview = createDiv({
-            class: ["selector-model-value__preview"]
-        }, createPreview(value));
-
-        content.append(title, preview);
-
-        let actionBar = createDiv({
-            class: ["selector-model-value__action-bar"]
-        });
-
-        let btnClone = createButton({
-            class: ["btn", "selector-model-value__action-bar-button", "selector-model-value__action-bar-button--clone"],
-            dataset: {
-                action: "clone",
-                id: value.id,
-            }
-        }, "Clone");
-
-        let btnDelete = createButton({
-            class: ["btn", "selector-model-value__action-bar-button", "selector-model-value__action-bar-button--delete"],
-            dataset: {
-                action: "delete",
-                id: value.id,
-            }
-        }, "Delete");
-
-        actionBar.append(btnDelete, btnClone);
-
-        let valueItem = createListItem({
-            class: ["selector-model-value", "font-ui"],
-            dataset: {
-                type: "value",
-                id: value.id,
-            }
-        }, [content, actionBar]);
-
-        this.modelValueList.append(valueItem);
-    });
+    this._valueSelector.update();
 
     this.valueCount = 0;
 
     // update current selector
-    show(this.modelValueList);
-    hide(this.modelValueNotification);
+    this._valueSelector.show();
+    hide(this.tabValueNotification);
 
     // update other selectors
-    hide(this.modelConceptList);
-    hide(this.modelProjectionList);
+    this._conceptSelector.hide();
+    this._projectionSelector.hide();
 }
 
-function createPreview(obj) {
-    if (isNullOrUndefined(obj)) {
-        return createEmphasis({
-            class: ["selector-model-value__preview-null"]
-        }, "null");
-    }
+/**
+ * Selector handler for model menu item
+ * @returns {HTMLElement}
+ * @this {EditorSection}
+ */
+function SelectorProjectionHandler() {
+    this._projectionSelector.update();
 
-    const { name, value, attributes } = obj;
+    // update current selector
+    this._projectionSelector.show();
+    hide(this.tabProjectionNotification);
 
-    if (["string", "number", "boolean"].includes(name)) {
-        return createSpan({
-            class: ["selector-model-value__preview-text"]
-        }, value);
-    } else if (name === "set") {
-        let list = createUnorderedList({
-            class: ["bare-list", "selector-model-value__preview-list"]
-        });
-
-        value.forEach(val => {
-            let item = createListItem({
-                class: ["selector-model-value__preview-list-item"]
-            }, createPreview(val));
-
-            list.append(item);
-        });
-
-        return list;
-    } else if (attributes) {
-        let list = createUnorderedList({
-            class: ["bare-list", "selector-model-value__preview-attribute-list"]
-        });
-
-        attributes.forEach(attr => {
-            const { name, value } = attr;
-
-            let attrElement = createSpan({
-                class: ["selector-model-value__preview-text", "selector-model-value__preview-text--attribute"]
-            }, name);
-
-            let item = createListItem({
-                class: ["selector-model-value__preview-attribute-list-item"]
-            }, [attrElement, createPreview(value)]);
-
-            list.append(item);
-        });
-
-        return list;
-    } else if (value) {
-        return createPreview(value);
-    }
-
-    return obj.toString();
+    // update other selectors
+    this._conceptSelector.hide();
+    this._valueSelector.hide();
 }
+
 
 /**
  * Gets an event real target
@@ -634,11 +359,127 @@ function getSelector(element) {
      * Check if element is a selector
      * @param {HTMLElement} el 
      */
-    const isValid = (el) => el.parentElement === this.selectorList;
+    const isValid = (el) => el.parentElement === this.tabs;
 
     if (isValid(element)) {
         return element;
     }
 
     return findAncestor(element, isValid, 10);
+}
+
+/**
+ * Creates a selector between a root concept and the active concept
+ * @param {Concept!} rootConcept 
+ * @param {Concept} [activeConcept] 
+ * @returns {Node}
+ */
+function conceptSelectorHandler(rootConcept, activeConcept) {
+
+    if (isNullOrUndefined(rootConcept)) {
+        throw new TypeError("Bad argument: rootConcept must be a Concept");
+    }
+
+    /**
+     * Createa a selector item
+     * @param {string} type 
+     * @param {Concept} concept 
+     * @returns {HTMLElement}
+     */
+    const createSelectorItem = (type, concept, source = false) => {
+        const { name, alias, object, ref } = concept;
+
+        const typeHandler = {
+            "root": `${valOrDefault(alias, name)}`,
+            "parent": `${valOrDefault(alias, name)}`,
+            "ancestor": `${valOrDefault(alias, name)}`,
+            "active": `${valOrDefault(ref.name, name)}`,
+        };
+
+        const fragment = createDocFragment();
+
+        if (type === "active") {
+            fragment.appendChild(createI({
+                class: [`selector-concept-nature`]
+            }, name));
+        }
+
+        /** @type {HTMLElement} */
+        var content = createSpan({
+            class: ["selector-concept-content"],
+        }, typeHandler[type]);
+
+        fragment.appendChild(content);
+
+        if (type === "ancestor") {
+            content.classList.add("fit-content");
+        }
+
+
+        /** @type {HTMLElement} */
+        var item = createListItem({
+            class: ["selector-concept", `selector-concept--${type}`],
+            dataset: {
+                object: object
+            }
+        }, fragment);
+
+        if (source) {
+            item.classList.add("source");
+        }
+
+        return item;
+    };
+
+    const fragment = createDocFragment();
+    const hasActiveConcept = !isNullOrUndefined(activeConcept);
+
+    fragment.appendChild(createSelectorItem("root", rootConcept, hasActiveConcept));
+
+    if (!hasActiveConcept) {
+        return fragment;
+    }
+
+    let activeParent = activeConcept.getParent();
+
+    if (activeParent !== rootConcept) {
+        let parent = activeParent;
+        let parentItem = null;
+
+        parentItem = createSelectorItem("parent", activeParent, true);
+
+        let ancestor = parent.getAncestor().filter(val => val.object === "concept" && val.nature !== "primitive" && val !== rootConcept);
+
+        if (!isEmpty(ancestor)) {
+            ancestor = ancestor.reverse();
+            let ancestorItem = createListItem({
+                class: ["selector-concept", `selector-concept--ancestor`, "source", "collapse"]
+            });
+
+            let list = createUnorderedList({
+                class: ["bare-list", "selector-ancestor-concepts"]
+            });
+            ancestor.forEach(concept => {
+                list.appendChild(createListItem({
+                    class: ["selector-ancestor-concept", "fit-content"],
+                }, concept.name));
+            });
+
+            ancestorItem.appendChild(list);
+
+            fragment.appendChild(ancestorItem);
+
+            // ancestor.forEach(concept => {
+            //     fragment.appendChild(createSelectorItem("ancestor", concept, true));
+            // });
+        }
+
+        fragment.appendChild(parentItem);
+    } else {
+        // TODO: mark root as parent
+    }
+
+    fragment.appendChild(createSelectorItem("active", activeConcept));
+
+    return fragment;
 }

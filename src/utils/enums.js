@@ -14,6 +14,7 @@ export const EventType = {
     CLICK: 'click',
     FOCUSIN: 'focusin',
     FOCUSOUT: 'focusout',
+    INPUT: 'input',
     KEYDOWN: 'keydown',
     KEYUP: 'keyup',
     MOUSEENTER: 'mouseenter',
@@ -42,122 +43,9 @@ export const Key = {
     period: ".",
 };
 
-export const HTMLAttribute = {
-    Optional: 'optional',
-    Type: 'type',
-    Name: 'name',
-    Path: 'path',
-    Error: 'error',
-    Prop: 'prop',
-    Position: 'position',
+export const NotificationType = {
+    NORMAL: "normal",
+    WARNING: "warning",
+    SUCCESS: "success",
+    ERROR: "error"
 };
-
-/**
- * Enum for datatype values.
- * @readonly
- * @enum {string}
- */
-export const DataType = {
-    ID: "ID",
-    IDREF: "IDREF",
-    boolean: "boolean",
-    integer: "integer",
-    real: "real",
-    raw: "raw",
-    string: "string",
-};
-
-export const ModelType = {
-    ABSTRACT: 'abstract',
-    DATATYPE: 'data-type',
-    ENUM: 'enum',
-    ELEMENT: 'element',
-    RULE: 'rule',
-    PRIMITIVE: DataType,
-};
-
-export const ModelAttributeProperty = {
-    NAME: 'name',
-    TYPE: 'type',
-    VAL: 'val',
-    OPTIONAL: 'optional',
-    MULTIPLE: 'multiple',
-    REPRESENTATION: 'representation'
-};
-
-export const RepresentationType = {
-    TEXT: 'text',
-    TABLE: 'table',
-    GRAPHIC: 'graphic',
-};
-
-export const ClassName = {
-    BTN: 'btn',
-    BTN_DELETE: 'btn-delete',
-};
-
-export const UI = (function () {
-    const BUTTON = 'BUTTON';
-    const ANCHOR = 'ANCHOR';
-    const ATTRIBUTE = 'ATTRIBUTE';
-    const OPTION = 'OPTION';
-
-    var pub = {
-        ATTR_WRAPPER: 'attr-wrapper',
-        COLLAPSE: 'collapse',
-        CHECKED: 'checked',
-        DISABLED: 'disabled',
-        EMPTY: 'empty',
-        HIDDEN: 'hidden',
-        SELECTED: 'selected',
-
-        Element: {
-            ANCHOR: {
-                name: ANCHOR
-            },
-            ATTRIBUTE: {
-                name: ATTRIBUTE,
-                class: 'attr',
-                toClass() { return '.attr'; },
-                toString() { return 'ATTRIBUTE'; }
-            },
-            ATTRIBUTE_ABSTRACT: {
-                name: ATTRIBUTE,
-                class: 'attr attr--extension',
-                toString() { return 'ABSTRACT ATTRIBUTE'; }
-            },
-            ATTRIBUTE_BOOLEAN: {
-                name: ATTRIBUTE,
-                class: 'attr--bool',
-                toString() { return 'BOOLEAN ATTRIBUTE'; }
-            },
-            BUTTON: {
-                name: BUTTON,
-                class: 'btn',
-                toString() { return 'BUTTON'; }
-            },
-            BUTTON_ADD: {
-                name: BUTTON,
-                class: 'btn btn-add',
-                toString() { return 'ADD BUTTON'; }
-            },
-            BUTTON_DELETE: {
-                name: BUTTON,
-                class: 'btn btn-delete',
-                toString() { return 'DELETE BUTTON'; }
-            },
-            BUTTON_MENU: {
-                name: BUTTON,
-                class: 'btn btn-menu',
-                toString() { return 'MENU BUTTON'; }
-            },
-            OPTION: {
-                name: OPTION,
-                class: 'option',
-                toString() { return 'OPTION'; }
-            }
-        }
-    };
-
-    return pub;
-})();

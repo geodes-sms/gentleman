@@ -1,6 +1,6 @@
 import {
     createButton, removeChildren, insertAfterElement, insertBeforeElement,
-    isNode, isHTMLElement, isNullOrUndefined, hasOwn, valOrDefault, isEmpty, createI,
+    isNode, isHTMLElement, isNullOrUndefined, hasOwn, valOrDefault, isEmpty,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
 import { LayoutFactory } from "./layout/index.js";
@@ -30,7 +30,6 @@ const Projection = {
     init(args) {
         this.containers = [];
         this.attributes = [];
-        this.components = [];
 
         this.args = valOrDefault(args, {});
 
@@ -47,12 +46,10 @@ const Projection = {
     parent: null,
     /** @type {HTMLElement[]} */
     containers: null,
-    /** @type {HTMLElement[]} */
+    /** @type {Layout|Field} */
     element: null,
     /** @type {string[]} */
     attributes: null,
-    /** @type {string[]} */
-    components: null,
     /** @type {number} */
     index: 0,
     /** @type {boolean} */
@@ -126,7 +123,6 @@ const Projection = {
             return;
         }
 
-
         if (message === "delete") {
             this.concept.unregister(this);
             this.concept = null;
@@ -139,6 +135,21 @@ const Projection = {
             this.model.removeProjection(this.id);
 
             return;
+        }
+
+        switch (message) {
+            case "value.changed":
+                this.element.setValue(value);
+                return;
+            case "value.added":
+                this.element.addItem(value);
+                return;
+            case "value.removed":
+                this.element.removeItem(value);
+                return;
+            default:
+                console.warn(`The message '${message}' is not handled by the element`);
+                break;
         }
 
         if (!(/attribute.(added|removed)/gi).test(message)) {
@@ -205,6 +216,8 @@ const Projection = {
 
         if (type === "layout") {
             this.element = LayoutFactory.createLayout(this.model, valOrDefault(projection, content), this).init(this.args);
+            this.element.focusable = true;
+            this.element.source = this.concept;
 
             this.environment.registerLayout(this.element);
         } else if (type === "field") {
@@ -240,6 +253,7 @@ const Projection = {
             container.prepend(btnDelete);
         }
 
+
         // if (this.hasMultipleViews) {
         //     let altBadge = createI({
         //         class: ["badge", "badge--alt"]
@@ -253,7 +267,7 @@ const Projection = {
         return container;
     },
     addContainer(container) {
-        if(!isHTMLElement(container)) {
+        if (!isHTMLElement(container)) {
             throw new TypeError("Bad request: Missing container");
         }
 

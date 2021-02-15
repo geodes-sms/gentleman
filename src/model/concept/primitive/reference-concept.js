@@ -88,7 +88,7 @@ const _ReferenceConcept = {
             this.reference.unregister(this);
         }
 
-        this.reference = this.model.getConcept(value);console.log(value, this.reference);
+        this.reference = this.model.getConcept(value);
         this.reference.register(this);
 
         this.value = value;
@@ -162,7 +162,7 @@ const _ReferenceConcept = {
                 this.value = null;
                 this.reference = null;
 
-                this.notify("value.deleted", this.reference);
+                this.notify("value.changed", this.reference);
                 break;
 
             default:

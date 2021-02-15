@@ -47,10 +47,14 @@ const BaseTextStatic = {
                 this.element.tabIndex = 0;
             }
 
+            const { type, name } = content;
+
+            let value = type === "property" ? this.projection.concept.getProperty(name) : content;
+
             if (this.contentType === "html") {
-                this.element.append(htmlToElement(content));
+                this.element.append(htmlToElement(value));
             } else {
-                this.element.textContent = content.trim();
+                this.element.textContent = value.trim();
             }
         }
 
@@ -99,7 +103,7 @@ const BaseTextStatic = {
      */
     arrowHandler(dir, target) {
         if (!this.editable) {
-            if (this.parent.object === "layout") {
+            if (this.parent) {
                 return this.parent.arrowHandler(dir, target);
             }
         }
@@ -112,27 +116,25 @@ const BaseTextStatic = {
             }
         } else if (dir === "left") {
             let isAtStart = 0 === getCaretIndex(this.element);
-            
-            console.log(isAtStart, getCaretIndex(this.element));
 
             if (isAtStart && this.parent) {
                 return this.parent.arrowHandler(dir, target);
             }
-        } else if (this.parent.object === "layout") {
+        } else if (this.parent) {
             return this.parent.arrowHandler(dir, target);
         }
 
         return false;
     },
-    
+
     /**
      * Handles the `escape` command
      * @param {HTMLElement} target 
      */
     escapeHandler(target) {
         let parent = findAncestor(target, (el) => el.tabIndex === 0);
-        let element =  this.environment.resolveElement(parent);
-        
+        let element = this.environment.resolveElement(parent);
+
         element.focus(parent);
     },
     refresh() {

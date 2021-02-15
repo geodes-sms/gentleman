@@ -38,7 +38,6 @@ h4 { font-size: 1.5em; font-weight: 600; margin-bottom: 0; }
     height: 100%;
     padding: 4px 5px 6px;
     background-color: #d3d3d3;
-    box-sizing: border-box;
 }
 
 .action-call-wrapper {
@@ -254,7 +253,6 @@ article[data-page="docs"] {
     position: relative;
     display: inline-block;
     text-decoration: none; text-align: center;
-    box-sizing: border-box;
 }
 
 .link-wrapper {
@@ -266,7 +264,6 @@ article[data-page="docs"] {
     background: #5497FF;
     border-radius: 50%;
     font-size: 1.4rem;
-    box-sizing: border-box;
     vertical-align: middle;
     transform: scale(0.8);
 }

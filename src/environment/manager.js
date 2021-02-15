@@ -1,8 +1,10 @@
 import {
-    createDocFragment, createDiv, createParagraph, createButton, getElement, 
-    isHTMLElement, isNullOrWhitespace, isNullOrUndefined, isString, isFunction, isEmpty,
+    createDocFragment, createDiv, createButton, getElement, isHTMLElement,
+    isNullOrWhitespace, isNullOrUndefined, isString, isFunction, isEmpty,
 } from "zenkai";
+import { Events } from "@utils/index.js";
 import { Explorer, Editor } from './index.js';
+
 
 const ENV_EDITOR = "editor";
 const ENV_EXPLORER = "explorer";
@@ -62,8 +64,8 @@ export const Manager = {
             fragment.append(this.menu);
         }
 
-        if (isNullOrUndefined(this.btnBuild.parentElement)) {
-            this.menu.append(this.btnNew, this.btnBuild, this.btnStyle);
+        if (isNullOrUndefined(this.btnNew.parentElement)) {
+            this.menu.append(this.btnNew, this.btnStyle);
         }
 
         if (fragment.hasChildNodes()) {
@@ -94,7 +96,7 @@ export const Manager = {
             }
         }
 
-        this.btnBuild.disabled = !(conceptEditor && projectionEditor);
+        // this.btnBuild.disabled = !(conceptEditor && projectionEditor);
 
         return this;
     },
@@ -140,7 +142,7 @@ export const Manager = {
             model: { value: model },
             container: { value: createContainer("editor") },
         });
-        
+
         this.container.append(editor.container);
 
         environments.push(editor);
@@ -168,6 +170,7 @@ export const Manager = {
 
         return true;
     },
+  
 
     /**
      * Gets an explorer
@@ -194,7 +197,7 @@ export const Manager = {
             manager: { value: this },
             container: { value: createContainer("explorer") },
         });
-        
+
         this.container.append(explorer.container);
 
         environments.push(explorer);
@@ -211,13 +214,13 @@ export const Manager = {
             });
         }
 
-        if (!isHTMLElement(this.btnBuild)) {
-            this.btnBuild = createButton({
-                id: "btnBuildModel",
-                class: ["btn", "manager__button", "manager__btn-build"]
-            }, "Build");
+        // if (!isHTMLElement(this.btnBuild)) {
+        //     this.btnBuild = createButton({
+        //         id: "btnBuildModel",
+        //         class: ["btn", "manager__button", "manager__btn-build"]
+        //     }, "Build");
 
-        }
+        // }
 
         if (!isHTMLElement(this.btnNew)) {
             this.btnNew = createButton({
@@ -242,30 +245,26 @@ export const Manager = {
             }
         });
 
-        this.btnBuild.addEventListener('click', (event) => {
-            var json = [];
+        // this.btnBuild.addEventListener('click', (event) => {
+        //     var json = [];
 
-            for (let i = 0; i < this.editors.length; i++) {
-                const editor = this.editors[i];
+        //     for (let i = 0; i < this.editors.length; i++) {
+        //         const editor = this.editors[i];
 
-                if (editor.buildTarget === "gentleman_concept") {
-                    json.push(editor.build());
-                }
+        //         if (editor.buildTarget === "gentleman_concept") {
+        //             json.push(editor.build());
+        //         }
 
-                if (editor.buildTarget === "gentleman_projection") {
-                    json.push(editor.build());
-                }
-            }
+        //         if (editor.buildTarget === "gentleman_projection") {
+        //             json.push(editor.build());
+        //         }
+        //     }
 
-            const [concept, projection] = json; 
-            console.log(concept, projection);
+        //     const [concept, projection] = json; 
+        //     console.log(concept, projection);
 
-            this.createEditor("gentleman_concept").init(concept, projection).open();
-        });
-
-        this.btnStyle.addEventListener('click', (event) => {
-            console.log("change style");
-        });
+        //     this.createEditor("gentleman_concept").init(concept, projection).open();
+        // });
     }
 };
 

@@ -1,6 +1,7 @@
 import { createI, valOrDefault } from "zenkai";
 import { ContentHandler } from "./content-handler.js";
 import { StyleHandler } from "./style-handler.js";
+import { StateHandler } from "./state-handler.js";
 
 
 /**
@@ -8,7 +9,7 @@ import { StyleHandler } from "./style-handler.js";
  * @param {string} name 
  */
 export function AttributeHandler(schema, concept) {
-    const { name, optional, style, tag } = schema;
+    const { name, optional, tag, state } = schema;
 
     if (!concept.hasAttribute(name)) {
         throw new Error(`Attribute '${name}' does not exist in the concept '${concept.name}'`);
@@ -17,7 +18,8 @@ export function AttributeHandler(schema, concept) {
     let attr = {
         name: name,
         schema: schema,
-        required: true,
+        required: concept.isAttributeRequired(name),
+        created: concept.isAttributeCreated(name),
         optional: null,
         element: null,
     };
@@ -26,11 +28,11 @@ export function AttributeHandler(schema, concept) {
 
     var render = null;
 
-    if (!(concept.isAttributeRequired(name) || concept.isAttributeCreated(name))) {
-        const { alias, description } = concept.getAttributeSchema(name);
+    let stateResult = StateHandler.call(attr, state);
 
-        if (optional) {
-            render = ContentHandler.call(this, optional, concept);
+    if (stateResult) {
+        if (stateResult.content) {
+            render = ContentHandler.call(this, stateResult.content, concept);
         } else {
             render = createI({
                 class: ["projection-element", "projection-element--optional"],
@@ -38,7 +40,7 @@ export function AttributeHandler(schema, concept) {
                     object: "attribute",
                     id: name
                 },
-            }, `Add ${valOrDefault(alias, name)}`);
+            }, `Add ${name}`);
         }
 
         render.tabIndex = 0;
@@ -47,7 +49,6 @@ export function AttributeHandler(schema, concept) {
             concept.createAttribute(name);
         });
 
-        attr.required = false;
         attr.optional = render;
     } else {
         let { target, description, schema } = concept.getAttributeByName(name);
@@ -57,8 +58,6 @@ export function AttributeHandler(schema, concept) {
         projection.parent = this.projection;
 
         render = projection.render();
-
-        StyleHandler(render, style);
 
         attr.element = render;
     }

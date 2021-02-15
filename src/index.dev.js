@@ -15,6 +15,7 @@ const Environment = Manager.init();
 // const ConceptEditor = Environment.createEditor().init(concept, projection).initProjection().open();
 Environment.render();
 
+
 // if (editor) {
 //     ConceptEditor.buildTarget = editor.build;
 // }

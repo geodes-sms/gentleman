@@ -6,12 +6,14 @@ import {
     cloneObject, copytoClipboard
 } from 'zenkai';
 import { Events, hide, show, Key, getEventTarget } from '@utils/index.js';
+import { buildProjectionHandler } from "../build-projection.js";
+import { buildConceptHandler } from "../build-concept.js";
 import { ConceptModelManager } from '@model/index.js';
 import { createProjectionModel } from '@projection/index.js';
 import { ProjectionWindow } from '../projection-window.js';
 import { StyleWindow } from '../style-window.js';
 import { createHome } from './home.js';
-import { createEditorMenu } from './editor-menu.js';
+import { EditorMenu } from './editor-menu.js';
 import { EditorSection } from './editor-section.js';
 
 
@@ -41,17 +43,29 @@ function createProjectionWindow() {
 }
 
 /**
+ * Creates a projection window
+ * @returns {ProjectionWindow}
+ */
+function createEditorMenu() {
+    return Object.create(EditorMenu, {
+        object: { value: "environment" },
+        name: { value: "editor-menu" },
+        type: { value: "menu" },
+        editor: { value: this }
+    });
+}
+
+/**
  * Create a projection in the editor
  * @param {*} concept 
  * @this {Editor}
  */
 function createProjection(concept) {
-    let projection = this.projectionModel.createGlobalProjection(concept).init();
+    const { name } = concept;
 
-    let btnBuild = createButton({
-        class: ["btn", "editor-concept-toolbar__btn-build"],
-        title: `Build ${name.toLowerCase()}`
-    });
+    let projection = this.projectionModel.createProjection(concept).init();
+
+
 
     let btnDelete = createButton({
         class: ["btn", "editor-concept-toolbar__btn-delete"],
@@ -65,7 +79,7 @@ function createProjection(concept) {
 
     let toolbar = createDiv({
         class: ["editor-concept-toolbar"],
-    }, [btnBuild, btnMaximize, btnDelete]);
+    }, [btnMaximize, btnDelete]);
 
     var modelConceptContainer = createDiv({
         class: ["editor-concept"],
@@ -74,64 +88,6 @@ function createProjection(concept) {
             nature: "concept-container"
         }
     }, [toolbar, projection.render()]);
-
-
-
-    btnBuild.addEventListener('click', (event) => {
-        if (this.buildTarget === "gentleman_concept") {
-            try {
-                const result = this.conceptModel.buildSingleConcept(concept);
-
-                if (!result.success) {
-                    console.log('%c Concept is not valid', 'padding: 4px 6px; color: #fff; font-weight: bold; background: #DC143C;');
-
-                    result.errors.forEach(error => console.error(error));
-
-                    modelConceptContainer.classList.remove("valid");
-                    modelConceptContainer.classList.add("not-valid");
-                } else {
-                    const value = result.message;
-
-                    console.log(`%c Concept '${value.name}' is valid`, 'padding: 4px 6px; color: #fff; font-weight: bold; background: #00AB66;');
-                    console.log(value);
-
-                    modelConceptContainer.classList.remove("not-valid");
-                    modelConceptContainer.classList.add("valid");
-                }
-            } catch (error) {
-                console.error(error);
-
-                this.notify("There was an unexpected error", "error");
-            }
-        } else if (this.buildTarget === "gentleman_projection") {
-            try {
-                const result = this.conceptModel.buildSingleProjection(concept);
-
-                if (!result.success) {
-                    console.log('%c Projection is not valid', 'padding: 4px 6px; color: #fff; font-weight: bold; background: #DC143C;');
-
-                    result.errors.forEach(error => console.error(error));
-
-                    modelConceptContainer.classList.remove("valid");
-                    modelConceptContainer.classList.add("not-valid");
-                } else {
-                    const value = result.message;
-
-                    console.log(`%c Projection '${value.name}' is valid`, 'padding: 4px 6px; color: #fff; font-weight: bold; background: #00AB66;');
-                    console.log(value);
-
-                    modelConceptContainer.classList.remove("not-valid");
-                    modelConceptContainer.classList.add("valid");
-                }
-            } catch (error) {
-                console.error(error);
-
-                this.notify("There was an unexpected error", "error");
-
-                return;
-            }
-        }
-    });
 
     btnDelete.addEventListener('click', (event) => {
         if (concept.delete(true)) {
@@ -149,11 +105,32 @@ function createProjection(concept) {
 
 const MODEL_GENTLEMAN_CONCEPT = require('@include/gentleman_model.json');
 const MODEL_GENTLEMAN_PROJECTION = require('@include/gentleman_projection.json');
+const DEFAULT_CONFIG = {
+    "header": {
+        "selectors": {},
+        "css": ["model-concept-list"]
+    },
+    "root": [],
+    "body": {
+        "concept": {
+            "actions": [
+                { "name": "build", "triggers": ["click"] }
+            ],
+            "css": ["model-concept-list"]
+        },
+        "css": ["model-concept-list"]
+    },
+    "menu": {
+        "actions": [
+            { "name": "export" },
+            { "name": "import" }
+        ],
+        "css": ["model-concept-list"]
+    }
+};
 
 
 export const Editor = {
-    _initialized: false,
-
     /** @type {ConceptModel} */
     conceptModel: null,
     /** @type {Concept} */
@@ -175,7 +152,10 @@ export const Editor = {
     footer: null,
     /** @type {ProjectionWindow} */
     projectionWindow: null,
-
+    /** @type {EditorMenu} */
+    menu: null,
+    /** @type {HTMLInputElement} */
+    input: null,
 
     /** @type {HTMLElement} */
     downloadList: null,
@@ -195,35 +175,27 @@ export const Editor = {
     /** @type {Concept} */
     activeConcept: null,
 
-    /** @type {HTMLElement} */
-    menu: null,
-    /** @type {HTMLAnchorElement} */
-    btnPrint: null,
-    /** @type {HTMLInputElement} */
-    input: null,
-
-    /** @type {string} */
-    buildTarget: null,
     /** @type {*} */
     config: null,
 
     /** @type {boolean} */
     active: false,
+    handlers: null,
 
-    init(conceptModel, projectionModel) {
-        if (conceptModel) {
-            this.conceptModel = ConceptModelManager.createModel(conceptModel).init();
-            this.conceptModel.register(this);
+    init(conceptSchema, projectionSchema) {
+        if (conceptSchema) {
+            this.conceptModel = ConceptModelManager.createModel(conceptSchema).init();
         }
 
-        if (projectionModel) {
-            this.projectionModel = createProjectionModel(projectionModel, this).init();
+        if (projectionSchema) {
+            this.projectionModel = createProjectionModel(projectionSchema, this).init();
         }
 
         this.fields = new Map();
         this.statics = new Map();
         this.layouts = new Map();
-        this.config = {};
+        this.config = DEFAULT_CONFIG;
+        this.handlers = {};
 
         if (this.config) {
             this.header = createEditorHeader.call(this).init();
@@ -231,201 +203,39 @@ export const Editor = {
 
         this.projectionWindow = createProjectionWindow.call(this).init();
 
-        this.render();
+        this.menu = createEditorMenu.call(this).init(this.config.menu);
 
-        this._initialized = true;
+        this.render();
 
         return this;
     },
-    initProjection() {
+    initProjection(values) {
         // this.changeModel(MODEL_GENTLEMAN_PROJECTION);
 
         const { concept, projection, views = [], editor } = MODEL_GENTLEMAN_PROJECTION;
 
-
-        const values = [
-            {
-                "id": "3c35664d-b3c2-4058-bd36-7c2b2057d4e3",
-                "root": true,
-                "name": "projection",
-                "attributes": [
-                    {
-                        "name": "global",
-                        "value": {
-                            "name": "boolean",
-                            "value": true
-                        }
-                    },
-                    {
-                        "name": "concept",
-                        "value": {
-                            "name": "concept",
-                            "attributes": [
-                                {
-                                    "name": "name",
-                                    "value": {
-                                        "name": "string",
-                                        "value": "okidok"
-                                    }
-                                },
-                                {
-                                    "name": "prototype",
-                                    "value": null
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "name": "tags",
-                        "value": {
-                            "name": "set",
-                            "value": []
-                        }
-                    },
-                    {
-                        "name": "content",
-                        "value": {
-                            "name": "component",
-                            "value": {
-                                "name": "layout component",
-                                "attributes": [
-                                    {
-                                        "name": "layout",
-                                        "value": {
-                                            "name": "layout",
-                                            "value": {
-                                                "name": "wrap layout",
-                                                "attributes": [
-                                                    {
-                                                        "name": "elements",
-                                                        "value": {
-                                                            "name": "set",
-                                                            "value": [
-                                                                {
-                                                                    "name": "element",
-                                                                    "attributes": null
-                                                                }
-                                                            ]
-                                                        }
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                ]
-            },
-            {
-                "id": "bc52a796-ded8-441a-986a-92806858e3ae",
-                "name": "boolean",
-                "root": false,
-                "value": true
-            },
-            {
-                "id": "6ed70699-54af-4a9d-a0f2-aa743308e3f0",
-                "root": false,
-                "name": "concept",
-                "attributes": [
-                    {
-                        "name": "name",
-                        "value": {
-                            "name": "string",
-                            "value": "okidok"
-                        }
-                    },
-                    {
-                        "name": "prototype",
-                        "value": {
-                            "name": "string",
-                            "value": ""
-                        }
-                    }
-                ]
-            },
-            {
-                "id": "b7828cdf-2c17-42b9-94e6-fd0ce5520bc7",
-                "name": "string",
-                "root": false,
-                "value": "okidok"
-            },
-            {
-                "id": "89fc6c8f-4ede-476f-84ec-4fe201d08e8d",
-                "name": "string",
-                "root": false,
-                "value": ""
-            },
-            {
-                "id": "74ba8855-971c-4893-911e-c9ae998fbaf1",
-                "name": "set",
-                "root": false,
-                "value": []
-            },
-            {
-                "id": "0994d05b-7a09-4517-997c-5c404d6ada71",
-                "name": "component",
-                "root": false,
-                "value": {
-                    "id": "8c12f177-67c3-43b5-9c5d-162cd19c5bf1",
-                    "name": "layout component"
-                }
-            },
-            {
-                "id": "8621aeb6-fcc8-4264-be5d-016dbd8f29d7",
-                "name": "layout",
-                "root": false,
-                "value": {
-                    "id": "13681657-6a6f-486e-9a56-0314167e5a71",
-                    "name": "wrap layout"
-                }
-            },
-            {
-                "id": "fa33c315-c364-4e18-9c5c-8443462ce44e",
-                "name": "element",
-                "root": false,
-                "value": null
-            },
-            {
-                "id": "43ade4b5-4c75-4c5d-9e4a-c2c7f889c166",
-                "name": "set",
-                "root": false,
-                "value": [
-                    {
-                        "id": "fa33c315-c364-4e18-9c5c-8443462ce44e",
-                        "name": "element",
-                        "root": false,
-                        "value": null
-                    }
-                ]
-            }
-        ];
-
         if (concept) {
             this.conceptModel = ConceptModelManager.createModel(concept, projection).init(values);
-            this.conceptModel.register(this);
         }
 
         if (projection) {
-            this.projectionModel = createProjectionModel(projection, this).init(views);
+            this.projectionModel = createProjectionModel(projection, this).init();
         }
 
         if (editor) {
             this.config = editor;
-            this.buildTarget = editor.build;
         }
 
         this.manager.refresh();
 
         this.clear().refresh();
 
-        [{ concept: { id: "3c35664d-b3c2-4058-bd36-7c2b2057d4e3", name: "projection" } }].forEach(view => {
+        let value = values[0];
+
+        [{ concept: { id: value.id, name: value.name } }].forEach(view => {
             const { id, name } = view.concept;
 
             const concept = this.conceptModel.getConcept(id);
-
-            console.log(concept);
 
             this.conceptSection.appendChild(createProjection.call(this, concept));
         });
@@ -433,13 +243,21 @@ export const Editor = {
 
         return this;
     },
+    getRoots() {
+        const { root = [] } = this.config;
+
+        if (isEmpty(root)) {
+            return this.conceptModel.getSchema();
+        }
+
+        return root;
+    },
 
     changeModel(modelSchema) {
-        const { concept, projection, values = [], views = [], editor } = modelSchema;
+        const { concept, projection, values = [], views = [], editor = DEFAULT_CONFIG } = modelSchema;
 
         if (concept) {
             this.conceptModel = ConceptModelManager.createModel(concept, projection).init(values);
-            this.conceptModel.register(this);
         }
 
         if (projection) {
@@ -448,7 +266,7 @@ export const Editor = {
 
         if (editor) {
             this.config = editor;
-            this.buildTarget = editor.build;
+            this.menu.update(editor.menu);
         }
 
         this.manager.refresh();
@@ -469,6 +287,9 @@ export const Editor = {
         let projection = createProjection.call(this, concept);
 
         this.conceptSection.appendChild(projection);
+
+        let element = getElement('[data-projection]', projection);
+        element.focus();
     },
     addProjection(projections) {
         if (Array.isArray(projections)) {
@@ -628,21 +449,44 @@ export const Editor = {
         }
     },
 
-    undo() {
-        this.state.undo();
-        this.setState(cloneObject(this.state.current));
+    triggerEvent(event) {
+        const { name, downloadable, } = event;
 
-        Events.emit('editor.undo', this.state.hasUndo);
+        const handlers = this.handlers[name];
 
-        return this;
+        handlers.forEach((handler) => {
+            let result = handler.call(this, this.conceptModel);
+
+            if (result === false) {
+                return;
+            }
+
+            if (downloadable) {
+                this.download(result);
+            }
+        });
     },
-    redo() {
-        this.state.redo();
-        this.setState(cloneObject(this.state.current));
+    registerHandler(name, handler) {
+        if (!Array.isArray(this.handlers[name])) {
+            this.handlers[name] = [];
+        }
 
-        Events.emit('editor.redo', this.state.hasRedo);
+        this.handlers[name].push(handler);
+    },
+    unregisterHandler(name, handler) {
+        if (!hasOwn(this.handlers, name)) {
+            return false;
+        }
 
-        return this;
+        for (let i = 0; i < this.handlers[name].length; i++) {
+            if (this.handlers[name][i] === handler) {
+                this.handlers[name].splice(i, 1);
+
+                return true;
+            }
+        }
+
+        return false;
     },
     save() {
         this.state.set(this.concrete);
@@ -651,77 +495,51 @@ export const Editor = {
 
         return this;
     },
-    print() {
-        const MIME_TYPE = 'application/json';
-        window.URL = window.webkitURL || window.URL;
 
-        if (!isNullOrWhitespace(this.btnPrint.href)) {
-            window.URL.revokeObjectURL(this.btnPrint.href);
-        }
-
-        var bb = new Blob([JSON.stringify(this.conceptModel)], { type: MIME_TYPE });
-        Object.assign(this.btnPrint, {
-            download: `model_${this.conceptModel.language}_${Date.now()}.json`,
-            href: window.URL.createObjectURL(bb),
-        });
-        this.btnPrint.dataset.downloadurl = [MIME_TYPE, this.btnPrint.download, this.btnPrint.href].join(':');
-
-        this.btnPrint.disabled = true;
-        // Need a small delay for the revokeObjectURL to work properly.
-        setTimeout(() => {
-            window.URL.revokeObjectURL(this.btnPrint.href);
-            this.btnPrint.disabled = false;
-        }, 1500);
-    },
-
-    build() {
+    download(obj) {
         const MIME_TYPE = 'application/json';
         window.URL = window.webkitURL || window.URL;
 
         /** @type {HTMLAnchorElement} */
         var link = createAnchor({
             class: ["bare-link", "download-item__link"]
-        }, `Build ${this.footer.childElementCount + 1}`);
+        }, `Download`);
 
         // if (!isNullOrWhitespace(link.href)) {
         //     window.URL.revokeObjectURL(link.href);
         // }
 
-        var result = null;
 
-        if (this.buildTarget === "gentleman_concept") {
-            try {
-                result = this.conceptModel.buildConcept();
-            } catch (error) {
-                console.error(error);
-                this.notify("The model is not valid. Please review before the next build.", "error");
-
-                return;
-            }
-        } else if (this.buildTarget === "gentleman_projection") {
-            try {
-                result = this.conceptModel.buildProjection();
-            } catch (error) {
-                console.error(error);
-                this.notify("The projection are not valid. Please review before the next build.", "error");
-
-                return;
-            }
-        }
-
-        var bb = new Blob([result], { type: MIME_TYPE });
+        var bb = new Blob([JSON.stringify(obj)], { type: MIME_TYPE });
         Object.assign(link, {
             download: `model.json`,
             href: window.URL.createObjectURL(bb),
         });
 
-        this.notify("The model has been successfully built. Please download the model.");
-
         link.dataset.downloadurl = [MIME_TYPE, link.download, link.href].join(':');
+
 
         let item = createListItem({
             class: ["download-item", "download-item--build"]
-        }, link);
+        });
+
+        let btnDelete = createButton({
+            class: ["btn", "btn-delete"],
+            dataset: {
+                action: "delete",
+                target: "parent"
+            }
+        }, "✖");
+
+        let title = createSpan({
+            class: ["download-item__name"],
+            dataset: {
+                action: "delete",
+                target: "parent"
+            }
+        }, `Build ${this.footer.childElementCount + 1}`);
+
+        item.append(btnDelete, title, link);
 
         this.downloadList.append(item);
 
@@ -731,7 +549,7 @@ export const Editor = {
         //     link.remove();
         // }, 1500);
 
-        return result;
+        return obj;
     },
     export(copy = false) {
         const MIME_TYPE = 'application/json';
@@ -843,40 +661,32 @@ export const Editor = {
         this.container.classList.add("busy");
     },
 
+    /**
+     * Diplays a notification message
+     * @param {string} message 
+     * @param {NotificationType} type 
+     */
     notify(message, type) {
-        var notify = getElement('.notify:not(.open)', this.container);
-
-        if (!isHTMLElement(notify)) {
-            notify = createParagraph({
-                class: ["notify"]
-            });
-            this.container.appendChild(notify);
-        }
-
-        notify.textContent = message;
-        notify.classList.remove("error");
+        /** @type {HTMLElement} */
+        let notify = createParagraph({
+            class: ["notify"],
+            html: message
+        });
 
         if (type) {
             notify.classList.add(type);
         }
-        notify.classList.add("open");
+
+        this.container.appendChild(notify);
+
+        setTimeout(() => {
+            notify.classList.add("open");
+        }, 50);
+
         setTimeout(() => {
             notify.classList.remove("open");
-        }, 3000);
-    },
-    display(message, title) {
-        var dialog = getElement('.dialog:not(.open)', this.container);
-        if (!isHTMLElement(dialog)) {
-            dialog = createDiv({
-                class: ["dialog-container"]
-            });
-            this.container.appendChild(dialog);
-        }
-        removeChildren(dialog);
-        dialog.appendChild(createParagraph({
-            class: ["dialog-content"]
-        }, message));
-        dialog.classList.add('open');
+            setTimeout(() => { notify.remove(); }, 500);
+        }, 4500);
     },
 
     /**
@@ -924,10 +734,8 @@ export const Editor = {
             fragment.appendChild(this.projectionWindow.render());
         }
 
-        if (!isHTMLElement(this.menu)) {
-            this.menu = createEditorMenu.call(this);
-
-            fragment.appendChild(this.menu);
+        if (!isHTMLElement(this.menu.container)) {
+            fragment.appendChild(this.menu.render());
         }
 
         if (!isHTMLElement(this.input)) {
@@ -966,18 +774,14 @@ export const Editor = {
             this.home = createHome();
             show(this.home);
 
-            hide(this.menu);
+            this.menu.hide();
             this.body.append(this.home);
-
-            this._initialized = false;
 
             return;
         }
 
-        show(this.menu);
-
         this.header.refresh().show();
-
+        this.menu.refresh().show();
         this.projectionWindow.show();
 
         this.container.classList.remove("empty");
@@ -1039,26 +843,6 @@ export const Editor = {
 
 
         return this;
-    },
-    /**
-     * Updates the editor on model change
-     * @param {string} message
-     * @param {*} value 
-     */
-    update(message, value) {
-        console.log(message, value);
-        switch (message) {
-            case "value.added":
-                this.header.notify("value.added", value);
-
-                break;
-            default:
-                console.warn(`The message '${message}' was not handled for editor`);
-
-                break;
-        }
-
-        this.refresh();
     },
     /**
      * Updates the active HTML Element
@@ -1132,13 +916,18 @@ export const Editor = {
         this.container.addEventListener('click', (event) => {
             var target = getEventTarget(event.target);
 
-            const { action } = target.dataset;
+            const { action, handler, downloadable } = target.dataset;
 
             if (this.activeField) {
                 this.activeField.clickHandler(target);
             }
 
-            if (action === "close") {
+            if (handler && action) {
+                this.triggerEvent({
+                    "name": action,
+                    "downloadable": downloadable,
+                });
+            } else if (action === "close") {
                 this.close();
                 this.manager.deleteEditor(this);
                 target.blur();
@@ -1157,10 +946,16 @@ export const Editor = {
                 fileHandler = this.changeModel;
 
                 this.input.dispatchEvent(event);
+            } else if (action === "delete") {
+                const { target: actionTarget } = target.dataset;
+
+                if (actionTarget === "parent") {
+                    let parent = target.parentElement;
+                    removeChildren(parent);
+                    parent.remove();
+                }
             } else if (action === "export") {
                 this.export();
-            } else if (action === "build") {
-                this.build(true);
             } else if (action === "import-projection") {
                 let event = new MouseEvent('click', {
                     view: window,
@@ -1264,6 +1059,13 @@ export const Editor = {
                         if (handled) {
                             event.preventDefault();
                         }
+                    } else if (nature === "layout") {
+                        let element = this.getLayout(target);
+                        const handled = element.enterHandler(target) === true;
+
+                        if (handled) {
+                            event.preventDefault();
+                        }
                     } else {
                         event.preventDefault();
                     }
@@ -1283,13 +1085,18 @@ export const Editor = {
                         if (handled) {
                             event.preventDefault();
                         }
+                    } else if (nature === "layout") {
+                        let element = this.getLayout(target);
+                        const handled = element.escapeHandler(target) === true;
+
+                        if (handled) {
+                            event.preventDefault();
+                        }
                     }
 
                     break;
                 case Key.insert:
                     if (this.activeField) {
-                        console.log("Insert value");
-
                         event.preventDefault();
                     }
 
@@ -1301,12 +1108,14 @@ export const Editor = {
                         if (handled) {
                             event.preventDefault();
                         }
-                    } else if (nature === "static") {
-                        let element = this.getStatic(target);
-                        const handled = element.arrowHandler("up", target) === true;
+                    } else {
+                        let element = this.resolveElement(target);
+                        if (element) {
+                            const handled = element.arrowHandler("up", target) === true;
 
-                        if (handled) {
-                            event.preventDefault();
+                            if (handled) {
+                                event.preventDefault();
+                            }
                         }
                     }
 
@@ -1318,12 +1127,14 @@ export const Editor = {
                         if (handled) {
                             event.preventDefault();
                         }
-                    } else if (nature === "static") {
-                        let element = this.getStatic(target);
-                        const handled = element.arrowHandler("down", target) === true;
+                    } else {
+                        let element = this.resolveElement(target);
+                        if (element) {
+                            const handled = element.arrowHandler("down", target) === true;
 
-                        if (handled) {
-                            event.preventDefault();
+                            if (handled) {
+                                event.preventDefault();
+                            }
                         }
                     }
 
@@ -1335,12 +1146,15 @@ export const Editor = {
                         if (handled) {
                             event.preventDefault();
                         }
-                    } else if (nature === "static") {
-                        let element = this.getStatic(target);
-                        const handled = element.arrowHandler("right", target) === true;
+                    } else {
+                        let element = this.resolveElement(target);
 
-                        if (handled) {
-                            event.preventDefault();
+                        if (element) {
+                            const handled = element.arrowHandler("right", target) === true;
+
+                            if (handled) {
+                                event.preventDefault();
+                            }
                         }
                     }
 
@@ -1352,12 +1166,14 @@ export const Editor = {
                         if (handled) {
                             event.preventDefault();
                         }
-                    } else if (nature === "static") {
-                        let element = this.getStatic(target);
-                        const handled = element.arrowHandler("left", target) === true;
+                    } else {
+                        let element = this.resolveElement(target);
+                        if (element) {
+                            const handled = element.arrowHandler("left", target) === true;
 
-                        if (handled) {
-                            event.preventDefault();
+                            if (handled) {
+                                event.preventDefault();
+                            }
                         }
                     }
 
@@ -1513,124 +1329,7 @@ export const Editor = {
             event.preventDefault();
         });
 
-        Events.on('model.change', (from) => {
-            this.save();
-        });
+        this.registerHandler("build-concept", buildConceptHandler);
+        this.registerHandler("build-projection", buildProjectionHandler);
     }
 };
-
-/**
- * Creates a selector between a root concept and the active concept
- * @param {Concept!} rootConcept 
- * @param {Concept} [activeConcept] 
- * @returns {Node}
- */
-function conceptSelectorHandler(rootConcept, activeConcept) {
-
-    if (isNullOrUndefined(rootConcept)) {
-        throw new TypeError("Bad argument: rootConcept must be a Concept");
-    }
-
-    /**
-     * Createa a selector item
-     * @param {string} type 
-     * @param {Concept} concept 
-     * @returns {HTMLElement}
-     */
-    const createSelectorItem = (type, concept, source = false) => {
-        const { name, alias, object, ref } = concept;
-
-        const typeHandler = {
-            "root": `${valOrDefault(alias, name)}`,
-            "parent": `${valOrDefault(alias, name)}`,
-            "ancestor": `${valOrDefault(alias, name)}`,
-            "active": `${valOrDefault(ref.name, name)}`,
-        };
-
-        const fragment = createDocFragment();
-
-        if (type === "active") {
-            fragment.appendChild(createI({
-                class: [`selector-concept-nature`]
-            }, name));
-        }
-
-        /** @type {HTMLElement} */
-        var content = createSpan({
-            class: ["selector-concept-content"],
-        }, typeHandler[type]);
-
-        fragment.appendChild(content);
-
-        if (type === "ancestor") {
-            content.classList.add("fit-content");
-        }
-
-
-        /** @type {HTMLElement} */
-        var item = createListItem({
-            class: ["selector-concept", `selector-concept--${type}`],
-            dataset: {
-                object: object
-            }
-        }, fragment);
-
-        if (source) {
-            item.classList.add("source");
-        }
-
-        return item;
-    };
-
-    const fragment = createDocFragment();
-    const hasActiveConcept = !isNullOrUndefined(activeConcept);
-
-    fragment.appendChild(createSelectorItem("root", rootConcept, hasActiveConcept));
-
-    if (!hasActiveConcept) {
-        return fragment;
-    }
-
-    let activeParent = activeConcept.getParent();
-
-    if (activeParent !== rootConcept) {
-        let parent = activeParent;
-        let parentItem = null;
-
-        parentItem = createSelectorItem("parent", activeParent, true);
-
-        let ancestor = parent.getAncestor().filter(val => val.object === "concept" && val.nature !== "primitive" && val !== rootConcept);
-
-        if (!isEmpty(ancestor)) {
-            ancestor = ancestor.reverse();
-            let ancestorItem = createListItem({
-                class: ["selector-concept", `selector-concept--ancestor`, "source", "collapse"]
-            });
-
-            let list = createUnorderedList({
-                class: ["bare-list", "selector-ancestor-concepts"]
-            });
-            ancestor.forEach(concept => {
-                list.appendChild(createListItem({
-                    class: ["selector-ancestor-concept", "fit-content"],
-                }, concept.name));
-            });
-
-            ancestorItem.appendChild(list);
-
-            fragment.appendChild(ancestorItem);
-
-            // ancestor.forEach(concept => {
-            //     fragment.appendChild(createSelectorItem("ancestor", concept, true));
-            // });
-        }
-
-        fragment.appendChild(parentItem);
-    } else {
-        // TODO: mark root as parent
-    }
-
-    fragment.appendChild(createSelectorItem("active", activeConcept));
-
-    return fragment;
-}

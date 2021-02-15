@@ -1,5 +1,5 @@
 import {
-    createDocFragment, createDiv, createInput, createLabel, createButton, isHTMLElement, valOrDefault,
+    createDocFragment, createDiv, createInput, createLabel, createButton, isHTMLElement, valOrDefault, findAncestor,
 } from "zenkai";
 import { getElementTop, getElementBottom, getElementLeft, getElementRight } from "@utils/index.js";
 import { StyleHandler } from './../style-handler.js';
@@ -80,7 +80,7 @@ export const WrapLayout = {
         }
 
         if (this.focusable) {
-            this.container.tabIndex = -1;
+            this.container.tabIndex = 0;
         } else {
             this.container.dataset.ignore = "all";
         }
@@ -143,7 +143,8 @@ export const WrapLayout = {
         if (this.focusable) {
             this.container.focus();
         } else {
-            let projectionElement = this.environment.resolveElement(valOrDefault(target, this.elements[0]));
+            let projectionElement = this.environment.resolveElement(valOrDefault(target, this.container.children[0]));
+            
             if (projectionElement) {
                 projectionElement.focus();
             }
@@ -151,12 +152,38 @@ export const WrapLayout = {
     },
 
     /**
+     * Handles the `enter` command
+     * @param {HTMLElement} target element
+     */
+    enterHandler(target) {
+        let projectionElement = this.environment.resolveElement(this.elements[0]);
+        if (projectionElement) {
+            projectionElement.focus();
+        }
+
+        return false;
+    },
+    /**
+     * Handles the `escape` command
+     * @param {HTMLElement} target 
+     */
+    escapeHandler(target) {
+        let parent = findAncestor(target, (el) => el.tabIndex === 0);
+        let element =  this.environment.resolveElement(parent);
+        
+        element.focus(parent);
+    },
+    /**
      * Handles the `arrow` command
      * @param {string} dir direction 
      * @param {HTMLElement} target target element
      */
     arrowHandler(dir, target) {
-        if (!this.elements.includes(target)) {
+        if (target === this.container) {
+            if (this.parent) {
+                return this.parent.arrowHandler(dir, this.container);
+            }
+
             return false;
         }
 
@@ -171,9 +198,8 @@ export const WrapLayout = {
         } else if (dir === "right") {
             closestElement = getElementRight(target, this.container);
         }
-
+     
         if (isHTMLElement(closestElement)) {
-
             let element = this.environment.resolveElement(closestElement);
             if (element) {
                 element.focus();

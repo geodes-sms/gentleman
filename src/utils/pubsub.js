@@ -1,23 +1,54 @@
+import { hasOwn, isFunction } from "zenkai";
+
+var events = {};
+
+
 // Pub-Sub pattern implementation
 export const Events = {
-    events: {},
     on: function (eventName, fn) {
-        this.events[eventName] = this.events[eventName] || [];
-        this.events[eventName].push(fn);
+        if (!isFunction(fn)) {
+            return false;
+        }
+
+        events[eventName] = events[eventName] || [];
+        events[eventName].push(fn);
+    },
+    once: function (eventName, fn) {
+        if (!isFunction(fn)) {
+            return false;
+        }
+
+        events[eventName] = events[eventName] || [];
+        events[eventName].push(function () {
+            fn.apply(this, arguments);
+        });
     },
     off: function (eventName, fn) {
-        if (this.events[eventName]) {
-            for (var i = 0; i < this.events[eventName].length; i++) {
-                if (this.events[eventName][i] === fn) {
-                    this.events[eventName].splice(i, 1);
-                    break;
-                }
+        if (!hasOwn(events, eventName)) {
+            return false;
+        }
+
+        for (var i = 0; i < events[eventName].length; i++) {
+            if (events[eventName][i] === fn) {
+                events[eventName].splice(i, 1);
+
+                return true;
             }
+        }
+
+        return false;
+    },
+    clearAll: function () {
+        events = {};
+    },
+    clear: function (eventName) {
+        if (hasOwn(events, eventName)) {
+            events[eventName] = [];
         }
     },
     emit: function (eventName, data) {
-        if (this.events[eventName]) {
-            this.events[eventName].forEach(function (fn) {
+        if (hasOwn(events, eventName)) {
+            events[eventName].forEach(function (fn) {
                 fn(data);
             });
         }

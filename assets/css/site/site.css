@@ -29,7 +29,6 @@
     height: 100%;
     padding: 4px 5px 6px;
     background-color: #d3d3d3;
-    box-sizing: border-box;
 }
 
 .nav { display: flex; }

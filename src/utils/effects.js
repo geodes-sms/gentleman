@@ -1,46 +1,87 @@
-import { UI } from '@utils/index.js';
+import { isHTMLElement } from 'zenkai';
 
-const Elements = ['BUTTON', 'COMMAND', 'FIELDSET', 'INPUT', 'KEYGEN', 'OPTGROUP', 'OPTION', 'SELECT', 'TEXTAREA'];
+const HIDDEN = 'hidden';
+const COLLAPSE = 'collapse';
+const CHECKED = 'checked';
+const DISABLED = 'disabled';
+const EMPTY = 'empty';
+const SHAKE = 'shake';
+const SELECTED = 'selected';
 
 /**
  * Shows an element
- * @param {Element} el Element
+ * @param {HTMLElement} element element
+ * @returns {HTMLElement} element
  */
-export const show = (el) => el.classList.remove(UI.HIDDEN);
+export function show(element) {
+    if (isHTMLElement(element)) {
+        element.classList.remove(HIDDEN);
+    }
+
+    return element;
+}
 
 /**
  * Hides an element
- * @param {Element} el element
+ * @param {HTMLElement} element element
+ * @returns {HTMLElement} element
  */
-export const hide = (el) => el.classList.add(UI.HIDDEN);
+export function hide(element) {
+    if (isHTMLElement(element)) {
+        element.classList.add(HIDDEN);
+    }
+
+    return element;
+}
+
+/**
+ * Toggles the display of an element
+ * @param {HTMLElement} element element
+ * @returns {HTMLElement} element
+ */
+export function toggle(element) {
+    if (isHTMLElement(element)) {
+        element.classList.toggle(HIDDEN);
+    }
+
+    return element;
+}
 
 /**
  * Shakes an element for a second
- * @param {Element} el element
+ * @param {Element} element element
  */
-export const shake = (el) => {
-    if (!el.classList.contains('shake')) {
-        el.classList.add('shake');
+export const shake = (element) => {
+    if (!element.classList.contains(SHAKE)) {
+        element.classList.add(SHAKE);
         setTimeout(() => {
-            el.classList.remove('shake');
+            element.classList.remove(SHAKE);
         }, 1000);
     }
 };
 
 /**
- * Moves an element out of screen
- * @param {HTMLElement} el Element
- */
-export const fakeHide = (el) => Object.assign(el, { position: 'absolute', top: '-9999px', left: '-9999px' });
-
-/**
  * Applies highlighting style to an element
- * @param {HTMLElement} el Element
+ * @param {HTMLElement} element element
+ * @returns {HTMLElement} element
  */
-export const highlight = (el) => el.classList.add(UI.SELECTED);
+export function highlight(element) {
+    if (isHTMLElement(element)) {
+        element.classList.add(SELECTED);
+    }
+
+    return element;
+}
 
 /**
  * Removes highlighting style of an element
- * @param {HTMLElement} el Element
+ * @param {HTMLElement} element element
+ * @returns {HTMLElement} element
  */
-export const unhighlight = (el) => el.classList.remove(UI.SELECTED);
+export function unhighlight(element) {
+    if (isHTMLElement(element)) {
+        element.classList.remove(SELECTED);
+    }
+
+    return element;
+}

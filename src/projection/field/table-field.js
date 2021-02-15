@@ -465,7 +465,6 @@ const BaseTableField = {
         this.body.appendChild(tableRow);
     },
     removeRow(value) {
-        console.log(value);
         var row = this.body.rows.item(value.index);
         if (!isHTMLElement(row)) {
             throw new Error("Table error: Row not found");
