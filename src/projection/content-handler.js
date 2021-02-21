@@ -1,4 +1,4 @@
-import { createSpan, createTextNode, isString, hasOwn, valOrDefault, createButton, createDocFragment } from "zenkai";
+import { createSpan, valOrDefault, createButton, createDocFragment, createTextArea, createInput } from "zenkai";
 import { StyleHandler } from './style-handler.js';
 import { AttributeHandler } from './structure-handler.js';
 import { LayoutFactory } from "./layout/index.js";
@@ -29,6 +29,59 @@ export function ContentHandler(schema, concept, args) {
         this.projection.environment.registerStatic(staticContent);
 
         return staticContent.render();
+    } if (schema.type === "input") {
+        const { placeholder, type, style } = valOrDefault(schema.input, {});
+
+        let input = null;
+
+        if (this.readonly || this.resizable) {
+            input = createSpan({
+                editable: !this.readonly,
+                title: placeholder,
+                dataset: {
+                    placeholder: placeholder,
+                    nature: "field-component",
+                    view: this.type,
+                    id: this.id,
+                }
+            });
+        } else if (this.multiline) {
+            input = createTextArea({
+                placeholder: placeholder,
+                title: placeholder,
+                dataset: {
+                    nature: "field-component",
+                    view: this.type,
+                    id: this.id,
+                }
+            });
+        } else {
+            input = createInput({
+                type: valOrDefault(type, "text"),
+                placeholder: placeholder,
+                title: placeholder,
+                dataset: {
+                    nature: "field-component",
+                    view: this.type,
+                    id: this.id,
+                }
+            });
+        }
+
+        if (this.disabled) {
+            input.disabled = true;
+        }
+
+        if (this.focusable) {
+            input.tabIndex = 0;
+        } else {
+            input.dataset.ignore = "all";
+        }
+        
+        StyleHandler(input, style);
+
+        return input;
+
     } else if (schema.type === "attribute") {
         return AttributeHandler.call(this, schema, contentConcept);
     } else if (schema.type === "template") {

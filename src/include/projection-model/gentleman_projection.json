@@ -948,7 +948,6 @@
         {
             "concept": { "name": "template" },
             "type": "layout",
-            "global": true,
             "tags": [],
             "projection": {
                 "type": "stack",
@@ -1029,7 +1028,6 @@
         {
             "concept": { "name": "projection" },
             "type": "layout",
-            "global": true,
             "tags": [],
             "projection": {
                 "type": "stack",
@@ -1178,17 +1176,16 @@
             "type": "layout",
             "tags": ["choice-selection"],
             "projection": {
-                "type": "stack",
-                "orientation": "vertical",
-                "style": {
-                    "css": ["layout-component"]
-                },
+                "type": "wrap",
                 "disposition": [
                     {
                         "type": "attribute",
                         "name": "layout"
                     }
-                ]
+                ],
+                "style": {
+                    "css": ["layout-component"]
+                }
             }
         },
         {
@@ -1216,17 +1213,16 @@
             "type": "layout",
             "tags": ["choice-selection"],
             "projection": {
-                "type": "stack",
-                "orientation": "vertical",
-                "style": {
-                    "css": ["field-component"]
-                },
+                "type": "wrap",
                 "disposition": [
                     {
                         "type": "attribute",
                         "name": "field"
                     }
-                ]
+                ],
+                "style": {
+                    "css": ["field-component"]
+                }
             }
         },
         {
@@ -2694,65 +2690,6 @@
         {
             "concept": { "name": "boolean" },
             "type": "field",
-            "tags": ["global-boolean"],
-            "projection": {
-                "type": "binary",
-                "style": {
-                    "css": ["global-switch-field"]
-                },
-                "label": {
-                    "style": {
-                        "css": ["global-switch-field__label"]
-                    }
-                },
-                "state": [
-                    {
-                        "rule": {
-                            "type": "eq",
-                            "eq": [{ "prop": "value" }, true]
-                        },
-                        "result": {
-                            "label": {
-                                "projection": {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Global",
-                                        "focusable": false
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    {
-                        "rule": {
-                            "type": "eq",
-                            "eq": [{ "prop": "value" }, false]
-                        },
-                        "result": {
-                            "label": {
-                                "projection": {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Contextual",
-                                        "focusable": false
-                                    }
-                                }
-                            }
-                        }
-                    }
-                ],
-                "input": {
-                    "style": {
-                        "css": ["global-switch-field__input"]
-                    }
-                }
-            }
-        },
-        {
-            "concept": { "name": "boolean" },
-            "type": "field",
             "tags": ["field-binary-state"],
             "projection": {
                 "type": "binary",
@@ -3548,33 +3485,5 @@
                 }
             }
         }
-    ],
-
-
-
-    "editor": {
-        "name": "Gentleman projection",
-        "header": {
-            "selectors": {},
-            "css": ["model-concept-list"]
-        },
-        "root": ["projection", "template"],
-        "body": {
-            "concept": {
-                "actions": [
-                    { "name": "build", "triggers": ["click"] }
-                ],
-                "css": ["model-concept-list"]    
-            },
-            "css": ["model-concept-list"]
-        },
-        "menu": {
-            "actions": [
-                { "name": "build-projection",  "content": "Build", "downloadable": true },
-                { "name": "export" },
-                { "name": "import" }
-            ],
-            "css": ["model-concept-list"]
-        }
-    }
+    ]
 }

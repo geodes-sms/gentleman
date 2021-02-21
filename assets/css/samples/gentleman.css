@@ -7,7 +7,6 @@
     .editor-concept {
         position: relative;
         margin-right: 12px; margin-bottom: 12px;
-        padding-bottom: 2px;
         width: calc(50% - 12px);
         border-radius: 4px;
         box-shadow: 0 0 0 1px #d5d5d5;
@@ -158,8 +157,8 @@
 
 .model-concept {
     position: relative;
-    padding-top: 6px;
-    border-top-left-radius: 2px; border-top-right-radius: 2px;
+    padding-top: 6px; padding-bottom: 6px;
+    border-bottom-left-radius: 4px; border-bottom-right-radius: 4px;
 }
 
     .model-concept .line {

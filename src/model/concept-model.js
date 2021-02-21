@@ -1,6 +1,5 @@
 import {
-    isString, isObject, isEmpty, hasOwn, isIterable, valOrDefault, isNullOrUndefined,
-    isNullOrWhitespace
+    isString, isObject, isEmpty, hasOwn, isIterable, valOrDefault, isNullOrUndefined
 } from "zenkai";
 import { deepCopy, Events } from "@utils/index.js";
 import { ConceptFactory } from "./concept/factory.js";

@@ -5,24 +5,19 @@
     box-shadow: 0 1px 2px rgba(100, 100, 100, 0.95);
     z-index: 1;
 }
-
-    .editor-container.close { 
-        display: none; 
+    .editor-container .editor-header {
+        border-bottom: 4px solid #8095d9;
     }
+        .editor-container .editor-header:hover { border-color: #0087bd; }
 
-        .editor-container.empty .editor-header {
-            background-color: #fff;
-        }
-        .editor-container:not(.empty) .editor-header {
-            border-bottom: 4px solid #8095d9;
-        }
-            .editor-container:not(.empty) .editor-header:hover {
-                border-color: #0087bd;
-            }
-
-        .editor-container.empty .editor-body {
-            padding: 0;
-        }
+    .editor-container.no-concept-model .editor-header {
+        background-color: #fff;
+        border-bottom: 2px solid #c0c0c0;
+    }
+    
+    .editor-container.no-concept-model .editor-body {
+        padding: 0;
+    }
 
 
 .editor-body {
@@ -36,9 +31,12 @@
 }
 
 .editor-home {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+    position: absolute;
+    top: 36px; right: 0; bottom: 0; left: 0;
+    display: flex; align-items: flex-start; justify-content: center;
+    backdrop-filter: blur(2px);
+    background-color: rgba(245, 245, 245, 0.8);
+    z-index: 100;
 }
 
 .download-list {
@@ -256,6 +254,7 @@
     }
     .notify.warning {
         color: #555;
+        background-color: #E86923;
         background-color: #ffa55c;
     }
     .notify.open { 

@@ -1,10 +1,10 @@
 import {
     createDocFragment, createDiv, createSpan, createUnorderedList, createListItem,
-    createI, createButton, isHTMLElement, findAncestor, removeChildren, hasOwn,
-    isNullOrUndefined, isFunction, createH4, createEmphasis, createInput, toBoolean, isEmpty, valOrDefault,
+    createI, createButton, isHTMLElement, findAncestor, hasOwn, isNullOrUndefined,
+    isFunction, isEmpty, valOrDefault,
 } from 'zenkai';
 import { show, hide, Key, Events } from '@utils/index.js';
-import { createProjectionSelector } from './projection-selector.js';
+import { createModelSelector } from './model-selector.js';
 
 
 /**
@@ -70,15 +70,15 @@ export const EditorSection = {
             this.editor = editor;
         }
 
-        this._conceptSelector = createProjectionSelector("concept", this.editor).init(
+        this._conceptSelector = createModelSelector("concept", this.editor).init(
             () => this.editor.conceptModel ? this.editor.getRoots().map(concept => this.editor.conceptModel.getCompleteModelConcept(concept)) : []
         );
 
-        this._valueSelector = createProjectionSelector("value", this.editor).init(
+        this._valueSelector = createModelSelector("value", this.editor).init(
             () => this.editor.conceptModel ? this.editor.conceptModel.getValues() : []
         );
 
-        this._projectionSelector = createProjectionSelector("projection", this.editor).init(
+        this._projectionSelector = createModelSelector("projection", this.editor).init(
             () => this.editor.projectionModel ? this.editor.projectionModel.schema.filter(p => p.type !== "template") : []
         );
 
@@ -188,6 +188,14 @@ export const EditorSection = {
     refresh() {
         if (hasOwn(this.editor.config, "name")) {
             this.title.textContent = `Editor: ${this.editor.config["name"]}`;
+        }
+
+        if (this.editor.conceptModel) {
+            show(this.tabs);
+            show(this.body);
+        } else {
+            hide(this.tabs);
+            hide(this.body);
         }
 
         let handler = SelectorHandler[this.activeTabValue];

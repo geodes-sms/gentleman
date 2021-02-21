@@ -101,7 +101,7 @@
 -----------------------------------------------------------------------------*/
 
 .editor-selectors {
-    display: flex;
+    display: flex; align-items: flex-start;
 }
     .editor-selector {
         display: flex; flex-direction: column;
@@ -117,17 +117,57 @@
         .editor-selector:hover {
             transform: scale(1.02);
         }
+
+        .editor-selector__header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 2px 4px;
+        }
+
+        .editor-selector .btn-collapse {
+            position: relative;
+            display: flex; justify-content: center;
+            margin-left: 12px;
+            font-size: 1em;
+            height: 24px; 
+            width: 24px;
+            border-radius: 50%;
+            color: #575757;
+            background-color: rgba(225, 225, 225, 0.2);
+            box-shadow: 0 1px 2px -1px #575757;
+            outline: none;
+            z-index: 5;
+        }
+
+            .editor-selector.collapsed .btn-collapse:after {
+                content: "+";
+                transform: scale(2) rotate(0);
+                transition: transform .2s;
+            }
+
+            .editor-selector:not(.collapsed) .btn-collapse:after {
+                content: "-";
+                color: #000;
+                transform: scale(3) rotate(360deg) translateY(-1px);
+                transition: transform .2s;
+            }
+
+        .editor-selector.collapsed .editor-selector__preview {
+            display: none;
+        }
         
         .editor-selector__title {
             margin: 0;
             padding: 4px 6px;
             font-family: inherit; font-size: 1.1em; font-weight: 600;
-            color: #111;
+            color: #222;
         }
-            .editor-selector__title:hover,
-            .editor-selector__title:focus {
-                background-color: #f0f0f0;
+            
+            .editor-selector__title-concept {
+                white-space: nowrap;
+                text-transform: lowercase;
+                color: #333;
             }
+                .editor-selector__title-concept:before { content: "@"; }
     
         .editor-selector__preview {
             padding: 2px 6px;
@@ -186,12 +226,12 @@
             .editor-selector__preview-text--attribute + .editor-selector__preview-list  {
                 width: 100%;
             } 
-
+            
             .editor-selector__preview-concept {
                 display: block;
                 white-space: nowrap;
             }
-            
+
             .editor-selector__preview-tags {
                 margin-top: 6px;
                 display: flex; flex-wrap: wrap;

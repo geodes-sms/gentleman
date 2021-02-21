@@ -1,6 +1,6 @@
 import {
-    createDiv, createH2, createParagraph, createButton, createHeader, createSpan, 
-    createSection,
+    createDocFragment, createH3, createDiv, createParagraph, createButton,
+    createSpan, createSection, createUnorderedList, createListItem,
 } from 'zenkai';
 
 
@@ -13,165 +13,111 @@ export function createHome() {
         class: ["editor-home"]
     });
 
-    /** @type {HTMLElement} */
-    const header = createHeader({
-        class: ["menu-header"]
-    });
+    let designMenu = createDesignMenu();
 
-    /** @type {HTMLElement} */
-    var title = createH2({
-        class: ["editor-home__title"]
-    }, "Editor");
+    let modelMenu = createModelMenu();
 
-    /** @type {HTMLElement} */
-    var content = createParagraph({
-        class: ["menu-content"],
-        html: "Welcome to Gentleman's editor.<br>To begin, please load a model or continue with a previous instance."
-    });
-
-    header.append(title, content);
-
-    /** @type {HTMLElement} */
-    const body = createDiv({
-        class: ["loader-container"],
-        tabindex: -1
-    });
-
-    /** @type {HTMLElement} */
-    var modelOptions = createDiv({
-        class: ["loader-options"]
-    });
-
-    /** @type {HTMLElement} */
-    var modelOptionsTitle = createH2({
-        class: ["loader-options-title"]
-    }, "Concept");
-
-    /** @type {HTMLElement} */
-    var modelOptionsContent = createParagraph({
-        class: ["loader-options-content"],
-        html: "Create or edit a model."
-    });
-
-    /** @type {HTMLElement} */
-    var modelOptionsAction = createDiv({
-        class: ["loader-options-action"]
-    });
-
-    /** @type {HTMLElement} */
-    var btnCreateMetaModel = createButton({
-        class: ["btn", "loader-option", "loader-option--new"],
-        dataset: {
-            action: "create-metamodel",
-        }
-    }, [
-        createSpan({
-            class: ["loader-option__action"],
-            dataset: {
-                ignore: "all",
-            }
-        }, "New"),
-        createSpan({
-            class: ["loader-option__type"],
-            dataset: {
-                ignore: "all",
-            }
-        }, "metamodel")
-    ]);
-
-    /** @type {HTMLElement} */
-    var btnOpenModel = createButton({
-        class: ["btn", "loader-option", "loader-option--open"],
-        dataset: {
-            action: "open-model",
-        },
-    }, [
-        createSpan({
-            class: ["loader-option__action"],
-            dataset: {
-                ignore: "all",
-            }
-        }, "Open"),
-        createSpan({
-            class: ["loader-option__type"],
-            dataset: {
-                ignore: "all",
-            }
-        }, "model")
-    ]);
-
-    modelOptionsAction.append(btnCreateMetaModel, btnOpenModel);
-
-    modelOptions.append(modelOptionsTitle, modelOptionsContent, modelOptionsAction);
-
-
-    var projectionOptions = createDiv({
-        class: ["loader-options"]
-    });
-
-    var projectionOptionsTitle = createH2({
-        class: ["loader-options-title"]
-    }, "Projection");
-
-    var projectionOptionsContent = createParagraph({
-        class: ["loader-options-content"],
-        html: "Create or edit a projection."
-    });
-
-    var projectionOptionsAction = createDiv({
-        class: ["loader-options-action"]
-    });
-
-    var btnCreateProjection = createButton({
-        class: ["btn", "loader-option", "loader-option--new"],
-        dataset: {
-            action: "create-projection",
-        }
-    }, [
-        createSpan({
-            class: ["loader-option__action"],
-            dataset: {
-                ignore: "all",
-            }
-        }, "New"),
-        createSpan({
-            class: ["loader-option__type"],
-            dataset: {
-                ignore: "all",
-            }
-        }, "projection")
-    ]);
-
-    var btnOpenProjection = createButton({
-        class: ["btn", "loader-option", "loader-option--open"],
-        dataset: {
-            action: "open-projection",
-        }
-    }, [
-        createSpan({
-            class: ["loader-option__action"],
-            dataset: {
-                ignore: "all",
-            }
-        }, "Open"),
-        createSpan({
-            class: ["loader-option__type"],
-            dataset: {
-                ignore: "all",
-            }
-        }, "projection")
-    ]);
-
-    projectionOptionsAction.append(btnCreateProjection, btnOpenProjection);
-
-    projectionOptions.append(projectionOptionsTitle, projectionOptionsContent, projectionOptionsAction);
-
-    body.append(
-        modelOptions
-        ,projectionOptions
-    );
-
-    container.append(header, body);
+    container.append(designMenu, modelMenu);
 
     return container;
+}
+
+/**
+ * Creates the design menu section
+ * @returns {HTMLElement}
+ */
+function createDesignMenu() {
+    const section = createSection({
+        class: ["editor-home-section", "editor-home-section--design"],
+    });
+
+    let title = createH3({
+        class: ["title", "editor-home-section__title", "font-ui"]
+    }, "Design ");
+
+    let content = createDiv({
+        class: ["editor-home-section__content", "editor-home-section--design__content"],
+    });
+
+    let btnCreateMetaModel = createMenuButton("metamodel");
+
+    let btnCreateProjection = createMenuButton("projection");
+
+    content.append(btnCreateMetaModel, btnCreateProjection);
+
+    section.append(title, content);
+
+    return section;
+}
+
+/**
+ * Creates a drop area
+ * @param {string} type 
+ * @returns {HTMLElement}
+ */
+function createMenuButton(type) {
+    /** @type {HTMLElement} */
+    let button = createButton({
+        class: ["btn", "editor-home-section__button", "editor-home-section__button--new"],
+        dataset: {
+            action: `create-${type}`,
+        }
+    }, `New ${type}`);
+
+    return button;
+}
+
+/**
+ * Creates the model menu section
+ * @returns {HTMLElement}
+ */
+function createModelMenu() {
+    const section = createSection({
+        class: ["editor-home-section", "editor-home-section--model"],
+    });
+
+    let title = createH3({
+        class: ["title", "editor-home-section__title", "font-ui"]
+    }, "Modelling activity");
+
+    let content = createDiv({
+        class: ["editor-home-section__content", "editor-home-section--model__content"],
+    });
+
+    let modelDroparea = createDropArea("model");
+    let projectionDroparea = createDropArea("projection");
+
+    content.append(modelDroparea, projectionDroparea);
+
+    section.append(title, content);
+
+    return section;
+}
+
+/**
+ * Creates a drop area
+ * @param {string} type 
+ * @returns {HTMLElement}
+ */
+function createDropArea(type) {
+    /** @type {HTMLElement} */
+    let droparea = createDiv({
+        class: ["drop-area", "editor-home-section__drop-area", `editor-home-section__drop-area--${type}`],
+        dataset: { type: type, },
+    });
+
+    /** @type {HTMLElement} */
+    let btnOpen = createButton({
+        class: ["btn", "drop-area__button", "drop-area__button--open"],
+        dataset: { action: `open-${type}`, },
+    }, "Select a model");
+
+    /** @type {HTMLElement} */
+    let instruction = createParagraph({
+        class: ["drop-area__instruction"]
+    }, [btnOpen, "or drop it here"]);
+
+    droparea.append(instruction);
+
+    return droparea;
 }

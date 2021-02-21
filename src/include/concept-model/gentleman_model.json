@@ -478,7 +478,6 @@
             "concept": { "name": "prototype concept" },
             "id": "548ab98a-4e11-4957-b9cc-9ca11235497f",
             "type": "layout",
-            "global": true,
             "tags": [],
             "projection": {
                 "type": "stack",
@@ -576,7 +575,6 @@
             "concept": { "name": "concrete concept" },
             "id": "fedea564-4345-4576-bf9d-ffcdcb35e75e",
             "type": "layout",
-            "global": true,
             "tags": ["textual"],
             "projection": {
                 "type": "stack",
@@ -692,7 +690,6 @@
             "concept": { "name": "derivative concept" },
             "id": "548ab98a-4e11-4957-b9cc-9ca11235497h",
             "type": "layout",
-            "global": true,
             "tags": [],
             "projection": {
                 "type": "stack",
@@ -2514,36 +2511,5 @@
                 }   
             }
         }
-    ],
-
-
-
-
-    "editor": {
-        "name": "Gentleman concept",
-        "header": {
-            "selectors": {},
-            "css": ["model-concept-list"]
-        },
-        "root": ["prototype concept", "concrete concept", "derivative concept"],
-        "body": {
-            "concept": {
-                "actions": [
-                    { "name": "build", "triggers": ["click"] }
-                ],
-                "css": ["model-concept-list"]    
-            },
-            "css": ["model-concept-list"]
-        },
-        "menu": {
-            "actions": [
-                { "name": "build-concept", "handler": "gentleman_concept", "content": "Build", "downloadable": true },
-                { "name": "export" },
-                { "name": "import" },
-                { "name": "import-projection", "content": "Expand" },
-                { "name": "projection" }
-            ],
-            "css": ["model-concept-list"]
-        }
-    }
+    ]
 }

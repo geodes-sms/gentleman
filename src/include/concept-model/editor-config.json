@@ -1,0 +1,29 @@
+{
+    "editor": {
+        "name": "Gentleman concept",
+        "header": {
+            "selectors": {},
+            "css": ["model-concept-list"]
+        },
+        "root": ["prototype concept", "concrete concept", "derivative concept"],
+        "body": {
+            "concept": {
+                "actions": [
+                    { "name": "build", "triggers": ["click"] }
+                ],
+                "css": ["model-concept-list"]    
+            },
+            "css": ["model-concept-list"]
+        },
+        "menu": {
+            "actions": [
+                { "name": "build-concept", "handler": "gentleman_concept", "content": "Build", "downloadable": true },
+                { "name": "export" },
+                { "name": "import" },
+                { "name": "import-projection", "content": "Expand" },
+                { "name": "projection" }
+            ],
+            "css": ["model-concept-list"]
+        }
+    }
+}
