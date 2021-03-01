@@ -1,7 +1,4 @@
-import {
-    isNullOrUndefined, hasOwn, valOrDefault, isEmpty,  isIterable, isString
-} from "zenkai";
-import { deepCopy } from "@utils/index.js";
+import { isNullOrUndefined, isEmpty, isIterable, isString } from "zenkai";
 import { ProjectionFactory } from "./projection.js";
 
 
@@ -29,6 +26,16 @@ export const ProjectionModel = {
     projections: null,
 
     init(views) {
+        this.projections = [];
+
+        return this;
+    },
+    done() {
+        // TODO check if has model changes
+
+        this.projections.forEach(projection => {
+        });
+
         this.projections = [];
 
         return this;
@@ -95,7 +102,7 @@ export const ProjectionModel = {
      */
     getMetadata(projectionId) {
         let target = this.schema.find(p => p.id === projectionId);
-        
+
         if (target) {
             return target.metadata;
         }
@@ -129,17 +136,6 @@ export const ProjectionModel = {
         return this.schema.findIndex(p => hasConcept(p) && hasTag(p)) !== -1;
     },
     /**
-     * Gets a value indicating whether this projection is defined in the model
-     * @param {string|*} concept 
-     * @param {string} tag 
-     * @returns {boolean}
-     */
-    hasGlobalProjection(concept) {
-        const hasConcept = (projection) => projection.concept.name === concept.name;
-
-        return this.schema.findIndex(p => p.type !== "template" && hasConcept(p) && p.global) !== -1;
-    },
-    /**
      * Gets the projection matching a concept and optionnally a tag
      * @param {*} concept 
      * @param {string} tag 
@@ -151,7 +147,7 @@ export const ProjectionModel = {
 
         var projection = null;
 
-        const hasName = (name) => name && (name === concept.name || name === concept.schema.base); // TODO: change to look for base (include self)
+        const hasName = (name) => name && (name === concept.name || concept.schema && name === concept.schema.base); // TODO: change to look for base (include self)
         // const hasPrototype = (prototype) => !!(prototype && concept.hasPrototype(prototype));
         const hasPrototype = (prototype) => {
             if (isNullOrUndefined(prototype) || concept.nature === "prototype") {
@@ -175,17 +171,6 @@ export const ProjectionModel = {
     },
     getModelTemplate(name, tag) {
         return this.schema.find(p => p.type === "template" && p.name === name);
-    },
-    getGlobalModelProjection(concept) {
-        var projection = null;
-
-        if (isString(concept)) {
-            projection = this.schema.filter(p => p.type !== "template" && p.concept.name === concept);
-        } else if (concept.name) {
-            projection = this.schema.filter(p => p.type !== "template" && p.concept.name === concept.name);
-        }
-
-        return projection.filter(p => p.global);
     },
     getModelProjectionTemplate(concept, type, tag) {
         var projection = this.getModelProjection(concept, tag);

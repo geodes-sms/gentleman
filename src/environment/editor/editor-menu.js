@@ -1,20 +1,18 @@
 
 import {
-    createDocFragment, createDiv, createButton, createSpan, removeChildren,
+    createDocFragment, createDiv, createButton, createSpan, createParagraph, removeChildren,
     isHTMLElement, isNullOrUndefined, valOrDefault, createUnorderedList, createListItem,
 } from 'zenkai';
-import { hide, show } from '@utils/index.js';
+import { hide, show, toggle } from '@utils/index.js';
 
 
-
-/**
- * @returns {HTMLElement}
- */
 export const EditorMenu = {
     /** @type {HTMLElement} */
     container: null,
     /** @type {HTMLElement} */
     actionList: null,
+    /** @type {HTMLElement} */
+    notification: null,
     /** @type {*} */
     schema: null,
     /** @type {boolean} */
@@ -29,21 +27,37 @@ export const EditorMenu = {
 
         return this;
     },
+    isRendered() {
+        return isHTMLElement(this.container);
+    },
 
     show() {
         show(this.container);
-        this.isVisible = true;
+        this.visible = true;
 
         return this;
     },
     hide() {
         hide(this.container);
-        this.isVisible = false;
+        this.visible = false;
+
+        return this;
+    },
+    toggle() {
+        toggle(this.container);
+        this.visible = !this.visible;
 
         return this;
     },
     open() {
+        if (this.actionList.childElementCount === 0) {
+            this.notify("The menu is empty", 1500);
+
+            return this;
+        }
+
         this.container.classList.add("open");
+        this.show();
         this.isOpen = true;
 
         return this;
@@ -61,11 +75,11 @@ export const EditorMenu = {
         return this;
     },
     update(schema) {
-        if (isNullOrUndefined(schema)) {
-            return this;
+        if (schema) {
+            this.schema = schema;
         }
 
-        const { actions } = schema;
+        const { actions } =  this.schema;
 
         const fragment = createDocFragment();
 
@@ -93,6 +107,33 @@ export const EditorMenu = {
 
         this.schema = schema;
     },
+    /**
+     * Diplays a notification message
+     * @param {string} message 
+     * @param {NotificationType} type 
+     */
+    notify(message, time = 4500) {
+        let notify = createNotificationMessage(message);
+
+        const CSS_OPEN = "open";
+
+        if (this.notification.classList.contains(CSS_OPEN)) {
+            return false;
+        }
+
+        this.notification.appendChild(notify);
+
+        setTimeout(() => {
+            this.notification.classList.add(CSS_OPEN);
+            this.container.classList.add("menu--notifying");
+        }, 50);
+
+        setTimeout(() => {
+            this.notification.classList.remove(CSS_OPEN);
+            this.container.classList.remove("menu--notifying");
+            setTimeout(() => { removeChildren(this.notification); }, 500);
+        }, time);
+    },
     render() {
         const fragment = createDocFragment();
 
@@ -100,8 +141,20 @@ export const EditorMenu = {
             this.container = createDiv({
                 class: ["menu"],
                 draggable: true,
-                title: "Click to access the editor actions"
+                title: "Click to access the editor actions",
+                dataset: {
+                    action: "menu.click",
+                    handler: true,
+                }
             });
+        }
+
+        if (!isHTMLElement(this.notification)) {
+            this.notification = createDiv({
+                class: ["notification", "menu-notification"]
+            });
+
+            fragment.appendChild(this.notification);
         }
 
         const title = createSpan({
@@ -121,13 +174,13 @@ export const EditorMenu = {
             fragment.append(this.actionList);
         }
 
-
         if (fragment.hasChildNodes()) {
             this.container.append(fragment);
 
             this.bindEvents();
         }
 
+        this.update();
         this.refresh();
 
         return this.container;
@@ -138,8 +191,27 @@ export const EditorMenu = {
     },
 
     bindEvents() {
-        this.container.addEventListener('click', (event) => {
-            this.isOpen ? this.close() : this.open();
-        });
+        this.editor.registerHandler("menu.click", () => this.isOpen ? this.close() : this.open());
     }
 };
+
+
+/**
+ * Creates a notification message
+ * @param {string} type 
+ * @param {string} message 
+ * @returns {HTMLElement}
+ */
+function createNotificationMessage(message, type = "normal") {
+    var element = createSpan({
+        class: ["notification-message", `notification-message--${type}`]
+    }, message);
+
+    if (Array.isArray(message)) {
+        element.style.minWidth = `${Math.min(message[0].length * 0.6, 30)}em`;
+    } else {
+        element.style.minWidth = `${Math.min(message.length * 0.6, 30)}em`;
+    }
+
+    return element;
+}

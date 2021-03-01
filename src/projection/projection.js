@@ -1,6 +1,6 @@
 import {
-    createButton, removeChildren, insertAfterElement, insertBeforeElement,
-    isNode, isHTMLElement, isNullOrUndefined, hasOwn, valOrDefault, isEmpty,
+    createButton, createI, removeChildren, insertAfterElement, insertBeforeElement,
+    isNode, isHTMLElement, hasOwn, isNullOrUndefined, valOrDefault, isEmpty, toBoolean,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
 import { LayoutFactory } from "./layout/index.js";
@@ -27,9 +27,13 @@ export const ProjectionFactory = {
 };
 
 const Projection = {
+    handlers: null,
+
     init(args) {
         this.containers = [];
         this.attributes = [];
+        this.params = [];
+        this.handlers = {};
 
         this.args = valOrDefault(args, {});
 
@@ -50,6 +54,8 @@ const Projection = {
     element: null,
     /** @type {string[]} */
     attributes: null,
+    /** @type {*[]} */
+    params: null,
     /** @type {number} */
     index: 0,
     /** @type {boolean} */
@@ -73,6 +79,38 @@ const Projection = {
         const { style } = this.getSchema();
 
         return style;
+    },
+    addParam(param) {
+        this.params.push(...(Array.isArray(param) ? param : [param]));
+    },
+    getParam(name) {
+        let param = this.params.find(p => p.name === name);
+
+        if (isNullOrUndefined(param)) {
+            return undefined;
+        }
+
+        const { type = "string", value } = param;
+
+        if (type === "string") {
+            return value.toString();
+        }
+
+        if (type === "number") {
+            return +value;
+        }
+
+        if (type === "boolean") {
+            return toBoolean(value);
+        }
+    },
+    /**
+     * Get the defined attributes
+     * @param {string} name 
+     * @returns {*[]}
+     */
+    getAttributes(name) {
+        return this.attributes.filter((attr) => attr.name === name);
     },
     /**
      * Get a the related field object
@@ -98,20 +136,14 @@ const Projection = {
     getLayout(element) {
         return this.environment.getLayout(element);
     },
-    remove() {
-        var parent = this.container.parentElement;
 
-        removeChildren(this.container);
-        if (isHTMLElement(this.container)) {
-            // let handler = LayoutHandler[this.concept.reftype];
-            // var renderContent = handler.call(this.concept.getParent().projection, this.concept.refname);
-            // parent.replaceChild(renderContent, this.container);
-            // this.container = renderContent;
-        }
-
-        this.concept.unregister(this);
-
-        return true;
+    /**
+     * Get Handlers registered to this name
+     * @param {string} name 
+     * @returns {*[]} List of registered handlers
+     */
+    getHandlers(name) {
+        return valOrDefault(this.handlers[name], []);
     },
     /**
      * Updates the projection
@@ -137,73 +169,96 @@ const Projection = {
             return;
         }
 
-        switch (message) {
-            case "value.changed":
-                this.element.setValue(value);
-                return;
-            case "value.added":
-                this.element.addItem(value);
-                return;
-            case "value.removed":
-                this.element.removeItem(value);
-                return;
-            default:
-                console.warn(`The message '${message}' is not handled by the element`);
-                break;
+        const handlers = this.getHandlers(message);
+
+        if (!isEmpty(handlers)) {
+            handlers.forEach((handler) => {
+                let result = handler(value);
+
+                if (result === false) {
+                    return;
+                }
+            });
+        } else {
+            switch (message) {
+                case "value.changed":
+                    this.element.setValue(value);
+                    return;
+                case "value.added":
+                    this.element.addItem(value);
+                    return;
+                case "value.removed":
+                    this.element.removeItem(value);
+                    return;
+                case "attribute.added":
+                    this.getAttributes(value.name).forEach(attr => {
+                        const { schema } = attr;
+
+                        const projection = this.model.createProjection(value.target, schema.tag).init();
+                        projection.parent = this;
+                        projection.optional = true;
+
+                        /** @type {HTMLElement} */
+                        const render = projection.render();
+                        StyleHandler(render, schema.style);
+
+                        attr.element = render;
+
+                        if (attr.placeholder) {
+                            attr.placeholder.after(render);
+                            hide(attr.placeholder);
+                        }
+                    });
+                    return;
+                case "attribute.removed":
+                    this.getAttributes(value.name).forEach(attr => {
+                        attr.element = null;
+
+                        if (attr.placeholder) {
+                            show(attr.placeholder);
+                        }
+                    });
+                    return;
+                default:
+                    console.warn(`The message '${message}' is not handled by the element`);
+                    break;
+            }
+        }
+    },
+
+    /**
+     * Sets up a function that will be called whenever the specified event is triggered
+     * @param {string} name 
+     * @param {Function} handler The function that receives a notification
+     */
+    registerHandler(name, handler) {
+        if (!Array.isArray(this.handlers[name])) {
+            this.handlers[name] = [];
         }
 
-        if (!(/attribute.(added|removed)/gi).test(message)) {
-            console.warn(`Projection does not support message ${message}`);
-            return;
+        this.handlers[name].push(handler);
+
+        return true;
+    },
+    /**
+     * Removes an event handler previously registered with `registerHandler()`
+     * @param {string} name 
+     * @param {Function} handler The function that receives a notification
+     */
+    unregisterHandler(name, handler) {
+        if (!hasOwn(this.handlers, name)) {
+            return false;
         }
 
-        const [type, action] = message.split('.');
+        for (let i = 0; i < this.handlers[name].length; i++) {
+            if (this.handlers[name][i] === handler) {
+                this.handlers[name].splice(i, 1);
 
-        var structure = null;
-
-        if (type === "attribute") {
-            structure = this.attributes.filter((attr) => attr.name === value.name);
+                return true;
+            }
         }
 
-        if (isEmpty(structure)) {
-            console.warn(`${type} not found in projection`);
-            return;
-        }
-
-        const target = type === "attribute" ? value.target : value;
-
-        switch (action) {
-            case "added":
-                structure.forEach(struct => {
-                    const { schema, name } = struct;
-
-                    const projection = this.model.createProjection(target, schema.tag).init();
-                    projection.parent = this;
-                    projection.optional = true;
-
-                    /** @type {HTMLElement} */
-                    const render = projection.render();
-                    StyleHandler(render, schema.style);
-
-                    struct.element = render;
-                    struct.optional.after(render);
-
-                    hide(struct.optional);
-                });
-
-
-                break;
-            case "removed":
-                structure.forEach(struct => {
-                    struct.element = null;
-
-                    show(struct.optional);
-                });
-
-                break;
-            default:
-                break;
-        }
+        return false;
     },
 
     render() {
@@ -216,8 +271,6 @@ const Projection = {
 
         if (type === "layout") {
             this.element = LayoutFactory.createLayout(this.model, valOrDefault(projection, content), this).init(this.args);
-            this.element.focusable = true;
-            this.element.source = this.concept;
 
             this.environment.registerLayout(this.element);
         } else if (type === "field") {
@@ -254,13 +307,13 @@ const Projection = {
         }
 
 
-        // if (this.hasMultipleViews) {
-        //     let altBadge = createI({
-        //         class: ["badge", "badge--alt"]
-        //     });
+        if (this.hasMultipleViews) {
+            let altBadge = createI({
+                class: ["badge", "badge--alt"]
+            });
 
-        //     container.prepend(altBadge);
-        // }
+            container.prepend(altBadge);
+        }
 
         this.addContainer(container);
 
@@ -302,18 +355,6 @@ const Projection = {
 
         currentContainer.replaceWith(container);
         container.focus();
-
-        // Animated transition
-
-        // currentContainer.classList.remove("fade-in");
-        // currentContainer.classList.add("swap-left");
-
-        // setTimeout(() => {
-        //     currentContainer.replaceWith(container);
-        //     currentContainer.classList.remove("swap-left");
-        //     container.classList.add("fade-in");
-        //     container.focus();
-        // }, 600);
 
         return this;
     },

@@ -1,6 +1,7 @@
 import { isNullOrUndefined } from "zenkai";
 import { StackLayout } from "./stack-layout.js";
 import { WrapLayout } from "./wrap-layout.js";
+import { CellLayout } from "./cell-layout.js";
 
 
 var inc = 0;
@@ -16,6 +17,7 @@ const Handler = {
         model: { value: model },
         schema: { value: schema },
         projection: { value: projection },
+        source: { value: projection.concept },
     }),
     'wrap': (model, schema, projection) => Object.create(WrapLayout, {
         object: { value: "layout" },
@@ -25,7 +27,18 @@ const Handler = {
         model: { value: model },
         schema: { value: schema },
         projection: { value: projection },
-    })
+        source: { value: projection.concept },
+    }),
+    'table': (model, schema, projection) => Object.create(CellLayout, {
+        object: { value: "layout" },
+        name: { value: "table-layout" },
+        type: { value: "table" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept },
+    }),
 };
 
 export const LayoutFactory = {
@@ -39,11 +52,12 @@ export const LayoutFactory = {
         }
 
         const layout = handler(model, schema, projection);
-        layout.createLayout = this.createLayout;
 
         if (isNullOrUndefined(layout)) {
             throw new Error(`Bad request: The '${type}' layout could not be created`);
         }
+
+        layout.createLayout = this.createLayout;
 
         if (isNullOrUndefined(layout.id)) {
             layout.id = nextId();

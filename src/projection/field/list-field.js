@@ -3,9 +3,13 @@ import {
     createListItem, createButton, findAncestor, removeChildren, isHTMLElement,
     isNullOrUndefined, valOrDefault, hasOwn,
 } from "zenkai";
-import { hide, show, shake, getElementTop, getElementBottom, getElementLeft, getElementRight, getTopElement } from "@utils/index.js";
+import {
+    hide, show, shake, NotificationType,
+    getElementTop, getElementBottom, getElementLeft, getElementRight, getTopElement
+} from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler } from "./../content-handler.js";
+import { StateHandler } from "./../state-handler.js";
 import { Field } from "./field.js";
 
 
@@ -106,10 +110,6 @@ function createListFieldItem(object) {
     return container;
 }
 
-const NotificationType = {
-    INFO: "info",
-    ERROR: "error"
-};
 
 /**
  * Creates a notification message
@@ -151,6 +151,8 @@ const BaseListField = {
     list: null,
     /** @type {Map} */
     items: null,
+    /** @type {Map} */
+    elements: null,
     /** @type {HTMLElement} */
     selection: null,
     /** @type {*[]} */
@@ -159,6 +161,7 @@ const BaseListField = {
 
     init() {
         this.items = new Map();
+        this.elements = new Map();
         this.content = this.schema.content;
 
         return this;
@@ -218,7 +221,9 @@ const BaseListField = {
 
         content.forEach(element => {
             if (element.type === "list") {
-                const { style } = valOrDefault(element.list, {});
+                let schema = valOrDefault(element.list, {});
+
+                const { style } = schema;
 
                 this.list = createUnorderedList({
                     class: ["bare-list", "field--list__list"],
@@ -233,15 +238,20 @@ const BaseListField = {
                     this.list.classList.add("empty");
                 }
 
+                schema.currentState = null;
+                this.elements.set(schema, this.list);
+
                 StyleHandler(this.list, style);
 
                 fragment.appendChild(this.list);
             } else if (element.type === "action") {
-                var { content, style } = valOrDefault(element, actionDefaultSchema.add);
+                let schema = valOrDefault(element, actionDefaultSchema.add);
 
-                var addProjection = ContentHandler.call(this, content, null);
+                const { content, style } = schema;
 
-                var addElement = createButton({
+                let addProjection = ContentHandler.call(this, content, null);
+
+                let addElement = createButton({
                     class: ["field--list__add"],
                     tabindex: 0,
                     dataset: {
@@ -253,12 +263,16 @@ const BaseListField = {
                     }
                 }, [addProjection]);
 
+                schema.currentState = null;
+                this.elements.set(schema, addElement);
 
                 StyleHandler(addElement, style);
 
                 fragment.appendChild(addElement);
             } else {
                 let content = ContentHandler.call(this, element);
+
+                this.elements.set(element, content);
 
                 fragment.appendChild(content);
             }
@@ -411,6 +425,29 @@ const BaseListField = {
         } else {
             this.statusElement.classList.remove("change");
         }
+
+        this.elements.forEach((element, schema) => {
+            if (!Array.isArray(schema.state)) {
+                return;
+            }
+
+            const { currentState: prevState } = schema;
+
+            const result = StateHandler.call(this, schema, schema.state);
+
+            if (prevState === schema.currentState) {
+                return;
+            }
+
+            let content = null;
+            if (result) {
+                content = ContentHandler.call(this, result.content, null);
+            } else {
+                content = ContentHandler.call(this, schema.content, null);
+            }
+
+            removeChildren(element).append(content);
+        });
 
         removeChildren(this.statusElement);
         if (this.hasError) {
@@ -704,8 +741,9 @@ const BaseListField = {
     }
 };
 
-
 export const ListField = Object.assign(
     Object.create(Field),
     BaseListField
 );
+
+Object.defineProperty(ListField, 'size', { get() { return this.items.size; } });

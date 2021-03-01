@@ -1,12 +1,25 @@
 import {
     createDocFragment, createSpan, removeChildren, isHTMLElement, isNullOrUndefined,
-    htmlToElement,
-    findAncestor,
+    htmlToElement, findAncestor, valOrDefault,
 } from "zenkai";
 import { hide, show, getCaretIndex } from "@utils/index.js";
 import { StyleHandler } from "../style-handler.js";
 import { Static } from "./static.js";
 
+
+function resolveValue(content) {
+    const { type, name } = content;
+
+    if (type === "property") {
+        return this.projection.concept.getProperty(name);
+    }
+
+    if (type === "param") {
+        return this.projection.getParam(name);
+    }
+
+    return content;
+}
 
 const BaseTextStatic = {
     /** @type {string} */
@@ -17,7 +30,7 @@ const BaseTextStatic = {
     focusable: null,
 
     init() {
-        const { contentType = "text", editable = false, focusable = true } = this.schema;
+        const { contentType = "text", editable = false, focusable = valOrDefault(this.parent.focusable, true) } = this.schema;
 
         this.contentType = contentType;
         this.editable = editable;
@@ -47,9 +60,7 @@ const BaseTextStatic = {
                 this.element.tabIndex = 0;
             }
 
-            const { type, name } = content;
-
-            let value = type === "property" ? this.projection.concept.getProperty(name) : content;
+            let value = resolveValue.call(this, content);
 
             if (this.contentType === "html") {
                 this.element.append(htmlToElement(value));

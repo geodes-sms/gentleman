@@ -5,17 +5,14 @@ import {
 import { getElementTop, getElementBottom, getElementLeft, getElementRight } from "@utils/index.js";
 import { StyleHandler } from './../style-handler.js';
 import { ContentHandler } from './../content-handler.js';
+import { Layout } from "./layout.js";
 
 
-export const StackLayout = {
-    /** @type {HTMLElement} */
-    container: null,
+export const BaseStackLayout = {
     /** @type {string} */
     orientation: null,
     /** @type {HTMLElement[]} */
     elements: null,
-    /** @type {boolean} */
-    focusable: null,
     /** @type {boolean} */
     edit: false,
     /** @type {HTMLElement} */
@@ -34,6 +31,9 @@ export const StackLayout = {
 
         return this;
     },
+    getOrientation() {
+        return this.orientation;
+    },
     setOrientation(value) {
         if (!["horizontal", "vertical"].includes(value)) {
             return;
@@ -41,35 +41,11 @@ export const StackLayout = {
 
         this.orientation = value;
     },
-    getStyle() {
-        return this.schema['style'];
-    },
-    setStyle(style) {
-        this.schema.style = style;
-        StyleHandler.call(this, this.container, style);
-    },
-    /**
-     * Get a the related field object
-     * @param {HTMLElement} element 
-     */
-    getField(element) {
-        return this.projection.getField(element);
-    },
-    /**
-     * Get a the related static object
-     * @param {HTMLElement} element 
-     */
-    getStatic(element) {
-        return this.projection.getStatic(element);
-    },
-    /**
-     * Get a the related static object
-     * @param {HTMLElement} element 
-     */
-    getLayout(element) {
-        return this.environment.getLayout(element);
-    },
 
+    /**
+     * Renders the stack layout container
+     * @returns {HTMLElement}
+     */
     render() {
         const { disposition, style, help } = this.schema;
 
@@ -147,31 +123,6 @@ export const StackLayout = {
         return this;
     },
 
-    openMenu() {
-        if (!isHTMLElement(this.menu)) {
-            this.menu = createDiv({
-                class: ["layout-menu"]
-            });
-
-            let orientationField = createOrientationField.call(this);
-            let styleField = createStyleField.call(this);
-            this.menu.append(orientationField, styleField);
-            this.btnEdit.after(this.menu);
-        }
-
-        this.menu.prepend(this.btnEdit);
-        this.menu.classList.add("open");
-    },
-    closeMenu() {
-        if (!isHTMLElement(this.menu)) {
-            return;
-        }
-
-        this.menu.classList.remove("open");
-        setTimeout(() => {
-            this.menu.before(this.btnEdit);
-        }, 200);
-    },
     focus(element) {
         if (this.focusable) {
             this.container.focus();
@@ -359,3 +310,9 @@ function Collapsible() {
 
     return fragment;
 }
+
+
+export const StackLayout = Object.assign({},
+    Layout,
+    BaseStackLayout
+);

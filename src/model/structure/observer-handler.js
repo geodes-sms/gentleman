@@ -23,6 +23,9 @@ export const ObserverHandler = {
 
         return false;
     },
+    unregisterAll() {
+        this.listeners = [];
+    },
     notify(message, value) {
         this.listeners.forEach(listener => {
             listener.update(message, value);

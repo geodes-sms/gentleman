@@ -1,5 +1,6 @@
 require: 
   - 'jsdom-global/register'
+  - '@babel/register'
 ui: 'bdd'
 spec:
   - test/**/*.spec.js

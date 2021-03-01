@@ -1,27 +1,27 @@
 {
     "editor": {
         "name": "Gentleman concept",
-        "header": {
-            "selectors": {},
-            "css": ["model-concept-list"]
-        },
         "root": ["prototype concept", "concrete concept", "derivative concept"],
+        "header": {
+            "tabs": [
+                {}
+            ],
+            "css": ["editor-header"]
+        },
         "body": {
             "concept": {
                 "actions": [
-                    { "name": "build", "triggers": ["click"] }
+                    { "name": "build" }
                 ],
-                "css": ["model-concept-list"]    
+                "css": ["concept-section"]    
             },
-            "css": ["model-concept-list"]
+            "css": ["editor-body"]
         },
         "menu": {
             "actions": [
                 { "name": "build-concept", "handler": "gentleman_concept", "content": "Build", "downloadable": true },
                 { "name": "export" },
-                { "name": "import" },
-                { "name": "import-projection", "content": "Expand" },
-                { "name": "projection" }
+                { "name": "ecore" }
             ],
             "css": ["model-concept-list"]
         }

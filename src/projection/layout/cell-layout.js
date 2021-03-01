@@ -2,27 +2,30 @@ import {
     createDocFragment, createTable, createTableRow, createTableCell,
     isObject, isString, hasOwn, isHTMLElement, createDiv, valOrDefault,
 } from "zenkai";
-import { StyleHandler } from "./../style-handler.js";
-import { ContentHandler } from "./../content-handler.js";
+import { StyleHandler } from "../style-handler.js";
+import { ContentHandler } from "../content-handler.js";
+import { Layout } from "./layout.js";
 
 
-export const TableLayout = {
-    /** @type {HTMLElement} */
-    container: null,
-    /** @type {boolean} */
-    focusable: null,
+export const BaseCellLayout = {
+    init(args = {}) {
+        const { orientation = "row", focusable = false } = this.schema;
 
-    init(args) {
-        this.orientation = valOrDefault(this.schema.orientation, "row");
-        this.collapsible = valOrDefault(this.schema.collapsible, false);
-        this.focusable = valOrDefault(this.schema.focusable, true);
+        this.orientation = orientation;
+        this.focusable = focusable;
+        this.elements = [];
 
-        Object.assign(this, valOrDefault(args, {}));
+        Object.assign(this, args);
 
         return this;
     },
+    refresh() {
+
+        return this;
+    },
+
     render() {
-        const { disposition, style } = this.schema;
+        const { disposition, style, help } = this.schema;
 
         if (!Array.isArray(disposition)) {
             throw new SyntaxError("Bad disposition");
@@ -48,9 +51,27 @@ export const TableLayout = {
 
 
         for (let i = 0; i < disposition.length; i++) {
-            let render = ContentHandler.call(this, disposition[i]);
+            let rowDisposition = disposition[i];
 
-            fragment.appendChild(render);
+            let row = createDiv({
+                class: ["table-row"],
+            });
+            row.style.display = "table-row";
+
+            for (let j = 0; j < rowDisposition.length; j++) {
+                const cellContent = rowDisposition[j];
+
+                let cell = createDiv({
+                    class: ["table-cell"],
+                }, ContentHandler.call(this, cellContent.content));
+
+                cell.style.display = "table-cell";
+
+                row.append(cell);
+            }
+
+
+            fragment.appendChild(row);
         }
 
         StyleHandler.call(this, this.container, style);
@@ -60,12 +81,17 @@ export const TableLayout = {
             this.bindEvents();
         }
 
-        // this.container.style.display = "inline-block";
+        this.container.style.display = "table";
 
         this.refresh();
 
         return this.container;
     },
+
+    
+    bindEvents() {
+
+    }
 };
 
 
@@ -207,3 +233,9 @@ function rowTableHandler(layout) {
 
     return fragment;
 }
+
+
+export const CellLayout = Object.assign({},
+    Layout,
+    BaseCellLayout
+);

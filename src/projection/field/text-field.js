@@ -1,10 +1,12 @@
 import {
     createDocFragment, createSpan, createDiv, createI, createUnorderedList,
-    createTextArea, createInput, createListItem, createButton, findAncestor,
-    removeChildren, isHTMLElement, isNullOrWhitespace, isEmpty, valOrDefault,
-    hasOwn, getPreviousElementSibling, getNextElementSibling,
+    createListItem, findAncestor, removeChildren, isHTMLElement, isNullOrWhitespace,
+    isEmpty, valOrDefault, hasOwn, getPreviousElementSibling, getNextElementSibling,
 } from "zenkai";
-import { hide, show, getCaretIndex, isHidden, getElementLeft, getElementTop, getElementBottom, getElementRight } from "@utils/index.js";
+import {
+    hide, show, getCaretIndex, isHidden, NotificationType,
+    getElementLeft, getElementTop, getElementBottom, getElementRight
+} from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { StateHandler } from "./../state-handler.js";
 import { ContentHandler } from "./../content-handler.js";
@@ -12,7 +14,6 @@ import { Field } from "./field.js";
 
 
 const isInputOrTextarea = (element) => isHTMLElement(element, ["input", "textarea"]);
-
 
 
 function createMessageElement() {
@@ -72,11 +73,6 @@ function createChoiceItemElement(value) {
     }, value);
 }
 
-const NotificationType = {
-    INFO: "info",
-    ERROR: "error"
-};
-
 /**
  * Creates a notification message
  * @param {string} type 
@@ -93,22 +89,6 @@ function createNotificationMessage(type, message) {
     }
 
     return element;
-}
-
-/**
- * Resolves the value of the placeholder
- * @returns {string}
- */
-function resolvePlaceholder(value) {
-    if (value) {
-        return value;
-    }
-
-    if (this.source.object === "concept") {
-        return this.source.getAlias();
-    }
-
-    return "Enter a value";
 }
 
 /**
@@ -286,7 +266,7 @@ const BaseTextField = {
     },
 
     refresh() {
-        StateHandler.call(this, this.schema.state);
+        StateHandler.call(this, this.schema, this.schema.state);
 
         if (this.hasValue()) {
             this.element.classList.remove("empty");

@@ -9,7 +9,7 @@ import { StateHandler } from "./state-handler.js";
  * @param {string} name 
  */
 export function AttributeHandler(schema, concept) {
-    const { name, optional, tag, state } = schema;
+    const { name, tag, state } = schema;
 
     if (!concept.hasAttribute(name)) {
         throw new Error(`Attribute '${name}' does not exist in the concept '${concept.name}'`);
@@ -20,22 +20,22 @@ export function AttributeHandler(schema, concept) {
         schema: schema,
         required: concept.isAttributeRequired(name),
         created: concept.isAttributeCreated(name),
-        optional: null,
+        placeholder: null,
         element: null,
     };
 
     this.projection.attributes.push(attr);
 
-    var render = null;
+    let render = null;
 
-    let stateResult = StateHandler.call(attr, state);
+    let stateResult = StateHandler.call(attr, schema, state);
 
     if (stateResult) {
         if (stateResult.content) {
             render = ContentHandler.call(this, stateResult.content, concept);
         } else {
             render = createI({
-                class: ["projection-element", "projection-element--optional"],
+                class: ["projection-element", "projection-element--placeholder"],
                 dataset: {
                     object: "attribute",
                     id: name
@@ -49,7 +49,7 @@ export function AttributeHandler(schema, concept) {
             concept.createAttribute(name);
         });
 
-        attr.optional = render;
+        attr.placeholder = render;
     } else {
         let { target, description, schema } = concept.getAttributeByName(name);
 

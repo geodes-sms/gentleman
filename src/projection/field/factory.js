@@ -80,18 +80,17 @@ export const FieldFactory = {
         const handler = Handler[type];
 
         if (isNullOrUndefined(handler)) {
-            throw new Error(`Missing handler: The '${name}' field could not be handled`);
+            throw new Error(`Missing handler: The '${type}' field could not be handled`);
         }
 
         var field = handler(model, schema, projection);
 
         if (isNullOrUndefined(field)) {
-            throw new Error(`Bad request: The '${name}' field could not be created`);
+            throw new Error(`Bad request: The '${type}' field could not be created`);
         }
 
         field.errors = [];
         field.readonly = valOrDefault(schema.readonly, false);
-        field.initObserver();
 
         if (isNullOrUndefined(field.id)) {
             field.id = nextId();

@@ -77,45 +77,18 @@ const BaseTableField = {
     elements: null,
 
     init() {
-        this.source.register(this);
         this.caption = this.schema.caption;
         this.elements = new Map();
 
-        const { concept, name } = this.schema.template;
-        this.template = this.model.getModelProjectionTemplate(concept, "table").projection;
+        const { template } = this.schema;
+        this.template = this.model.getModelProjection(this.source.accept, template.tag)[0].projection;
 
         return this;
     },
 
-    update(message, value) {
-        switch (message) {
-            case "value.added":
-                this.addRow(value);
-
-                break;
-            case "value.removed":
-                this.removeRow(value);
-
-                break;
-            case "value.changed":
-                removeChildren(this.body);
-
-                this.source.getValue().forEach(concept => {
-                    this.addRow(concept);
-                });
-
-                break;
-            default:
-                console.warn(`The message '${message}' was not handled for table field`);
-                break;
-        }
-
-        this.refresh();
-    },
-
     render() {
         const { table = {}, action = {} } = this.schema;
-        const { row } = this.template;
+        const { disposition } = this.template;
 
         const fragment = createDocFragment();
 
@@ -243,7 +216,7 @@ const BaseTableField = {
                 }
             });
 
-            row.forEach(cellDef => {
+            disposition.forEach(cellDef => {
                 const { header } = cellDef;
 
                 const { style, content } = header;
@@ -379,7 +352,7 @@ const BaseTableField = {
     },
     addRow(concept) {
         const { action = {}, before = {}, after = {} } = this.schema;
-        const { row } = this.template;
+        const { disposition } = this.template;
 
         const index = valOrDefault(concept.index, this.table.rows.length);
         const elementId = nextRowId();
@@ -397,7 +370,7 @@ const BaseTableField = {
         });
         this.elements.set(elementId, tableRow);
 
-        row.forEach(cellDef => {
+        disposition.forEach(cellDef => {
             const { body } = cellDef;
 
             const { style, content } = body;
@@ -463,6 +436,8 @@ const BaseTableField = {
         tableRow.appendChild(actionCell);
 
         this.body.appendChild(tableRow);
+
+        this.refresh();
     },
     removeRow(value) {
         var row = this.body.rows.item(value.index);
@@ -478,6 +453,8 @@ const BaseTableField = {
             const { index } = row.dataset;
             row.dataset.index = +index - 1;
         }
+
+        this.refresh();
     },
     removeElement(element) {
         return this.source.removeElement(element);
@@ -541,6 +518,20 @@ const BaseTableField = {
                 }
             }
         }, true);
+
+        this.projection.registerHandler("value.added", (value) => {
+            this.addRow(value);
+        });
+        this.projection.registerHandler("value.removed", (value) => {
+            this.removeRow(value);
+        });
+        this.projection.registerHandler("value.changed", (value) => {
+            removeChildren(this.body);
+    
+            this.source.getValue().forEach(concept => {
+                this.addRow(concept);
+            });
+        });
     }
 };
 

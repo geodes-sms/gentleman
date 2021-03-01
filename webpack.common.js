@@ -21,6 +21,8 @@ module.exports = {
             '@structure': path.resolve(__dirname, 'src/model/structure'),
             '@projection': path.resolve(__dirname, 'src/projection'),
             '@field': path.resolve(__dirname, 'src/projection/field'),
+            '@layout': path.resolve(__dirname, 'src/projection/layout'),
+            '@static': path.resolve(__dirname, 'src/projection/static'),
             '@exception': path.resolve(__dirname, 'src/exception'),
             '@utils': path.resolve(__dirname, 'src/utils'),
             '@css': path.resolve(__dirname, 'assets/css'),

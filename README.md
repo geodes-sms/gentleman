@@ -8,19 +8,19 @@ Gentleman aims to **to close the gap between models and domain experts**.
 |:-------------:|:-------------:|
 | ![Gentleman Screenshot](https://geodes-sms.github.io/gentleman/assets/images/concept.png "Concept definition")  | ![Gentleman Screenshot](https://geodes-sms.github.io/gentleman/assets/images/projection.png "projection definition") |
 
-> **Projectional-editing**
+> **Projectional-editing characteristics**
 > 1. No parser needed: the user manipulates the AST directly (through projections)
 > 2. Support of various notations: tables, math formulas, graphics...
 > 3. Composition of any language without introducing syntactic ambiguities
 
 ## Workflow
 
-1. **Language enginneer**
-   1. Define a model for your DSL concepts or import and Ecore model
-   2. Create projections to interact with your DSL concepts
+1. **Design (Language enginneer)**
+   1. Create a metamodel, by defining your DSL concepts or import and Ecore model
+   2. Create a set of projections to interact with your DSL concepts
 
-2. **Domain expert**
-   1. Use the generated editor to create the model instances
+2. **Model (Domain expert)**
+   1. Create instances of a model with the chosen projections
    2. Personnalize freely the presentation of your instance
 
 ## Features
@@ -45,7 +45,7 @@ Take a look at the [demonstration (MODELS 2020) and see the tool in action](http
 <html>
     <body>
         ...
-        <div data-gentleman></div>
+        <div data-gentleman="editor"></div>
         ...
         <script src="gentleman.js"></script>
     </body>
@@ -55,16 +55,16 @@ Take a look at the [demonstration (MODELS 2020) and see the tool in action](http
 ### Create an instance in JS
 
 ```javascript
-const MODEL = {JSON};
-const PROJECTION = {JSON}
+const CONCEPT_MODEL = {JSON};
+const PROJECTION_MODEL = {JSON}
 
 var editor = Gentleman.createEdiotr();
-editor.init(MODEL, PROJETION)
+editor.init(CONCEPT_MODEL, PROJECTION_MODEL)
 ```
 
 # Installation
 
-⚠️ **Gentleman is currently in alpha.** ⚠️
+⚠️ **Gentleman is not recommended to be used in production.** ⚠️
 
 ## Building the Code
 
@@ -104,12 +104,6 @@ The editor configuration is done through a JSON file.
     }
 }
 ```
-
-### Header
-
-### Body
-
-### Menu
 
 <!-- You can read the documentation for Gentleman [here](https://geodes-sms.github.io/gentleman/docs). If you would like to help improve this documentation, the source for many of the docs can be found in the doc folder within this repository.  -->
 

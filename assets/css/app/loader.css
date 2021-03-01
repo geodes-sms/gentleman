@@ -1,4 +1,5 @@
 .editor-home-section {
+    display: flex; flex-direction: column;
     padding: 12px 24px 18px;
     background-color: rgba(255, 255, 255, 0.8);
     box-shadow: 0 1px 2px #999;
@@ -31,40 +32,72 @@
 
 
     .editor-home-section__drop-area {
+        flex: 1 1;
         position: relative;
         display: flex; flex-direction: column; align-items: center;
-        border: 2px dashed #d5d5d5;
+        border: 2px solid #d5d5d5;
         background-color: #f5f5f5;
         overflow: hidden;
-        padding: 60px 24px 6px;
+        padding: 12px 24px 6px;
         border-radius: 6px;
     }
-      
-        .editor-home-section__drop-area:before {
-            content: attr(data-type) " file {JSON}";
-            position: absolute;
-            top: 6px;
-            width: 36px; height: 48px;
-            border-radius: 1px;
-            text-align: center;
-            background-color: #f0f0f0;
-            border: 2px dashed #d5d5d5;
-            transform: skew(-6deg);
-            box-shadow: 2px 2px 0 #c0c0c0;
-            overflow: hidden;
-            opacity: 0.6;
-            transition: .2s;
-            z-index: 1;
-        }
-        .editor-home-section__drop-area:after {
+
+    .editor-home-section__drop-area.empty {
+        border-style: dashed;
+        background-color: #eee;
+    }
+
+    .editor-home-section .drop-area__file-section {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .editor-home-section__drop-area .file-section__icon {
+        align-self: center; justify-self: center;
+
+        position: relative;
+        display: flex; align-items: center;  justify-content: center;
+        text-align: center;
+        width: 48px; height: 60px;
+        border-radius: 1px;
+        text-align: center;
+        background-color: #f0f0f0;
+        border: 2px dashed #d5d5d5;
+        transform: skew(-6deg) scale(0.95);
+        box-shadow: 2px 2px 0 #c0c0c0;
+        /* opacity: 0.6; */
+        transition: .2s;
+    } 
+        .editor-home-section__drop-area .file-section__icon:after {
             content: "";
             position: absolute;
-            top: 30px;
+            top: 24px;
             width: 80px; height: 24px;
             border: 4px solid #d5d5d5; border-top: 0;
             border-radius: 50%;
             opacity: 0.5;
-            z-index: 2;
+            z-index: 5;
+        }
+
+        .file-section__actionbar {
+            display: flex; justify-content: space-between;
+            margin-top: 6px;
+        }
+
+        .file-section__actionbar-button {
+            padding: 4px 6px;
+            color: #fff;
+            font-size: 1.2em;
+            border-radius: 2px;
+            background-color: #222444;
+            transition: .2s;
+        }
+        .file-section__actionbar-button:disabled {
+            color: #d5d5d5;
+            background-color: #969696;
+            opacity: 0.9;
+            transform: scale(0.9);
         }
 
         .editor-home-section__drop-area--model:hover {
@@ -77,12 +110,13 @@
                 transform: skew(-2deg) translateY(-4px);
                 opacity: 0.8;
             }
+            
             .editor-home-section__drop-area:hover:after {
                 opacity: 0.8;
             }
         
-        .editor-home-section__drop-area--model:before,
-        .editor-home-section__drop-area--model:after {
+        .editor-home-section__drop-area--model .file-section__icon,
+        .editor-home-section__drop-area--model .file-section__icon:after {
             border-color: #2d71b5;
         }
         
@@ -90,8 +124,17 @@
                 background-color: #2d71b5;
             }
 
-        .editor-home-section__drop-area--projection:before,
-        .editor-home-section__drop-area--projection:after {
+            .editor-home-section__drop-area--model:not(.empty) .file-section__icon {
+                transform: skew(0) translateY(2px);
+                border-style: solid;
+                background-color: #2d71b5;
+                color: #fff;
+                box-shadow: none;
+                opacity: 1;
+            }
+
+        .editor-home-section__drop-area--projection .file-section__icon,
+        .editor-home-section__drop-area--projection .file-section__icon:after {
             border-color: #b52d44;
         }
         
@@ -99,8 +142,17 @@
                 background-color: #b52d44;
             }
 
+            .editor-home-section__drop-area--projection:not(.empty) .file-section__icon {
+                transform: skew(0) translateY(2px);
+                border-style: solid;
+                background-color: #b52d44;
+                color: #fff;
+                box-shadow: none;
+                opacity: 1;
+            }
+
     .drop-area__instruction {
-        margin: 0;
+        margin: 0; margin-top: 6px;
         display: flex; flex-direction: column; align-items: center;
         font-size: 1.4em;
     }
@@ -108,8 +160,7 @@
         .drop-area__button {
             position: relative;
             padding: 3px 6px 4px;
-            display: flex; flex-direction: column; 
-            justify-content: center; align-items: center;
+            width: 124px;
             margin-top: 6px;
             font-size: 0.95em; font-weight: 500;
             text-align: center;
@@ -131,18 +182,42 @@
         display: flex; flex-direction: column; 
         justify-content: center; align-items: center;
         margin-top: 6px;
-        width: 120px; 
+        
         padding: 8px 12px; 
-        font-size: 1.5em; font-weight: 800;
+        font-size: 1.5em; font-weight: 600;
         text-align: center;
-        border-radius: 4px;
-        text-transform: capitalize;
+        border-radius: 2px;
         color: #fff;
         background-color: #2d71b5;
         transition: .2s;
         cursor: pointer;
     }
-        .editor-home-section .btn:hover { transform: scale(1.05); opacity: 1; }
+
+    
+    .editor-home-section--model__button {
+        position: relative;
+        align-self: center;
+        margin-top: 12px;
+        width: 96px; height: 96px;
+        font-size: 1.5em; font-weight: 800;
+        text-align: center;
+        border-radius: 50%;
+        text-transform: capitalize;
+        color: #fff;
+        background-color: #2db561;
+        transition: .2s;
+        cursor: pointer;
+    }
+    .editor-home-section--model__button:disabled {
+        color: #f5f5f5;
+        background-color: #a9a9a9;
+        opacity: 0.9;
+        transform: scale(0.9);
+    }
+        .editor-home-section .btn:not(:disabled):hover { 
+            transform: scale(1.05); 
+            opacity: 1; 
+        }
     
     
     .loader-option:active {

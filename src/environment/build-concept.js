@@ -78,7 +78,7 @@ function buildConcept(concept) {
     const properties = [];
 
     if (isNullOrWhitespace(name)) {
-        buildErrors.push("The concept's 'name' is missing a value.");
+        buildErrors.push(`The ${nature} concept's 'name' is missing a value.`);
     }
 
     if (concept.isAttributeCreated(ATTR_ATTRIBUTES)) {

@@ -38,11 +38,24 @@
             overflow: auto;
         }
 
+    .editor-concept-header {
+        display: flex; justify-content: space-between; align-items: center;
+        border-top-left-radius: 4px; border-top-right-radius: 4px;
+        background-color: #eee;
+    }
+
+    .editor-concept-title {
+        margin: 0;
+        padding-left: 6px;
+        font-size: 1.4em;
+        font-family: inherit; font-weight: 600;
+        text-transform: capitalize;
+        color: #555;
+    }
+
     .editor-concept-toolbar {
         display: flex; justify-content: flex-end;
         padding: 6px;
-        border-top-left-radius: 4px; border-top-right-radius: 4px;
-        background-color: #eee;
     }
 
     .editor-concept-toolbar__btn-build {
@@ -157,17 +170,17 @@
 
 .model-concept {
     position: relative;
-    padding-top: 6px; padding-bottom: 6px;
+    padding-top: 2px; padding-bottom: 6px;
     border-bottom-left-radius: 4px; border-bottom-right-radius: 4px;
 }
 
-    .model-concept .line {
+    .model-concept--textual .line {
         display: flex; flex-direction: row; flex-wrap: wrap;
         padding-left: 4px;
         font-size: 1.4rem;
     }
         
-    .model-concept .title {
+    .model-concept--textual .title {
         display: block;
         margin-top: 6px; margin-bottom: 2px;
         font-size: 1.2em; font-weight: bold;
@@ -189,12 +202,10 @@
 
     .model-concept-header {
         display: flex; align-items: center; 
-        padding: 8px 12px;
+        padding-left: 4px; padding-right: 4px;
         width: 100%;
         font-size: 1rem;
         color: #1b1b1b;
-        border-top-left-radius: 4px; border-top-right-radius: 4px;
-        background-color: #e5e4e2;
     }    
 
         .model-concept-header__title {
@@ -1355,80 +1366,70 @@
     Attribute list
 -----------------------------------------------------------------------------*/
 
-.attribute-list-container {
+.attribute-list--card {
     display: flex;
     flex-direction: column;
-    max-width: 500px;
 }
 
-    .attribute-list-container .field--list__add {
-        position: relative;
-        width: 48px; 
-        height: 48px;
-        align-self: flex-end;
-        line-height: 48px;
-        font-size: 1.4rem; font-weight: bold;
-        text-align: center;
-        color: #fff;
-        border-radius: 50%;
-        background-color: #09b54d;
-        cursor: default;
-    }
-
-    .attribute-list-container.empty .field--list__add {
-        width: 120px; 
-        height: 48px;
-        align-self: center;
-        line-height: 48px;
-        font-size: 1.6rem; font-weight: bold;
-        border-radius: 4px;
-    }
-
-.attribute-list {
-    padding: 10px;
-    background-color: #d5d5d5;
+.attribute-list--card__list {
+    display: flex;
 }
 
-.attribute-list-item {
-    display: inline-flex;
+.attribute-list--card .attribute-list--card__btn-add {
+    position: relative;
+    width: 48px; 
+    height: 48px;
+    align-self: flex-end;
+    line-height: 48px;
+    font-size: 5em; font-weight: 100;
+    text-align: center;
+    color: #fff;
+    border-radius: 50%;
+    background-color: #09b54d;
+    cursor: default;
+}
+
+.attribute-list--card.empty .attribute-list--card__btn-add {
+    position: relative;
+    width: 100%; max-width: 240px;
+    align-self: center;
+    line-height: 48px;
+    font-size: 2em; font-weight: 100;
+    text-align: center;
+    color: #fff;
+    border-radius: 4px;
+    background-color: #09b54d;
+    cursor: default;
+}
+
+.attribute-list--card__list-item {
     margin-right: 6px; margin-bottom: 6px;
-    align-items: center;
+    padding: 6px 6px 2px;
+    font-size: 1.3rem;
     border-radius: 2px;
-    width: 150px;
+    box-shadow: 0 0 2px -1px #555;
     background-color: #fefefe;
 }
 
-    .attribute-list-item .field {
-        display: inline-flex;
+    .attribute-list--card__list-item .attribute-list--card__btn-remove {
+        position: absolute;
+        top: 0; right: 0;
+        padding: 2px 6px 3px;
+        color: #555;
+        font-size: 1.2em; font-weight: 300;
+        background-color: #f5f5f5;
+        border-bottom-left-radius: 4px;
+        transition: .1s;
+        z-index: 10;
     }
-
-    .attribute-list-item .field--textbox__input {
-        display: inline-flex;
-        font-weight: 600;
-    }
-
-    .attribute-list-item .btn-remove {
-        position: relative;
-        height: 100%;
-        background-color: #555;
-        order: 2;
-        padding: 4px 6px;
-        font-size: 0.9em; font-weight: 600;
-        z-index: 5;
-    }
-        .attribute-list-item .btn-remove:before {
+        .attribute-list--card__btn-remove:before {
             content: "✖";
             display: block;
-            padding: 2px 2px 2px 1px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            color: #fff;
-            transition: .4s;
+            opacity: 0.5;
+            transition: .1s;
         }
-        .attribute-list-item .btn-remove:hover {
-            background-color: rgb(225, 65, 65);
-        }
+        .attribute-list--card__btn-remove:hover { color: #fff; background-color: rgb(225, 65, 65); }
+            .attribute-list--card__btn-remove:hover:before { transform: scale(1.2);  opacity: 1; }
 
 
 

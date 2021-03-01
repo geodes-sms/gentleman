@@ -160,6 +160,11 @@ const BaseChoiceField = {
 
         this.refresh();
     },
+    setInputValue(value) {
+        if (isHTMLElement(this.input)) {
+            this.input.value = value;
+        }
+    },
 
     render() {
         const fragment = createDocFragment();
@@ -225,33 +230,9 @@ const BaseChoiceField = {
 
             content.forEach(element => {
                 if (element.type === "input") {
-                    const { placeholder, style, type } = valOrDefault(element.input, {});
+                    this.input = ContentHandler.call(this, element);
 
-                    this.input = createInput({
-                        type: valOrDefault(type, "text"),
-                        class: ["field--choice__input"],
-                        placeholder: placeholder,
-                        dataset: {
-                            nature: "field-component",
-                            view: "choice",
-                            id: this.id,
-                        }
-                    });
-
-
-                    if (this.disabled) {
-                        this.element.classList.add("disabled");
-                        this.input.disabled = true;
-                    }
-
-                    if (this.focusable) {
-                        this.input.tabIndex = 0;
-                    } else {
-                        this.element.dataset.ignore = "all";
-                        this.input.dataset.ignore = "all";
-                    }
-
-                    StyleHandler(this.input, style);
+                    this.input.classList.add("field--textbox__input");
 
                     fragment.append(this.input);
                 } else if (element.type === "choice") {
@@ -397,7 +378,7 @@ const BaseChoiceField = {
                 }
             }
 
-            this.input.value = getItemValue(this.selection);
+            this.setInputValue(getItemValue(this.selection));
         }
 
         this.focused = false;
@@ -405,15 +386,19 @@ const BaseChoiceField = {
         return this;
     },
     enable() {
-        this.input.disabled = false;
-        this.input.tabIndex = 0;
+        if (this.input) {
+            this.input.disabled = false;
+            this.input.tabIndex = 0;
+        }
         this.disabled = false;
 
         return this;
     },
     disable() {
-        this.input.disabled = true;
-        this.input.tabIndex = -1;
+        if (this.input) {
+            this.input.disabled = true;
+            this.input.tabIndex = -1;
+        }
         this.disabled = true;
 
         return this;
@@ -573,7 +558,7 @@ const BaseChoiceField = {
         }
 
         if (found) {
-            this.input.value = value.name;
+            this.setInputValue(value.name);
         }
 
         return this;
@@ -615,7 +600,9 @@ const BaseChoiceField = {
             return true;
         }
 
-        this.input.focus();
+        if (this.input) {
+            this.input.focus();
+        }
 
         if (this.messageElement) {
             hide(this.messageElement);
@@ -651,7 +638,7 @@ const BaseChoiceField = {
     backspaceHandler(target) {
         const item = getItem.call(this, target);
 
-        if (item) {
+        if (item && this.input) {
             this.input.focus();
         }
     },
@@ -738,9 +725,11 @@ const BaseChoiceField = {
     },
 
     bindEvents() {
-        this.element.addEventListener('input', (event) => {
-            this.filterChoice(this.input.value);
-        });
+        if (isHTMLElement(this.input)) {
+            this.element.addEventListener('input', (event) => {
+                this.filterChoice(this.input.value);
+            });
+        }
     },
 };
 
