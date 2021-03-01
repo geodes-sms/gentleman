@@ -1,0 +1,68 @@
+
+.style-container {
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    padding: 12px 18px;
+    backdrop-filter: blur(2px);
+    background-color: rgba(245, 245, 245, 0.8);
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+    z-index: 1;
+    z-index: 20;
+}
+
+.style-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 1.3em; font-weight: 400;
+    color: #000;
+}
+
+.control-wrapper--width .material-icons {
+    transform: rotate(90deg);
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px #c0c0c0;
+    margin-right: 8px;
+}
+
+.control-wrapper--size .material-icons {
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px #c0c0c0;
+    margin-right: 8px;
+}
+
+.control-wrapper {
+    margin-bottom: 12px;
+}
+
+.input-wrapper {
+    display: inline-flex;
+}
+
+.style-input {
+    font-size: 1.3em;
+}
+    .style-input:not(:last-child) {
+        margin-right: 4px;
+    }
+
+.style-input--number {
+    padding: 2px;
+    max-width: 30px;
+    text-align: center;
+    background: none;
+    outline: none;
+    border: 0 none; border-bottom: 1px solid #d5d5d5;
+}
+
+    .style-input--range:hover + .style-input--number,
+    .style-input--number:hover {
+        border-color: #a9a9a9;
+    }
+
+    .style-input--range:focus + .style-input--number,
+    .style-input--number:focus {
+        border-color: #2680eb;
+        box-shadow: 0 1px 0 #2680eb;
+    }

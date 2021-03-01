@@ -1,4 +1,8 @@
 require('module-alias/register');
+require("@babel/register")({
+    ignore: [/node_modules\/zenkai/]
+});
+
 
 // require jsdom-global
 const jsdom = require('jsdom-global');
@@ -9,7 +13,6 @@ const expect = require('chai').expect;
 // import { expect } from 'chai';
 
 // import the library under test
-// import { Manager } from '@environment/manager.js';
 const Manager = require('@environment/manager.js').Manager;
 
 describe('DOM query helpers', function () {
@@ -23,7 +26,7 @@ describe('DOM query helpers', function () {
             var result = Manager.init();
 
             expect(result.container).to.be.an.instanceOf(HTMLElement);
-            // expect(result.container.dataset).to.have.property('gentleman');
+            expect(result.container.dataset).to.have.property('gentleman');
         });
     });
 

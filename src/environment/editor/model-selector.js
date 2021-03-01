@@ -1,6 +1,7 @@
 import {
     createDocFragment, createDiv, createSpan, createUnorderedList, createListItem,
-    createH4, createInput, createButton, removeChildren, isHTMLElement, toBoolean, isNullOrUndefined, createEmphasis, createI,
+    createH4, createInput, createButton, removeChildren, isHTMLElement, toBoolean, 
+    isNullOrUndefined, createEmphasis, createI, createHeader, formatCase,
 } from 'zenkai';
 import { show, hide, Key, Events } from '@utils/index.js';
 
@@ -11,8 +12,8 @@ import { show, hide, Key, Events } from '@utils/index.js';
  * @param {Editor} editor
  * @returns {ProjectionSelector}
  */
-export function createProjectionSelector(type, editor, model) {
-    return Object.create(ProjectionSelector, {
+export function createModelSelector(type, editor, model) {
+    return Object.create(EditorSelector, {
         object: { value: "selector" },
         model: { value: model },
         type: { value: type },
@@ -20,7 +21,7 @@ export function createProjectionSelector(type, editor, model) {
     });
 }
 
-export const ProjectionSelector = {
+export const EditorSelector = {
     /** @type {HTMLElement} */
     container: null,
     /** @type {HTMLElement} */
@@ -76,9 +77,32 @@ export const ProjectionSelector = {
 
         this.dataList.forEach(data => {
             // Create header
-            let header = createH4({
+            const { concept } = data;
+
+            // Create header
+            let title = createH4({
                 class: ["title", "editor-selector__title"],
             }, `${data.name || data.type}`);
+
+            if (concept) {
+                title.append(createSpan({
+                    class: ["editor-selector__title-concept"]
+                },  (concept.name || concept.prototype).replace(" ", "-").toLowerCase()));
+            }
+
+            let btnCollapse = createButton({
+                class: ["btn", "btn-collapse"],
+                dataset: {
+                    action: "collapse",
+                    rel: "parent",
+                    target: "selector",
+                }
+            });
+
+            let header = createHeader({
+                class: ["title", "editor-selector__header"],
+                title: `Expand/Collapse ${this.type}`
+            }, [title, btnCollapse]);
 
             // Create preview
             let previewHandler = PreviewHandler[this.type];
@@ -95,11 +119,12 @@ export const ProjectionSelector = {
 
             // Create item container
             let item = createListItem({
-                class: ["editor-selector", "font-ui"],
+                class: ["editor-selector", "collapsed", "font-ui"],
                 title: data.description,
                 tabindex: 0,
                 dataset: {
                     type: this.type,
+                    name: "selector",
                     projection: data.id
                 }
             }, [header, preview, actionBar]);
@@ -138,7 +163,7 @@ export const ProjectionSelector = {
 
 const PreviewHandler = {
     "projection": (projection) => {
-        const { concept } = projection;
+        const { concept, tags =[] } = projection;
 
         const fragment = createDocFragment();
 
@@ -149,7 +174,7 @@ const PreviewHandler = {
         let tagList = createUnorderedList({
             class: ["bare-list", "editor-selector__preview-tags"]
         });
-        projection.tags.forEach(tag => tagList.append(
+        tags.forEach(tag => tagList.append(
             createListItem({
                 class: ["editor-selector__preview-tag"]
             }, tag)
@@ -214,7 +239,6 @@ const PreviewHandler = {
     },
     "concept": (concept) => {
         const fragment = createDocFragment();
-        console.log(concept);
 
         if (Array.isArray(concept.attributes)) {
             let attrList = createUnorderedList({

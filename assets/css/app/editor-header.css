@@ -72,15 +72,15 @@
             transform: scale(0.85);
             border-radius: 4px;
         }
+            .editor-header-tab:not(.selected):hover {
+                background-color: #f0f0f0;
+                transform: scale(0.95);
+            }
         .editor-header-tab:not(:last-child) {
             margin-right: 4px;
         }
-        .editor-header-tab:not(.selected):hover {
-            background-color: #f0f0f0;
-            transform: scale(0.95);
-        }
-
-    .editor-header-tab__notification {
+    
+    .editor-selector__notification {
         position: absolute;
         top: 0; right: 0;
         font-style: normal;
@@ -101,33 +101,90 @@
 -----------------------------------------------------------------------------*/
 
 .editor-selectors {
-    display: flex;
+    display: flex; align-items: flex-start;
 }
     .editor-selector {
+        position: relative;
         display: flex; flex-direction: column;
         margin-right: 8px; margin-bottom: 6px;
         text-align: center; text-transform: capitalize;
         font-size: 1.3rem; font-weight: 600;
         border-radius: 2px;
         background-color: #fcfcfc;
-        box-shadow: 0 1px 2px #555;
+        box-shadow: 0 1px 2px #777;
         cursor: default;
         transition: .2s;
     }
         .editor-selector:hover {
-            transform: scale(1.02);
+            box-shadow: 0 0 4px 2px #c0c0c0;
+        }
+
+        .editor-selector__header {
+            position: relative;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 4px 12px 8px;
+            border-bottom: 1px solid #bdbdbd;
+        }
+            .editor-selector.collapsed .editor-selector__header {
+                border-color: #d5d5d5;
+            }
+
+        .editor-selector .btn-collapse {
+            position: absolute;
+            display: flex; justify-content: center;
+            top: calc(100% - 9px); right: calc(100% - 24px);
+            font-size: 0.9em;
+            height: 18px; 
+            width: 18px;
+            border-radius: 50%;
+            background-color: #fff;
+            border: 1px solid #d5d5d5;
+            box-shadow: 1px 0 1px -1px #555;
+            outline: none;
+            transition: .2s;
+            z-index: 5;
+        }
+
+        .editor-selector .btn-collapse:hover {
+            transform: scale(1.1);
+        }
+
+            .editor-selector .btn-collapse:after {
+                content: "-";
+                color: #222;
+                transform: scale(3) rotate(360deg) translateY(-1px);
+                transition: transform .2s;
+            }
+                .editor-selector.collapsed .btn-collapse:after {
+                    content: "+";
+                    color: #555;
+                    transform: scale(2) rotate(0) translateY(-1px);
+                }
+
+            .editor-selector:not(.collapsed) .btn-collapse {
+                right: 6px;
+                box-shadow: -1px 0 1px -1px #555;
+                border-color: #bdbdbd;
+            }
+
+        .editor-selector.collapsed .editor-selector__preview {
+            display: none;
         }
         
         .editor-selector__title {
             margin: 0;
-            padding: 4px 6px;
+            min-width: 120px;
+            white-space: nowrap;
             font-family: inherit; font-size: 1.1em; font-weight: 600;
-            color: #111;
+            color: #222;
         }
-            .editor-selector__title:hover,
-            .editor-selector__title:focus {
-                background-color: #f0f0f0;
+            
+            .editor-selector__title-concept {
+                white-space: nowrap;
+                text-transform: lowercase;
+                color: #333;
             }
+                .editor-selector__title-concept:before { content: "@"; }
     
         .editor-selector__preview {
             padding: 2px 6px;
@@ -186,12 +243,12 @@
             .editor-selector__preview-text--attribute + .editor-selector__preview-list  {
                 width: 100%;
             } 
-
+            
             .editor-selector__preview-concept {
                 display: block;
                 white-space: nowrap;
             }
-            
+
             .editor-selector__preview-tags {
                 margin-top: 6px;
                 display: flex; flex-wrap: wrap;
@@ -210,7 +267,7 @@
         
         
         .editor-selector__action-bar {
-            padding: 8px 6px;
+            padding: 8px 6px 6px;
             display: flex; justify-content: flex-end;
             border-top: 1px solid #d5d5d5;
             background-color: #fcfcfc;
@@ -230,7 +287,6 @@
 
             .editor-selector__action-bar-button--clone {
                 margin-left: 6px;
-                font-size: 1.05em;
                 color: #695399;
                 background-color: #fcfcfc;
             }
@@ -416,6 +472,14 @@
     .editor-toolbar .btn {
         font-size: 1rem;
     }
+        .editor-toolbar .btn:after {
+            display: block;
+            color: #555;
+            transition: .4s;
+        }
+        .editor-toolbar .btn:not(:last-child) {
+            margin-right: 12px;
+        }
 
     .editor-toolbar .btn-close {
         display: block;
@@ -430,16 +494,39 @@
     }
         .editor-toolbar .btn-close:after {
             content: "✖";
-            display: block;
-            transition: .4s;
         }
         .editor-toolbar .btn-close:hover {
             background-color: #fff; 
         }
         .editor-toolbar .btn-close:hover:after {
             color: #222;
-            transform: rotate(-180deg) scale(1.1) translateY(-1px);
+            transform: rotate(-180deg) scale(1.2) translateY(-2px);
         }
+
+
+        .editor-toolbar .btn-home {
+            display: block;
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            font-size: 1.4rem; font-weight: 500;
+            background-color: #f0f0f0;
+            box-shadow: 0 1px 2px  #555;
+            border-radius: 50%;
+            transition: .2s;
+        }
+            .editor-toolbar .btn-home:after {
+                content: "•••";
+            }
+            .editor-toolbar .btn-home:hover {
+                background-color: #fff; 
+            }
+            .editor-toolbar .btn-home:hover:after {
+                color: #222;
+                letter-spacing: -1px;
+                transform: rotate(-270deg) scale(1.3) translate(-1px, -2px);
+            }
+
     .editor-toolbar .btn-new {
         display: block;
         margin-right: 12px;

@@ -310,15 +310,13 @@ const BaseBinaryField = {
         this.disabled = true;
     },
     refresh() {
-        StateHandler.call(this, this.schema.state);
+        const state = valOrDefault(StateHandler.call(this, this.schema, this.schema.state), this.schema);
 
         if (this.hasChanges()) {
             this.statusElement.classList.add("change");
         } else {
             this.statusElement.classList.remove("change");
         }
-
-        const state = valOrDefault(this.state, this.schema);
 
         if (state) {
             const { label } = state;

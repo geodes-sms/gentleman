@@ -91,7 +91,6 @@ const BaseField = {
         var result = this.source.delete();
 
         if (result.success) {
-            this.source.unregister(this);
             this.clear();
             removeChildren(this.element);
             this.element.remove();
@@ -177,6 +176,5 @@ const BaseField = {
 
 
 export const Field = Object.assign(
-    BaseField,
-    ObserverHandler
+    BaseField
 );

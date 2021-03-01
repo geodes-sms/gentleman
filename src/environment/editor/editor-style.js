@@ -1,9 +1,113 @@
 import {
-    createInput, createDiv, createLabel, createI, removeChildren,
+    createDocFragment, createH3, createDiv, createInput, createLabel,
+    createSection, createButton, createI, removeChildren, isHTMLElement,
+    valOrDefault, isNullOrUndefined
 } from 'zenkai';
+import { hide, show, toggle } from '@utils/index.js';
 
-export const StyleWindow = {
 
+export const EditorStyle = {
+    /** @type {HTMLElement} */
+    container: null,
+    /** @type {*} */
+    schema: null,
+    /** @type {boolean} */
+    isOpen: false,
+    /** @type {boolean} */
+    visible: true,
+    /** @type {HTMLButtonElement} */
+    btnStart: null,
+    /** @type {FIleIO} */
+    modelFileIO: null,
+    /** @type {FIleIO} */
+    projectionFileIO: null,
+
+    init(schema) {
+        if (schema) {
+            this.schema = schema;
+        }
+
+        return this;
+    },
+
+    isRendered() {
+        return isHTMLElement(this.container);
+    },
+
+    show() {
+        show(this.container);
+        this.visible = true;
+
+        return this;
+    },
+    hide() {
+        hide(this.container);
+        this.visible = false;
+
+        return this;
+    },
+    toggle() {
+        toggle(this.container);
+        this.visible = !this.visible;
+
+        return this;
+    },
+    open() {
+        this.container.classList.add("open");
+        this.show();
+        this.isOpen = true;
+
+        return this;
+    },
+    close() {
+        this.container.classList.remove("open");
+        this.hide();
+        this.isOpen = false;
+
+        return this;
+    },
+
+    clear() {
+        removeChildren(this.container);
+
+        return this;
+    },
+    update() {
+
+    },
+    render() {
+        const fragment = createDocFragment();
+
+        if (!isHTMLElement(this.container)) {
+            this.container = createDiv({
+                class: ["editor-style"]
+            });
+        }
+
+        if (fragment.hasChildNodes()) {
+            this.container.append(fragment);
+
+            this.bindEvents();
+        }
+
+        this.close();
+        this.refresh();
+
+        return this.container;
+    },
+    refresh() {
+        // this.btnStart.disabled = !(this.editor.hasConceptModel() && this.editor.hasProjectionModel());
+
+        return this;
+    },
+
+    bindEvents() {
+
+    }
+};
+
+
+const StyleWindow = {
     createWidthControl() {
         /** @type {HTMLElement} */
         const controlWrapper = createDiv({

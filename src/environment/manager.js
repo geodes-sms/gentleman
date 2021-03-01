@@ -2,7 +2,6 @@ import {
     createDocFragment, createDiv, createButton, getElement, isHTMLElement,
     isNullOrWhitespace, isNullOrUndefined, isString, isFunction, isEmpty,
 } from "zenkai";
-import { Events } from "@utils/index.js";
 import { Explorer, Editor } from './index.js';
 
 
@@ -17,6 +16,8 @@ const nextId = () => `GE${inc++}`;
 export const Manager = {
     /** @type {HTMLElement} */
     container: null,
+    /** @type {string} */
+    containerEnv: null,
     /** @type {HTMLElement} */
     homeContainer: null,
     /** @type {HTMLElement} */
@@ -51,9 +52,18 @@ export const Manager = {
 
         this.container = container;
         this.container.tabIndex = -1;
+        this.containerEnv = this.container.dataset["gentleman"];
+
+        if (this.containerEnv === "editor") {
+            this.createEditor().init();
+
+            return this;
+        }
 
         this.bindDOM();
         this.bindEvents();
+
+        this.render();
 
         return this;
     },
@@ -78,25 +88,10 @@ export const Manager = {
     },
     refresh() {
         if (!this.hasEnvironment) {
-            this.createEditor().init().open();
+            this.createEditor().init();
 
             return this;
         }
-
-        let conceptEditor = false;
-        let projectionEditor = false;
-
-        for (let i = 0; i < this.editors.length; i++) {
-            const editor = this.editors[i];
-            if (editor.buildTarget === "gentleman_concept") {
-                conceptEditor = true;
-            }
-            if (editor.buildTarget === "gentleman_projection") {
-                projectionEditor = true;
-            }
-        }
-
-        // this.btnBuild.disabled = !(conceptEditor && projectionEditor);
 
         return this;
     },
@@ -127,19 +122,17 @@ export const Manager = {
 
         return this.editors.find(env => !env.active);
     },
-
     /**
      * Creates a new `Editor`
      * @returns {Editor}
      */
-    createEditor(model) {
+    createEditor() {
         var editor = Object.create(Editor, {
             object: { value: "environment" },
             type: { value: "editor" },
             name: { value: "editor" },
             id: { value: nextId() },
             manager: { value: this },
-            model: { value: model },
             container: { value: createContainer("editor") },
         });
 
@@ -244,27 +237,6 @@ export const Manager = {
                 this.createEditor().init().open();
             }
         });
-
-        // this.btnBuild.addEventListener('click', (event) => {
-        //     var json = [];
-
-        //     for (let i = 0; i < this.editors.length; i++) {
-        //         const editor = this.editors[i];
-
-        //         if (editor.buildTarget === "gentleman_concept") {
-        //             json.push(editor.build());
-        //         }
-
-        //         if (editor.buildTarget === "gentleman_projection") {
-        //             json.push(editor.build());
-        //         }
-        //     }
-
-        //     const [concept, projection] = json; 
-        //     console.log(concept, projection);
-
-        //     this.createEditor("gentleman_concept").init(concept, projection).open();
-        // });
     }
 };
 

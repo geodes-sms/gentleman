@@ -1,10 +1,12 @@
 import {
     createDocFragment, createSpan, createDiv, createI, createUnorderedList,
-    createTextArea, createInput, createListItem, createButton, findAncestor,
-    removeChildren, isHTMLElement, isNullOrWhitespace, isEmpty, valOrDefault,
-    hasOwn, getPreviousElementSibling, getNextElementSibling,
+    createListItem, findAncestor, removeChildren, isHTMLElement, isNullOrWhitespace,
+    isEmpty, valOrDefault, hasOwn, getPreviousElementSibling, getNextElementSibling,
 } from "zenkai";
-import { hide, show, getCaretIndex, isHidden, getElementLeft, getElementTop, getElementBottom, getElementRight } from "@utils/index.js";
+import {
+    hide, show, getCaretIndex, isHidden, NotificationType,
+    getElementLeft, getElementTop, getElementBottom, getElementRight
+} from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { StateHandler } from "./../state-handler.js";
 import { ContentHandler } from "./../content-handler.js";
@@ -12,7 +14,6 @@ import { Field } from "./field.js";
 
 
 const isInputOrTextarea = (element) => isHTMLElement(element, ["input", "textarea"]);
-
 
 
 function createMessageElement() {
@@ -72,11 +73,6 @@ function createChoiceItemElement(value) {
     }, value);
 }
 
-const NotificationType = {
-    INFO: "info",
-    ERROR: "error"
-};
-
 /**
  * Creates a notification message
  * @param {string} type 
@@ -93,22 +89,6 @@ function createNotificationMessage(type, message) {
     }
 
     return element;
-}
-
-/**
- * Resolves the value of the placeholder
- * @returns {string}
- */
-function resolvePlaceholder(value) {
-    if (value) {
-        return value;
-    }
-
-    if (this.source.object === "concept") {
-        return this.source.getAlias();
-    }
-
-    return "Enter a value";
 }
 
 /**
@@ -286,7 +266,7 @@ const BaseTextField = {
     },
 
     refresh() {
-        StateHandler.call(this, this.schema.state);
+        StateHandler.call(this, this.schema, this.schema.state);
 
         if (this.hasValue()) {
             this.element.classList.remove("empty");
@@ -345,6 +325,10 @@ const BaseTextField = {
                 this.element.classList.add("readonly");
             }
 
+            if (this.disabled) {
+                this.element.classList.add("disabled");
+            }
+
             StyleHandler(this.element, this.schema.style);
         }
 
@@ -376,57 +360,12 @@ const BaseTextField = {
 
         content.forEach(element => {
             if (element.type === "input") {
-                const { placeholder, style, type } = valOrDefault(element.input, {});
+                this.input = ContentHandler.call(this, element);
 
-                let inputPlaceholder = resolvePlaceholder.call(this, placeholder);
+                this.input.classList.add("field--textbox__input");
 
-                if (this.readonly || this.resizable) {
-                    this.input = createSpan({
-                        class: ["field--textbox__input"],
-                        editable: !this.readonly,
-                        title: inputPlaceholder,
-                        dataset: {
-                            placeholder: inputPlaceholder,
-                            nature: "field-component",
-                            view: "text",
-                            id: this.id,
-                        }
-                    });
-                } else if (this.multiline) {
-                    this.input = createTextArea({
-                        class: ["field--textbox__input", "field--textbox__input--multiline"],
-                        placeholder: inputPlaceholder,
-                        title: inputPlaceholder,
-                        dataset: {
-                            nature: "field-component",
-                            view: "text",
-                            id: this.id,
-                        }
-                    });
-                } else {
-                    this.input = createInput({
-                        type: valOrDefault(type, "text"),
-                        class: ["field--textbox__input"],
-                        placeholder: inputPlaceholder,
-                        title: inputPlaceholder,
-                        dataset: {
-                            nature: "field-component",
-                            view: "text",
-                            id: this.id,
-                        }
-                    });
-                }
-
-                if (this.disabled) {
-                    this.element.classList.add("disabled");
-                    this.input.disabled = true;
-                }
-
-                if (this.focusable) {
-                    this.input.tabIndex = 0;
-                } else {
-                    this.element.dataset.ignore = "all";
-                    this.input.dataset.ignore = "all";
+                if (this.multiline) {
+                    this.input.classList.add("field--textbox__input--multiline");
                 }
 
                 let value = "";
@@ -434,12 +373,8 @@ const BaseTextField = {
                     value = this.source.getValue();
                 }
 
-                if (!isNullOrWhitespace(value)) {
-                    this.input.textContent = value;
-                    this.value = value;
-                }
-
-                StyleHandler(this.input, style);
+                this.input.textContent = value;
+                this.value = value;
 
                 fragment.appendChild(this.input);
             } else {
@@ -686,7 +621,7 @@ const BaseTextField = {
             }
         }
 
-        if(isHTMLElement(element)) {
+        if (isHTMLElement(element)) {
             element.focus();
 
             return true;

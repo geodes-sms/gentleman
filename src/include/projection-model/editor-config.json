@@ -1,0 +1,29 @@
+{
+    "editor": {
+        "name": "Gentleman projection",
+        "root": ["projection", "template"],
+        "header": {
+            "tabs": [
+                {}
+            ],
+            "css": ["editor-header"]
+        },
+        "body": {
+            "concept": {
+                "actions": [
+                    { "name": "build" }
+                ],
+                "css": ["concept-section"]    
+            },
+            "css": ["editor-body"]
+        },
+        "menu": {
+            "actions": [
+                { "name": "build-projection",  "content": "Build", "downloadable": true },
+                { "name": "preview-projection", "content": "Preview" },
+                { "name": "export" }
+            ],
+            "css": ["editor-menu"]
+        }
+    }
+}

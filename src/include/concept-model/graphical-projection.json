@@ -3,74 +3,6 @@
         {
             "concept": { "name": "prototype concept" },
             "type": "layout",
-            "global": true,
-            "tags": [],
-            "projection": {
-                "type": "stack",
-                "orientation": "vertical",
-                "style": {
-                    "css": ["model-concept", "model-concept--textual"]
-                },
-                "disposition": [
-                    {
-                        "type": "layout",
-                        "layout": {
-                            "type": "wrap",
-                            "style": {
-                                "css": ["line", "model-concept__line"]
-                            },
-                            "disposition": [
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Define prototype concept",
-                                        "style": {
-                                            "css": ["keyword", "model-concept__keyword"]
-                                        }
-                                    }
-                                },
-                                { 
-                                    "type": "attribute", 
-                                    "name": "name",
-                                    "tag": "textual"
-                                }
-                            ]
-                        }
-                    },          
-                    {
-                        "type": "layout",
-                        "layout": {
-                            "type": "wrap",
-                            "style": {
-                                "css": ["line", "model-projection__line"]
-                            },
-                            "disposition": [
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Attribute definition",
-                                        "style": {
-                                            "css": ["title"]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    { 
-                        "type": "attribute", 
-                        "name": "attributes", 
-                        "tag": "attribute-set"
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "prototype concept" },
-            "type": "layout",
-            "global": true,
             "tags": [],
             "projection": {
                 "type": "stack",
@@ -83,13 +15,10 @@
                         "type": "layout",
                         "layout": {
                             "type": "wrap",
-                            "style": {
-                                "css": ["model-concept-header", "prototype-concept-header"]
-                            },
                             "disposition": [
                                 {
                                     "type": "static",
-                                    "static":  {
+                                    "static": {
                                         "type": "text",
                                         "style": {
                                             "css": "model-concept-header__title"
@@ -97,11 +26,14 @@
                                         "content": "Prototype concept "
                                     }
                                 },
-                                { 
-                                    "type": "attribute", 
-                                    "name": "name" 
+                                {
+                                    "type": "attribute",
+                                    "name": "name"
                                 }
-                            ]
+                            ],
+                            "style": {
+                                "css": ["model-concept-header", "prototype-concept-header"]
+                            }
                         }
                     },
                     {
@@ -110,17 +42,20 @@
                             "type": "stack",
                             "orientation": "vertical",
                             "style": {
-                                "css": ["model-concept-body", "prototype-concept-body"]
+                                "css": [
+                                    "model-concept-body",
+                                    "prototype-concept-body"
+                                ]
                             },
                             "disposition": [
-                                { 
-                                    "type": "attribute", 
-                                    "name": "description", 
-                                    "tag": "description-string" 
+                                {
+                                    "type": "attribute",
+                                    "name": "description",
+                                    "tag": "description-string"
                                 },
-                                { 
-                                    "type": "attribute", 
-                                    "name": "attributes", 
+                                {
+                                    "type": "attribute",
+                                    "name": "attributes",
                                     "tag": "attribute-set"
                                 }
                             ]
@@ -137,10 +72,10 @@
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { 
-                        "type": "attribute", 
-                        "name": "name", 
-                        "tag": "readonly-string" 
+                    {
+                        "type": "attribute",
+                        "name": "name",
+                        "tag": "readonly-string"
                     }
                 ]
             }
@@ -149,14 +84,14 @@
             "concept": { "name": "prototype concept" },
             "type": "layout",
             "tags": ["choice"],
-            "projection":  {
+            "projection": {
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { 
-                        "type": "attribute", 
-                        "name": "name", 
-                        "tag": "readonly-string" 
+                    {
+                        "type": "attribute",
+                        "name": "name",
+                        "tag": "readonly-string"
                     }
                 ],
                 "style": {
@@ -164,93 +99,9 @@
                 }
             }
         },
-
         {
             "concept": { "name": "concrete concept" },
             "type": "layout",
-            "global": true,
-            "tags": ["textual"],
-            "projection": {
-                "type": "stack",
-                "orientation": "vertical",
-                "style": {
-                    "css": ["model-concept", "model-concept--textual"]
-                },
-                "disposition": [
-                    {
-                        "type": "layout",
-                        "layout": {
-                            "type": "wrap",
-                            "style": {
-                                "css": ["line", "model-concept__line"]
-                            },
-                            "disposition": [
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Define concrete concept",
-                                        "style": {
-                                            "css": ["keyword", "model-concept__keyword"]
-                                        }
-                                    }
-                                },
-                                { 
-                                    "type": "attribute", 
-                                    "name": "name",
-                                    "tag": "textual"
-                                },
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "as",
-                                        "style": {
-                                            "css": ["keyword", "model-concept__keyword"]
-                                        }
-                                    }
-                                },
-                                { 
-                                    "type": "attribute", 
-                                    "name": "prototype",
-                                    "tag": "textual"
-                                }
-                            ]
-                        }
-                    },          
-                    {
-                        "type": "layout",
-                        "layout": {
-                            "type": "wrap",
-                            "style": {
-                                "css": ["line", "model-projection__line"]
-                            },
-                            "disposition": [
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Attribute definition",
-                                        "style": {
-                                            "css": ["title"]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    { 
-                        "type": "attribute", 
-                        "name": "attributes", 
-                        "tag": "attribute-set"
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "concrete concept" },
-            "type": "layout",
-            "global": true,
             "tags": [],
             "projection": {
                 "type": "stack",
@@ -263,13 +114,10 @@
                         "type": "layout",
                         "layout": {
                             "type": "wrap",
-                            "style": {
-                                "css": ["model-concept-header", "concrete-concept-header"]
-                            },
                             "disposition": [
                                 {
                                     "type": "static",
-                                    "static":  {
+                                    "static": {
                                         "type": "text",
                                         "style": {
                                             "css": "model-concept-header__title"
@@ -277,9 +125,43 @@
                                         "content": "Concrete concept "
                                     }
                                 },
-                                { 
-                                    "type": "attribute", 
-                                    "name": "name" 
+                                {
+                                    "type": "attribute",
+                                    "name": "name"
+                                }
+                            ],
+                            "style": {
+                                "css": ["model-concept-header"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "description",
+                        "tag": "description-string"
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "style": {
+                                "css": ["model-concept-structure"]
+                            },
+                            "disposition": [
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Attributes",
+                                        "style": {
+                                            "css": ["title", "model-concept-structure__title", "model-concept-structure__title--attributes"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "attributes",
+                                    "tag": "attribute-set"
                                 }
                             ]
                         }
@@ -287,80 +169,25 @@
                     {
                         "type": "layout",
                         "layout": {
-                            "type": "stack",
-                            "orientation": "vertical",
+                            "type": "wrap",
                             "style": {
-                                "css": ["model-concept-body", "concrete-concept-body"]
+                                "css": ["model-concept-structure"]
                             },
                             "disposition": [
-                                { 
-                                    "type": "attribute", 
-                                    "name": "description", 
-                                    "tag": "description-string" 
-                                },
-                                { 
-                                    "type": "attribute", 
-                                    "name": "prototype", 
-                                    "tag": "prototype-reference",
-                                    "optional": {
-                                        "type": "layout",
-                                        "layout": {
-                                            "type": "wrap",
-                                            "style": {
-                                                "css": ["model-concept-option", "model-concept-option--prototype"]
-                                            },
-                                            "disposition": [
-                                                {
-                                                    "type": "static",
-                                                    "static": { 
-                                                        "type": "text", 
-                                                        "content": "Use a prototype" 
-                                                    }
-                                                }
-                                            ]
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Properties",
+                                        "style": {
+                                            "css": ["title", "model-concept-structure__title", "model-concept-structure__title--properties"]
                                         }
                                     }
                                 },
                                 {
-                                    "type": "layout",
-                                    "layout": {
-                                        "type": "wrap",
-                                        "style": {
-                                            "css": ["model-concept-structure"]
-                                        },
-                                        "disposition": [
-                                            {
-                                                "type": "static",
-                                                "static": {
-                                                    "type": "text", 
-                                                    "content": "Attributes",
-                                                    "style": {
-                                                        "css": ["title", "model-concept-structure__title", "model-concept-structure__title--attributes"]
-                                                    }
-                                                }
-                                            },
-                                            { 
-                                                "type": "attribute", 
-                                                "name": "attributes", 
-                                                "tag": "attribute-set"
-                                            },
-                                            {
-                                                "type": "static",
-                                                "static": {
-                                                    "type": "text", 
-                                                    "content": "Properties",
-                                                    "style": {
-                                                        "css": ["title", "model-concept-structure__title", "model-concept-structure__title--properties"]
-                                                    }
-                                                }
-                                            },
-                                            { 
-                                                "type": "attribute", 
-                                                "name": "properties", 
-                                                "tag": "property-set"
-                                            }
-                                        ]
-                                    }
+                                    "type": "attribute",
+                                    "name": "properties",
+                                    "tag": "property-set"
                                 }
                             ]
                         }
@@ -375,10 +202,10 @@
             "projection": {
                 "type": "wrap",
                 "disposition": [
-                    { 
-                        "type": "attribute", 
-                        "name": "name", 
-                        "tag": "readonly-string" 
+                    {
+                        "type": "attribute",
+                        "name": "name",
+                        "tag": "readonly-string"
                     }
                 ]
             }
@@ -387,33 +214,31 @@
             "concept": { "name": "concrete concept" },
             "type": "layout",
             "tags": ["choice"],
-            "projection":  {
+            "projection": {
                 "type": "wrap",
                 "focusable": false,
                 "style": {
                     "css": ["link-choice", "link-choice--concrete"]
                 },
                 "disposition": [
-                    { 
+                    {
                         "type": "static",
                         "static": {
-                            "type": "text", 
-                            "content": "Concrete concept" 
+                            "type": "text",
+                            "content": "Concrete concept"
                         }
                     },
-                    { 
-                        "type": "attribute", 
-                        "name": "name", 
-                        "tag": "readonly-string" 
+                    {
+                        "type": "attribute",
+                        "name": "name",
+                        "tag": "readonly-string"
                     }
                 ]
             }
         },
-
         {
             "concept": { "name": "derivative concept" },
             "type": "layout",
-            "global": true,
             "tags": [],
             "projection": {
                 "type": "stack",
@@ -432,7 +257,7 @@
                             "disposition": [
                                 {
                                     "type": "static",
-                                    "static":  {
+                                    "static": {
                                         "type": "text",
                                         "style": {
                                             "css": "model-concept-header__title"
@@ -440,9 +265,9 @@
                                         "content": "Derivative concept "
                                     }
                                 },
-                                { 
-                                    "type": "attribute", 
-                                    "name": "name" 
+                                {
+                                    "type": "attribute",
+                                    "name": "name"
                                 }
                             ]
                         }
@@ -456,24 +281,24 @@
                                 "css": ["model-concept-body", "derivative-concept-body"]
                             },
                             "disposition": [
-                                { 
-                                    "type": "attribute", 
-                                    "name": "description", 
-                                    "tag": "description-string" 
+                                {
+                                    "type": "attribute",
+                                    "name": "description",
+                                    "tag": "description-string"
                                 },
                                 {
                                     "type": "static",
                                     "static": {
-                                        "type": "text", 
+                                        "type": "text",
                                         "content": "Base",
                                         "style": {
                                             "css": ["title", "model-concept-structure__title", "model-concept-structure__title--properties"]
                                         }
                                     }
                                 },
-                                { 
-                                    "type": "attribute", 
-                                    "name": "base" 
+                                {
+                                    "type": "attribute",
+                                    "name": "base"
                                 }
                             ]
                         }
@@ -491,14 +316,14 @@
                     {
                         "type": "static",
                         "static": {
-                            "type": "text", 
-                            "content": "Derivative" 
+                            "type": "text",
+                            "content": "Derivative"
                         }
                     },
-                    { 
-                        "type": "attribute", 
-                        "name": "name", 
-                        "tag": "readonly-string" 
+                    {
+                        "type": "attribute",
+                        "name": "name",
+                        "tag": "readonly-string"
                     }
                 ]
             }
@@ -507,109 +332,24 @@
             "concept": { "name": "derivative concept" },
             "type": "layout",
             "tags": ["reference-choice"],
-            "projection":  {
+            "projection": {
                 "type": "wrap",
                 "focusable": false,
                 "style": {
                     "css": ["link-choice", "link-choice--derivative"]
                 },
                 "disposition": [
-                    { 
+                    {
                         "type": "static",
                         "static": {
-                            "type": "text", 
-                            "content": "Derivative concept" 
-                        }
-                    },
-                    { 
-                        "type": "attribute", 
-                        "name": "name", 
-                        "tag": "readonly-string" 
-                    }
-                ]
-            }
-        },
-
-
-        {
-            "name": "attribute-table",
-            "concept": { "name": "attribute" },
-            "type": "template",
-            "tags": [],
-            "template": "table",
-            "projection": {
-                "type": "row",
-                "row": [
-                    {
-                        "header": {
-                            "style": {
-                                "css": ["attribute-table__header-cell"]
-                            },
-                            "content": {
-                                "type": "static",
-                                "static": {
-                                    "type": "text", 
-                                    "content": "Required"
-                                }
-                            }
-                        },
-                        "body": {
-                            "style": {
-                                "css": ["attribute-table__body-cell", "attribute-table__body-cell--required"]
-                            },
-                            "content": { 
-                                "type": "attribute", 
-                                "name": "required", 
-                                "tag": "required-boolean" 
-                            }
+                            "type": "text",
+                            "content": "Derivative concept"
                         }
                     },
                     {
-                        "header": {
-                            "style": {
-                                "css": ["attribute-table__header-cell"]
-                            },
-                            "content": {
-                                "type": "static",
-                                "static": {
-                                    "type": "text", 
-                                    "content": "Name"
-                                }
-                            }
-                        },
-                        "body": {
-                            "style": {
-                                "css": ["attribute-table__body-cell"]
-                            },
-                            "content": { 
-                                "type": "attribute", 
-                                "name": "name",
-                                "tag": "textfield-outlined"
-                            }
-                        }
-                    },
-                    {
-                        "header": {
-                            "style": {
-                                "css": ["attribute-table__header-cell"]
-                            },
-                            "content": {
-                                "type": "static",
-                                "static": {
-                                    "type": "text", 
-                                    "content": "Target"
-                                }
-                            }
-                        },
-                        "body": {
-                            "style": {
-                                "css": ["attribute-table__body-cell"]
-                            },
-                            "content": { 
-                                "type": "attribute", 
-                                "name": "target" 
-                            }
-                        }
+                        "type": "attribute",
+                        "name": "name",
+                        "tag": "readonly-string"
                     }
                 ]
             }
@@ -617,146 +357,79 @@
         {
             "concept": { "name": "attribute" },
             "type": "layout",
-            "tags": ["attribute-list-item--textual"],
-            "projection":  {
+            "tags": ["attribute-item"],
+            "projection": {
                 "type": "stack",
                 "orientation": "vertical",
                 "disposition": [
                     {
-                        "type": "layout",
-                        "layout": {
-                            "type": "wrap",
-                            "disposition": [
-                                { 
-                                    "type": "static", 
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Define ",
-                                        "style": {
-                                            "css": ["keyword"]
-                                        }
-                                    }
-                                },
-                                { 
-                                    "type": "attribute", 
-                                    "name": "required",
-                                    "tag": "field-binary-state"
-                                },
-                                { 
-                                    "type": "static", 
-                                    "static": {
-                                        "type": "text",
-                                        "content": "attribute ",
-                                        "style": {
-                                            "css": ["keyword"]
-                                        }
-                                    }
-                                },
-                                { 
-                                    "type": "attribute", 
-                                    "name": "name",
-                                    "tag": "textual"
-                                },
-                                { 
-                                    "type": "static", 
-                                    "static": {
-                                        "type": "text",
-                                        "content": "of type ",
-                                        "style": {
-                                            "css": ["keyword"]
-                                        }
-                                    }
-                                }
-                            ],
-                            "style": {
-                                "css": ["line"]
-                            }
-                        }
+                        "type": "attribute",
+                        "name": "name"
                     },
-                    { 
-                        "type": "attribute", 
-                        "name": "target",
-                        "tag": "textual"
+                    {
+                        "type": "attribute",
+                        "name": "target"
                     }
                 ]
             }
         },
         {
-            "concept": { "name": "attribute" },
-            "type": "layout",
-            "tags": ["attribute-list-item"],
-            "projection":  {
-                "type": "wrap",
-                "disposition": [
-                    { 
-                        "type": "attribute", 
-                        "name": "name" 
-                    }
-                ]
-            }
-        },
-
-        {
-            "name": "property-table",
             "concept": { "name": "property" },
-            "type": "template",
-            "tags": [],
-            "template": "table",
+            "type": "layout",
+            "tags": ["property-row"],
             "projection": {
                 "type": "row",
-                "row": [
+                "disposition": [
                     {
                         "header": {
-                            "style": {
-                                "css": ["property-table__header-cell"]
-                            },
                             "content": {
                                 "type": "static",
                                 "static": {
-                                    "type": "text", 
+                                    "type": "text",
                                     "content": "Name"
                                 }
+                            },
+                            "style": {
+                                "css": ["property-table__header-cell"]
                             }
                         },
                         "body": {
-                            "style": {
-                                "css": ["property-table__body-cell"]
-                            },
-                            "content": { 
-                                "type": "attribute", 
+                            "content": {
+                                "type": "attribute",
                                 "name": "name",
                                 "tag": "textfield-outlined"
+                            },
+                            "style": {
+                                "css": ["property-table__body-cell"]
                             }
                         }
                     },
                     {
                         "header": {
-                            "style": {
-                                "css": ["property-table__header-cell"]
-                            },
                             "content": {
                                 "type": "static",
                                 "static": {
-                                    "type": "text", 
+                                    "type": "text",
                                     "content": "Target"
                                 }
+                            },
+                            "style": {
+                                "css": ["property-table__header-cell"]
                             }
                         },
                         "body": {
+                            "content": {
+                                "type": "attribute",
+                                "name": "target"
+                            },
                             "style": {
                                 "css": ["property-table__body-cell"]
-                            },
-                            "content": { 
-                                "type": "attribute", 
-                                "name": "target" 
                             }
                         }
                     }
                 ]
             }
         },
-
-
         {
             "concept": { "name": "primitive" },
             "type": "field",
@@ -783,42 +456,6 @@
                 }
             }
         },
-
-        {
-            "concept": { "name": "primitive" },
-            "type": "field",
-            "tags": ["textual"],
-            "projection": {
-                "type": "choice",
-                "content": [
-                    {
-                        "type": "input",
-                        "input": {
-                            "placeholder": "concept name",
-                            "style": {
-                                "css": ["target-choice--textual__input"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "choice",
-                        "choice": {
-                            "style": {
-                                "css": ["target-choice--textual__list"]
-                            },
-                            "option": {
-                                "style": {
-                                    "css": ["target-choice--textual__list-option"]
-                                }
-                            }
-                        }
-                    }
-                ],
-                "style": {
-                    "css": ["target-choice--textual"]
-                }
-            }
-        },
         {
             "concept": { "name": "string primitive" },
             "type": "layout",
@@ -827,25 +464,44 @@
                 "type": "stack",
                 "orientation": "vertical",
                 "disposition": [
-                    { 
-                        "type": "attribute", 
+                    {
+                        "type": "attribute",
                         "name": "default",
                         "tag": "default-string"
                     },
-                    { 
-                        "type": "attribute", 
-                        "name": "values", 
+                    {
+                        "type": "attribute",
+                        "name": "values",
                         "tag": "value-set",
-                        "optional": {
-                            "type": "static",
-                            "static": {
-                                "type": "text",
-                                "content": "Restrict accepted values",
-                                "style": {
-                                    "css": ["textual-option", "textual-option--values"]
+                        "state": [
+                            {
+                                "rule": {
+                                    "type": "and",
+                                    "and": [
+                                        {
+                                            "type": "eq",
+                                            "eq": [{ "prop": "required" }, false]
+                                        }, 
+                                        {
+                                            "type": "eq",
+                                            "eq": [{ "prop": "created" }, false]
+                                        }
+                                    ]
+                                },
+                                "result": {
+                                    "content": {
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "content": "Restrict accepted values",
+                                            "style": {
+                                                "css": ["textual-option", "textual-option--values"]
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                        }
+                        ]
                     }
                 ]
             }
@@ -858,8 +514,8 @@
                 "type": "stack",
                 "orientation": "vertical",
                 "disposition": [
-                    { 
-                        "type": "attribute", 
+                    {
+                        "type": "attribute",
                         "name": "default",
                         "tag": "default-string"
                     },
@@ -895,41 +551,79 @@
                                         }
                                     }
                                 },
-                                { 
-                                    "type": "attribute", 
+                                {
+                                    "type": "attribute",
                                     "name": "length",
                                     "tag": "length",
                                     "style": {
                                         "css": ["target-constraint-component"]
                                     },
-                                    "optional": {
-                                        "type": "static",
-                                        "static": {
-                                            "type": "text",
-                                            "content": "Restrict length",
-                                            "style": {
-                                                "css": ["string-primitive-option", "string-primitive-option--values"]
+                                    "state": [
+                                        {
+                                            "rule": {
+                                                "type": "and",
+                                                "and": [
+                                                    {
+                                                        "type": "eq",
+                                                        "eq": [{ "prop": "required" }, false]
+                                                    }, 
+                                                    {
+                                                        "type": "eq",
+                                                        "eq": [{ "prop": "created" }, false]
+                                                    }
+                                                ]
+                                            },
+                                            "result": {
+                                                "content": {
+                                                    "type": "static",
+                                                    "static": {
+                                                        "type": "text",
+                                                        "content": "Restrict length",
+                                                        "style": {
+                                                            "css": ["string-primitive-option", "string-primitive-option--values"]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
-                                    }
+                                    ]
                                 },
-                                { 
-                                    "type": "attribute", 
-                                    "name": "values", 
+                                {
+                                    "type": "attribute",
+                                    "name": "values",
                                     "tag": "value-set",
                                     "style": {
                                         "css": ["target-constraint-component"]
                                     },
-                                    "optional": {
-                                        "type": "static",
-                                        "static": {
-                                            "type": "text",
-                                            "content": "Restrict accepted values",
-                                            "style": {
-                                                "css": ["string-primitive-option", "string-primitive-option--values"]
+                                    "state": [
+                                        {
+                                            "rule": {
+                                                "type": "and",
+                                                "and": [
+                                                    {
+                                                        "type": "eq",
+                                                        "eq": [{ "prop": "required" }, false]
+                                                    }, 
+                                                    {
+                                                        "type": "eq",
+                                                        "eq": [{ "prop": "created" }, false]
+                                                    }
+                                                ]
+                                            },
+                                            "result": {
+                                                "content": {
+                                                    "type": "static",
+                                                    "static": {
+                                                        "type": "text",
+                                                        "content": "Restrict accepted values",
+                                                        "style": {
+                                                            "css": ["string-primitive-option", "string-primitive-option--values"]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
-                                    }
+                                    ]
                                 }
                             ]
                         }
@@ -945,10 +639,10 @@
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { 
+                    {
                         "type": "static",
                         "static": {
-                            "type": "text", 
+                            "type": "text",
                             "content": "String",
                             "focusable": false
                         }
@@ -1098,8 +792,8 @@
                 "type": "stack",
                 "orientation": "horizontal",
                 "disposition": [
-                    { 
-                        "type": "attribute", 
+                    {
+                        "type": "attribute",
                         "name": "value"
                     }
                 ]
@@ -1113,11 +807,11 @@
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { 
+                    {
                         "type": "static",
                         "static": {
-                            "type": "text", 
-                            "content": "Fixed value" 
+                            "type": "text",
+                            "content": "Fixed value"
                         }
                     }
                 ]
@@ -1131,12 +825,12 @@
                 "type": "stack",
                 "orientation": "horizontal",
                 "disposition": [
-                    { 
-                        "type": "attribute", 
+                    {
+                        "type": "attribute",
                         "name": "min"
                     },
-                    { 
-                        "type": "attribute", 
+                    {
+                        "type": "attribute",
                         "name": "max"
                     }
                 ]
@@ -1150,11 +844,11 @@
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { 
+                    {
                         "type": "static",
                         "static": {
-                            "type": "text", 
-                            "content": "Range" 
+                            "type": "text",
+                            "content": "Range"
                         }
                     }
                 ]
@@ -1167,12 +861,12 @@
             "projection": {
                 "type": "wrap",
                 "disposition": [
-                    { 
-                        "type": "attribute", 
+                    {
+                        "type": "attribute",
                         "name": "value"
                     },
-                    { 
-                        "type": "attribute", 
+                    {
+                        "type": "attribute",
                         "name": "included"
                     }
                 ]
@@ -1186,8 +880,8 @@
                 "type": "stack",
                 "orientation": "vertical",
                 "disposition": [
-                    { 
-                        "type": "attribute", 
+                    {
+                        "type": "attribute",
                         "name": "default",
                         "tag": "default-number"
                     },
@@ -1216,8 +910,8 @@
                 "type": "stack",
                 "orientation": "vertical",
                 "disposition": [
-                    { 
-                        "type": "attribute", 
+                    {
+                        "type": "attribute",
                         "name": "default",
                         "tag": "default-number"
                     },
@@ -1253,41 +947,79 @@
                                         }
                                     }
                                 },
-                                { 
-                                    "type": "attribute", 
+                                {
+                                    "type": "attribute",
                                     "name": "value",
                                     "tag": "value",
                                     "style": {
                                         "css": ["target-constraint-component"]
                                     },
-                                    "optional": {
-                                        "type": "static",
-                                        "static": {
-                                            "type": "text",
-                                            "content": "Restrict value",
-                                            "style": {
-                                                "css": ["string-primitive-option", "string-primitive-option--values"]
+                                    "state": [
+                                        {
+                                            "rule": {
+                                                "type": "and",
+                                                "and": [
+                                                    {
+                                                        "type": "eq",
+                                                        "eq": [{ "prop": "required" }, false]
+                                                    }, 
+                                                    {
+                                                        "type": "eq",
+                                                        "eq": [{ "prop": "created" }, false]
+                                                    }
+                                                ]
+                                            },
+                                            "result": {
+                                                "content":  {
+                                                    "type": "static",
+                                                    "static": {
+                                                        "type": "text",
+                                                        "content": "Restrict value",
+                                                        "style": {
+                                                            "css": ["string-primitive-option", "string-primitive-option--values"]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
-                                    }
+                                    ]
                                 },
-                                { 
-                                    "type": "attribute", 
-                                    "name": "values", 
+                                {
+                                    "type": "attribute",
+                                    "name": "values",
                                     "tag": "value-set",
                                     "style": {
                                         "css": ["target-constraint-component"]
                                     },
-                                    "optional": {
-                                        "type": "static",
-                                        "static": {
-                                            "type": "text",
-                                            "content": "Restrict accepted values",
-                                            "style": {
-                                                "css": ["string-primitive-option", "string-primitive-option--values"]
+                                    "state": [
+                                        {
+                                            "rule": {
+                                                "type": "and",
+                                                "and": [
+                                                    {
+                                                        "type": "eq",
+                                                        "eq": [{ "prop": "required" }, false]
+                                                    }, 
+                                                    {
+                                                        "type": "eq",
+                                                        "eq": [{ "prop": "created" }, false]
+                                                    }
+                                                ]
+                                            },
+                                            "result": {
+                                                "content":  {
+                                                    "type": "static",
+                                                    "static": {
+                                                        "type": "text",
+                                                        "content": "Restrict accepted values",
+                                                        "style": {
+                                                            "css": ["string-primitive-option", "string-primitive-option--values"]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
-                                    }
+                                    ]
                                 }
                             ]
                         }
@@ -1303,10 +1035,10 @@
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { 
+                    {
                         "type": "static",
                         "static": {
-                            "type": "text", 
+                            "type": "text",
                             "content": "Number",
                             "focusable": false
                         }
@@ -1321,8 +1053,8 @@
             "projection": {
                 "type": "wrap",
                 "disposition": [
-                    { 
-                        "type": "attribute", 
+                    {
+                        "type": "attribute",
                         "name": "default",
                         "tag": "default-boolean"
                     }
@@ -1337,7 +1069,7 @@
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { 
+                    {
                         "type": "static",
                         "static": {
                             "type": "text",
@@ -1356,9 +1088,9 @@
                 "type": "stack",
                 "orientation": "vertical",
                 "disposition": [
-                    { 
-                        "type": "attribute", 
-                        "name": "accept" 
+                    {
+                        "type": "attribute",
+                        "name": "accept"
                     }
                 ]
             }
@@ -1371,10 +1103,10 @@
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { 
+                    {
                         "type": "static",
                         "static": {
-                            "type": "text", 
+                            "type": "text",
                             "content": "Reference",
                             "focusable": false
                         }
@@ -1382,7 +1114,6 @@
                 ]
             }
         },
-
         {
             "concept": { "name": "set primitive" },
             "type": "layout",
@@ -1391,16 +1122,18 @@
                 "type": "stack",
                 "orientation": "vertical",
                 "disposition": [
-                    { 
-                        "type": "attribute", 
-                        "name": "ordered" 
+                    {
+                        "type": "attribute",
+                        "name": "ordered"
                     },
                     {
                         "type": "layout",
                         "layout": {
                             "type": "wrap",
                             "style": {
-                                "css": ["target-accept"]
+                                "css": [
+                                    "target-accept"
+                                ]
                             },
                             "disposition": [
                                 {
@@ -1409,13 +1142,16 @@
                                         "type": "text",
                                         "content": "Element target",
                                         "style": {
-                                            "css": ["title", "target-accept-title"]
+                                            "css": [
+                                                "title",
+                                                "target-accept-title"
+                                            ]
                                         }
                                     }
                                 },
-                                { 
-                                    "type": "attribute", 
-                                    "name": "accept" 
+                                {
+                                    "type": "attribute",
+                                    "name": "accept"
                                 }
                             ]
                         }
@@ -1445,9 +1181,9 @@
                 "type": "stack",
                 "orientation": "vertical",
                 "disposition": [
-                    { 
-                        "type": "attribute", 
-                        "name": "ordered" 
+                    {
+                        "type": "attribute",
+                        "name": "ordered"
                     },
                     {
                         "type": "layout",
@@ -1467,9 +1203,9 @@
                                         }
                                     }
                                 },
-                                { 
-                                    "type": "attribute", 
-                                    "name": "accept" 
+                                {
+                                    "type": "attribute",
+                                    "name": "accept"
                                 }
                             ]
                         }
@@ -1506,23 +1242,42 @@
                                         }
                                     }
                                 },
-                                { 
-                                    "type": "attribute", 
+                                {
+                                    "type": "attribute",
                                     "name": "cardinality",
                                     "tag": "cardinality",
                                     "style": {
                                         "css": ["target-constraint-component"]
                                     },
-                                    "optional": {
-                                        "type": "static",
-                                        "static": {
-                                            "type": "text",
-                                            "content": "Restrict cardinality",
-                                            "style": {
-                                                "css": ["string-primitive-option", "string-primitive-option--values"]
+                                    "state": [
+                                        {
+                                            "rule": {
+                                                "type": "and",
+                                                "and": [
+                                                    {
+                                                        "type": "eq",
+                                                        "eq": [{ "prop": "required" }, false]
+                                                    }, 
+                                                    {
+                                                        "type": "eq",
+                                                        "eq": [{ "prop": "created" }, false]
+                                                    }
+                                                ]
+                                            },
+                                            "result": {
+                                                "content": {
+                                                    "type": "static",
+                                                    "static": {
+                                                        "type": "text",
+                                                        "content": "Restrict cardinality",
+                                                        "style": {
+                                                            "css": ["string-primitive-option", "string-primitive-option--values"]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
-                                    }
+                                    ]
                                 }
                             ]
                         }
@@ -1538,10 +1293,10 @@
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { 
+                    {
                         "type": "static",
                         "static": {
-                            "type": "text", 
+                            "type": "text",
                             "content": "Set",
                             "focusable": false
                         }
@@ -1549,7 +1304,6 @@
                 ]
             }
         },
-
         {
             "concept": { "name": "concept primitive" },
             "type": "layout",
@@ -1574,9 +1328,9 @@
                 "focusable": false,
                 "disposition": [
                     {
-                        "type": "static", 
+                        "type": "static",
                         "static": {
-                            "type": "text", 
+                            "type": "text",
                             "content": "Containment",
                             "focusable": false
                         }
@@ -1584,7 +1338,6 @@
                 ]
             }
         },
-
         {
             "concept": { "name": "value" },
             "type": "field",
@@ -1619,8 +1372,8 @@
                 "type": "stack",
                 "orientation": "horizontal",
                 "disposition": [
-                    { 
-                        "type": "attribute", 
+                    {
+                        "type": "attribute",
                         "name": "value"
                     }
                 ]
@@ -1630,15 +1383,15 @@
             "concept": { "name": "number value" },
             "type": "layout",
             "tags": ["choice"],
-            "projection": {
+            "content": {
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { 
+                    {
                         "type": "static",
                         "static": {
-                            "type": "text", 
-                            "content": "Number" 
+                            "type": "text",
+                            "content": "Number"
                         }
                     }
                 ]
@@ -1648,12 +1401,12 @@
             "concept": { "name": "string value" },
             "type": "layout",
             "tags": ["choice-selection"],
-            "projection": {
+            "content": {
                 "type": "stack",
                 "orientation": "horizontal",
                 "disposition": [
-                    { 
-                        "type": "attribute", 
+                    {
+                        "type": "attribute",
                         "name": "value",
                         "tag": "outlined-string"
                     }
@@ -1664,14 +1417,14 @@
             "concept": { "name": "string value" },
             "type": "layout",
             "tags": ["choice"],
-            "projection": {
+            "content": {
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { 
+                    {
                         "type": "static",
                         "static": {
-                            "type": "text", 
+                            "type": "text",
                             "content": "String",
                             "focusable": false
                         }
@@ -1683,12 +1436,12 @@
             "concept": { "name": "boolean value" },
             "type": "layout",
             "tags": ["choice-selection"],
-            "projection": {
+            "content": {
                 "type": "stack",
                 "orientation": "horizontal",
                 "disposition": [
-                    { 
-                        "type": "attribute", 
+                    {
+                        "type": "attribute",
                         "name": "value",
                         "tag": "choice-boolean"
                     }
@@ -1699,42 +1452,26 @@
             "concept": { "name": "boolean value" },
             "type": "layout",
             "tags": ["choice"],
-            "projection": {
+            "content": {
                 "type": "wrap",
                 "focusable": false,
                 "disposition": [
-                    { 
+                    {
                         "type": "static",
                         "static": {
-                            "type": "text", 
-                            "content": "Boolean" 
+                            "type": "text",
+                            "content": "Boolean"
                         }
                     }
                 ]
             }
         },
 
-
-
-        {
-            "concept": { "name": "boolean" },
-            "type": "field",
-            "tags": [],
-            "projection": {   
-                "type": "binary",
-                "label": {
-                    "projection": {
-                        "type": "property",
-                        "name": "name"
-                    }
-                }
-            }
-        },
         {
             "concept": { "name": "boolean" },
             "type": "field",
             "tags": ["required-boolean"],
-            "projection": {
+            "content": {
                 "type": "binary",
                 "label": false
             }
@@ -1743,7 +1480,7 @@
             "concept": { "name": "boolean" },
             "type": "field",
             "tags": ["field-binary-state"],
-            "projection": {
+            "content": {
                 "type": "binary",
                 "style": {
                     "css": ["yesno-field"]
@@ -1809,10 +1546,10 @@
             "concept": { "name": "boolean" },
             "type": "field",
             "tags": ["default-boolean"],
-            "projection": {
+            "content": {
                 "type": "choice",
                 "content": [
-                    { 
+                    {
                         "type": "static",
                         "static": {
                             "type": "text",
@@ -1845,7 +1582,7 @@
             "concept": { "name": "boolean" },
             "type": "field",
             "tags": ["choice-boolean"],
-            "projection": {
+            "content": {
                 "type": "choice",
                 "content": [
                     {
@@ -1867,12 +1604,11 @@
                 }
             }
         },
-
         {
             "concept": { "name": "number" },
             "type": "field",
             "tags": [],
-            "projection": {
+            "content": {
                 "type": "text",
                 "content": [
                     {
@@ -1891,10 +1627,10 @@
             "concept": { "name": "number" },
             "type": "field",
             "tags": ["default-number"],
-            "projection": {
+            "content": {
                 "type": "text",
                 "content": [
-                    { 
+                    {
                         "type": "static",
                         "static": {
                             "type": "text",
@@ -1921,7 +1657,7 @@
             "concept": { "name": "number" },
             "type": "field",
             "tags": ["list-item"],
-            "projection": {
+            "content": {
                 "type": "text",
                 "content": [
                     {
@@ -1933,90 +1669,33 @@
                 ]
             }
         },
-
-
         {
             "concept": { "name": "reference" },
             "type": "field",
-            "tags": [],
-            "projection": {
-                "type": "link"
-            }
-        },
-        {
-            "concept": { "name": "reference" },
-            "type": "field",
-            "tags": ["textual"],
-            "projection": {
+            "tags": ["prototype-reference"],
+            "content": {
                 "type": "choice",
-                "state": [
-                    {
-                        "rule": {
-                            "type": "no",
-                            "no": { "prop": "value" }
-                        },
-                        "result": {
-                            "content": [
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "null"
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                ],
                 "content": [
                     {
                         "type": "input",
                         "input": {
-                            "placeholder": "prototype name"
+                            "placeholder": "Select a prototype"
                         }
                     },
                     {
                         "type": "choice",
                         "choice": {
                             "style": {
-                                "css": ["prototype-link__choice"]
+                                "css": ["link--prototype__choices"]
                             },
                             "option": {
                                 "style": {
-                                    "css": ["prototype-link__option"]
+                                    "css": ["link--prototype__choice"]
                                 }
                             }
                         }
                     }
                 ],
-                "style": {
-                    "css": ["prototype-link"]
-                }
-            }
-        },
-        {
-            "concept": { "name": "reference" },
-            "type": "field",
-            "tags": ["prototype-reference"],
-            "projection": {
-                "type": "link",
-                "placeholder": {
-                    "type": "static",
-                    "static": {
-                        "type": "text",
-                        "content": "Select a prototype"
-                    }
-                },
-                "choice": {
-                    "style": {
-                        "css": ["link--prototype__choices"]
-                    },
-                    "option": {
-                        "style": {
-                            "css": ["link--prototype__choice"]
-                        }
-                    }
-                },
                 "style": {
                     "css": ["link--prototype"]
                 }
@@ -2026,68 +1705,53 @@
             "concept": { "name": "reference" },
             "type": "field",
             "tags": ["concept-reference"],
-            "projection": {
-                "type": "link",
-                "placeholder": {
-                    "type": "static",
-                    "static": {
-                        "type": "text",
-                        "content": "Select a concept"
-                    }
-                },
-                "choice": {
-                    "style": {
-                        "css": ["link--concept__choices"]
+            "content": {
+                "type": "choice",
+                "content": [
+                    {
+                        "type": "input",
+                        "input": {
+                            "placeholder": "Select a concept"
+                        }
                     },
-                    "option": {
-                        "style": {
-                            "css": ["link--concept__choice"]
+                    {
+                        "type": "choice",
+                        "choice": {
+                            "style": {
+                                "css": ["link--concept__choices"]
+                            },
+                            "option": {
+                                "style": {
+                                    "css": ["link--concept__choice"]
+                                }
+                            }
                         }
                     }
-                },
+                ],
                 "style": {
                     "css": ["link--concept"]
                 }
             }
         },
 
-        {
-            "concept": { "name": "prototype" },
-            "type": "field",
-            "tags": [],
-            "projection": {
-                "type": "choice"
-            }
-        },
 
-        
-        {
-            "concept": { "name": "set" },
-            "type": "field",
-            "tags": [],
-            "projection": {
-                "type": "list"
-            }
-        },
         {
             "concept": { "name": "set" },
             "type": "field",
             "tags": ["attribute-set"],
-            "projection": {
+            "content": {
                 "type": "list",
                 "content": [
                     {
                         "type": "list",
                         "list": {
                             "style": {
-                                "css": ["attribute-list--textual__list"]
+                                "css": ["attribute-list--card__list"]
                             },
                             "item": {
-                                "template": {
-                                    "tag": "attribute-list-item--textual"
-                                },
+                                "template": { "concept": "attribute" },
                                 "style": {
-                                    "css": ["attribute-list--textual__list-item"]
+                                    "css": ["attribute-list--card__list-item"]
                                 }
                             }
                         }
@@ -2095,219 +1759,65 @@
                     {
                         "type": "action",
                         "name": "add",
-                        "content": {
-                            "type": "static",
-                            "static": {
-                                "type": "text",
-                                "help": "Add an attribute",
-                                "content": "New attribute",
-                                "focusable": false,
-                                "style": {
-                                    "css": ["attribute-list--textual__btn-add"]
-                                }
-                            }                        
-                        }
-                    }
-                ],
-                "action": {
-                    "remove": {
-                        "content": {
-                            "type": "static",
-                            "static": {
-                                "type": "text",
-                                "help": "Remove attribute",
-                                "content": "",
-                                "style": {
-                                    "css": "attribute-list__btn-remove"
-                                }
-                            }                        
-                        }
-                    }
-                },
-                "style": {
-                    "css": ["attribute-list--textual"]
-                }
-            }
-        },
-        {
-            "concept": { "name": "set" },
-            "type": "field",
-            "tags": ["attribute-set"],
-            "projection": {
-                "type": "list",
-                "content": [
-                    {
-                        "type": "list",
-                        "list": {
-                            "style": {
-                                "css": ["attribute-list"]
-                            },
-                            "item": {
-                                "template": {
-                                    "tag": "attribute-list-item"
+                        "state": [
+                            {
+                                "rule": {
+                                    "type": "no",
+                                    "no": { "prop": "value" }
                                 },
-                                "style": {
-                                    "css": ["attribute-list-item"]
-                                }
-                            }
-                        }
-                    },
-                    {
-                        "type": "action",
-                        "name": "add",
-                        "content": {
-                            "type": "static",
-                            "static": {
-                                "type": "text",
-                                "help": "Add an attribute",
-                                "content": "Add"
-                            }                        
-                        }
-                    }
-                ],
-                "action": {
-                    "remove": {
-                        "content": {
-                            "type": "static",
-                            "static": {
-                                "type": "text",
-                                "help": "Remove attribute",
-                                "content": "",
-                                "style": {
-                                    "css": "attribute-list__btn-remove"
-                                }
-                            }                        
-                        }
-                    }
-                },
-                "style": {
-                    "css": ["attribute-list-container"]
-                }
-            }
-        },
-        {
-            "concept": { "name": "set" },
-            "type": "field",
-            "tags": ["attribute-set"],
-            "projection": {
-                "type": "table",
-                "orientation": "column",
-                "table": {
-                    "header": {
-                        "style": {
-                            "css": ["attribute-table-header"]
-                        }
-                    },
-                    "body": {
-                        "style": {
-                            "css": ["attribute-table-body"]
-                        }
-                    },
-                    "style": {
-                        "css": ["attribute-table"]
-                    }
-                },
-                "template": {
-                    "concept": "attribute"
-                },
-                "action": {
-                    "add": {
-                        "projection": {
-                            "type": "static",
-                            "static": {
-                                "type": "text",
-                                "help": "Add an attribute",
-                                "content": "Add"
-                            }
-                        }
-                    },
-                    "remove": {
-                        "style": {
-                            "css": "cell-list__btn-remove"
-                        },
-                        "projection": {
-                            "type": "static",
-                            "static": {
-                                "type": "text",
-                                "help": "Remove attribute",
-                                "content": "Remove"
-                            }                        
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "concept": { "name": "set" },
-            "type": "field",
-            "tags": ["attribute-set"],
-            "projection": {
-                "type": "list",
-                "template": {
-                    "concept": "attribute"
-                },
-                "list": {
-                    "style": {
-                        "css": ["attribute-list"]
-                    },
-                    "item": {
-                        "style": {
-                            "css": ["attribute-list-item"]
-                        }
-                    }
-                },
-                "action": {
-                    "add": {
-                        "projection": {
-                            "type": "layout",
-                            "layout": {
-                                "type": "wrap",
-                                "disposition": [
-                                    {
+                                "result": {
+                                    "content": {
                                         "type": "static",
                                         "static": {
                                             "type": "text",
                                             "help": "Add an attribute",
-                                             "content": "Add"
-                                        }                        
+                                            "content": "Add an attribute"
+                                        }
                                     }
-                                ]
+                                }
                             }
+                        ],
+                        "content": {
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "focusable": false,
+                                "help": "Add an attribute",
+                                "content": "+"
+                            }
+                        },
+                        "style": {
+                            "css": ["attribute-list--card__btn-add"]
                         }
-                    },
+                    }
+                ],
+
+                "action": {
                     "remove": {
-                        "projection": {
-                            "type": "layout",
-                            "layout": {
-                                "type": "wrap",
-                                "style": {
-                                    "css": "attribute-list__btn-remove"
-                                },
-                                "disposition": [
-                                    {
-                                        "type": "static",
-                                        "static": {
-                                            "type": "text",
-                                            "help": "Remove attribute",
-                                            "content": ""
-                                        }                        
-                                    }
-                                ]
+                        "content": {
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "help": "Remove attribute",
+                                "content": "",
+                                "focusable": false
                             }
+                        },
+                        "style": {
+                            "css": ["attribute-list--card__btn-remove"]
                         }
                     }
                 },
                 "style": {
-                    "css": ["attribute-list-container"]
+                    "css": ["attribute-list--card"]
                 }
             }
         },
-
         {
             "concept": { "name": "set" },
             "type": "field",
             "tags": ["property-set"],
-            "projection": {
+            "content": {
                 "type": "table",
                 "orientation": "column",
                 "table": {
@@ -2325,10 +1835,7 @@
                         "css": ["attribute-table"]
                     }
                 },
-                "template": {
-                    "concept": "property",
-                    "name": "property-table"
-                },
+                "template": { "concept": "property", "name": "property-table" },
                 "action": {
                     "add": {
                         "projection": {
@@ -2336,6 +1843,7 @@
                             "static": {
                                 "type": "text",
                                 "help": "Add a property",
+                                "focusable": false,
                                 "content": "Add"
                             }
                         }
@@ -2348,23 +1856,23 @@
                             "type": "static",
                             "static": {
                                 "type": "text",
+                                "focusable": false,
                                 "help": "Remove property",
                                 "content": "Remove"
-                            }                        
+                            }
                         }
                     }
                 }
             }
         },
-     
         {
             "concept": { "name": "set" },
             "type": "field",
             "tags": ["value-set"],
-            "projection": {
+            "content": {
                 "type": "list",
                 "content": [
-                    { 
+                    {
                         "type": "static",
                         "static": {
                             "type": "text",
@@ -2375,15 +1883,13 @@
                         }
                     },
                     {
-                        "type": "list",  
+                        "type": "list",
                         "list": {
                             "style": {
                                 "css": ["value-list"]
                             },
                             "item": {
-                                "template": {
-                                    "tag": "list-item"
-                                },
+                                "template": { "tag": "list-item" },
                                 "style": {
                                     "css": ["value-list-item"]
                                 }
@@ -2391,13 +1897,14 @@
                         }
                     },
                     {
-                        "type": "action",  
+                        "type": "action",
                         "name": "add",
-                        "content":  { 
+                        "content": {
                             "type": "static",
                             "static": {
                                 "type": "text",
-                                "help": "Add a value", 
+                                "help": "Add a value",
+                                "focusable": false,
                                 "content": "+",
                                 "style": {
                                     "css": ["css-list__btn-add"]
@@ -2408,11 +1915,12 @@
                 ],
                 "action": {
                     "remove": {
-                        "content": { 
+                        "content": {
                             "type": "static",
                             "static": {
                                 "type": "text",
-                                "help": "Remove value", 
+                                "help": "Remove value",
+                                "focusable": false,
                                 "content": "",
                                 "style": {
                                     "css": ["css-list__btn-remove"]
@@ -2426,95 +1934,8 @@
                 }
             }
         },
-        {
-            "concept": { "name": "set" },
-            "type": "field",
-            "tags": ["string-set"],
-            "projection": {
-                "type": "list",
-                "orientation": "vertical",
-                "list": {
-                    "style": {
-                        "css": ["string-list"]
-                    },
-                    "item": {
-                        "template": {
-                            "tag": "list-item"
-                        },
-                        "style": {
-                            "css": ["string-list-item"]
-                        }
-                    }
-                },
-                "action": {
-                    "add": {
-                        "projection": { 
-                            "type": "static",
-                            "static": {
-                                "type": "text",
-                                "help": "Add a value", 
-                                "content": "Add",
-                                "style": {
-                                    "css": ["string-list__btn-add"]
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
 
-     
-        {
-            "concept": { "name": "name" },
-            "type": "field",
-            "tags": [],
-            "projection": {
-                "type": "text",
-                "content": [
-                    {
-                        "type": "input"
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "name" },
-            "type": "field",
-            "tags": ["textual"],
-            "projection": {
-                "type": "text",
-                "resizable": true,
-                "content": [
-                    {
-                        "type": "input",
-                        "input": {
-                            "placeholder": "name",
-                            "style": {
-                                "css": ["name-field--textual__input"]
-                            }
-                        }
-                    }
-                ],
-                "style": {
-                    "css": ["name-field", "name-field--textual"]
-                }   
-            }
-        },
-        {
-            "concept": { "name": "name" },
-            "type": "field",
-            "tags": ["readonly-string"],
-            "projection": {
-                "type": "text",
-                "content": [
-                    {
-                        "type": "input"
-                    }
-                ],
-                "readonly": true
-            }
-        },
+
         {
             "concept": { "name": "name" },
             "type": "field",
@@ -2523,7 +1944,10 @@
                 "type": "text",
                 "content": [
                     {
-                        "type": "input"
+                        "type": "input",
+                        "input": {
+                            "placeholder": "name"
+                        }
                     }
                 ],
                 "style": {
@@ -2534,21 +1958,8 @@
         {
             "concept": { "name": "string" },
             "type": "field",
-            "tags": [],
-            "projection": {
-                "type": "text",
-                "content": [
-                    {
-                        "type": "input"
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "string" },
-            "type": "field",
             "tags": ["readonly-string"],
-            "projection": {
+            "content": {
                 "type": "text",
                 "readonly": true,
                 "content": [
@@ -2562,7 +1973,7 @@
             "concept": { "name": "string" },
             "type": "field",
             "tags": ["list-item"],
-            "projection": {
+            "content": {
                 "type": "text",
                 "content": [
                     {
@@ -2584,7 +1995,7 @@
             "concept": { "name": "string" },
             "type": "field",
             "tags": ["description-string"],
-            "projection": {
+            "content": {
                 "type": "text",
                 "content": [
                     {
@@ -2604,11 +2015,11 @@
             "concept": { "name": "string" },
             "type": "field",
             "tags": ["default-string"],
-            "projection": {
+            "content": {
                 "type": "text",
                 "resizable": true,
                 "content": [
-                    { 
+                    {
                         "type": "static",
                         "static": {
                             "type": "text",
@@ -2638,7 +2049,7 @@
             "concept": { "name": "string" },
             "type": "field",
             "tags": ["outlined-string"],
-            "projection": {
+            "content": {
                 "type": "text",
                 "content": [
                     {
@@ -2650,16 +2061,5 @@
                 }
             }
         }
-    ],
-
-
-
-
-    "editor": {
-        "name": "Gentleman concept",
-        "body": {
-            "css": "model-concept-list"
-        },
-        "build": "gentleman_concept"
-    }
+    ]
 }

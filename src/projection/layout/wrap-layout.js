@@ -1,18 +1,16 @@
 import {
-    createDocFragment, createDiv, createInput, createLabel, createButton, isHTMLElement, valOrDefault, findAncestor,
+    createDocFragment, createDiv, createInput, createLabel, createButton, isHTMLElement,
+    valOrDefault, findAncestor,
 } from "zenkai";
 import { getElementTop, getElementBottom, getElementLeft, getElementRight } from "@utils/index.js";
 import { StyleHandler } from './../style-handler.js';
 import { ContentHandler } from './../content-handler.js';
+import { Layout } from "./layout.js";
 
 
-export const WrapLayout = {
-    /** @type {HTMLElement} */
-    container: null,
+export const BaseWrapLayout = {
     /** @type {HTMLElement[]} */
     elements: null,
-    /** @type {boolean} */
-    focusable: null,
 
     init(args = {}) {
         const { focusable = false } = this.schema;
@@ -25,39 +23,10 @@ export const WrapLayout = {
         return this;
     },
 
-    getStyle() {
-        return this.schema['style'];
-    },
-    setStyle(style) {
-        this.schema.style = style;
-        StyleHandler.call(this, this.container, style);
-
-        this.refresh();
-
-        return true;
-    },
     /**
-     * Get a the related field object
-     * @param {HTMLElement} element 
+     * Renders the wrap layout container
+     * @returns {HTMLElement}
      */
-    getField(element) {
-        return this.projection.getField(element);
-    },
-    /**
-     * Get a the related static object
-     * @param {HTMLElement} element 
-     */
-    getStatic(element) {
-        return this.projection.getStatic(element);
-    },
-    /**
-     * Get a the related layout object
-     * @param {HTMLElement} element 
-     */
-    getLayout(element) {
-        return this.projection.getLayout(element);
-    },
-
     render() {
         const { disposition, style, help } = this.schema;
 
@@ -114,37 +83,12 @@ export const WrapLayout = {
         return this;
     },
 
-    openMenu() {
-        if (!isHTMLElement(this.menu)) {
-            this.menu = createDiv({
-                class: ["layout-menu"]
-            });
-
-            let orientationField = createOrientationField.call(this);
-            let styleField = createStyleField.call(this);
-            this.menu.append(orientationField, styleField);
-            this.btnEdit.after(this.menu);
-        }
-
-        this.menu.prepend(this.btnEdit);
-        this.menu.classList.add("open");
-    },
-    closeMenu() {
-        if (!isHTMLElement(this.menu)) {
-            return;
-        }
-
-        this.menu.classList.remove("open");
-        setTimeout(() => {
-            this.menu.before(this.btnEdit);
-        }, 200);
-    },
     focus(target) {
         if (this.focusable) {
             this.container.focus();
         } else {
             let projectionElement = this.environment.resolveElement(valOrDefault(target, this.container.children[0]));
-            
+
             if (projectionElement) {
                 projectionElement.focus();
             }
@@ -169,8 +113,8 @@ export const WrapLayout = {
      */
     escapeHandler(target) {
         let parent = findAncestor(target, (el) => el.tabIndex === 0);
-        let element =  this.environment.resolveElement(parent);
-        
+        let element = this.environment.resolveElement(parent);
+
         element.focus(parent);
     },
     /**
@@ -198,7 +142,7 @@ export const WrapLayout = {
         } else if (dir === "right") {
             closestElement = getElementRight(target, this.container);
         }
-     
+
         if (isHTMLElement(closestElement)) {
             let element = this.environment.resolveElement(closestElement);
             if (element) {
@@ -314,3 +258,9 @@ function Collapsible() {
 
     return fragment;
 }
+
+
+export const WrapLayout = Object.assign({},
+    Layout,
+    BaseWrapLayout
+);

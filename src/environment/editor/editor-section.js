@@ -1,10 +1,10 @@
 import {
     createDocFragment, createDiv, createSpan, createUnorderedList, createListItem,
-    createI, createButton, isHTMLElement, findAncestor, removeChildren, hasOwn,
-    isNullOrUndefined, isFunction, createH4, createEmphasis, createInput, toBoolean, isEmpty, valOrDefault,
+    createI, createButton, isHTMLElement, findAncestor, hasOwn, isNullOrUndefined,
+    isFunction, isEmpty, valOrDefault,
 } from 'zenkai';
-import { show, hide, Key, Events } from '@utils/index.js';
-import { createProjectionSelector } from './projection-selector.js';
+import { show, hide, Key, toggle, Events } from '@utils/index.js';
+import { createModelSelector } from './model-selector.js';
 
 
 /**
@@ -41,6 +41,8 @@ export const EditorSection = {
     container: null,
     /** @type {HTMLElement} */
     title: null,
+    /** @type {boolean} */
+    visible: true,
 
     /** @type {HTMLElement} */
     tabs: null,
@@ -64,25 +66,32 @@ export const EditorSection = {
     menu: null,
     /** @type {HTMLElement} */
     body: null,
+    /** @type {HTMLButtonElement} */
+    btnClose: null,
+    /** @type {HTMLButtonElement} */
+    btnHome: null,
 
     init(editor) {
         if (editor) {
             this.editor = editor;
         }
 
-        this._conceptSelector = createProjectionSelector("concept", this.editor).init(
-            () => this.editor.conceptModel ? this.editor.getRoots().map(concept => this.editor.conceptModel.getCompleteModelConcept(concept)) : []
+        this._conceptSelector = createModelSelector("concept", this.editor).init(
+            () => this.editor.hasConceptModel ? this.editor.getRoots().map(concept => this.editor.conceptModel.getCompleteModelConcept(concept)) : []
         );
 
-        this._valueSelector = createProjectionSelector("value", this.editor).init(
-            () => this.editor.conceptModel ? this.editor.conceptModel.getValues() : []
+        this._valueSelector = createModelSelector("value", this.editor).init(
+            () => this.editor.hasConceptModel ? this.editor.conceptModel.getValues() : []
         );
 
-        this._projectionSelector = createProjectionSelector("projection", this.editor).init(
-            () => this.editor.projectionModel ? this.editor.projectionModel.schema.filter(p => p.type !== "template") : []
+        this._projectionSelector = createModelSelector("projection", this.editor).init(
+            () => this.editor.hasProjectionModel ? this.editor.projectionModel.schema.filter(p => p.type !== "template") : []
         );
 
         return this;
+    },
+    isRendered() {
+        return isHTMLElement(this.container);
     },
 
     render() {
@@ -129,10 +138,17 @@ export const EditorSection = {
         this.activeTabValue = this.activeTab.dataset.value;
 
 
-        let btnClose = createButton({
+        this.btnClose = createButton({
             class: ["btn", "btn-close"],
             dataset: {
                 action: "close"
+            }
+        });
+
+        this.btnHome = createButton({
+            class: ["btn", "btn-home"],
+            dataset: {
+                action: "home"
             }
         });
 
@@ -145,7 +161,7 @@ export const EditorSection = {
 
         let toolbar = createDiv({
             class: ["editor-toolbar"],
-        }, [btnStyle, btnClose]);
+        }, [this.btnHome, this.btnClose]);
 
         if (!isHTMLElement(this.menu)) {
             this.menu = createDiv({
@@ -190,6 +206,14 @@ export const EditorSection = {
             this.title.textContent = `Editor: ${this.editor.config["name"]}`;
         }
 
+        if (this.editor.conceptModel) {
+            show(this.tabs);
+            show(this.body);
+        } else {
+            hide(this.tabs);
+            hide(this.body);
+        }
+
         let handler = SelectorHandler[this.activeTabValue];
 
         if (isFunction(handler)) {
@@ -230,9 +254,21 @@ export const EditorSection = {
 
     show() {
         show(this.container);
+        this.visible = true;
+
+        return this;
     },
     hide() {
         hide(this.container);
+        this.visible = false;
+
+        return this;
+    },
+    toggle() {
+        toggle(this.container);
+        this.visible = !this.visible;
+
+        return this;
     },
 
     bindEvents() {

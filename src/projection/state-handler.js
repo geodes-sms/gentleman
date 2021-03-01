@@ -1,12 +1,12 @@
-import { isEmpty, isObject, isFunction, isIterable, isNullOrUndefined, toBoolean, } from "zenkai";
+import { isEmpty, isObject, isFunction, isIterable, isNullOrUndefined, toBoolean, pascalCase, } from "zenkai";
 
 
-export function StateHandler(states) {
+export function StateHandler(schema, states) {
     if (!Array.isArray(states)) {
         return false;
     }
 
-    var out = null;
+    schema.currentState = null;
 
     for (let i = 0; i < states.length; i++) {
         const state = states[i];
@@ -22,13 +22,13 @@ export function StateHandler(states) {
         }
 
         if (valid) {
-            out = result;
+            schema.currentState = i;
+            
+            return result;
         }
     }
-
-    this.state = out;
-
-    return out;
+    
+    return null;
 }
 
 const ruleHandler = {
@@ -46,6 +46,12 @@ const ruleHandler = {
 
 function resolveTerm(term, defValue) {
     if (isObject(term)) {
+        let propGetter = `get${pascalCase(term.prop)}`;
+
+        if (this[propGetter]) {
+            return this[propGetter]();
+        }
+
         return this[term.prop];
     }
 

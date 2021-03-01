@@ -1,6 +1,5 @@
 import {
-    isString, isObject, isEmpty, hasOwn, isIterable, valOrDefault, isNullOrUndefined,
-    isNullOrWhitespace
+    isString, isObject, isEmpty, hasOwn, isIterable, valOrDefault, isNullOrUndefined
 } from "zenkai";
 import { deepCopy, Events } from "@utils/index.js";
 import { ConceptFactory } from "./concept/factory.js";
@@ -35,6 +34,17 @@ export const ConceptModel = {
 
         return this;
     },
+    done() {
+        // TODO check if has model changes
+
+        this.concepts.forEach(concept => {
+            concept.unregisterAll();
+        });
+
+        this.concepts = [];
+
+        return true;
+    },
 
     /**
      * Creates and returns a model element
@@ -50,6 +60,11 @@ export const ConceptModel = {
 
         return concept;
     },
+    /**
+     * Returns the list of concepts matching the optional parameters
+     * @param {string|Object} name
+     * @returns {Concept[]}
+     */
     getConcepts(name) {
         if (isIterable(name)) {
             const pred = Array.isArray(name) ? (concept) => name.includes(concept.name) : (concept) => concept.name === name;
@@ -58,6 +73,13 @@ export const ConceptModel = {
         }
 
         return this.concepts.slice();
+    },
+    /**
+     * Returns the list of root concepts
+     * @returns {Concept[]}
+     */
+    getRootConcepts() {
+        return this.concepts.filter(concept => concept.isRoot());
     },
     getConceptsByPrototype(prototype) {
         return this.concepts.filter((concept) => concept.schema.prototype === prototype);
@@ -222,7 +244,13 @@ export const ConceptModel = {
         return concept.nature === "prototype";
     },
 
-    getSchema() {
+    getSchema(nature) {
+        if (isIterable(nature)) {
+            const pred = Array.isArray(nature) ? (concept) => nature.includes(concept.nature) : (concept) => concept.nature === nature;
+
+            return this.schema.filter(concept => pred(concept));
+        }
+
         return this.schema.slice();
     },
     /**
