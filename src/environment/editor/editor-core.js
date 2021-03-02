@@ -1,8 +1,8 @@
 import {
-    createDocFragment, createDiv, createSpan, createUnorderedList, createListItem,
-    createParagraph, createButton, createAnchor, createInput, createSection,
-    getElement, getElements, removeChildren, isHTMLElement, findAncestor,
-    isNullOrWhitespace, isNullOrUndefined, isEmpty, hasOwn, copytoClipboard, isFunction, createH3, createHeader, valOrDefault
+    createDocFragment, createHeader, createSection, createH3, createDiv, createSpan,
+    createUnorderedList, createListItem, createParagraph, createButton, createAnchor, createInput,
+    getElement, getElements, removeChildren, isHTMLElement, findAncestor, copytoClipboard,
+    isNullOrWhitespace, isNullOrUndefined, isEmpty, hasOwn, isFunction, valOrDefault
 } from 'zenkai';
 import { Events, hide, show, Key, getEventTarget, NotificationType } from '@utils/index.js';
 import { buildProjectionHandler } from "../build-projection.js";
@@ -13,6 +13,7 @@ import { ProjectionWindow } from '../projection-window.js';
 import { EditorHome } from './editor-home.js';
 import { EditorMenu } from './editor-menu.js';
 import { EditorStyle } from './editor-style.js';
+import { EditorFile } from './editor-file.js';
 import { EditorSection } from './editor-section.js';
 
 
@@ -81,6 +82,19 @@ function createEditorStyle() {
 }
 
 /**
+ * Creates an editor file manager
+ * @returns {EditorFile}
+ */
+function createEditorFile() {
+    return Object.create(EditorFile, {
+        object: { value: "environment" },
+        name: { value: "editor-file" },
+        type: { value: "file" },
+        editor: { value: this }
+    });
+}
+
+/**
  * Create a projection in the editor
  * @param {*} concept 
  * @this {Editor}
@@ -99,6 +113,11 @@ function createProjection(concept) {
         title: `Delete ${name.toLowerCase()}`
     });
 
+    let btnNew = createButton({
+        class: ["btn", "editor-concept-toolbar__btn-new"],
+        title: `New ${name.toLowerCase()}`
+    });
+
     let btnCollapse = createButton({
         class: ["btn", "editor-concept-toolbar__btn-collapse"],
         title: `Collapse ${name.toLowerCase()}`
@@ -111,7 +130,7 @@ function createProjection(concept) {
 
     let toolbar = createDiv({
         class: ["editor-concept-toolbar"],
-    }, [btnMaximize, btnDelete]);
+    }, [btnNew, btnMaximize, btnDelete]);
 
     let header = createHeader({
         class: ["editor-concept-header"],
@@ -136,18 +155,22 @@ function createProjection(concept) {
         modelConceptContainer.classList.toggle('focus');
     });
 
+    btnNew.addEventListener('click', (event) => {
+        this.addConcept(name);
+    });
+
     return modelConceptContainer;
 }
 
 const CONCEPT_MODEL__CONFIG = require('@include/concept-model/editor-config.json');
 const CONCEPT_MODEL__CONCEPT = require('@include/concept-model/concept.json');
-const CONCEPT_MODEL__PROJECTION1 = require('@include/concept-model/textual-projection.json');
-const CONCEPT_MODEL__PROJECTION2 = require('@include/concept-model/graphical-projection.json');
+// const CONCEPT_MODEL__PROJECTION = require('@include/concept-model/textual-projection.json');
+const CONCEPT_MODEL__PROJECTION = require('@include/concept-model/graphical-projection.json');
 
 const PROJECTION_MODEL__CONFIG = require('@include/projection-model/editor-config.json');
 const PROJECTION_MODEL__CONCEPT = require('@include/projection-model/concept.json');
-const PROJECTION_MODEL__PROJECTION1 = require('@include/projection-model/textual-projection.json');
-const PROJECTION_MODEL__PROJECTION2 = require('@include/projection-model/graphical-projection.json');
+const PROJECTION_MODEL__PROJECTION = require('@include/projection-model/textual-projection.json');
+// const PROJECTION_MODEL__PROJECTION = require('@include/projection-model/graphical-projection.json');
 
 const DEFAULT_CONFIG = {
     "header": {
@@ -200,13 +223,11 @@ export const Editor = {
     home: null,
     /** @type {EditorStyle} */
     style: null,
+    /** @type {EditorFile} */
+    files: null,
     /** @type {HTMLInputElement} */
     input: null,
 
-    /** @type {HTMLElement} */
-    downloadList: null,
-    /** @type {HTMLElement} */
-    modelSection: null,
 
     /** @type {Map} */
     fields: null,
@@ -251,6 +272,7 @@ export const Editor = {
         this.menu = createEditorMenu.call(this).init(this.config.menu);
         this.home = createEditorHome.call(this).init(this.config.home);
         this.style = createEditorStyle.call(this).init(this.config.style);
+        this.files = createEditorFile.call(this).init(this.config.files);
 
         this.render();
 
@@ -267,6 +289,7 @@ export const Editor = {
         this.menu.update(this.config.menu);
         this.home.update(this.config.home);
         this.style.update(this.config.style);
+        this.files.update(this.config.files);
     },
     getRoots() {
         const { root = [] } = this.config;
@@ -513,57 +536,9 @@ export const Editor = {
     // Editor actions
 
     download(obj) {
-        const MIME_TYPE = 'application/json';
-        window.URL = window.webkitURL || window.URL;
+        this.files.addFile(obj);
 
-        /** @type {HTMLAnchorElement} */
-        var link = createAnchor({
-            class: ["bare-link", "download-item__link"]
-        }, `Download`);
-
-        // if (!isNullOrWhitespace(link.href)) {
-        //     window.URL.revokeObjectURL(link.href);
-        // }
-
-
-        var bb = new Blob([JSON.stringify(obj)], { type: MIME_TYPE });
-        Object.assign(link, {
-            download: `model.json`,
-            href: window.URL.createObjectURL(bb),
-        });
-
-        link.dataset.downloadurl = [MIME_TYPE, link.download, link.href].join(':');
-
-
-        let item = createListItem({
-            class: ["download-item", "download-item--build"]
-        });
-
-        let btnDelete = createButton({
-            class: ["btn", "btn-delete"],
-            dataset: {
-                action: "delete",
-                target: "parent"
-            }
-        }, "✖");
-
-        let title = createSpan({
-            class: ["download-item__name"],
-            dataset: {
-                action: "delete",
-                target: "parent"
-            }
-        }, `Build ${this.footer.childElementCount + 1}`);
-
-        item.append(btnDelete, title, link);
-
-        this.downloadList.append(item);
-
-        // // Need a small delay for the revokeObjectURL to work properly.
-        // setTimeout(() => {
-        //     window.URL.revokeObjectURL(link.href);
-        //     link.remove();
-        // }, 1500);
+        this.refresh();
 
         return obj;
     },
@@ -600,7 +575,7 @@ export const Editor = {
             this.notify("Export has been copied to clipboard");
         } else {
             link.click();
-            this.notify("The model has been successfully built. Please download the model.");
+            this.notify("The model has been successfully saved. Please download the model.");
         }
 
         // Need a small delay for the revokeObjectURL to work properly.
@@ -670,6 +645,7 @@ export const Editor = {
         // cleanup
         this.clean();
         this.container.remove();
+        this.manager.deleteEditor(this);
 
         Events.emit('editor.close');
 
@@ -753,6 +729,42 @@ export const Editor = {
         this.refresh();
 
         return this;
+    },
+    /**
+     * Parse and load a file
+     * @param {JSON} json 
+     * @param {string} type 
+     */
+    load(json, type) {
+        const file = JSON.parse(json);
+
+        switch (type) {
+            case "model":
+                if (Array.isArray(file)) {
+                    this.loadConceptModel(file);
+                } else {
+                    const { concept, values = [] } = file;
+
+                    this.loadConceptModel(concept, values);
+                }
+                
+                break;
+            case "projection":
+                if (Array.isArray(file)) {
+                    this.loadProjectionModel(file);
+                } else {
+                    const { projection, views = [] } = file;
+        
+                    this.loadProjectionModel(projection, views);
+                }
+
+                break;
+            default:
+                console.warn(`File type ${type} not handled`);
+                return false;
+        }
+
+        return true;
     },
     unload() {
         this.unloadConceptModel();
@@ -838,16 +850,9 @@ export const Editor = {
                 tabindex: 0,
             });
 
-            this.downloadList = createUnorderedList({
-                class: ["bare-list", "download-list"]
-            });
-
-            this.modelSection = createSection({
-                class: ["editor-model-section"]
-            });
-
-            this.footer.append(this.downloadList);
-            this.footer.append(this.modelSection);
+            if (!this.files.isRendered) {
+                this.footer.append(this.files.render());
+            }
 
             fragment.appendChild(this.footer);
         }
@@ -901,6 +906,7 @@ export const Editor = {
         this.menu.refresh();
         this.home.refresh();
         this.style.refresh();
+        this.files.refresh();
 
         return this;
     },
@@ -1040,12 +1046,25 @@ export const Editor = {
 
     bindEvents() {
         var lastKey = null;
-        var fileHandler = null;
 
         const ActionHandler = {
+            "open": (target) => {
+                const { context } = target.dataset;
+
+                if (context) {
+                    this[context].open();
+                } else {
+                    this.open();
+                }
+            },
             "close": (target) => {
-                this.close();
-                this.manager.deleteEditor(this);
+                const { context } = target.dataset;
+
+                if (context) {
+                    this[context].close();
+                } else {
+                    this.close();
+                }
             },
             "collapse": (target) => {
                 const { rel, target: actionTarget } = target.dataset;
@@ -1067,38 +1086,12 @@ export const Editor = {
                 }
             },
 
-            "style": (target) => {
-                this.style.toggle();
-            },
-            "open-style": (target) => {
-                this.style.open();
-            },
-            "close-style": (target) => {
-                this.style.close();
-            },
-            "home": (target) => {
-                this.home.toggle();
-            },
-            "open-home": (target) => {
-                this.home.open();
-            },
-            "close-home": (target) => {
-                this.home.close();
-            },
+            "style": (target) => { this.style.toggle(); },
+            "home": (target) => { this.home.toggle(); },
+            "files": (target) => { this.files.toggle(); },
 
-            "export": (target) => {
-                this.export();
-            },
-            "import-projection": (target) => {
-                let event = new MouseEvent('click', {
-                    view: window,
-                    bubbles: true,
-                    cancelable: true,
-                });
-                fileHandler = this.addProjection;
-
-                this.input.dispatchEvent(event);
-            },
+            "export": (target) => { this.export(); },
+            "copy": (target) => { this.export(true); },
 
             "load-model": (target) => {
                 let event = new MouseEvent('click', {
@@ -1106,16 +1099,7 @@ export const Editor = {
                     bubbles: true,
                     cancelable: true,
                 });
-
-                fileHandler = (file) => {
-                    if (Array.isArray(file)) {
-                        this.loadConceptModel(file);
-                    } else {
-                        const { concept, values = [] } = file;
-
-                        this.loadConceptModel(concept, values);
-                    }
-                };
+                event._customFileType = "model";
 
                 this.input.dispatchEvent(event);
             },
@@ -1133,15 +1117,7 @@ export const Editor = {
                     bubbles: true,
                     cancelable: true,
                 });
-                fileHandler = (file) => {
-                    if (Array.isArray(file)) {
-                        this.loadProjectionModel(file);
-                    } else {
-                        const { projection, views = [] } = file;
-
-                        this.loadProjectionModel(projection, views);
-                    }
-                };
+                event._customFileType = "projection";
 
                 this.input.dispatchEvent(event);
             },
@@ -1156,7 +1132,7 @@ export const Editor = {
 
             "create-metamodel": (target) => {
                 const { concept, values = [] } = CONCEPT_MODEL__CONCEPT;
-                const { projection, views = [] } = CONCEPT_MODEL__PROJECTION2;
+                const { projection, views = [] } = CONCEPT_MODEL__PROJECTION;
                 const { editor: config } = CONCEPT_MODEL__CONFIG;
 
                 this.unload();
@@ -1166,7 +1142,7 @@ export const Editor = {
             },
             "create-projection": (target) => {
                 const { concept, values = [] } = PROJECTION_MODEL__CONCEPT;
-                const { projection, views = [] } = PROJECTION_MODEL__PROJECTION1;
+                const { projection, views = [] } = PROJECTION_MODEL__PROJECTION;
                 const { editor: config } = PROJECTION_MODEL__CONFIG;
 
                 this.unload();
@@ -1211,16 +1187,16 @@ export const Editor = {
         }, true);
 
         this.input.addEventListener('change', (event) => {
-            var file = this.input.files[0];
+            let file = this.input.files[0];
 
             if (!file.name.endsWith('.json')) {
                 this.notify("This file is not supported. Please use a .json file");
+                return;
             }
 
-            var reader = new FileReader();
-            reader.onload = (e) => {
-                fileHandler(JSON.parse(reader.result));
-                fileHandler = null;
+            let reader = new FileReader();
+            reader.onload = (event) => {
+                this.load(reader.result, event._customFileType);
                 this.input.value = "";
             };
             reader.readAsText(file);
@@ -1553,5 +1529,6 @@ export const Editor = {
         this.registerHandler("build-concept", buildConceptHandler);
         this.registerHandler("build-projection", buildProjectionHandler);
         this.registerHandler("export", () => this.export());
+        this.registerHandler("copy", () => this.export(true));
     }
 };

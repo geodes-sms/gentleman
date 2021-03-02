@@ -75,6 +75,7 @@
         }
 
     .editor-concept-toolbar__btn-maximize {
+        margin-right: 6px;
         font-size: 1.4rem; font-weight: 600;
         width: 24px;
         height: 24px;
@@ -99,7 +100,6 @@
             }
 
     .editor-concept-toolbar__btn-delete {
-        margin-left: 4px;
         font-size: 1.4rem; font-weight: 600;
         width: 24px;
         height: 24px;
@@ -120,6 +120,31 @@
         }
             .editor-concept-toolbar__btn-delete:hover:before {
                 transform: rotate(180deg) scale(1.1) translateY(-2px);
+            }
+
+    .editor-concept-toolbar__btn-new {
+        margin-right: 12px;
+        font-size: 1.4rem; font-weight: 600;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        color: #575757;
+        background-color: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 1px 2px -1px #575757;
+        z-index: 5;
+    }
+        .editor-concept-toolbar__btn-new:before {
+            content: "+";
+            display: block;
+            transform: scale(1.9) translateY(-1px);
+            transition: .4s;
+        }
+        .editor-concept-toolbar__btn-new:hover {
+            background-color: rgba(155, 155, 155, 0.1);
+            box-shadow: 0 1px 1px #343434;
+        }
+            .editor-concept-toolbar__btn-new:hover:before {
+                transform: rotate(180deg) scale(2) translateY(-2px);
             }
 
     .editor-concept > .layout-container { background: linear-gradient(to bottom, #fefefe, #f9f9f9); }
