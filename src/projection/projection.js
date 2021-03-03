@@ -273,11 +273,11 @@ const Projection = {
         if (type === "layout") {
             this.element = LayoutFactory.createLayout(this.model, valOrDefault(projection, content), this).init(this.args);
 
-            this.environment.registerLayout(this.element);
+            this.model.registerLayout(this.element);
         } else if (type === "field") {
             this.element = FieldFactory.createField(this.model, valOrDefault(projection, content), this).init(this.args);
 
-            this.environment.registerField(this.element);
+            this.model.registerField(this.element);
         }
 
         if(this.isRoot()) {

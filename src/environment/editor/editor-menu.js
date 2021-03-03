@@ -29,7 +29,7 @@ export const EditorMenu = {
 
         return this;
     },
-    
+
     show() {
         show(this.container);
         this.visible = true;
@@ -78,7 +78,7 @@ export const EditorMenu = {
             this.schema = schema;
         }
 
-        const { actions } =  this.schema;
+        const { actions } = this.schema;
 
         const fragment = createDocFragment();
 
@@ -185,6 +185,11 @@ export const EditorMenu = {
         return this.container;
     },
     refresh() {
+        if (!this.editor.isReady) {
+            this.hide();
+        } else {
+            this.show();
+        }
 
         return this;
     },

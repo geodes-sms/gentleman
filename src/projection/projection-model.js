@@ -24,9 +24,19 @@ export function createProjectionModel(schema, environment) {
 export const ProjectionModel = {
     /** @type {Projection[]} */
     projections: null,
+    /** @type {Map} */
+    fields: null,
+    /** @type {Map} */
+    statics: null,
+    /** @type {Map} */
+    layouts: null,
 
     init(views) {
         this.projections = [];
+
+        this.fields = new Map();
+        this.statics = new Map();
+        this.layouts = new Map();
 
         return this;
     },
@@ -37,18 +47,22 @@ export const ProjectionModel = {
         });
 
         this.projections = [];
+        this.fields.clear();
+        this.layouts.clear();
+        this.statics.clear();
 
         return this;
     },
 
     createProjection(concept, tag) {
         const schema = this.getModelProjection(concept, tag);
-        
+
         if (isEmpty(schema)) {
             console.warn(concept, schema, tag);
         }
 
         const projection = ProjectionFactory.createProjection(this, schema, concept, this.environment);
+        projection.tag = tag;
 
         this.addProjection(projection);
 
@@ -91,6 +105,90 @@ export const ProjectionModel = {
         this.projections.splice(index, 1);
 
         return true;
+    },
+    /**
+  * Get a the related field object
+  * @param {HTMLElement} element 
+  * @returns {Field}
+  */
+    registerField(field) {
+        field.environment = this.environment;
+        this.fields.set(field.id, field);
+
+        return this;
+    },
+    unregisterField(field) {
+        var _field = this.fields.get(field.id);
+
+        if (_field) {
+            _field.environment = null;
+            this.fields.delete(_field.id);
+        }
+
+        return this;
+    },
+    /**
+     * Get a the related field object
+     * @param {string|number} id 
+     * @returns {Field}
+     */
+    getField(id) {
+        return this.fields.get(id);
+    },
+
+    registerStatic(staticElement) {
+        staticElement.environment = this.environment;
+        this.statics.set(staticElement.id, staticElement);
+
+        return this;
+    },
+    unregisterStatic(staticElement) {
+        var _static = this.statics.get(staticElement.id);
+
+        if (_static) {
+            _static.environment = null;
+            this.statics.delete(_static.id);
+        }
+
+        return this;
+    },
+    /**
+     * Get a the related static object
+     * @param {string|number} id 
+     * @returns {Static}
+     */
+    getStatic(id) {
+        return this.statics.get(id);
+    },
+
+    registerLayout(layout) {
+        layout.environment = this.environment;
+        this.layouts.set(layout.id, layout);
+
+        return this;
+    },
+    /**
+     * Removes a layout the cache
+     * @param {Layout} layout 
+     * @returns {Static}
+     */
+    unregisterLayout(layout) {
+        var _layout = this.layouts.get(layout.id);
+
+        if (_layout) {
+            _layout.environment = null;
+            this.layouts.delete(_layout.id);
+        }
+
+        return this;
+    },
+    /**
+     * Get a the related layout object
+     * @param {string|number} id 
+     * @returns {Layout}
+     */
+    getLayout(id) {
+        return this.layouts.get(id);
     },
 
     /**

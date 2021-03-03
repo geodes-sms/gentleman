@@ -169,7 +169,7 @@ function createMenuButton(type) {
         dataset: {
             action: `create-${type}`,
         }
-    }, `Build a ${type}`);
+    }, `Create a ${type}`);
 
     return button;
 }
@@ -193,7 +193,7 @@ function createModelMenu() {
     });
 
     this.modelFileIO = createFileIO.call(this, "model");
-    this.projectionFileIO = createFileIO.call(this, "projection", "interface");
+    this.projectionFileIO = createFileIO.call(this, "projection");
 
     content.append(this.modelFileIO.render(), this.projectionFileIO.render());
 

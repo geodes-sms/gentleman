@@ -202,10 +202,17 @@ export const EditorSection = {
     },
     refresh() {
         if (hasOwn(this.editor.config, "name")) {
-            this.title.textContent = `Editor: ${this.editor.config["name"]}`;
+            this.title.textContent = `Editor – ${this.editor.config["name"]}`;
         }
 
-        if (this.editor.conceptModel) {
+        if(this.editor.concept) {
+            this.title.textContent = `Editor – ${this.editor.config["name"]} : ${this.editor.concept["name"]}`;
+            hide(this.tabs);
+            hide(this.body);
+            return;
+        }
+
+        if (this.editor.hasConceptModel) {
             show(this.tabs);
             show(this.body);
         } else {

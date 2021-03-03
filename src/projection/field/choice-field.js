@@ -94,6 +94,8 @@ const BaseChoiceField = {
     /** @type {HTMLElement} */
     selection: null,
     /** @type {HTMLElement} */
+    selectionPlaceholder: null,
+    /** @type {HTMLElement} */
     selectionElement: null,
     /** @type {*[]} */
     content: null,
@@ -150,7 +152,8 @@ const BaseChoiceField = {
             response = this.source.setValue(value);
         } else {
             if (isNullOrUndefined(value)) {
-                removeChildren(this.selectionElement);
+                show(this.selectionPlaceholder);
+                removeChildren(this.selectionElement).remove();
                 this.selection = null;
             } else if (value.object === "concept") {
                 const { template = {} } = this.schema.selection;
@@ -161,6 +164,7 @@ const BaseChoiceField = {
                 this.setChoice(value);
 
                 this.setSelection(projection.render());
+                projection.element.parent = this;
             } else {
                 this.setChoice(value);
             }
@@ -189,7 +193,7 @@ const BaseChoiceField = {
     render() {
         const fragment = createDocFragment();
 
-        const { choice, content, selection = {}, input = {}, style } = this.schema;
+        const { choice, content = [], selection = {}, input = {}, style } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createDiv({
@@ -246,39 +250,35 @@ const BaseChoiceField = {
             this.notification.appendChild(this.messageElement);
         }
 
-        if (content) {
+        content.forEach(element => {
+            if (element.type === "input") {
+                this.input = ContentHandler.call(this, element);
 
-            content.forEach(element => {
-                if (element.type === "input") {
-                    this.input = ContentHandler.call(this, element);
+                this.input.classList.add("field--textbox__input");
 
-                    this.input.classList.add("field--textbox__input");
+                fragment.append(this.input);
+            } else if (element.type === "choice") {
+                const { style } = valOrDefault(element.choice, {});
 
-                    fragment.append(this.input);
-                } else if (element.type === "choice") {
-                    const { style } = valOrDefault(element.choice, {});
+                this.choices = createUnorderedList({
+                    class: ["bare-list", "field--choice__choices"],
+                    tabindex: -1,
+                    dataset: {
+                        nature: "field-component",
+                        view: "choice",
+                        id: this.id
+                    }
+                });
 
-                    this.choices = createUnorderedList({
-                        class: ["bare-list", "field--choice__choices"],
-                        tabindex: -1,
-                        dataset: {
-                            nature: "field-component",
-                            view: "choice",
-                            id: this.id
-                        }
-                    });
+                StyleHandler(this.choices, style);
 
-                    StyleHandler(this.choices, style);
+                fragment.appendChild(this.choices);
+            } else {
+                let content = ContentHandler.call(this, element);
 
-                    fragment.appendChild(this.choices);
-                } else {
-                    let content = ContentHandler.call(this, element);
-
-                    fragment.appendChild(content);
-                }
-            });
-
-        }
+                fragment.appendChild(content);
+            }
+        });
 
         if (!isHTMLElement(this.choices)) {
             const { style } = choice;
@@ -298,10 +298,8 @@ const BaseChoiceField = {
             fragment.appendChild(this.choices);
         }
 
-        if (!isHTMLElement(this.selectionElement)) {
-            const { style } = selection;
-
-            this.selectionElement = createDiv({
+        if (!isHTMLElement(this.selectionPlaceholder)) {
+            this.selectionPlaceholder = createI({
                 class: ["field--choice__selection"],
                 dataset: {
                     nature: "field-component",
@@ -310,9 +308,7 @@ const BaseChoiceField = {
                 }
             });
 
-            StyleHandler(this.selectionElement, style);
-
-            fragment.appendChild(this.selectionElement);
+            fragment.appendChild(this.selectionPlaceholder);
         }
 
         if (fragment.hasChildNodes()) {
@@ -583,8 +579,22 @@ const BaseChoiceField = {
 
         return this;
     },
+    /**
+     * Set the selection
+     * @param {HTMLElement} element 
+     */
     setSelection(element) {
-        removeChildren(this.selectionElement).appendChild(element);
+        if(!isHTMLElement(element)) {
+            throw new TypeError("Bad parameter");
+        }
+
+        const { style = {}} = this.schema.selection;
+        
+        hide(this.selectionPlaceholder);
+        this.selectionElement = element;
+        this.selectionElement.classList.add("field--choice__selection");
+        StyleHandler(this.selectionElement, style);
+        this.selectionPlaceholder.after(element);
     },
 
     /**
@@ -729,7 +739,8 @@ const BaseChoiceField = {
                     let firstChild = getVisibleElement(closestItem);
                     if (firstChild) { firstChild.focus(); }
                 } else if (closestItem === this.selectionElement) {
-                    closestItem.children[0].focus();
+                    let element = this.environment.resolveElement(closestItem);
+                    if (element) { element.focus(); }
                 } else {
                     closestItem.focus();
                 }

@@ -136,6 +136,8 @@ export const Editor = {
     /** @type {ProjectionModel} */
     projectionModel: null,
     /** @type {Concept} */
+    concept: null,
+    /** @type {Concept} */
     activeConcept: null,
     /** @type {Projection} */
     activeProjection: null,
@@ -161,12 +163,7 @@ export const Editor = {
     /** @type {HTMLInputElement} */
     input: null,
 
-    /** @type {Map} */
-    fields: null,
-    /** @type {Map} */
-    statics: null,
-    /** @type {Map} */
-    layouts: null,
+
     /** @type {HTMLElement} */
     activeElement: null,
 
@@ -178,11 +175,13 @@ export const Editor = {
     handlers: null,
 
     init(args = {}) {
-        const { config = DEFAULT_CONFIG } = args;
+        const { conceptModel, projectionModel, concept, projection, config = DEFAULT_CONFIG } = args;
 
-        this.fields = new Map();
-        this.statics = new Map();
-        this.layouts = new Map();
+
+        this.conceptModel = conceptModel;
+        this.projectionModel = projectionModel;
+        this.concept = concept;
+        this.projection = projection;
 
         // Editor configuration
         this.config = config;
@@ -227,9 +226,8 @@ export const Editor = {
     },
 
     /**
-     * Create a projection in the editor
-     * @param {*} concept 
-     * @this {Editor}
+     * Creates a concept instance
+     * @param {string} name 
      */
     createInstance(name) {
         if (!this.conceptModel.isConcept(name)) {
@@ -239,39 +237,71 @@ export const Editor = {
 
         let concept = this.conceptModel.createConcept(name);
 
-        let projection = this.projectionModel.createProjection(concept).init();
+        return this.addInstance(concept);
+    },
+    /**
+     * Creates a projection for a concept instance
+     * @param {*} concept 
+     * @param {boolean} hasToolbar 
+     * @returns {HTMLElement}
+     */
+    addInstance(concept, schema = {}, hasToolbar = true) {
+        if (isNullOrUndefined(concept)) {
+            this.notify(`The concept is not valid`, NotificationType.ERROR);
+            return false;
+        }
+
+        const { name } = concept;
+
+        let projection = this.projectionModel.createProjection(concept, schema.tag).init();
 
         let title = createH3({
             class: ["title", "editor-concept-title"],
         }, name);
 
-        let btnDelete = createButton({
-            class: ["btn", "editor-concept-toolbar__btn-delete"],
-            title: `Delete ${name.toLowerCase()}`
-        });
-
-        let btnNew = createButton({
-            class: ["btn", "editor-concept-toolbar__btn-new"],
-            title: `New ${name.toLowerCase()}`
-        });
-
-        let btnCollapse = createButton({
-            class: ["btn", "editor-concept-toolbar__btn-collapse"],
-            title: `Collapse ${name.toLowerCase()}`
-        });
-
-        let btnMaximize = createButton({
-            class: ["btn", "editor-concept-toolbar__btn-maximize"],
-            title: `Maximize ${name.toLowerCase()}`
-        });
-
-        let toolbar = createDiv({
-            class: ["editor-concept-toolbar"],
-        }, [btnNew, btnMaximize, btnDelete]);
-
         let header = createHeader({
             class: ["editor-concept-header"],
-        }, [title, toolbar]);
+        }, [title]);
+
+        if (hasToolbar) {
+            let btnDelete = createButton({
+                class: ["btn", "editor-concept-toolbar__btn-delete"],
+                title: `Delete ${name.toLowerCase()}`
+            });
+            btnDelete.addEventListener('click', (event) => {
+                if (concept.delete(true)) {
+                    removeChildren(instanceContainer);
+                    instanceContainer.remove();
+                }
+            });
+
+            let btnNew = createButton({
+                class: ["btn", "editor-concept-toolbar__btn-new"],
+                title: `New ${name.toLowerCase()}`
+            });
+            btnNew.addEventListener('click', (event) => {
+                this.createInstance(name);
+            });
+
+            let btnCollapse = createButton({
+                class: ["btn", "editor-concept-toolbar__btn-collapse"],
+                title: `Collapse ${name.toLowerCase()}`
+            });
+
+            let btnMaximize = createButton({
+                class: ["btn", "editor-concept-toolbar__btn-maximize"],
+                title: `Maximize ${name.toLowerCase()}`
+            });
+            btnMaximize.addEventListener('click', (event) => {
+                instanceContainer.classList.toggle('focus');
+            });
+
+            let toolbar = createDiv({
+                class: ["editor-concept-toolbar"],
+            }, [btnNew, btnMaximize, btnDelete]);
+
+            header.append(toolbar);
+        }
 
         let instanceContainer = createDiv({
             class: ["editor-concept"],
@@ -283,24 +313,27 @@ export const Editor = {
 
         this.conceptSection.appendChild(instanceContainer);
 
-        btnDelete.addEventListener('click', (event) => {
-            if (concept.delete(true)) {
-                removeChildren(instanceContainer);
-                instanceContainer.remove();
-            }
-        });
-
-        btnMaximize.addEventListener('click', (event) => {
-            instanceContainer.classList.toggle('focus');
-        });
-
-        btnNew.addEventListener('click', (event) => {
-            this.createInstance(name);
-        });
-
         projection.focus();
 
         return instanceContainer;
+    },
+    initInstance() {
+        if (!this.isReady) {
+            return;
+        }
+
+        if (this.concept) {
+            let container = this.addInstance(this.concept, this.projection, false);
+            container.classList.add("focus");
+
+            return true;
+        }
+
+        this.conceptModel.getRootConcepts().forEach(concept => {
+            this.addInstance(concept);
+        });
+
+        return this;
     },
 
     // Model management
@@ -315,6 +348,11 @@ export const Editor = {
      * @returns {boolean} Value indicating whether the editor has a projection model loaded
      */
     get hasProjectionModel() { return !isNullOrUndefined(this.projectionModel); },
+    /**
+     * Verifies that the editor has both model loaded
+     * @returns {boolean} Value indicating whether the editor has both model loaded
+     */
+    get isReady() { return this.hasConceptModel && this.hasProjectionModel; },
 
     // Model concept operations
 
@@ -343,27 +381,6 @@ export const Editor = {
      * @param {HTMLElement} element 
      * @returns {Field}
      */
-    registerField(field) {
-        field.environment = this;
-        this.fields.set(field.id, field);
-
-        return this;
-    },
-    unregisterField(field) {
-        var _field = this.fields.get(field.id);
-
-        if (_field) {
-            _field.environment = null;
-            this.fields.delete(_field.id);
-        }
-
-        return this;
-    },
-    /**
-     * Get a the related field object
-     * @param {HTMLElement} element 
-     * @returns {Field}
-     */
     getField(element) {
         if (!isHTMLElement(element)) {
             console.warn("Field error: Bad argument");
@@ -382,24 +399,7 @@ export const Editor = {
             return null;
         }
 
-        return this.fields.get(id);
-    },
-
-    registerStatic(staticElement) {
-        staticElement.environment = this;
-        this.statics.set(staticElement.id, staticElement);
-
-        return this;
-    },
-    unregisterStatic(staticElement) {
-        var _static = this.statics.get(staticElement.id);
-
-        if (_static) {
-            _static.environment = null;
-            this.statics.delete(_static.id);
-        }
-
-        return this;
+        return this.projectionModel.getField(id);
     },
     /**
      * Get a the related static object
@@ -424,34 +424,12 @@ export const Editor = {
             return null;
         }
 
-        return this.statics.get(id);
-    },
-
-    registerLayout(layout) {
-        layout.environment = this;
-        this.layouts.set(layout.id, layout);
-
-        return this;
-    },
-    /**
-     * Removes a layout the cache
-     * @param {Layout} layout 
-     * @returns {Static}
-     */
-    unregisterLayout(layout) {
-        var _layout = this.layouts.get(layout.id);
-
-        if (_layout) {
-            _layout.environment = null;
-            this.layouts.delete(_layout.id);
-        }
-
-        return this;
+        return this.projectionModel.getStatic(id);
     },
     /**
      * Get a the related layout object
      * @param {HTMLElement} element 
-     * @returns {Static}
+     * @returns {Layout}
      */
     getLayout(element) {
         if (!isHTMLElement(element)) {
@@ -471,7 +449,7 @@ export const Editor = {
             return null;
         }
 
-        return this.layouts.get(id);
+        return this.projectionModel.getLayout(id);
     },
     resolveElement(element) {
         if (!isHTMLElement(element)) {
@@ -484,17 +462,26 @@ export const Editor = {
             return null;
         }
 
+        let projectionElement = null;
+
         switch (nature) {
             case "field":
             case "field-component":
-                return this.getField(element);
+                projectionElement = this.getField(element);
+                break;
             case "layout":
-                return this.getLayout(element);
+                projectionElement = this.getLayout(element);
+                break;
             case "static":
-                return this.getStatic(element);
-            default:
-                return null;
+                projectionElement = this.getStatic(element);
+                break;
         }
+
+        if (projectionElement) {
+            projectionElement.environment = this;
+        }
+
+        return projectionElement;
     },
 
     // Editor actions
@@ -646,13 +633,9 @@ export const Editor = {
 
         if (this.hasProjectionModel) {
             this.projectionModel.done();
-
-            this.conceptModel.getRootConcepts()
-                .forEach(concept => {
-                    this.conceptSection.appendChild(this.createInstance(concept));
-                });
         }
 
+        this.initInstance();
         this.refresh();
 
         return this;
@@ -683,13 +666,7 @@ export const Editor = {
             // TODO: add validation and notify of errors
         }
 
-        if (this.hasConceptModel) {
-            this.conceptModel.getRootConcepts()
-                .forEach(concept => {
-                    this.conceptSection.appendChild(this.createInstance(concept));
-                });
-        }
-
+        this.initInstance();
         this.refresh();
 
         return this;
@@ -753,10 +730,6 @@ export const Editor = {
         return this;
     },
     clear() {
-        this.fields.clear();
-        this.layouts.clear();
-        this.statics.clear();
-
         if (this.conceptSection) {
             removeChildren(this.conceptSection);
         }
@@ -849,6 +822,7 @@ export const Editor = {
             container.appendChild(this.container);
         }
 
+        this.initInstance();
         this.refresh();
 
         return this.container;
@@ -1105,7 +1079,7 @@ export const Editor = {
             var target = getEventTarget(event.target);
 
             const { action, handler, downloadable } = target.dataset;
-            
+
             if (this.activeElement) {
                 this.activeElement.clickHandler(target);
             }
@@ -1268,6 +1242,20 @@ export const Editor = {
 
                         event.preventDefault();
                     }
+
+                    break;
+                case "e":
+                    // if (this.activeConcept) {
+                    //     let editor = this.manager.createEditor().init({
+                    //         conceptModel: this.conceptModel,
+                    //         projectionModel: this.projectionModel,
+                    //         concept: this.activeConcept,
+                    //         projection: this.activeProjection,
+                    //         config: this.config,
+                    //     });
+
+                    //     event.preventDefault();
+                    // }
 
                     break;
                 default:

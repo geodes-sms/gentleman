@@ -32,7 +32,7 @@
                                 {
                                     "type": "attribute",
                                     "name": "name",
-                                    "tag": "simple-string"
+                                    "tag": "textual"
                                 }
                             ]
                         }
@@ -112,7 +112,7 @@
                                 {
                                     "type": "attribute",
                                     "name": "name",
-                                    "tag": "simple-string"
+                                    "tag": "textual"
                                 }
                             ]
                         }
@@ -2268,7 +2268,29 @@
         },
 
 
-  
+        {
+            "concept": { "name": "name" },
+            "type": "field",
+            "tags": ["textual", "list-item"],
+            "content": {
+                "type": "text",
+                "resizable": true,
+                "content": [
+                    {
+                        "type": "input",
+                        "input": {
+                            "placeholder": "name",
+                            "style": {
+                                "css": ["textfield--labeled__input"]
+                            }
+                        }
+                    }
+                ],
+                "style": {
+                    "css": ["textfield--labeled"]
+                }
+            }
+        },
         {
             "concept": { "name": "string" },
             "type": "field",
@@ -2396,6 +2418,7 @@
                     {
                         "type": "input",
                         "input": {
+                            "placeholder": "null",
                             "style": {
                                 "css": ["name-field--textual__input"]
                             }
