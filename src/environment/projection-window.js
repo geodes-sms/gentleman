@@ -1,8 +1,8 @@
 import {
     createDocFragment, createDiv, createButton, createSpan, removeChildren,
-    isHTMLElement, isNullOrUndefined, hasOwn, findAncestor
+    isHTMLElement, isNullOrUndefined, hasOwn, findAncestor, createUnorderedList, createListItem
 } from 'zenkai';
-import { hide, show, getEventTarget } from '@utils/index.js';
+import { hide, show, toggle, getEventTarget } from '@utils/index.js';
 
 
 /**
@@ -14,38 +14,66 @@ export const ProjectionWindow = {
     container: null,
     /** @type {HTMLElement} */
     content: null,
-    /** @type {HTMLButtonElement} */
-    btnChange: null,
-    /** @type {HTMLButtonElement} */
-    btnSearch: null,
+    /** @type {HTMLElement} */
+    views: null,
+    /** @type {*} */
+    schema: null,
+    /** @type {boolean} */
+    isOpen: false,
+    /** @type {boolean} */
+    visible: true,
 
-    init(editor) {
-        if (editor) {
-            this.editor = editor;
+    get isRendered() { return isHTMLElement(this.container); },
+
+    init(schema) {
+        if (schema) {
+            this.schema = schema;
         }
 
         return this;
     },
-    
-    setProjection(projection) {
-        if (this.projection !== projection) {
-            this.projection = projection;
+    update(schema) {
+        if (schema) {
+            this.schema = schema;
         }
 
-        this.refresh();
+        this.schema = schema;
     },
-    refresh() {
-        if (isNullOrUndefined(this.projection)) {
-            this.content.textContent = "N/A";
-            this.btnChange.disabled = true;
-            this.btnSearch.disabled = true;
 
-            return;
+    show() {
+        show(this.container);
+        this.visible = true;
+
+        return this;
+    },
+    hide() {
+        hide(this.container);
+        this.visible = false;
+
+        return this;
+    },
+    toggle() {
+        toggle(this.container);
+        this.visible = !this.visible;
+
+        return this;
+    },
+    open() {
+        if (this.actionList.childElementCount === 0) {
+            this.notify("The menu is empty", 1500);
+
+            return this;
         }
 
-        this.content.textContent = this.projection.id;
+        this.container.classList.add("open");
+        this.show();
+        this.isOpen = true;
 
-        this.btnChange.disabled = !this.projection.hasMultipleViews;
+        return this;
+    },
+    close() {
+        this.container.classList.remove("open");
+        this.isOpen = false;
 
         return this;
     },
@@ -54,12 +82,26 @@ export const ProjectionWindow = {
 
         return this;
     },
-    show() {
-        // show(this.container);
-        return this;
-    },
-    hide() {
-        hide(this.container);
+
+    refresh() {
+        const { activeProjection } = this.editor;
+
+        if (isNullOrUndefined(activeProjection)) {
+            this.content.textContent = "N/A";
+            removeChildren(this.views);
+
+            return;
+        }
+
+        removeChildren(this.views);
+        activeProjection.schema.forEach(element => {
+            this.views.append(createListItem({
+                class: ["projection-window-view"],
+            }, "VIEW"));
+        });
+
+        this.content.textContent =activeProjection.id;
+
         return this;
     },
     render() {
@@ -90,26 +132,15 @@ export const ProjectionWindow = {
             fragment.append(this.content);
         }
 
-        this.btnChange = createButton({
-            class: ["btn", "projection-window-button", "projection-window-button-change"],
-            dataset: {
-                "context": "projection",
-                "action": "change",
-            }
-        }, "Change");
+        if (!isHTMLElement(this.views)) {
+            this.views = createUnorderedList({
+                class: ["bare-list", "projection-window-views"],
+            });
+    
+            fragment.append(this.views);
+        }
 
         fragment.append(this.btnChange);
-
-        this.btnSearch = createButton({
-            class: ["btn", "projection-window-button", "projection-window-button-search"],
-            dataset: {
-                "context": "projection",
-                "action": "search"
-            }
-        }, "Search");
-
-        fragment.append(this.btnSearch);
-
 
         if (fragment.hasChildNodes()) {
             this.container.append(fragment);

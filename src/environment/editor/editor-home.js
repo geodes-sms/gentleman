@@ -33,9 +33,7 @@ export const EditorHome = {
         return this;
     },
 
-    isRendered() {
-        return isHTMLElement(this.container);
-    },
+    get isRendered() { return isHTMLElement(this.container); },
 
     show() {
         show(this.container);
@@ -110,7 +108,7 @@ export const EditorHome = {
         return this.container;
     },
     refresh() {
-        const { hasConceptModel, hasProjectionModel} = this.editor;
+        const { hasConceptModel, hasProjectionModel } = this.editor;
 
         if (!(hasConceptModel && hasProjectionModel)) {
             this.show();
@@ -194,15 +192,15 @@ function createModelMenu() {
         class: ["editor-home-section__content", "editor-home-section--model__content"],
     });
 
-    this.modelFileIO = createFileIO("model");
-    this.projectionFileIO = createFileIO("projection", "interface");
+    this.modelFileIO = createFileIO.call(this, "model");
+    this.projectionFileIO = createFileIO.call(this, "projection", "interface");
 
     content.append(this.modelFileIO.render(), this.projectionFileIO.render());
 
     this.btnStart = createButton({
         class: ["btn", "editor-home-section--model__button", "editor-home-section__button--start"],
         dataset: {
-            action: "close-home",
+            action: "close",
             context: "home"
         }
     }, `Start modelling`);
@@ -227,7 +225,9 @@ const isVowel = (char) => char && ["a", "e", "i", "o", "u"].includes(char.toLowe
  * @this {EditorHome}
  */
 function createFileIO(type, _title) {
-    const fileIO = Object.create(FileIO);
+    const fileIO = Object.create(FileIO, {
+        editor: { value: this.editor }
+    });
     fileIO.init(type, _title);
 
     return fileIO;
@@ -259,7 +259,7 @@ const FileIO = {
         return this;
     },
 
-    get hasFile() {        return !isNullOrUndefined(this.file);    },
+    get hasFile() { return !isNullOrUndefined(this.file); },
     getFile() {
         return this.file;
     },
@@ -333,12 +333,53 @@ const FileIO = {
 
         this.container.append(fileSection, instruction);
 
+        this.bindEvents();
+
         this.refresh();
 
         return this.container;
     },
 
     bindEvents() {
+        this.container.addEventListener('dragenter', (event) => {
+            this.container.classList.add('highlight');
 
+            event.preventDefault();
+            event.stopPropagation();
+        }, false);
+
+        this.container.addEventListener('dragleave', (event) => {
+            this.container.classList.remove('highlight');
+
+            event.preventDefault();
+            event.stopPropagation();
+        }, false);
+
+        this.container.addEventListener('dragover', (event) => {
+            this.container.classList.add('highlight');
+
+            event.preventDefault();
+            event.stopPropagation();
+        }, false);
+
+        this.container.addEventListener('drop', (event) => {
+            this.container.classList.remove('highlight');
+
+            let file = event.dataTransfer.files[0];
+
+            if (!file.name.endsWith('.json')) {
+                this.notify("This file is not supported. Please use a .json file");
+                return;
+            }
+
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                this.editor.load(reader.result, this.type);
+            };
+            reader.readAsText(file);
+
+            event.preventDefault();
+            event.stopPropagation();
+        }, false);
     }
 };

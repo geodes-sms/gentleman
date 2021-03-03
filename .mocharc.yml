@@ -1,5 +1,7 @@
 require: 
   - 'jsdom-global/register'
+  - 'core-js'
+  - 'regenerator-runtime'
   - '@babel/register'
 ui: 'bdd'
 spec:

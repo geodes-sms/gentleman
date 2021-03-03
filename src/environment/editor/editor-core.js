@@ -1,8 +1,8 @@
 import {
-    createDocFragment, createDiv, createSpan, createUnorderedList, createListItem,
-    createParagraph, createButton, createAnchor, createInput, createSection,
-    getElement, getElements, removeChildren, isHTMLElement, findAncestor,
-    isNullOrWhitespace, isNullOrUndefined, isEmpty, hasOwn, copytoClipboard, isFunction, createH3, createHeader, valOrDefault
+    createDocFragment, createHeader, createSection, createH3, createDiv, createSpan,
+    createUnorderedList, createListItem, createParagraph, createButton, createAnchor, createInput,
+    getElement, removeChildren, isHTMLElement, findAncestor, copytoClipboard,
+    isNullOrWhitespace, isNullOrUndefined, isEmpty, hasOwn, isFunction, valOrDefault
 } from 'zenkai';
 import { Events, hide, show, Key, getEventTarget, NotificationType } from '@utils/index.js';
 import { buildProjectionHandler } from "../build-projection.js";
@@ -13,6 +13,7 @@ import { ProjectionWindow } from '../projection-window.js';
 import { EditorHome } from './editor-home.js';
 import { EditorMenu } from './editor-menu.js';
 import { EditorStyle } from './editor-style.js';
+import { EditorFile } from './editor-file.js';
 import { EditorSection } from './editor-section.js';
 
 
@@ -81,73 +82,28 @@ function createEditorStyle() {
 }
 
 /**
- * Create a projection in the editor
- * @param {*} concept 
- * @this {Editor}
+ * Creates an editor file manager
+ * @returns {EditorFile}
  */
-function createProjection(concept) {
-    const { name } = concept;
-
-    let projection = this.projectionModel.createProjection(concept).init();
-
-    let title = createH3({
-        class: ["title", "editor-concept-title"],
-    }, name);
-
-    let btnDelete = createButton({
-        class: ["btn", "editor-concept-toolbar__btn-delete"],
-        title: `Delete ${name.toLowerCase()}`
+function createEditorFile() {
+    return Object.create(EditorFile, {
+        object: { value: "environment" },
+        name: { value: "editor-file" },
+        type: { value: "file" },
+        editor: { value: this }
     });
-
-    let btnCollapse = createButton({
-        class: ["btn", "editor-concept-toolbar__btn-collapse"],
-        title: `Collapse ${name.toLowerCase()}`
-    });
-
-    let btnMaximize = createButton({
-        class: ["btn", "editor-concept-toolbar__btn-maximize"],
-        title: `Maximize ${name.toLowerCase()}`
-    });
-
-    let toolbar = createDiv({
-        class: ["editor-concept-toolbar"],
-    }, [btnMaximize, btnDelete]);
-
-    let header = createHeader({
-        class: ["editor-concept-header"],
-    }, [title, toolbar]);
-
-    let modelConceptContainer = createDiv({
-        class: ["editor-concept"],
-        draggable: false,
-        dataset: {
-            nature: "concept-container"
-        }
-    }, [header, projection.render()]);
-
-    btnDelete.addEventListener('click', (event) => {
-        if (concept.delete(true)) {
-            removeChildren(modelConceptContainer);
-            modelConceptContainer.remove();
-        }
-    });
-
-    btnMaximize.addEventListener('click', (event) => {
-        modelConceptContainer.classList.toggle('focus');
-    });
-
-    return modelConceptContainer;
 }
+
 
 const CONCEPT_MODEL__CONFIG = require('@include/concept-model/editor-config.json');
 const CONCEPT_MODEL__CONCEPT = require('@include/concept-model/concept.json');
-const CONCEPT_MODEL__PROJECTION1 = require('@include/concept-model/textual-projection.json');
-const CONCEPT_MODEL__PROJECTION2 = require('@include/concept-model/graphical-projection.json');
+const CONCEPT_MODEL__PROJECTION = require('@include/concept-model/textual-projection.json');
+// const CONCEPT_MODEL__PROJECTION = require('@include/concept-model/graphical-projection.json');
 
 const PROJECTION_MODEL__CONFIG = require('@include/projection-model/editor-config.json');
 const PROJECTION_MODEL__CONCEPT = require('@include/projection-model/concept.json');
-const PROJECTION_MODEL__PROJECTION1 = require('@include/projection-model/textual-projection.json');
-const PROJECTION_MODEL__PROJECTION2 = require('@include/projection-model/graphical-projection.json');
+const PROJECTION_MODEL__PROJECTION = require('@include/projection-model/textual-projection.json');
+// const PROJECTION_MODEL__PROJECTION = require('@include/projection-model/graphical-projection.json');
 
 const DEFAULT_CONFIG = {
     "header": {
@@ -177,12 +133,12 @@ const DEFAULT_CONFIG = {
 export const Editor = {
     /** @type {ConceptModel} */
     conceptModel: null,
-    /** @type {Concept} */
-    concept: null,
     /** @type {ProjectionModel} */
     projectionModel: null,
+    /** @type {Concept} */
+    activeConcept: null,
     /** @type {Projection} */
-    projection: null,
+    activeProjection: null,
 
     /** @type {HTMLElement} */
     container: null,
@@ -200,13 +156,10 @@ export const Editor = {
     home: null,
     /** @type {EditorStyle} */
     style: null,
+    /** @type {EditorFile} */
+    files: null,
     /** @type {HTMLInputElement} */
     input: null,
-
-    /** @type {HTMLElement} */
-    downloadList: null,
-    /** @type {HTMLElement} */
-    modelSection: null,
 
     /** @type {Map} */
     fields: null,
@@ -214,15 +167,8 @@ export const Editor = {
     statics: null,
     /** @type {Map} */
     layouts: null,
-    /** @type {Field} */
-    activeField: null,
     /** @type {HTMLElement} */
     activeElement: null,
-
-    /** @type {Projection} */
-    activeProjection: null,
-    /** @type {Concept} */
-    activeConcept: null,
 
     /** @type {*} */
     config: null,
@@ -251,6 +197,7 @@ export const Editor = {
         this.menu = createEditorMenu.call(this).init(this.config.menu);
         this.home = createEditorHome.call(this).init(this.config.home);
         this.style = createEditorStyle.call(this).init(this.config.style);
+        this.files = createEditorFile.call(this).init(this.config.files);
 
         this.render();
 
@@ -267,6 +214,7 @@ export const Editor = {
         this.menu.update(this.config.menu);
         this.home.update(this.config.home);
         this.style.update(this.config.style);
+        this.files.update(this.config.files);
     },
     getRoots() {
         const { root = [] } = this.config;
@@ -276,6 +224,83 @@ export const Editor = {
         }
 
         return root;
+    },
+
+    /**
+     * Create a projection in the editor
+     * @param {*} concept 
+     * @this {Editor}
+     */
+    createInstance(name) {
+        if (!this.conceptModel.isConcept(name)) {
+            this.notify(`The concept '${name}' is not defined in the model`, NotificationType.ERROR);
+            return false;
+        }
+
+        let concept = this.conceptModel.createConcept(name);
+
+        let projection = this.projectionModel.createProjection(concept).init();
+
+        let title = createH3({
+            class: ["title", "editor-concept-title"],
+        }, name);
+
+        let btnDelete = createButton({
+            class: ["btn", "editor-concept-toolbar__btn-delete"],
+            title: `Delete ${name.toLowerCase()}`
+        });
+
+        let btnNew = createButton({
+            class: ["btn", "editor-concept-toolbar__btn-new"],
+            title: `New ${name.toLowerCase()}`
+        });
+
+        let btnCollapse = createButton({
+            class: ["btn", "editor-concept-toolbar__btn-collapse"],
+            title: `Collapse ${name.toLowerCase()}`
+        });
+
+        let btnMaximize = createButton({
+            class: ["btn", "editor-concept-toolbar__btn-maximize"],
+            title: `Maximize ${name.toLowerCase()}`
+        });
+
+        let toolbar = createDiv({
+            class: ["editor-concept-toolbar"],
+        }, [btnNew, btnMaximize, btnDelete]);
+
+        let header = createHeader({
+            class: ["editor-concept-header"],
+        }, [title, toolbar]);
+
+        let instanceContainer = createDiv({
+            class: ["editor-concept"],
+            draggable: false,
+            dataset: {
+                nature: "concept-container"
+            }
+        }, [header, projection.render()]);
+
+        this.conceptSection.appendChild(instanceContainer);
+
+        btnDelete.addEventListener('click', (event) => {
+            if (concept.delete(true)) {
+                removeChildren(instanceContainer);
+                instanceContainer.remove();
+            }
+        });
+
+        btnMaximize.addEventListener('click', (event) => {
+            instanceContainer.classList.toggle('focus');
+        });
+
+        btnNew.addEventListener('click', (event) => {
+            this.createInstance(name);
+        });
+
+        projection.focus();
+
+        return instanceContainer;
     },
 
     // Model management
@@ -291,65 +316,27 @@ export const Editor = {
      */
     get hasProjectionModel() { return !isNullOrUndefined(this.projectionModel); },
 
-    // Model concept management
+    // Model concept operations
 
-    addConcept(name) {
-        let concept = this.conceptModel.createConcept({ name: name });
+    addConcept(concepts) {
+        if (Array.isArray(concepts)) {
+            this.conceptModel.schema.push(...concepts);
+        }
 
-        let projection = createProjection.call(this, concept);
-
-        this.conceptSection.appendChild(projection);
-
-        let element = getElement('[data-projection]', projection);
-        element.focus();
+        this.refresh();
     },
 
-    // Model projection management
+    // Model projection operations
 
     addProjection(projections) {
         if (Array.isArray(projections)) {
             this.projectionModel.schema.push(...projections);
         }
 
-        // const { projection, values = [], views = [], editor } = modelSchema;
-    },
-    initProjection(values) {
-        // this.changeModel(MODEL_GENTLEMAN_PROJECTION);
-
-        const { concept, projection, views = [], editor } = PROJECTION_MODEL__CONCEPT;
-
-        if (concept) {
-            this.conceptModel = ConceptModelManager.createModel(concept, projection).init(values);
-        }
-
-        if (projection) {
-            this.projectionModel = createProjectionModel(projection, this).init();
-        }
-
-        if (editor) {
-            this.config = editor;
-        }
-
-        this.manager.refresh();
-
-        this.clear().refresh();
-
-        let value = values[0];
-
-        [{ concept: { id: value.id, name: value.name } }].forEach(view => {
-            const { id, name } = view.concept;
-
-            const concept = this.conceptModel.getConcept(id);
-
-            this.conceptSection.appendChild(createProjection.call(this, concept));
-        });
-
-
-        return this;
+        this.refresh();
     },
 
-
-    // Projection elements management
+    // Projection elements
 
     /**
      * Get a the related field object
@@ -513,57 +500,9 @@ export const Editor = {
     // Editor actions
 
     download(obj) {
-        const MIME_TYPE = 'application/json';
-        window.URL = window.webkitURL || window.URL;
+        this.files.addFile(obj);
 
-        /** @type {HTMLAnchorElement} */
-        var link = createAnchor({
-            class: ["bare-link", "download-item__link"]
-        }, `Download`);
-
-        // if (!isNullOrWhitespace(link.href)) {
-        //     window.URL.revokeObjectURL(link.href);
-        // }
-
-
-        var bb = new Blob([JSON.stringify(obj)], { type: MIME_TYPE });
-        Object.assign(link, {
-            download: `model.json`,
-            href: window.URL.createObjectURL(bb),
-        });
-
-        link.dataset.downloadurl = [MIME_TYPE, link.download, link.href].join(':');
-
-
-        let item = createListItem({
-            class: ["download-item", "download-item--build"]
-        });
-
-        let btnDelete = createButton({
-            class: ["btn", "btn-delete"],
-            dataset: {
-                action: "delete",
-                target: "parent"
-            }
-        }, "✖");
-
-        let title = createSpan({
-            class: ["download-item__name"],
-            dataset: {
-                action: "delete",
-                target: "parent"
-            }
-        }, `Build ${this.footer.childElementCount + 1}`);
-
-        item.append(btnDelete, title, link);
-
-        this.downloadList.append(item);
-
-        // // Need a small delay for the revokeObjectURL to work properly.
-        // setTimeout(() => {
-        //     window.URL.revokeObjectURL(link.href);
-        //     link.remove();
-        // }, 1500);
+        this.refresh();
 
         return obj;
     },
@@ -600,7 +539,7 @@ export const Editor = {
             this.notify("Export has been copied to clipboard");
         } else {
             link.click();
-            this.notify("The model has been successfully built. Please download the model.");
+            this.notify("The model has been successfully saved. Please download the model.");
         }
 
         // Need a small delay for the revokeObjectURL to work properly.
@@ -670,6 +609,7 @@ export const Editor = {
         // cleanup
         this.clean();
         this.container.remove();
+        this.manager.deleteEditor(this);
 
         Events.emit('editor.close');
 
@@ -709,7 +649,7 @@ export const Editor = {
 
             this.conceptModel.getRootConcepts()
                 .forEach(concept => {
-                    this.conceptSection.appendChild(createProjection.call(this, concept));
+                    this.conceptSection.appendChild(this.createInstance(concept));
                 });
         }
 
@@ -746,13 +686,49 @@ export const Editor = {
         if (this.hasConceptModel) {
             this.conceptModel.getRootConcepts()
                 .forEach(concept => {
-                    this.conceptSection.appendChild(createProjection.call(this, concept));
+                    this.conceptSection.appendChild(this.createInstance(concept));
                 });
         }
 
         this.refresh();
 
         return this;
+    },
+    /**
+     * Parse and load a file
+     * @param {JSON} json 
+     * @param {string} type 
+     */
+    load(json, type) {
+        const file = JSON.parse(json);
+
+        switch (type) {
+            case "model":
+                if (Array.isArray(file)) {
+                    this.loadConceptModel(file);
+                } else {
+                    const { concept, values = [] } = file;
+
+                    this.loadConceptModel(concept, values);
+                }
+
+                break;
+            case "projection":
+                if (Array.isArray(file)) {
+                    this.loadProjectionModel(file);
+                } else {
+                    const { projection, views = [] } = file;
+
+                    this.loadProjectionModel(projection, views);
+                }
+
+                break;
+            default:
+                console.warn(`File type ${type} not handled`);
+                return false;
+        }
+
+        return true;
     },
     unload() {
         this.unloadConceptModel();
@@ -785,9 +761,9 @@ export const Editor = {
             removeChildren(this.conceptSection);
         }
 
-        this.activeField = null;
         this.activeElement = null;
         this.activeConcept = null;
+        this.activeProjection = null;
 
         Events.emit('editor.clear');
 
@@ -805,15 +781,15 @@ export const Editor = {
         const fragment = createDocFragment();
 
 
-        if (!this.home.isRendered()) {
+        if (!this.home.isRendered) {
             fragment.appendChild(this.home.render());
         }
 
-        if (!this.style.isRendered()) {
+        if (!this.style.isRendered) {
             fragment.appendChild(this.style.render());
         }
 
-        if (!this.header.isRendered()) {
+        if (!this.header.isRendered) {
             fragment.appendChild(this.header.render());
         }
 
@@ -838,16 +814,9 @@ export const Editor = {
                 tabindex: 0,
             });
 
-            this.downloadList = createUnorderedList({
-                class: ["bare-list", "download-list"]
-            });
-
-            this.modelSection = createSection({
-                class: ["editor-model-section"]
-            });
-
-            this.footer.append(this.downloadList);
-            this.footer.append(this.modelSection);
+            if (!this.files.isRendered) {
+                this.footer.append(this.files.render());
+            }
 
             fragment.appendChild(this.footer);
         }
@@ -856,7 +825,7 @@ export const Editor = {
             fragment.appendChild(this.projectionWindow.render());
         }
 
-        if (!this.menu.isRendered()) {
+        if (!this.menu.isRendered) {
             fragment.appendChild(this.menu.render());
         }
 
@@ -901,6 +870,8 @@ export const Editor = {
         this.menu.refresh();
         this.home.refresh();
         this.style.refresh();
+        this.files.refresh();
+        this.projectionWindow.refresh();
 
         return this;
     },
@@ -909,38 +880,11 @@ export const Editor = {
      * @param {HTMLElement} element 
      */
     updateActiveElement(element) {
-        if (this.activeElement && this.activeElement !== element) {
-            this.activeElement.classList.remove('active');
-            Array.from(getElements(".active-parent"))
-                .forEach(el => el.classList.remove("active-parent"));
+        if (this.activeElement && this.activeElement === element) {
+            return;
         }
 
         this.activeElement = element;
-
-        this.activeElement.classList.add('active');
-
-
-        var parent = this.activeElement.parentElement;
-
-        while (parent) {
-            const { nature, view } = parent.dataset;
-
-            if (hasOwn(parent.dataset, 'projection')) {
-                parent.classList.add("active-parent");
-            }
-
-            if (nature === "field-component") {
-                parent.classList.add("active-parent");
-            }
-
-            if (nature === "concept-container") {
-                parent.classList.add("active-parent");
-            }
-
-            parent = parent.parentElement;
-        }
-
-        this.projectionWindow.setProjection(this.projectionModel.getProjection(element.dataset.projection));
 
         return this;
     },
@@ -961,6 +905,16 @@ export const Editor = {
      */
     updateActiveProjection(projection) {
         this.activeProjection = projection;
+
+        // let parent = this.activeElement.parentElement;
+
+        // while (parent) {
+        //     if (hasOwn(parent.dataset, 'projection')) {
+        //         parent.classList.add("active-parent");
+        //     }
+
+        //     parent = parent.parentElement;
+        // }
 
         this.refresh();
 
@@ -1040,12 +994,26 @@ export const Editor = {
 
     bindEvents() {
         var lastKey = null;
-        var fileHandler = null;
+        var fileType = null;
 
         const ActionHandler = {
+            "open": (target) => {
+                const { context } = target.dataset;
+
+                if (context) {
+                    this[context].open();
+                } else {
+                    this.open();
+                }
+            },
             "close": (target) => {
-                this.close();
-                this.manager.deleteEditor(this);
+                const { context } = target.dataset;
+
+                if (context) {
+                    this[context].close();
+                } else {
+                    this.close();
+                }
             },
             "collapse": (target) => {
                 const { rel, target: actionTarget } = target.dataset;
@@ -1067,38 +1035,12 @@ export const Editor = {
                 }
             },
 
-            "style": (target) => {
-                this.style.toggle();
-            },
-            "open-style": (target) => {
-                this.style.open();
-            },
-            "close-style": (target) => {
-                this.style.close();
-            },
-            "home": (target) => {
-                this.home.toggle();
-            },
-            "open-home": (target) => {
-                this.home.open();
-            },
-            "close-home": (target) => {
-                this.home.close();
-            },
+            "style": (target) => { this.style.toggle(); },
+            "home": (target) => { this.home.toggle(); },
+            "files": (target) => { this.files.toggle(); },
 
-            "export": (target) => {
-                this.export();
-            },
-            "import-projection": (target) => {
-                let event = new MouseEvent('click', {
-                    view: window,
-                    bubbles: true,
-                    cancelable: true,
-                });
-                fileHandler = this.addProjection;
-
-                this.input.dispatchEvent(event);
-            },
+            "export": (target) => { this.export(); },
+            "copy": (target) => { this.export(true); },
 
             "load-model": (target) => {
                 let event = new MouseEvent('click', {
@@ -1106,16 +1048,7 @@ export const Editor = {
                     bubbles: true,
                     cancelable: true,
                 });
-
-                fileHandler = (file) => {
-                    if (Array.isArray(file)) {
-                        this.loadConceptModel(file);
-                    } else {
-                        const { concept, values = [] } = file;
-
-                        this.loadConceptModel(concept, values);
-                    }
-                };
+                fileType = "model";
 
                 this.input.dispatchEvent(event);
             },
@@ -1133,15 +1066,7 @@ export const Editor = {
                     bubbles: true,
                     cancelable: true,
                 });
-                fileHandler = (file) => {
-                    if (Array.isArray(file)) {
-                        this.loadProjectionModel(file);
-                    } else {
-                        const { projection, views = [] } = file;
-
-                        this.loadProjectionModel(projection, views);
-                    }
-                };
+                fileType = "projection";
 
                 this.input.dispatchEvent(event);
             },
@@ -1156,7 +1081,7 @@ export const Editor = {
 
             "create-metamodel": (target) => {
                 const { concept, values = [] } = CONCEPT_MODEL__CONCEPT;
-                const { projection, views = [] } = CONCEPT_MODEL__PROJECTION2;
+                const { projection, views = [] } = CONCEPT_MODEL__PROJECTION;
                 const { editor: config } = CONCEPT_MODEL__CONFIG;
 
                 this.unload();
@@ -1166,7 +1091,7 @@ export const Editor = {
             },
             "create-projection": (target) => {
                 const { concept, values = [] } = PROJECTION_MODEL__CONCEPT;
-                const { projection, views = [] } = PROJECTION_MODEL__PROJECTION1;
+                const { projection, views = [] } = PROJECTION_MODEL__PROJECTION;
                 const { editor: config } = PROJECTION_MODEL__CONFIG;
 
                 this.unload();
@@ -1176,25 +1101,13 @@ export const Editor = {
             }
         };
 
-        /**
-         * Get the choice element
-         * @param {HTMLElement} element 
-         */
-        function getProjection(element) {
-            if (hasOwn(element.dataset, 'projection')) {
-                return element;
-            }
-
-            return findAncestor(element, (el) => hasOwn(el.dataset, 'projection'));
-        }
-
         this.container.addEventListener('click', (event) => {
             var target = getEventTarget(event.target);
 
             const { action, handler, downloadable } = target.dataset;
-
-            if (this.activeField) {
-                this.activeField.clickHandler(target);
+            
+            if (this.activeElement) {
+                this.activeElement.clickHandler(target);
             }
 
             const actionHandler = ActionHandler[action];
@@ -1211,16 +1124,17 @@ export const Editor = {
         }, true);
 
         this.input.addEventListener('change', (event) => {
-            var file = this.input.files[0];
+            let file = this.input.files[0];
 
             if (!file.name.endsWith('.json')) {
                 this.notify("This file is not supported. Please use a .json file");
+                return;
             }
 
-            var reader = new FileReader();
-            reader.onload = (e) => {
-                fileHandler(JSON.parse(reader.result));
-                fileHandler = null;
+            let reader = new FileReader();
+            reader.onload = (event) => {
+                this.load(reader.result, fileType);
+                fileType = null;
                 this.input.value = "";
             };
             reader.readAsText(file);
@@ -1235,8 +1149,8 @@ export const Editor = {
 
             switch (event.key) {
                 case Key.backspace:
-                    if (this.activeField && lastKey !== Key.ctrl) {
-                        const handled = this.activeField.backspaceHandler(target) === true;
+                    if (this.activeElement && lastKey !== Key.ctrl) {
+                        const handled = this.activeElement.backspaceHandler(target) === true;
 
                         if (handled) {
                             event.preventDefault();
@@ -1250,8 +1164,8 @@ export const Editor = {
                     rememberKey = true;
                     break;
                 case Key.delete:
-                    if (this.activeField && lastKey !== Key.ctrl) {
-                        const handled = this.activeField.deleteHandler(target);
+                    if (this.activeElement && lastKey !== Key.ctrl) {
+                        const handled = this.activeElement.deleteHandler(target);
 
                         if (handled) {
                             event.preventDefault();
@@ -1260,8 +1174,8 @@ export const Editor = {
 
                     break;
                 case Key.spacebar:
-                    if (this.activeField && lastKey !== Key.ctrl) {
-                        const handled = this.activeField.spaceHandler(target);
+                    if (this.activeElement && lastKey !== Key.ctrl) {
+                        const handled = this.activeElement.spaceHandler(target);
 
                         if (handled) {
                             event.preventDefault();
@@ -1272,26 +1186,16 @@ export const Editor = {
                 case Key.alt:
                     event.preventDefault();
 
-                    var projectionElement = getProjection(target);
-                    if (projectionElement) {
-                        const { projection: id } = projectionElement.dataset;
-                        let projection = this.projectionModel.getProjection(id);
-                        projection.changeView();
+                    if (this.activeProjection && this.activeProjection.hasMultipleViews) {
+                        this.activeProjection.changeView();
                     }
 
                     rememberKey = true;
 
                     break;
                 case Key.enter:
-                    if (this.activeField) {
-                        const handled = this.activeField.enterHandler(target) === true;
-
-                        if (handled) {
-                            event.preventDefault();
-                        }
-                    } else if (nature === "layout") {
-                        let element = this.getLayout(target);
-                        const handled = element.enterHandler(target) === true;
+                    if (this.activeElement) {
+                        const handled = this.activeElement.enterHandler(target) === true;
 
                         if (handled) {
                             event.preventDefault();
@@ -1302,22 +1206,8 @@ export const Editor = {
 
                     break;
                 case Key.escape:
-                    if (this.activeField) {
-                        const handled = this.activeField.escapeHandler(target) === true;
-
-                        if (handled) {
-                            event.preventDefault();
-                        }
-                    } else if (nature === "static") {
-                        let element = this.getStatic(target);
-                        const handled = element.escapeHandler(target) === true;
-
-                        if (handled) {
-                            event.preventDefault();
-                        }
-                    } else if (nature === "layout") {
-                        let element = this.getLayout(target);
-                        const handled = element.escapeHandler(target) === true;
+                    if (this.activeElement) {
+                        const handled = this.activeElement.escapeHandler(target) === true;
 
                         if (handled) {
                             event.preventDefault();
@@ -1326,84 +1216,47 @@ export const Editor = {
 
                     break;
                 case Key.insert:
-                    if (this.activeField) {
+                    if (this.activeElement) {
                         event.preventDefault();
                     }
 
                     break;
                 case Key.up_arrow:
-                    if (this.activeField) {
-                        const handled = this.activeField.arrowHandler("up", target) === true;
+                    if (this.activeElement) {
+                        const handled = this.activeElement.arrowHandler("up", target) === true;
 
                         if (handled) {
                             event.preventDefault();
-                        }
-                    } else {
-                        let element = this.resolveElement(target);
-                        if (element) {
-                            const handled = element.arrowHandler("up", target) === true;
-
-                            if (handled) {
-                                event.preventDefault();
-                            }
                         }
                     }
 
                     break;
                 case Key.down_arrow:
-                    if (this.activeField) {
-                        const handled = this.activeField.arrowHandler("down", target) === true;
+                    if (this.activeElement) {
+                        const handled = this.activeElement.arrowHandler("down", target) === true;
 
                         if (handled) {
                             event.preventDefault();
-                        }
-                    } else {
-                        let element = this.resolveElement(target);
-                        if (element) {
-                            const handled = element.arrowHandler("down", target) === true;
-
-                            if (handled) {
-                                event.preventDefault();
-                            }
                         }
                     }
 
                     break;
                 case Key.right_arrow:
-                    if (this.activeField) {
-                        const handled = this.activeField.arrowHandler("right", target) === true;
+                    if (this.activeElement) {
+                        const handled = this.activeElement.arrowHandler("right", target) === true;
 
                         if (handled) {
                             event.preventDefault();
-                        }
-                    } else {
-                        let element = this.resolveElement(target);
-
-                        if (element) {
-                            const handled = element.arrowHandler("right", target) === true;
-
-                            if (handled) {
-                                event.preventDefault();
-                            }
                         }
                     }
 
                     break;
                 case Key.left_arrow:
-                    if (this.activeField) {
-                        const handled = this.activeField.arrowHandler("left", target) === true;
+                    if (this.activeElement) {
+                        const handled = this.activeElement.arrowHandler("left", target) === true;
 
                         if (handled) {
                             event.preventDefault();
-                        }
-                    } else {
-                        let element = this.resolveElement(target);
-                        if (element) {
-                            const handled = element.arrowHandler("left", target) === true;
-
-                            if (handled) {
-                                event.preventDefault();
-                            }
                         }
                     }
 
@@ -1433,24 +1286,24 @@ export const Editor = {
             switch (event.key) {
                 case Key.spacebar:
                     if (lastKey === Key.ctrl) {
-                        if (this.activeField) {
-                            this.activeField._spaceHandler(target);
+                        if (this.activeElement) {
+                            this.activeElement._spaceHandler(target);
                         }
                     }
 
                     break;
                 case Key.delete:
                     if (lastKey === Key.ctrl) {
-                        if (this.activeField) {
-                            this.activeField.delete(target);
+                        if (this.activeElement) {
+                            this.activeElement.delete(target);
                         }
                     }
 
                     break;
                 case Key.ctrl:
                     if (lastKey === Key.ctrl) {
-                        if (this.activeField) {
-                            this.activeField.controlHandler(target);
+                        if (this.activeElement) {
+                            this.activeElement.controlHandler(target);
                         }
                     }
 
@@ -1466,63 +1319,43 @@ export const Editor = {
         }, false);
 
         this.body.addEventListener('focusin', (event) => {
-            const target = event.target;
+            const { target } = event;
 
-            const { nature } = target.dataset;
+            const element = this.resolveElement(target);
 
-            var handler = focusinHandler[nature];
-
-            if (handler) {
-                handler.call(this, target);
-            } else {
-                if (this.activeField) {
-                    this.activeField.focusOut(target);
+            if (element && element.focusable) {
+                if (this.activeElement && this.activeElement !== element) {
+                    this.activeElement.focusOut();
+                    this.activeElement = null;
                 }
 
-                this.activeField = null;
+                if (isNullOrUndefined(element) || element === this.activeElement) {
+                    if (this.activeElement) {
+                        this.activeElement._focusIn(target);
+                    }
+
+                    return;
+                }
+
+                this.updateActiveElement(element);
+                this.activeElement.focusIn(target);
+            } else {
+                if (this.activeElement) {
+                    this.activeElement.focusOut(target);
+                }
+
+                this.activeElement = null;
             }
 
-            let projectionElement = getProjection(target);
-            if (isHTMLElement(projectionElement)) {
-                this.updateActiveElement(projectionElement);
-
-                const { projection: id } = projectionElement.dataset;
-                let projection = this.projectionModel.getProjection(id);
+            if (this.activeElement) {
+                let projection = this.activeElement.projection;
 
                 this.updateActiveProjection(projection);
-
-                // update active concept
-                if (projection.concept) {
-                    this.updateActiveConcept(projection.concept);
-                }
+                this.updateActiveConcept(projection.concept);
             }
         });
 
-        const focusinHandler = {
-            'field': focusinField,
-            'field-component': focusinField,
-        };
-
-        function focusinField(target) {
-            const field = this.getField(target);
-
-            if (this.activeField && this.activeField !== field) {
-                this.activeField.focusOut();
-                this.activeField = null;
-            }
-
-            if (isNullOrUndefined(field) || field === this.activeField) {
-                if (this.activeField) {
-                    this.activeField._focusIn(target);
-                }
-
-                return;
-            }
-
-            this.activeField = field;
-            this.activeField.focusIn(target);
-        }
-
+        /** @type {HTMLElement} */
         var dragElement = null;
 
         this.container.addEventListener('dragstart', (event) => {
@@ -1542,8 +1375,8 @@ export const Editor = {
             var prevClientX = event.dataTransfer.getData("clientX");
             var prevClientY = event.dataTransfer.getData("clientY");
 
-            dragElement.style.top = `${dragElement.offsetTop - (prevClientY - event.clientY)}px`;
-            dragElement.style.left = `${dragElement.offsetLeft - (prevClientX - event.clientX)}px`;
+            dragElement.style.top = `${Math.max(dragElement.offsetTop - (prevClientY - event.clientY), 0)}px`;
+            dragElement.style.left = `${Math.max(dragElement.offsetLeft - (prevClientX - event.clientX), 0)}px`;
         });
 
         this.body.addEventListener('dragover', (event) => {
@@ -1553,5 +1386,6 @@ export const Editor = {
         this.registerHandler("build-concept", buildConceptHandler);
         this.registerHandler("build-projection", buildProjectionHandler);
         this.registerHandler("export", () => this.export());
+        this.registerHandler("copy", () => this.export(true));
     }
 };

@@ -1771,7 +1771,8 @@
                                         "static": {
                                             "type": "text",
                                             "help": "Add an attribute",
-                                            "content": "Add an attribute"
+                                            "content": "Add an attribute",
+                                            "focusable": false
                                         }
                                     }
                                 }
@@ -1820,39 +1821,67 @@
             "content": {
                 "type": "table",
                 "orientation": "column",
-                "table": {
-                    "header": {
-                        "style": {
-                            "css": ["attribute-table-header"]
-                        }
-                    },
-                    "body": {
-                        "style": {
-                            "css": ["attribute-table-body"]
-                        }
-                    },
-                    "style": {
-                        "css": ["attribute-table"]
-                    }
-                },
-                "template": { "concept": "property", "name": "property-table" },
-                "action": {
-                    "add": {
-                        "projection": {
-                            "type": "static",
-                            "static": {
-                                "type": "text",
-                                "help": "Add a property",
-                                "focusable": false,
-                                "content": "Add"
+                "content": [
+                    {
+                        "type": "table",
+                        "table": {
+                            "header": {
+                                "style": {
+                                    "css": ["attribute-table-header"]
+                                }
+                            },
+                            "body": {
+                                "style": {
+                                    "css": ["attribute-table-body"]
+                                }
+                            },
+                            "style": {
+                                "css": ["attribute-table__table"]
                             }
                         }
                     },
-                    "remove": {
-                        "style": {
-                            "css": "cell-list__btn-remove"
+                    {
+                        "type": "action",
+                        "name": "add",
+                        "state": [
+                            {
+                                "rule": {
+                                    "type": "no",
+                                    "no": { "prop": "value" }
+                                },
+                                "result": {
+                                    "content": {
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "help": "Add a property",
+                                            "content": "Add a property",
+                                            "focusable": false
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "content": {
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "focusable": false,
+                                "help": "Add a property",
+                                "content": "Add"
+                            }
                         },
-                        "projection": {
+                        "style": {
+                            "css": ["attribute-table__btn-add"]
+                        }
+                    }
+                ],
+
+                "template": { "concept": "property", "name": "property-table" },
+
+                "action": {
+                    "remove": {
+                        "content": {
                             "type": "static",
                             "static": {
                                 "type": "text",
@@ -1860,8 +1889,14 @@
                                 "help": "Remove property",
                                 "content": "Remove"
                             }
+                        },
+                        "style": {
+                            "css": "attribute-table__btn-remove"
                         }
                     }
+                },
+                "style": {
+                    "css": ["attribute-table"]
                 }
             }
         },

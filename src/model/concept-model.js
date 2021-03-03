@@ -213,6 +213,10 @@ export const ConceptModel = {
      * @returns {boolean}
      */
     isConcept(name) {
+        if(!isString(name)) {
+            return false;
+        }
+
         return this.schema.findIndex(concept => concept.name === name) !== -1;
     },
     /**
@@ -221,6 +225,10 @@ export const ConceptModel = {
      * @returns {boolean}
      */
     isConcrete(name) {
+        if(!isString(name)) {
+            return false;
+        }
+
         const concept = this.schema.find(concept => concept.name === name);
 
         if (isNullOrUndefined(concept)) {
@@ -235,6 +243,10 @@ export const ConceptModel = {
      * @returns {boolean}
      */
     isPrototype(name) {
+        if(!isString(name)) {
+            return false;
+        }
+        
         const concept = this.schema.find(concept => concept.name === name);
 
         if (isNullOrUndefined(concept)) {

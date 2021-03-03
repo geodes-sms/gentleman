@@ -41,6 +41,9 @@
         padding: 12px 24px 6px;
         border-radius: 6px;
     }
+    .editor-home-section__drop-area.highlight {
+        border-color: purple;
+    }
 
     .editor-home-section__drop-area.empty {
         border-style: dashed;

@@ -75,6 +75,7 @@
         }
 
     .editor-concept-toolbar__btn-maximize {
+        margin-right: 6px;
         font-size: 1.4rem; font-weight: 600;
         width: 24px;
         height: 24px;
@@ -99,7 +100,6 @@
             }
 
     .editor-concept-toolbar__btn-delete {
-        margin-left: 4px;
         font-size: 1.4rem; font-weight: 600;
         width: 24px;
         height: 24px;
@@ -120,6 +120,31 @@
         }
             .editor-concept-toolbar__btn-delete:hover:before {
                 transform: rotate(180deg) scale(1.1) translateY(-2px);
+            }
+
+    .editor-concept-toolbar__btn-new {
+        margin-right: 12px;
+        font-size: 1.4rem; font-weight: 600;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        color: #575757;
+        background-color: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 1px 2px -1px #575757;
+        z-index: 5;
+    }
+        .editor-concept-toolbar__btn-new:before {
+            content: "+";
+            display: block;
+            transform: scale(1.9) translateY(-1px);
+            transition: .4s;
+        }
+        .editor-concept-toolbar__btn-new:hover {
+            background-color: rgba(155, 155, 155, 0.1);
+            box-shadow: 0 1px 1px #343434;
+        }
+            .editor-concept-toolbar__btn-new:hover:before {
+                transform: rotate(180deg) scale(2) translateY(-2px);
             }
 
     .editor-concept > .layout-container { background: linear-gradient(to bottom, #fefefe, #f9f9f9); }
@@ -163,19 +188,26 @@
             color: #FA6A5A;
             border: 2px solid currentColor;
         }
-/* 
-*[data-projection].active {
-    box-shadow: 0 0 0 1px #1f75fe;
-} */
+
+.field-action {
+    border: none;
+    background: none;
+    font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
+    text-decoration: none; text-align: center;
+    outline: none;
+    cursor: default;
+}
 
 .model-concept {
     position: relative;
     padding-top: 2px; padding-bottom: 6px;
+    font-size: 1.4rem;
     border-bottom-left-radius: 4px; border-bottom-right-radius: 4px;
 }
 
     .model-concept--textual .line {
         display: flex; flex-direction: row; flex-wrap: wrap;
+        align-items: flex-start;
         padding-left: 4px;
         font-size: 1.4rem;
     }
@@ -406,12 +438,12 @@
 }
 
 
-.attribute-table {
+.attribute-table__table {
     border: 1px solid #387aeb;
     z-index: 20;
 }
 
-    .attribute-table.empty {
+    .attribute-table__table.empty {
         display: none;
     }
 
@@ -520,7 +552,7 @@
             background-color: royalblue;
         }
 
-    .field--table__button[data-action="add"] {
+    .attribute-table__btn-add {
         position: relative;
         display: block;
         margin: 0 auto;
@@ -530,19 +562,28 @@
         color: #fff;
         border-radius: 0 0 20px 20px;
         background-color: #387aeb;
-        transform: translateY(-8px);
+        
         transition: .2s;
         opacity: 0.8;
         z-index: -1;
     }
-        .field--table__button[data-action="add"]:hover {
+        .attribute-table__btn-add:hover {
             transform: translateY(0);
             opacity: 1;
         }
-        .attribute-table.empty + .field--table__button[data-action="add"] {
-            transform: translateY(0);
-            border-radius: 180px;
-            opacity: 1;
+        .attribute-table:not(.empty) .attribute-table__btn-add {
+            transform: translateY(-8px);
+        }
+        .attribute-table.empty .attribute-table__btn-add {
+            width: 100%; max-width: 240px;
+            font-size: 1.8em; font-weight: 300;
+            border-radius: 2px;
+            background-color: #3E8C49;
+            background-color: #09b54d;
+        }
+        .attribute-table.empty .attribute-table__btn-add:hover {
+            background-color: #75D982;
+            transform: scale(1.05);
         }
 
 
@@ -776,6 +817,7 @@
 -----------------------------------------------------------------------------*/
 
 .attribute-list--textual {
+    display: flex; flex-direction: column;
     padding: 0;
     padding-right: 6px;
 }
@@ -814,7 +856,7 @@
         position: absolute;
         top: 0; right: 0;
         width: 24px; height: 24px;
-        font-size: 1.8em; font-weight: 300;
+        font-size: 1.4em; font-weight: 300;
         color: #999;
         padding: 0;
         border: 1px solid #c0c0c0;
@@ -830,6 +872,52 @@
         .attribute-list--textual__list-item > .btn-remove:before {
             content: "✖";
         }
+
+    
+.attribute-list--textual .attribute-list--textual__btn-add {
+    align-self: flex-end;
+
+    position: relative;
+    display: flex; justify-content: center; align-items: center;
+    margin-right: 12px;
+    width: 60px; 
+    height: 60px;
+    padding-bottom: 8px;
+    font-size: 0.95em; font-weight: 300; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px -1px #555;
+    background-color: #5F4B8B;
+    opacity: 0.8;
+    transform: scale(0.9);
+    transition: .2s;
+}
+    .attribute-list--textual .attribute-list--textual__btn-add:hover,
+    .attribute-list--textual .attribute-list--textual__btn-add:focus {
+        opacity: 1;
+        transform: scale(1);
+    }
+    .attribute-list--textual .attribute-list--textual__btn-add:focus {
+        box-shadow: 0 0 0 3px #fff, 0 0 0 6px #5F4B8B;
+    }
+
+.attribute-list--textual.empty .attribute-list--textual__btn-add {
+    align-self: flex-start;
+
+    width: 100%; max-width: 180px;
+    padding: 6px 12px;
+    height: auto;
+    font-size: 1.2em; font-weight: 500;
+    border-radius: 2px;
+    background-color: #3E8C49;
+    background-color: #09b54d;
+}
+    .attribute-list--textual.empty .attribute-list--textual__btn-add:hover {
+        background-color: #75D982;
+    }
+    .attribute-list--textual.empty .attribute-list--textual__btn-add:focus {
+        box-shadow: 0 0 0 3px #fff, 0 0 0 6px #3E8C49;
+    }
         
     .attribute-list-item-container {
         width: 100%;
@@ -841,8 +929,8 @@
 -----------------------------------------------------------------------------*/
 
 .property-list--textual {
-    padding: 0;
-    padding-right: 6px;
+    display: flex; flex-direction: column;
+    padding: 0; padding-right: 6px;
 }
 
 .property-list--textual__list {
@@ -879,7 +967,7 @@
         position: absolute;
         top: 0; right: 0;
         width: 24px; height: 24px;
-        font-size: 1.8em; font-weight: 300;
+        font-size: 1.4em; font-weight: 300;
         color: #999;
         padding: 0;
         border: 1px solid #c0c0c0;
@@ -895,6 +983,51 @@
         .property-list--textual__list-item > .btn-remove:before {
             content: "✖";
         }
+
+        .property-list--textual .property-list--textual__btn-add {
+            align-self: flex-end;
+        
+            position: relative;
+            display: flex; justify-content: center; align-items: center;
+            margin-right: 12px;
+            width: 60px; 
+            height: 60px;
+            padding-bottom: 8px;
+            font-size: 0.95em; font-weight: 300; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            border-radius: 50%;
+            box-shadow: 0 1px 2px -1px #555;
+            background-color: #5F4B8B;
+            opacity: 0.8;
+            transform: scale(0.9);
+            transition: .2s;
+        }
+            .property-list--textual .property-list--textual__btn-add:hover,
+            .property-list--textual .property-list--textual__btn-add:focus {
+                opacity: 1;
+                transform: scale(1);
+            }
+            .property-list--textual .property-list--textual__btn-add:focus {
+                box-shadow: 0 0 0 3px #fff, 0 0 0 6px #5F4B8B;
+            }
+        
+        .property-list--textual.empty .property-list--textual__btn-add {
+            align-self: flex-start;
+        
+            width: 100%; max-width: 180px;
+            padding: 6px 12px;
+            height: auto;
+            font-size: 1.2em; font-weight: 500;
+            border-radius: 2px;
+            background-color: #3E8C49;
+            background-color: #09b54d;
+        }
+            .property-list--textual.empty .property-list--textual__btn-add:hover {
+                background-color: #75D982;
+            }
+            .property-list--textual.empty .property-list--textual__btn-add:focus {
+                box-shadow: 0 0 0 3px #fff, 0 0 0 6px #3E8C49;
+            }
         
     .property-list-item-container {
         width: 100%;
@@ -955,7 +1088,18 @@
     color: #555;
 }
 
-.model-concept__keyword + .reference-choice--textual {
+.model-concept__keyword + .reference-choice--textual,
+.keyword + .reference-choice--textual {
+    margin-left: 0.5em;
+}
+
+.model-concept__keyword + .field--textbox,
+.keyword + .field--textbox {
+    margin-left: 0.5em;
+}
+
+.field--textbox + .model-concept__keyword,
+.field--textbox + .keyword {
     margin-left: 0.5em;
 }
 
@@ -1376,31 +1520,48 @@
 }
 
 .attribute-list--card .attribute-list--card__btn-add {
+    align-self: flex-end;
+
     position: relative;
+    display: flex; justify-content: center;
+    margin-right: 12px;
     width: 48px; 
     height: 48px;
-    align-self: flex-end;
-    line-height: 48px;
-    font-size: 5em; font-weight: 100;
-    text-align: center;
+    line-height: 36px;
+    font-size: 4em; font-weight: 300; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #fff;
     border-radius: 50%;
-    background-color: #09b54d;
-    cursor: default;
+    box-shadow: 0 1px 2px -1px #555;
+    background-color: #5F4B8B;
+    opacity: 0.9;
+    transition: .2s;
 }
+    .attribute-list--card .attribute-list--card__btn-add:hover {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    .attribute-list--card .attribute-list--card__btn-add:focus {
+        box-shadow: 0 0 0 3px #fff, 0 0 0 6px #5F4B8B;
+        opacity: 1;
+        transform: scale(1);
+    }
 
 .attribute-list--card.empty .attribute-list--card__btn-add {
-    position: relative;
-    width: 100%; max-width: 240px;
     align-self: center;
+
+    width: 100%; max-width: 240px;
     line-height: 48px;
-    font-size: 2em; font-weight: 100;
-    text-align: center;
-    color: #fff;
-    border-radius: 4px;
+    font-size: 1.8em; font-weight: 300;
+    border-radius: 2px;
+    background-color: #3E8C49;
     background-color: #09b54d;
-    cursor: default;
 }
+    .attribute-list--card.empty .attribute-list--card__btn-add:hover {
+        background-color: #75D982;
+    }
+    .attribute-list--card.empty .attribute-list--card__btn-add:focus {
+        box-shadow: 0 0 0 3px #fff, 0 0 0 6px #3E8C49;
+    }
 
 .attribute-list--card__list-item {
     margin-right: 6px; margin-bottom: 6px;
@@ -1436,22 +1597,18 @@
 
 .badge--alt {
     position: absolute;
-    top: 0; right: 0;
+    bottom: calc(100% + 2px); left: -2px;
     width: 12px; height: 12px;
     border-radius: 2px;
     background-color: #5f4b8b;
     box-shadow: 4px 4px 0 #271c40;
     opacity: 0;
     transition: .2s;
-}
-
-.active-parent:hover > .badge--alt {
-    opacity: 0.2;
-    transform: scale(0.8);
+    z-index: 20;
 }
 
 .active > .badge--alt {
-    opacity: 1;
+    opacity: 0.8;
     transform: scale(1);
 }
 

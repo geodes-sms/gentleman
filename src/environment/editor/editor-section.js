@@ -71,6 +71,8 @@ export const EditorSection = {
     /** @type {HTMLButtonElement} */
     btnHome: null,
 
+    get isRendered() { return isHTMLElement(this.container); },
+
     init(editor) {
         if (editor) {
             this.editor = editor;
@@ -89,9 +91,6 @@ export const EditorSection = {
         );
 
         return this;
-    },
-    isRendered() {
-        return isHTMLElement(this.container);
     },
 
     render() {
@@ -131,7 +130,7 @@ export const EditorSection = {
         });
         this.tabProjection.prepend(this.tabProjectionNotification);
 
-        this.tabs.append(this.tabConcept, this.tabValue, this.tabProjection);
+        this.tabs.append(this.tabConcept, this.tabValue);
 
         this.activeTab = this.tabs.children[0];
         this.activeTab.classList.add("selected");
@@ -307,9 +306,9 @@ export const EditorSection = {
                 this.editor.conceptModel.removeValue(id);
             } else if (action === "edit") {
                 let projection = this.editor.projectionModel.getMetadata(id);
-                this.editor.manager.createEditor().init().initProjection([JSON.parse(projection)]).open();
+                // this.editor.manager.createEditor().init().initProjection([JSON.parse(projection)]).open();
             } else if (action === "create") {
-                this.editor.addConcept(concept);
+                this.editor.createInstance(concept);
             }
         });
 

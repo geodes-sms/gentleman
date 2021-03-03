@@ -65,15 +65,13 @@ const Projection = {
     get isReadOnly() { return valOrDefault(this.getSchema().readonly, false); },
 
     /** @returns {boolean} */
-    isRoot() {
-        return isNullOrUndefined(this.parent);
-    },
+    isRoot() { return isNullOrUndefined(this.parent); },
 
-    getSchema() {
-        return this.schema[this.index];
+    getSchema(index) {
+        return this.schema[valOrDefault(index, this.index)];
     },
-    getContainer() {
-        return this.containers[this.index];
+    getContainer(index) {
+        return this.containers[valOrDefault(index, this.index)];
     },
     getStyle() {
         const { style } = this.getSchema();
@@ -260,6 +258,9 @@ const Projection = {
 
         return false;
     },
+    focus() {
+        this.element.focus();
+    },
 
     render() {
         const schema = this.getSchema();
@@ -277,6 +278,10 @@ const Projection = {
             this.element = FieldFactory.createField(this.model, valOrDefault(projection, content), this).init(this.args);
 
             this.environment.registerField(this.element);
+        }
+
+        if(this.isRoot()) {
+            this.element.focusable = true;
         }
 
         container = this.element.render();
@@ -309,12 +314,14 @@ const Projection = {
 
         if (this.hasMultipleViews) {
             let altBadge = createI({
-                class: ["badge", "badge--alt"]
+                class: ["badge", "badge--alt"],
+                title: "This projection has multiple views"
             });
 
             container.prepend(altBadge);
         }
 
+      
         this.addContainer(container);
 
         return container;

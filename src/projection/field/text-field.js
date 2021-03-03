@@ -139,10 +139,12 @@ const BaseTextField = {
 
 
     init() {
-        this.multiline = valOrDefault(this.schema.multiline, false);
-        this.focusable = valOrDefault(this.schema.focusable, true);
-        this.resizable = valOrDefault(this.schema.resizable, false);
-        this.content = this.schema.content;
+        const { multiline = false, content = [], resizable = false, focusable = true } = this.schema;
+
+        this.multiline = multiline;
+        this.focusable = focusable;
+        this.resizable = resizable;
+        this.content = content;
 
         if (!hasOwn(this.schema, "choice")) {
             this.schema.choice = {};
