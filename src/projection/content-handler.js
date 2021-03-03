@@ -14,7 +14,7 @@ export function ContentHandler(schema, concept, args) {
         layout.parent = this;
         layout.init(args);
 
-        this.projection.environment.registerLayout(layout);
+        this.model.registerLayout(layout);
 
         return layout.render();
     } else if (schema.type === "field") {
@@ -29,7 +29,7 @@ export function ContentHandler(schema, concept, args) {
         staticContent.parent = this;
         staticContent.init(args);
 
-        this.projection.environment.registerStatic(staticContent);
+        this.model.registerStatic(staticContent);
 
         return staticContent.render();
     } if (schema.type === "input") {
