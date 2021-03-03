@@ -43,12 +43,10 @@ export const ProjectionModel = {
 
     createProjection(concept, tag) {
         const schema = this.getModelProjection(concept, tag);
+        
         if (isEmpty(schema)) {
             console.warn(concept, schema, tag);
         }
-
-        // console.warn(concept.name, tag);
-        // console.log(schema);
 
         const projection = ProjectionFactory.createProjection(this, schema, concept, this.environment);
 

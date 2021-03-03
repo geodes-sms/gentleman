@@ -30,7 +30,7 @@ const BaseTextStatic = {
     focusable: null,
 
     init() {
-        const { contentType = "text", editable = false, focusable = valOrDefault(this.parent.focusable, true) } = this.schema;
+        const { contentType = "text", editable = false, focusable = valOrDefault(this.parent.schema.focusable, true) } = this.schema;
 
         this.contentType = contentType;
         this.editable = editable;

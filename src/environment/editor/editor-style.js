@@ -22,16 +22,14 @@ export const EditorStyle = {
     /** @type {FIleIO} */
     projectionFileIO: null,
 
+    get isRendered() { return isHTMLElement(this.container); },
+
     init(schema) {
         if (schema) {
             this.schema = schema;
         }
 
         return this;
-    },
-
-    isRendered() {
-        return isHTMLElement(this.container);
     },
 
     show() {

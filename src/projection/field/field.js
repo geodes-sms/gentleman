@@ -1,6 +1,5 @@
 import { removeChildren, isEmpty, isFunction } from 'zenkai';
-import { ObserverHandler } from '@structure/index.js';
-import { shake, show, hide } from '@utils/index.js';
+import { shake, show, hide, toggle } from '@utils/index.js';
 
 
 const BaseField = {
@@ -56,6 +55,12 @@ const BaseField = {
     hide() {
         hide(this.element);
         this.visible = false;
+
+        return this;
+    },
+    toggle() {
+        toggle(this.container);
+        this.visible = !this.visible;
 
         return this;
     },

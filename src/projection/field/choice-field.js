@@ -49,6 +49,22 @@ function getItem(element) {
 }
 
 /**
+ * 
+ * @param {HTMLElement} parent 
+ */
+function getVisibleElement(parent) {
+    for (let i = 0; i < parent.children.length; i++) {
+        const element = parent.children[i];
+
+        if (!isHidden(element)) {
+            return element;
+        }
+    }
+
+    return null;
+}
+
+/**
  * Get the choice element value
  * @param {HTMLElement} item
  * @returns {string} 
@@ -84,8 +100,12 @@ const BaseChoiceField = {
 
 
     init() {
+        const { focusable = true } = this.schema;
+
         this.items = new Map();
         this.content = this.schema.content;
+        this.focusable = focusable;
+
         // TODO: Add group support
 
         if (!hasOwn(this.schema, "choice")) {
@@ -706,7 +726,8 @@ const BaseChoiceField = {
 
             if (isHTMLElement(closestItem)) {
                 if (closestItem === this.choices && this.choices.hasChildNodes()) {
-                    closestItem.children[0].focus();
+                    let firstChild = getVisibleElement(closestItem);
+                    if (firstChild) { firstChild.focus(); }
                 } else if (closestItem === this.selectionElement) {
                     closestItem.children[0].focus();
                 } else {

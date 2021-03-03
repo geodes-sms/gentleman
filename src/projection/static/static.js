@@ -1,6 +1,6 @@
 import { removeChildren, isEmpty, isFunction } from 'zenkai';
 import { ObserverHandler } from '@structure/index.js';
-import { show, hide } from '@utils/index.js';
+import { show, hide, toggle } from '@utils/index.js';
 
 
 const BaseStatic = {
@@ -58,12 +58,25 @@ const BaseStatic = {
 
         return this;
     },
+    toggle() {
+        toggle(this.container);
+        this.visible = !this.visible;
+
+        return this;
+    },
     focus() {
         this.element.focus();
         this.focused = true;
         this.active = true;
 
         return this;
+    },
+    /**
+     * Static Focus in handler
+     * @param {HTMLElement} target 
+     */
+    _focusIn(target) {
+        return false;
     },
     clear() {
         return true;
@@ -73,6 +86,78 @@ const BaseStatic = {
 
         removeChildren(this.element);
         this.element.remove();
+    },
+    /**
+     * Handles the `space` command
+     * @param {HTMLElement} target 
+     */
+    spaceHandler(target) {
+        console.warn(`SPACE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+
+        return false;
+    },
+
+    /**
+     * Handles the `space` command
+     * @param {HTMLElement} target 
+     */
+    _spaceHandler(target) {
+        console.warn(`CTRL_SPACE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+
+        return false;
+    },
+    /**
+     * Handles the `escape` command
+     * @param {HTMLElement} target 
+     */
+    escapeHandler(target) {
+        console.warn(`ESCAPE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+
+        return false;
+    },
+    /**
+     * Handles the `enter` command
+     * @param {HTMLElement} target 
+     */
+    enterHandler(target) {
+        this.focusOut();
+    },
+    /**
+     * Handles the `delete` command
+     * @param {HTMLElement} target 
+     */
+    deleteHandler(target) {
+        console.warn(`DELETE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+
+        this.focusOut();
+    },
+    /**
+     * Handles the `backspace` command
+     * @param {HTMLElement} target 
+     */
+    backspaceHandler(target) {
+        console.warn("BACKSPACE_HANDLER NOT IMPLEMENTED");
+
+        return false;
+    },
+    /**
+     * Handles the `arrow` command
+     * @param {string} dir 
+     * @param {HTMLElement} target 
+     */
+    arrowHandler(dir, target) {
+        console.warn("ARROW_HANDLER NOT IMPLEMENTED");
+
+        return false;
+    },
+    /**
+     * Handles the `click` command
+     * @param {HTMLElement} target 
+     */
+    clickHandler(target) {
+        console.warn("CLICK_HANDLER NOT IMPLEMENTED");
+
+        return false;
     }
 };
 

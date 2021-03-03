@@ -81,7 +81,7 @@ function createListFieldItem(object) {
     var btnRemoveProjection = ContentHandler.call(this, removeLayout);
 
     var btnRemove = createButton({
-        class: ["btn", "btn-remove"],
+        class: ["btn", "field-action", "btn-remove"],
         tabindex: -1,
         title: "Remove",
         dataset: {
@@ -160,9 +160,12 @@ const BaseListField = {
 
 
     init() {
+        const { content = [], focusable = true } = this.schema;
+
         this.items = new Map();
         this.elements = new Map();
-        this.content = this.schema.content;
+        this.focusable = focusable;
+        this.content = content;
 
         return this;
     },
@@ -252,7 +255,7 @@ const BaseListField = {
                 let addProjection = ContentHandler.call(this, content, null);
 
                 let addElement = createButton({
-                    class: ["field--list__add"],
+                    class: ["field-action", "field--list__add"],
                     tabindex: 0,
                     dataset: {
                         nature: "field-component",
@@ -524,7 +527,6 @@ const BaseListField = {
         var result = this.source.removeElementAt(+index);
 
         if (result.success) {
-            this.environment.notify("The element was successfully deleted");
             if (this.hasValue()) {
                 let itemIndex = +index < this.list.childElementCount ? +index : this.list.childElementCount - 1;
                 this.list.children[itemIndex].focus();

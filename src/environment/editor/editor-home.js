@@ -33,9 +33,7 @@ export const EditorHome = {
         return this;
     },
 
-    isRendered() {
-        return isHTMLElement(this.container);
-    },
+    get isRendered() { return isHTMLElement(this.container); },
 
     show() {
         show(this.container);

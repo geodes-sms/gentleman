@@ -1,6 +1,6 @@
 import {
-    createDocFragment, createDiv, createInput, createLabel, createButton, isHTMLElement,
-    valOrDefault, findAncestor,
+    createDocFragment, createDiv, createInput, createLabel, createButton, 
+    isHTMLElement,valOrDefault, findAncestor,
 } from "zenkai";
 import { getElementTop, getElementBottom, getElementLeft, getElementRight } from "@utils/index.js";
 import { StyleHandler } from './../style-handler.js';
@@ -83,6 +83,21 @@ export const BaseWrapLayout = {
         return this;
     },
 
+    focusIn() {
+        this.focused = true;
+        this.container.classList.add("active");
+        this.container.classList.add("focus");
+
+        return this;
+    },
+    focusOut() {
+        this.container.classList.remove("active");
+        this.container.classList.remove("focus");
+
+        this.focused = false;
+
+        return this;
+    },
     focus(target) {
         if (this.focusable) {
             this.container.focus();

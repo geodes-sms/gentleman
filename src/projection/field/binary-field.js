@@ -133,6 +133,10 @@ const BaseBinaryField = {
     state: null,
 
     init() {
+        const { focusable = true } = this.schema;
+
+        this.focusable = focusable;
+        
         return this;
     },
 

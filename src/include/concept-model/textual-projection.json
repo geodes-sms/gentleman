@@ -1538,11 +1538,11 @@
                                 "type": "text",
                                 "help": "Add an attribute",
                                 "content": "New attribute",
-                                "focusable": false,
-                                "style": {
-                                    "css": ["attribute-list--textual__btn-add"]
-                                }
+                                "focusable": false
                             }
+                        },
+                        "style": {
+                            "css": ["attribute-list--textual__btn-add"]
                         }
                     }
                 ],
@@ -1553,11 +1553,11 @@
                             "static": {
                                 "type": "text",
                                 "help": "Remove attribute",
-                                "content": "",
-                                "style": {
-                                    "css": ["attribute-list--textual__btn-remove"]
-                                }
+                                "content": ""
                             }
+                        },
+                        "style": {
+                            "css": ["attribute-list--textual__btn-remove"]
                         }
                     }
                 },
@@ -1596,11 +1596,11 @@
                                 "type": "text",
                                 "help": "Add an property",
                                 "content": "New property",
-                                "focusable": false,
-                                "style": {
-                                    "css": ["property-list--textual__btn-add"]
-                                }
+                                "focusable": false
                             }
+                        },
+                        "style": {
+                            "css": ["property-list--textual__btn-add"]
                         }
                     }
                 ],
@@ -1611,11 +1611,11 @@
                             "static": {
                                 "type": "text",
                                 "help": "Remove property",
-                                "content": "",
-                                "style": {
-                                    "css": ["property-list--textual__btn-remove"]
-                                }
+                                "content": ""
                             }
+                        },
+                        "style": {
+                            "css": ["property-list--textual__btn-remove"]
                         }
                     }
                 },
@@ -1641,11 +1641,35 @@
             }
         },
         {
+            "concept": { "name": "name" },
+            "type": "field",
+            "tags": ["textual", "list-item"],
+            "content": {
+                "type": "text",
+                "resizable": true,
+                "content": [
+                    {
+                        "type": "input",
+                        "input": {
+                            "placeholder": "name",
+                            "style": {
+                                "css": ["textfield--labeled__input"]
+                            }
+                        }
+                    }
+                ],
+                "style": {
+                    "css": ["textfield--labeled"]
+                }
+            }
+        },
+        {
             "concept": { "name": "string" },
             "type": "field",
             "tags": ["textual", "list-item"],
             "content": {
                 "type": "text",
+                "resizable": true,
                 "content": [
                     {
                         "type": "input",

@@ -133,6 +133,21 @@ export const BaseStackLayout = {
             }
         }
     },
+    focusIn() {
+        this.focused = true;
+        this.container.classList.add("active");
+        this.container.classList.add("focus");
+
+        return this;
+    },
+    focusOut() {
+        this.container.classList.remove("active");
+        this.container.classList.remove("focus");
+
+        this.focused = false;
+
+        return this;
+    },
 
     /**
      * Handles the `enter` command

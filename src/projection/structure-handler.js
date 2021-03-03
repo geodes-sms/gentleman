@@ -56,9 +56,10 @@ export function AttributeHandler(schema, concept) {
         var projection = this.projection.model.createProjection(target, tag).init();
 
         projection.parent = this.projection;
-
+        
         render = projection.render();
-
+        
+        projection.element.parent = this;
         attr.element = render;
     }
 

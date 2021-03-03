@@ -20,6 +20,8 @@ export const EditorMenu = {
     /** @type {boolean} */
     visible: true,
 
+    get isRendered() { return isHTMLElement(this.container); },
+
     init(schema) {
         if (schema) {
             this.schema = schema;
@@ -27,10 +29,7 @@ export const EditorMenu = {
 
         return this;
     },
-    isRendered() {
-        return isHTMLElement(this.container);
-    },
-
+    
     show() {
         show(this.container);
         this.visible = true;
