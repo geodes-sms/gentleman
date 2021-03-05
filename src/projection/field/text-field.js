@@ -91,17 +91,6 @@ function createNotificationMessage(type, message) {
     return element;
 }
 
-/**
- * Resolves the value
- * @returns {string}
- */
-function resolveValue(object) {
-    if (object.type === "property") {
-        return this.getProperty(object.value);
-    }
-
-    return object;
-}
 
 /**
  * Get the choice element

@@ -148,7 +148,7 @@ const Projection = {
      * @param {string} message 
      * @param {*} value 
      */
-    update(message, value) {
+    update(message, value, from) {
         if (isEmpty(this.containers)) {
             return;
         }
@@ -171,7 +171,7 @@ const Projection = {
 
         if (!isEmpty(handlers)) {
             handlers.forEach((handler) => {
-                let result = handler(value);
+                let result = handler(value, from);
 
                 if (result === false) {
                     return;
@@ -280,7 +280,7 @@ const Projection = {
             this.model.registerField(this.element);
         }
 
-        if(this.isRoot()) {
+        if (this.isRoot()) {
             this.element.focusable = true;
         }
 
@@ -312,16 +312,16 @@ const Projection = {
         }
 
 
-        if (this.hasMultipleViews) {
-            let altBadge = createI({
-                class: ["badge", "badge--alt"],
-                title: "This projection has multiple views"
-            });
+        // if (this.hasMultipleViews) {
+        //     let altBadge = createI({
+        //         class: ["badge", "badge--alt"],
+        //         title: "This projection has multiple views"
+        //     });
 
-            container.prepend(altBadge);
-        }
+        //     container.prepend(altBadge);
+        // }
 
-      
+
         this.addContainer(container);
 
         return container;
@@ -361,7 +361,11 @@ const Projection = {
         }
 
         currentContainer.replaceWith(container);
-        container.focus();
+        this.focus();
+
+        if (this.parent) {
+            this.parent.update("view.changed", container, this);
+        }
 
         return this;
     },

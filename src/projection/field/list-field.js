@@ -491,6 +491,11 @@ const BaseListField = {
         const index = +item.dataset.index;
 
         this.items.delete(value.id);
+
+        if(this.selection == item) {
+            this.selection = null;
+        }
+
         removeChildren(item);
         item.remove();
 
@@ -530,6 +535,8 @@ const BaseListField = {
             if (this.hasValue()) {
                 let itemIndex = +index < this.list.childElementCount ? +index : this.list.childElementCount - 1;
                 this.list.children[itemIndex].focus();
+            }else{
+                this.focus();
             }
         } else {
             this.environment.notify(`This element cannot be deleted: ${result.message}`);

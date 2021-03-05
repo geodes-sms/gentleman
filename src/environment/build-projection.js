@@ -93,9 +93,9 @@ const ProjectionBuildHandler = {
 };
 
 const ProjectionHandler = {
-    "layout": (concept) => buildLayout(getValue(concept, "layout")),
-    "field": (concept) => buildField(getValue(concept, "field")),
-    "element": (concept) => buildElement(getValue(concept, "element")),
+    "layout": (concept) => buildLayout(concept),
+    "field": (concept) => buildField(concept),
+    "element": (concept) => buildElement(concept, "element"),
 };
 
 export function buildProjectionHandler(model) {
@@ -130,7 +130,7 @@ export function buildProjectionHandler(model) {
         }
     });
 
-    
+
     if (!isEmpty(buildErrors)) {
         this.notify("<strong>Validation failed</strong>: The model could not be built.<br> <em>See Log for more details</em>.", NotificationType.ERROR);
         console.error(buildErrors);
@@ -166,14 +166,14 @@ function buildProjection(concept) {
 
     const content = getValue(concept, ATTR_CONTENT);
 
-    const type = content.getBuildProperty(PROP_TYPE);
+    const contentType = content.getBuildProperty("contentType");
 
     let schema = {
         "id": concept.id,
         "concept": buildConcept(getAttr(concept, ATTR_CONCEPT)),
-        "type": type,
+        "type": contentType,
         "tags": tags,
-        "content": ProjectionHandler[type](content),
+        "content": ProjectionHandler[contentType](content),
         "metadata": JSON.stringify(concept.export()),
     };
 
@@ -222,7 +222,7 @@ function buildTemplate(concept) {
         "content": content,
     };
 
-    
+
     return {
         success: true,
         message: schema,
@@ -327,7 +327,7 @@ function buildElement(element) {
             layout: buildLayout(element)
         };
     }
-    
+
     if (contentType === "template") {
         let schema = {
             type: contentType,
@@ -417,86 +417,80 @@ function buildField(field) {
         schema.type = "binary";
         schema.state = [];
 
-        getValue(field, "content").forEach(state => {
-            if (hasAttr(state, "state")) {
-                schema.state.push({
-                    "rule": {
-                        "type": "eq",
-                        "eq": [{ "prop": "value" }, getValue(state, "state")]
-                    },
-                    "result": {
-                        "label": {
-                            "projection": buildElement(getValue(state, "content"))
-                        }
-                    }
-                });
-            } else {
-                schema.label = {
-                    "projection": buildElement(getValue(state, "content"))
-                };
+
+        schema.state.push({
+            "rule": {
+                "type": "eq",
+                "eq": [{ "prop": "value" }, true]
+            },
+            "result": {
+                "label": {
+                    "projection": buildElement(getValue(field, "state1"))
+                }
+            }
+        });
+
+        schema.state.push({
+            "rule": {
+                "type": "eq",
+                "eq": [{ "prop": "value" }, false]
+            },
+            "result": {
+                "label": {
+                    "projection": buildElement(getValue(field, "state2"))
+                }
             }
         });
     } else if (field.name === "choice field") {
         schema.type = "choice";
+        schema.content = [];
 
         let choice = getAttr(field, "choice template");
         let selection = getAttr(field, "selection template");
 
-        schema.choice = {
-            "option": {
-                "template": {
-                    "tag": getValue(choice, "tag"),
-                    "name": getValue(choice, "name"),
-                }
-            },
-            "selection": {
-                "template": {
-                    "tag": getValue(selection, "tag"),
-                    "name": getValue(selection, "name"),
-                }
-            }
-        };
-    } else if (field.name === "link field") {
-        schema.type = "link";
-
-        let choice = getAttr(field, "choice template");
-        let value = getAttr(field, "value template");
-
-        schema.choice = {
-            "option": {
-                "template": {
-                    "tag": getValue(choice, "tag"),
-                    "name": getValue(choice, "name"),
-                }
-            },
-            "selection": {
-                "template": {
-                    "tag": getValue(value, "tag"),
-                    "name": getValue(value, "name"),
+        schema.content.push({
+            "type": "choice",
+            "choice": {
+                "option": {
+                    "template": {
+                        "tag": getValue(choice, "tag"),
+                        "name": getValue(choice, "name"),
+                    }
+                },
+                "selection": {
+                    "template": {
+                        "tag": getValue(selection, "tag"),
+                        "name": getValue(selection, "name"),
+                    }
                 }
             }
-        };
-
+        });
     } else if (field.name === "list field") {
         schema.type = "list";
-
-        if (hasAttr("orientation")) {
-            schema.orientation = getValue(field, 'orientation');
-        }
+        schema.content = [];
 
         let item = getAttr(field, "item template");
 
-        schema.list = {
-            "item": {
-                "template": {
-                    "tag": getValue(item, "tag"),
-                    "name": getValue(item, "name"),
+        schema.content.push({
+            "type": "list",
+            "list": {
+                "item": {
+                    "template": {
+                        "tag": getValue(item, "tag"),
+                        "name": getValue(item, "name"),
+                    }
                 }
             }
-        };
+        });
     } else if (field.name === "table field") {
+        schema.type = "table";
         let template = {};
+        schema.content = [];
 
+        schema.content.push({
+            "type": "table",
+            "table": {}
+        });
         if (field.isAttributeCreated("template")) {
             template.name = getAttr(field, 'template').getValue();
         }
@@ -506,7 +500,6 @@ function buildField(field) {
 
         schema.template = template;
 
-        schema.type = "table";
     }
 
     return schema;

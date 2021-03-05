@@ -19,15 +19,7 @@ export const Manager = {
     /** @type {string} */
     containerEnv: null,
     /** @type {HTMLElement} */
-    homeContainer: null,
-    /** @type {HTMLElement} */
     menu: null,
-    /** @type {HTMLElement} */
-    homePage: null,
-    /** @type {HTMLButtonElement} */
-    btnBuild: null,
-    /** @type {HTMLButtonElement} */
-    btnNew: null,
     /** @type {HTMLButtonElement} */
     btnStyle: null,
 
@@ -36,7 +28,6 @@ export const Manager = {
     get hasEnvironment() { return !isEmpty(environments); },
     get hasEditor() { return environments.some(env => env.type === ENV_EDITOR); },
     get hasExplorer() { return environments.some(env => env.type === ENV_EXPLORER); },
-
 
     /**
      * Initiliazes the manager
@@ -56,8 +47,6 @@ export const Manager = {
 
         if (this.containerEnv === "editor") {
             this.createEditor().init();
-
-            return this;
         }
 
         this.bindDOM();
@@ -69,14 +58,6 @@ export const Manager = {
     },
     render() {
         const fragment = createDocFragment();
-
-        if (isNullOrUndefined(this.menu.parentElement)) {
-            fragment.append(this.menu);
-        }
-
-        if (isNullOrUndefined(this.btnNew.parentElement)) {
-            this.menu.append(this.btnNew, this.btnStyle);
-        }
 
         if (fragment.hasChildNodes()) {
             this.container.append(fragment);
@@ -120,7 +101,7 @@ export const Manager = {
             return environments(env => env.id === id);
         }
 
-        return this.editors.find(env => !env.active);
+        return this.editors[0];
     },
     /**
      * Creates a new `Editor`
@@ -163,7 +144,6 @@ export const Manager = {
 
         return true;
     },
-  
 
     /**
      * Gets an explorer
@@ -207,36 +187,15 @@ export const Manager = {
             });
         }
 
-        // if (!isHTMLElement(this.btnBuild)) {
-        //     this.btnBuild = createButton({
-        //         id: "btnBuildModel",
-        //         class: ["btn", "manager__button", "manager__btn-build"]
-        //     }, "Build");
-
-        // }
-
-        if (!isHTMLElement(this.btnNew)) {
-            this.btnNew = createButton({
-                id: "btnNewEditor",
-                class: ["btn", "manager__button", "manager__btn-new"]
-            }, "New");
-        }
-
         if (!isHTMLElement(this.btnStyle)) {
             this.btnStyle = createButton({
                 id: "btnStyleEditor",
-                class: ["btn", "manager__button", "manager__btn-style", "hidden"]
+                class: ["btn", "manager__button", "manager__btn-style"]
             }, "Style");
         }
     },
 
     bindEvents() {
-        this.menu.addEventListener("click", (event) => {
-            const { target } = event;
-            if (target === this.btnNew) {
-                this.createEditor().init().open();
-            }
-        });
     }
 };
 
@@ -257,11 +216,12 @@ function resolveContainer(container) {
 }
 
 /** Creates a container
+ * @param {string} type
  * @returns {HTMLElement}
  */
 function createContainer(type) {
     return createDiv({
-        class: ["env", `${type}-container`, "close"],
+        class: ["env", `${type}-container`],
         tabindex: -1
     });
 }

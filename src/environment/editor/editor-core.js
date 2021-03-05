@@ -287,6 +287,9 @@ export const Editor = {
                 class: ["btn", "editor-concept-toolbar__btn-collapse"],
                 title: `Collapse ${name.toLowerCase()}`
             });
+            btnCollapse.addEventListener('click', (event) => {
+                instanceContainer.classList.toggle('collapsed');
+            });
 
             let btnMaximize = createButton({
                 class: ["btn", "editor-concept-toolbar__btn-maximize"],
@@ -298,9 +301,9 @@ export const Editor = {
 
             let toolbar = createDiv({
                 class: ["editor-concept-toolbar"],
-            }, [btnNew, btnMaximize, btnDelete]);
+            }, [btnCollapse, btnMaximize, btnDelete]);
 
-            header.append(toolbar);
+            header.append(btnNew, toolbar);
         }
 
         let instanceContainer = createDiv({
@@ -1062,6 +1065,7 @@ export const Editor = {
                 this.setConfig(config);
                 this.loadConceptModel(concept, values);
                 this.loadProjectionModel(projection, views);
+                setTimeout(() => { this.home.close(); }, 100);
             },
             "create-projection": (target) => {
                 const { concept, values = [] } = PROJECTION_MODEL__CONCEPT;
@@ -1072,6 +1076,7 @@ export const Editor = {
                 this.setConfig(config);
                 this.loadConceptModel(concept, values);
                 this.loadProjectionModel(projection, views);
+                setTimeout(() => { this.home.close(); }, 100);
             }
         };
 
@@ -1174,6 +1179,9 @@ export const Editor = {
                         if (handled) {
                             event.preventDefault();
                         }
+                    } else if (target.tagName === "BUTTON") {
+                        target.click();
+                        event.preventDefault();
                     } else {
                         event.preventDefault();
                     }
@@ -1245,17 +1253,17 @@ export const Editor = {
 
                     break;
                 case "e":
-                    // if (this.activeConcept) {
-                    //     let editor = this.manager.createEditor().init({
-                    //         conceptModel: this.conceptModel,
-                    //         projectionModel: this.projectionModel,
-                    //         concept: this.activeConcept,
-                    //         projection: this.activeProjection,
-                    //         config: this.config,
-                    //     });
+                    if (lastKey === Key.ctrl && this.activeConcept) {
+                        let editor = this.manager.createEditor().init({
+                            conceptModel: this.conceptModel,
+                            projectionModel: this.projectionModel,
+                            concept: this.activeConcept,
+                            projection: this.activeProjection,
+                            config: this.config,
+                        });
 
-                    //     event.preventDefault();
-                    // }
+                        event.preventDefault();
+                    }
 
                     break;
                 default:

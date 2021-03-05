@@ -1,5 +1,6 @@
 import { isNullOrUndefined } from 'zenkai';
 import { AudioStatic } from './audio-static.js';
+import { ButtonStatic } from './button-static.js';
 import { HTMLStatic } from './html-static.js';
 import { ImageStatic } from './image-static.js';
 import { LinkStatic } from './link-static.js';
@@ -15,6 +16,15 @@ const Handler = {
         object: { value: "static" },
         name: { value: "audio-static" },
         type: { value: "audio" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+    }),
+    'button': (model, schema, projection) => Object.create(ButtonStatic, {
+        object: { value: "static" },
+        name: { value: "button-static" },
+        type: { value: "button" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
