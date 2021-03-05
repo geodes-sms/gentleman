@@ -127,7 +127,7 @@ export const BaseStackLayout = {
         if (this.focusable) {
             this.container.focus();
         } else {
-            let projectionElement = this.environment.resolveElement(valOrDefault(element, this.container.children[0]));
+            let projectionElement = this.environment.resolveElement(valOrDefault(element, this.elements[0]));
             if (projectionElement) {
                 projectionElement.focus();
             }

@@ -1,27 +1,15 @@
 import {
-    createDocFragment, createSpan, removeChildren, isHTMLElement, isNullOrUndefined,
-    htmlToElement, findAncestor, valOrDefault,
+    createDocFragment, createButton, createSpan, removeChildren, isHTMLElement,
+    isNullOrUndefined, hasOwn, findAncestor, valOrDefault, isFunction,
 } from "zenkai";
 import { hide, show, getCaretIndex } from "@utils/index.js";
 import { StyleHandler } from "../style-handler.js";
+import { ContentHandler } from "./../content-handler.js";
 import { Static } from "./static.js";
 
 
-function resolveValue(content) {
-    const { type, name } = content;
-
-    if (type === "property") {
-        return this.projection.concept.getProperty(name);
-    }
-
-    if (type === "param") {
-        return this.projection.getParam(name);
-    }
-
-    return content;
-}
-
-const BaseTextStatic = {
+// TODO: Change to projection window
+const BaseButtonStatic = {
     /** @type {string} */
     contentType: null,
     /** @type {boolean} */
@@ -31,12 +19,14 @@ const BaseTextStatic = {
 
     init(args = {}) {
         Object.assign(this.schema, args);
-        
-        const { contentType = "text", editable = false, focusable = valOrDefault(this.parent.schema.focusable, true) } = this.schema;
 
-        this.contentType = contentType;
-        this.editable = editable;
+        const { focusable = true } = this.schema;
+
         this.focusable = focusable;
+
+        if (!hasOwn(this.schema, "action")) {
+            this.schema.action = {};
+        }
 
         return this;
     },
@@ -47,27 +37,17 @@ const BaseTextStatic = {
         const { help, style, content } = this.schema;
 
         if (!isHTMLElement(this.element)) {
-            this.element = createSpan({
-                class: ["text"],
-                editable: this.editable,
+            this.element = createButton({
+                class: ["btn"],
                 dataset: {
                     nature: "static",
-                    view: "text",
-                    id: this.id,
-                    ignore: "all",
+                    view: "button",
+                    id: this.id
                 }
-            });
+            }, ContentHandler.call(this, content, this.projection.concept, { focusable: false }));
 
             if (this.focusable) {
                 this.element.tabIndex = 0;
-            }
-
-            let value = resolveValue.call(this, content);
-
-            if (this.contentType === "html") {
-                this.element.append(htmlToElement(value));
-            } else {
-                this.element.textContent = value.trim();
             }
         }
 
@@ -107,9 +87,7 @@ const BaseTextStatic = {
 
         return this;
     },
-    getLength() {
-        return this.element.textContent.length;
-    },
+
     /**
      * Handles the `arrow` command
      * @param {HTMLElement} target 
@@ -150,6 +128,36 @@ const BaseTextStatic = {
 
         element.focus(parent);
     },
+    /**
+     * Handles the `enter` command
+     * @param {HTMLElement} target 
+     */
+    enterHandler(target) {
+        const { name, arg } = this.schema.action;
+
+        const handler = this.projection[name];
+
+        if (isFunction(handler)) {
+            handler.call(this.projection, ...arg);
+
+            return false;
+        }
+    },
+    /**
+     * Handles the `click` command
+     * @param {HTMLElement} target 
+     */
+    clickHandler(target) {
+        const { name, arg } = this.schema.action;
+
+        const handler = this.projection[name];
+
+        if (isFunction(handler)) {
+            handler.call(this.projection, ...arg);
+            
+            return false;
+        }
+    },
     refresh() {
         return this;
     },
@@ -158,7 +166,7 @@ const BaseTextStatic = {
     },
 };
 
-export const TextStatic = Object.assign(
+export const ButtonStatic = Object.assign(
     Object.create(Static),
-    BaseTextStatic
+    BaseButtonStatic
 );

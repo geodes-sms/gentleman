@@ -21,7 +21,17 @@
                 {
                     "name": "content",
                     "target": {
-                        "name": "component"
+                        "name": "render",
+                        "accept": [
+                            { "name": "stack layout" },
+                            { "name": "wrap layout" },
+                            { "name": "cell layout" },
+                            { "name": "text field" },
+                            { "name": "binary field" },
+                            { "name": "choice field" },
+                            { "name": "list field" },
+                            { "name": "table field" }
+                        ]
                     },
                     "required": true
                 },
@@ -70,45 +80,6 @@
             }
         },
 
-        {
-            "name": "component",
-            "nature": "prototype",
-            "attributes": []
-        },
-        {
-            "name": "layout component",
-            "nature": "concrete",
-            "prototype": "component",
-            "attributes": [
-                {
-                    "name": "layout",
-                    "target": {
-                        "name": "layout"
-                    }
-                }
-            ],
-
-            "build": {
-                "type": "layout"
-            }
-        },
-        {
-            "name": "field component",
-            "nature": "concrete",
-            "prototype": "component",
-            "attributes": [
-                {
-                    "name": "field",
-                    "target": {
-                        "name": "field"
-                    }
-                }
-            ],
-
-            "build": {
-                "type": "field"
-            }
-        },
 
         {
             "name": "concept",
@@ -183,7 +154,15 @@
                     "target": {
                         "name": "set",
                         "accept": {
-                            "name": "element"
+                            "name": "element",
+                            "accept": [
+                                { "name": "stack layout" },
+                                { "name": "wrap layout" },
+                                { "name": "cell layout" },
+                                { "name": "static text" },
+                                { "name": "input" },
+                                { "name": "template element" }
+                            ]
                         },
                         "min": 1
                     }
@@ -208,14 +187,15 @@
             "prototype": "field",
             "attributes": [
                 {
-                    "name": "content",
+                    "name": "state1",
                     "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "state element"
-                        },
-                        "min": 1,
-                        "max": 2
+                        "name": "element"
+                    }
+                },
+                {
+                    "name": "state2",
+                    "target": {
+                        "name": "element"
                     }
                 }
             ],
@@ -225,25 +205,7 @@
                 "elementType": "binary"
             }
         },
-        {
-            "name": "state element",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "state",
-                    "target": {
-                        "name": "boolean"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "content",
-                    "target": {
-                        "name": "element"
-                    }
-                }
-            ]
-        },
+    
      
         {
             "name": "choice field",
@@ -788,7 +750,7 @@
         {
             "name": "static link",
             "nature": "concrete",
-            "prototype": "static element",
+            "prototype": "$static element",
             "attributes": [
                 {
                     "name": "url",
@@ -854,7 +816,7 @@
         {
             "name": "checkbox",
             "nature": "concrete",
-            "prototype": "dynamic element",
+            "prototype": "$dynamic element",
             "attributes": [
                 {
                     "name": "label",
@@ -877,7 +839,7 @@
                 {
                     "name": "value",
                     "target": {
-                        "name": "string"
+                        "name": "name"
                     }
                 },
                 {

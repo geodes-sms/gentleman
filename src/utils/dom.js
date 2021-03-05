@@ -106,7 +106,7 @@ export function getElementTop(source, container) {
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
 
-        if (isHidden(item) || item === source) {
+        if (isHidden(item) || item.classList.contains("badge") || item === source) {
             continue;
         }
 
@@ -147,7 +147,7 @@ export function getElementLeft(source, container) {
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
 
-        if (isHidden(item) || item === source) {
+        if (isHidden(item) || item.classList.contains("badge") || item === source) {
             continue;
         }
 
@@ -188,7 +188,7 @@ export function getElementRight(source, container) {
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
 
-        if (isHidden(item) || item === source) {
+        if (isHidden(item) || item.classList.contains("badge") || item === source) {
             continue;
         }
 
@@ -229,7 +229,7 @@ export function getElementBottom(source, container) {
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
 
-        if (isHidden(item) || item === source) {
+        if (isHidden(item) || item.classList.contains("badge") || item === source) {
             continue;
         }
 
@@ -271,7 +271,7 @@ export function getTopElement(container) {
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
 
-        if (isHidden(item)) {
+        if (isHidden(item) || item.classList.contains("badge")) {
             continue;
         }
 
@@ -312,7 +312,7 @@ export function getLeftElement(container) {
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
 
-        if (isHidden(item)) {
+        if (isHidden(item) || item.classList.contains("badge")) {
             continue;
         }
 
@@ -353,7 +353,7 @@ export function getRightElement(container) {
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
 
-        if (isHidden(item)) {
+        if (isHidden(item) || item.classList.contains("badge")) {
             continue;
         }
 
@@ -394,7 +394,7 @@ export function getBottomElement(container) {
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
 
-        if (isHidden(item)) {
+        if (isHidden(item) || item.classList.contains("badge")) {
             continue;
         }
 

@@ -153,7 +153,9 @@ const BaseChoiceField = {
         } else {
             if (isNullOrUndefined(value)) {
                 show(this.selectionPlaceholder);
-                removeChildren(this.selectionElement).remove();
+                if (this.selectionElement) {
+                    removeChildren(this.selectionElement).remove();
+                }
                 this.selection = null;
             } else if (value.object === "concept") {
                 const { template = {} } = this.schema.selection;
@@ -162,6 +164,10 @@ const BaseChoiceField = {
                 projection.parent = this.projection;
 
                 this.setChoice(value);
+
+                if (this.selectionElement) {
+                    removeChildren(this.selectionElement).remove();
+                }
 
                 this.setSelection(projection.render());
                 projection.element.parent = this;
@@ -584,12 +590,12 @@ const BaseChoiceField = {
      * @param {HTMLElement} element 
      */
     setSelection(element) {
-        if(!isHTMLElement(element)) {
+        if (!isHTMLElement(element)) {
             throw new TypeError("Bad parameter");
         }
 
-        const { style = {}} = this.schema.selection;
-        
+        const { style = {} } = this.schema.selection;
+
         hide(this.selectionPlaceholder);
         this.selectionElement = element;
         this.selectionElement.classList.add("field--choice__selection");
@@ -737,12 +743,21 @@ const BaseChoiceField = {
             if (isHTMLElement(closestItem)) {
                 if (closestItem === this.choices && this.choices.hasChildNodes()) {
                     let firstChild = getVisibleElement(closestItem);
-                    if (firstChild) { firstChild.focus(); }
+                    if (firstChild) {
+                        firstChild.focus();
+                    }
                 } else if (closestItem === this.selectionElement) {
                     let element = this.environment.resolveElement(closestItem);
-                    if (element) { element.focus(); }
+                    if (element) {
+                        element.focus();
+                    }
                 } else {
-                    closestItem.focus();
+                    let element = this.environment.resolveElement(closestItem);
+                    if (element) {
+                        element.focus();
+                    } else {
+                        closestItem.focus();
+                    }
                 }
 
                 return true;
@@ -762,6 +777,12 @@ const BaseChoiceField = {
                 this.filterChoice(this.input.value);
             });
         }
+
+        this.projection.registerHandler("view.changed", (value, from) => {
+            if (from && from.parent === this.projection) {
+                this.setSelection(value);
+            }
+        });
     },
 };
 
