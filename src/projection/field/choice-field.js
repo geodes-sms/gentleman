@@ -5,7 +5,7 @@ import {
 } from "zenkai";
 import { getElementBottom, getElementLeft, getElementRight, getElementTop, hide, isHidden, show } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
-import { ContentHandler } from "./../content-handler.js";
+import { ContentHandler, resolveValue } from "./../content-handler.js";
 import { Field } from "./field.js";
 
 
@@ -199,7 +199,7 @@ const BaseChoiceField = {
     render() {
         const fragment = createDocFragment();
 
-        const { choice, content = [], selection = {}, input = {}, style } = this.schema;
+        const { choice, input, style } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createDiv({
@@ -213,8 +213,6 @@ const BaseChoiceField = {
                     id: this.id,
                 }
             });
-
-            StyleHandler(this.element, style);
         }
 
         if (!isHTMLElement(this.notification)) {
@@ -256,35 +254,27 @@ const BaseChoiceField = {
             this.notification.appendChild(this.messageElement);
         }
 
-        content.forEach(element => {
-            if (element.type === "input") {
-                this.input = ContentHandler.call(this, element);
+        if (!isHTMLElement(this.input) && input) {
+            const { placeholder = "", type, style } = input;
 
-                this.input.classList.add("field--textbox__input");
+            let placeholderValue = resolveValue.call(this, placeholder);
 
-                fragment.append(this.input);
-            } else if (element.type === "choice") {
-                const { style } = valOrDefault(element.choice, {});
+            this.input = createInput({
+                class: ["field--choice__input"],
+                type: valOrDefault(type, "text"),
+                placeholder: placeholderValue,
+                title: placeholderValue,
+                dataset: {
+                    nature: "field-component",
+                    view: this.type,
+                    id: this.id,
+                }
+            });
 
-                this.choices = createUnorderedList({
-                    class: ["bare-list", "field--choice__choices"],
-                    tabindex: -1,
-                    dataset: {
-                        nature: "field-component",
-                        view: "choice",
-                        id: this.id
-                    }
-                });
+            StyleHandler.call(this, this.input, style);
 
-                StyleHandler(this.choices, style);
-
-                fragment.appendChild(this.choices);
-            } else {
-                let content = ContentHandler.call(this, element);
-
-                fragment.appendChild(content);
-            }
-        });
+            fragment.append(this.input);
+        }
 
         if (!isHTMLElement(this.choices)) {
             const { style } = choice;
@@ -299,7 +289,7 @@ const BaseChoiceField = {
                 }
             });
 
-            StyleHandler(this.choices, style);
+            StyleHandler.call(this, this.choices, style);
 
             fragment.appendChild(this.choices);
         }
@@ -316,6 +306,8 @@ const BaseChoiceField = {
 
             fragment.appendChild(this.selectionPlaceholder);
         }
+
+        StyleHandler(this.element, style);
 
         if (fragment.hasChildNodes()) {
             this.element.appendChild(fragment);
@@ -340,6 +332,7 @@ const BaseChoiceField = {
     focus(target) {
         if (this.input && !isHidden(this.input)) {
             this.input.focus();
+            this.element.classList.add("active");
         } else if (this.selection) {
             this.selection.focus();
         }
@@ -347,7 +340,7 @@ const BaseChoiceField = {
         return this;
     },
     focusIn() {
-        this.focused = true;
+        this.focused = true; 
         this.element.classList.add("active");
 
         //requery
@@ -516,8 +509,7 @@ const BaseChoiceField = {
             }
         });
 
-        const choiceSchema = this.content.find(c => c.type === "choice");
-        const { template = {}, style } = choiceSchema.choice.option;
+        const { template = {}, style } = this.schema.choice.option;
 
         if (isConcept) {
             let choiceProjection = this.model.createProjection(value, valOrDefault(template.tag, "choice")).init({ focusable: false });
@@ -777,6 +769,10 @@ const BaseChoiceField = {
                 this.filterChoice(this.input.value);
             });
         }
+
+        this.projection.registerHandler("value.changed", (value, from) => {
+            this.setValue(value);
+        });
 
         this.projection.registerHandler("view.changed", (value, from) => {
             if (from && from.parent === this.projection) {

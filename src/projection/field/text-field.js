@@ -1,7 +1,7 @@
 import {
     createDocFragment, createSpan, createDiv, createI, createUnorderedList,
-    createListItem, findAncestor, removeChildren, isHTMLElement, isNullOrWhitespace,
-    isEmpty, valOrDefault, hasOwn, getPreviousElementSibling, getNextElementSibling,
+    createTextArea, createInput, createListItem, findAncestor, removeChildren,
+    isHTMLElement, isNullOrWhitespace, isEmpty, valOrDefault, hasOwn, getPreviousElementSibling, getNextElementSibling,
 } from "zenkai";
 import {
     hide, show, getCaretIndex, isHidden, NotificationType,
@@ -9,7 +9,7 @@ import {
 } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { StateHandler } from "./../state-handler.js";
-import { ContentHandler } from "./../content-handler.js";
+import { ContentHandler, resolveValue } from "./../content-handler.js";
 import { Field } from "./field.js";
 
 
@@ -91,7 +91,6 @@ function createNotificationMessage(type, message) {
     return element;
 }
 
-
 /**
  * Get the choice element
  * @param {HTMLElement} element 
@@ -107,6 +106,53 @@ function getItem(element) {
  */
 function getItemValue(item) {
     return item.dataset.value;
+}
+
+/**
+ * Resolves the input
+ * @param {*} schema 
+ * @returns {HTMLElement}
+ */
+function resolveInput(schema) {
+    const { placeholder = "", type } = schema;
+
+    let placeholderValue = resolveValue.call(this, placeholder);
+
+    if (this.readonly || this.resizable) {
+        return createSpan({
+            class: ["field--textbox__input"],
+            editable: !this.readonly,
+            title: placeholderValue,
+            dataset: {
+                placeholder: placeholderValue,
+                nature: "field-component",
+                view: this.type,
+                id: this.id,
+            }
+        });
+    } else if (this.multiline) {
+        return createTextArea({
+            class: ["field--textbox__input"],
+            placeholder: placeholderValue,
+            title: placeholderValue,
+            dataset: {
+                nature: "field-component",
+                view: this.type,
+                id: this.id,
+            }
+        });
+    }
+    return createInput({
+        class: ["field--textbox__input"],
+        type: valOrDefault(type, "text"),
+        placeholder: placeholderValue,
+        title: placeholderValue,
+        dataset: {
+            nature: "field-component",
+            view: this.type,
+            id: this.id,
+        }
+    });
 }
 
 const BaseTextField = {
@@ -128,12 +174,11 @@ const BaseTextField = {
 
 
     init() {
-        const { multiline = false, content = [], resizable = false, focusable = true } = this.schema;
+        const { multiline = false, resizable = false, focusable = true } = this.schema;
 
         this.multiline = multiline;
         this.focusable = focusable;
         this.resizable = resizable;
-        this.content = content;
 
         if (!hasOwn(this.schema, "choice")) {
             this.schema.choice = {};
@@ -207,6 +252,11 @@ const BaseTextField = {
 
         return this.input.textContent;
     },
+    /**
+     * Sets the field value
+     * @param {string} value
+     * @param {boolean} update 
+     */
     setValue(value, update = false) {
         var response = null;
 
@@ -226,15 +276,22 @@ const BaseTextField = {
 
         // this.attached.filter(element => !element.active).forEach(element => element.hide());
 
+        this.setInputValue(value);
+
+        this.value = value;
+
+        this.refresh();
+    },
+    /**
+     * Sets the input value
+     * @param {string} value 
+     */
+    setInputValue(value) {
         if (isInputOrTextarea(this.input)) {
             this.input.value = value;
         } else {
             this.input.textContent = value;
         }
-
-        this.value = value;
-
-        this.refresh();
     },
     getCandidates() {
         return this.source.getCandidates();
@@ -292,11 +349,7 @@ const BaseTextField = {
     render() {
         const fragment = createDocFragment();
 
-        const { content, style } = this.schema;
-
-        if (!Array.isArray(content)) {
-            throw new Error("Empty content for textfield");
-        }
+        const { input = {}, style } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createDiv({
@@ -349,31 +402,29 @@ const BaseTextField = {
             this.notification.appendChild(this.statusElement);
         }
 
-        content.forEach(element => {
-            if (element.type === "input") {
-                this.input = ContentHandler.call(this, element);
+        if (!isHTMLElement(this.input)) {
+            const { placeholder = "", type, style } = input;
 
-                this.input.classList.add("field--textbox__input");
+            this.input = resolveInput.call(this, input);
 
-                if (this.multiline) {
-                    this.input.classList.add("field--textbox__input--multiline");
-                }
-
-                let value = "";
-                if (this.source.hasValue()) {
-                    value = this.source.getValue();
-                }
-
-                this.input.textContent = value;
-                this.value = value;
-
-                fragment.appendChild(this.input);
-            } else {
-                let content = ContentHandler.call(this, element);
-
-                fragment.appendChild(content);
+            if (this.disabled) {
+                this.input.disabled = true;
             }
-        });
+
+            if (this.focusable) {
+                this.input.tabIndex = 0;
+            } else {
+                this.input.dataset.ignore = "all";
+            }
+
+            StyleHandler.call(this, this.input, style);
+
+            if (this.multiline) {
+                this.input.classList.add("field--textbox__input--multiline");
+            }    
+
+            fragment.appendChild(this.input);
+        }
 
         StyleHandler(this.element, style);
 
@@ -660,6 +711,10 @@ const BaseTextField = {
     bindEvents() {
         this.element.addEventListener('input', (event) => {
             this.refresh();
+        });
+
+        this.projection.registerHandler("value.changed", (value) => {
+            this.setValue(value);
         });
     },
 };

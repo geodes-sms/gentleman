@@ -136,14 +136,14 @@ const BaseBinaryField = {
         const { focusable = true } = this.schema;
 
         this.focusable = focusable;
-        
+
         return this;
     },
 
     render() {
         const fragment = createDocFragment();
 
-        const { before = {}, label = {}, input = {}, after = {} } = this.schema;
+        const { label = {}, input = {}, after = {} } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createFieldElement(this.id);
@@ -169,7 +169,7 @@ const BaseBinaryField = {
 
 
         if (!isHTMLElement(this.input)) {
-            const { before, projection, after, style } = input;
+            const { style } = input;
 
             this.input = createFieldInput(this.id);
             this.input.checked = resolveValue(this.source);
@@ -186,7 +186,7 @@ const BaseBinaryField = {
         }
 
         if (!isHTMLElement(this.label)) {
-            const { style, projection, value } = label;
+            const { style, content =[], value } = label;
 
             this.label = createLabel({
                 class: ["field--checkbox__label"],
@@ -200,13 +200,9 @@ const BaseBinaryField = {
             });
             this.label.htmlFor = this.input.id;
 
-            if (Array.isArray(projection)) {
-                projection.forEach(element => {
-                    this.label.append(ContentHandler.call(this, element));
-                });
-            } else if (projection) {
-                this.label.append(ContentHandler.call(this, projection));
-            }
+            content.forEach(element => {
+                this.label.append(ContentHandler.call(this, element));
+            });
 
             StyleHandler(this.label, style);
 
@@ -322,24 +318,19 @@ const BaseBinaryField = {
             this.statusElement.classList.remove("change");
         }
 
-        if (state) {
-            const { label } = state;
+        if (this.schema.state) {
+            let state = this.schema.state[this.getValue().toString()];
+            
+            const { style, content, value } = state;
 
-            removeChildren(this.label);
+            let fragment = createDocFragment();
+            content.forEach(element => {
+                fragment.append(ContentHandler.call(this, element));
+            });
 
-            if (label) {
-                const { style, projection, value } = label;
+            removeChildren(this.label).append(fragment);
 
-                if (Array.isArray(projection)) {
-                    projection.forEach(element => {
-                        this.label.append(ContentHandler.call(this, element));
-                    });
-                } else if (projection) {
-                    this.label.append(ContentHandler.call(this, projection));
-                }
-
-                StyleHandler(this.label, style);
-            }
+            StyleHandler(this.label, style);
         }
 
         if (this.input.checked) {

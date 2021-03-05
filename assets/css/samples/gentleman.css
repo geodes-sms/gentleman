@@ -838,31 +838,34 @@
 
 
 .name-field--textual {
+    display: flex; flex-direction: row;
     padding: 0;
     margin-left: 6px; margin-right: 6px;
 }
 
-.name-field--textual__label:after {
-    content: ":";
-}
+    .name-field--textual__label {
+        text-transform: capitalize;
+        font-weight: 600;
+    }
+        .name-field--textual__label:after { content: ":"; }
 
-.name-field--textual__input {
-    font-family: inherit;
-    display: inline-flex;
-    width: auto;
-    color: blue;
-    border-bottom: 1px solid #d5d5d5;
-    background-color: #f5f5f5;
-}
+    .name-field--textual__input {
+        font-family: inherit;
+        display: inline-flex;
+        width: auto;
+        color: blue;
+        border-bottom: 1px solid #d5d5d5;
+        background-color: #f5f5f5;
+    }
 
-.name-field--textual.empty .name-field--textual__input:before {
-    content: attr(data-placeholder);
-    padding-left: 4px; padding-right: 4px;
-    flex: 1 1;
-    font-style: italic;
-    background-color: #d5d5d5;
-    color: #555;
-}
+    .name-field--textual.empty .name-field--textual__input:before {
+        content: attr(data-placeholder);
+        padding-left: 4px; padding-right: 4px;
+        flex: 1 1;
+        font-style: italic;
+        background-color: #d5d5d5;
+        color: #555;
+    }
 
 .string-field--bracket {
     padding: 0;
@@ -1130,80 +1133,80 @@
         letter-spacing: -0.5px;
     }
 
-    .constraint-choice--textual.empty:not(.querying) .constraint-choice--textual__list {
+    .constraint-choice--textual__choice.empty:not(.querying) .constraint-choice--textual__choice-list {
         display: none;
     }
 
-    .constraint-choice--textual__list {
+    .constraint-choice--textual__choice-list {
         display: flex; flex-direction: row; align-items: center;
         width: 100%;
     }
-        .constraint-choice--textual.active .constraint-choice--textual__list:before {
+        .constraint-choice--textual__choice.active .constraint-choice--textual__choice-list:before {
             content: "[";
             font-weight: bold;
             transform: scale(1.1);
         }
-        .constraint-choice--textual.active .constraint-choice--textual__list:after {
+        .constraint-choice--textual__choice.active .constraint-choice--textual__choice-list:after {
             content: "]";
             font-weight: bold;
             transform: scale(1.1);
         }
 
-    .constraint-choice--textual__input {
+    .constraint-choice--textual__choice-input {
         border: 0 none;
         border-bottom: 1px solid #555;
     }
         
-        .constraint-choice--textual__input:focus { 
+        .constraint-choice--textual__choice-input:focus { 
             border-color: royalblue; 
             box-shadow: 0 1px 0 royalblue; 
         }
 
-    .constraint-choice--textual.active > .constraint-choice--textual__list {
+    .constraint-choice--textual__choice.active > .constraint-choice--textual__choice-list {
         margin-left: 4px;
         z-index: 10;
     }
 
-    .constraint-choice--textual.active > .constraint-choice--textual__list .constraint-choice--textual__list-option.selected {
+    .constraint-choice--textual__choice.active > .constraint-choice--textual__choice-list .constraint-choice--textual__choice-option.selected {
         color: #222;
         background-color: #ffd300;
     }
         
-    .constraint-choice--textual:not(.active) .constraint-choice--textual__list-option:not(.selected) { display: none; }
+    .constraint-choice--textual__choice:not(.active) .constraint-choice--textual__choice-option:not(.selected) { display: none; }
 
-    .constraint-choice--textual:not(.active) .constraint-choice--textual__list-option.selected { 
+    .constraint-choice--textual__choice:not(.active) .constraint-choice--textual__choice-option.selected { 
         margin: 0;
         font-size: 1em; 
         padding: 0; 
     }
 
-    .constraint-choice--textual:not(.active):not(.empty) .constraint-choice--textual__input { display: none; }
+    .constraint-choice--textual__choice:not(.active):not(.empty) .constraint-choice--textual__choice-input { display: none; }
 
-    .constraint-choice--textual:not(.active).empty .constraint-choice--textual__input { font-style: italic; }
+    .constraint-choice--textual__choice:not(.active).empty .constraint-choice--textual__choice-input { font-style: italic; }
     
         
-    .constraint-choice--textual__list-option {
+    .constraint-choice--textual__choice-option {
         font-size: 0.95em;
         padding-left: 4px; padding-right: 4px;
         border-radius: 1px;
         transition: transform .2s;
     }
     
-    .constraint-choice--textual__list-option:not(:last-child) {
+    .constraint-choice--textual__choice-option:not(:last-child) {
         margin-right: 4px;
     }
     
-    .constraint-choice--textual__list-option:hover,
-    .constraint-choice--textual__list-option:focus {
+    .constraint-choice--textual__choice-option:hover,
+    .constraint-choice--textual__choice-option:focus {
         background-color: rgba(205, 205, 205, 0.85);
         transform: scale(1.05);
     }
     
-    .constraint-choice--textual__list-option.selected {
+    .constraint-choice--textual__choice-option.selected {
         font-weight: bold;
     }
 
-    .constraint-choice--textual > .field--choice__selection { width: 100%; }
+    .constraint-choice--textual__choice > .field--choice__selection { width: 100%; }
 
     .constraint-choice--textual__keyword { margin-right: 0.5em; }
 
