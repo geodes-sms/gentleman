@@ -11,7 +11,7 @@ import { _ } from "core-js";
  * Resolves the value
  * @returns {string}
  */
-function resolveValue(object) {
+export function resolveValue(object) {
     if (object.type === "property") {
         return this.projection.concept.getProperty(object.name);
     }
@@ -32,10 +32,11 @@ export function ContentHandler(schema, concept, args = {}) {
 
         return layout.render();
     } else if (schema.type === "field") {
-        let field = FieldFactory.createField(this.model, schema, this.projection);
-        field.model = this.model;
+        let field = FieldFactory.createField(this.model, schema.field, this.projection);
         field.parent = this;
         field.init(args);
+
+        this.model.registerField(field);
 
         return field.render();
     } else if (schema.type === "static") {
@@ -46,59 +47,6 @@ export function ContentHandler(schema, concept, args = {}) {
         this.model.registerStatic(staticContent);
 
         return staticContent.render();
-    } if (schema.type === "input") {
-        const { placeholder = "", type, style } = valOrDefault(schema.input, {});
-
-        let input = null;
-
-        if (this.readonly || this.resizable) {
-            input = createSpan({
-                editable: !this.readonly,
-                title: placeholder,
-                dataset: {
-                    placeholder: resolveValue.call(this, placeholder),
-                    nature: "field-component",
-                    view: this.type,
-                    id: this.id,
-                }
-            });
-        } else if (this.multiline) {
-            input = createTextArea({
-                placeholder: placeholder,
-                title: placeholder,
-                dataset: {
-                    nature: "field-component",
-                    view: this.type,
-                    id: this.id,
-                }
-            });
-        } else {
-            input = createInput({
-                type: valOrDefault(type, "text"),
-                placeholder: placeholder,
-                title: placeholder,
-                dataset: {
-                    nature: "field-component",
-                    view: this.type,
-                    id: this.id,
-                }
-            });
-        }
-
-        if (this.disabled) {
-            input.disabled = true;
-        }
-
-        if (this.focusable) {
-            input.tabIndex = 0;
-        } else {
-            input.dataset.ignore = "all";
-        }
-
-        StyleHandler(input, style);
-
-        return input;
-
     } else if (schema.type === "attribute") {
         return AttributeHandler.call(this, schema, contentConcept);
     } else if (schema.type === "template") {

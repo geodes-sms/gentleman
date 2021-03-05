@@ -16,12 +16,7 @@ const projections = [
         "type": "field",
         "tags": [],
         "content": {
-            "type": "text",
-            "content": [
-                {
-                    "type": "input"
-                }
-            ]
+            "type": "text"
         }
     },
     {
@@ -45,7 +40,7 @@ const projections = [
         "type": "field",
         "tags": [],
         "content": {
-            "type": "link"
+            "type": "choice"
         }
     },
     {
@@ -304,10 +299,6 @@ function buildElement(element) {
         return schema;
     }
 
-    if (contentType === "dynamic") {
-        return buildDynamic(element, elementType);
-    }
-
     if (contentType === "attribute") {
         let schema = {
             type: contentType,
@@ -325,6 +316,13 @@ function buildElement(element) {
         return {
             type: contentType,
             layout: buildLayout(element)
+        };
+    }
+
+    if (contentType === "field") {
+        return {
+            type: contentType,
+            field: buildField(element)
         };
     }
 
@@ -373,18 +371,91 @@ function buildStatic(element, type) {
     return schema;
 }
 
-function buildDynamic(element, type) {
-    let schema = {
-        type: type
+function buildField(field) {
+    var schema = {
+        readonly: getValue(field, "readonly"),
+        disabled: getValue(field, "disabled"),
     };
 
-    if (type === "input") {
-        schema.placeholder = getValue(element, "placeholder");
-    } else if (type === "checkbox") {
-        schema.label = getValue(element, "label");
-    } else if (type === "list") {
-        schema.selector = getValue(element, "item");
+    if (field.name === "text field") {
+        schema.type = "text";
+        schema.multiline = getValue(field, "multiline");
+        schema.resizable = getValue(field, "resizable");
+
+        if (field.isAttributeCreated("input")) {
+            schema.input = buildInput(getAttr(field, "input"));
+        }
+    } else if (field.name === "binary field") {
+        schema.type = "binary";
+
+        schema.state = {
+            "true": {
+                "content": getValue(field, "true-state").filter(proto => proto.hasValue())
+                    .map(proto => buildElement(proto.getValue()))
+            },
+            "false": {
+                "content": getValue(field, "false-state").filter(proto => proto.hasValue())
+                    .map(proto => buildElement(proto.getValue()))
+            }
+        };
+    } else if (field.name === "choice field") {
+        schema.type = "choice";
+        schema.choice = {};
+        
+        if (field.isAttributeCreated("choice template")) {
+            schema.choice.option = {
+                "template": buildFieldTemplate(getAttr(field, "choice template"))
+            };
+        }
+        if (field.isAttributeCreated("choice template")) {
+            schema.selection = {
+                "template": buildFieldTemplate(getAttr(field, "selection template"))
+            };
+        }
+    } else if (field.name === "list field") {
+        schema.type = "list";
+        schema.list = {};
+        
+        if (field.isAttributeCreated("item template")) {
+            schema.list.item = {
+                "template": buildFieldTemplate(getAttr(field, "item template"))
+            };
+        }
+    } else if (field.name === "table field") {
+        schema.type = "table";
+        schema.table = {};
+
+        if (field.isAttributeCreated("item template")) {
+            schema.table.row = {
+                "template": buildFieldTemplate(getAttr(field, "item template"))
+            };
+        }
+
+        if (field.isAttributeCreated("header")) {
+            schema.header = buildStyle(getAttr(field, "header"));
+        }
+
+        if (field.isAttributeCreated("body")) {
+            schema.header = buildStyle(getAttr(field, "body"));
+        }
+
+        if (field.isAttributeCreated("footer")) {
+            schema.header = buildStyle(getAttr(field, "footer"));
+        }
     }
+
+    if (field.isAttributeCreated("style")) {
+        schema.style = buildStyle(getAttr(field, "style"));
+    }
+
+
+    return schema;
+}
+
+function buildInput(element) {
+    let schema = {
+        placeholder: getValue(element, "placeholder")
+    };
 
     if (hasAttr(element, "style")) {
         schema.style = buildStyle(getAttr(element, 'style'));
@@ -393,113 +464,14 @@ function buildDynamic(element, type) {
     return schema;
 }
 
-function buildField(field) {
-    var schema = {
-        readonly: getValue(field, "readonly"),
-        disabled: getValue(field, "disabled"),
+function buildFieldTemplate(element) {
+    let schema = {
+        "tag": getValue(element, "tag"),
+        "name": getValue(element, "name"),
     };
 
-    if (field.isAttributeCreated("style")) {
-        schema.style = buildStyle(getAttr(field, "style"));
-    }
-
-    if (field.name === "text field") {
-        schema.type = "text";
-        schema.multiline = getValue(field, "multiline");
-
-        schema.content = [];
-
-        getValue(field, "content").filter(proto => proto.hasValue()).forEach(proto => {
-            const element = proto.getValue();
-            schema.content.push(buildElement(element));
-        });
-    } else if (field.name === "binary field") {
-        schema.type = "binary";
-        schema.state = [];
-
-
-        schema.state.push({
-            "rule": {
-                "type": "eq",
-                "eq": [{ "prop": "value" }, true]
-            },
-            "result": {
-                "label": {
-                    "projection": buildElement(getValue(field, "state1"))
-                }
-            }
-        });
-
-        schema.state.push({
-            "rule": {
-                "type": "eq",
-                "eq": [{ "prop": "value" }, false]
-            },
-            "result": {
-                "label": {
-                    "projection": buildElement(getValue(field, "state2"))
-                }
-            }
-        });
-    } else if (field.name === "choice field") {
-        schema.type = "choice";
-        schema.content = [];
-
-        let choice = getAttr(field, "choice template");
-        let selection = getAttr(field, "selection template");
-
-        schema.content.push({
-            "type": "choice",
-            "choice": {
-                "option": {
-                    "template": {
-                        "tag": getValue(choice, "tag"),
-                        "name": getValue(choice, "name"),
-                    }
-                },
-                "selection": {
-                    "template": {
-                        "tag": getValue(selection, "tag"),
-                        "name": getValue(selection, "name"),
-                    }
-                }
-            }
-        });
-    } else if (field.name === "list field") {
-        schema.type = "list";
-        schema.content = [];
-
-        let item = getAttr(field, "item template");
-
-        schema.content.push({
-            "type": "list",
-            "list": {
-                "item": {
-                    "template": {
-                        "tag": getValue(item, "tag"),
-                        "name": getValue(item, "name"),
-                    }
-                }
-            }
-        });
-    } else if (field.name === "table field") {
-        schema.type = "table";
-        let template = {};
-        schema.content = [];
-
-        schema.content.push({
-            "type": "table",
-            "table": {}
-        });
-        if (field.isAttributeCreated("template")) {
-            template.name = getAttr(field, 'template').getValue();
-        }
-        if (field.isAttributeCreated("concept")) {
-            template.concept = getAttr(field, 'concept').getValue();
-        }
-
-        schema.template = template;
-
+    if (hasAttr(element, "style")) {
+        schema.style = buildStyle(getAttr(element, 'style'));
     }
 
     return schema;

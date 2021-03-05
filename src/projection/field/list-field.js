@@ -19,7 +19,8 @@ const actionDefaultSchema = {
             "type": "static",
             "static": {
                 "type": "text",
-                "content": "Add"
+                "content": "Add",
+                "focusable": false
             }
         }
     },
@@ -28,7 +29,8 @@ const actionDefaultSchema = {
             "type": "static",
             "static": {
                 "type": "text",
-                "content": "Remove"
+                "content": "Remove",
+                "focusable": false
             }
         }
     }
@@ -59,8 +61,7 @@ function createMessageElement() {
 function createListFieldItem(object) {
     const { action = {} } = this.schema;
 
-    const listSchema = this.content.find(c => c.type === "list");
-    const { template, style } = listSchema.list.item;
+    const { template = {}, style } = this.schema.list.item;
 
     const container = createListItem({
         class: ["field--list-item"],
@@ -160,12 +161,17 @@ const BaseListField = {
 
 
     init() {
-        const { content = [], focusable = true } = this.schema;
+        const { focusable = true } = this.schema;
 
         this.items = new Map();
         this.elements = new Map();
         this.focusable = focusable;
-        this.content = content;
+        
+        if (!hasOwn(this.schema, "list")) {
+            this.schema.list = {
+                item: {}
+            };
+        }
 
         return this;
     },
@@ -173,11 +179,7 @@ const BaseListField = {
     render() {
         const fragment = createDocFragment();
 
-        const { content, style, action = {} } = this.schema;
-
-        if (!Array.isArray(content)) {
-            throw new Error("Empty content for listfield");
-        }
+        const { list, style, action = {} } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createDiv({
@@ -222,64 +224,56 @@ const BaseListField = {
             this.notification.appendChild(this.statusElement);
         }
 
-        content.forEach(element => {
-            if (element.type === "list") {
-                let schema = valOrDefault(element.list, {});
+        if (!isHTMLElement(this.list)) {
+            const { style } = list;
 
-                const { style } = schema;
-
-                this.list = createUnorderedList({
-                    class: ["bare-list", "field--list__list"],
-                    dataset: {
-                        nature: "field-component",
-                        view: "list",
-                        id: this.id
-                    }
-                });
-
-                if (!this.source.hasValue()) {
-                    this.list.classList.add("empty");
+            this.list = createUnorderedList({
+                class: ["bare-list", "field--list__list"],
+                dataset: {
+                    nature: "field-component",
+                    view: "list",
+                    id: this.id
                 }
+            });
 
-                schema.currentState = null;
-                this.elements.set(schema, this.list);
-
-                StyleHandler(this.list, style);
-
-                fragment.appendChild(this.list);
-            } else if (element.type === "action") {
-                let schema = valOrDefault(element, actionDefaultSchema.add);
-
-                const { content, style } = schema;
-
-                let addProjection = ContentHandler.call(this, content, null);
-
-                let addElement = createButton({
-                    class: ["field-action", "field--list__add"],
-                    tabindex: 0,
-                    dataset: {
-                        nature: "field-component",
-                        view: "list",
-                        component: "action",
-                        id: this.id,
-                        action: "add",
-                    }
-                }, [addProjection]);
-
-                schema.currentState = null;
-                this.elements.set(schema, addElement);
-
-                StyleHandler(addElement, style);
-
-                fragment.appendChild(addElement);
-            } else {
-                let content = ContentHandler.call(this, element);
-
-                this.elements.set(element, content);
-
-                fragment.appendChild(content);
+            if (!this.source.hasValue()) {
+                this.list.classList.add("empty");
             }
-        });
+
+            list.currentState = null;
+            this.elements.set(list, this.list);
+
+            StyleHandler(this.list, style);
+
+            fragment.appendChild(this.list);
+
+        }
+
+        let addSchema = valOrDefault(action.add, actionDefaultSchema.add);
+        if (addSchema) {
+            const { content, style } = addSchema;
+
+            let addProjection = ContentHandler.call(this, content, null);
+
+            let addElement = createButton({
+                class: ["field-action", "field--list__add"],
+                tabindex: 0,
+                dataset: {
+                    nature: "field-component",
+                    view: "list",
+                    component: "action",
+                    id: this.id,
+                    action: "add",
+                }
+            }, addProjection);
+
+            addSchema.currentState = null;
+            this.elements.set(addSchema, addElement);
+
+            StyleHandler(addElement, style);
+
+            fragment.appendChild(addElement);
+        }
 
         this.source.getValue().forEach((value) => {
             var item = createListFieldItem.call(this, value);
@@ -492,7 +486,7 @@ const BaseListField = {
 
         this.items.delete(value.id);
 
-        if(this.selection == item) {
+        if (this.selection == item) {
             this.selection = null;
         }
 
@@ -535,7 +529,7 @@ const BaseListField = {
             if (this.hasValue()) {
                 let itemIndex = +index < this.list.childElementCount ? +index : this.list.childElementCount - 1;
                 this.list.children[itemIndex].focus();
-            }else{
+            } else {
                 this.focus();
             }
         } else {
@@ -746,7 +740,13 @@ const BaseListField = {
     },
 
     bindEvents() {
+        this.projection.registerHandler("value.added", (value) => {
+            this.addItem(value);
+        });
 
+        this.projection.registerHandler("value.removed", (value) => {
+            this.removeItem(value);
+        });
     }
 };
 

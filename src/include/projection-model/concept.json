@@ -121,6 +121,19 @@
                 }
             ]
         },
+        {
+            "name": "$render",
+            "nature": "prototype",
+            "attributes": [
+                {
+                    "name": "style",
+                    "target": {
+                        "name": "style"
+                    },
+                    "required": false
+                }
+            ]
+        },
 
 
         {
@@ -150,25 +163,20 @@
             "prototype": "field",
             "attributes": [
                 {
-                    "name": "content",
+                    "name": "input",
                     "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "element",
-                            "accept": [
-                                { "name": "stack layout" },
-                                { "name": "wrap layout" },
-                                { "name": "cell layout" },
-                                { "name": "static text" },
-                                { "name": "input" },
-                                { "name": "template element" }
-                            ]
-                        },
-                        "min": 1
+                        "name": "input"
                     }
                 },
                 {
                     "name": "multiline",
+                    "target": {
+                        "name": "boolean",
+                        "default": false
+                    }
+                },
+                {
+                    "name": "resizable",
                     "target": {
                         "name": "boolean",
                         "default": false
@@ -182,20 +190,49 @@
             }
         },
         {
+            "name": "input",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "placeholder",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ],
+                  
+            "build": {
+                "contentType": "dynamic",
+                "elementType": "input"
+            }
+        },
+        {
             "name": "binary field",
             "nature": "concrete",
             "prototype": "field",
             "attributes": [
                 {
-                    "name": "state1",
+                    "name": "true-state",
                     "target": {
-                        "name": "element"
+                        "name": "set",
+                        "accept": {
+                            "name": "element",
+                            "accept": [
+                                { "name": "static text" },
+                                { "name": "static HTML" },
+                                { "name": "static image" },
+                                { "name": "template element" }
+                            ]
+                        }
                     }
                 },
                 {
-                    "name": "state2",
+                    "name": "false-state",
                     "target": {
-                        "name": "element"
+                        "name": "set",
+                        "accept": {
+                            "name": "element"
+                        }
                     }
                 }
             ],
@@ -223,6 +260,13 @@
                     "target": {
                         "name": "template reference"
                     }
+                },
+                {
+                    "name": "input",
+                    "target": {
+                        "name": "input"
+                    },
+                    "required": false
                 }
             ],
 
@@ -301,14 +345,19 @@
         {
             "name": "action",
             "nature": "concrete",
-            "prototype": "render",
             "attributes": [
                 {
                     "name": "content",
                     "target": {
                         "name": "set",
                         "accept": {
-                            "name": "static element"
+                            "name": "element",
+                            "accept": [
+                                { "name": "static text" },
+                                { "name": "static HTML" },
+                                { "name": "static image" },
+                                { "name": "template element" }
+                            ]
                         }
                     }
                 }
@@ -317,7 +366,7 @@
         {
             "name": "table field",
             "nature": "concrete",
-            "prototype": "field",
+            "prototype": "$field",
             "attributes": [
                 {
                     "name": "orientation",
@@ -327,32 +376,11 @@
                     }
                 },
                 {
-                    "name": "template",
+                    "name": "row template",
                     "target": {
-                        "name": "reference",
-                        "accept": {
-                            "name": "template"
-                        }
+                        "name": "template reference"
                     }
                 },
-                {
-                    "name": "table",
-                    "target": {
-                        "name": "table"
-                    }
-                }
-            ],
-
-            "build": {
-                "contentType": "field",
-                "elementType": "table"
-            }
-        },
-        {
-            "name": "table",
-            "nature": "concrete",
-            "prototype": "render",
-            "attributes": [
                 {
                     "name": "header",
                     "target": {
@@ -374,8 +402,14 @@
                     },
                     "required": false
                 }
-            ]
+            ],
+
+            "build": {
+                "contentType": "field",
+                "elementType": "table"
+            }
         },
+   
 
 
         {
@@ -401,7 +435,7 @@
                     "target": {
                         "name": "set",
                         "accept": {
-                            "name": "element"
+                            "name": "render"
                         },
                         "min": 1
                     }
@@ -447,7 +481,8 @@
                     "name": "orientation",
                     "target": {
                         "name": "string",
-                        "values": ["row", "column"]
+                        "values": ["row", "column"],
+                        "default": "row"
                     }
                 },
                 {
@@ -540,7 +575,7 @@
         {
             "name": "row",
             "nature": "concrete",
-            "prototype": "render",
+            "prototype": "$render",
             "attributes": [
                 {
                     "name": "cells",
@@ -557,7 +592,7 @@
         {
             "name": "cell",
             "nature": "concrete",
-            "prototype": "render",
+            "prototype": "$render",
             "attributes": [
                 {
                     "name": "span",
@@ -589,67 +624,7 @@
                 }
             ]
         },
-        {
-            "name": "table template",
-            "nature": "concrete",
-            "prototype": "$template",
-            "attributes": [
-                {
-                    "name": "row",
-                    "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "table cell"
-                        },
-                        "min": 1
-                    }
-                }
-            ]
-        },
-        {
-            "name": "table cell",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "header",
-                    "target": {
-                        "name": "static element"
-                    }
-                },
-                {
-                    "name": "body",
-                    "target": {
-                        "name": "attribute element"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "table header cell",
-            "nature": "concrete",
-            "prototype": "render",
-            "attributes": [
-                {
-                    "name": "content",
-                    "target": {
-                        "name": "static element"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "table body cell",
-            "nature": "concrete",
-            "prototype": "render",
-            "attributes": [
-                {
-                    "name": "content",
-                    "target": {
-                        "name": "attribute element"
-                    }
-                }
-            ]
-        },
+
 
         {
             "name": "static element",
@@ -789,48 +764,8 @@
                 "elementType": "link"
             }
         },
-        {
-            "name": "dynamic element",
-            "nature": "prototype",
-            "prototype": "element",
-            "attributes": []
-        },
-        {
-            "name": "input",
-            "nature": "concrete",
-            "prototype": "dynamic element",
-            "attributes": [
-                {
-                    "name": "placeholder",
-                    "target": {
-                        "name": "string"
-                    }
-                }
-            ],
-                  
-            "build": {
-                "contentType": "dynamic",
-                "elementType": "input"
-            }
-        },
-        {
-            "name": "checkbox",
-            "nature": "concrete",
-            "prototype": "$dynamic element",
-            "attributes": [
-                {
-                    "name": "label",
-                    "target": {
-                        "name": "string"
-                    }
-                }
-            ],
-                  
-            "build": {
-                "contentType": "dynamic",
-                "elementType": "checkbox"
-            }
-        },
+      
+       
         {
             "name": "attribute element",
             "nature": "concrete",

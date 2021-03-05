@@ -179,15 +179,6 @@ const Projection = {
             });
         } else {
             switch (message) {
-                case "value.changed":
-                    this.element.setValue(value);
-                    return;
-                case "value.added":
-                    this.element.addItem(value);
-                    return;
-                case "value.removed":
-                    this.element.removeItem(value);
-                    return;
                 case "attribute.added":
                     this.getAttributes(value.name).forEach(attr => {
                         const { schema } = attr;
