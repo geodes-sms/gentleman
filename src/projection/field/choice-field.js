@@ -3,7 +3,7 @@ import {
     createListItem, findAncestor, isHTMLElement, removeChildren, isNullOrUndefined,
     isNullOrWhitespace, isObject, valOrDefault, hasOwn, capitalizeFirstLetter
 } from "zenkai";
-import { getElementBottom, getElementLeft, getElementRight, getElementTop, hide, isHidden, show } from "@utils/index.js";
+import { getElementBottom, getElementLeft, getElementRight, getElementTop, getVisibleElement, hide, isHidden, show } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler, resolveValue } from "./../content-handler.js";
 import { Field } from "./field.js";
@@ -46,22 +46,6 @@ function getItem(element) {
     }
 
     return findAncestor(element, isValid, 5);
-}
-
-/**
- * 
- * @param {HTMLElement} parent 
- */
-function getVisibleElement(parent) {
-    for (let i = 0; i < parent.children.length; i++) {
-        const element = parent.children[i];
-
-        if (!isHidden(element)) {
-            return element;
-        }
-    }
-
-    return null;
 }
 
 /**
@@ -340,7 +324,7 @@ const BaseChoiceField = {
         return this;
     },
     focusIn() {
-        this.focused = true; 
+        this.focused = true;
         this.element.classList.add("active");
 
         //requery

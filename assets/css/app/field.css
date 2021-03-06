@@ -44,6 +44,7 @@
         .field.active .notification-message {
             opacity: 1;
             z-index: 100;
+            background-color: #555;
         }
         .field.active .notification-message--error {
             background-color: #db3b1f;
@@ -184,7 +185,7 @@
 
 .field--textbox__choices {
     position: absolute;
-    top: 100%; left: 0;
+    top: calc(100% + 1px); left: 0;
     min-width: 150px;
     font-size: 1em;
     box-shadow: 0 1px 2px #999;
@@ -194,7 +195,7 @@
 }
 
     .field--textbox__choice {
-        padding: 5px 1%;
+        padding: 4px 1%;
         font-size: 0.9em;
     }
         .field--textbox__choice:hover,

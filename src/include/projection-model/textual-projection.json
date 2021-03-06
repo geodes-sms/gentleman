@@ -588,9 +588,6 @@
             "projection": {
                 "type": "stack",
                 "orientation": "vertical",
-                "style": {
-                    "css": ["listfield-config"]
-                },
                 "disposition": [
                     {
                         "type": "attribute",
@@ -748,40 +745,30 @@
             "projection": {
                 "type": "stack",
                 "orientation": "vertical",
-                "style": {
-                    "css": ["field-config"]
-                },
                 "disposition": [
                     {
-                        "type": "layout",
-                        "layout": {
-                            "type": "wrap",
+                        "type": "attribute",
+                        "name": "disabled",
+                        "tag": "field-binary-state"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "readonly",
+                        "tag": "field-binary-state"
+                    },
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Row template",
                             "style": {
-                                "css": ["field-state-properties"]
-                            },
-                            "disposition": [
-                                {
-                                    "type": "attribute",
-                                    "name": "disabled",
-                                    "tag": "field-binary-state"
-                                },
-                                {
-                                    "type": "attribute",
-                                    "name": "readonly",
-                                    "tag": "field-binary-state"
-                                }
-                            ]
+                                "css": ["title--small"]
+                            }
                         }
                     },
                     {
                         "type": "attribute",
-                        "name": "concept",
-                        "tag": "concept-string"
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "template",
-                        "tag": "template-string"
+                        "name": "row template"
                     }
                 ]
             }
@@ -1733,7 +1720,7 @@
                                     }
                                 },
                                 "style": {
-                                    "css": ["textual-list__list", "textual-list__list--horizontal"]
+                                    "css": ["textual-list__list", "textual-list__list--inline", "textual-list__list--horizontal"]
                                 }
                             },
                             "action": {

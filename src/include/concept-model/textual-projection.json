@@ -1715,7 +1715,7 @@
                                     }
                                 },
                                 "style": {
-                                    "css": ["textual-list__list", "textual-list__list--horizontal"]
+                                    "css": ["textual-list__list", "textual-list__list--inline", "textual-list__list--horizontal"]
                                 }
                             },
                             "action": {
@@ -1750,7 +1750,7 @@
                                 }
                             },
                             "style": {
-                                "css": ["textual-list"]
+                                "css": ["textual-list", "textual-list--value"]
                             }
                         }
                     }

@@ -160,13 +160,20 @@
 .textual-list__list--horizontal {
     flex-direction: row;
 }
+.textual-list__list--vertical {
+    flex-direction: column;
+}
+
+.textual-list.empty .textual-list__list {
+    display: none;
+}
 
     .textual-list .textual-list__btn-add {
         align-self: flex-end;
 
         position: relative;
         display: flex; justify-content: center; align-items: center;
-        margin-top: 6px; margin-right: 6px;
+        margin-top: 2px; margin-right: 6px;
         width: 60px; 
         height: 60px;
         padding-bottom: 8px;
@@ -321,6 +328,23 @@
     }
     .textual-list__list-item--inline > .textual-list__btn-remove:hover {
         background-color: rgb(225, 65, 65);
+    }
+
+    .textual-list__list--inline {
+        display: inline-flex;
+        width: auto;
+    }
+
+    .textual-list__list--inline + .textual-list__btn-add {
+        align-self: flex-start;
+
+        margin: 0; margin-right: 4px;
+        height: 24px;
+        min-width: 72px;
+        padding-bottom: 2px;
+        font-size: 0.9em;
+        border-radius: 180px;
+        transform: none;
     }
 
     
@@ -839,14 +863,15 @@
 
 .name-field--textual {
     display: flex; flex-direction: row;
-    padding: 0;
-    margin-left: 6px; margin-right: 6px;
+    padding: 2px;
 }
 
     .name-field--textual__label {
         text-transform: capitalize;
         font-weight: 600;
     }
+
+    .name-field--textual .field--textbox { padding: 0;}
         .name-field--textual__label:after { content: ":"; }
 
     .name-field--textual__input {

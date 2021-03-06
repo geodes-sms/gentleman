@@ -366,7 +366,7 @@
         {
             "name": "table field",
             "nature": "concrete",
-            "prototype": "$field",
+            "prototype": "field",
             "attributes": [
                 {
                     "name": "orientation",

@@ -672,6 +672,21 @@
         border-color: royalblue;
     }
 
+.textual-list--tag {
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.textual-list--css {
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.textual-list--value {
+    flex-direction: row;
+    align-items: flex-start;
+}
+
 
 .row-list-container {
     border: 1px solid #555;

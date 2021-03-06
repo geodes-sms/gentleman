@@ -5,7 +5,7 @@ import {
 } from "zenkai";
 import {
     hide, show, getCaretIndex, isHidden, NotificationType,
-    getElementLeft, getElementTop, getElementBottom, getElementRight
+    getElementLeft, getElementTop, getElementBottom, getElementRight, getVisibleElement
 } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { StateHandler } from "./../state-handler.js";
@@ -48,6 +48,7 @@ function createChoiceElement() {
                 id: this.id,
             }
         });
+
         this.append(this.choice);
     }
 
@@ -421,7 +422,7 @@ const BaseTextField = {
 
             if (this.multiline) {
                 this.input.classList.add("field--textbox__input--multiline");
-            }    
+            }
 
             fragment.appendChild(this.input);
         }
@@ -538,9 +539,6 @@ const BaseTextField = {
             removeChildren(this.choice).appendChild(fragment);
             this.filterChoice(this.getValue());
             show(this.choice);
-
-            this.messageElement.appendChild(createNotificationMessage(NotificationType.INFO, "Select an element from the list."));
-            show(this.messageElement);
         }
     },
     /**
@@ -620,27 +618,33 @@ const BaseTextField = {
         const item = getItem.call(this, target);
 
         if (isHTMLElement(item)) {
-            let $item = null;
+            let closestItem = null;
+
             if (dir === "up") {
-                $item = getPreviousElementSibling(item, (el) => !el.hidden);
-
+                closestItem = getElementTop(target, this.choice);
             } else if (dir === "down") {
-                $item = getNextElementSibling(item, (el) => !el.hidden);
+                closestItem = getElementBottom(target, this.choice);
+            } else if (dir === "left") {
+                closestItem = getElementLeft(target, this.choice);
+            } else if (dir === "right") {
+                closestItem = getElementRight(target, this.choice);
             }
 
-            if (isHTMLElement($item)) {
-                $item.focus();
+            if (isHTMLElement(closestItem)) {
+                closestItem.focus();
+
+                return true;
             }
 
-            return true;
+            return this.arrowHandler(dir, this.choice);
         }
 
         let element = null;
 
-        if (dir === "up" && this.parent) {
+        if (dir === "up") {
             element = getElementTop(target, this.element);
-        } else if (dir === "down" && this.parent) {
-            element = getElementBottom(target, this.element);
+        } else if (dir === "down") {
+            element = getElementBottom(target, this.element, false);
         } else if (dir === "right") {
             if (target === this.input) {
                 let isAtEnd = this.getValue().length < getCaretIndex(this.input) + 1;
@@ -664,7 +668,14 @@ const BaseTextField = {
         }
 
         if (isHTMLElement(element)) {
-            element.focus();
+            if (element === this.choice && this.choice.hasChildNodes()) {
+                let firstChild = getVisibleElement(element);
+                if (firstChild) {
+                    firstChild.focus();
+                }
+            } else {
+                element.focus();
+            }
 
             return true;
         }
@@ -672,7 +683,6 @@ const BaseTextField = {
         if (this.parent) {
             return this.parent.arrowHandler(dir, this.element);
         }
-
 
         return false;
     },
