@@ -1,10 +1,8 @@
-import { createSpan, valOrDefault, createButton, createDocFragment, createTextArea, createInput, isString } from "zenkai";
-import { StyleHandler } from './style-handler.js';
+import { valOrDefault, createDocFragment, } from "zenkai";
 import { AttributeHandler } from './structure-handler.js';
 import { LayoutFactory } from "./layout/index.js";
 import { FieldFactory } from "./field/index.js";
 import { StaticFactory } from "./static/index.js";
-import { _ } from "core-js";
 
 
 /**

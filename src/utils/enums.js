@@ -49,3 +49,8 @@ export const NotificationType = {
     SUCCESS: "success",
     ERROR: "error"
 };
+
+export const EditorMode = {
+    MODEL: "model",
+    DESIGN: "design"
+};

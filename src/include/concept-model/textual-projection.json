@@ -1615,7 +1615,8 @@
                             "static": {
                                 "type": "text",
                                 "help": "Remove attribute",
-                                "content": ""
+                                "content": "",
+                                "focusable": false
                             }
                         },
                         "style": {
@@ -1654,7 +1655,8 @@
                             "static": {
                                 "type": "text",
                                 "help": "Add a property",
-                                "content": "New property"
+                                "content": "New property",
+                                "focusable": false
                             }
                         },
                         "style": {
@@ -1667,7 +1669,8 @@
                             "static": {
                                 "type": "text",
                                 "help": "Remove property",
-                                "content": ""
+                                "content": "",
+                                "focusable": false
                             }
                         },
                         "style": {
@@ -1737,7 +1740,8 @@
                                         "static": {
                                             "type": "text",
                                             "help": "Remove value", 
-                                            "content": ""
+                                            "content": "",
+                                            "focusable": false
                                         }
                                     },
                                     "style": {

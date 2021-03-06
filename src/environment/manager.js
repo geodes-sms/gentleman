@@ -34,8 +34,8 @@ export const Manager = {
      * @param {string|HTMLElement} _container
      * @returns {Manager}
      */
-    init(_container) {
-        const container = resolveContainer(_container);
+    init(args = {}) {
+        const container = resolveContainer(args.container);
 
         if (!isHTMLElement(container)) {
             throw new TypeError("Bad argument: The container argument could not be resolved to an HTML Element.");
@@ -46,7 +46,7 @@ export const Manager = {
         this.containerEnv = this.container.dataset["gentleman"];
 
         if (this.containerEnv === "editor") {
-            this.createEditor().init();
+            this.createEditor().init(args.editor);
         }
 
         this.bindDOM();

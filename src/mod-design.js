@@ -1,13 +1,3 @@
-/* eslint-disable indent */
-
-// Import CSS
-import './stylesheets.js';
-import '@css/samples/gentleman.css';
-import '@css/samples/projection.css';
-
-import { Manager } from '@environment/index.js';
-
-
 const CONCEPT_MODEL__CONFIG = require('@include/concept-model/editor-config.json');
 const CONCEPT_MODEL__CONCEPT = require('@include/concept-model/concept.json');
 const CONCEPT_MODEL__PROJECTION = require('@include/concept-model/textual-projection.json');
@@ -59,9 +49,9 @@ const EDITOR_HANDLER = {
     }
 };
 
-Manager.init({
+window.GENTLEMAN_CONFIG = {
     editor: {
         config: EDITOR_CONFIG,
         handlers: EDITOR_HANDLER
     }
-});
+};
