@@ -4,7 +4,7 @@ import {
     getElement, removeChildren, isHTMLElement, findAncestor, copytoClipboard,
     isNullOrWhitespace, isNullOrUndefined, isEmpty, hasOwn, isFunction, valOrDefault
 } from 'zenkai';
-import { Events, hide, show, Key, getEventTarget, NotificationType } from '@utils/index.js';
+import { Events, hide, show, Key, getEventTarget, NotificationType, EditorMode } from '@utils/index.js';
 import { buildProjectionHandler } from "../build-projection.js";
 import { buildConceptHandler } from "../build-concept.js";
 import { ConceptModelManager } from '@model/index.js';
@@ -94,30 +94,13 @@ function createEditorFile() {
     });
 }
 
-
-const CONCEPT_MODEL__CONFIG = require('@include/concept-model/editor-config.json');
-const CONCEPT_MODEL__CONCEPT = require('@include/concept-model/concept.json');
-const CONCEPT_MODEL__PROJECTION = require('@include/concept-model/textual-projection.json');
-// const CONCEPT_MODEL__PROJECTION = require('@include/concept-model/graphical-projection.json');
-
-const PROJECTION_MODEL__CONFIG = require('@include/projection-model/editor-config.json');
-const PROJECTION_MODEL__CONCEPT = require('@include/projection-model/concept.json');
-const PROJECTION_MODEL__PROJECTION = require('@include/projection-model/textual-projection.json');
-// const PROJECTION_MODEL__PROJECTION = require('@include/projection-model/graphical-projection.json');
-
-const DEFAULT_CONFIG = {
+const EDITOR_CONFIG = {
+    "root": [],
+    "mode": EditorMode.MODEL,
     "header": {
-        "selectors": {},
         "css": ["editor-header"]
     },
-    "root": [],
     "body": {
-        "concept": {
-            "actions": [
-                { "name": "build", "triggers": ["click"] }
-            ],
-            "css": ["model-concept-list"]
-        },
         "css": ["editor-body"]
     },
     "menu": {
@@ -175,8 +158,7 @@ export const Editor = {
     handlers: null,
 
     init(args = {}) {
-        const { conceptModel, projectionModel, concept, projection, config = DEFAULT_CONFIG } = args;
-
+        const { conceptModel, projectionModel, concept, projection, config = EDITOR_CONFIG, handlers = {} } = args;
 
         this.conceptModel = conceptModel;
         this.projectionModel = projectionModel;
@@ -186,6 +168,11 @@ export const Editor = {
         // Editor configuration
         this.config = config;
         this.handlers = {};
+
+        for (const key in handlers) {
+            const handler = handlers[key];
+            this.registerHandler(key, handler);
+        }
 
         if (this.config) {
             this.header = createEditorHeader.call(this).init();
@@ -223,6 +210,9 @@ export const Editor = {
         }
 
         return root;
+    },
+    getMode() {
+        return valOrDefault(this.config.mode, EditorMode.MODEL);
     },
 
     /**
@@ -1054,29 +1044,6 @@ export const Editor = {
                 const { schema, views } = this.projectionModel;
 
                 this.loadProjectionModel(schema, views);
-            },
-
-            "create-metamodel": (target) => {
-                const { concept, values = [] } = CONCEPT_MODEL__CONCEPT;
-                const { projection, views = [] } = CONCEPT_MODEL__PROJECTION;
-                const { editor: config } = CONCEPT_MODEL__CONFIG;
-
-                this.unload();
-                this.setConfig(config);
-                this.loadConceptModel(concept, values);
-                this.loadProjectionModel(projection, views);
-                setTimeout(() => { this.home.close(); }, 100);
-            },
-            "create-projection": (target) => {
-                const { concept, values = [] } = PROJECTION_MODEL__CONCEPT;
-                const { projection, views = [] } = PROJECTION_MODEL__PROJECTION;
-                const { editor: config } = PROJECTION_MODEL__CONFIG;
-
-                this.unload();
-                this.setConfig(config);
-                this.loadConceptModel(concept, values);
-                this.loadProjectionModel(projection, views);
-                setTimeout(() => { this.home.close(); }, 100);
             }
         };
 
@@ -1099,6 +1066,10 @@ export const Editor = {
             } else if (isFunction(actionHandler)) {
                 actionHandler(target);
                 target.blur();
+            } else if (action) {
+                this.triggerEvent({
+                    "name": action,
+                });
             }
         }, true);
 

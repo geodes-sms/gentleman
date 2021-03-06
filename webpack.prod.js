@@ -6,8 +6,12 @@ const path = require('path');
 
 module.exports = merge(common, {
     mode: 'production',
+    entry: {
+        app: './src/index.js',
+        mod: './src/mod-design.js',
+    },
     output: {
-        filename: 'gentleman.js',
+        filename: 'gentleman.[name].js',
         path: path.resolve(__dirname, 'dist')
     },
     plugins: [

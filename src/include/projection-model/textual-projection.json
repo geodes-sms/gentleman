@@ -1758,7 +1758,8 @@
                                         "static": {
                                             "type": "text",
                                             "help": "Remove tag", 
-                                            "content": ""
+                                            "content": "",
+                                            "focusable": false
                                         }
                                     },
                                     "style": {
@@ -1831,7 +1832,8 @@
                                         "static": {
                                             "type": "text",
                                             "help": "Remove class", 
-                                            "content": ""
+                                            "content": "",
+                                            "focusable": false
                                         }
                                     },
                                     "style": {
@@ -1888,7 +1890,8 @@
                             "static": {
                                 "type": "text",
                                 "help": "Remove element",
-                                "content": ""
+                                "content": "",
+                                "focusable": false
                             }
                         },
                         "style": {
@@ -1942,7 +1945,8 @@
                             "static": {
                                 "type": "text",
                                 "help": "Remove row",
-                                "content": ""
+                                "content": "",
+                                "focusable": false
                             }
                         },
                         "style": {
@@ -1982,7 +1986,8 @@
                             "static": {
                                 "type": "text",
                                 "help": "Add a cell",
-                                "content": "New cell"
+                                "content": "New cell",
+                                "focusable": false
                             }
                         },
                         "style": {
@@ -1995,7 +2000,8 @@
                             "static": {
                                 "type": "text",
                                 "help": "Remove cell",
-                                "content": ""
+                                "content": "",
+                                "focusable": false
                             }
                         },
                         "style": {

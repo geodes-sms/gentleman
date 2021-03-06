@@ -1,8 +1,8 @@
 import {
-    createDocFragment, createH3, createDiv, createParagraph, createSection, createButton,
-    removeChildren, valOrDefault, isHTMLElement, isNullOrUndefined, createI,
+    createDocFragment, createH3, createDiv, createParagraph, createSection, createI,
+    createButton, removeChildren, valOrDefault, isHTMLElement, isNullOrUndefined,
 } from 'zenkai';
-import { hide, show, toggle } from '@utils/index.js';
+import { hide, show, toggle, EditorMode } from '@utils/index.js';
 
 
 export const EditorHome = {
@@ -110,6 +110,12 @@ export const EditorHome = {
     refresh() {
         const { hasConceptModel, hasProjectionModel } = this.editor;
 
+        if (this.editor.getMode() === EditorMode.DESIGN) {
+            show(this.designMenu);
+        } else {
+            hide(this.designMenu);
+        }
+
         if (!(hasConceptModel && hasProjectionModel)) {
             this.show();
         }
@@ -205,7 +211,7 @@ function createModelMenu() {
         }
     }, `Start modelling`);
 
-    section.append(title, content, this.btnStart);
+    section.append(content, this.btnStart);
 
     return section;
 }
