@@ -31,7 +31,7 @@ const BaseTextStatic = {
 
     init(args = {}) {
         Object.assign(this.schema, args);
-        
+
         const { contentType = "text", editable = false, focusable = valOrDefault(this.parent.schema.focusable, true) } = this.schema;
 
         this.contentType = contentType;
@@ -150,6 +150,7 @@ const BaseTextStatic = {
 
         element.focus(parent);
     },
+
     refresh() {
         return this;
     },

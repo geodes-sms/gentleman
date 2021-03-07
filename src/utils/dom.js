@@ -83,18 +83,34 @@ function isClosestTo(source, container, dir) {
     return delta(sourceDistance, containerDistance) < 2;
 }
 
+/**
+ * Gets the first visible element
+ * @param {HTMLElement} parent 
+ */
+export function getVisibleElement(parent) {
+    for (let i = 0; i < parent.children.length; i++) {
+        const element = parent.children[i];
+
+        if (!isHidden(element)) {
+            return element;
+        }
+    }
+
+    return null;
+}
+
 
 /**
  * Get closest element above a source element inside an optional container
  * @param {HTMLElement} source 
  * @param {HTMLElement} container 
  */
-export function getElementTop(source, container) {
+export function getElementTop(source, container, relative = true) {
     const items = container.children;
 
     const { top: top1, left: left1 } = source.getBoundingClientRect();
 
-    if (isClosestTo(source, container, "top")) {
+    if (relative && isClosestTo(source, container, "top")) {
         return null;
     }
 
@@ -130,12 +146,12 @@ export function getElementTop(source, container) {
  * @param {HTMLElement} source 
  * @param {HTMLElement} container 
  */
-export function getElementLeft(source, container) {
+export function getElementLeft(source, container, relative = true) {
     const items = container.children;
 
     const { top: top1, left: left1 } = source.getBoundingClientRect();
 
-    if (isClosestTo(source, container, "left")) {
+    if (relative && isClosestTo(source, container, "left")) {
         return null;
     }
 
@@ -171,12 +187,12 @@ export function getElementLeft(source, container) {
  * @param {HTMLElement} source 
  * @param {HTMLElement} container 
  */
-export function getElementRight(source, container) {
+export function getElementRight(source, container, relative = true) {
     const items = container.children;
 
     const { top: top1, right: right1 } = source.getBoundingClientRect();
 
-    if (isClosestTo(source, container, "right")) {
+    if (relative && isClosestTo(source, container, "right")) {
         return null;
     }
 
@@ -212,12 +228,12 @@ export function getElementRight(source, container) {
  * @param {HTMLElement} source 
  * @param {HTMLElement} container 
  */
-export function getElementBottom(source, container) {
+export function getElementBottom(source, container, relative = true) {
     const items = container.children;
 
     const { bottom: bottom1, left: left1 } = source.getBoundingClientRect();
 
-    if (isClosestTo(source, container, "bottom")) {
+    if (relative && isClosestTo(source, container, "bottom")) {
         return null;
     }
 

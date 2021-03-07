@@ -120,7 +120,7 @@ const BaseStatic = {
      * @param {HTMLElement} target 
      */
     enterHandler(target) {
-        this.focusOut();
+        this.element.click();
     },
     /**
      * Handles the `delete` command

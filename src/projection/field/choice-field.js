@@ -3,7 +3,7 @@ import {
     createListItem, findAncestor, isHTMLElement, removeChildren, isNullOrUndefined,
     isNullOrWhitespace, isObject, valOrDefault, hasOwn, capitalizeFirstLetter
 } from "zenkai";
-import { getElementBottom, getElementLeft, getElementRight, getElementTop, hide, isHidden, show } from "@utils/index.js";
+import { getElementBottom, getElementLeft, getElementRight, getElementTop, getVisibleElement, hide, isHidden, show } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler, resolveValue } from "./../content-handler.js";
 import { Field } from "./field.js";
@@ -46,22 +46,6 @@ function getItem(element) {
     }
 
     return findAncestor(element, isValid, 5);
-}
-
-/**
- * 
- * @param {HTMLElement} parent 
- */
-function getVisibleElement(parent) {
-    for (let i = 0; i < parent.children.length; i++) {
-        const element = parent.children[i];
-
-        if (!isHidden(element)) {
-            return element;
-        }
-    }
-
-    return null;
 }
 
 /**
@@ -192,7 +176,7 @@ const BaseChoiceField = {
     },
     setInputValue(value) {
         if (isHTMLElement(this.input)) {
-            this.input.value = value;
+            this.input.value = value.name || value;
         }
     },
 
@@ -340,7 +324,7 @@ const BaseChoiceField = {
         return this;
     },
     focusIn() {
-        this.focused = true; 
+        this.focused = true;
         this.element.classList.add("active");
 
         //requery
@@ -421,8 +405,10 @@ const BaseChoiceField = {
     refresh() {
         if (this.hasValue()) {
             this.element.classList.remove("empty");
+            this.element.dataset.value = this.value.name || this.value;
         } else {
             this.element.classList.add("empty");
+            this.element.dataset.value = "";
         }
 
         if (this.hasChanges()) {
@@ -430,6 +416,11 @@ const BaseChoiceField = {
         } else {
             this.statusElement.classList.remove("change");
         }
+
+        if(this.input) {
+            this.element.dataset.input = this.input.value;
+        }
+        
 
         this.element.classList.remove("querying");
 
@@ -572,7 +563,7 @@ const BaseChoiceField = {
         }
 
         if (found) {
-            this.setInputValue(value.name);
+            this.setInputValue(value);
         }
 
         return this;

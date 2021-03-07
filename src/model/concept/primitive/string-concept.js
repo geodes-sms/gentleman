@@ -110,6 +110,14 @@ const _StringConcept = {
     },
 
     getCandidates() {
+        if (isEmpty(this.values)) {
+            let uniqueValues = new Set(
+                this.model.getConcepts(this.name)
+                    .filter(c => c.hasValue())
+                    .map(c => c.getValue()));
+            return [...uniqueValues];
+        }
+
         this.values.forEach(value => {
             if (isObject(value)) {
                 value.type = "value";
@@ -133,6 +141,7 @@ const _StringConcept = {
 
         if (this.length) {
             const { min, max } = this.length;
+            
             if (this.length.value && value.length !== this.length.value) {
                 return ResponseCode.FIXLENGTH_ERROR;
             }

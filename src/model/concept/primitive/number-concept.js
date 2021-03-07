@@ -12,6 +12,8 @@ const ResponseCode = {
 };
 
 function responseHandler(code) {
+    let cvalue = this.constraint.value;
+
     switch (code) {
         case ResponseCode.INVALID_NUMBER:
             return {
@@ -26,17 +28,17 @@ function responseHandler(code) {
         case ResponseCode.MAX_ERROR:
             return {
                 success: false,
-                message: `The value is greater than the maximum allowed: ${this.schema.max.value}.`
+                message: `The value is greater than the maximum allowed: ${cvalue.max.value}.`
             };
         case ResponseCode.MIN_ERROR:
             return {
                 success: false,
-                message: `The value is less than the minimum allowed: ${this.schema.min.value}.`
+                message: `The value is less than the minimum allowed: ${cvalue.min.value}.`
             };
         case ResponseCode.FIX_ERROR:
             return {
                 success: false,
-                message: `The value is different from the value allowed: ${this.schema.value.value}.`
+                message: `The value is different from the value allowed: ${cvalue.value}.`
             };
     }
 }
@@ -51,8 +53,8 @@ const _NumberConcept = {
         this.default = valOrDefault(this.schema.default, null);
         this.alias = this.schema.alias;
         this.description = this.schema.description;
-        this.min = this.schema.min;
-        this.max = this.schema.max;
+        this.constraint = {};
+        this.constraint.value = this.schema.value;
 
         this.initObserver();
         this.initAttribute();
@@ -77,7 +79,7 @@ const _NumberConcept = {
         return this;
     },
     hasValue() {
-        return !(isNullOrWhitespace(this.value) || isNaN(this.value));
+        return !isNaN(this.value);
     },
     getValue() {
         if (!this.hasValue()) {
@@ -129,27 +131,30 @@ const _NumberConcept = {
             return ResponseCode.INVALID_NUMBER;
         }
 
-        
-        if (this.schema.value) {
-            const { min, max } = this.schema.value;
-            if (this.length.value && value.length !== this.length.value) {
+
+        let cvalue = this.constraint.value;
+
+        if (cvalue) {
+            const { min, max } = cvalue;
+
+            if (cvalue.value && value !== cvalue.value) {
                 return ResponseCode.FIX_ERROR;
             }
 
             if (min) {
-                if (min.included && value.length < min.value) {
+                if (min.included && value < min.value) {
                     return ResponseCode.MIN_ERROR;
                 }
-                if (!min.included && value.length <= min.value) {
+                if (!min.included && value <= min.value) {
                     return ResponseCode.MIN_ERROR;
                 }
             }
 
             if (max) {
-                if (max.included && value.length > max.value) {
+                if (max.included && value > max.value) {
                     return ResponseCode.MAX_ERROR;
                 }
-                if (!max.included && value.length >= max.value) {
+                if (!max.included && value >= max.value) {
                     return ResponseCode.MAX_ERROR;
                 }
             }

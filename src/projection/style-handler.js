@@ -121,6 +121,9 @@ function resolveColor(schema) {
             }
 
             return value;
+        case "name":
+
+            return value;
         default:
             return schema;
     }

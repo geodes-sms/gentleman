@@ -1,4 +1,7 @@
-import { isEmpty, isObject, isFunction, isIterable, isNullOrUndefined, toBoolean, pascalCase, } from "zenkai";
+import { 
+    isEmpty, isObject, isFunction, isIterable, isNullOrUndefined, toBoolean,
+    pascalCase, valOrDefault, 
+} from "zenkai";
 
 
 export function StateHandler(schema, states) {
@@ -23,15 +26,16 @@ export function StateHandler(schema, states) {
 
         if (valid) {
             schema.currentState = i;
-            
+
             return result;
         }
     }
-    
+
     return null;
 }
 
 const ruleHandler = {
+    "ref": referenceHandler,
     "eq": equalHandler,
     "ne": notEqualHandler,
     "lt": lowerHandler,
@@ -43,6 +47,18 @@ const ruleHandler = {
     "not": negationHandler,
     "no": noHandler,
 };
+
+function referenceHandler(name) {
+    const { rule = {} } = valOrDefault(this.model.getRule(name), {});
+
+    let handler = ruleHandler[rule.type];
+
+    if (isFunction(handler)) {
+        return handler.call(this, rule[rule.type]);
+    }
+
+    return false;
+}
 
 function resolveTerm(term, defValue) {
     if (isObject(term)) {

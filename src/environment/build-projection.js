@@ -401,7 +401,7 @@ function buildField(field) {
     } else if (field.name === "choice field") {
         schema.type = "choice";
         schema.choice = {};
-        
+
         if (field.isAttributeCreated("choice template")) {
             schema.choice.option = {
                 "template": buildFieldTemplate(getAttr(field, "choice template"))
@@ -415,7 +415,7 @@ function buildField(field) {
     } else if (field.name === "list field") {
         schema.type = "list";
         schema.list = {};
-        
+
         if (field.isAttributeCreated("item template")) {
             schema.list.item = {
                 "template": buildFieldTemplate(getAttr(field, "item template"))
@@ -478,11 +478,70 @@ function buildFieldTemplate(element) {
 }
 
 function buildStyle(style) {
+    let schema = {};
+
     if (style.isAttributeCreated("css")) {
-        return {
-            css: getAttr(style, 'css').build()
+        schema.css = getAttr(style, 'css').build();
+    }
+
+    let textStyle = getAttr(style, 'text');
+    schema.text = {};
+
+    if (hasAttr(textStyle, "bold")) {
+        schema.text.bold = getValue(textStyle, 'bold');
+    }
+    if (hasAttr(textStyle, "italic")) {
+        schema.text.italic = getValue(textStyle, 'italic');
+    }
+    if (hasAttr(textStyle, "underline")) {
+        schema.text.underline = getValue(textStyle, 'underline');
+    }
+    if (hasAttr(textStyle, "strikethrough")) {
+        schema.text.strikethrough = getValue(textStyle, 'strikethrough');
+    }
+    if (hasAttr(textStyle, "colour") && hasValue(textStyle, "colour")) {
+        schema.text.color = buildColour(getValue(textStyle, 'colour'));
+    }
+    if (hasAttr(textStyle, "size") && hasValue(textStyle, "size")) {
+        schema.text.size = buildSize(getValue(textStyle, 'size'));
+    }
+
+    return schema;
+}
+
+function buildColour(colour) {
+    let schema = {};
+
+    if (colour.name === "name colour") {
+        schema.type = "name";
+        schema.value = getValue(colour, "value");
+    } else if (colour.name === "rgb colour") {
+        schema.type = "rgb";
+        schema.value = {
+            red: getValue(colour, "red"),
+            green: getValue(colour, "green"),
+            blue: getValue(colour, "blue"),
         };
     }
 
-    return null;
+    return schema;
+}
+
+function buildSize(size) {
+    let schema = {};
+
+    if (size.name === "pixel") {
+        schema.type = "pixel";
+        schema.value = getValue(size, "value");
+    } else if (size.name === "percentage") {
+        schema.type = "percentage";
+        schema.ref = getValue(size, "type");
+        schema.value = getValue(size, "value");
+    } else if (size.name === "multiplier") {
+        schema.type = "multiplier";
+        schema.ref = getValue(size, "type");
+        schema.value = getValue(size, "value");
+    }
+
+    return schema;
 }

@@ -108,6 +108,12 @@ export const Layout = {
      * @param {HTMLElement} target 
      */
     deleteHandler(target) {
+        if(this.projection.element === this) {
+            this.source.delete();
+            this.projection.parent.focus();
+            return;
+        }
+
         console.warn(`DELETE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
 
         this.focusOut();
