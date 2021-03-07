@@ -113,7 +113,7 @@ const _StringConcept = {
         if (isEmpty(this.values)) {
             let uniqueValues = new Set(
                 this.model.getConcepts(this.name)
-                    .filter(c => c.hasValue())
+                    .filter(c => c.hasValue() && c.value !== this.value)
                     .map(c => c.getValue()));
             return [...uniqueValues];
         }

@@ -4,8 +4,8 @@ import {
     isNullOrUndefined, valOrDefault, hasOwn,
 } from "zenkai";
 import {
-    hide, show, shake, NotificationType,
-    getElementTop, getElementBottom, getElementLeft, getElementRight, getTopElement
+    hide, show, shake, NotificationType, getClosest,
+    getTopElement, getBottomElement, getRightElement, getLeftElement
 } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler } from "./../content-handler.js";
@@ -52,64 +52,6 @@ function createMessageElement() {
     return this.messageElement;
 }
 
-/**
- * Creates a list field item
- * @param {*} object 
- * @returns {HTMLElement}
- * @this {BaseListField}
- */
-function createListFieldItem(object) {
-    const { action = {} } = this.schema;
-
-    const { template = {}, style } = this.schema.list.item;
-
-    const container = createListItem({
-        class: ["field--list-item"],
-        tabindex: 0,
-        dataset: {
-            nature: "field-component",
-            view: "list",
-            component: "list-item",
-            id: this.id,
-            value: object.id,
-            name: object.name,
-            index: valOrDefault(object.index, this.items.size)
-        }
-    });
-
-    var { content: removeLayout, style: removeStyle } = valOrDefault(action.remove, actionDefaultSchema.remove);
-
-    var btnRemoveProjection = ContentHandler.call(this, removeLayout);
-
-    var btnRemove = createButton({
-        class: ["btn", "field-action", "btn-remove"],
-        tabindex: -1,
-        title: "Remove",
-        dataset: {
-            nature: "field-component",
-            view: "list",
-            component: "action",
-            id: this.id,
-            action: "remove",
-            index: container.dataset.index
-        }
-    }, btnRemoveProjection);
-
-    StyleHandler(btnRemove, removeStyle);
-
-    container.appendChild(btnRemove);
-
-    var itemProjection = this.model.createProjection(object, template.tag);
-    itemProjection.parent = this.projection;
-
-    container.appendChild(itemProjection.init().render());
-
-    this.items.set(object.id, container);
-
-    StyleHandler(container, style);
-
-    return container;
-}
 
 
 /**
@@ -146,6 +88,21 @@ function isValid(element) {
     return nature === "field-component" && id === this.id;
 }
 
+/**
+ * Gets the parent list-item element
+ * @param {HTMLElement} element 
+ * @this {BaseListField}
+ * @returns {HTMLElement}
+ */
+function getItem(element) {
+    const isValid = (el) => el.parentElement === this.list;
+
+    if (isValid(element)) {
+        return element;
+    }
+
+    return findAncestor(element, isValid, 3);
+}
 
 const BaseListField = {
     /** @type {HTMLElement} */
@@ -166,7 +123,7 @@ const BaseListField = {
         this.items = new Map();
         this.elements = new Map();
         this.focusable = focusable;
-        
+
         if (!hasOwn(this.schema, "list")) {
             this.schema.list = {
                 item: {}
@@ -276,7 +233,7 @@ const BaseListField = {
         }
 
         this.source.getValue().forEach((value) => {
-            var item = createListFieldItem.call(this, value);
+            var item = this.createItem(value);
             this.list.appendChild(item);
         });
 
@@ -326,7 +283,7 @@ const BaseListField = {
         removeChildren(this.list);
 
         value.forEach((val) => {
-            var item = createListFieldItem.call(this, val);
+            var item = this.createItem(val);
             this.list.appendChild(item);
         });
 
@@ -464,8 +421,68 @@ const BaseListField = {
     getItem(id) {
         return this.items.get(id);
     },
+
+    /**
+     * Creates a list field item
+     * @param {*} object 
+     * @returns {HTMLElement}
+     */
+    createItem(object) {
+        const { action = {} } = this.schema;
+
+        const { template = {}, style } = this.schema.list.item;
+
+        const container = createListItem({
+            class: ["field--list-item"],
+            tabindex: 0,
+            dataset: {
+                nature: "field-component",
+                view: "list",
+                component: "list-item",
+                id: this.id,
+                value: object.id,
+                name: object.name,
+                index: valOrDefault(object.index, this.items.size)
+            }
+        });
+
+        const { content: removeLayout, style: removeStyle } = valOrDefault(action.remove, actionDefaultSchema.remove);
+
+        let btnRemoveProjection = ContentHandler.call(this, removeLayout);
+
+        let btnRemove = createButton({
+            class: ["btn", "field-action", "btn-remove"],
+            tabindex: -1,
+            title: "Remove",
+            dataset: {
+                nature: "field-component",
+                view: "list",
+                component: "action",
+                id: this.id,
+                action: "remove",
+                index: container.dataset.index
+            }
+        }, btnRemoveProjection);
+
+        StyleHandler(btnRemove, removeStyle);
+
+        container.appendChild(btnRemove);
+
+        let itemProjection = this.model.createProjection(object, template.tag);
+        itemProjection.parent = this.projection;
+
+        container.appendChild(itemProjection.init().render());
+
+        itemProjection.element.parent = this;
+
+        this.items.set(object.id, container);
+
+        StyleHandler(container, style);
+
+        return container;
+    },
     addItem(value) {
-        const item = createListFieldItem.call(this, value);
+        const item = this.createItem(value);
 
         if (value.index) {
             this.list.children[value.index - 1].after(item);
@@ -683,60 +700,57 @@ const BaseListField = {
             return false;
         }
 
-        if (target.parentElement === this.list) {
-            let closestItem = null;
+        const { parentElement } = target;
 
+        const exit = () => {
+            if (this.parent) {
+                return this.parent.arrowHandler(dir, this.element);
+            }
+
+            return false;
+        };
+
+        // gets the parent list item if target is a children
+        let item = getItem.call(this, target);
+
+        if (item) {
+            let closestItem = getClosest(item, dir, this.list);
+
+            if (!isHTMLElement(closestItem)) {
+                return this.arrowHandler(dir, this.list);
+            }
+
+            closestItem.focus();
+            this.selection = closestItem;
+
+            return true;
+        } 
+        
+        if (parentElement !== this.element) {
+            return exit();
+        }
+
+        let closestItem = getClosest(target, dir, this.element);
+
+        if (!isHTMLElement(closestItem)) {
+            return exit();
+        }
+
+        if (closestItem === this.list && this.list.hasChildNodes()) {
             if (dir === "up") {
-                closestItem = getElementTop(target, this.list);
+                closestItem = getBottomElement(this.list);
             } else if (dir === "down") {
-                closestItem = getElementBottom(target, this.list);
+                closestItem = getTopElement(this.list);
             } else if (dir === "left") {
-                closestItem = getElementLeft(target, this.list);
+                closestItem = getRightElement(this.list);
             } else if (dir === "right") {
-                closestItem = getElementRight(target, this.list);
-            }
-
-            if (isHTMLElement(closestItem)) {
-                closestItem.focus();
-                this.selection = closestItem;
-
-                return true;
-            }
-
-            return this.arrowHandler(dir, target.parentElement);
-        } else if (target.parentElement === this.element) {
-            let closestItem = null;
-
-            if (dir === "up") {
-                closestItem = getElementTop(target, this.element);
-            } else if (dir === "down") {
-                closestItem = getElementBottom(target, this.element);
-            } else if (dir === "left") {
-                closestItem = getElementLeft(target, this.element);
-            } else if (dir === "right") {
-                closestItem = getElementRight(target, this.element);
-            }
-
-            if (isHTMLElement(closestItem)) {
-                if (closestItem === this.list) {
-                    if (this.list.hasChildNodes()) {
-                        closestItem.children[0].focus();
-                    } else {
-                        return this.arrowHandler(dir, this.list);
-                    }
-                } else {
-                    closestItem.focus();
-                }
-
-                return true;
+                closestItem = getLeftElement(this.list);
             }
         }
 
-        if (this.parent) {
-            return this.parent.arrowHandler(dir, this.element);
-        }
+        closestItem.focus();
 
-        return false;
+        return true;
     },
 
     bindEvents() {

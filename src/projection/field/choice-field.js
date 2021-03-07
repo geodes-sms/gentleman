@@ -3,16 +3,11 @@ import {
     createListItem, findAncestor, isHTMLElement, removeChildren, isNullOrUndefined,
     isNullOrWhitespace, isObject, valOrDefault, hasOwn, capitalizeFirstLetter
 } from "zenkai";
-import { getElementBottom, getElementLeft, getElementRight, getElementTop, getVisibleElement, hide, isHidden, show } from "@utils/index.js";
+import { getClosest, NotificationType, getVisibleElement, hide, isHidden, show } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
-import { ContentHandler, resolveValue } from "./../content-handler.js";
+import { resolveValue } from "./../content-handler.js";
 import { Field } from "./field.js";
 
-
-const NotificationType = {
-    INFO: "info",
-    ERROR: "error"
-};
 
 /**
  * Creates a notification message
@@ -45,7 +40,7 @@ function getItem(element) {
         return element;
     }
 
-    return findAncestor(element, isValid, 5);
+    return findAncestor(element, isValid, 3);
 }
 
 /**
@@ -63,6 +58,8 @@ const isSame = (val1, val2) => {
     }
     return val1 === val2;
 };
+
+
 
 const BaseChoiceField = {
     /** @type {string} */
@@ -281,6 +278,7 @@ const BaseChoiceField = {
         if (!isHTMLElement(this.selectionPlaceholder)) {
             this.selectionPlaceholder = createI({
                 class: ["field--choice__selection"],
+                hidden: true,
                 dataset: {
                     nature: "field-component",
                     view: "choice",
@@ -417,10 +415,10 @@ const BaseChoiceField = {
             this.statusElement.classList.remove("change");
         }
 
-        if(this.input) {
+        if (this.input) {
             this.element.dataset.input = this.input.value;
         }
-        
+
 
         this.element.classList.remove("querying");
 
@@ -612,7 +610,7 @@ const BaseChoiceField = {
     escapeHandler(target) {
         if (target === this.input) {
             let parent = findAncestor(target, (el) => el.tabIndex === 0);
-            let element = this.environment.resolveElement(parent);
+            let element = this.projection.resolveElement(parent);
 
             element.focus(parent);
 
@@ -690,68 +688,65 @@ const BaseChoiceField = {
      * @param {HTMLElement} target 
      */
     arrowHandler(dir, target) {
-        if (target.parentElement === this.choices) {
-            let closestItem = null;
+        if (!isHTMLElement(target)) {
+            return false;
+        }
 
-            if (dir === "up") {
-                closestItem = getElementTop(target, this.choices);
-            } else if (dir === "down") {
-                closestItem = getElementBottom(target, this.choices);
-            } else if (dir === "left") {
-                closestItem = getElementLeft(target, this.choices);
-            } else if (dir === "right") {
-                closestItem = getElementRight(target, this.choices);
+        const { parentElement } = target;
+
+        const exit = () => {
+            if (this.parent) {
+                return this.parent.arrowHandler(dir, this.element);
             }
 
-            if (isHTMLElement(closestItem)) {
+            return false;
+        };
+
+        // gets the parent choice item if target is a children
+        let item = getItem.call(this, target);
+
+        if (item) {
+            let closestItem = getClosest(item, dir, this.choices);
+
+            if (!isHTMLElement(closestItem)) {
+                return this.arrowHandler(dir, this.choices);
+            }
+
+            closestItem.focus();
+
+            return true;
+        } 
+               
+        if (parentElement !== this.element) {
+            return exit();
+        }
+
+        let closestItem = getClosest(target, dir, this.element);
+
+        if (!isHTMLElement(closestItem)) {
+            return exit();
+        }
+
+        if (closestItem === this.choices && this.choices.hasChildNodes()) {
+            let firstChild = getVisibleElement(closestItem);
+            if (firstChild) {
+                firstChild.focus();
+            }
+        } else if (closestItem === this.selectionElement) {
+            let element = this.projection.resolveElement(closestItem);
+            if (element) {
+                element.focus();
+            }
+        } else {
+            let element = this.projection.resolveElement(closestItem);
+            if (element) {
+                element.focus();
+            } else {
                 closestItem.focus();
-
-                return true;
-            }
-
-            return this.arrowHandler(dir, target.parentElement);
-        } else if (target.parentElement === this.element) {
-            let closestItem = null;
-
-            if (dir === "up") {
-                closestItem = getElementTop(target, this.element);
-            } else if (dir === "down") {
-                closestItem = getElementBottom(target, this.element);
-            } else if (dir === "left") {
-                closestItem = getElementLeft(target, this.element);
-            } else if (dir === "right") {
-                closestItem = getElementRight(target, this.element);
-            }
-
-            if (isHTMLElement(closestItem)) {
-                if (closestItem === this.choices && this.choices.hasChildNodes()) {
-                    let firstChild = getVisibleElement(closestItem);
-                    if (firstChild) {
-                        firstChild.focus();
-                    }
-                } else if (closestItem === this.selectionElement) {
-                    let element = this.environment.resolveElement(closestItem);
-                    if (element) {
-                        element.focus();
-                    }
-                } else {
-                    let element = this.environment.resolveElement(closestItem);
-                    if (element) {
-                        element.focus();
-                    } else {
-                        closestItem.focus();
-                    }
-                }
-
-                return true;
             }
         }
 
-        if (this.parent) {
-            return this.parent.arrowHandler(dir, this.element);
-        }
-
-        return false;
+        return true;
     },
 
     bindEvents() {
@@ -767,6 +762,7 @@ const BaseChoiceField = {
 
         this.projection.registerHandler("view.changed", (value, from) => {
             if (from && from.parent === this.projection) {
+                from.element.parent = this;
                 this.setSelection(value);
             }
         });

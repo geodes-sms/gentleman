@@ -1459,7 +1459,6 @@
                         "static": {
                             "type": "text",
                             "content": "Default value: ",
-                            "focusable": false,
                             "style": {
                                 "css": ["textfield--labeled__label", "label"]
                             }
@@ -1816,7 +1815,6 @@
                         "static": {
                             "type": "text",
                             "content": "Default value: ",
-                            "focusable": false,
                             "style": {
                                 "css": ["textfield--labeled__label", "label"]
                             }

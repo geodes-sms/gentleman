@@ -111,6 +111,13 @@ const BaseTextStatic = {
         return this.element.textContent.length;
     },
     /**
+     * Handles the `backspace` command
+     * @param {HTMLElement} target 
+     */
+    backspaceHandler(target) {
+        return this.arrowHandler("left", target);
+    },
+    /**
      * Handles the `arrow` command
      * @param {HTMLElement} target 
      */
@@ -146,7 +153,7 @@ const BaseTextStatic = {
      */
     escapeHandler(target) {
         let parent = findAncestor(target, (el) => el.tabIndex === 0);
-        let element = this.environment.resolveElement(parent);
+        let element = this.projection.resolveElement(parent);
 
         element.focus(parent);
     },

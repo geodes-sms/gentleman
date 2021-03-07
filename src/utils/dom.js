@@ -99,11 +99,35 @@ export function getVisibleElement(parent) {
     return null;
 }
 
+/**
+ * Get closest element from a direction inside an optional container
+ * @param {HTMLElement} source 
+ * @param {string} dir 
+ * @param {HTMLElement} container 
+ * @param {boolean} relative 
+ */
+export function getClosest(source, dir, container, relative) {
+    if (dir === "up") {
+        return getElementTop(source, container, relative);
+    } else if (dir === "down") {
+        return getElementBottom(source, container, relative);
+    } else if (dir === "left") {
+        return getElementLeft(source, container, relative);
+    } else if (dir === "right") {
+        return getElementRight(source, container, relative);
+    }
+
+    console.error("unknown direction", dir);
+    
+    return null;
+}
+
 
 /**
  * Get closest element above a source element inside an optional container
  * @param {HTMLElement} source 
  * @param {HTMLElement} container 
+ * @param {boolean} relative 
  */
 export function getElementTop(source, container, relative = true) {
     const items = container.children;

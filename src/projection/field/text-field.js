@@ -1,15 +1,15 @@
 import {
     createDocFragment, createSpan, createDiv, createI, createUnorderedList,
     createTextArea, createInput, createListItem, findAncestor, removeChildren,
-    isHTMLElement, isNullOrWhitespace, isEmpty, valOrDefault, hasOwn, getPreviousElementSibling, getNextElementSibling,
+    isHTMLElement, isNullOrWhitespace, isEmpty, valOrDefault, hasOwn,
 } from "zenkai";
 import {
-    hide, show, getCaretIndex, isHidden, NotificationType,
-    getElementLeft, getElementTop, getElementBottom, getElementRight, getVisibleElement
+    hide, show, getCaretIndex, isHidden, NotificationType, getClosest,
+    getTopElement, getBottomElement, getRightElement, getLeftElement
 } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { StateHandler } from "./../state-handler.js";
-import { ContentHandler, resolveValue } from "./../content-handler.js";
+import { resolveValue } from "./../content-handler.js";
 import { Field } from "./field.js";
 
 
@@ -233,7 +233,7 @@ const BaseTextField = {
      * @returns {boolean}
      */
     hasChanges() {
-        return this.value !== this.getValue();
+        return this.value != this.getValue();
     },
     /**
      * Verifies that the field has a value
@@ -614,77 +614,85 @@ const BaseTextField = {
      * @param {HTMLElement} target 
      */
     arrowHandler(dir, target) {
-        /** @type {HTMLElement} */
-        const item = getItem.call(this, target);
+        if (!isHTMLElement(target)) {
+            return false;
+        }
+
+        const { parentElement } = target;
+
+        const exit = () => {
+            if (this.parent) {
+                return this.parent.arrowHandler(dir, this.element);
+            }
+
+            return false;
+        };
+
+        // gets the parent list item if target is a children
+        let item = getItem.call(this, target);
 
         if (isHTMLElement(item)) {
-            let closestItem = null;
+            let closestItem = getClosest(item, dir, this.choice);
 
-            if (dir === "up") {
-                closestItem = getElementTop(target, this.choice);
-            } else if (dir === "down") {
-                closestItem = getElementBottom(target, this.choice);
-            } else if (dir === "left") {
-                closestItem = getElementLeft(target, this.choice);
-            } else if (dir === "right") {
-                closestItem = getElementRight(target, this.choice);
+            if (!isHTMLElement(closestItem)) {
+                return this.arrowHandler(dir, this.choice);
             }
 
-            if (isHTMLElement(closestItem)) {
-                closestItem.focus();
-
-                return true;
-            }
-
-            return this.arrowHandler(dir, this.choice);
-        }
-
-        let element = null;
-
-        if (dir === "up") {
-            element = getElementTop(target, this.element);
-        } else if (dir === "down") {
-            element = getElementBottom(target, this.element, false);
-        } else if (dir === "right") {
-            if (target === this.input) {
-                let isAtEnd = this.getValue().length < getCaretIndex(this.input) + 1;
-
-                if (isAtEnd && this.parent) {
-                    element = getElementRight(target, this.element);
-                }
-            } else {
-                element = getElementRight(target, this.element);
-            }
-        } else if (dir === "left") {
-            if (target === this.input) {
-                let isAtStart = 0 === getCaretIndex(this.input);
-
-                if (isAtStart) {
-                    element = getElementLeft(target, this.element);
-                }
-            } else {
-                element = getElementLeft(target, this.element);
-            }
-        }
-
-        if (isHTMLElement(element)) {
-            if (element === this.choice && this.choice.hasChildNodes()) {
-                let firstChild = getVisibleElement(element);
-                if (firstChild) {
-                    firstChild.focus();
-                }
-            } else {
-                element.focus();
-            }
+            closestItem.focus();
 
             return true;
         }
 
-        if (this.parent) {
-            return this.parent.arrowHandler(dir, this.element);
+        if (parentElement !== this.element) {
+            return exit();
         }
 
-        return false;
+        let element = null;
+
+        if (dir === "right") {
+            if (target === this.input) {
+                let isAtEnd = this.getValue().length < getCaretIndex(this.input) + 1;
+
+                if (!isAtEnd) {
+                    return false;
+                }
+            }
+
+            element = getClosest(target, dir, this.element, false);
+        } else if (dir === "left") {
+            if (target === this.input) {
+                let isAtStart = 0 === getCaretIndex(this.input);
+
+                if (!isAtStart) {
+                    return false;
+                }
+            } 
+
+            element = getClosest(target, dir, this.element, false);
+        } else {
+            element = getClosest(target, dir, this.element, false);
+        }
+
+        
+        if (!isHTMLElement(element)) {
+            return exit();
+        }
+
+        if (element === this.choice && this.choice.hasChildNodes()) {
+            if (dir === "up") {
+                element = getBottomElement(this.choice);
+            } else if (dir === "down") {
+                element = getTopElement(this.choice);
+            } else if (dir === "left") {
+                element = getRightElement(this.choice);
+            } else if (dir === "right") {
+                element = getLeftElement(this.choice);
+            }
+        }
+
+        element.focus();
+
+        return true;
     },
     /**
      * Handles the `control` command

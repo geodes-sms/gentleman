@@ -212,7 +212,7 @@ const Projection = {
                 case "attribute.removed":
                     this.getAttributes(value.name).forEach(attr => {
 
-                        if(attr.element) {
+                        if (attr.element) {
                             removeChildren(attr.element).remove();
                             attr.element = null;
                         }
@@ -366,11 +366,14 @@ const Projection = {
         }
 
         currentContainer.replaceWith(container);
-        this.element.focus();
+
+        this.element = this.resolveElement(this.getContainer());
 
         if (this.parent) {
             this.parent.update("view.changed", container, this);
         }
+
+        this.focus();
 
         return this;
     },
