@@ -141,6 +141,7 @@ const _StringConcept = {
 
         if (this.length) {
             const { min, max } = this.length;
+            
             if (this.length.value && value.length !== this.length.value) {
                 return ResponseCode.FIXLENGTH_ERROR;
             }

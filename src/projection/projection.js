@@ -60,6 +60,8 @@ const Projection = {
     index: 0,
     /** @type {boolean} */
     editing: false,
+    /** @type {boolean} */
+    optional: false,
 
     get hasMultipleViews() { return this.schema.length > 1; },
     get isReadOnly() { return valOrDefault(this.getSchema().readonly, false); },
@@ -134,6 +136,14 @@ const Projection = {
     getLayout(element) {
         return this.environment.getLayout(element);
     },
+    /**
+     * Resolves the element to a projection element
+     * @param {HTMLElement} element 
+     * @returns 
+     */
+    resolveElement(element) {
+        return this.environment.resolveElement(element);
+    },
 
     /**
      * Get Handlers registered to this name
@@ -158,8 +168,7 @@ const Projection = {
             this.concept = null;
 
             this.containers.forEach(container => {
-                removeChildren(container);
-                container.remove();
+                removeChildren(container).remove();
             });
 
             this.model.removeProjection(this.id);
@@ -191,6 +200,7 @@ const Projection = {
                         const render = projection.render();
                         StyleHandler(render, schema.style);
 
+                        projection.element.parent = this.element;
                         attr.element = render;
 
                         if (attr.placeholder) {
@@ -201,7 +211,11 @@ const Projection = {
                     return;
                 case "attribute.removed":
                     this.getAttributes(value.name).forEach(attr => {
-                        attr.element = null;
+
+                        if(attr.element) {
+                            removeChildren(attr.element).remove();
+                            attr.element = null;
+                        }
 
                         if (attr.placeholder) {
                             show(attr.placeholder);
@@ -271,7 +285,7 @@ const Projection = {
             this.model.registerField(this.element);
         }
 
-        if (this.isRoot()) {
+        if (this.isRoot() || this.optional) {
             this.element.focusable = true;
         }
 
@@ -352,7 +366,7 @@ const Projection = {
         }
 
         currentContainer.replaceWith(container);
-        this.focus();
+        this.element.focus();
 
         if (this.parent) {
             this.parent.update("view.changed", container, this);

@@ -21,6 +21,8 @@ export function AttributeHandler(schema, concept) {
         required: concept.isAttributeRequired(name),
         created: concept.isAttributeCreated(name),
         placeholder: null,
+        model: this.model,
+        projection: this.projection,
         element: null,
     };
 
@@ -47,13 +49,15 @@ export function AttributeHandler(schema, concept) {
 
         render.addEventListener('click', (event) => {
             concept.createAttribute(name);
+            let element = this.projection.resolveElement(attr.element);
+            element.focus();
         });
 
         attr.placeholder = render;
     } else {
-        let { target, description, schema } = concept.getAttributeByName(name);
+        const { target, description, schema } = concept.getAttributeByName(name);
 
-        var projection = this.projection.model.createProjection(target, tag).init();
+        let projection = this.projection.model.createProjection(target, tag).init();
 
         projection.parent = this.projection;
         

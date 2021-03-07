@@ -252,11 +252,12 @@ export const ProjectionModel = {
 
             return concept.hasPrototype(prototype);
         };
+        const isValid = (type) => !["template", "rule"].includes(type);
 
         if (isString(concept)) {
-            projection = this.schema.filter(p => p.type !== "template" && p.concept.name === concept);
+            projection = this.schema.filter(p => isValid(p.type) && p.concept.name === concept);
         } else {
-            projection = this.schema.filter(p => p.type !== "template" && (hasName(p.concept.name) || hasPrototype(p.concept.prototype)));
+            projection = this.schema.filter(p => isValid(p.type) && (hasName(p.concept.name) || hasPrototype(p.concept.prototype)));
         }
 
         if (isIterable(tag) && !isEmpty(tag)) {
@@ -267,6 +268,12 @@ export const ProjectionModel = {
     },
     getModelTemplate(name, tag) {
         return this.schema.find(p => p.type === "template" && p.name === name);
+    },
+    getRule(name) {
+        return this.schema.find(p => p.type === "rule" && p.name === name);
+    },
+    getStyle(name) {
+        return this.schema.find(p => p.type === "style" && p.name === name);
     },
     getModelProjectionTemplate(concept, type, tag) {
         var projection = this.getModelProjection(concept, tag);

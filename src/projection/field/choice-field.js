@@ -176,7 +176,7 @@ const BaseChoiceField = {
     },
     setInputValue(value) {
         if (isHTMLElement(this.input)) {
-            this.input.value = value;
+            this.input.value = value.name || value;
         }
     },
 
@@ -405,8 +405,10 @@ const BaseChoiceField = {
     refresh() {
         if (this.hasValue()) {
             this.element.classList.remove("empty");
+            this.element.dataset.value = this.value.name || this.value;
         } else {
             this.element.classList.add("empty");
+            this.element.dataset.value = "";
         }
 
         if (this.hasChanges()) {
@@ -414,6 +416,11 @@ const BaseChoiceField = {
         } else {
             this.statusElement.classList.remove("change");
         }
+
+        if(this.input) {
+            this.element.dataset.input = this.input.value;
+        }
+        
 
         this.element.classList.remove("querying");
 
@@ -556,7 +563,7 @@ const BaseChoiceField = {
         }
 
         if (found) {
-            this.setInputValue(value.name);
+            this.setInputValue(value);
         }
 
         return this;

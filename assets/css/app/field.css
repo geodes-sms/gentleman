@@ -196,6 +196,7 @@
 
     .field--textbox__choice {
         padding: 4px 1%;
+        color: #333;
         font-size: 0.9em;
     }
         .field--textbox__choice:hover,

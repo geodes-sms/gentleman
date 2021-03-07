@@ -2,7 +2,7 @@ import {
     createDocFragment, createDiv, createInput, createLabel, createButton, 
     isHTMLElement,valOrDefault, findAncestor,
 } from "zenkai";
-import { getElementTop, getElementBottom, getElementLeft, getElementRight } from "@utils/index.js";
+import { getElementTop, getElementBottom, getElementLeft, getElementRight, getVisibleElement } from "@utils/index.js";
 import { StyleHandler } from './../style-handler.js';
 import { ContentHandler } from './../content-handler.js';
 import { Layout } from "./layout.js";
@@ -74,6 +74,8 @@ export const BaseWrapLayout = {
             this.bindEvents();
         }
 
+        this.container.style.display = "inline-flex";
+
         this.refresh();
 
         return this.container;
@@ -102,7 +104,9 @@ export const BaseWrapLayout = {
         if (this.focusable) {
             this.container.focus();
         } else {
-            let projectionElement = this.environment.resolveElement(valOrDefault(element, this.elements[0]));
+            let firstElement = valOrDefault(getVisibleElement(this.container), this.elements[0]);
+            let projectionElement = this.environment.resolveElement(firstElement);
+            
             if (projectionElement) {
                 projectionElement.focus();
             }
@@ -115,6 +119,7 @@ export const BaseWrapLayout = {
      */
     enterHandler(target) {
         let projectionElement = this.environment.resolveElement(this.elements[0]);
+
         if (projectionElement) {
             projectionElement.focus();
         }

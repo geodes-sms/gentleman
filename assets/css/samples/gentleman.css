@@ -37,6 +37,7 @@
         display: inline-flex;
         margin-top: 4px; margin-bottom: 2px;
         font-size: 1.1em; font-weight: bold;
+        letter-spacing: -0.5px;
         color: #C40234;
     }
 

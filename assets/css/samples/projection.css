@@ -725,3 +725,105 @@
     flex-direction: row; align-items: flex-start;
     flex-wrap: nowrap;
 }
+
+.textual-option--style {
+    margin-right: 4px;
+    padding: 2px 4px;
+    color: #555;
+    border: 2px dashed #999; border-radius: 1px;
+    font-style: italic;
+    opacity: 0.8;
+    transition: .2s;
+}
+
+.text-style-container {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    margin-top: 6px;
+    padding-top: 4px;
+}
+
+.textual-option--style:hover,
+.textual-option--style:focus {
+    transform: scale(1.05);
+    opacity: 1;
+}
+
+.text-style__attribute {
+    margin-right: 4px; margin-bottom: 6px;
+    padding: 2px 6px;
+    color: #222;
+    border-radius: 3px;
+    color: #fff;
+    background-color: #111;
+    transition: .2s;
+}
+
+    .text-style__attribute .keyword,
+    .text-style__attribute .title--small {
+        color: inherit;
+    }
+    .text-style__attribute:hover {
+        background-color: #555;
+    }
+    .text-style__attribute:focus {
+        background-color: #d5d5d5;
+        color: #222;
+    }
+
+    .text-style__attribute > .structure__btn-delete {
+        top: -2px; right: 0;
+        width: 18px; height: 18px; 
+        font-size: 0.9em; font-weight: 300;
+        color: #999;
+        padding: 0;
+        border: 1px solid #c0c0c0;
+        background-color: #fefefe;
+        border-radius: 50%;
+        transition: .2s;
+        transform: translateY(-50%) translateX(3px);
+    }
+        .text-style__attribute > .structure__btn-delete:before {
+            content: "✖";
+        }
+        .text-style__attribute > .structure__btn-delete:hover {
+            color: #555;
+            border-color: #a9a9a9;
+        }
+            .text-style__attribute > .structure__btn-delete:hover:before {
+                transform: scale(1.2) translateY(1px);
+            }
+
+.render__nav-projection {
+    align-self: flex-start;
+
+    margin-top: 6px;
+    width: 100%; max-width: 120px;
+    padding: 6px 12px 8px;
+    color: #fff;
+    font-size: 1em; font-weight: 500;
+    border-radius: 2px;
+    background-color: #1f75fe;
+    transition: .2s;
+    opacity: 0.8;
+    transform: scale(0.9) translateX(-6px);
+    outline: none;
+}
+    .render__nav-projection:hover,
+    .render__nav-projection:focus {
+        opacity: 1;
+    }
+    .render__nav-projection:focus {
+        box-shadow: 0 0 0 3px #fff, 0 0 0 6px #1f75fe;
+    }
+
+    .render__nav-projection--back {
+        margin-left: 6px;
+        width: auto;
+        max-width: 72px;
+        border-radius: 180px;
+    }
+        .render__nav-projection--back:focus {
+            box-shadow: 0 0 0 2px #fff, 0 0 0 4px #1f75fe;
+        }
+            
