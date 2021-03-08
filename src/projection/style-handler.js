@@ -62,9 +62,6 @@ function styleTextHandler(element, schema) {
             case "align":
                 element.style.textAlign = value;
                 break;
-            case "space":
-                element.style.lineHeight = resolveSize(value);
-                break;
             default:
                 break;
         }
@@ -159,8 +156,11 @@ function styleBoxHandler(element, schema) {
     for (const rule in schema) {
         const value = schema[rule];
         switch (rule) {
-            case "space":
-                resolveSpace(element, value);
+            case "inner":
+                resolveSpace(element, value, "padding");
+                break;
+            case "outer":
+                resolveSpace(element, value, "margin");
                 break;
             case "border":
                 resolveBorder(element, value);
@@ -190,48 +190,24 @@ function styleBoxHandler(element, schema) {
  * @param {HTMLElement} element 
  * @param {*} schema 
  */
-function resolveSpace(element, schema) {
-    const { inner = {}, outer = {} } = schema;
-
-    if (Number.isInteger(inner)) {
-        element.style.padding = `${inner}px`;
+function resolveSpace(element, schema, prop) {
+    if (Number.isInteger(schema)) {
+        element.style[prop] = `${schema}px`;
     } else {
-        for (const rule in inner) {
-            const value = inner[rule];
+        for (const rule in schema) {
+            const value = schema[rule];
             switch (rule) {
                 case "top":
-                    element.style.paddingTop = `${value}px`;
+                    element.style[`${[prop]}Top`] = `${value}px`;
                     break;
                 case "right":
-                    element.style.paddingRight = `${value}px`;
+                    element.style[`${[prop]}Right`] = `${value}px`;
                     break;
                 case "bottom":
-                    element.style.paddingBottom = `${value}px`;
+                    element.style[`${[prop]}Bottom`] = `${value}px`;
                     break;
                 case "left":
-                    element.style.paddingLeft = `${value}px`;
-                    break;
-            }
-        }
-    }
-
-    if (Number.isInteger(outer)) {
-        element.style.margin = `${outer}px`;
-    } else {
-        for (const rule in outer) {
-            const value = outer[rule];
-            switch (rule) {
-                case "top":
-                    element.style.marginTop = `${value}px`;
-                    break;
-                case "right":
-                    element.style.marginRight = `${value}px`;
-                    break;
-                case "bottom":
-                    element.style.marginBottom = `${value}px`;
-                    break;
-                case "left":
-                    element.style.marginLeft = `${value}px`;
+                    element.style[`${[prop]}Left`] = `${value}px`;
                     break;
             }
         }

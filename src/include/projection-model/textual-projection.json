@@ -261,6 +261,20 @@
                     {
                         "type": "attribute",
                         "name": "text"
+                    },
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Box style",
+                            "style": {
+                                "css": ["title--small"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "box"
                     }
                 ]
             }
@@ -549,6 +563,312 @@
                 ]
             }
         },
+
+
+        {
+            "concept": { "name": "box style" },
+            "tags": [],
+            "type": "layout",
+            "content":  {
+                "type": "stack",
+                "orientation": "horizontal",
+                "disposition": [
+                    {
+                        "type": "attribute",
+                        "name": "inner space",
+                        "state": [
+                            {
+                                "rule": {
+                                    "type": "ref",
+                                    "ref": "is-attribute-created"
+                                },
+                                "triggers": ["click", "enter"],
+                                "result": {
+                                    "content": {
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "content": "Inner",
+                                            "style": {
+                                                "css": ["textual-option", "textual-option--style"]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["text-style__attribute"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "outer space",
+                        "state": [
+                            {
+                                "rule": {
+                                    "type": "ref",
+                                    "ref": "is-attribute-created"
+                                },
+                                "triggers": ["click", "enter"],
+                                "result": {
+                                    "content": {
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "content": "Outer",
+                                            "style": {
+                                                "css": ["textual-option", "textual-option--style"]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["text-style__attribute"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "background",
+                        "state": [
+                            {
+                                "rule": {
+                                    "type": "ref",
+                                    "ref": "is-attribute-created"
+                                },
+                                "triggers": ["click", "enter"],
+                                "result": {
+                                    "content": {
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "content": "Background",
+                                            "style": {
+                                                "css": ["textual-option", "textual-option--style"]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["text-style__attribute"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "width",
+                        "state": [
+                            {
+                                "rule": {
+                                    "type": "ref",
+                                    "ref": "is-attribute-created"
+                                },
+                                "triggers": ["click", "enter"],
+                                "result": {
+                                    "content": {
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "content": "Width",
+                                            "style": {
+                                                "css": ["textual-option", "textual-option--style"]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["text-style__attribute"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "height",
+                        "state": [
+                            {
+                                "rule": {
+                                    "type": "ref",
+                                    "ref": "is-attribute-created"
+                                },
+                                "triggers": ["click", "enter"],
+                                "result": {
+                                    "content": {
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "content": "Height",
+                                            "style": {
+                                                "css": ["textual-option", "textual-option--style"]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["text-style__attribute"]
+                        }
+                    }
+                ],
+                "style": {
+                    "css": ["text-style-container"]
+                }
+            }
+        },
+
+
+        {
+            "concept": { "name": "multi size" },
+            "tags": [],
+            "type": "field",
+            "content":  {
+                "type": "choice",
+                "choice": {
+                    "style": {
+                        "css": ["bracket-choice__list"]
+                    },
+                    "option": {
+                        "style": {
+                            "css": ["bracket-choice__list-option"]
+                        }
+                    }
+                },
+                "input": {
+                    "placeholder": "omni or direction specific",
+                    "style": {
+                        "css": ["bracket-choice__input"]
+                    }
+                },
+                "selection": {
+                    "style": {
+                        "css": ["bracket-choice__selection", "bracket-choice--component__selection"]
+                    }
+                },
+                "style": {
+                    "css": ["bracket-choice", "bracket-choice--component"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "omni size" },
+            "tags": ["choice-selection"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "horizontal",
+                "disposition": [
+                    {
+                        "type": "attribute",
+                        "name": "value"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "type",
+                        "tag": "bracket-string"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "omni size" },
+            "type": "layout",
+            "tags": ["choice"],
+            "projection": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Omni size"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "direction size" },
+            "tags": ["choice-selection"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static":  {
+                            "type": "text",
+                            "content": { "type": "property", "name": "refname" },
+                            "style": {
+                                "css": ["title--small"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "top",
+                                    "style": {
+                                        "css": ["direction-size"]
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "right",
+                                    "style": {
+                                        "css": ["direction-size"]
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "bottom",
+                                    "style": {
+                                        "css": ["direction-size"]
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "left",
+                                    "style": {
+                                        "css": ["direction-size"]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "direction size" },
+            "type": "layout",
+            "tags": ["choice"],
+            "projection": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Direction size"
+                        }
+                    }
+                ]
+            }
+        },
+
+
 
 
         {
@@ -1917,7 +2237,7 @@
                         "type": "static",
                         "static":  {
                             "type": "text",
-                            "content": "Colour",
+                            "content": { "type": "property", "name": "refname" },
                             "style": {
                                 "css": ["title--small"]
                             }
@@ -2046,66 +2366,95 @@
             "concept": { "name": "size" },
             "tags": [],
             "type": "layout",
-            "projection": {
+            "content": {
                 "type": "stack",
                 "orientation": "vertical",
                 "disposition": [
                     {
                         "type": "static",
-                        "static":  {
+                        "static": {
                             "type": "text",
-                            "content": "Text size",
+                            "content": { "type": "property", "name": "refname" },
                             "style": {
-                                "css": ["title--small"]
+                                "css": ["title--small", "primitive-constraint__title--small"]
                             }
                         }
                     },
                     {
-                        "type": "field",
-                        "field": {
-                            "type": "choice",
-                            "choice": {
-                                "style": {
-                                    "css": ["bracket-choice__list"]
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "value",
+                                    "tag": "textual"
                                 },
-                                "option": {
-                                    "style": {
-                                        "css": ["bracket-choice__list-option"]
-                                    }
+                                {
+                                    "type": "attribute",
+                                    "name": "unit",
+                                    "tag": "simple-string"
                                 }
-                            },
-                            "input": {
-                                "placeholder": "type",
-                                "style": {
-                                    "css": ["bracket-choice__input"]
-                                }
-                            },
-                            "selection": {
-                                "style": {
-                                    "css": ["bracket-choice__selection"]
-                                }
-                            },
-                            "style": {
-                                "css": ["bracket-choice"]
-                            }
+                            ]
                         }
                     }
-                ]
+                ],
+                "style": {
+                    "css": ["size-config"]
+                }
             }
         },
+    
 
+
+        
+        {
+            "concept": { "name": "unit" },
+            "tags": [],
+            "type": "field",
+            "projection": {
+                "type": "choice",
+                "choice": {
+                    "style": {
+                        "css": ["bracket-choice__list"]
+                    },
+                    "option": {
+                        "style": {
+                            "css": ["bracket-choice__list-option"]
+                        }
+                    }
+                },
+                "input": {
+                    "placeholder": "type",
+                    "style": {
+                        "css": ["bracket-choice__input"]
+                    }
+                },
+                "selection": {
+                    "style": {
+                        "css": ["bracket-choice__selection"]
+                    }
+                },
+                "style": {
+                    "css": ["bracket-choice", "bracket-choice--unit"]
+                }
+            }
+        },
         {
             "concept": { "name": "pixel" },
             "tags": ["choice-selection"],
             "type": "layout",
             "content": {
-                "type": "stack",
-                "orientation": "horizontal",
+                "type": "wrap",
+                "focusable": false,
                 "disposition": [
                     {
-                        "type": "attribute",
-                        "name": "value",
-                        "tag": "textual"
+                        "type": "static", 
+                        "static": {
+                            "type": "text",
+                            "content": "PX"
+                        }
                     }
                 ]
             }
@@ -2138,9 +2487,11 @@
                 "orientation": "horizontal",
                 "disposition": [
                     {
-                        "type": "attribute",
-                        "name": "value",
-                        "tag": "textual"
+                        "type": "static", 
+                        "static": {
+                            "type": "text",
+                            "content": "X"
+                        }
                     },
                     {
                         "type": "attribute",
@@ -2178,9 +2529,11 @@
                 "orientation": "horizontal",
                 "disposition": [
                     {
-                        "type": "attribute",
-                        "name": "value",
-                        "tag": "textual"
+                        "type": "static", 
+                        "static": {
+                            "type": "text",
+                            "content": "%"
+                        }
                     },
                     {
                         "type": "attribute",

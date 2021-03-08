@@ -45,11 +45,10 @@ const _Concept = {
         this.accept = args.accept;
         this.parent = args.parent;
         this.ref = args.ref;
+        this.default = valOrDefault(this.schema.default, null);
         this.values = valOrDefault(args.values, valOrDefault(this.schema.values, []));
         this.alias = valOrDefault(args.alias, this.schema.alias);
         this.description = valOrDefault(args.description, this.schema.description);
-        this.min = valOrDefault(args.min, valOrDefault(this.schema.min, 1));
-        this.max = valOrDefault(args.max, this.schema.max);
 
 
         this.initObserver();

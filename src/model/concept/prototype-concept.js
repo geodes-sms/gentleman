@@ -24,10 +24,15 @@ const BasePrototypeConcept = {
 
     initValue(args) {
         if (isNullOrUndefined(args)) {
+            if (this.default) {
+                let concept = this.createConcept(this.default);
+                this.setValue(concept);
+            }
+            
             return this;
         }
 
-        const { id, value } = args;
+        const { id, value, name } = args;
 
         // this.id = id;
 
@@ -36,8 +41,8 @@ const BasePrototypeConcept = {
             // console.log(concept);
             // return;
             this.setValue(concept);
-        } else if (args.name) {
-            let concept = this.createConcept(args.name, args);
+        } else if (name) {
+            let concept = this.createConcept(name, args);
             this.setValue(concept);
         }
 

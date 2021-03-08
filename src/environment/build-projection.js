@@ -480,31 +480,84 @@ function buildFieldTemplate(element) {
 function buildStyle(style) {
     let schema = {};
 
-    if (style.isAttributeCreated("css")) {
-        schema.css = getAttr(style, 'css').build();
+    if (hasAttr(style, "css")) {
+        schema.css = getAttr(style, "css").build();
     }
 
-    let textStyle = getAttr(style, 'text');
-    schema.text = {};
+    if (hasAttr(style, "text")) {
+        schema.text = buildTextStyle(getAttr(style, "text"));
+    }
 
-    if (hasAttr(textStyle, "bold")) {
-        schema.text.bold = getValue(textStyle, 'bold');
+    if (hasAttr(style, "box")) {
+        schema.box = buildBoxStyle(getAttr(style, "box"));
     }
-    if (hasAttr(textStyle, "italic")) {
-        schema.text.italic = getValue(textStyle, 'italic');
+
+    return schema;
+}
+
+function buildTextStyle(style) {
+    let schema = {};
+
+    if (hasAttr(style, "bold")) {
+        schema.bold = getValue(style, 'bold');
     }
-    if (hasAttr(textStyle, "underline")) {
-        schema.text.underline = getValue(textStyle, 'underline');
+
+    if (hasAttr(style, "italic")) {
+        schema.italic = getValue(style, 'italic');
     }
-    if (hasAttr(textStyle, "strikethrough")) {
-        schema.text.strikethrough = getValue(textStyle, 'strikethrough');
+
+    if (hasAttr(style, "underline")) {
+        schema.underline = getValue(style, 'underline');
     }
-    if (hasAttr(textStyle, "colour") && hasValue(textStyle, "colour")) {
-        schema.text.color = buildColour(getValue(textStyle, 'colour'));
+
+    if (hasAttr(style, "strikethrough")) {
+        schema.strikethrough = getValue(style, 'strikethrough');
     }
-    if (hasAttr(textStyle, "size") && hasValue(textStyle, "size")) {
-        schema.text.size = buildSize(getValue(textStyle, 'size'));
+
+    if (hasAttr(style, "colour") && hasValue(style, "colour")) {
+        schema.color = buildColour(getValue(style, 'colour'));
     }
+    if (hasAttr(style, "size")) {
+        schema.size = buildSize(getAttr(style, 'size'));
+    }
+
+    return schema;
+}
+
+function buildBoxStyle(style) {
+    let schema = {};
+
+    if (hasAttr(style, "inner space")) {
+        schema.inner = buildSpace(getAttr(style, 'inner space'));
+    }
+
+    if (hasAttr(style, "outer space")) {
+        schema.outer = buildSpace(getAttr(style, 'outer space'));
+    }
+
+    if (hasAttr(style, "background") && hasValue(style, "background")) {
+        schema.background = buildColour(getValue(style, 'background'));
+    }
+
+    if (hasAttr(style, "width")) {
+        schema.width = buildSize(getAttr(style, 'width'));
+    }
+
+    if (hasAttr(style, "height")) {
+        schema.height = buildSize(getAttr(style, 'height'));
+    }
+
+    return schema;
+}
+
+function buildSpace(style) {
+    let schema = {};
+
+    ["top", "right", "bottom", "left"].forEach(dir => {
+        if (hasAttr(style, dir)) {
+            schema[dir] = buildSize(getAttr(style, dir));
+        }
+    });
 
     return schema;
 }
@@ -528,20 +581,10 @@ function buildColour(colour) {
 }
 
 function buildSize(size) {
-    let schema = {};
-
-    if (size.name === "pixel") {
-        schema.type = "pixel";
-        schema.value = getValue(size, "value");
-    } else if (size.name === "percentage") {
-        schema.type = "percentage";
-        schema.ref = getValue(size, "type");
-        schema.value = getValue(size, "value");
-    } else if (size.name === "multiplier") {
-        schema.type = "multiplier";
-        schema.ref = getValue(size, "type");
-        schema.value = getValue(size, "value");
-    }
+    let schema = {
+        value: getValue(size, "value"),
+        unit: getValue(size, "unit")
+    };
 
     return schema;
 }

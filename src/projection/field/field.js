@@ -146,8 +146,6 @@ const BaseField = {
      */
     deleteHandler(target) {
         console.warn(`DELETE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
-
-        this.focusOut();
     },
     /**
      * Handles the `backspace` command

@@ -162,10 +162,11 @@
 
 .field--textbox__input {
     display: inline-block;
-    width: 100%; min-width: 48px;
+    width: 100%; min-width: 42px;
+    padding-left: 1px; padding-right: 1px;
     font-size: 1em; font-family: inherit;
     color: inherit;
-    border: 0 none;
+    border: 0 none; border-radius: 1px;
     background-color: transparent;
     outline: none;
     z-index: 5;
