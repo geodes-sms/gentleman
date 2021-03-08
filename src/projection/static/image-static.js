@@ -85,7 +85,7 @@ const BaseImageStatic = {
             this.element.title = help;
         }
 
-        StyleHandler(this.element, style);
+        StyleHandler.call(this.projection, this.element, style);
 
         this.refresh();
 

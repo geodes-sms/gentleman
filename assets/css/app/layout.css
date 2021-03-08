@@ -1,6 +1,5 @@
 .layout-container {
     position: relative;
-    transition: .2s;
 }
 
 .layout-container-collapse {
@@ -53,32 +52,7 @@
         opacity: 0.8;
     }
 
-.layout-menu {
-    position: absolute;
-    top: 0; left: calc(100% + 2px);
-    padding: 20px 12px 8px;
-    min-width: 300px;
-    font-size: 1rem;
-    color: #fff;
-    background-color: #232425;
-    border-radius: 4px;
-    opacity: 0;
-    transform: scale(0);
-    transition: .2s;
-}
 
-    .layout-menu.open {
-        opacity: 1;
-        transform: scale(1);   
-    }
-
-    .layout-menu .btn-edit {
-        left: unset; right: 0;
-        background-color: royalblue;
-        opacity: 1;
-        transform: scale(1);
-        z-index: 5;
-    }
 
 .radio-group {
     display: flex;

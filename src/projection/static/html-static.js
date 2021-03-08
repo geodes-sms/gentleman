@@ -23,7 +23,7 @@ const BaseHTMLStatic = {
             this.element = cloneTemplate(this.template);
         }
 
-        // StyleHandler(this.element, style);
+        // StyleHandler.call(this.projection, this.element, style);
 
         this.refresh();
 

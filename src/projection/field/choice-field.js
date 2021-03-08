@@ -169,6 +169,10 @@ const BaseChoiceField = {
 
         this.value = value;
 
+        if (isNullOrUndefined(value)) {
+            this.setInputValue("");
+        }
+
         this.refresh();
     },
     setInputValue(value) {
@@ -289,7 +293,7 @@ const BaseChoiceField = {
             fragment.appendChild(this.selectionPlaceholder);
         }
 
-        StyleHandler(this.element, style);
+        StyleHandler.call(this.projection, this.element, style);
 
         if (fragment.hasChildNodes()) {
             this.element.appendChild(fragment);
@@ -518,7 +522,7 @@ const BaseChoiceField = {
             container.append(value.toString());
         }
 
-        StyleHandler(container, style);
+        StyleHandler.call(this.projection, container, style);
 
         this.items.set(value.id, container);
 
@@ -580,7 +584,7 @@ const BaseChoiceField = {
         hide(this.selectionPlaceholder);
         this.selectionElement = element;
         this.selectionElement.classList.add("field--choice__selection");
-        StyleHandler(this.selectionElement, style);
+        StyleHandler.call(this.projection, this.selectionElement, style);
         this.selectionPlaceholder.after(element);
     },
 
@@ -715,8 +719,8 @@ const BaseChoiceField = {
             closestItem.focus();
 
             return true;
-        } 
-               
+        }
+
         if (parentElement !== this.element) {
             return exit();
         }

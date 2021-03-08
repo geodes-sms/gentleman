@@ -1,4 +1,4 @@
-import { isEmpty, isNullOrUndefined, isNullOrWhitespace } from "zenkai";
+import { isEmpty, isNullOrUndefined, isNullOrWhitespace, valOrDefault } from "zenkai";
 import { NotificationType } from "@utils/index.js";
 
 
@@ -42,7 +42,7 @@ export function buildConceptHandler(model) {
     }
 
     concepts.forEach(concept => {
-        const { success, errors, message } = buildConcept(concept);
+        const { success, errors, message } = buildConcept.call(model, concept);
 
         if (!success) {
             buildErrors.push(...errors);
@@ -78,12 +78,12 @@ function buildConcept(concept) {
     const properties = [];
 
     if (isNullOrWhitespace(name)) {
-        buildErrors.push(`The ${nature} concept's 'name' is missing a value.`);
+        buildErrors.push(`The ${nature} concept's <<name>> is missing a value.`);
     }
 
     if (concept.isAttributeCreated(ATTR_ATTRIBUTES)) {
         getValue(concept, ATTR_ATTRIBUTES).forEach(attribute => {
-            const { success, errors, message } = buildAttribute(attribute);
+            const { success, errors, message } = buildAttribute.call(this, attribute);
 
             if (!success) {
                 buildErrors.push(...errors);
@@ -99,7 +99,7 @@ function buildConcept(concept) {
 
     if (concept.isAttributeCreated(ATTR_PROPERTIES)) {
         getValue(concept, ATTR_PROPERTIES).forEach(property => {
-            const { success, errors, message } = buildProperty(property);
+            const { success, errors, message } = buildProperty.call(this, property);
 
             if (!success) {
                 buildErrors.push(...errors);
@@ -136,7 +136,7 @@ function buildConcept(concept) {
     }
 
     if (concept.isAttributeCreated(ATTR_BASE) && hasValue(concept, ATTR_BASE)) {
-        schema.base = buildTarget(getValue(concept, ATTR_BASE));
+        schema.base = buildTarget.call(this, getValue(concept, ATTR_BASE));
     }
 
     return {
@@ -157,11 +157,11 @@ function buildAttribute(attribute) {
     const errors = [];
 
     if (isNullOrWhitespace(name)) {
-        errors.push("The attribute's 'name' is missing a value.");
+        errors.push("The attribute's <<name>> is missing a value.");
     }
 
     if (!(hasAttr(attribute, "target") && hasValue(attribute, "target"))) {
-        errors.push(`The attribute '${name}' 'target' is missing a value.`);
+        errors.push(`Attribute ${isNullOrWhitespace(name) ? "N/A" : `'${name}'`}: <<target>> is missing a value.`);
     }
 
     if (!isEmpty(errors)) {
@@ -174,7 +174,7 @@ function buildAttribute(attribute) {
 
     const schema = {
         "name": name,
-        "target": buildTarget(getValue(attribute, "target")),
+        "target": buildTarget.call(this, getValue(attribute, "target")),
         "required": required,
         "description": description,
     };
@@ -203,7 +203,7 @@ function buildTarget(target) {
     if (target.isAttributeCreated("accept")) {
         let accept = getValue(target, "accept");
 
-        result["accept"] = buildTarget(accept);
+        result["accept"] = buildTarget.call(this, accept);
     }
 
     ["default", "ordered", "pattern"].filter(prop => hasAttr(target, prop) && hasValue(target, prop))
@@ -265,13 +265,20 @@ function buildProperty(property) {
     }
 
     if (!(hasAttr(property, "target") && hasValue(property, "target"))) {
-        errors.push(`The property '${name}' 'target' is missing a value.`);
+        errors.push(`Property ${isNullOrWhitespace(name) ? "N/A" : `'${name}'`}: <<target>> is missing a value.`);
+    }
+
+    if (!isEmpty(errors)) {
+        return {
+            success: false,
+            message: "Validation failed: The property could not be built.",
+            errors: errors,
+        };
     }
 
     const target = getValue(property, "target");
 
     const type = target.getProperty(PROP_TYPE);
-
 
     if (isNullOrUndefined(type)) {
         errors.push(`The property '${name}' target's type is missing a value.`);

@@ -75,7 +75,7 @@ const BaseTextStatic = {
             this.element.title = help;
         }
 
-        StyleHandler(this.element, style);
+        StyleHandler.call(this.projection, this.element, style);
 
         if (fragment.hasChildNodes()) {
             this.element.appendChild(fragment);

@@ -743,8 +743,12 @@
     color: #555;
     border: 2px dashed #999; border-radius: 1px;
     font-style: italic;
+    font-size: 0.9em;
     opacity: 0.8;
     transition: .2s;
+    cursor: default;
+
+    order: 2;
 }
 
 .text-style-container {
@@ -768,6 +772,7 @@
     color: #fff;
     background-color: #111;
     transition: .2s;
+    order: 1;
 }
 
     .text-style__attribute .keyword,
@@ -781,6 +786,10 @@
     .text-style__attribute:focus {
         background-color: #d5d5d5;
         color: #222;
+    }
+
+    .reference-choice--textual:not(.empty) .field--choice__selection {
+        display: none!important;
     }
 
     .text-style__attribute > .structure__btn-delete {

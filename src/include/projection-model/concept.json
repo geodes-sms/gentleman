@@ -92,7 +92,7 @@
                 {
                     "name": "style",
                     "target": {
-                        "name": "style"
+                        "name": "gentleman style"
                     }
                 }
             ],
@@ -151,6 +151,13 @@
                 },
                 {
                     "name": "draggable",
+                    "target": {
+                        "name": "boolean",
+                        "default": false
+                    }
+                },
+                {
+                    "name": "hidden",
                     "target": {
                         "name": "boolean",
                         "default": false
@@ -867,10 +874,33 @@
                         "name": "set",
                         "accept": {
                             "name": "string"
-                        },
-                        "min": 1
+                        }
                     }
                 },
+                {
+                    "name": "ref",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "reference",
+                            "accept": {
+                                "name": "style rule"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "gss",
+                    "target": {
+                        "name": "gentleman style"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "gentleman style",
+            "nature": "concrete",
+            "attributes": [
                 {
                     "name": "text",
                     "target": {
@@ -929,12 +959,35 @@
                     "required": false
                 },
                 {
+                    "name": "opacity",
+                    "target": {
+                        "name": "percentage"
+                    },
+                    "required": false
+                },
+                {
                     "name": "size",
                     "target": {
                         "name": "size"
                     },
-                    "required": false,
-                    "alias": "text size"
+                    "required": false
+                },
+                {
+                    "name": "font",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "string"
+                        }
+                    },
+                    "required": false
+                },
+                {
+                    "name": "alignment",
+                    "target": {
+                        "name": "alignment"
+                    },
+                    "required": false
                 }
             ]
         },
@@ -976,6 +1029,13 @@
                         "name": "size"
                     },
                     "required": false
+                },
+                {
+                    "name": "opacity",
+                    "target": {
+                        "name": "percentage"
+                    },
+                    "required": false
                 }
             ]
         },
@@ -1007,53 +1067,12 @@
                     "name": "unit",
                     "target": {
                         "name": "size unit",
-                        "default": "PX"
+                        "default": "px"
                     }
                 }
             ]
         },
-        
-        {
-            "name": "unit",
-            "nature": "prototype",
-            "attributes": []
-        },
-        {
-            "name": "pixel",
-            "nature": "concrete",
-            "prototype": "unit",
-            "attributes": []
-        },
-        {
-            "name": "percentage",
-            "nature": "concrete",
-            "prototype": "unit",
-            "attributes": [
-                {
-                    "name": "type",
-                    "target": {
-                        "name": "string",
-                        "values": ["parent", "window"],
-                        "default": "parent"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "multiplier",
-            "nature": "concrete",
-            "prototype": "unit",
-            "attributes": [
-                {
-                    "name": "type",
-                    "target": {
-                        "name": "string",
-                        "values": ["parent", "root"],
-                        "default": "parent"
-                    }
-                }
-            ]
-        },
+
 
         {
             "name": "colour",
@@ -1168,6 +1187,15 @@
             }
         },
         {
+            "name": "percentage",
+            "nature": "derivative",
+            "base": "number",
+            "value": {
+                "min": { "value": 0, "included": true },
+                "max": { "value": 100, "included": true }
+            }
+        },
+        {
             "name": "name",
             "nature": "derivative",
             "base": "string",
@@ -1215,13 +1243,19 @@
             "name": "size unit",
             "nature": "derivative",
             "base": "string",
-            "values": ["PX", "EM", "REM", "%", "VW", "VH"]
+            "values": ["px", "em", "rem", "%", "vw", "vh"]
         },
         {
             "name": "direction",
             "nature": "derivative",
             "base": "string",
             "values": ["top", "right", "bottom", "left"]
+        },
+        {
+            "name": "alignment",
+            "nature": "derivative",
+            "base": "string",
+            "values": ["left", "right", "center", "justify"]
         }
     ]
 }

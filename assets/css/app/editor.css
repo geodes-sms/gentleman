@@ -232,8 +232,12 @@
         max-height: 100%;
     }
     .editor-concept.collapsed > .layout-container {
-        height: 30px;
+        max-height: 48px;
         opacity: 0.5;
+    }
+    .editor-concept.collapsed [data-nature="layout"],
+    .editor-concept.collapsed [data-nature="field"] {
+        font-size: 0.8rem;
     }
 
     .editor-concept-preview {

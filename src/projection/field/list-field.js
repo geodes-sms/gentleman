@@ -154,7 +154,7 @@ const BaseListField = {
                 this.element.classList.add("readonly");
             }
 
-            StyleHandler(this.element, this.schema.style);
+            StyleHandler.call(this.projection, this.element, this.schema.style);
         }
 
         if (!isHTMLElement(this.notification)) {
@@ -200,7 +200,7 @@ const BaseListField = {
             list.currentState = null;
             this.elements.set(list, this.list);
 
-            StyleHandler(this.list, style);
+            StyleHandler.call(this.projection, this.list, style);
 
             fragment.appendChild(this.list);
 
@@ -227,7 +227,7 @@ const BaseListField = {
             addSchema.currentState = null;
             this.elements.set(addSchema, addElement);
 
-            StyleHandler(addElement, style);
+            StyleHandler.call(this.projection, addElement, style);
 
             fragment.appendChild(addElement);
         }
@@ -237,7 +237,7 @@ const BaseListField = {
             this.list.appendChild(item);
         });
 
-        StyleHandler(this.element, style);
+        StyleHandler.call(this.projection, this.element, style);
 
         if (fragment.hasChildNodes()) {
             this.element.appendChild(fragment);
@@ -464,7 +464,7 @@ const BaseListField = {
             }
         }, btnRemoveProjection);
 
-        StyleHandler(btnRemove, removeStyle);
+        StyleHandler.call(this.projection, btnRemove, removeStyle);
 
         container.appendChild(btnRemove);
 
@@ -477,7 +477,7 @@ const BaseListField = {
 
         this.items.set(object.id, container);
 
-        StyleHandler(container, style);
+        StyleHandler.call(this.projection, container, style);
 
         return container;
     },
@@ -724,8 +724,8 @@ const BaseListField = {
             this.selection = closestItem;
 
             return true;
-        } 
-        
+        }
+
         if (parentElement !== this.element) {
             return exit();
         }

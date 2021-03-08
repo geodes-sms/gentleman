@@ -374,7 +374,7 @@ const BaseTextField = {
                 this.element.classList.add("disabled");
             }
 
-            StyleHandler(this.element, this.schema.style);
+            StyleHandler.call(this.projection, this.element, this.schema.style);
         }
 
         if (!isHTMLElement(this.notification)) {
@@ -427,7 +427,7 @@ const BaseTextField = {
             fragment.appendChild(this.input);
         }
 
-        StyleHandler(this.element, style);
+        StyleHandler.call(this.projection, this.element, style);
 
         if (fragment.hasChildNodes()) {
             this.element.appendChild(fragment);

@@ -1,9 +1,15 @@
-import { isObject, isIterable, isNullOrWhitespace } from "zenkai";
+import { isObject, isIterable, isNullOrWhitespace, valOrDefault, isFunction } from "zenkai";
+
 
 const StyleMap = {
+    "css": CSSStyleHandler,
+    "ref": ReferenceStyleHandler,
+    "gss": GentlemanStyleHandler,
+};
+
+const GentlemanStyleMap = {
     "text": styleTextHandler,
     "box": styleBoxHandler,
-    "css": styleCSSHandler,
     "size": styleSizeHandler,
 };
 
@@ -20,7 +26,54 @@ export function StyleHandler(element, style) {
 
     for (const rule in style) {
         const value = style[rule];
-        StyleMap[rule](element, value);
+
+        let handler = StyleMap[rule];
+
+        if (isFunction(handler)) {
+            handler.call(this, element, value);
+        }
+    }
+
+    return element;
+}
+
+/**
+ * Applies style constraints to an element
+ * @param {HTMLElement} element 
+ * @param {*[]} schema 
+ */
+export function ReferenceStyleHandler(element, schema) {
+    if (!isIterable(schema)) {
+        return element;
+    }
+
+    schema.forEach(ref => {
+        const { style = {} } = valOrDefault(this.model.getStyle(ref), {});
+
+        GentlemanStyleHandler.call(this, element, style);
+    });
+
+    return element;
+}
+
+/**
+ * Applies style constraints to an element
+ * @param {HTMLElement} element 
+ * @param {*} schema 
+ */
+export function GentlemanStyleHandler(element, style) {
+    if (!isObject(style)) {
+        return element;
+    }
+
+    for (const rule in style) {
+        const value = style[rule];
+
+        let handler = GentlemanStyleMap[rule];
+
+        if (isFunction(handler)) {
+            handler.call(this, element, value);
+        }
     }
 
     return element;
@@ -34,6 +87,7 @@ export function StyleHandler(element, style) {
 function styleTextHandler(element, schema) {
     for (const rule in schema) {
         const value = schema[rule];
+
         switch (rule) {
             case "bold":
                 element.style.fontWeight = resolveBold(value);
@@ -47,18 +101,17 @@ function styleTextHandler(element, schema) {
             case "strikethrough":
                 element.style.textDecoration = "line-through";
                 break;
+            case "colour":
             case "color":
                 element.style.color = resolveColor(value);
                 break;
             case "font":
-                element.style.fontFamily = value;
-                break;
-            case "highlight":
-                element.style.backgroundColor = resolveColor(value);
+                element.style.fontFamily = value.toString();
                 break;
             case "size":
                 element.style.fontSize = resolveSize(value);
                 break;
+            case "alignment":
             case "align":
                 element.style.textAlign = value;
                 break;
@@ -96,9 +149,9 @@ function addClass(element, value) {
 /**
  * Applies CSS style to an element
  * @param {HTMLElement} element 
- * @param {*} schema 
+ * @param {*[]} schema 
  */
-function styleCSSHandler(element, schema) {
+function CSSStyleHandler(element, schema) {
     if (!isIterable(schema)) {
         return element;
     }
@@ -136,15 +189,10 @@ function resolveBold(schema) {
     return "bold";
 }
 
-function resolveSize(schema, unit = "px") {
-    const { type, value } = schema;
+function resolveSize(schema) {
+    const { value, unit } = schema;
 
-    if (Number.isInteger(schema)) {
-        return `${schema}${unit}`;
-    }
-
-    return 0;
-
+    return `${value}${unit}`;
 }
 
 /**
@@ -157,25 +205,28 @@ function styleBoxHandler(element, schema) {
         const value = schema[rule];
         switch (rule) {
             case "inner":
-                resolveSpace(element, value, "padding");
+                resolveSpace.call(this, element, value, "padding");
                 break;
             case "outer":
-                resolveSpace(element, value, "margin");
+                resolveSpace.call(this, element, value, "margin");
                 break;
             case "border":
-                resolveBorder(element, value);
+                resolveBorder.call(this, element, value);
                 break;
             case "background":
-                resolveBackground(element, value);
+                resolveBackground.call(this, element, value);
                 break;
             case "width":
-                element.style.width = resolveSize(value, "%");
+                element.style.width = resolveSize.call(this, value);
                 break;
             case "height":
-                element.style.height = resolveSize(value, "%");
+                element.style.height = resolveSize.call(this, value);
                 break;
             case "overflow":
                 element.style.overflow = value;
+                break;
+            case "opacity":
+                element.style.opacity = value / 100;
                 break;
             default:
                 break;
@@ -192,22 +243,22 @@ function styleBoxHandler(element, schema) {
  */
 function resolveSpace(element, schema, prop) {
     if (Number.isInteger(schema)) {
-        element.style[prop] = `${schema}px`;
+        element.style[prop] = resolveSize.call(this, schema);
     } else {
         for (const rule in schema) {
             const value = schema[rule];
             switch (rule) {
                 case "top":
-                    element.style[`${[prop]}Top`] = `${value}px`;
+                    element.style[`${[prop]}Top`] = resolveSize.call(this, value);
                     break;
                 case "right":
-                    element.style[`${[prop]}Right`] = `${value}px`;
+                    element.style[`${[prop]}Right`] = resolveSize.call(this, value);
                     break;
                 case "bottom":
-                    element.style[`${[prop]}Bottom`] = `${value}px`;
+                    element.style[`${[prop]}Bottom`] = resolveSize.call(this, value);
                     break;
                 case "left":
-                    element.style[`${[prop]}Left`] = `${value}px`;
+                    element.style[`${[prop]}Left`] = resolveSize.call(this, value);
                     break;
             }
         }
@@ -221,7 +272,7 @@ function resolveSpace(element, schema, prop) {
  * @param {*} schema 
  */
 function resolveBackground(element, schema) {
-    element.style.backgroundColor = resolveColor(schema);
+    element.style.backgroundColor = resolveColor.call(this, schema);
 }
 
 /**
@@ -232,38 +283,38 @@ function resolveBackground(element, schema) {
 function resolveBorder(element, schema) {
     if (schema.size) {
         element.style.borderStyle = "solid";
-        element.style.borderWidth = resolveSize(schema.size);
-        element.style.borderColor = resolveColor(schema.color);
+        element.style.borderWidth = resolveSize.call(this, schema.size);
+        element.style.borderColor = resolveColor.call(this, schema.color);
     } else {
         for (const rule in schema) {
             const value = schema[rule];
             switch (rule) {
                 case "top":
                     element.style.borderTopStyle = "solid";
-                    element.style.borderTopWidth = resolveSize(value.size);
-                    element.style.borderTopColor = resolveColor(value.color);
+                    element.style.borderTopWidth = resolveSize.call(this, value.size);
+                    element.style.borderTopColor = resolveColor.call(this, value.color);
                     break;
                 case "right":
                     element.style.borderRightStyle = "solid";
-                    element.style.borderRightWidth = resolveSize(value.size);
-                    element.style.borderRightColor = resolveColor(value.color);
+                    element.style.borderRightWidth = resolveSize.call(this, value.size);
+                    element.style.borderRightColor = resolveColor.call(this, value.color);
                     break;
                 case "bottom":
                     element.style.borderBottomStyle = "solid";
-                    element.style.borderBottomWidth = resolveSize(value.size);
-                    element.style.borderBottomColor = resolveColor(value.color);
+                    element.style.borderBottomWidth = resolveSize.call(this, value.size);
+                    element.style.borderBottomColor = resolveColor.call(this, value.color);
                     break;
                 case "left":
                     element.style.borderLeftStyle = "solid";
-                    element.style.borderLeftWidth = resolveSize(value.size);
-                    element.style.borderLeftColor = resolveColor(value.color);
+                    element.style.borderLeftWidth = resolveSize.call(this, value.size);
+                    element.style.borderLeftColor = resolveColor.call(this, value.color);
                     break;
             }
         }
     }
 
     if (schema.radius) {
-        resolveBorderRadius(element, schema.radius);
+        resolveBorderRadius.call(this, element, schema.radius);
     }
 }
 
@@ -274,22 +325,22 @@ function resolveBorder(element, schema) {
  */
 function resolveBorderRadius(element, schema) {
     if (Number.isInteger(schema)) {
-        element.style.borderRadius = resolveSize(schema);
+        element.style.borderRadius = resolveSize.call(this, schema);
     } else {
         for (const rule in schema) {
             const value = schema[rule];
             switch (rule) {
                 case "top":
-                    element.style.borderTopLeftRadius = resolveSize(value);
+                    element.style.borderTopLeftRadius = resolveSize.call(this, value);
                     break;
                 case "right":
-                    element.style.borderTopRightRadius = resolveSize(value);
+                    element.style.borderTopRightRadius = resolveSize.call(this, value);
                     break;
                 case "bottom":
-                    element.style.borderBottomRightRadius = resolveSize(value);
+                    element.style.borderBottomRightRadius = resolveSize.call(this, value);
                     break;
                 case "left":
-                    element.style.borderBottomLeftRadius = resolveSize(value);
+                    element.style.borderBottomLeftRadius = resolveSize.call(this, value);
                     break;
             }
         }
@@ -305,9 +356,6 @@ function styleSizeHandler(element, schema) {
     for (const rule in schema) {
         const value = schema[rule];
         switch (rule) {
-            case "bold":
-
-                break;
             default:
                 break;
         }

@@ -288,14 +288,14 @@ const _Concept = {
                 return result;
             }
         }
+        
+        this.notify("delete");
 
         this.getChildren().forEach(child => {
             child.delete(true);
         });
 
         this.model.removeConcept(this.id);
-
-        this.notify("delete");
 
         return {
             message: `The concept '${name}' was successfully deleted.`,

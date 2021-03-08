@@ -20,8 +20,7 @@
         "menu": {
             "actions": [
                 { "name": "build-concept", "handler": "gentleman_concept", "content": "Build", "downloadable": true },
-                { "name": "export" },
-                { "name": "ecore" }
+                { "name": "export" }
             ],
             "css": ["model-concept-list"]
         }

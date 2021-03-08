@@ -116,8 +116,8 @@
                                         "content": "projection",
                                         "style": {
                                             "css": ["keyword"],
-                                            "text": {
-                                                "bold": true
+                                            "gss": {
+                                                "text": { "bold": true }
                                             }
                                         }
                                     }
@@ -162,25 +162,64 @@
             }
         },
         {
-            "type": "template",
-            "name": "style section",
-            "content": [
-                {
-                    "type": "static",
-                    "static": {
-                        "type": "text",
-                        "content": "Define style",
-                        "style": {
-                            "css": ["keyword"]
-                        }
-                    }
+            "concept": { "name": "style rule" },
+            "type": "layout",
+            "tags": [],
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "style": {
+                    "css": ["model-projection"]
                 },
-                {
-                    "type": "attribute",
-                    "name": "style"
-                }
-            ]
+                "disposition": [
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "style": {
+                                "css": ["line", "model-projection__line"]
+                            },
+                            "disposition": [
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Define style rule",
+                                        "style": {
+                                            "css": ["keyword"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "name",
+                                    "tag": "textual"
+                                }
+                            ]
+                        }
+                    },                
+                    {
+                        "type": "attribute",
+                        "name": "style"
+                    }
+                ]
+            }
         },
+        {
+            "concept": { "name": "style rule" },
+            "type": "layout",
+            "tags": ["choice", "choice-selection", "list-item"],
+            "content": {
+                "type": "wrap",
+                "disposition": [
+                    {
+                        "type": "attribute",
+                        "name": "name"
+                    }
+                ]
+            }
+        },
+  
 
         {
             "concept": { "name": "render" },
@@ -248,6 +287,26 @@
                         "name": "css",
                         "tag": "css-set"
                     },
+                    {
+                        "type": "attribute",
+                        "name": "ref",
+                        "tag": "style-set"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "gss"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "gentleman style" },
+            "type": "layout",
+            "tags": [],
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
                     {
                         "type": "static",
                         "static": {
@@ -447,6 +506,64 @@
                                         "static": {
                                             "type": "text",
                                             "content": "Size",
+                                            "style": {
+                                                "css": ["textual-option", "textual-option--style"]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["text-style__attribute"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "font",
+                        "tag": "font-set",
+                        "state": [
+                            {
+                                "rule": {
+                                    "type": "ref",
+                                    "ref": "is-attribute-created"
+                                },
+                                "triggers": ["click", "enter"],
+                                "result": {
+                                    "content": {
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "content": "Font",
+                                            "style": {
+                                                "css": ["textual-option", "textual-option--style"]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["text-style__attribute"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "alignment",
+                        "tag": "label-string",
+                        "state": [
+                            {
+                                "rule": {
+                                    "type": "ref",
+                                    "ref": "is-attribute-created"
+                                },
+                                "triggers": ["click", "enter"],
+                                "result": {
+                                    "content": {
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "content": "Alignment",
                                             "style": {
                                                 "css": ["textual-option", "textual-option--style"]
                                             }
@@ -701,6 +818,35 @@
                                         "static": {
                                             "type": "text",
                                             "content": "Height",
+                                            "style": {
+                                                "css": ["textual-option", "textual-option--style"]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["text-style__attribute"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "opacity",
+                        "tag": "textual--labelled",
+                        "state": [
+                            {
+                                "rule": {
+                                    "type": "ref",
+                                    "ref": "is-attribute-created"
+                                },
+                                "triggers": ["click", "enter"],
+                                "result": {
+                                    "content": {
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "content": "Opacity",
                                             "style": {
                                                 "css": ["textual-option", "textual-option--style"]
                                             }
@@ -1148,9 +1294,11 @@
                                             }
                                         ],
                                         "style": {
-                                            "box": {
-                                                "space": { 
-                                                    "outer": { "right": 12 }
+                                            "gss": {
+                                                "box": {
+                                                    "outer": { 
+                                                        "right": { "value": 12, "unit": "px" }
+                                                    }
                                                 }
                                             }
                                         }
@@ -1337,9 +1485,11 @@
                                             }
                                         ],
                                         "style": {
-                                            "box": {
-                                                "space": { 
-                                                    "outer": { "right": 12 }
+                                            "gss": {
+                                                "box": {
+                                                    "outer": { 
+                                                        "right": { "value": 12, "unit": "px" }
+                                                    }
                                                 }
                                             }
                                         }
@@ -2737,6 +2887,80 @@
         },
         {
             "concept": { "name": "set" },
+            "tags": ["font-set"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Fonts",
+                            "style": {
+                                "css": ["title--small", "css-list__title--small"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "field",
+                        "field": {
+                            "type": "list",
+                            "list": {
+                                "item": {
+                                    "template": {
+                                        "tag": "simple-string"
+                                    },
+                                    "style": {
+                                        "css": ["textual-list__list-item--inline"]
+                                    }
+                                },
+                                "style": {
+                                    "css": ["textual-list__list", "textual-list__list--inline", "textual-list__list--horizontal"]
+                                }
+                            },
+                            "action": {
+                                "add": {
+                                    "name": "add",
+                                    "content": {
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "help": "Add a font",
+                                            "content": "New font",
+                                            "focusable": false
+                                        }
+                                    },
+                                    "style": {
+                                        "css": ["textual-list__btn-add"]
+                                    }
+                                },
+                                "remove": {
+                                    "content": { 
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "help": "Remove font", 
+                                            "content": "",
+                                            "focusable": false
+                                        }
+                                    },
+                                    "style": {
+                                        "css": ["textual-list__btn-remove"]
+                                    }
+                                }
+                            },
+                            "style": {
+                                "css": ["textual-list", "textual-list--font"]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
             "tags": ["css-set"],
             "type": "layout",
             "content": {  
@@ -2803,6 +3027,77 @@
                             },
                             "style": {
                                 "css": ["textual-list", "textual-list--css"]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["style-set"],
+            "type": "layout",
+            "content": {  
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Style rules",
+                            "style": {
+                                "css": ["title--small", "css-list__title--small"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "field",
+                        "field": {
+                            "type": "list",
+                            "list": {
+                                "item": {
+                                    "style": {
+                                        "css": ["textual-list__list-item--inline"]
+                                    }
+                                },
+                                "style": {
+                                    "css": ["textual-list__list", "textual-list__list--inline", "textual-list__list--horizontal"]
+                                }
+                            },
+                            "action": {
+                                "add": {
+                                    "name": "add",
+                                    "content": {
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "help": "Add a rule",
+                                            "content": "Add rule",
+                                            "focusable": false
+                                        }
+                                    },
+                                    "style": {
+                                        "css": ["textual-list__btn-add"]
+                                    }
+                                },
+                                "remove": {
+                                    "content": { 
+                                        "type": "static",
+                                        "static": {
+                                            "type": "text",
+                                            "help": "Remove rule", 
+                                            "content": "",
+                                            "focusable": false
+                                        }
+                                    },
+                                    "style": {
+                                        "css": ["textual-list__btn-remove"]
+                                    }
+                                }
+                            },
+                            "style": {
+                                "css": ["textual-list", "textual-list--style"]
                             }
                         }
                     }

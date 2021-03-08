@@ -1,7 +1,7 @@
 {
     "editor": {
         "name": "Gentleman projection",
-        "root": ["projection", "template"],
+        "root": ["projection", "template", "style rule"],
         "header": {
             "tabs": [
                 {}
@@ -20,7 +20,6 @@
         "menu": {
             "actions": [
                 { "name": "build-projection",  "content": "Build", "downloadable": true },
-                { "name": "preview-projection", "content": "Preview" },
                 { "name": "export" }
             ],
             "css": ["editor-menu"]

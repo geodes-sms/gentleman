@@ -62,6 +62,8 @@ const Projection = {
     editing: false,
     /** @type {boolean} */
     optional: false,
+    /** @type {boolean} */
+    searchable: false,
 
     get hasMultipleViews() { return this.schema.length > 1; },
     get isReadOnly() { return valOrDefault(this.getSchema().readonly, false); },
@@ -198,7 +200,7 @@ const Projection = {
 
                         /** @type {HTMLElement} */
                         const render = projection.render();
-                        StyleHandler(render, schema.style);
+                        StyleHandler.call(this, render, schema.style);
 
                         projection.element.parent = this.element;
                         attr.element = render;

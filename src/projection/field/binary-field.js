@@ -152,7 +152,7 @@ const BaseBinaryField = {
                 this.element.classList.add("readonly");
             }
 
-            StyleHandler(this.element, this.schema.style);
+            StyleHandler.call(this.projection, this.element, this.schema.style);
         }
 
         if (!isHTMLElement(this.notification)) {
@@ -180,7 +180,7 @@ const BaseBinaryField = {
                 this.input.disabled = true;
             }
 
-            StyleHandler(this.input, style);
+            StyleHandler.call(this.projection, this.input, style);
 
             fragment.appendChild(this.input);
         }
@@ -204,7 +204,7 @@ const BaseBinaryField = {
                 this.label.append(ContentHandler.call(this, element));
             });
 
-            StyleHandler(this.label, style);
+            StyleHandler.call(this.projection, this.label, style);
 
             fragment.appendChild(this.label);
         }
@@ -330,7 +330,7 @@ const BaseBinaryField = {
 
             removeChildren(this.label).append(fragment);
 
-            StyleHandler(this.label, style);
+            StyleHandler.call(this.projection, this.label, style);
         }
 
         if (this.input.checked) {

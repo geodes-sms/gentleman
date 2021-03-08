@@ -252,7 +252,7 @@ export const ProjectionModel = {
 
             return concept.hasPrototype(prototype);
         };
-        const isValid = (type) => !["template", "rule"].includes(type);
+        const isValid = (type) => !["template", "rule", "style"].includes(type);
 
         if (isString(concept)) {
             projection = this.schema.filter(p => isValid(p.type) && p.concept.name === concept);

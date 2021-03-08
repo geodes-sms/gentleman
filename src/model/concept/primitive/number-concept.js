@@ -79,7 +79,7 @@ const _NumberConcept = {
         return this;
     },
     hasValue() {
-        return !isNaN(this.value);
+        return typeof this.value === 'number' && !isNaN(this.value);
     },
     getValue() {
         if (!this.hasValue()) {
@@ -101,7 +101,12 @@ const _NumberConcept = {
             };
         }
 
-        this.value = value;
+        if (isNullOrWhitespace(value)) {
+            this.value = null;
+        } else {
+            this.value = +value;
+        }
+
         this.notify("value.changed", value);
 
         return {
