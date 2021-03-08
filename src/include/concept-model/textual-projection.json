@@ -24,8 +24,8 @@
                         "content": { "type": "param", "name": "conceptType" },
                         "style": {
                             "css": ["keyword", "model-concept__keyword"],
-                            "text": {
-                                "bold": true
+                            "gss": {
+                                "text": { "bold": true }
                             }
                         }
                     }
@@ -85,6 +85,7 @@
                 }
             ]
         },
+
 
         {
             "concept": { "name": "prototype concept" },
@@ -281,8 +282,8 @@
                                         "content": "attribute",
                                         "style": {
                                             "css": ["keyword"],
-                                            "text": {
-                                                "bold": true
+                                            "gss": {
+                                                "text": { "bold": true }
                                             }
                                         }
                                     }
@@ -349,8 +350,8 @@
                                         "content": "property",
                                         "style": {
                                             "css": ["keyword"],
-                                            "text": {
-                                                "bold": true
+                                            "gss": {
+                                                "text": { "bold": true }
                                             }
                                         }
                                     }
@@ -615,18 +616,21 @@
                             "input": {
                                 "placeholder": "type",
                                 "style": {
-                                    "css": ["constraint-choice--textual__input"]
+                                    "css": ["constraint-choice--textual__choice-input"]
                                 }
                             },
                             "choice": {
                                 "style": {
-                                    "css": ["constraint-choice--textual__list"]
+                                    "css": ["constraint-choice--textual__choice-list"]
                                 },
                                 "option": {
                                     "style": {
-                                        "css": ["constraint-choice--textual__list-option"]
+                                        "css": ["constraint-choice--textual__choice-option"]
                                     }
                                 }
+                            },
+                            "style": {
+                                "css": ["constraint-choice--textual__choice"]
                             }
                         }
                     }
@@ -661,18 +665,21 @@
                             "input": {
                                 "placeholder": "type",
                                 "style": {
-                                    "css": ["constraint-choice--textual__input"]
+                                    "css": ["constraint-choice--textual__choice-input"]
                                 }
                             },
                             "choice": {
                                 "style": {
-                                    "css": ["constraint-choice--textual__list"]
+                                    "css": ["constraint-choice--textual__choice-list"]
                                 },
                                 "option": {
                                     "style": {
-                                        "css": ["constraint-choice--textual__list-option"]
+                                        "css": ["constraint-choice--textual__choice-option"]
                                     }
                                 }
+                            },
+                            "style": {
+                                "css": ["constraint-choice--textual__choice"]
                             }
                         }
                     }
@@ -1459,7 +1466,6 @@
                         "static": {
                             "type": "text",
                             "content": "Default value: ",
-                            "focusable": false,
                             "style": {
                                 "css": ["textfield--labeled__label", "label"]
                             }
@@ -1816,7 +1822,6 @@
                         "static": {
                             "type": "text",
                             "content": "Default value: ",
-                            "focusable": false,
                             "style": {
                                 "css": ["textfield--labeled__label", "label"]
                             }

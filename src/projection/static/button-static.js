@@ -55,7 +55,7 @@ const BaseButtonStatic = {
             this.element.title = help;
         }
 
-        StyleHandler(this.element, style);
+        StyleHandler.call(this.projection, this.element, style);
 
         if (fragment.hasChildNodes()) {
             this.element.appendChild(fragment);
@@ -98,20 +98,8 @@ const BaseButtonStatic = {
                 return this.parent.arrowHandler(dir, target);
             }
         }
-
-        if (dir === "right") {
-            let isAtEnd = this.getLength() < getCaretIndex(this.element) + 1;
-
-            if (isAtEnd && this.parent) {
-                return this.parent.arrowHandler(dir, target);
-            }
-        } else if (dir === "left") {
-            let isAtStart = 0 === getCaretIndex(this.element);
-
-            if (isAtStart && this.parent) {
-                return this.parent.arrowHandler(dir, target);
-            }
-        } else if (this.parent) {
+        
+        if (this.parent) {
             return this.parent.arrowHandler(dir, target);
         }
 
@@ -154,7 +142,7 @@ const BaseButtonStatic = {
 
         if (isFunction(handler)) {
             handler.call(this.projection, ...arg);
-            
+
             return false;
         }
     },

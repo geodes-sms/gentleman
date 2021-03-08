@@ -9,7 +9,7 @@ import { StateHandler } from "./state-handler.js";
  * @param {string} name 
  */
 export function AttributeHandler(schema, concept) {
-    const { name, tag, state } = schema;
+    const { name, tag, state, style } = schema;
 
     if (!concept.hasAttribute(name)) {
         throw new Error(`Attribute '${name}' does not exist in the concept '${concept.name}'`);
@@ -62,6 +62,8 @@ export function AttributeHandler(schema, concept) {
         projection.parent = this.projection;
         
         render = projection.render();
+        
+        StyleHandler.call(this, render, style);
         
         projection.element.parent = this;
         attr.element = render;

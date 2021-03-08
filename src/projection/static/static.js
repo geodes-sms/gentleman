@@ -1,4 +1,4 @@
-import { removeChildren, isEmpty, isFunction } from 'zenkai';
+import { removeChildren, findAncestor, isEmpty, isFunction } from 'zenkai';
 import { ObserverHandler } from '@structure/index.js';
 import { show, hide, toggle } from '@utils/index.js';
 
@@ -53,7 +53,7 @@ const BaseStatic = {
     },
     hide() {
         hide(this.element);
-        
+
         this.visible = false;
 
         return this;
@@ -111,9 +111,12 @@ const BaseStatic = {
      * @param {HTMLElement} target 
      */
     escapeHandler(target) {
-        console.warn(`ESCAPE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        let parent = findAncestor(target, (el) => el.tabIndex === 0);
+        let element = this.projection.resolveElement(parent);
 
-        return false;
+        element.focus(parent);
+
+        return true;
     },
     /**
      * Handles the `enter` command

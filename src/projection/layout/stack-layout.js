@@ -2,7 +2,7 @@ import {
     createDocFragment, createDiv, createButton, createInput, createLabel,
     isHTMLElement, isEmpty, valOrDefault, findAncestor,
 } from "zenkai";
-import { getElementTop, getElementBottom, getElementLeft, getElementRight, getVisibleElement } from "@utils/index.js";
+import { getClosest, getVisibleElement } from "@utils/index.js";
 import { StyleHandler } from './../style-handler.js';
 import { ContentHandler } from './../content-handler.js';
 import { Layout } from "./layout.js";
@@ -129,9 +129,9 @@ export const BaseStackLayout = {
         } else {
             let firstElement = valOrDefault(getVisibleElement(this.container), this.elements[0]);
             let projectionElement = this.environment.resolveElement(firstElement);
-            
+
             if (projectionElement) {
-                projectionElement.focus();
+                projectionElement.focus(firstElement);
             }
         }
     },
@@ -188,17 +188,7 @@ export const BaseStackLayout = {
             return false;
         }
 
-        let closestElement = null;
-
-        if (dir === "up") {
-            closestElement = getElementTop(target, this.container);
-        } else if (dir === "down") {
-            closestElement = getElementBottom(target, this.container);
-        } else if (dir === "left") {
-            closestElement = getElementLeft(target, this.container);
-        } else if (dir === "right") {
-            closestElement = getElementRight(target, this.container);
-        }
+        let closestElement = getClosest(target, dir, this.container);
 
         if (isHTMLElement(closestElement)) {
             let element = this.environment.resolveElement(closestElement);
@@ -212,7 +202,7 @@ export const BaseStackLayout = {
         if (this.parent) {
             return this.parent.arrowHandler(dir, this.container);
         }
-        
+
         return false;
     },
 
@@ -229,6 +219,13 @@ export const BaseStackLayout = {
             if (prop === "orientation") {
                 this.setOrientation(target.value);
                 this.refresh();
+            }
+        });
+
+        this.projection.registerHandler("view.changed", (value, from) => {
+            console.log(value, from);
+            if (from && from.parent === this.projection) {
+                value.parent = this;
             }
         });
     }

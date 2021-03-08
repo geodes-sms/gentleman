@@ -69,6 +69,14 @@ export const Layout = {
     },
 
     /**
+     * Component Focus in handler
+     * @param {HTMLElement} target 
+     */
+    _focusIn(target) {
+        return false;
+    },
+
+    /**
      * Handles the `space` command
      * @param {HTMLElement} target 
      */
@@ -108,7 +116,7 @@ export const Layout = {
      * @param {HTMLElement} target 
      */
     deleteHandler(target) {
-        if(this.projection.element === this) {
+        if (this.projection.element === this) {
             this.source.delete();
             this.projection.parent.focus();
             return;

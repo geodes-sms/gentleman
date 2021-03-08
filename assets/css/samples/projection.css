@@ -211,6 +211,17 @@
         box-shadow: inset 0 1px 2px #999; 
     }
 
+    .bracket-choice--unit {
+        display: flex;
+    }
+
+    .bracket-choice--unit:not(.active):not(.empty) .bracket-choice__list {
+        display: inline-flex;
+    }
+
+    .bracket-choice--unit > .bracket-choice__selection {
+        width: auto;
+    }
 
  
 .component-choice {
@@ -727,13 +738,17 @@
 }
 
 .textual-option--style {
-    margin-right: 4px;
+    margin-right: 4px; margin-bottom: 6px;
     padding: 2px 4px;
     color: #555;
     border: 2px dashed #999; border-radius: 1px;
     font-style: italic;
+    font-size: 0.9em;
     opacity: 0.8;
     transition: .2s;
+    cursor: default;
+
+    order: 2;
 }
 
 .text-style-container {
@@ -751,17 +766,19 @@
 
 .text-style__attribute {
     margin-right: 4px; margin-bottom: 6px;
-    padding: 2px 6px;
+    padding: 2px 6px 4px;
     color: #222;
     border-radius: 3px;
     color: #fff;
     background-color: #111;
     transition: .2s;
+    order: 1;
 }
 
     .text-style__attribute .keyword,
     .text-style__attribute .title--small {
         color: inherit;
+        text-transform: capitalize;
     }
     .text-style__attribute:hover {
         background-color: #555;
@@ -769,6 +786,10 @@
     .text-style__attribute:focus {
         background-color: #d5d5d5;
         color: #222;
+    }
+
+    .reference-choice--textual:not(.empty) .field--choice__selection {
+        display: none!important;
     }
 
     .text-style__attribute > .structure__btn-delete {
@@ -827,3 +848,28 @@
             box-shadow: 0 0 0 2px #fff, 0 0 0 4px #1f75fe;
         }
             
+.direction-size {
+    margin-right: 4px;
+}
+
+.size-config .field--textbox__input {
+    border-radius: 2px;
+    min-width: 36px;
+    padding-left: 2px;
+}
+
+    .size-config .field--textbox:first-child .field--textbox__input {
+        border-bottom-right-radius: 0; border-top-right-radius: 0;
+    }
+
+    .size-config .field--textbox:last-child .field--textbox__input {
+        border-bottom-left-radius: 0; border-top-left-radius: 0;
+        font-weight: bold;
+        text-transform: lowercase;
+        background-color: #d5d5d5;
+        min-width: 24px;
+    }
+
+.text-style__attribute .field--textbox__input.error {
+    color: #f5f5f5;
+}

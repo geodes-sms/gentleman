@@ -86,7 +86,7 @@ function createListFieldItem(object) {
         }
     }, btnRemoveProjection);
 
-    StyleHandler(btnRemove, removeStyle);
+    StyleHandler.call(this.projection, btnRemove, removeStyle);
 
     container.appendChild(btnRemove);
 
@@ -97,7 +97,7 @@ function createListFieldItem(object) {
 
     this.items.set(object.id, container);
 
-    StyleHandler(container, style);
+    StyleHandler.call(this.projection, container, style);
 
     return container;
 }
@@ -204,7 +204,7 @@ const BaseGraphField = {
                 this.element.classList.add("readonly");
             }
 
-            StyleHandler(this.element, this.schema.style);
+            StyleHandler.call(this.projection, this.element, this.schema.style);
         }
 
         if (!isHTMLElement(this.notification)) {

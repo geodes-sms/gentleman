@@ -155,7 +155,7 @@ const _ReferenceConcept = {
         };
     },
 
-    update(message, value) {
+    update(message, value) { console.log(message);
         switch (message) {
             case "delete":
                 this.reference.unregister(this);

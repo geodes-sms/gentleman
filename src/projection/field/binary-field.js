@@ -1,8 +1,8 @@
 import {
     createDocFragment, createSpan, createDiv, createI, createInput, createLabel,
-    removeChildren, isHTMLElement, valOrDefault,
+    removeChildren, findAncestor, isHTMLElement, valOrDefault,
 } from "zenkai";
-import { hide, show } from "@utils/index.js";
+import { hide, isHidden, show } from "@utils/index.js";
 import { StyleHandler } from "../style-handler.js";
 import { ContentHandler } from "./../content-handler.js";
 import { StateHandler } from "./../state-handler.js";
@@ -152,7 +152,7 @@ const BaseBinaryField = {
                 this.element.classList.add("readonly");
             }
 
-            StyleHandler(this.element, this.schema.style);
+            StyleHandler.call(this.projection, this.element, this.schema.style);
         }
 
         if (!isHTMLElement(this.notification)) {
@@ -180,13 +180,13 @@ const BaseBinaryField = {
                 this.input.disabled = true;
             }
 
-            StyleHandler(this.input, style);
+            StyleHandler.call(this.projection, this.input, style);
 
             fragment.appendChild(this.input);
         }
 
         if (!isHTMLElement(this.label)) {
-            const { style, content =[], value } = label;
+            const { style, content = [], value } = label;
 
             this.label = createLabel({
                 class: ["field--checkbox__label"],
@@ -204,7 +204,7 @@ const BaseBinaryField = {
                 this.label.append(ContentHandler.call(this, element));
             });
 
-            StyleHandler(this.label, style);
+            StyleHandler.call(this.projection, this.label, style);
 
             fragment.appendChild(this.label);
         }
@@ -320,7 +320,7 @@ const BaseBinaryField = {
 
         if (this.schema.state) {
             let state = this.schema.state[this.getValue().toString()];
-            
+
             const { style, content, value } = state;
 
             let fragment = createDocFragment();
@@ -330,7 +330,7 @@ const BaseBinaryField = {
 
             removeChildren(this.label).append(fragment);
 
-            StyleHandler(this.label, style);
+            StyleHandler.call(this.projection, this.label, style);
         }
 
         if (this.input.checked) {
@@ -369,15 +369,29 @@ const BaseBinaryField = {
      * @param {HTMLElement} target 
      */
     escapeHandler(target) {
-        this.input.focus();
+        let exit = true;
 
-        if (this.messageElement) {
+        if (this.messageElement && !isHidden(this.messageElement)) {
             hide(this.messageElement);
+
+            exit = false;
         }
 
-        if (this.choice) {
-            hide(this.choice);
+        if (exit) {
+            let parent = findAncestor(target, (el) => el.tabIndex === 0);
+            let element = this.environment.resolveElement(parent);
+
+            element.focus(parent);
+
+            return true;
         }
+    },
+    /**
+     * Handles the `backspace` command
+     * @param {HTMLElement} target 
+     */
+    backspaceHandler(target) {
+        return this.arrowHandler("left", target);
     },
     /**
      * Handles the `enter` command

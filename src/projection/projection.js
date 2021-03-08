@@ -62,6 +62,8 @@ const Projection = {
     editing: false,
     /** @type {boolean} */
     optional: false,
+    /** @type {boolean} */
+    searchable: false,
 
     get hasMultipleViews() { return this.schema.length > 1; },
     get isReadOnly() { return valOrDefault(this.getSchema().readonly, false); },
@@ -198,7 +200,7 @@ const Projection = {
 
                         /** @type {HTMLElement} */
                         const render = projection.render();
-                        StyleHandler(render, schema.style);
+                        StyleHandler.call(this, render, schema.style);
 
                         projection.element.parent = this.element;
                         attr.element = render;
@@ -212,7 +214,7 @@ const Projection = {
                 case "attribute.removed":
                     this.getAttributes(value.name).forEach(attr => {
 
-                        if(attr.element) {
+                        if (attr.element) {
                             removeChildren(attr.element).remove();
                             attr.element = null;
                         }
@@ -366,11 +368,14 @@ const Projection = {
         }
 
         currentContainer.replaceWith(container);
-        this.element.focus();
+
+        this.element = this.resolveElement(this.getContainer());
 
         if (this.parent) {
             this.parent.update("view.changed", container, this);
         }
+
+        this.focus();
 
         return this;
     },

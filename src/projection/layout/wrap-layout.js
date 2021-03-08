@@ -1,8 +1,8 @@
 import {
-    createDocFragment, createDiv, createInput, createLabel, createButton, 
-    isHTMLElement,valOrDefault, findAncestor,
+    createDocFragment, createDiv, createInput, createLabel, createButton,
+    isHTMLElement, valOrDefault, findAncestor,
 } from "zenkai";
-import { getElementTop, getElementBottom, getElementLeft, getElementRight, getVisibleElement } from "@utils/index.js";
+import { getVisibleElement, getClosest } from "@utils/index.js";
 import { StyleHandler } from './../style-handler.js';
 import { ContentHandler } from './../content-handler.js';
 import { Layout } from "./layout.js";
@@ -106,9 +106,9 @@ export const BaseWrapLayout = {
         } else {
             let firstElement = valOrDefault(getVisibleElement(this.container), this.elements[0]);
             let projectionElement = this.environment.resolveElement(firstElement);
-            
+
             if (projectionElement) {
-                projectionElement.focus();
+                projectionElement.focus(firstElement);
             }
         }
     },
@@ -150,17 +150,7 @@ export const BaseWrapLayout = {
             return false;
         }
 
-        let closestElement = null;
-
-        if (dir === "up") {
-            closestElement = getElementTop(target, this.container);
-        } else if (dir === "down") {
-            closestElement = getElementBottom(target, this.container);
-        } else if (dir === "left") {
-            closestElement = getElementLeft(target, this.container);
-        } else if (dir === "right") {
-            closestElement = getElementRight(target, this.container);
-        }
+        let closestElement = getClosest(target, dir, this.container);
 
         if (isHTMLElement(closestElement)) {
             let element = this.environment.resolveElement(closestElement);
@@ -179,104 +169,14 @@ export const BaseWrapLayout = {
     },
 
     bindEvents() {
-
+        this.projection.registerHandler("view.changed", (value, from) => {
+            console.log(value, from);
+            if (from && from.parent === this.projection) {
+                value.parent = this;
+            }
+        });
     }
 };
-
-
-/**
- * @returns {HTMLElement}
- */
-function createOrientationField() {
-    var radioVertical = createInput({
-        type: "radio",
-        class: ["stack-orientation__input"],
-        name: `${this.id}orientation`,
-        value: "vertical",
-        checked: this.orientation === "vertical",
-        dataset: {
-            prop: "orientation"
-        }
-    });
-
-    var radioHorizontal = createInput({
-        type: "radio",
-        class: ["stack-orientation__input"],
-        name: `${this.id}orientation`,
-        value: "horizontal",
-        checked: this.orientation === "horizontal",
-        dataset: {
-            prop: "orientation"
-        }
-    });
-
-    var radioVerticalLabel = createLabel({
-        class: ["stack-orientation"]
-    }, [radioVertical, "Vertical"]);
-
-    var radioHorizontalLabel = createLabel({
-        class: ["stack-orientation"]
-    }, [radioHorizontal, "Horizontal"]);
-
-
-    var orientationField = createDiv({
-        class: ["radio-group"]
-    }, [radioVerticalLabel, radioHorizontalLabel]);
-
-    return orientationField;
-}
-
-/**
- * @returns {HTMLElement}
- */
-function createStyleField() {
-    var container = createDiv({
-        class: ["style-container"]
-    });
-
-    return container;
-}
-
-/**
- * @this {WrapLayout}
- */
-function Collapsible() {
-    const fragment = createDocFragment();
-
-    /** @type {HTMLElement} */
-    const btnCollapse = createButton({
-        class: ["btn", "btn-collapse"],
-        dataset: {
-            "action": "collapse"
-        }
-    });
-
-
-    btnCollapse.addEventListener('click', (event) => {
-        if (btnCollapse.dataset.status === "off") {
-            let children = Array.from(this.container.children).filter(element => element !== btnCollapse);
-            this.collapseContainer = createDiv({
-                class: "layout-container-collapse"
-            }, children);
-            btnCollapse.after(this.collapseContainer);
-            this.container.classList.add("collapsed");
-            btnCollapse.classList.add("on");
-            btnCollapse.dataset.status = "on";
-        }
-        else {
-            let fragment = createDocFragment(Array.from(this.collapseContainer.children));
-            btnCollapse.after(fragment);
-            this.collapseContainer.remove();
-            this.container.classList.remove("collapsed");
-            btnCollapse.classList.remove("on");
-            btnCollapse.dataset.status = "off";
-        }
-    });
-
-    fragment.appendChild(btnCollapse);
-
-    return fragment;
-}
 
 
 export const WrapLayout = Object.assign({},

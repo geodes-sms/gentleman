@@ -1,0 +1,90 @@
+[
+    {
+        "name": "state rule",
+        "nature": "concrete",
+        "attributes": [
+            {
+                "name": "name",
+                "target": {
+                    "name": "name"
+                },
+                "required": true
+            },
+            {
+                "name": "context",
+                "target": {
+                    "name": "name"
+                },
+                "required": true
+            },
+            {
+                "name": "rule",
+                "target": {
+                    "name": "rule"
+                }
+            },
+            {
+                "name": "result",
+                "target": {
+                    "name": "set",
+                    "accept": {
+                        "name": "element"
+                    }
+                },
+                "required": true
+            }
+        ],
+
+        "build": {
+            "handler": "state"
+        }
+    },
+    {
+        "name": "rule",
+        "nature": "prototype",
+        "attributes": [
+            {
+                "name": "name",
+                "target": {
+                    "name": "name"
+                },
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "eq",
+        "nature": "concrete",
+        "prototype": "rule",
+        "attributes": [
+            {
+                "name": "terms",
+                "target": {
+                    "name": "set",
+                    "accept": {
+                        "name": "term"
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "name": "term",
+        "nature": "concrete",
+        "prototype": "rule",
+        "attributes": [
+            {
+                "name": "value",
+                "target": {
+                    "name": "string"
+                }
+            },
+            {
+                "name": "type",
+                "target": {
+                    "name": "string"
+                }
+            }
+        ]
+    }
+]

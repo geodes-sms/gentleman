@@ -119,7 +119,7 @@ const BaseTableField = {
                 this.element.classList.add("readonly");
             }
 
-            StyleHandler(this.element, this.schema.style);
+            StyleHandler.call(this.projection, this.element, this.schema.style);
         }
 
         if (!isHTMLElement(this.notification)) {
@@ -174,7 +174,7 @@ const BaseTableField = {
                         }
                     });
 
-                    StyleHandler(this.header, style);
+                    StyleHandler.call(this.projection, this.header, style);
 
                     this.table.append(this.header);
                 }
@@ -191,7 +191,7 @@ const BaseTableField = {
                         }
                     });
 
-                    StyleHandler(this.body, style);
+                    StyleHandler.call(this.projection, this.body, style);
 
                     this.table.append(this.body);
                 }
@@ -208,7 +208,7 @@ const BaseTableField = {
                         }
                     });
 
-                    StyleHandler(this.footer, style);
+                    StyleHandler.call(this.projection, this.footer, style);
 
                     this.table.append(this.footer);
                 }
@@ -216,7 +216,7 @@ const BaseTableField = {
                 schema.currentState = null;
                 this.contentElements.set(schema, this.table);
 
-                StyleHandler(this.table, style);
+                StyleHandler.call(this.projection, this.table, style);
 
                 fragment.appendChild(this.table);
             } else if (element.type === "action") {
@@ -241,7 +241,7 @@ const BaseTableField = {
                 schema.currentState = null;
                 this.contentElements.set(schema, addElement);
 
-                StyleHandler(addElement, style);
+                StyleHandler.call(this.projection, addElement, style);
 
                 fragment.appendChild(addElement);
             } else {
@@ -280,7 +280,7 @@ const BaseTableField = {
                     }
                 }, render);
 
-                StyleHandler(cell, style);
+                StyleHandler.call(this.projection, cell, style);
 
                 tableRow.appendChild(cell);
             });
@@ -441,7 +441,7 @@ const BaseTableField = {
                 }
             }, render);
 
-            StyleHandler(cell, style);
+            StyleHandler.call(this.projection, cell, style);
 
             tableRow.appendChild(cell);
         });
@@ -486,7 +486,7 @@ const BaseTableField = {
             }
         }, "Move down");
 
-        StyleHandler(btnRemove, removeStyle);
+        StyleHandler.call(this.projection, btnRemove, removeStyle);
 
         actionCell.append(btnRemove, btnUp, btnDown);
 
