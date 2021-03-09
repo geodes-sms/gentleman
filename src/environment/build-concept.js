@@ -1,4 +1,4 @@
-import { isEmpty, isNullOrUndefined, isNullOrWhitespace, valOrDefault } from "zenkai";
+import { isEmpty, isNullOrUndefined, isNullOrWhitespace, isObject, valOrDefault } from "zenkai";
 import { NotificationType } from "@utils/index.js";
 
 
@@ -200,13 +200,21 @@ function buildTarget(target) {
         "name": name
     };
 
-    if (target.isAttributeCreated("accept")) {
+    if (hasAttr(target, "accept")) {
         let accept = getValue(target, "accept");
 
-        result["accept"] = buildTarget.call(this, accept);
+        if (isObject(accept)) {
+            result["accept"] = buildTarget.call(this, accept);
+        } else {
+            result["accept"] = { "name": accept };
+        }
     }
 
-    ["default", "ordered", "pattern"].filter(prop => hasAttr(target, prop) && hasValue(target, prop))
+    if (hasAttr(target, "scope") && hasValue(target, "scope")) {
+        result["scope"] = getName(getReference(target, 'scope'));
+    }
+
+    ["default", "rel", "ordered", "predefined", "pattern"].filter(prop => hasAttr(target, prop) && hasValue(target, prop))
         .forEach(prop => {
             result[prop] = getValue(target, prop);
         });

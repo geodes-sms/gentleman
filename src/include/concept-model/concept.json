@@ -58,7 +58,9 @@
                     "name": "prototype",
                     "target": {
                         "name": "reference",
-                        "accept": { "name": "prototype concept" }
+                        "accept": { 
+                            "name": "prototype concept" 
+                        }
                     }
                 }
             ],
@@ -87,7 +89,9 @@
                     "name": "prototype",
                     "target": {
                         "name": "reference",
-                        "accept": { "name": "prototype concept" }
+                        "accept": { 
+                            "name": "prototype concept" 
+                        }
                     }
                 }
             ],
@@ -278,9 +282,30 @@
                 {
                     "name": "accept",
                     "target": {
-                        "name": "primitive"
+                        "name": "name",
+                        "predefined": true,
+                        "src": ["string", "number", "boolean", "set", "reference"]
                     },
                     "required": true
+                },
+                {
+                    "name": "rel",
+                    "target": {
+                        "name": "string",
+                        "values": ["parent", "child", "sibling"]
+                    },
+                    "alias": "relationship",
+                    "required": false
+                },
+                {
+                    "name": "scope",
+                    "target": {
+                        "name": "reference",
+                        "accept": { 
+                            "name": "model concept" 
+                        }
+                    },
+                    "required": false
                 }
             ],
             
@@ -329,7 +354,9 @@
                     "name": "concept",
                     "target": {
                         "name": "reference",
-                        "accept": { "prototype": "model concept" }
+                        "accept": { 
+                            "name": "model concept" 
+                        }
                     },
                     "required": true
                 }
@@ -464,8 +491,8 @@
             "nature": "derivative",
             "base": "string",
             "length": {
-                "min": { "value": 1 },
-                "max": { "value": 80 }
+                "min": { "value": 1, "included": true },
+                "max": { "value": 50, "included": true }
             }
         }
     ]

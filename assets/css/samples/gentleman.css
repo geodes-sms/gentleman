@@ -41,6 +41,10 @@
         color: #C40234;
     }
 
+    .primitive-constraint__title--small {
+        margin-right: 0.5em;
+    }
+
     .model-concept--textual .value-list__title--small,
     .model-projection .value-list__title--small {
         color: #222;
@@ -48,16 +52,20 @@
         letter-spacing: -0.5px;
     }
     
-
-    .model-concept__keyword,
-    .keyword {
+    .keyword,
+    .text {
         display: inline-flex;
     }
 
-    .model-concept__keyword + .model-concept__keyword,
-    .keyword + .keyword {
-        margin-left: 0.5em;
+
+    .keyword + .keyword:before,
+    .text + .text:before {
+        content: "_";
+        color: rgba(0, 0, 0, 0);
+        text-decoration: underline;
     }
+
+    
 
 .model-concept--textual {
     font-family: Consolas, 'Courier New', Courier, monospace;
@@ -1145,7 +1153,7 @@
         font-weight: bold;
     }
 
-    .target-choice--textual > .field--choice__selection { width: 100%; padding-top: 6px; }
+    .target-choice--textual > .field--choice__selection { flex-wrap: wrap; width: 100%; padding-top: 6px; }
 
 
 
