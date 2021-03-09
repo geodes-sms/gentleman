@@ -16,7 +16,7 @@ Gentleman aims to **to close the gap between models and domain experts**.
 ## Workflow
 
 1. **Design (Language enginneer)**
-   1. Create a metamodel, by defining your DSL concepts or import and Ecore model
+   1. Create a metamodel, by defining your DSL concepts
    2. Create a set of projections to interact with your DSL concepts
 
 2. **Model (Domain expert)**

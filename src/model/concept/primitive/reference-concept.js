@@ -155,7 +155,8 @@ const _ReferenceConcept = {
         };
     },
 
-    update(message, value) { console.log(message);
+    update(message, value) {
+        console.log(message);
         switch (message) {
             case "delete":
                 this.reference.unregister(this);
@@ -212,7 +213,7 @@ const _ReferenceConcept = {
 };
 
 function resolveAccept(accept) {
-    const { name, prototype, scope, rel } = accept;
+    const { name, scope, rel } = accept;
 
     if (rel === "parent") {
         let parent = this.getParent(scope);
@@ -220,8 +221,8 @@ function resolveAccept(accept) {
         return parent.getChildren(name);
     }
 
-    if (prototype) {
-        return this.model.getConceptsByPrototype(prototype);
+    if (this.model.isPrototype(name)) {
+        return this.model.getConceptsByPrototype(name);
     }
 
     return this.model.getConcepts(name);

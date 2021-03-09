@@ -55,6 +55,8 @@ const _StringConcept = {
         this.description = this.schema.description;
         this.length = this.schema.length;
         this.pattern = this.schema.pattern;
+        this.predefined = this.schema.predefined;
+        this.src = valOrDefault(this.schema.src, []);
 
         this.initObserver();
         this.initAttribute();
@@ -115,7 +117,7 @@ const _StringConcept = {
                 this.model.getConcepts(this.name)
                     .filter(c => c.hasValue() && c.value !== this.value)
                     .map(c => c.getValue()));
-            return [...uniqueValues];
+            return [...uniqueValues, ...this.src];
         }
 
         this.values.forEach(value => {
@@ -169,13 +171,24 @@ const _StringConcept = {
             return ResponseCode.PATTERN_ERROR;
         }
 
-        if (isEmpty(this.values)) {
+        let values = this.values;
+
+        if(isEmpty(values) && this.predefined) {
+            let uniqueValues = new Set(
+                this.model.getConcepts(this.name)
+                    .filter(c => c.hasValue())
+                    .map(c => c.getValue()));
+            values = [...uniqueValues, ...this.src];
+        }
+
+        if (isEmpty(values)) {
             return ResponseCode.SUCCESS;
         }
 
-        var found = false;
-        for (let i = 0; !found && i < this.values.length; i++) {
-            const val = this.values[i];
+        let found = false;
+        for (let i = 0; !found && i < values.length; i++) {
+            const val = values[i];
+
             if (isObject(val)) {
                 found = val.value === value;
             } else {

@@ -85,6 +85,45 @@
                 }
             ]
         },
+        {
+            "type": "template",
+            "name": "constraint-title",
+            "content": [
+                {
+                    "type": "layout",
+                    "layout": {
+                        "type": "wrap",
+                        "disposition": [
+                            {
+                                "type": "static",
+                                "static": {
+                                    "type": "text",
+                                    "content": "Constraint",
+                                    "style": {
+                                        "css": ["title--small", "primitive-constraint__title--small"]
+                                    }
+                                }
+                            },
+                            {
+                                "type": "projection",
+                                "tag": "base",
+                                "content": {
+                                    "type": "static", 
+                                    "static": {
+                                        "type": "text",
+                                        "help": "Hide constraint",
+                                        "content": "Back"
+                                    }
+                                },
+                                "style": {
+                                    "css": ["nav-projection", "primitive__nav-projection", "primitive__nav-projection--return"]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
 
 
         {
@@ -474,42 +513,8 @@
                 "orientation": "vertical",
                 "disposition": [
                     {
-                        "type": "attribute",
-                        "name": "default",
-                        "tag": "default-string"
-                    },
-                    {
-                        "type": "layout",
-                        "layout": {
-                            "type": "wrap",
-                            "disposition": [
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Constraint",
-                                        "style": {
-                                            "css": ["title--small", "primitive-constraint__title--small"]
-                                        }
-                                    }
-                                },
-                                {
-                                    "type": "projection",
-                                    "tag": "base",
-                                    "content": {
-                                        "type": "static", 
-                                        "static": {
-                                            "type": "text",
-                                            "help": "Hide constraint",
-                                            "content": "Hide"
-                                        }
-                                    },
-                                    "style": {
-                                        "css": ["nav-projection", "primitive__nav-projection", "primitive__nav-projection--return"]
-                                    }
-                                }
-                            ]
-                        }
+                        "type": "template",
+                        "name": "constraint-title"
                     },
                     {
                         "type": "attribute",
@@ -525,7 +530,7 @@
         },
         {
             "concept": { "name": "string primitive" },
-            "tags": ["choice", "choice-selection--name"],
+            "tags": ["choice"],
             "type": "layout",
             "content": {
                 "type": "wrap",
@@ -543,116 +548,44 @@
             }
         },
         {
-            "concept": { "name": "number constraint" },
-            "tags": ["length"],
+            "concept": { "name": "string primitive" },
+            "tags": ["choice-selection--name"],
             "type": "layout",
             "content": {
-                "type": "stack",
-                "orientation": "vertical",
+                "type": "wrap",
+                "focusable": false,
                 "disposition": [
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "Restrict length",
-                            "style": {
-                                "css": ["title--small", "constraint-choice--textual__title--small"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "field",
-                        "field": {
-                            "type": "choice",
-                            "input": {
-                                "placeholder": "type",
-                                "style": {
-                                    "css": ["constraint-choice--textual__choice-input"]
-                                }
-                            },
-                            "choice": {
-                                "style": {
-                                    "css": ["constraint-choice--textual__choice-list"]
-                                },
-                                "option": {
-                                    "style": {
-                                        "css": ["constraint-choice--textual__choice-option"]
-                                    }
-                                }
-                            },
-                            "style": {
-                                "css": ["constraint-choice--textual__choice"]
-                            }
-                        }
-                    }
-                ],
-                "style": {
-                    "css": ["constraint-choice--textual"]
-                }
+                ]
             }
         },
         {
             "concept": { "name": "number constraint" },
-            "tags": ["value"],
+            "tags": [],
             "type": "layout",
             "content": {
                 "type": "stack",
                 "orientation": "vertical",
                 "disposition": [
                     {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "Restrict value",
-                            "style": {
-                                "css": ["title--small", "constraint-choice--textual__title--small"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "field",
-                        "field": {
-                            "type": "choice",
-                            "input": {
-                                "placeholder": "type",
-                                "style": {
-                                    "css": ["constraint-choice--textual__choice-input"]
-                                }
-                            },
-                            "choice": {
-                                "style": {
-                                    "css": ["constraint-choice--textual__choice-list"]
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Restrict"
+                                    }
                                 },
-                                "option": {
-                                    "style": {
-                                        "css": ["constraint-choice--textual__choice-option"]
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": { "type": "property", "name": "refname" }
                                     }
                                 }
-                            },
-                            "style": {
-                                "css": ["constraint-choice--textual__choice"]
-                            }
-                        }
-                    }
-                ],
-                "style": {
-                    "css": ["constraint-choice--textual"]
-                }
-            }
-        },
-        {
-            "concept": { "name": "number constraint" },
-            "tags": ["cardinality"],
-            "type": "layout",
-            "content": {
-                "type": "stack",
-                "orientation": "vertical",
-                "disposition": [
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "Restrict cardinality",
+                            ],
                             "style": {
                                 "css": ["title--small", "constraint-choice--textual__title--small"]
                             }
@@ -860,47 +793,12 @@
                 "orientation": "vertical",
                 "disposition": [
                     {
-                        "type": "attribute",
-                        "name": "default",
-                        "tag": "default-number"
-                    },
-                    {
-                        "type": "layout",
-                        "layout": {
-                            "type": "wrap",
-                            "disposition": [
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Constraint",
-                                        "style": {
-                                            "css": ["title--small", "primitive-constraint__title--small"]
-                                        }
-                                    }
-                                },
-                                {
-                                    "type": "projection",
-                                    "tag": "base",
-                                    "content": {
-                                        "type": "static", 
-                                        "static": {
-                                            "type": "text",
-                                            "help": "Hide constraint",
-                                            "content": "Hide"
-                                        }
-                                    },
-                                    "style": {
-                                        "css": ["nav-projection", "primitive__nav-projection", "primitive__nav-projection--return"]
-                                    }
-                                }
-                            ]
-                        }
+                        "type": "template",
+                        "name": "constraint-title"
                     },
                     {
                         "type": "attribute",
-                        "name": "value",
-                        "tag": "value"
+                        "name": "value"
                     }
                 ]
             }
@@ -967,19 +865,38 @@
                 "orientation": "vertical",
                 "disposition": [
                     {
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "accept",
+                                    "tag": "label-string"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "rel",
+                                    "tag": "bracket-string"
+                                }
+                            ]
+                        }
+                    },
+                    {
                         "type": "static",
                         "static": {
                             "type": "text",
-                            "content": "Reference target",
+                            "content": "Scope",
                             "style": {
-                                "css": ["title", "primitive-constraint__title"]
+                                "css": ["title--small", "primitive-constraint__title--small"]
                             }
                         }
                     },
                     {
                         "type": "attribute",
-                        "name": "accept",
-                        "tag": "textual-reference"
+                        "name": "scope",
+                        "tag": "textual"
                     }
                 ]
             }
@@ -1009,8 +926,23 @@
             "type": "layout",
             "content": {
                 "type": "stack",
-                "orientation": "vertical",
+                "orientation": "horizontal",
                 "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "OF",
+                            "style": {
+                                "css": ["title--small", "primitive-constraint__title--small"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "accept",
+                        "tag": "textual"
+                    },
                     {
                         "type": "projection",
                         "tag": "full",
@@ -1024,21 +956,6 @@
                         "style": {
                             "css": ["nav-projection", "primitive__nav-projection"]
                         }
-                    },
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "Element target",
-                            "style": {
-                                "css": ["title--small", "primitive-constraint__title--small"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "accept",
-                        "tag": "textual"
                     }
                 ]
             }
@@ -1052,37 +969,8 @@
                 "orientation": "vertical",
                 "disposition": [
                     {
-                        "type": "layout",
-                        "layout": {
-                            "type": "wrap",
-                            "disposition": [
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Constraint",
-                                        "style": {
-                                            "css": ["title--small", "primitive-constraint__title--small"]
-                                        }
-                                    }
-                                },
-                                {
-                                    "type": "projection",
-                                    "tag": "base",
-                                    "content": {
-                                        "type": "static", 
-                                        "static": {
-                                            "type": "text",
-                                            "help": "Hide constraint",
-                                            "content": "Hide"
-                                        }
-                                    },
-                                    "style": {
-                                        "css": ["nav-projection", "primitive__nav-projection", "primitive__nav-projection--return"]
-                                    }
-                                }
-                            ]
-                        }
+                        "type": "template",
+                        "name": "constraint-title"
                     },
                     {
                         "type": "attribute",
@@ -1091,23 +979,7 @@
                     },
                     {
                         "type": "attribute",
-                        "name": "cardinality",
-                        "tag": "cardinality"
-                    },
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "Element target",
-                            "style": {
-                                "css": ["title--small", "primitive-constraint__title--small"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "accept",
-                        "tag": "textual"
+                        "name": "cardinality"
                     }
                 ]
             }
@@ -1158,7 +1030,7 @@
                         "type": "static",
                         "static": {
                             "type": "text",
-                            "content": "Containment",
+                            "content": "Complex",
                             "focusable": false
                         }
                     }
@@ -1580,6 +1452,53 @@
             }
         },
 
+        {
+            "concept": { "name": "reference" },
+            "tags": ["label-reference"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": { "type": "property", "name": "refname" }
+                        },
+                        "style": {
+                            "css": ["title--small", "reference-choice--textual__title--small"]
+                        }
+                    },
+                    {
+                        "type": "field",
+                        "field": {
+                            "type": "choice",
+                            "input": {
+                                "placeholder": { "type": "property", "name": "refname" },
+                                "style": {
+                                    "css": ["reference-choice--textual__input"]
+                                }
+                            },
+                            "choice": {
+                                "style": {
+                                    "css": ["reference-choice--textual__list"]
+                                },
+                                "option": {
+                                    "style": {
+                                        "css": ["reference-choice--textual__list-option"]
+                                    }
+                                }
+                            },
+                            "style": {
+                                "css": ["reference-choice--textual"]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+
 
         {
             "concept": { "name": "set" },
@@ -1808,6 +1727,24 @@
                 "style": {
                     "css": ["textfield--labeled"]
                 }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["bracket-string"],
+            "type": "field",
+            "content": {
+                "type": "text",
+                "resizable": true,
+                "input": {
+                    "placeholder": { "type": "property", "name": "refname" },
+                    "style": {
+                        "css": ["string-field--bracket__input"]
+                    }
+                },
+                "style": {
+                    "css": ["string-field", "string-field--bracket"]
+                }  
             }
         },
         {
