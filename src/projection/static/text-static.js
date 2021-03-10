@@ -67,7 +67,7 @@ const BaseTextStatic = {
             if (this.contentType === "html") {
                 this.element.append(htmlToElement(value));
             } else if (this.contentType === "property") {
-                this.element.textContent = this.source.getProperty(value);
+                this.element.textContent = this.projection.concept.getProperty(value);
             } else {
                 this.element.textContent = value.trim();
             }

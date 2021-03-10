@@ -1334,7 +1334,7 @@ export const Editor = {
                 this.updateActiveElement(element);
                 this.activeElement.focusIn(target);
             } else if (element) {
-                
+                // TODO
             } else {
                 if (this.activeElement) {
                     this.activeElement.focusOut(target);
