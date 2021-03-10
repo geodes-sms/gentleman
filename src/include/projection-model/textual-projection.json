@@ -121,23 +121,23 @@
                                             }
                                         }
                                     }
+                                },
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "for concept",
+                                        "style": {
+                                            "css": ["keyword"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "concept"
                                 }
                             ]
                         }
-                    },
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "Concept target",
-                            "style": {
-                                "css": ["title", "model-projection__line"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "concept"
                     },
                     {
                         "type": "attribute",
@@ -260,16 +260,12 @@
             "type": "layout",
             "tags": [],
             "projection": {
-                "type": "stack",
-                "orientation": "vertical",
-                "style": {
-                    "css": ["block"]
-                },
+                "type": "wrap",
                 "disposition": [
                     {
                         "type": "attribute",
                         "name": "name",
-                        "tag": "label-string"
+                        "tag": "simple-string"
                     }
                 ]
             }
@@ -1666,6 +1662,21 @@
                 },
                 "disposition": [
                     {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Input",
+                            "style": {
+                                "css": ["title--small"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "type",
+                        "tag": "label-string"
+                    },
+                    {
                         "type": "attribute",
                         "name": "placeholder",
                         "tag": "label-string"
@@ -2862,15 +2873,15 @@
             "type": "layout",
             "content": {
                 "type": "stack",
-                "orientation": "vertical",
+                "orientation": "horizontal",
                 "disposition": [
                     {
                         "type": "static",
                         "static": {
                             "type": "text",
-                            "content": "Tags",
+                            "content": "Tags:",
                             "style": {
-                                "css": ["title--small", "css-list__title--small"]
+                                "css": ["title--small", "css-list__title--small", "label"]
                             }
                         }
                     },
@@ -3564,7 +3575,7 @@
                                         }
                                     },
                                     "style": {
-                                        "css": ["nav-projection", "primitive__nav-projection", "primitive__nav-projection--return"]
+                                        "css": ["nav-projection", "render__nav-projection", "render__nav-projection--return"]
                                     }
                                 }
                             ]

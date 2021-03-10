@@ -33,7 +33,7 @@
 }
 
 .model-projection .label {
-    color: blue;
+    color: blue; margin-right: 0.5em;
 }
 
 .model-projection .block__line {
@@ -729,12 +729,10 @@
 }
 
 .textual-list--element .textual-list__list {
-    flex-direction: column; align-items: flex-start;
-}
-
-.textual-list--element .textual-list__list .textual-list__list {
+    padding-top: 6px;
     flex-direction: row; align-items: flex-start;
 }
+
 
 .textual-list--cell .textual-list__list {
     flex-direction: row; align-items: flex-start;
@@ -820,11 +818,10 @@
             }
 
 .render__nav-projection {
-    align-self: center;
-
-    margin-top: 6px;
-    width: 100%; max-width: 120px;
-    padding: 6px 12px 8px;
+    position: absolute;
+    bottom: calc(100% + 2px); right: 12px;
+    width: 60px;
+    padding: 4px 12px 6px;
     color: #fff;
     font-size: 1em; font-weight: 500;
     border-radius: 2px;
@@ -842,13 +839,11 @@
         box-shadow: 0 0 0 3px #fff, 0 0 0 6px #1f75fe;
     }
 
-    .render__nav-projection--back {
-        margin-left: 6px;
-        width: auto;
-        max-width: 72px;
+    .render__nav-projection--return {
+        bottom: calc(100% + 8px); right: 2px;
         border-radius: 180px;
     }
-        .render__nav-projection--back:focus {
+        .render__nav-projection--return:focus {
             box-shadow: 0 0 0 2px #fff, 0 0 0 4px #1f75fe;
         }
             

@@ -67,7 +67,7 @@
                     "target": {
                         "name": "set",
                         "accept": {
-                            "name": "element"
+                            "name": "render"
                         },
                         "min": 1
                     }
@@ -111,7 +111,8 @@
                 {
                     "name": "name",
                     "target": {
-                        "name": "name"
+                        "name": "name",
+                        "src": ["string", "number", "boolean", "set", "reference"]
                     }
                 },
                 {
@@ -251,6 +252,14 @@
             "name": "input",
             "nature": "concrete",
             "attributes": [
+                {
+                    "name": "type",
+                    "target": {
+                        "name": "string",
+                        "default": "text",
+                        "values": ["text", "number", "email", "tel", "url"]
+                    }
+                },
                 {
                     "name": "placeholder",
                     "target": {
@@ -647,7 +656,7 @@
                     "alias": "contentType",
                     "target": {
                         "name": "string",
-                        "values": ["text", "html"]
+                        "values": ["text", "html", "property"]
                     },
                     "value": "text"
                 }
