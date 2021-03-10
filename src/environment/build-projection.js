@@ -435,6 +435,7 @@ function buildField(field) {
 
 function buildInput(element) {
     let schema = {
+        type: getValue(element, "type"),
         placeholder: getValue(element, "placeholder")
     };
 
