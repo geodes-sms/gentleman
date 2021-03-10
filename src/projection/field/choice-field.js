@@ -3,9 +3,9 @@ import {
     createListItem, findAncestor, isHTMLElement, removeChildren, isNullOrUndefined,
     isNullOrWhitespace, isObject, valOrDefault, hasOwn, capitalizeFirstLetter
 } from "zenkai";
-import { getClosest, NotificationType, getVisibleElement, hide, isHidden, show } from "@utils/index.js";
+import { getClosest, NotificationType, getVisibleElement, hide, isHidden, show, shake } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
-import { resolveValue } from "./../content-handler.js";
+import { ContentHandler, resolveValue } from "./../content-handler.js";
 import { Field } from "./field.js";
 
 
@@ -40,7 +40,7 @@ function getItem(element) {
         return element;
     }
 
-    return findAncestor(element, isValid, 3);
+    return findAncestor(element, isValid, 5);
 }
 
 /**
@@ -53,8 +53,11 @@ function getItemValue(item) {
 }
 
 const isSame = (val1, val2) => {
-    if (isObject(val1)) {
+    if (val1.type === "concept") {
         return val1.id === val2.id;
+    }
+    if (val1.type === "meta-concept") {
+        return val1.name === val2.name;
     }
     return val1 === val2;
 };
@@ -110,7 +113,7 @@ const BaseChoiceField = {
     },
     reset() {
         // TODO: Get initial value
-        this.setValue(null, true);
+        this.source.removeValue();
     },
     /**
      * Verifies that the field has a value
@@ -131,41 +134,44 @@ const BaseChoiceField = {
 
         if (update) {
             response = this.source.setValue(value);
-        } else {
-            if (isNullOrUndefined(value)) {
-                show(this.selectionPlaceholder);
-                if (this.selectionElement) {
-                    removeChildren(this.selectionElement).remove();
-                }
-                this.selection = null;
-            } else if (value.object === "concept") {
-                const { template = {} } = this.schema.selection;
 
-                let projection = this.model.createProjection(value, valOrDefault(template.tag, "choice-selection")).init();
-                projection.parent = this.projection;
-
-                this.setChoice(value);
-
-                if (this.selectionElement) {
-                    removeChildren(this.selectionElement).remove();
-                }
-
-                this.setSelection(projection.render());
-                projection.element.parent = this;
-            } else {
-                this.setChoice(value);
+            this.errors = [];
+            if (!response.success) {
+                this.environment.notify(response.message, NotificationType.ERROR);
+                this.errors.push(...response.errors);
             }
 
-            response = {
-                success: true
-            };
+            return true;
+        }
+
+        if (isNullOrUndefined(value)) {
+            show(this.selectionPlaceholder);
+            if (this.selectionElement) {
+                removeChildren(this.selectionElement).remove();
+            }
+            if (this.selection) {
+                this.selection.classList.remove("selected");
+            }
+            this.selection = null;
+        } else if (value.object === "concept") {
+            const { template = {} } = this.schema.selection;
+
+            let projection = this.model.createProjection(value, valOrDefault(template.tag, "choice-selection")).init();
+            projection.parent = this.projection;
+
+            this.setChoice(value);
+
+            if (this.selectionElement) {
+                removeChildren(this.selectionElement).remove();
+            }
+
+            this.setSelection(projection.render());
+            projection.element.parent = this;
+        } else {
+            this.setChoice(value);
         }
 
         this.errors = [];
-        if (!response.success) {
-            this.environment.notify(response.message, "error");
-            this.errors.push(...response.errors);
-        }
 
         this.value = value;
 
@@ -308,7 +314,7 @@ const BaseChoiceField = {
         });
 
         if (this.source.hasValue()) {
-            this.setValue(this.source.getValue());
+            this.setValue(this.source.getValue(true));
         }
 
         this.refresh();
@@ -504,18 +510,23 @@ const BaseChoiceField = {
 
         const { template = {}, style } = this.schema.choice.option;
 
-        if (isConcept) {
+        if (value.type === "meta-concept") {
+            let choiceProjectionSchema = this.model.getProjectionSchema(value.name, valOrDefault(template.tag, "choice"))[0];
+            let type = choiceProjectionSchema.type;
+            let schema = {
+                "type": type,
+                [type]: choiceProjectionSchema.content || choiceProjectionSchema.projection,
+            };
+
+            let render = ContentHandler.call(this, schema, null, { focusable: false });
+            container.dataset.type = "meta-concept";
+            container.dataset.value = value.name;
+            container.append(render);
+        } else if (isConcept) {
             let choiceProjection = this.model.createProjection(value, valOrDefault(template.tag, "choice")).init({ focusable: false });
+            choiceProjection.readonly = true;
+            choiceProjection.focusable = false;
             choiceProjection.parent = this.projection;
-
-            const { context } = choiceProjection.getSchema();
-
-            if (context) {
-                for (const key in context) {
-                    const value = context[key];
-                    container.dataset[`choice${capitalizeFirstLetter(key)}`] = value;
-                }
-            }
 
             container.append(choiceProjection.render());
         } else {
@@ -536,6 +547,10 @@ const BaseChoiceField = {
 
             if (type === "concept") {
                 return this.values.find(val => val.id === value);
+            }
+
+            if (type === "meta-concept") {
+                return this.values.find(val => val.name === value);
             }
 
             if (type === "value") {
@@ -586,6 +601,25 @@ const BaseChoiceField = {
         this.selectionElement.classList.add("field--choice__selection");
         StyleHandler.call(this.projection, this.selectionElement, style);
         this.selectionPlaceholder.after(element);
+
+        this.refresh();
+    },
+
+    delete() {
+        if (this.hasValue()) {
+            this.reset();
+        } else {
+            let result = this.source.delete();
+
+            if (result.success) {
+                this.clear();
+                removeChildren(this.element);
+                this.element.remove();
+            } else {
+                this.environment.notify(result.message);
+                shake(this.element);
+            }
+        }
     },
 
     /**
@@ -643,9 +677,15 @@ const BaseChoiceField = {
                 return this.values.find(val => val.id === value);
             }
 
+            if (type === "meta-concept") {
+                return value;
+            }
+
             if (type === "value") {
                 return value;
             }
+
+            return value;
         };
 
         if (isHTMLElement(item) && this.selection !== item) {
@@ -677,9 +717,15 @@ const BaseChoiceField = {
                 return this.values.find(val => val.id === value);
             }
 
+            if (type === "meta-concept") {
+                return value;
+            }
+
             if (type === "value") {
                 return value;
             }
+
+            return value;
         };
 
         if (isHTMLElement(item) && this.selection !== item) {

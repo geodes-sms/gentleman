@@ -147,7 +147,7 @@ const _Concept = {
         if (type === "number") {
             return +value;
         }
-        
+
         if (type === "boolean") {
             return toBoolean(value);
         }
@@ -288,17 +288,17 @@ const _Concept = {
                 return result;
             }
         }
-        
-        this.notify("delete");
 
         this.getChildren().forEach(child => {
             child.delete(true);
         });
 
-        this.model.removeConcept(this.id);
+        if (this.model.removeConcept(this.id)) {
+            this.notify("delete");
+        }
 
         return {
-            message: `The concept '${name}' was successfully deleted.`,
+            message: `The concept '${this.name}' was successfully deleted.`,
             success: true,
         };
     },

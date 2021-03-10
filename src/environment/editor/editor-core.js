@@ -1,8 +1,8 @@
 import {
-    createDocFragment, createHeader, createSection, createH3, createDiv, createSpan,
-    createUnorderedList, createListItem, createParagraph, createButton, createAnchor, createInput,
-    getElement, removeChildren, isHTMLElement, findAncestor, copytoClipboard,
-    isNullOrWhitespace, isNullOrUndefined, isEmpty, hasOwn, isFunction, valOrDefault
+    createDocFragment, createHeader, createSection, createH3, createDiv,
+    createParagraph, createButton, createAnchor, createInput, removeChildren,
+    isHTMLElement, findAncestor, isNullOrWhitespace, isNullOrUndefined, isEmpty,
+    hasOwn, isFunction, valOrDefault, copytoClipboard
 } from 'zenkai';
 import { Events, hide, show, Key, getEventTarget, NotificationType, EditorMode } from '@utils/index.js';
 import { buildProjectionHandler } from "../build-projection.js";
@@ -437,7 +437,7 @@ export const Editor = {
             return null;
         }
 
-        if (!["layout"].includes(nature)) {
+        if (!["layout", "layout-component"].includes(nature)) {
             console.warn("Layout error: Unknown nature attribute on field");
             return null;
         }
@@ -463,6 +463,7 @@ export const Editor = {
                 projectionElement = this.getField(element);
                 break;
             case "layout":
+            case "layout-component":
                 projectionElement = this.getLayout(element);
                 break;
             case "static":
@@ -505,6 +506,8 @@ export const Editor = {
         const result = {
             "concept": this.conceptModel.schema,
             "values": this.conceptModel.export(),
+            "projection": this.projectionModel.schema,
+            "editor": this.config
         };
 
         var bb = new Blob([JSON.stringify(result)], { type: MIME_TYPE });
@@ -516,10 +519,10 @@ export const Editor = {
         link.dataset.downloadurl = [MIME_TYPE, link.download, link.href].join(':');
         if (copy) {
             copytoClipboard(JSON.stringify(result));
-            this.notify("Export has been copied to clipboard");
+            this.notify("The model has been copied to clipboard", NotificationType.SUCCESS);
         } else {
             link.click();
-            this.notify("The model has been successfully saved. Please download the model.");
+            this.notify("The model has been downloaded", NotificationType.SUCCESS);
         }
 
         // Need a small delay for the revokeObjectURL to work properly.
@@ -535,7 +538,7 @@ export const Editor = {
      * @param {string} message 
      * @param {NotificationType} type 
      */
-    notify(message, type) {
+    notify(message, type, time = 4500) {
         /** @type {HTMLElement} */
         let notify = createParagraph({
             class: ["notify"],
@@ -555,7 +558,7 @@ export const Editor = {
         setTimeout(() => {
             notify.classList.remove("open");
             setTimeout(() => { notify.remove(); }, 500);
-        }, 4500);
+        }, time);
     },
 
     // Editor window actions
@@ -615,6 +618,12 @@ export const Editor = {
             return false;
         }
 
+        if (isEmpty(schema)) {
+            this.notify("The concept model is empty", NotificationType.ERROR);
+
+            return false;
+        }
+
         this.unloadConceptModel();
         this.clear();
 
@@ -650,6 +659,12 @@ export const Editor = {
             return false;
         }
 
+        if (isEmpty(schema)) {
+            this.notify("The projection model is empty", NotificationType.ERROR);
+
+            return false;
+        }
+
         this.unloadProjectionModel();
         this.clear();
 
@@ -677,9 +692,20 @@ export const Editor = {
                 if (Array.isArray(file)) {
                     this.loadConceptModel(file);
                 } else {
-                    const { concept, values = [] } = file;
+                    const { concept, values = [], projection = [], editor } = file;
 
                     this.loadConceptModel(concept, values);
+
+
+                    if (!isEmpty(projection)) {
+                        this.notify("A projection was found in the model.", NotificationType.NORMAL, 2000);
+
+                        this.loadProjectionModel(projection);
+                    }
+
+                    if (editor) {
+                        this.setConfig(editor);
+                    }
                 }
 
                 break;
@@ -694,7 +720,8 @@ export const Editor = {
 
                 break;
             default:
-                console.warn(`File type ${type} not handled`);
+                this.notify(`File type '${type}' is not handled`, NotificationType.WARNING);
+
                 return false;
         }
 
@@ -1290,7 +1317,7 @@ export const Editor = {
 
             const element = this.resolveElement(target);
 
-            if (element && element.focusable) {
+            if (element && element.projection.focusable && element.focusable) {
                 if (this.activeElement && this.activeElement !== element) {
                     this.activeElement.focusOut();
                     this.activeElement = null;
@@ -1306,6 +1333,8 @@ export const Editor = {
 
                 this.updateActiveElement(element);
                 this.activeElement.focusIn(target);
+            } else if (element) {
+                
             } else {
                 if (this.activeElement) {
                     this.activeElement.focusOut(target);

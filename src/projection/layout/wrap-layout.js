@@ -11,14 +11,53 @@ import { Layout } from "./layout.js";
 export const BaseWrapLayout = {
     /** @type {HTMLElement[]} */
     elements: null,
+    /** @type {boolean} */
+    edit: false,
+    /** @type {HTMLElement} */
+    btnEdit: false,
+    /** @type {HTMLElement} */
+    btnCollapse: false,
+    /** @type {boolean} */
+    collapsed: false,
 
     init(args = {}) {
-        const { focusable = false } = this.schema;
+        const { editable = true, collapsible = false, collapsed = false, focusable = false } = this.schema;
 
         this.focusable = focusable;
+        this.collapsible = collapsible;
+        this.collapsed = collapsed;
+        this.editable = editable;
         this.elements = [];
 
         Object.assign(this, args);
+
+        return this;
+    },
+    collapse(force = false) {
+        if (this.collapsed && !force) {
+            return;
+        }
+
+        this.collapseContainer = createDiv({
+            class: "layout-container-collapse"
+        }, this.elements);
+        this.btnCollapse.after(this.collapseContainer);
+        this.collapsed = true;
+
+        this.refresh();
+
+        return this;
+    },
+    expand(force = false) {
+        if (!this.collapsed && !force) {
+            return;
+        }
+        let fragment = createDocFragment(Array.from(this.collapseContainer.children));
+        this.btnCollapse.after(fragment);
+        this.collapseContainer.remove();
+        this.collapsed = false;
+
+        this.refresh();
 
         return this;
     },
@@ -54,6 +93,28 @@ export const BaseWrapLayout = {
             this.container.dataset.ignore = "all";
         }
 
+        if (this.collapsible) {
+            this.container.dataset.collapsible = "all";
+            if (!isHTMLElement(this.btnCollapse)) {
+                this.btnCollapse = createButton({
+                    class: ["btn", "btn-collapse"],
+                    tabindex: 0,
+                    dataset: {
+                        nature: "layout-component",
+                        layout: "stack",
+                        component: "action",
+                        id: this.id,
+                        action: "collapse"
+                    }
+                });
+
+                this.btnCollapse.classList.add("off");
+                this.btnCollapse.dataset.status = "off";
+
+                fragment.appendChild(this.btnCollapse);
+            }
+        }
+
         for (let i = 0; i < disposition.length; i++) {
             let render = ContentHandler.call(this, disposition[i]);
 
@@ -74,6 +135,10 @@ export const BaseWrapLayout = {
             this.bindEvents();
         }
 
+        if (this.collapsed) {
+            this.collapse(true);
+        }
+
         this.container.style.display = "inline-flex";
 
         this.refresh();
@@ -81,6 +146,11 @@ export const BaseWrapLayout = {
         return this.container;
     },
     refresh() {
+        if (this.collapsed) {
+            this.container.classList.add("collapsed");
+        } else {
+            this.container.classList.remove("collapsed");
+        }
 
         return this;
     },
@@ -170,11 +240,21 @@ export const BaseWrapLayout = {
 
     bindEvents() {
         this.projection.registerHandler("view.changed", (value, from) => {
-            console.log(value, from);
             if (from && from.parent === this.projection) {
                 value.parent = this;
             }
         });
+
+        if (this.btnCollapse) {
+            this.btnCollapse.addEventListener('click', (event) => {
+                if (this.collapsed) {
+                    this.expand();
+                }
+                else {
+                    this.collapse();
+                }
+            });
+        }
     }
 };
 

@@ -114,7 +114,17 @@ const _NumberConcept = {
             message: "The value has been successfully updated."
         };
     },
+    removeValue() {
+        this.value = null;
 
+        this.notify("value.changed", this.value);
+        
+        return {
+            success: true,
+            message: "The value has been successfully updated."
+        };
+    },
+    
     getCandidates() {
         this.values.forEach(value => {
             if (isObject(value)) {

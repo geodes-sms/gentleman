@@ -45,6 +45,10 @@
         margin-right: 0.5em;
     }
 
+    .primitive-constraint__title--small:not(.inline) {
+        width: 100%;
+    }
+
     .model-concept--textual .value-list__title--small,
     .model-projection .value-list__title--small {
         color: #222;
@@ -321,7 +325,7 @@
 
 .textual-list__list-item--inline > .textual-list__btn-remove {
     order: 2;
-
+    display: inline-flex;
     position: relative;
     padding-left: 4px; padding-right: 4px;
     font-size: 0.9em; font-weight: 600;
@@ -356,6 +360,10 @@
         transform: none;
     }
 
+
+.model-concept--textual .textual-list--attribute {
+    align-items: flex-start;
+}    
     
 
 .link--prototype {

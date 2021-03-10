@@ -64,6 +64,8 @@ const Projection = {
     optional: false,
     /** @type {boolean} */
     searchable: false,
+    /** @type {boolean} */
+    focusable: true,
 
     get hasMultipleViews() { return this.schema.length > 1; },
     get isReadOnly() { return valOrDefault(this.getSchema().readonly, false); },
@@ -166,9 +168,8 @@ const Projection = {
         }
 
         if (message === "delete") {
-            this.concept.unregister(this);
             this.concept = null;
-
+            
             this.containers.forEach(container => {
                 removeChildren(container).remove();
             });
@@ -289,6 +290,14 @@ const Projection = {
 
         if (this.isRoot() || this.optional) {
             this.element.focusable = true;
+        }
+
+        if(!this.focusable) {
+            this.element.focusable = false;
+        }
+
+        if(this.readonly) {
+            this.element.readonly = true;
         }
 
         container = this.element.render();

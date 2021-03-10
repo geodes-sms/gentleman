@@ -174,7 +174,38 @@ const BaseField = {
         console.warn("CLICK_HANDLER NOT IMPLEMENTED");
 
         return false;
-    }
+    },
+    /**
+     * Handles the `control` command
+     * @param {HTMLElement} target 
+     */
+    controlHandler(target) {
+        if (this.toolbar) {
+            this.toolbar.remove();
+        }
+
+        // this.toolbar = createDiv({
+        //     class: ["field-toolbar"],
+        //     dataset: {
+        //         nature: "field-component",
+        //         view: "text",
+        //         id: this.id,
+        //     }
+        // });
+
+        // this.body = createDiv({
+        //     class: ["field-body"],
+        //     dataset: {
+        //         nature: "field-component",
+        //         view: "text",
+        //         id: this.id,
+        //     }
+        // });
+        // this.body.append(...this.element.childNodes);
+
+        // this.element.append(this.toolbar, this.body);
+        // this.element.classList.add("control");
+    },
 };
 
 

@@ -48,7 +48,7 @@ export function ContentHandler(schema, concept, args = {}) {
     } else if (schema.type === "attribute") {
         return AttributeHandler.call(this, schema, contentConcept);
     } else if (schema.type === "template") {
-        let template = this.model.getModelTemplate(schema.name);
+        let template = this.model.getTemplateSchema(schema.name);
 
         if (template.param) {
             // TODO: Merge and validate template.param and schema.param

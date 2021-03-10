@@ -36,7 +36,7 @@ export const BaseAttribute = {
 
         if (nature === "primitive") {
             copy.value = value;
-        } else if (nature === "prototype") {
+        } else if (nature === "prototype" && this.target.hasValue()) {
             copy.value = {
                 name: this.target.value.name,
                 attributes: value
@@ -48,18 +48,21 @@ export const BaseAttribute = {
         return copy;
     },
     export() {
+        if (!this.target.hasValue()) {
+            return null;
+        }
+
         const { nature } = this.target;
-        
+
         let output = {
             name: this.target.name,
         };
 
-        
         let value = this.target.exportValue();
 
         if (nature === "primitive") {
             output.value = value;
-        } else if (nature === "prototype") {
+        } else if (nature === "prototype" && this.target.hasValue()) {
             output.value = {
                 name: this.target.value.name,
                 attributes: value
@@ -67,7 +70,6 @@ export const BaseAttribute = {
         } else {
             output.attributes = value;
         }
-
 
         return output;
     },

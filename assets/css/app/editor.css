@@ -35,7 +35,7 @@
     display: flex; align-items: flex-start; justify-content: center;
     backdrop-filter: blur(2px);
     background-color: rgba(245, 245, 245, 0.8);
-    z-index: 100;
+    z-index: 80;
 }
 
 .editor-style {
@@ -326,7 +326,7 @@
     box-shadow: -1px 0 4px #555;
     transform: translateX(900px);
     opacity: .5;
-    z-index: 50;
+    z-index: 100;
     transition: transform .4s, opacity .2s;
 }
     .notify.error {

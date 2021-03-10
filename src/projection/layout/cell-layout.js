@@ -1,6 +1,6 @@
 import {
-    createDocFragment, createTable, createTableRow, createTableCell,
-    isObject, isString, hasOwn, isHTMLElement, createDiv, valOrDefault,
+    createDocFragment, createTable, createTableRow, createTableCell, createDiv,
+    isHTMLElement, isObject, isString, hasOwn,
 } from "zenkai";
 import { StyleHandler } from "../style-handler.js";
 import { ContentHandler } from "../content-handler.js";
@@ -8,18 +8,67 @@ import { Layout } from "./layout.js";
 
 
 export const BaseCellLayout = {
-    init(args = {}) {
-        const { orientation = "row", focusable = false } = this.schema;
+    /** @type {HTMLElement[]} */
+    elements: null,
+    /** @type {boolean} */
+    edit: false,
+    /** @type {HTMLElement} */
+    btnEdit: false,
+    /** @type {HTMLElement} */
+    btnCollapse: false,
+    /** @type {HTMLElement} */
+    menu: false,
+    /** @type {boolean} */
+    collapsed: false,
 
-        this.orientation = orientation;
+    init(args = {}) {
+        const { editable = true, collapsible = false, focusable = false } = this.schema;
+
         this.focusable = focusable;
+        this.collapsible = collapsible;
+        this.editable = editable;
         this.elements = [];
 
         Object.assign(this, args);
 
         return this;
     },
+
+    collapse(row) {
+        if (this.collapsed) {
+            return;
+        }
+
+        this.collapseContainer = createDiv({
+            class: "layout-container-collapse"
+        }, this.elements);
+        this.btnCollapse.after(this.collapseContainer);
+        this.collapsed = true;
+
+        this.refresh();
+
+        return this;
+    },
+    expand(row) {
+        if (!this.collapsed) {
+            return;
+        }
+        let fragment = createDocFragment(Array.from(this.collapseContainer.children));
+        this.btnCollapse.after(fragment);
+        this.collapseContainer.remove();
+        this.collapsed = true;
+
+        this.refresh();
+
+        return this;
+    },
+
     refresh() {
+        if (this.collapsed) {
+            this.container.classList.add("collapsed");
+        } else {
+            this.container.classList.remove("collapsed");
+        }
 
         return this;
     },
@@ -88,9 +137,23 @@ export const BaseCellLayout = {
         return this.container;
     },
 
-    
     bindEvents() {
+        this.projection.registerHandler("view.changed", (value, from) => {
+            if (from && from.parent === this.projection) {
+                value.parent = this;
+            }
+        });
 
+        if (this.btnCollapse) {
+            this.btnCollapse.addEventListener('click', (event) => {
+                if (this.collapsed) {
+                    this.expand();
+                }
+                else {
+                    this.collapse();
+                }
+            });
+        }
     }
 };
 

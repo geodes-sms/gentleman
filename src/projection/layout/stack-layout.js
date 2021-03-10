@@ -1,12 +1,17 @@
 import {
     createDocFragment, createDiv, createButton, createInput, createLabel,
-    isHTMLElement, isEmpty, valOrDefault, findAncestor,
+    isHTMLElement, valOrDefault, findAncestor, hasOwn,
 } from "zenkai";
 import { getClosest, getVisibleElement } from "@utils/index.js";
 import { StyleHandler } from './../style-handler.js';
 import { ContentHandler } from './../content-handler.js';
 import { Layout } from "./layout.js";
 
+
+const Orientation = {
+    HORIZONTAL: "horizontal",
+    VERTICAL: "vertical"
+};
 
 export const BaseStackLayout = {
     /** @type {string} */
@@ -18,13 +23,20 @@ export const BaseStackLayout = {
     /** @type {HTMLElement} */
     btnEdit: false,
     /** @type {HTMLElement} */
+    btnCollapse: false,
+    /** @type {HTMLElement} */
     menu: false,
+    /** @type {boolean} */
+    collapsed: false,
 
     init(args = {}) {
-        const { orientation = "horizontal", focusable = false } = this.schema;
+        const { orientation = Orientation.HORIZONTAL, editable = true, collapsible = false, collapsed = false, focusable = false } = this.schema;
 
         this.orientation = orientation;
         this.focusable = focusable;
+        this.collapsible = collapsible;
+        this.collapsed = collapsed;
+        this.editable = editable;
         this.elements = [];
 
         Object.assign(this, args);
@@ -35,11 +47,41 @@ export const BaseStackLayout = {
         return this.orientation;
     },
     setOrientation(value) {
-        if (!["horizontal", "vertical"].includes(value)) {
+        if (!hasOwn(Orientation, value)) {
             return;
         }
 
         this.orientation = value;
+        this.refresh();
+    },
+    collapse(force = false) {
+        if (this.collapsed && !force) {
+            return;
+        }
+
+        this.collapseContainer = createDiv({
+            class: "layout-container-collapse"
+        }, this.elements);
+        this.btnCollapse.after(this.collapseContainer);
+        this.collapsed = true;
+
+        this.refresh();
+
+        return this;
+    },
+    expand(force = false) {
+        if (!this.collapsed && !force) {
+            return;
+        }
+
+        let fragment = createDocFragment(Array.from(this.collapseContainer.children));
+        this.btnCollapse.after(fragment);
+        this.collapseContainer.remove();
+        this.collapsed = false;
+
+        this.refresh();
+
+        return this;
     },
 
     /**
@@ -72,10 +114,25 @@ export const BaseStackLayout = {
         } else {
             this.container.dataset.ignore = "all";
         }
-        // this.btnEdit = createButton({
-        //     class: ["btn", "btn-edit"]
-        // }, "Edit");
-        // fragment.appendChild(this.btnEdit);
+
+        if (this.collapsible) {
+            this.container.dataset.collapsible = "all";
+            if (!isHTMLElement(this.btnCollapse)) {
+                this.btnCollapse = createButton({
+                    class: ["btn", "btn-collapse"],
+                    tabindex: 0,
+                    dataset: {
+                        nature: "layout-component",
+                        layout: "stack",
+                        component: "action",
+                        id: this.id,
+                        action: "collapse"
+                    }
+                });
+
+                fragment.appendChild(this.btnCollapse);
+            }
+        }
 
         for (let i = 0; i < disposition.length; i++) {
             let render = ContentHandler.call(this, disposition[i]);
@@ -97,6 +154,10 @@ export const BaseStackLayout = {
             this.bindEvents();
         }
 
+        if (this.collapsed) {
+            this.collapse(true);
+        }
+
         this.container.style.display = "flex";
 
         this.refresh();
@@ -104,21 +165,17 @@ export const BaseStackLayout = {
         return this.container;
     },
     refresh() {
-        if (this.orientation === "vertical") {
+        if (this.orientation === Orientation.VERTICAL) {
             this.container.style.flexDirection = "column";
-        }
-        if (this.orientation === "horizontal") {
+        } else if (this.orientation === Orientation.HORIZONTAL) {
             this.container.style.flexDirection = "row";
         }
-        // if (this.edit) {
-        //     this.container.classList.add("edit");
-        //     this.openMenu();
-        //     this.btnEdit.textContent = "Done";
-        // } else {
-        //     this.container.classList.remove("edit");
-        //     this.closeMenu();
-        //     this.btnEdit.textContent = "Edit";
-        // }
+
+        if (this.collapsed) {
+            this.container.classList.add("collapsed");
+        } else {
+            this.container.classList.remove("collapsed");
+        }
 
         return this;
     },
@@ -128,6 +185,11 @@ export const BaseStackLayout = {
             this.container.focus();
         } else {
             let firstElement = valOrDefault(getVisibleElement(this.container), this.elements[0]);
+
+            if (firstElement === this.btnCollapse) {
+                firstElement = this.elements[0];
+            }
+
             let projectionElement = this.environment.resolveElement(firstElement);
 
             if (projectionElement) {
@@ -207,27 +269,31 @@ export const BaseStackLayout = {
     },
 
     bindEvents() {
-        // this.btnEdit.addEventListener('click', (event) => {
-        //     this.edit = !this.edit;
-        //     this.refresh();
-        // });
-
         this.container.addEventListener('change', (event) => {
             const { target } = event;
             const { prop } = target.dataset;
 
             if (prop === "orientation") {
                 this.setOrientation(target.value);
-                this.refresh();
             }
         });
 
         this.projection.registerHandler("view.changed", (value, from) => {
-            console.log(value, from);
             if (from && from.parent === this.projection) {
                 value.parent = this;
             }
         });
+
+        if (this.btnCollapse) {
+            this.btnCollapse.addEventListener('click', (event) => {
+                if (this.collapsed) {
+                    this.expand();
+                }
+                else {
+                    this.collapse();
+                }
+            });
+        }
     }
 };
 
@@ -282,47 +348,6 @@ function createStyleField() {
     });
 
     return container;
-}
-
-/**
- * @this {WrapLayout}
- */
-function Collapsible() {
-    const fragment = createDocFragment();
-
-    /** @type {HTMLElement} */
-    const btnCollapse = createButton({
-        class: ["btn", "btn-collapse"],
-        dataset: {
-            "action": "collapse"
-        }
-    });
-
-
-    btnCollapse.addEventListener('click', (event) => {
-        if (btnCollapse.dataset.status === "off") {
-            let children = Array.from(this.container.children).filter(element => element !== btnCollapse);
-            this.collapseContainer = createDiv({
-                class: "layout-container-collapse"
-            }, children);
-            btnCollapse.after(this.collapseContainer);
-            this.container.classList.add("collapsed");
-            btnCollapse.classList.add("on");
-            btnCollapse.dataset.status = "on";
-        }
-        else {
-            let fragment = createDocFragment(Array.from(this.collapseContainer.children));
-            btnCollapse.after(fragment);
-            this.collapseContainer.remove();
-            this.container.classList.remove("collapsed");
-            btnCollapse.classList.remove("on");
-            btnCollapse.dataset.status = "off";
-        }
-    });
-
-    fragment.appendChild(btnCollapse);
-
-    return fragment;
 }
 
 

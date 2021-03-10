@@ -51,7 +51,7 @@ const _SetConcept = {
                 this.createElement();
             }
         }
-    
+
 
         return this;
     },
@@ -71,29 +71,26 @@ const _SetConcept = {
         const concepts = this.value.map(id => this.model.getConcept(id));
 
         return concepts.map(concept => {
-
-            if (concept.nature === "primitive") {
-                return {
-                    name: concept.name,
-                    value: concept.exportValue()
-                };
-            }
-
-            if (concept.nature === "prototype") {
-                let value = concept.exportValue();
-                return {
-                    name: concept.name,
-                    value: {
-                        name: concept.value.name,
-                        attributes: value
-                    }
-                };
-            }
-
-            return {
+            let output = {
                 name: concept.name,
-                attributes: concept.exportValue()
             };
+
+            const { nature } = concept;
+
+            let value = concept.exportValue();
+
+            if (nature === "primitive") {
+                output.value = value;
+            } else if (nature === "prototype" && concept.hasValue()) {
+                output.value = {
+                    name: concept.value.name,
+                    attributes: value
+                };
+            } else {
+                output.attributes = value;
+            }
+
+            return output;
         });
     },
     setValue(value) {

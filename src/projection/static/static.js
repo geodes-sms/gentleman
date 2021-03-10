@@ -1,6 +1,6 @@
 import { removeChildren, findAncestor, isEmpty, isFunction } from 'zenkai';
 import { ObserverHandler } from '@structure/index.js';
-import { show, hide, toggle } from '@utils/index.js';
+import { show, hide, shake, toggle, NotificationType } from '@utils/index.js';
 
 
 const BaseStatic = {
@@ -82,19 +82,15 @@ const BaseStatic = {
         return true;
     },
     delete() {
-        this.clear();
-
-        removeChildren(this.element);
-        this.element.remove();
+        this.environment.notify("This element cannot be removed", NotificationType.WARNING, 2000);
+        shake(this.element);
     },
     /**
      * Handles the `space` command
      * @param {HTMLElement} target 
      */
     spaceHandler(target) {
-        console.warn(`SPACE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
-
-        return false;
+        return this.arrowHandler("right", target);
     },
 
     /**
@@ -102,7 +98,7 @@ const BaseStatic = {
      * @param {HTMLElement} target 
      */
     _spaceHandler(target) {
-        console.warn(`CTRL_SPACE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        this.environment.notify("Nothing do here.", NotificationType.NORMAL, 1500);
 
         return false;
     },
@@ -131,17 +127,13 @@ const BaseStatic = {
      */
     deleteHandler(target) {
         console.warn(`DELETE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
-
-        this.focusOut();
     },
     /**
      * Handles the `backspace` command
      * @param {HTMLElement} target 
      */
     backspaceHandler(target) {
-        console.warn("BACKSPACE_HANDLER NOT IMPLEMENTED");
-
-        return false;
+        return this.arrowHandler("left", target);
     },
     /**
      * Handles the `arrow` command
@@ -149,7 +141,9 @@ const BaseStatic = {
      * @param {HTMLElement} target 
      */
     arrowHandler(dir, target) {
-        console.warn("ARROW_HANDLER NOT IMPLEMENTED");
+        if (this.parent) {
+            return this.parent.arrowHandler(dir, target);
+        }
 
         return false;
     },
@@ -161,7 +155,16 @@ const BaseStatic = {
         console.warn("CLICK_HANDLER NOT IMPLEMENTED");
 
         return false;
-    }
+    },
+    /**
+     * Handles the `control` command
+     * @param {HTMLElement} target 
+     */
+    controlHandler(target) {
+        console.warn("CONTROL NOT IMPLEMENTED");
+
+        return false;
+    },
 };
 
 

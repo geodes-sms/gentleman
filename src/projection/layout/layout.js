@@ -9,6 +9,10 @@ export const Layout = {
     /** @type {boolean} */
     visible: false,
     /** @type {boolean} */
+    collapsible: false,
+    /** @type {boolean} */
+    editable: false,
+    /** @type {boolean} */
     active: false,
     /** @type {HTMLElement} */
     container: null,
@@ -153,5 +157,36 @@ export const Layout = {
         console.warn("CLICK_HANDLER NOT IMPLEMENTED");
 
         return false;
-    }
+    },
+    /**
+     * Handles the `control` command
+     * @param {HTMLElement} target 
+     */
+    controlHandler(target) {
+        if (this.toolbar) {
+            this.toolbar.remove();
+        }
+
+        // this.toolbar = createDiv({
+        //     class: ["field-toolbar"],
+        //     dataset: {
+        //         nature: "field-component",
+        //         view: "text",
+        //         id: this.id,
+        //     }
+        // });
+
+        // this.body = createDiv({
+        //     class: ["field-body"],
+        //     dataset: {
+        //         nature: "field-component",
+        //         view: "text",
+        //         id: this.id,
+        //     }
+        // });
+        // this.body.append(...this.element.childNodes);
+
+        // this.element.append(this.toolbar, this.body);
+        // this.element.classList.add("control");
+    },
 };

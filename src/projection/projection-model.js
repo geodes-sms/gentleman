@@ -2,7 +2,51 @@ import { isNullOrUndefined, isEmpty, isIterable, isString } from "zenkai";
 import { ProjectionFactory } from "./projection.js";
 
 
-const models = [];
+const PREDEFINED_PROJECTIONS = [
+    {
+        "concept": { "name": "set" },
+        "type": "field",
+        "tags": [],
+        "content": {
+            "type": "list"
+        }
+    },
+    {
+        "concept": { "name": "boolean" },
+        "type": "field",
+        "tags": [],
+        "content": {
+            "type": "binary"
+        }
+    },
+    {
+        "concept": { "name": "string" },
+        "type": "field",
+        "tags": [],
+        "content": {
+            "type": "text"
+        }
+    },
+    {
+        "concept": { "name": "number" },
+        "type": "field",
+        "tags": [],
+        "content": {
+            "type": "text",
+            "input": {
+                "type": "number"
+            }
+        }
+    },
+    {
+        "concept": { "name": "reference" },
+        "type": "field",
+        "tags": [],
+        "content": {
+            "type": "choice"
+        }
+    }
+];
 
 /**
  * Creates a projection model
@@ -12,11 +56,9 @@ const models = [];
  */
 export function createProjectionModel(schema, environment) {
     const model = Object.create(ProjectionModel, {
-        schema: { value: schema },
+        schema: { value: [...schema, ...PREDEFINED_PROJECTIONS] },
         environment: { value: environment },
     });
-
-    models.push(model);
 
     return model;
 }
@@ -55,7 +97,7 @@ export const ProjectionModel = {
     },
 
     createProjection(concept, tag) {
-        const schema = this.getModelProjection(concept, tag);
+        const schema = this.getProjectionSchema(concept, tag);
 
         if (isEmpty(schema)) {
             console.warn(concept, schema, tag);
@@ -107,10 +149,10 @@ export const ProjectionModel = {
         return true;
     },
     /**
-  * Get a the related field object
-  * @param {HTMLElement} element 
-  * @returns {Field}
-  */
+     * Get a the related field object
+     * @param {HTMLElement} element 
+     * @returns {Field}
+     */
     registerField(field) {
         field.environment = this.environment;
         this.fields.set(field.id, field);
@@ -208,14 +250,6 @@ export const ProjectionModel = {
 
     /**
      * Gets a value indicating whether this projection is defined in the model
-     * @param {string} name 
-     * @returns {boolean}
-     */
-    hasProjection(name) {
-        return this.schema.findIndex(p => p.name === name) !== -1;
-    },
-    /**
-     * Gets a value indicating whether this projection is defined in the model
      * @param {string|*} concept 
      * @param {string} tag 
      * @returns {boolean}
@@ -231,12 +265,16 @@ export const ProjectionModel = {
 
         return this.schema.findIndex(p => hasConcept(p) && hasTag(p)) !== -1;
     },
+
+    getSchema() {
+        return this.schema;
+    },
     /**
      * Gets the projection matching a concept and optionnally a tag
      * @param {*} concept 
      * @param {string} tag 
      */
-    getModelProjection(concept, tag) {
+    getProjectionSchema(concept, tag) {
         if (isNullOrUndefined(concept)) {
             throw new TypeError("Bad parameter: concept");
         }
@@ -266,43 +304,29 @@ export const ProjectionModel = {
 
         return projection;
     },
-    getModelTemplate(name, tag) {
+    /**
+     * Gets a template schema
+     * @param {string} name 
+     * @returns 
+     */
+    getTemplateSchema(name) {
         return this.schema.find(p => p.type === "template" && p.name === name);
     },
-    getRule(name) {
+    /**
+     * Gets a rule schema
+     * @param {string} name 
+     * @returns 
+     */
+    getRuleSchema(name) {
         return this.schema.find(p => p.type === "rule" && p.name === name);
     },
-    getStyle(name) {
+    /**
+     * Gets a style schema
+     * @param {string} name 
+     * @returns 
+     */
+    getStyleSchema(name) {
         return this.schema.find(p => p.type === "style" && p.name === name);
-    },
-    getModelProjectionTemplate(concept, type, tag) {
-        var projection = this.getModelProjection(concept, tag);
-
-        if (!Array.isArray(projection)) {
-            return [];
-        }
-
-        projection = projection.filter(p => p.type === "template" && p.template === type);
-
-        return projection[0];
-    },
-    getModelProjectionLayout(concept, name, tag) {
-        var projection = this.getModelProjection(concept, tag);
-
-        if (!Array.isArray(projection)) {
-            return [];
-        }
-
-        projection = projection.filter(p => p.type === "layout").find(p => p.name === name);
-
-        return projection;
-    },
-    getModelProjectionField(concept, name, tag) {
-        var projection = this.schema.filter(p => p.concept === concept)
-            .filter(p => p.type === "field")
-            .find(p => p.name === name);
-
-        return projection;
     },
 
     export() {

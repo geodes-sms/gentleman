@@ -1078,24 +1078,33 @@
                 "orientation": "vertical",
                 "disposition": [
                     {
-                        "type": "attribute",
-                        "name": "disabled",
-                        "tag": "field-binary-state"
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "readonly",
-                        "tag": "field-binary-state"
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "multiline",
-                        "tag": "field-binary-state"
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "resizable",
-                        "tag": "field-binary-state"
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "disabled",
+                                    "tag": "field-binary-state"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "readonly",
+                                    "tag": "field-binary-state"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "multiline",
+                                    "tag": "field-binary-state"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "resizable",
+                                    "tag": "field-binary-state"
+                                }
+                            ]
+                        }
                     },
                     {
                         "type": "attribute",
@@ -1146,14 +1155,23 @@
                 "orientation": "vertical",
                 "disposition": [
                     {
-                        "type": "attribute",
-                        "name": "disabled",
-                        "tag": "field-binary-state"
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "readonly",
-                        "tag": "field-binary-state"
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "disabled",
+                                    "tag": "field-binary-state"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "readonly",
+                                    "tag": "field-binary-state"
+                                }
+                            ]
+                        }
                     },
                     {
                         "type": "layout",
@@ -1257,14 +1275,23 @@
                 "orientation": "vertical",
                 "disposition": [
                     {
-                        "type": "attribute",
-                        "name": "disabled",
-                        "tag": "field-binary-state"
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "readonly",
-                        "tag": "field-binary-state"
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "disabled",
+                                    "tag": "field-binary-state"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "readonly",
+                                    "tag": "field-binary-state"
+                                }
+                            ]
+                        }
                     },
                     {
                         "type": "layout",
@@ -1376,14 +1403,23 @@
                 "orientation": "vertical",
                 "disposition": [
                     {
-                        "type": "attribute",
-                        "name": "disabled",
-                        "tag": "field-binary-state"
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "readonly",
-                        "tag": "field-binary-state"
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "disabled",
+                                    "tag": "field-binary-state"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "readonly",
+                                    "tag": "field-binary-state"
+                                }
+                            ]
+                        }
                     },
                     {
                         "type": "static",
@@ -1549,14 +1585,23 @@
                 "orientation": "vertical",
                 "disposition": [
                     {
-                        "type": "attribute",
-                        "name": "disabled",
-                        "tag": "field-binary-state"
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "readonly",
-                        "tag": "field-binary-state"
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "disabled",
+                                    "tag": "field-binary-state"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "readonly",
+                                    "tag": "field-binary-state"
+                                }
+                            ]
+                        }
                     },
                     {
                         "type": "static",

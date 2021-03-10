@@ -28,7 +28,7 @@ const BasePrototypeConcept = {
                 let concept = this.createConcept(this.default);
                 this.setValue(concept);
             }
-            
+
             return this;
         }
 
@@ -103,6 +103,16 @@ const BasePrototypeConcept = {
             message: "The value has been successfully updated."
         };
     },
+    removeValue() {
+        this.value = null;
+
+        this.notify("value.changed", this.value);
+
+        return {
+            success: true,
+            message: "The value has been successfully updated."
+        };
+    },
     hasValue() {
         return !isNullOrUndefined(this.value);
     },
@@ -113,15 +123,24 @@ const BasePrototypeConcept = {
         }
 
         this.candidates = resolveAccept.call(this, this.schema.accept).map(
-            candidate => Object.create(Concept, {
-                object: { value: "concept" },
-                nature: { value: "fake" },
-                model: { value: this.model },
-                id: { value: this.hasValue() && this.value.name === candidate.name ? this.value.id : UUID.generate() },
-                name: { value: candidate.name },
-                schema: { value: candidate },
-            }).init(this)
+            candidate => {
+                return {
+                    type: "meta-concept" ,
+                    name: candidate.name,
+                };
+            }
         );
+
+        // this.candidates = resolveAccept.call(this, this.schema.accept).map(
+        //     candidate => Object.create(Concept, {
+        //         object: { value: "concept" },
+        //         nature: { value: "fake" },
+        //         model: { value: this.model },
+        //         id: { value: this.hasValue() && this.value.name === candidate.name ? this.value.id : UUID.generate() },
+        //         name: { value: candidate.name },
+        //         schema: { value: candidate },
+        //     }).init(this)
+        // );
 
         return this.candidates;
     },
