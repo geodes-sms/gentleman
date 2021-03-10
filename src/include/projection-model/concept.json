@@ -497,6 +497,13 @@
                         },
                         "min": 1
                     }
+                },
+                {
+                    "name": "collapsible",
+                    "target": {
+                        "name": "boolean",
+                        "default": false
+                    }
                 }
             ]
         },
@@ -560,76 +567,8 @@
                 "elementType": "table"
             }
         },
-        {
-            "name": "relative layout",
-            "nature": "concrete",
-            "prototype": "$layout",
-            "attributes": [
-                {
-                    "name": "elements",
-                    "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "position element"
-                        },
-                        "min": 1
-                    }
-                }
-            ],
-
-            "build": {
-                "contentType": "layout",
-                "elementType": "relative"
-            }
-        },
-        {
-            "name": "position element",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "tag",
-                    "target": {
-                        "name": "tag"
-                    }
-                },
-                {
-                    "name": "element",
-                    "target": {
-                        "name": "element"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "position",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "top",
-                    "target": {
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "right",
-                    "target": {
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "bottom",
-                    "target": {
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "left",
-                    "target": {
-                        "name": "number"
-                    }
-                }
-            ]
-        },
+     
+   
         {
             "name": "row",
             "nature": "concrete",

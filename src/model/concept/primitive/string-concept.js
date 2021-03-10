@@ -88,6 +88,16 @@ const _StringConcept = {
     getValue() {
         return this.value;
     },
+    removeValue() {
+        this.value = null;
+
+        this.notify("value.changed", this.value);
+        
+        return {
+            success: true,
+            message: "The value has been successfully updated."
+        };
+    },
     setValue(value) {
         var result = this.validate(value);
 

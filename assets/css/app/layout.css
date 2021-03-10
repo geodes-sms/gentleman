@@ -1,5 +1,6 @@
 .layout-container {
     position: relative;
+    /* width: 100%; */
 }
 
 .layout-container-collapse {
@@ -54,19 +55,50 @@
 
 
 
-.radio-group {
-    display: flex;
-}
-
-.stack-orientation {
-    display: flex;
-    align-items: center;
-    font-size: 1.4em;
-}
-    .stack-orientation:not(:last-child) {
-        margin-right: 6px;
+    .layout-container[data-collapsible] {
+        margin-top: 6px;
+        border-top: 2px solid #c0c0c0;
     }
 
-    .stack-orientation__input {
-        margin-right: 2px;
+.layout-container > .btn-collapse {
+    position: absolute;
+    display: flex; justify-content: center;
+    top: -9px; right: calc(100% - 24px);
+    font-size: 0.9em;
+    height: 18px; 
+    width: 18px;
+    border-radius: 50%;
+    background-color: #fff;
+    border: 1px solid #d5d5d5;
+    box-shadow: 1px 0 1px -1px #555;
+    outline: none;
+    transition: .2s;
+    z-index: 5;
+}
+
+.layout-container > .btn-collapse:hover {
+    transform: scale(1.1);
+}
+
+    .layout-container > .btn-collapse:after {
+        content: "-";
+        color: #222;
+        transform: scale(3) rotate(360deg) translateY(-1.5px);
+        transition: transform .2s;
+    }
+        .layout-container.collapsed > .btn-collapse:after {
+            content: "+";
+            color: #555;
+            transform: scale(2) rotate(0) translateY(-1.5px);
+        }
+
+    .layout-container:not(.collapsed) > .btn-collapse {
+        right: 6px;
+        box-shadow: -1px 0 1px -1px #555;
+        border-color: #bdbdbd;
+    }
+
+    .layout-container.collapsed > .layout-container-collapse {
+        max-height: 48px;
+        opacity: 0.5;
     }

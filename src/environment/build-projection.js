@@ -2,57 +2,6 @@ import { isNullOrUndefined, isEmpty, valOrDefault, isNullOrWhitespace, isFunctio
 import { NotificationType } from "@utils/index.js";
 
 
-const projections = [
-    {
-        "concept": { "name": "set" },
-        "type": "field",
-        "tags": [],
-        "content": {
-            "type": "list"
-        }
-    },
-    {
-        "concept": { "name": "string" },
-        "type": "field",
-        "tags": [],
-        "content": {
-            "type": "text"
-        }
-    },
-    {
-        "concept": { "name": "boolean" },
-        "type": "field",
-        "tags": [],
-        "content": {
-            "type": "binary"
-        }
-    },
-    {
-        "concept": { "name": "number" },
-        "type": "field",
-        "tags": [],
-        "content": {
-            "type": "text"
-        }
-    },
-    {
-        "concept": { "name": "reference" },
-        "type": "field",
-        "tags": [],
-        "content": {
-            "type": "choice"
-        }
-    },
-    {
-        "concept": { "name": "prototype" },
-        "type": "field",
-        "tags": [],
-        "content": {
-            "type": "choice"
-        }
-    }
-];
-
 const PROP_TYPE = "type";
 const PROP_HANDLER = "handler";
 
@@ -92,13 +41,12 @@ const ProjectionBuildHandler = {
 };
 
 const ProjectionHandler = {
-    "layout": (concept) => buildLayout(concept),
-    "field": (concept) => buildField(concept),
-    "element": (concept) => buildElement(concept, "element"),
+    "layout": buildLayout,
+    "field": buildField,
 };
 
 export function buildProjectionHandler(model) {
-    const result = [...projections];
+    const result = [];
     const buildErrors = [];
 
     const concepts = model.getConcepts(["projection", "template", "style rule"]);
@@ -121,11 +69,7 @@ export function buildProjectionHandler(model) {
         if (!success) {
             buildErrors.push(...errors);
         } else {
-            if (result.find(p => p.name && p.name === message.name)) {
-                buildErrors.push(`The model has two projections with the same name: ${message.name}`);
-            } else {
-                result.push(message);
-            }
+            result.push(message);
         }
     });
 
@@ -168,7 +112,7 @@ function buildProjection(concept) {
 
     let schema = {
         "id": concept.id,
-        "concept": buildConcept(getAttr(concept, ATTR_CONCEPT)),
+        "concept": buildConcept.call(this, getAttr(concept, ATTR_CONCEPT)),
         "type": contentType,
         "tags": tags,
         "content": ProjectionHandler[contentType].call(this, content),

@@ -729,6 +729,10 @@
 }
 
 .textual-list--element .textual-list__list {
+    flex-direction: column; align-items: flex-start;
+}
+
+.textual-list--element .textual-list__list .textual-list__list {
     flex-direction: row; align-items: flex-start;
 }
 
@@ -816,7 +820,7 @@
             }
 
 .render__nav-projection {
-    align-self: flex-start;
+    align-self: center;
 
     margin-top: 6px;
     width: 100%; max-width: 120px;

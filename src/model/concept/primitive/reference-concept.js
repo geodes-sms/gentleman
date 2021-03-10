@@ -51,12 +51,30 @@ const _ReferenceConcept = {
     hasValue() {
         return !isNullOrWhitespace(this.value);
     },
-    getValue() {
+    getValue(deep = false) {
         if (isNullOrUndefined(this.value)) {
             return null;
         }
 
+        if (deep) {
+            return this.reference;
+        }
+
         return this.value;
+    },
+    removeValue() {
+        if (this.reference) {
+            this.reference.unregister(this);
+        }
+        this.reference = null;
+        this.value = null;
+
+        this.notify("value.changed", this.value);
+
+        return {
+            success: true,
+            message: "The value has been successfully updated."
+        };
     },
     getReference() {
         if (isNullOrUndefined(this.reference)) {
@@ -156,7 +174,6 @@ const _ReferenceConcept = {
     },
 
     update(message, value) {
-        console.log(message);
         switch (message) {
             case "delete":
                 this.reference.unregister(this);

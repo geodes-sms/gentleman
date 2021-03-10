@@ -49,7 +49,7 @@ const ruleHandler = {
 };
 
 function referenceHandler(name) {
-    const { rule = {} } = valOrDefault(this.model.getRule(name), {});
+    const { rule = {} } = valOrDefault(this.model.getRuleSchema(name), {});
 
     let handler = ruleHandler[rule.type];
 

@@ -88,7 +88,7 @@ const BaseTableField = {
         this.focusable = focusable;
         this.content = content;
         this.contentElements = new Map();
-        this.template = this.model.getModelProjection(this.source.accept, template.tag)[0].projection;
+        this.template = this.model.getProjectionSchema(this.source.accept, template.tag)[0].projection;
 
         return this;
     },
