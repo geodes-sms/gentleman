@@ -50,6 +50,13 @@ export const NotificationType = {
     ERROR: "error"
 };
 
+export const LogType = {
+    NORMAL: "normal",
+    WARNING: "warning",
+    SUCCESS: "success",
+    ERROR: "error"
+};
+
 export const EditorMode = {
     MODEL: "model",
     DESIGN: "design"

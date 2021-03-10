@@ -925,7 +925,14 @@
                     "target": {
                         "name": "set",
                         "accept": {
-                            "name": "string"
+                            "name": "string",
+                            "src": [
+                                "Arial", "Arial Black", "Verdana", "Consolas", "Tahoma",
+                                "Trebuchet MS", "Impact", "Times New Roman", "Didot",
+                                "Georgia", "American Typewriter", "Andalé Mono",
+                                "Courier", "Lucida Console", "Monaco", "Bradley Hand",
+                                "Brush Script MT", "Luminari", "Comic Sans MS"
+                            ]
                         }
                     },
                     "required": false

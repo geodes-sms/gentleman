@@ -38,6 +38,12 @@
     z-index: 80;
 }
 
+.editor-footer {
+    max-height: 10%;
+    border-top: 2px solid #555;
+    overflow: auto;
+}
+
 .editor-style {
     position: absolute;
     top: 36px; right: 0; bottom: 0; left: 0;
@@ -287,6 +293,68 @@
             height: 100%;
             padding: 2px 8px;
             font-size: 0.9em;
+        }
+
+
+/*
+  Log list
+-----------------------------------------------------------------------------*/
+
+.log-list {
+    display: flex; flex-direction: column-reverse;
+    background-color: #d5d5d5;
+} 
+    .log-list:not(:empty) {
+        padding-top: 2px;
+    } 
+
+    .log-item {
+        position: relative;
+        display: flex; flex-direction: column;
+        padding: 2px 6px 4px;
+        font-size: 1.3rem;
+        color: #555;
+    }
+
+    .log-item--error {
+        color: #B3312E;
+    }
+    .log-item--success {
+        color: #00ca4e;
+    }
+    .log-item--warning {
+        color: #E86923;
+    }
+
+    .log-item:not(:last-child) {
+        box-shadow: 0 -1px 0 0 #777;
+    }
+
+    .log-item--error .log-item-messages {
+        font-weight: 600;
+    }
+
+    .log-item .btn-delete {
+        color: inherit;
+        align-self: flex-end;
+        transform: scale(1.2);
+        padding: 1px 2px;
+    }
+
+        .log-item-messages {
+            display: flex;
+            flex-direction: column;
+            padding-left: 0.5em;
+            font-size: 0.9em;
+            font-family: "Consolas", 'Courier New', Courier, monospace;
+        }
+
+        .log-item-message {
+            line-height: 1.25;
+        }
+
+        .log-item-message:before {
+            content: "- "
         }
 
 

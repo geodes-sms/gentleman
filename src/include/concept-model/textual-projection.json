@@ -827,21 +827,6 @@
                                 }
                             ]
                         }
-                    },
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "Scope",
-                            "style": {
-                                "css": ["title--small", "primitive-constraint__title--small"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "scope",
-                        "tag": "textual"
                     }
                 ]
             }
@@ -967,7 +952,7 @@
                         "type": "static",
                         "static": {
                             "type": "text",
-                            "content": "Complex",
+                            "content": "User-defined",
                             "focusable": false
                         }
                     }

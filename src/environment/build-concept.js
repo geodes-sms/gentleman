@@ -1,5 +1,5 @@
 import { isEmpty, isNullOrUndefined, isNullOrWhitespace, isObject, valOrDefault } from "zenkai";
-import { NotificationType } from "@utils/index.js";
+import { NotificationType, LogType } from "@utils/index.js";
 
 
 const PROP_NATURE = "nature";
@@ -57,7 +57,7 @@ export function buildConceptHandler(model) {
 
     if (!isEmpty(buildErrors)) {
         this.notify("<strong>Validation failed</strong>: The model could not be built.<br> <em>See Log for more details</em>.", NotificationType.ERROR);
-        console.error(buildErrors);
+        this.log(buildErrors, "Validation error", LogType.ERROR);
 
         return false;
     }

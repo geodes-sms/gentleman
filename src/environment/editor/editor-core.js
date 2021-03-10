@@ -4,7 +4,7 @@ import {
     isHTMLElement, findAncestor, isNullOrWhitespace, isNullOrUndefined, isEmpty,
     hasOwn, isFunction, valOrDefault, copytoClipboard
 } from 'zenkai';
-import { Events, hide, show, Key, getEventTarget, NotificationType, EditorMode } from '@utils/index.js';
+import { Events, hide, show, Key, getEventTarget, NotificationType, LogType, EditorMode } from '@utils/index.js';
 import { buildProjectionHandler } from "../build-projection.js";
 import { buildConceptHandler } from "../build-concept.js";
 import { ConceptModelManager } from '@model/index.js';
@@ -14,6 +14,7 @@ import { EditorHome } from './editor-home.js';
 import { EditorMenu } from './editor-menu.js';
 import { EditorStyle } from './editor-style.js';
 import { EditorFile } from './editor-file.js';
+import { EditorLog } from './editor-log.js';
 import { EditorSection } from './editor-section.js';
 
 
@@ -94,6 +95,19 @@ function createEditorFile() {
     });
 }
 
+/**
+ * Creates an editor log manager
+ * @returns {EditorLog}
+ */
+function createEditorLog() {
+    return Object.create(EditorLog, {
+        object: { value: "environment" },
+        name: { value: "editor-log" },
+        type: { value: "log" },
+        editor: { value: this }
+    });
+}
+
 const EDITOR_CONFIG = {
     "root": [],
     "mode": EditorMode.MODEL,
@@ -143,6 +157,8 @@ export const Editor = {
     style: null,
     /** @type {EditorFile} */
     files: null,
+    /** @type {EditorLog} */
+    logs: null,
     /** @type {HTMLInputElement} */
     input: null,
 
@@ -184,6 +200,7 @@ export const Editor = {
         this.home = createEditorHome.call(this).init(this.config.home);
         this.style = createEditorStyle.call(this).init(this.config.style);
         this.files = createEditorFile.call(this).init(this.config.files);
+        this.logs = createEditorLog.call(this).init(this.config.logs);
 
         this.render();
 
@@ -201,6 +218,7 @@ export const Editor = {
         this.home.update(this.config.home);
         this.style.update(this.config.style);
         this.files.update(this.config.files);
+        this.logs.update(this.config.logs);
     },
     getRoots() {
         const { root = [] } = this.config;
@@ -560,6 +578,13 @@ export const Editor = {
             setTimeout(() => { notify.remove(); }, 500);
         }, time);
     },
+    log(messages, title, type = LogType.NORMAL) {
+        this.logs.addLog(messages, title, type);
+
+        this.refresh();
+        
+        return messages;
+    },
 
     // Editor window actions
 
@@ -811,6 +836,10 @@ export const Editor = {
                 this.footer.append(this.files.render());
             }
 
+            if (!this.logs.isRendered) {
+                this.footer.append(this.logs.render());
+            }
+
             fragment.appendChild(this.footer);
         }
 
@@ -865,6 +894,7 @@ export const Editor = {
         this.home.refresh();
         this.style.refresh();
         this.files.refresh();
+        this.logs.refresh();
         this.projectionWindow.refresh();
 
         return this;
@@ -1032,6 +1062,7 @@ export const Editor = {
             "style": (target) => { this.style.toggle(); },
             "home": (target) => { this.home.toggle(); },
             "files": (target) => { this.files.toggle(); },
+            "logs": (target) => { this.logs.toggle(); },
 
             "export": (target) => { this.export(); },
             "copy": (target) => { this.export(true); },
@@ -1163,9 +1194,9 @@ export const Editor = {
                 case Key.alt:
                     event.preventDefault();
 
-                    if (this.activeProjection && this.activeProjection.hasMultipleViews) {
-                        this.activeProjection.changeView();
-                    }
+                    // if (this.activeProjection && this.activeProjection.hasMultipleViews) {
+                    //     this.activeProjection.changeView();
+                    // }
 
                     rememberKey = true;
 

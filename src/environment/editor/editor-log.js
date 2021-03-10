@@ -1,14 +1,14 @@
 import {
-    createDocFragment, createSpan, createDiv, createAnchor, createUnorderedList, createButton,
-    createListItem, removeChildren, valOrDefault, isHTMLElement, 
+    createDocFragment, createSpan, createDiv, createUnorderedList, createButton,
+    createListItem, removeChildren, valOrDefault, isHTMLElement, shortDateTime,
 } from 'zenkai';
-import { hide, show, toggle } from '@utils/index.js';
+import { hide, show, toggle, LogType } from '@utils/index.js';
 
 var inc = 0;
 const nextId = () => `file${inc++}`;
 
 
-export const EditorFile = {
+export const EditorLog = {
     /** @type {HTMLElement} */
     container: null,
     /** @type {*} */
@@ -20,7 +20,7 @@ export const EditorFile = {
     /** @type {HTMLButtonElement} */
     btnStart: null,
     /** @type {HTMLElement} */
-    downloadList: null,
+    logList: null,
     /** @type {Map} */
     files: null,
 
@@ -68,30 +68,25 @@ export const EditorFile = {
         return this;
     },
 
-    addFile(obj) {
-        const MIME_TYPE = 'application/json';
-        window.URL = window.webkitURL || window.URL;
-
-        /** @type {HTMLAnchorElement} */
-        var link = createAnchor({
-            class: ["bare-link", "download-item__link"]
-        }, `Download`);
-
-        // if (!isNullOrWhitespace(link.href)) {
-        //     window.URL.revokeObjectURL(link.href);
-        // }
-
-
-        var bb = new Blob([JSON.stringify(obj)], { type: MIME_TYPE });
-        Object.assign(link, {
-            download: `model.json`,
-            href: window.URL.createObjectURL(bb),
+    /**
+     * Add log
+     * @param {*[]} messages 
+     * @param {string} title 
+     * @param {LogType} level 
+     */
+    addLog(messages, title, level) {
+        let content = createUnorderedList({
+            class: ["bare-list", "log-item-messages"]
         });
 
-        link.dataset.downloadurl = [MIME_TYPE, link.download, link.href].join(':');
+        messages.forEach(msg =>
+            content.append(createListItem({
+                class: ["log-item-message"]
+            }, msg.toString()))
+        );
 
         let item = createListItem({
-            class: ["download-item", "download-item--build"]
+            class: ["log-item", `log-item--${level}`]
         });
 
         let btnDelete = createButton({
@@ -102,23 +97,17 @@ export const EditorFile = {
             }
         }, "✖");
 
-        let title = createSpan({
-            class: ["download-item__name"],
+        let titleElement = createSpan({
+            class: ["log-item__name"],
             dataset: {
                 action: "delete",
                 target: "parent"
             }
-        }, `Build ${nextId()}`);
+        }, `${valOrDefault(title, "Log")} (${shortDateTime(Date.now())})`);
 
-        item.append(btnDelete, title, link);
+        item.append(btnDelete, titleElement, content);
 
-        this.downloadList.append(item);
-
-        // // Need a small delay for the revokeObjectURL to work properly.
-        // setTimeout(() => {
-        //     window.URL.revokeObjectURL(link.href);
-        //     link.remove();
-        // }, 1500);
+        this.logList.append(item);
     },
 
     clear() {
@@ -134,16 +123,16 @@ export const EditorFile = {
 
         if (!isHTMLElement(this.container)) {
             this.container = createDiv({
-                class: ["editor-file"]
+                class: ["editor-log"]
             });
         }
 
-        if (!isHTMLElement(this.downloadList)) {
-            this.downloadList = createUnorderedList({
-                class: ["bare-list", "download-list"]
+        if (!isHTMLElement(this.logList)) {
+            this.logList = createUnorderedList({
+                class: ["bare-list", "log-list"]
             });
 
-            fragment.append(this.downloadList);
+            fragment.append(this.logList);
         }
 
 
@@ -158,12 +147,12 @@ export const EditorFile = {
         return this.container;
     },
     refresh() {
-        if (this.downloadList.hasChildNodes()) {
+        if (this.logList.hasChildNodes()) {
             this.show();
         } else {
             this.hide();
         }
-        
+
         return this;
     },
 
