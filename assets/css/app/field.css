@@ -298,6 +298,6 @@
         cursor: pointer;
     }
 
-    .field--choice__choice {
-        position: relative;
+    .field--choice__selection {
+        width: 100%;
     }

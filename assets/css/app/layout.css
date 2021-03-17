@@ -3,6 +3,11 @@
     /* width: 100%; */
 }
 
+
+.layout-container[data-layout="stack"] {
+    flex-wrap: wrap;
+}
+
 .layout-container-collapse {
     display: none;
 }        

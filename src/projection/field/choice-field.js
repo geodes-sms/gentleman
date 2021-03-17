@@ -1,9 +1,12 @@
 import {
     createDocFragment, createSpan, createDiv, createI, createInput, createUnorderedList,
     createListItem, findAncestor, isHTMLElement, removeChildren, isNullOrUndefined,
-    isNullOrWhitespace, isObject, valOrDefault, hasOwn, capitalizeFirstLetter
+    isNullOrWhitespace, isObject, valOrDefault, hasOwn, capitalizeFirstLetter, isEmpty
 } from "zenkai";
-import { getClosest, NotificationType, getVisibleElement, hide, isHidden, show, shake } from "@utils/index.js";
+import {
+    getClosest, NotificationType, getVisibleElement, hide, isHidden, show, shake,
+    getTopElement, getBottomElement, getRightElement, getLeftElement
+} from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler, resolveValue } from "./../content-handler.js";
 import { Field } from "./field.js";
@@ -62,6 +65,18 @@ const isSame = (val1, val2) => {
     return val1 === val2;
 };
 
+const actionDefaultSchema = {
+    reset: {
+        content: {
+            "type": "static",
+            "static": {
+                "type": "text",
+                "content": "Reset",
+                "focusable": false
+            }
+        }
+    },
+};
 
 
 const BaseChoiceField = {
@@ -77,28 +92,18 @@ const BaseChoiceField = {
     items: null,
     /** @type {HTMLElement} */
     selection: null,
-    /** @type {HTMLElement} */
-    selectionPlaceholder: null,
-    /** @type {HTMLElement} */
-    selectionElement: null,
-    /** @type {*[]} */
-    content: null,
 
 
     init() {
         const { focusable = true } = this.schema;
 
         this.items = new Map();
-        this.content = this.schema.content;
         this.focusable = focusable;
 
         // TODO: Add group support
 
         if (!hasOwn(this.schema, "choice")) {
             this.schema.choice = {};
-        }
-        if (!hasOwn(this.schema, "selection")) {
-            this.schema.selection = {};
         }
 
         return this;
@@ -109,7 +114,7 @@ const BaseChoiceField = {
      * @returns {boolean}
      */
     hasChanges() {
-        return this.value !== this.selected;
+        return this.value != this.source.getValue(true);
     },
     reset() {
         // TODO: Get initial value
@@ -145,28 +150,10 @@ const BaseChoiceField = {
         }
 
         if (isNullOrUndefined(value)) {
-            show(this.selectionPlaceholder);
-            if (this.selectionElement) {
-                removeChildren(this.selectionElement).remove();
-            }
             if (this.selection) {
                 this.selection.classList.remove("selected");
             }
             this.selection = null;
-        } else if (value.object === "concept") {
-            const { template = {} } = this.schema.selection;
-
-            let projection = this.model.createProjection(value, valOrDefault(template.tag, "choice-selection")).init();
-            projection.parent = this.projection;
-
-            this.setChoice(value);
-
-            if (this.selectionElement) {
-                removeChildren(this.selectionElement).remove();
-            }
-
-            this.setSelection(projection.render());
-            projection.element.parent = this;
         } else {
             this.setChoice(value);
         }
@@ -175,18 +162,51 @@ const BaseChoiceField = {
 
         this.value = value;
 
-        if (isNullOrUndefined(value)) {
-            this.setInputValue("");
-        }
-
         this.refresh();
     },
-    setInputValue(value) {
-        if (isHTMLElement(this.input)) {
-            this.input.value = value.name || value;
-        }
-    },
 
+    
+    refresh() {
+        if (this.hasValue()) {
+            this.element.classList.remove("empty");
+            this.element.dataset.value = this.value.name || this.value;
+        } else {
+            this.element.classList.add("empty");
+            this.element.dataset.value = "";
+        }
+
+        if (this.hasChanges()) {
+            this.statusElement.classList.add("change");
+        } else {
+            this.statusElement.classList.remove("change");
+        }
+
+        if (this.input) {
+            this.element.dataset.input = this.input.value;
+        }
+
+
+        this.element.classList.remove("querying");
+
+        removeChildren(this.statusElement);
+
+        if (this.hasError) {
+            this.element.classList.add("error");
+            if (this.input) {
+                this.input.classList.add("error");
+            }
+            this.statusElement.classList.add("error");
+            this.statusElement.appendChild(createNotificationMessage(NotificationType.ERROR, this.errors));
+        } else {
+            this.element.classList.remove("error");
+            if (this.input) {
+                this.input.classList.remove("error");
+            }
+            this.statusElement.classList.remove("error");
+        }
+
+        return this;
+    },
     render() {
         const fragment = createDocFragment();
 
@@ -208,7 +228,7 @@ const BaseChoiceField = {
 
         if (!isHTMLElement(this.notification)) {
             this.notification = createDiv({
-                class: ["field-notification", "hidden"],
+                class: ["field-notification"],
                 dataset: {
                     nature: "field-component",
                     view: "choice",
@@ -285,20 +305,6 @@ const BaseChoiceField = {
             fragment.appendChild(this.choices);
         }
 
-        if (!isHTMLElement(this.selectionPlaceholder)) {
-            this.selectionPlaceholder = createI({
-                class: ["field--choice__selection"],
-                hidden: true,
-                dataset: {
-                    nature: "field-component",
-                    view: "choice",
-                    id: this.id
-                }
-            });
-
-            fragment.appendChild(this.selectionPlaceholder);
-        }
-
         StyleHandler.call(this.projection, this.element, style);
 
         if (fragment.hasChildNodes()) {
@@ -322,12 +328,18 @@ const BaseChoiceField = {
         return this.element;
     },
     focus(target) {
-        if (this.input && !isHidden(this.input)) {
+        if (this.choices.hasChildNodes()) {
+            let firstChild = getVisibleElement(this.choices);
+            if (firstChild) {
+                firstChild.focus();
+            }
+        } else if (this.input && !isHidden(this.input)) {
             this.input.focus();
-            this.element.classList.add("active");
         } else if (this.selection) {
             this.selection.focus();
         }
+
+        this.element.classList.add("active");
 
         return this;
     },
@@ -366,26 +378,18 @@ const BaseChoiceField = {
         if (this.input) {
             this.input.blur();
         }
+
         this.element.classList.remove("active");
         this.element.classList.remove("querying");
 
-        if (isHTMLElement(this.selection)) {
-            const { children } = this.choices;
+        const { children } = this.choices;
 
-            for (let i = 0; i < children.length; i++) {
-                /** @type {HTMLElement} */
-                const item = children[i];
+        for (let i = 0; i < children.length; i++) {
+            /** @type {HTMLElement} */
+            const item = children[i];
 
-                if (item === this.selection) {
-                    show(item);
-                    item.hidden = false;
-                } else {
-                    hide(item);
-                    item.hidden = true;
-                }
-            }
-
-            this.setInputValue(getItemValue(this.selection));
+            show(item);
+            item.hidden = false;
         }
 
         this.focused = false;
@@ -407,47 +411,6 @@ const BaseChoiceField = {
             this.input.tabIndex = -1;
         }
         this.disabled = true;
-
-        return this;
-    },
-    refresh() {
-        if (this.hasValue()) {
-            this.element.classList.remove("empty");
-            this.element.dataset.value = this.value.name || this.value;
-        } else {
-            this.element.classList.add("empty");
-            this.element.dataset.value = "";
-        }
-
-        if (this.hasChanges()) {
-            this.statusElement.classList.add("change");
-        } else {
-            this.statusElement.classList.remove("change");
-        }
-
-        if (this.input) {
-            this.element.dataset.input = this.input.value;
-        }
-
-
-        this.element.classList.remove("querying");
-
-        removeChildren(this.statusElement);
-
-        if (this.hasError) {
-            this.element.classList.add("error");
-            if (this.input) {
-                this.input.classList.add("error");
-            }
-            this.statusElement.classList.add("error");
-            this.statusElement.appendChild(createNotificationMessage(NotificationType.ERROR, this.errors));
-        } else {
-            this.element.classList.remove("error");
-            if (this.input) {
-                this.input.classList.remove("error");
-            }
-            this.statusElement.classList.remove("error");
-        }
 
         return this;
     },
@@ -518,7 +481,7 @@ const BaseChoiceField = {
                 [type]: choiceProjectionSchema.content || choiceProjectionSchema.projection,
             };
 
-            let render = ContentHandler.call(this, schema, null, { focusable: false });
+            let render = ContentHandler.call(this, schema, null, { focusable: false, meta: value.name });
             container.dataset.type = "meta-concept";
             container.dataset.value = value.name;
             container.append(render);
@@ -574,35 +537,10 @@ const BaseChoiceField = {
             } else {
                 item.classList.remove("selected");
                 delete item.dataset.selected;
-
-                hide(item);
             }
         }
 
-        if (found) {
-            this.setInputValue(value);
-        }
-
         return this;
-    },
-    /**
-     * Set the selection
-     * @param {HTMLElement} element 
-     */
-    setSelection(element) {
-        if (!isHTMLElement(element)) {
-            throw new TypeError("Bad parameter");
-        }
-
-        const { style = {} } = this.schema.selection;
-
-        hide(this.selectionPlaceholder);
-        this.selectionElement = element;
-        this.selectionElement.classList.add("field--choice__selection");
-        StyleHandler.call(this.projection, this.selectionElement, style);
-        this.selectionPlaceholder.after(element);
-
-        this.refresh();
     },
 
     delete() {
@@ -627,41 +565,50 @@ const BaseChoiceField = {
      * @param {HTMLElement} target 
      */
     _spaceHandler(target) {
+        let candidates = this.source.getCandidates();
+
+        if (isEmpty(candidates)) {
+            this.messageElement.appendChild(createNotificationMessage(NotificationType.INFO, "No candidates found."));
+            show(this.messageElement);
+
+            return;
+        }
+
         const fragment = createDocFragment();
 
-        this.source.getCandidates().forEach(value => {
+        candidates.forEach(value => {
             fragment.appendChild(this.createChoiceOption(value));
         });
 
         removeChildren(this.choices).appendChild(fragment);
+
         this.filterChoice(this.input.value);
         show(this.choices);
         this.element.classList.add("querying");
-
-        this.messageElement.appendChild(createNotificationMessage(NotificationType.INFO, "Select an element from the list."));
-        show(this.messageElement);
     },
     /**
      * Handles the `escape` command
      * @param {HTMLElement} target 
      */
     escapeHandler(target) {
-        if (target === this.input) {
+        let exit = true;
+
+        if (this.messageElement && !isHidden(this.messageElement)) {
+            hide(this.messageElement);
+
+            exit = false;
+        }
+
+        if (exit) {
             let parent = findAncestor(target, (el) => el.tabIndex === 0);
-            let element = this.projection.resolveElement(parent);
+            let element = this.environment.resolveElement(parent);
 
             element.focus(parent);
 
             return true;
         }
 
-        if (this.input) {
-            this.input.focus();
-        }
-
-        if (this.messageElement) {
-            hide(this.messageElement);
-        }
+        this.focus();
     },
     /**
      * Handles the `enter` command
@@ -778,23 +725,18 @@ const BaseChoiceField = {
         }
 
         if (closestItem === this.choices && this.choices.hasChildNodes()) {
-            let firstChild = getVisibleElement(closestItem);
-            if (firstChild) {
-                firstChild.focus();
-            }
-        } else if (closestItem === this.selectionElement) {
-            let element = this.projection.resolveElement(closestItem);
-            if (element) {
-                element.focus();
-            }
-        } else {
-            let element = this.projection.resolveElement(closestItem);
-            if (element) {
-                element.focus();
-            } else {
-                closestItem.focus();
+            if (dir === "up") {
+                closestItem = getBottomElement(this.choices);
+            } else if (dir === "down") {
+                closestItem = getTopElement(this.choices);
+            } else if (dir === "left") {
+                closestItem = getRightElement(this.choices);
+            } else if (dir === "right") {
+                closestItem = getLeftElement(this.choices);
             }
         }
+
+        closestItem.focus();
 
         return true;
     },
@@ -808,13 +750,6 @@ const BaseChoiceField = {
 
         this.projection.registerHandler("value.changed", (value, from) => {
             this.setValue(value);
-        });
-
-        this.projection.registerHandler("view.changed", (value, from) => {
-            if (from && from.parent === this.projection) {
-                from.element.parent = this;
-                this.setSelection(value);
-            }
         });
     },
 };

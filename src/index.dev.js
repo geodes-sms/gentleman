@@ -56,7 +56,32 @@ const EDITOR_HANDLER = {
         this.loadConceptModel(concept, values);
         this.loadProjectionModel(projection, views);
         this.home.close();
-    }
+    },
+    "add-metamodel": function (target) {
+        this.triggerEvent({ "name": "load-resource" });
+    },
+    "preview-projection": function (target) {
+        this.triggerEvent({ "name": "build-projection" }, (pmodel) => {
+            if (!pmodel) {
+                return;
+            }
+
+            let reader = new FileReader();
+            this.resources.forEach((val, key) => {
+                reader.onload = (event) => {
+                    const schema = JSON.parse(reader.result);
+
+                    this.manager.createEditor()
+                        .init()
+                        .hide()
+                        .loadConceptModel(schema)
+                        .loadProjectionModel(pmodel)
+                        .show();
+                };
+                reader.readAsText(val);
+            });
+        });
+    },
 };
 
 Manager.init({

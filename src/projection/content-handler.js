@@ -1,8 +1,10 @@
-import { valOrDefault, createDocFragment, } from "zenkai";
-import { AttributeHandler } from './structure-handler.js';
+import { valOrDefault, createDocFragment, createI, isHTMLElement, removeChildren, } from "zenkai";
+import { hide, show } from "@utils/index.js";
 import { LayoutFactory } from "./layout/index.js";
 import { FieldFactory } from "./field/index.js";
 import { StaticFactory } from "./static/index.js";
+import { AttributeHandler } from './structure-handler.js';
+import { StyleHandler } from "./style-handler.js";
 
 
 /**
@@ -62,6 +64,62 @@ export function ContentHandler(schema, concept, args = {}) {
 
         return fragment;
     } else if (schema.type === "projection") {
+        const { tag, style } = schema;
+        
+        const bindElement = {
+            schema: schema,
+            placeholder: createI({
+                class: ["projection-element"],
+                hidden: true,
+            }),
+            parent: this,
+            projection: this.projection,
+            element: null,
+        };
+
+        bindElement.update = function (message, value, from) {
+            if (contentConcept.hasValue()) {
+                if (bindElement.element) {
+                    removeChildren(bindElement.element);
+
+                    if (isHTMLElement(bindElement.element)) {
+                        bindElement.element.remove();
+                    }
+
+                    bindElement.element = null;
+                }
+
+                let concept = contentConcept.getValue();
+
+                let projection = this.projection.model.createProjection(concept, tag).init();
+                projection.optional = true;
+                projection.parent = this.projection;
+
+                bindElement.element = projection.render();
+
+                if (bindElement.placeholder) {
+                    bindElement.placeholder.after(bindElement.element);
+                    hide(bindElement.placeholder);
+                }
+
+                if (isHTMLElement(bindElement.element)) {
+                    StyleHandler.call(this, bindElement.element, style);
+                }
+
+                projection.element.parent = this.projection.element;
+            } else {
+                if (bindElement.element) {
+                    bindElement.element.remove();
+                    bindElement.element = null;
+                }
+            }
+        };
+
+        contentConcept.register(bindElement);
+        bindElement.update();
+
+        return bindElement.element || bindElement.placeholder;
+    } else if (schema.type === "plink") {
         const index = this.projection.schema.findIndex((x) => x.tags.includes(schema.tag));
 
         let _schema = {

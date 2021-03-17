@@ -2,9 +2,9 @@ import {
     createDocFragment, createHeader, createSection, createH3, createDiv,
     createParagraph, createButton, createAnchor, createInput, removeChildren,
     isHTMLElement, findAncestor, isNullOrWhitespace, isNullOrUndefined, isEmpty,
-    hasOwn, isFunction, valOrDefault, copytoClipboard
+    hasOwn, isFunction, valOrDefault, copytoClipboard, toBoolean
 } from 'zenkai';
-import { Events, hide, show, Key, getEventTarget, NotificationType, LogType, EditorMode } from '@utils/index.js';
+import { Events, hide, show, toggle, Key, getEventTarget, NotificationType, LogType, EditorMode } from '@utils/index.js';
 import { buildProjectionHandler } from "../build-projection.js";
 import { buildConceptHandler } from "../build-concept.js";
 import { ConceptModelManager } from '@model/index.js';
@@ -15,6 +15,7 @@ import { EditorMenu } from './editor-menu.js';
 import { EditorStyle } from './editor-style.js';
 import { EditorFile } from './editor-file.js';
 import { EditorLog } from './editor-log.js';
+import { EditorResource } from './editor-resource.js';
 import { EditorSection } from './editor-section.js';
 
 
@@ -108,6 +109,19 @@ function createEditorLog() {
     });
 }
 
+/**
+ * Creates an editor resource manager
+ * @returns {EditorResource}
+ */
+function createEditorResource() {
+    return Object.create(EditorResource, {
+        object: { value: "environment" },
+        name: { value: "editor-resource" },
+        type: { value: "resource" },
+        editor: { value: this }
+    });
+}
+
 const EDITOR_CONFIG = {
     "root": [],
     "mode": EditorMode.MODEL,
@@ -119,12 +133,18 @@ const EDITOR_CONFIG = {
     },
     "menu": {
         "actions": [
-            { "name": "export" },
-            { "name": "import" }
+            { "name": "export" }
         ],
         "css": ["editor-menu"]
     }
 };
+
+/**
+ * 
+ * @param {HTMLElement} element 
+ * @returns 
+ */
+const isInputCapable = (element) => isHTMLElement(element, ["input", "textarea"]) || element.contentEditable === "true";
 
 
 export const Editor = {
@@ -159,8 +179,10 @@ export const Editor = {
     files: null,
     /** @type {EditorLog} */
     logs: null,
+
     /** @type {HTMLInputElement} */
     input: null,
+    copyValue: null,
 
 
     /** @type {HTMLElement} */
@@ -171,7 +193,11 @@ export const Editor = {
 
     /** @type {boolean} */
     active: false,
+    /** @type {boolean} */
+    visible: false,
     handlers: null,
+    /** @type {Map} */
+    resources: null,
 
     init(args = {}) {
         const { conceptModel, projectionModel, concept, projection, config = EDITOR_CONFIG, handlers = {} } = args;
@@ -184,6 +210,7 @@ export const Editor = {
         // Editor configuration
         this.config = config;
         this.handlers = {};
+        this.resources = new Map();
 
         for (const key in handlers) {
             const handler = handlers[key];
@@ -264,12 +291,21 @@ export const Editor = {
         let projection = this.projectionModel.createProjection(concept, schema.tag).init();
 
         let title = createH3({
-            class: ["title", "editor-concept-title"],
+            class: ["title", "editor-concept-title", "fit-content"],
         }, name);
 
         let header = createHeader({
             class: ["editor-concept-header"],
         }, [title]);
+
+        let instanceContainer = createDiv({
+            class: ["editor-concept"],
+            draggable: false,
+            dataset: {
+                nature: "concept-container",
+                size: 1,
+            }
+        }, [header, projection.render()]);
 
         if (hasToolbar) {
             let btnDelete = createButton({
@@ -307,20 +343,21 @@ export const Editor = {
                 instanceContainer.classList.toggle('focus');
             });
 
+            let btnResize = createButton({
+                class: ["btn", "editor-concept-toolbar__btn-resize"],
+                title: `Resize ${name.toLowerCase()}`
+            });
+            btnResize.addEventListener('click', (event) => {
+                const { size } = instanceContainer.dataset;
+                instanceContainer.dataset.size = `${+size % 3 + 1}`;
+            });
+
             let toolbar = createDiv({
                 class: ["editor-concept-toolbar"],
-            }, [btnCollapse, btnMaximize, btnDelete]);
+            }, [btnCollapse, btnResize, btnMaximize, btnDelete]);
 
-            header.append(btnNew, toolbar);
+            header.append(toolbar);
         }
-
-        let instanceContainer = createDiv({
-            class: ["editor-concept"],
-            draggable: false,
-            dataset: {
-                nature: "concept-container"
-            }
-        }, [header, projection.render()]);
 
         this.conceptSection.appendChild(instanceContainer);
 
@@ -370,6 +407,8 @@ export const Editor = {
     addConcept(concepts) {
         if (Array.isArray(concepts)) {
             this.conceptModel.schema.push(...concepts);
+        } else {
+            this.conceptModel.schema.push(concepts);
         }
 
         this.refresh();
@@ -380,6 +419,8 @@ export const Editor = {
     addProjection(projections) {
         if (Array.isArray(projections)) {
             this.projectionModel.schema.push(...projections);
+        } else {
+            this.projectionModel.schema.push(projections);
         }
 
         this.refresh();
@@ -582,17 +623,55 @@ export const Editor = {
         this.logs.addLog(messages, title, type);
 
         this.refresh();
-        
+
         return messages;
+    },
+    addResource(file) {
+        this.resources.set(file.name, file);
+
+        Events.emit("resource.added", file);
+
+        this.refresh();
+
+        return file;
+    },
+    removeResource(name) {
+        this.resources.delete(name);
+
+        Events.emit("resource.removed", name);
+        
+        this.refresh();
+
+        return true;
+    },
+    copy(value) {
+        this.copyValue = value;
+        this.notify(`${value.name} copied`, NotificationType.NORMAL);
+        return this;
+    },
+    paste(concept, value) {
+        concept.initValue(valOrDefault(value, this.copyValue));
     },
 
     // Editor window actions
 
     show() {
         show(this.container);
+        this.visible = true;
+
+        return this;
     },
     hide() {
         hide(this.container);
+        this.visible = false;
+
+        return this;
+    },
+    toggle() {
+        toggle(this.container);
+        this.visible = !this.visible;
+
+        return this;
     },
     open() {
         this.show();
@@ -709,45 +788,51 @@ export const Editor = {
      * @param {JSON} json 
      * @param {string} type 
      */
-    load(json, type) {
-        const file = JSON.parse(json);
+    load(file, type) {
+        let reader = new FileReader();
 
-        switch (type) {
-            case "model":
-                if (Array.isArray(file)) {
-                    this.loadConceptModel(file);
+        if (type === "model") {
+            reader.onload = (event) => {
+                const schema = JSON.parse(reader.result);
+
+                if (Array.isArray(schema)) {
+                    this.loadConceptModel(schema);
                 } else {
-                    const { concept, values = [], projection = [], editor } = file;
+                    const { concept, values = [], projection = [], editor } = schema;
 
                     this.loadConceptModel(concept, values);
-
 
                     if (!isEmpty(projection)) {
                         this.notify("A projection was found in the model.", NotificationType.NORMAL, 2000);
 
-                        this.loadProjectionModel(projection);
+                        setTimeout(() => { this.loadProjectionModel(projection); }, 30);
                     }
 
                     if (editor) {
                         this.setConfig(editor);
                     }
                 }
+            };
+            reader.readAsText(file);
+        } else if (type === "projection") {
+            reader.onload = (event) => {
+                const schema = JSON.parse(reader.result);
 
-                break;
-            case "projection":
-                if (Array.isArray(file)) {
-                    this.loadProjectionModel(file);
+                if (Array.isArray(schema)) {
+                    this.loadProjectionModel(schema);
                 } else {
-                    const { projection, views = [] } = file;
+                    const { projection, views = [] } = schema;
 
                     this.loadProjectionModel(projection, views);
                 }
+            };
+            reader.readAsText(file);
+        } else if (type === "resource") {
+            this.addResource(file);
+        } else {
+            this.notify(`File type '${type}' is not handled`, NotificationType.WARNING);
 
-                break;
-            default:
-                this.notify(`File type '${type}' is not handled`, NotificationType.WARNING);
-
-                return false;
+            return false;
         }
 
         return true;
@@ -960,7 +1045,7 @@ export const Editor = {
      * Triggers an event, invoking the attached handler in the registered order
      * @param {*} event 
      */
-    triggerEvent(event) {
+    triggerEvent(event, callback) {
         const { name, downloadable, } = event;
 
         const handlers = this.getHandlers(name);
@@ -968,11 +1053,15 @@ export const Editor = {
         handlers.forEach((handler) => {
             let result = handler.call(this, this.conceptModel);
 
+            if (isFunction(callback)) {
+                callback.call(this, result);
+            }
+
             if (result === false) {
                 return;
             }
 
-            if (downloadable) {
+            if (toBoolean(downloadable)) {
                 this.download(result);
             }
         });
@@ -1067,6 +1156,18 @@ export const Editor = {
             "export": (target) => { this.export(); },
             "copy": (target) => { this.export(true); },
 
+
+            "load-resource": (target) => {
+                let event = new MouseEvent('click', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
+                });
+                fileType = "resource";
+
+                this.input.dispatchEvent(event);
+            },
+
             "load-model": (target) => {
                 let event = new MouseEvent('click', {
                     view: window,
@@ -1133,19 +1234,9 @@ export const Editor = {
 
         this.input.addEventListener('change', (event) => {
             let file = this.input.files[0];
-
-            if (!file.name.endsWith('.json')) {
-                this.notify("This file is not supported. Please use a .json file");
-                return;
-            }
-
-            let reader = new FileReader();
-            reader.onload = (event) => {
-                this.load(reader.result, fileType);
-                fileType = null;
-                this.input.value = "";
-            };
-            reader.readAsText(file);
+            this.load(file, fileType);
+            fileType = null;
+            this.input.value = "";
         });
 
         this.body.addEventListener('keydown', (event) => {
@@ -1281,6 +1372,26 @@ export const Editor = {
                     }
 
                     break;
+                case "c":
+                    if (lastKey === Key.ctrl) {
+                        if (!isInputCapable(target)) {
+                            this.copy(this.activeConcept.copy(false));
+
+                            event.preventDefault();
+                        }
+                    }
+
+                    break;
+                case "v":
+                    if (lastKey === Key.ctrl) {
+                        if (!isInputCapable(target)) {
+                            this.paste(this.activeConcept);
+
+                            event.preventDefault();
+                        }
+                    }
+
+                    break;
                 case "e":
                     if (lastKey === Key.ctrl && this.activeConcept) {
                         let editor = this.manager.createEditor().init({
@@ -1406,13 +1517,17 @@ export const Editor = {
             dragElement.style.left = `${Math.max(dragElement.offsetLeft - (prevClientX - event.clientX), 0)}px`;
         });
 
-        this.body.addEventListener('dragover', (event) => {
-            event.preventDefault();
-        });
+        this.body.addEventListener('dragover', (event) => { event.preventDefault(); });
 
         this.registerHandler("build-concept", buildConceptHandler);
         this.registerHandler("build-projection", buildProjectionHandler);
         this.registerHandler("export", () => this.export());
         this.registerHandler("copy", () => this.export(true));
+        this.registerHandler("load-resource", () => {
+            let event = new MouseEvent('click', { view: window, bubbles: true, cancelable: true, });
+            fileType = "resource";
+
+            this.input.dispatchEvent(event);
+        });
     }
 };

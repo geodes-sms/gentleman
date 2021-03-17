@@ -1,3 +1,4 @@
+import { findAncestor, isNullOrUndefined } from "zenkai";
 import { StyleHandler } from './../style-handler.js';
 import { show, hide, toggle } from '@utils/index.js';
 
@@ -9,13 +10,15 @@ export const Layout = {
     /** @type {boolean} */
     visible: false,
     /** @type {boolean} */
-    collapsible: false,
-    /** @type {boolean} */
     editable: false,
     /** @type {boolean} */
     active: false,
     /** @type {HTMLElement} */
     container: null,
+    /** @type {HTMLElement[]} */
+    elements: null,
+    /** @type {boolean} */
+    editing: false,
 
     getStyle() {
         return this.schema['style'];
@@ -28,6 +31,7 @@ export const Layout = {
 
         return true;
     },
+    isRoot() { return isNullOrUndefined(this.parent); },
     /**
      * Get a the related field object
      * @param {HTMLElement} element 
@@ -104,16 +108,31 @@ export const Layout = {
      * @param {HTMLElement} target 
      */
     escapeHandler(target) {
-        console.warn(`ESCAPE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        if (this.isRoot()) {
+            return false;
+        }
 
-        return false;
+        let parent = findAncestor(target, (el) => el.tabIndex === 0);
+        let element = this.environment.resolveElement(parent);
+
+        if (isNullOrUndefined(element)) {
+            return false;
+        }
+
+        element.focus(parent);
     },
     /**
      * Handles the `enter` command
-     * @param {HTMLElement} target 
+     * @param {HTMLElement} target element
      */
     enterHandler(target) {
-        this.focusOut();
+        let projectionElement = this.environment.resolveElement(this.elements[0]);
+
+        if (projectionElement) {
+            projectionElement.focus();
+        }
+
+        return false;
     },
     /**
      * Handles the `delete` command

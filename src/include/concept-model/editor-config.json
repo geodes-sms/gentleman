@@ -3,26 +3,20 @@
         "name": "Gentleman concept",
         "root": ["prototype concept", "concrete concept", "derivative concept"],
         "header": {
-            "tabs": [
-                {}
-            ],
             "css": ["editor-header"]
         },
         "body": {
             "concept": {
-                "actions": [
-                    { "name": "build" }
-                ],
                 "css": ["concept-section"]    
             },
             "css": ["editor-body"]
         },
         "menu": {
             "actions": [
-                { "name": "build-concept", "handler": "gentleman_concept", "content": "Build", "downloadable": true },
+                { "name": "build-concept", "content": "Build", "downloadable": true },
                 { "name": "export" }
             ],
-            "css": ["model-concept-list"]
+            "css": ["editor-menu"]
         }
     }
 }

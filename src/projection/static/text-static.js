@@ -42,8 +42,7 @@ const BaseTextStatic = {
     },
 
     render() {
-        const fragment = createDocFragment();
-
+        let bind = false;
         const { help, style, content } = this.schema;
 
         if (!isHTMLElement(this.element)) {
@@ -71,6 +70,8 @@ const BaseTextStatic = {
             } else {
                 this.element.textContent = value.trim();
             }
+
+            bind = true;
         }
 
         if (!isNullOrUndefined(help)) {
@@ -79,8 +80,7 @@ const BaseTextStatic = {
 
         StyleHandler.call(this.projection, this.element, style);
 
-        if (fragment.hasChildNodes()) {
-            this.element.appendChild(fragment);
+        if (bind) {
             this.bindEvents();
         }
 
@@ -160,11 +160,23 @@ const BaseTextStatic = {
         element.focus(parent);
     },
 
+    update() {
+        if(this.contentType !== "property") {
+            return this;
+        }
+
+        this.element.textContent = this.projection.concept.getProperty(this.schema.content);
+
+        return this;
+    },
     refresh() {
         return this;
     },
 
     bindEvents() {
+        this.projection.registerHandler("value.changed", (value) => {
+            this.update();
+        });
     },
 };
 

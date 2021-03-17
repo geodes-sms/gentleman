@@ -106,11 +106,19 @@ const _ReferenceConcept = {
             this.reference.unregister(this);
         }
 
-        this.reference = this.model.getConcept(value);
-        this.reference.register(this);
-
         this.value = value;
-        this.notify("value.changed", this.reference);
+        this.reference = this.model.getConcept(value);
+
+        if (isNullOrUndefined(this.reference)) { // retry on failure
+            setTimeout(() => {
+                this.reference = this.model.getConcept(value);
+                this.reference.register(this);
+                this.notify("value.changed", this.reference);
+            }, 20);
+        } else {
+            this.reference.register(this);
+            this.notify("value.changed", this.reference);
+        }
 
         return {
             success: true,
@@ -202,6 +210,8 @@ const _ReferenceConcept = {
     copy(save = true) {
         var copy = {
             name: this.name,
+            nature: this.nature,
+            accept: this.accept,
             value: this.getValue()
         };
 

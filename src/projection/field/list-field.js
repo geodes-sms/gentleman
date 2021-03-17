@@ -4,7 +4,7 @@ import {
     isNullOrUndefined, valOrDefault, hasOwn,
 } from "zenkai";
 import {
-    hide, show, shake, NotificationType, getClosest,
+    hide, show, shake, NotificationType, getClosest, isHidden,
     getTopElement, getBottomElement, getRightElement, getLeftElement
 } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
@@ -133,121 +133,6 @@ const BaseListField = {
         return this;
     },
 
-    render() {
-        const fragment = createDocFragment();
-
-        const { list, style, action = {} } = this.schema;
-
-        if (!isHTMLElement(this.element)) {
-            this.element = createDiv({
-                id: this.id,
-                class: ["field", "field--list"],
-                tabindex: -1,
-                dataset: {
-                    nature: "field",
-                    view: "list",
-                    id: this.id,
-                }
-            });
-
-            if (this.readonly) {
-                this.element.classList.add("readonly");
-            }
-
-            StyleHandler.call(this.projection, this.element, this.schema.style);
-        }
-
-        if (!isHTMLElement(this.notification)) {
-            this.notification = createDiv({
-                class: ["field-notification"],
-                dataset: {
-                    nature: "field-component",
-                    view: "list",
-                    id: this.id,
-                }
-            });
-            fragment.appendChild(this.notification);
-        }
-
-        if (!isHTMLElement(this.statusElement)) {
-            this.statusElement = createI({
-                class: ["field-status"],
-                dataset: {
-                    nature: "field-component",
-                    view: "list",
-                    id: this.id,
-                }
-            });
-            this.notification.appendChild(this.statusElement);
-        }
-
-        if (!isHTMLElement(this.list)) {
-            const { style } = list;
-
-            this.list = createUnorderedList({
-                class: ["bare-list", "field--list__list"],
-                dataset: {
-                    nature: "field-component",
-                    view: "list",
-                    id: this.id
-                }
-            });
-
-            if (!this.source.hasValue()) {
-                this.list.classList.add("empty");
-            }
-
-            list.currentState = null;
-            this.elements.set(list, this.list);
-
-            StyleHandler.call(this.projection, this.list, style);
-
-            fragment.appendChild(this.list);
-
-        }
-
-        let addSchema = valOrDefault(action.add, actionDefaultSchema.add);
-        if (addSchema) {
-            const { content, style } = addSchema;
-
-            let addProjection = ContentHandler.call(this, content, null);
-
-            let addElement = createButton({
-                class: ["field-action", "field--list__add"],
-                tabindex: 0,
-                dataset: {
-                    nature: "field-component",
-                    view: "list",
-                    component: "action",
-                    id: this.id,
-                    action: "add",
-                }
-            }, addProjection);
-
-            addSchema.currentState = null;
-            this.elements.set(addSchema, addElement);
-
-            StyleHandler.call(this.projection, addElement, style);
-
-            fragment.appendChild(addElement);
-        }
-
-        this.source.getValue().forEach((value) => {
-            var item = this.createItem(value);
-            this.list.appendChild(item);
-        });
-
-        StyleHandler.call(this.projection, this.element, style);
-
-        if (fragment.hasChildNodes()) {
-            this.element.appendChild(fragment);
-            this.bindEvents();
-        }
-
-        this.refresh();
-
-        return this.element;
-    },
     /**
      * Verifies that the field has a changes
      * @returns {boolean}
@@ -365,56 +250,6 @@ const BaseListField = {
 
         return this;
     },
-    refresh() {
-        if (this.hasValue()) {
-            this.element.classList.remove("empty");
-            this.list.classList.remove("empty");
-        } else {
-            this.element.classList.add("empty");
-            this.list.classList.add("empty");
-        }
-
-        if (this.hasChanges()) {
-            this.statusElement.classList.add("change");
-        } else {
-            this.statusElement.classList.remove("change");
-        }
-
-        this.elements.forEach((element, schema) => {
-            if (!Array.isArray(schema.state)) {
-                return;
-            }
-
-            const { currentState: prevState } = schema;
-
-            const result = StateHandler.call(this, schema, schema.state);
-
-            if (prevState === schema.currentState) {
-                return;
-            }
-
-            let content = null;
-            if (result) {
-                content = ContentHandler.call(this, result.content, null);
-            } else {
-                content = ContentHandler.call(this, schema.content, null);
-            }
-
-            removeChildren(element).append(content);
-        });
-
-        removeChildren(this.statusElement);
-        if (this.hasError) {
-            this.element.classList.add("error");
-            this.list.classList.add("error");
-            this.statusElement.classList.add("error");
-            this.statusElement.appendChild(createNotificationMessage(NotificationType.ERROR, this.errors));
-        } else {
-            this.element.classList.remove("error");
-            this.list.classList.remove("error");
-            this.statusElement.classList.remove("error");
-        }
-    },
     createElement() {
         return this.source.createElement();
     },
@@ -446,14 +281,13 @@ const BaseListField = {
             }
         });
 
-        const { content: removeLayout, style: removeStyle } = valOrDefault(action.remove, actionDefaultSchema.remove);
-
-        let btnRemoveProjection = ContentHandler.call(this, removeLayout);
+        const { content: removeLayout, help, style: removeStyle } = valOrDefault(action.remove, actionDefaultSchema.remove);
 
         let btnRemove = createButton({
             class: ["btn", "field-action", "btn-remove"],
             tabindex: -1,
             title: "Remove",
+            help: help,
             dataset: {
                 nature: "field-component",
                 view: "list",
@@ -462,7 +296,13 @@ const BaseListField = {
                 action: "remove",
                 index: container.dataset.index
             }
-        }, btnRemoveProjection);
+        });
+
+        removeLayout.forEach(element => {
+            let content = ContentHandler.call(this, element, null, { focusable: false });
+
+            btnRemove.append(content);
+        });
 
         StyleHandler.call(this.projection, btnRemove, removeStyle);
 
@@ -555,6 +395,178 @@ const BaseListField = {
         }
     },
 
+
+    refresh() {
+        if (this.hasValue()) {
+            this.element.classList.remove("empty");
+            this.list.classList.remove("empty");
+        } else {
+            this.element.classList.add("empty");
+            this.list.classList.add("empty");
+        }
+
+        if (this.hasChanges()) {
+            this.statusElement.classList.add("change");
+        } else {
+            this.statusElement.classList.remove("change");
+        }
+
+        this.elements.forEach((element, schema) => {
+            if (!Array.isArray(schema.state)) {
+                return;
+            }
+
+            const { currentState: prevState } = schema;
+
+            const result = StateHandler.call(this, schema, schema.state);
+
+            if (prevState === schema.currentState) {
+                return;
+            }
+
+            let content = null;
+            if (result) {
+                content = ContentHandler.call(this, result.content, null);
+            } else {
+                content = ContentHandler.call(this, schema.content, null);
+            }
+
+            removeChildren(element).append(content);
+        });
+
+        removeChildren(this.statusElement);
+        if (this.hasError) {
+            this.element.classList.add("error");
+            this.list.classList.add("error");
+            this.statusElement.classList.add("error");
+            this.statusElement.appendChild(createNotificationMessage(NotificationType.ERROR, this.errors));
+        } else {
+            this.element.classList.remove("error");
+            this.list.classList.remove("error");
+            this.statusElement.classList.remove("error");
+        }
+    },
+    render() {
+        const fragment = createDocFragment();
+
+        const { list, style, action = {} } = this.schema;
+
+        if (!isHTMLElement(this.element)) {
+            this.element = createDiv({
+                id: this.id,
+                class: ["field", "field--list"],
+                tabindex: -1,
+                dataset: {
+                    nature: "field",
+                    view: "list",
+                    id: this.id,
+                }
+            });
+
+            if (this.readonly) {
+                this.element.classList.add("readonly");
+            }
+
+            StyleHandler.call(this.projection, this.element, this.schema.style);
+        }
+
+        if (!isHTMLElement(this.notification)) {
+            this.notification = createDiv({
+                class: ["field-notification"],
+                dataset: {
+                    nature: "field-component",
+                    view: "list",
+                    id: this.id,
+                }
+            });
+            fragment.appendChild(this.notification);
+        }
+
+        if (!isHTMLElement(this.statusElement)) {
+            this.statusElement = createI({
+                class: ["field-status"],
+                dataset: {
+                    nature: "field-component",
+                    view: "list",
+                    id: this.id,
+                }
+            });
+            this.notification.appendChild(this.statusElement);
+        }
+
+        if (!isHTMLElement(this.list)) {
+            const { style } = list;
+
+            this.list = createUnorderedList({
+                class: ["bare-list", "field--list__list"],
+                dataset: {
+                    nature: "field-component",
+                    view: "list",
+                    id: this.id
+                }
+            });
+
+            if (!this.source.hasValue()) {
+                this.list.classList.add("empty");
+            }
+
+            list.currentState = null;
+            this.elements.set(list, this.list);
+
+            StyleHandler.call(this.projection, this.list, style);
+
+            fragment.appendChild(this.list);
+
+        }
+
+        let addSchema = valOrDefault(action.add, actionDefaultSchema.add);
+        if (addSchema) {
+            const { content, help, style } = addSchema;
+
+            let addElement = createButton({
+                class: ["field-action", "field--list__add"],
+                tabindex: 0,
+                title: help,
+                dataset: {
+                    nature: "field-component",
+                    view: "list",
+                    component: "action",
+                    id: this.id,
+                    action: "add",
+                }
+            });
+
+            content.forEach(element => {
+                let content = ContentHandler.call(this, element, null, { focusable: false });
+
+                addElement.append(content);
+            });
+
+            addSchema.currentState = null;
+            this.elements.set(addSchema, addElement);
+
+            StyleHandler.call(this.projection, addElement, style);
+
+            fragment.appendChild(addElement);
+        }
+
+        this.source.getValue().forEach((value) => {
+            var item = this.createItem(value);
+            this.list.appendChild(item);
+        });
+
+        StyleHandler.call(this.projection, this.element, style);
+
+        if (fragment.hasChildNodes()) {
+            this.element.appendChild(fragment);
+            this.bindEvents();
+        }
+
+        this.refresh();
+
+        return this.element;
+    },
+
     /**
      * Handles the `ctrl+space` command
      * @param {HTMLElement} target 
@@ -600,11 +612,24 @@ const BaseListField = {
      * @param {HTMLElement} target 
      */
     escapeHandler(target) {
-        if (this.messageElement) {
+        let exit = true;
+
+        if (this.messageElement && !isHidden(this.messageElement)) {
             hide(this.messageElement);
+
+            exit = false;
+        }
+
+        if (exit) {
+            let parent = findAncestor(target, (el) => el.tabIndex === 0);
+            let element = this.environment.resolveElement(parent);
+
+            element.focus(parent);
 
             return true;
         }
+
+        this.focus();
 
         return false;
     },
@@ -642,12 +667,10 @@ const BaseListField = {
 
             return true;
         } else if (action === "add") {
-            this.selection = component;
             this.createElement();
 
             return true;
         } else if (action === "remove") {
-            this.selection = component.parentElement;
             this.delete(component.parentElement);
 
             return true;
@@ -684,10 +707,8 @@ const BaseListField = {
         const { action, index, name } = component.dataset;
 
         if (action === "add") {
-            this.selection = component;
             this.createElement();
         } else if (action === "remove") {
-            this.selection = component.parentElement;
             this.delete(component.parentElement);
         }
     },
@@ -760,6 +781,14 @@ const BaseListField = {
 
         this.projection.registerHandler("value.removed", (value) => {
             this.removeItem(value);
+        });
+        this.projection.registerHandler("value.changed", (value) => {
+            this.clear();
+
+            this.source.getValue().forEach((value) => {
+                let item = this.createItem(value);
+                this.list.appendChild(item);
+            });
         });
     }
 };

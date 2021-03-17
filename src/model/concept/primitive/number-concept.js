@@ -70,8 +70,13 @@ const _NumberConcept = {
         }
 
         if (isObject(args)) {
-            this.id = args.id;
-            this.setValue(args.value);
+            const { id = "", value } = args;
+
+            if (id.length > 10) {
+                this.id = id;
+            }
+
+            this.setValue(value);
         } else {
             this.setValue(args);
         }
@@ -206,6 +211,7 @@ const _NumberConcept = {
 
         var copy = {
             name: this.name,
+            nature: this.nature,
             root: this.isRoot(),
             value: this.getValue()
         };

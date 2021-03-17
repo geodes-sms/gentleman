@@ -52,13 +52,13 @@ export function buildProjectionHandler(model) {
     const concepts = model.getConcepts(["projection", "template", "style rule"]);
 
     if (isEmpty(concepts)) {
-        this.notify("<strong>Empty model</strong>: There was no projection found to be built.", NotificationType.WARNING);
+        this.notify("<strong>Empty model</strong>: There was no projection found to be built.", NotificationType.WARNING, 2000);
 
         return false;
     }
 
     concepts.forEach(concept => {
-        const handler = ProjectionBuildHandler[valOrDefault(concept.getBuildProperty(PROP_HANDLER), "")];
+        const handler = ProjectionBuildHandler[valOrDefault(concept.getProperty(PROP_HANDLER), "")];
 
         if (!isFunction(handler)) {
             throw new Error("The projection's is missing a build handler.");
@@ -81,7 +81,7 @@ export function buildProjectionHandler(model) {
         return false;
     }
 
-    this.notify("<strong>Build succeeded</strong>: The projection model was successfully built", NotificationType.SUCCESS);
+    this.notify("The projection model was <strong>successfully</strong> built", NotificationType.SUCCESS, 2000);
     console.log(result);
 
     return result;
@@ -93,9 +93,14 @@ function buildProjection(concept) {
 
     const tags = hasAttr(concept, ATTR_TAGS) ? getAttr(concept, ATTR_TAGS).build() : [];
 
+    const target = buildConcept.call(this, getAttr(concept, ATTR_CONCEPT));
+
+    if (isEmpty(Object.keys(target))) {
+        buildErrors.push("The projection is missing a <<concept>>.");
+    }
 
     if (!hasValue(concept, ATTR_CONTENT)) {
-        buildErrors.push("The projection is missing a content.");
+        buildErrors.push("The projection is missing a <<content>>.");
     }
 
     if (!isEmpty(buildErrors)) {
@@ -108,11 +113,11 @@ function buildProjection(concept) {
 
     const content = getValue(concept, ATTR_CONTENT);
 
-    const contentType = content.getBuildProperty("contentType");
+    const contentType = content.getProperty("contentType");
 
     let schema = {
         "id": concept.id,
-        "concept": buildConcept.call(this, getAttr(concept, ATTR_CONCEPT)),
+        "concept": target,
         "type": contentType,
         "tags": tags,
         "content": ProjectionHandler[contentType].call(this, content),
@@ -210,37 +215,40 @@ function buildStyleRule(concept) {
 function buildConcept(concept) {
     const result = {};
 
-    if (hasAttr(concept, ATTR_NAME)) {
-        result[ATTR_NAME] = hasValue(concept, ATTR_NAME) ? getValue(concept, ATTR_NAME).toLowerCase() : null;
+    if (hasAttr(concept, ATTR_NAME) && hasValue(concept, ATTR_NAME)) {
+        result[ATTR_NAME] = getValue(concept, ATTR_NAME).toLowerCase();
     }
 
-    if (hasAttr(concept, ATTR_PROTOTYPE)) {
-        result[ATTR_PROTOTYPE] = hasValue(concept, ATTR_PROTOTYPE) ? getValue(concept, ATTR_PROTOTYPE).toLowerCase() : null;
+    if (hasAttr(concept, ATTR_PROTOTYPE) && hasValue(concept, ATTR_PROTOTYPE)) {
+        result[ATTR_PROTOTYPE] = getValue(concept, ATTR_PROTOTYPE).toLowerCase();
     }
 
     return result;
 }
 
 function buildLayout(layout) {
-    var schema = {};
+    const elementType = layout.getProperty("elementType");
+
+    var schema = {
+        type: elementType
+    };
     var disposition = [];
 
-    if (layout.name === "stack layout") {
-        schema.type = "stack";
+    if (elementType === "stack") {
         schema.orientation = getValue(layout, 'orientation');
 
         getValue(layout, "elements").filter(proto => proto.hasValue()).forEach(proto => {
             const element = proto.getValue();
             disposition.push(buildElement.call(this, element));
         });
-    } else if (layout.name === "wrap layout") {
-        schema.type = "wrap";
+    } else if (elementType === "wrap") {
+        schema.containerless = getValue(layout, 'containerless');
 
         getValue(layout, "elements").filter(proto => proto.hasValue()).forEach(proto => {
             const element = proto.getValue();
             disposition.push(buildElement.call(this, element));
         });
-    } else if (layout.name === "cell layout") {
+    } else if (elementType === "cell") {
         schema.type = "table";
         schema.orientation = getValue(layout, 'orientation');
         getValue(layout, "rows").forEach(row => {
@@ -258,7 +266,7 @@ function buildLayout(layout) {
         });
     }
 
-    if (layout.isAttributeCreated("style")) {
+    if (hasAttr(layout, "style")) {
         schema.style = buildStyle.call(this, getAttr(layout, 'style'));
     }
 
@@ -268,8 +276,8 @@ function buildLayout(layout) {
 }
 
 function buildElement(element) {
-    const contentType = element.getBuildProperty("contentType");
-    const elementType = element.getBuildProperty("elementType");
+    const contentType = element.getProperty("contentType");
+    const elementType = element.getProperty("elementType");
 
     if (contentType === "static") {
         let schema = {
@@ -286,8 +294,41 @@ function buildElement(element) {
             name: getValue(element, "value")
         };
 
-        if (element.isAttributeCreated("tag")) {
+        if (hasAttr(element, "tag")) {
             schema.tag = getValue(element, "tag");
+        }
+
+        if (hasAttr(element, "placeholder")) {
+            const content = [];
+
+            getValue(element, "placeholder").filter(proto => proto.hasValue()).forEach(proto => {
+                const element = proto.getValue();
+                content.push(buildElement.call(this, element));
+            });
+            schema.placeholder = content;
+        }
+
+        return schema;
+    }
+
+    if (contentType === "projection") {
+        let schema = {
+            type: contentType,
+            src: "value"
+        };
+
+        if (hasAttr(element, "tag")) {
+            schema.tag = getValue(element, "tag");
+        }
+
+        if (hasAttr(element, "placeholder")) {
+            const content = [];
+
+            getValue(element, "placeholder").filter(proto => proto.hasValue()).forEach(proto => {
+                const element = proto.getValue();
+                content.push(buildElement.call(this, element));
+            });
+            schema.placeholder = content;
         }
 
         return schema;
@@ -353,22 +394,22 @@ function buildStatic(element, type) {
 }
 
 function buildField(field) {
+    const elementType = field.getProperty("elementType");
+
     var schema = {
+        type: elementType,
         readonly: getValue(field, "readonly"),
         disabled: getValue(field, "disabled"),
     };
 
-    if (field.name === "text field") {
-        schema.type = "text";
+    if (elementType === "text") {
         schema.multiline = getValue(field, "multiline");
         schema.resizable = getValue(field, "resizable");
 
-        if (field.isAttributeCreated("input")) {
+        if (hasAttr(field, "input")) {
             schema.input = buildInput.call(this, getAttr(field, "input"));
         }
-    } else if (field.name === "binary field") {
-        schema.type = "binary";
-
+    } else if (elementType === "binary") {
         schema.state = {
             "true": {
                 "content": getValue(field, "true-state").filter(proto => proto.hasValue())
@@ -379,53 +420,75 @@ function buildField(field) {
                     .map(proto => buildElement.call(this, proto.getValue()))
             }
         };
-    } else if (field.name === "choice field") {
-        schema.type = "choice";
+    } else if (elementType === "choice") {
         schema.choice = {};
 
-        if (field.isAttributeCreated("choice template")) {
+        if (hasAttr(field, "choice template")) {
             schema.choice.option = {
                 "template": buildFieldTemplate.call(this, getAttr(field, "choice template"))
             };
         }
-        if (field.isAttributeCreated("choice template")) {
-            schema.selection = {
-                "template": buildFieldTemplate.call(this, getAttr(field, "selection template"))
-            };
-        }
-    } else if (field.name === "list field") {
-        schema.type = "list";
+    } else if (elementType === "list") {
         schema.list = {};
 
-        if (field.isAttributeCreated("item template")) {
+        if (hasAttr(field, "item template")) {
             schema.list.item = {
                 "template": buildFieldTemplate.call(this, getAttr(field, "item template"))
             };
         }
-    } else if (field.name === "table field") {
+
+        if (hasAttr(field, "action")) {
+            let action = getAttr(field, "action");
+            schema.action = {};
+
+            if (hasAttr(action, "add")) {
+                let add = getAttr(action, "add");
+                schema.action.add = {};
+                const content = [];
+
+                getValue(add, ATTR_CONTENT).filter(proto => proto.hasValue()).forEach(proto => {
+                    const element = proto.getValue();
+                    content.push(buildElement.call(this, element));
+                });
+                schema.action.add.content = content;
+            }
+
+            if (hasAttr(action, "remove")) {
+                let remove = getAttr(action, "remove");
+                schema.action.remove = {};
+                const content = [];
+
+                getValue(remove, ATTR_CONTENT).filter(proto => proto.hasValue()).forEach(proto => {
+                    const element = proto.getValue();
+                    content.push(buildElement.call(this, element));
+                });
+                schema.action.remove.content = content;
+            }
+        }
+    } else if (elementType === "table") {
         schema.type = "table";
         schema.table = {};
 
-        if (field.isAttributeCreated("item template")) {
+        if (hasAttr(field, "row template")) {
             schema.table.row = {
-                "template": buildFieldTemplate.call(this, getAttr(field, "item template"))
+                "template": buildFieldTemplate.call(this, getAttr(field, "row template"))
             };
         }
 
-        if (field.isAttributeCreated("header")) {
+        if (hasAttr(field, "header")) {
             schema.header = buildStyle.call(this, getAttr(field, "header"));
         }
 
-        if (field.isAttributeCreated("body")) {
-            schema.header = buildStyle.call(this, getAttr(field, "body"));
+        if (hasAttr(field, "body")) {
+            schema.body = buildStyle.call(this, getAttr(field, "body"));
         }
 
-        if (field.isAttributeCreated("footer")) {
-            schema.header = buildStyle.call(this, getAttr(field, "footer"));
+        if (hasAttr(field, "footer")) {
+            schema.footer = buildStyle.call(this, getAttr(field, "footer"));
         }
     }
 
-    if (field.isAttributeCreated("style")) {
+    if (hasAttr(field, "style")) {
         schema.style = buildStyle.call(this, getAttr(field, "style"));
     }
 

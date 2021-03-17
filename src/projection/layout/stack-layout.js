@@ -1,7 +1,4 @@
-import {
-    createDocFragment, createDiv, createButton, createInput, createLabel,
-    isHTMLElement, valOrDefault, findAncestor, hasOwn,
-} from "zenkai";
+import { createDocFragment, createDiv, isHTMLElement, valOrDefault, hasOwn, } from "zenkai";
 import { getClosest, getVisibleElement } from "@utils/index.js";
 import { StyleHandler } from './../style-handler.js';
 import { ContentHandler } from './../content-handler.js';
@@ -16,28 +13,17 @@ const Orientation = {
 export const BaseStackLayout = {
     /** @type {string} */
     orientation: null,
-    /** @type {HTMLElement[]} */
-    elements: null,
-    /** @type {boolean} */
-    edit: false,
-    /** @type {HTMLElement} */
-    btnEdit: false,
-    /** @type {HTMLElement} */
-    btnCollapse: false,
-    /** @type {HTMLElement} */
-    menu: false,
-    /** @type {boolean} */
-    collapsed: false,
+    /** @type {*} */
+    args: null,
 
     init(args = {}) {
-        const { orientation = Orientation.HORIZONTAL, editable = true, collapsible = false, collapsed = false, focusable = false } = this.schema;
+        const { orientation = Orientation.HORIZONTAL, editable = true, focusable = false } = this.schema;
 
         this.orientation = orientation;
         this.focusable = focusable;
-        this.collapsible = collapsible;
-        this.collapsed = collapsed;
         this.editable = editable;
         this.elements = [];
+        this.args = args;
 
         Object.assign(this, args);
 
@@ -109,33 +95,8 @@ export const BaseStackLayout = {
             });
         }
 
-        if (this.focusable) {
-            this.container.tabIndex = 0;
-        } else {
-            this.container.dataset.ignore = "all";
-        }
-
-        if (this.collapsible) {
-            this.container.dataset.collapsible = "all";
-            if (!isHTMLElement(this.btnCollapse)) {
-                this.btnCollapse = createButton({
-                    class: ["btn", "btn-collapse"],
-                    tabindex: 0,
-                    dataset: {
-                        nature: "layout-component",
-                        layout: "stack",
-                        component: "action",
-                        id: this.id,
-                        action: "collapse"
-                    }
-                });
-
-                fragment.appendChild(this.btnCollapse);
-            }
-        }
-
         for (let i = 0; i < disposition.length; i++) {
-            let render = ContentHandler.call(this, disposition[i]);
+            let render = ContentHandler.call(this, disposition[i], null, this.args);
 
             let element = this.environment.resolveElement(render);
             if (element) {
@@ -145,6 +106,12 @@ export const BaseStackLayout = {
             this.elements.push(render);
 
             fragment.appendChild(render);
+        }
+
+        if (this.focusable) {
+            this.container.tabIndex = 0;
+        } else {
+            this.container.dataset.ignore = "all";
         }
 
         StyleHandler.call(this, this.container, style);
@@ -214,29 +181,6 @@ export const BaseStackLayout = {
     },
 
     /**
-     * Handles the `enter` command
-     * @param {HTMLElement} target element
-     */
-    enterHandler(target) {
-        let projectionElement = this.environment.resolveElement(this.elements[0]);
-
-        if (projectionElement) {
-            projectionElement.focus();
-        }
-
-        return false;
-    },
-    /**
-     * Handles the `escape` command
-     * @param {HTMLElement} target 
-     */
-    escapeHandler(target) {
-        let parent = findAncestor(target, (el) => el.tabIndex === 0);
-        let element = this.environment.resolveElement(parent);
-
-        element.focus(parent);
-    },
-    /**
      * Handles the `arrow` command
      * @param {string} dir direction 
      * @param {HTMLElement} target element
@@ -296,60 +240,6 @@ export const BaseStackLayout = {
         }
     }
 };
-
-/**
- * @returns {HTMLElement}
- */
-function createOrientationField() {
-    var radioVertical = createInput({
-        type: "radio",
-        class: ["stack-orientation__input"],
-        name: `${this.id}orientation`,
-        value: "vertical",
-        checked: this.orientation === "vertical",
-        dataset: {
-            prop: "orientation"
-        }
-    });
-
-    var radioHorizontal = createInput({
-        type: "radio",
-        class: ["stack-orientation__input"],
-        name: `${this.id}orientation`,
-        value: "horizontal",
-        checked: this.orientation === "horizontal",
-        dataset: {
-            prop: "orientation"
-        }
-    });
-
-    var radioVerticalLabel = createLabel({
-        class: ["stack-orientation"]
-    }, [radioVertical, "Vertical"]);
-
-    var radioHorizontalLabel = createLabel({
-        class: ["stack-orientation"]
-    }, [radioHorizontal, "Horizontal"]);
-
-
-    var orientationField = createDiv({
-        class: ["radio-group"]
-    }, [radioVerticalLabel, radioHorizontalLabel]);
-
-    return orientationField;
-}
-
-/**
- * @returns {HTMLElement}
- */
-function createStyleField() {
-    var container = createDiv({
-        class: ["style-container"]
-    });
-
-    return container;
-}
-
 
 export const StackLayout = Object.assign({},
     Layout,

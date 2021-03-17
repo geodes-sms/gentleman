@@ -1,4 +1,4 @@
-import { isNullOrWhitespace, valOrDefault, isNullOrUndefined, isObject, isEmpty } from "zenkai";
+import { isNullOrWhitespace, valOrDefault, isNullOrUndefined, isObject, isEmpty, hasOwn } from "zenkai";
 import { Concept } from "./../concept.js";
 
 
@@ -11,51 +11,45 @@ const ResponseCode = {
     PATTERN_ERROR: 405,
 };
 
-function responseHandler(code) {
+function responseHandler(code, ctx) {
     switch (code) {
         case ResponseCode.INVALID_VALUE:
             return {
                 success: false,
-                message: "The value is not included in the list of valid values."
+                message: `Valid values: ${ctx}`
             };
         case ResponseCode.MAXLENGTH_ERROR:
             return {
                 success: false,
-                message: `The length of the value exceeds the maximum allowed: ${this.length.max.value}.`
+                message: `Maximum length: ${this.value.length}/${ctx.value}.`
             };
         case ResponseCode.MINLENGTH_ERROR:
             return {
                 success: false,
-                message: `The length of the value is beneath the minimum allowed: ${this.length.min.value}.`
+                message: `Minimum length: ${this.value.length}/${ctx.value}.`
             };
         case ResponseCode.FIXLENGTH_ERROR:
             return {
                 success: false,
-                message: `The length of the value is different from the fixed value: ${this.length.value}.`
+                message: `Fixed length: ${ctx.value}.`
             };
         case ResponseCode.PATTERN_ERROR:
             return {
                 success: false,
-                message: `The value does not match the valid pattern.`
+                message: `The value is not valid.`
             };
     }
 }
 
 const _StringConcept = {
     nature: 'primitive',
-    /** @type {string} */
-    pattern: null,
 
     init(args = {}) {
         this.parent = args.parent;
         this.ref = args.ref;
-        this.values = valOrDefault(this.schema.values, []);
-        this.alias = this.schema.alias;
         this.default = valOrDefault(this.schema.default, "");
         this.description = this.schema.description;
-        this.length = this.schema.length;
-        this.pattern = this.schema.pattern;
-        this.predefined = this.schema.predefined;
+        this.constraint = this.schema.constraint;
         this.src = valOrDefault(this.schema.src, []);
 
         this.initObserver();
@@ -71,10 +65,14 @@ const _StringConcept = {
             return this;
         }
 
-
         if (isObject(args)) {
-            // this.id = this.id || args.id;
-            this.setValue(args.value);
+            const { id = "", value } = args;
+
+            if (id.length > 10) {
+                this.id = id;
+            }
+            
+            this.setValue(value);
         } else {
             this.setValue(args);
         }
@@ -92,26 +90,26 @@ const _StringConcept = {
         this.value = null;
 
         this.notify("value.changed", this.value);
-        
+
         return {
             success: true,
             message: "The value has been successfully updated."
         };
     },
     setValue(value) {
-        var result = this.validate(value);
+        var { code, ctx } = this.validate(value);
 
-        if (result !== ResponseCode.SUCCESS) {
+        this.value = value;
+
+        if (code !== ResponseCode.SUCCESS) {
             return {
                 success: false,
                 message: "Validation failed: The value could not be updated.",
                 errors: [
-                    responseHandler.call(this, result).message
+                    responseHandler.call(this, code, ctx).message
                 ]
             };
         }
-
-        this.value = value;
 
         this.notify("value.changed", value);
 
@@ -122,7 +120,9 @@ const _StringConcept = {
     },
 
     getCandidates() {
-        if (isEmpty(this.values)) {
+        let values = valOrDefault(this.getConstraint("values"), []);
+
+        if (isEmpty(values)) {
             let uniqueValues = new Set(
                 this.model.getConcepts(this.name)
                     .filter(c => c.hasValue() && c.value !== this.value)
@@ -130,13 +130,7 @@ const _StringConcept = {
             return [...uniqueValues, ...this.src];
         }
 
-        this.values.forEach(value => {
-            if (isObject(value)) {
-                value.type = "value";
-            }
-        });
-
-        return this.values;
+        return values.map(value => resolveValue.call(this, value)).flat().filter(val => !isNullOrWhitespace(val));
     },
     getChildren(name) {
         return [];
@@ -148,69 +142,92 @@ const _StringConcept = {
 
     validate(value) {
         if (isNullOrWhitespace(value)) {
-            return ResponseCode.SUCCESS;
+            return {
+                code: ResponseCode.SUCCESS
+            };
         }
 
-        if (this.length) {
-            const { min, max } = this.length;
-            
-            if (this.length.value && value.length !== this.length.value) {
-                return ResponseCode.FIXLENGTH_ERROR;
-            }
+        if (!this.hasConstraint()) {
+            return {
+                code: ResponseCode.SUCCESS
+            };
+        }
 
-            if (min) {
-                if (min.included && value.length < min.value) {
-                    return ResponseCode.MINLENGTH_ERROR;
+        if (this.hasConstraint("length")) {
+            let lengthConstraint = this.getConstraint("length");
+
+            const { type } = lengthConstraint;
+
+            if (type === "range") {
+                const { min, max } = lengthConstraint[type];
+
+                if (min && value.length < min.value) {
+                    return {
+                        code: ResponseCode.MINLENGTH_ERROR,
+                        ctx: min
+                    };
                 }
-                if (!min.included && value.length <= min.value) {
-                    return ResponseCode.MINLENGTH_ERROR;
+
+                if (max && value.length > max.value) {
+                    return {
+                        code: ResponseCode.MAXLENGTH_ERROR,
+                        ctx: max
+                    };
                 }
-            }
+            } else if (type === "fixed") {
+                const { value: fixedValue } = lengthConstraint["fixed"];
 
-            if (max) {
-                if (max.included && value.length > max.value) {
-                    return ResponseCode.MAXLENGTH_ERROR;
+                if (value.length !== fixedValue) {
+                    return {
+                        code: ResponseCode.FIXLENGTH_ERROR,
+                        ctx: lengthConstraint["fixed"]
+                    };
                 }
-                if (!max.included && value.length >= max.value) {
-                    return ResponseCode.MAXLENGTH_ERROR;
-                }
-            }
-        }
-
-        if (this.pattern && !(new RegExp(this.pattern, "gi")).test(value)) {
-            return ResponseCode.PATTERN_ERROR;
-        }
-
-        let values = this.values;
-
-        if(isEmpty(values) && this.predefined) {
-            let uniqueValues = new Set(
-                this.model.getConcepts(this.name)
-                    .filter(c => c.hasValue())
-                    .map(c => c.getValue()));
-            values = [...uniqueValues, ...this.src];
-        }
-
-        if (isEmpty(values)) {
-            return ResponseCode.SUCCESS;
-        }
-
-        let found = false;
-        for (let i = 0; !found && i < values.length; i++) {
-            const val = values[i];
-
-            if (isObject(val)) {
-                found = val.value === value;
-            } else {
-                found = val === value;
             }
         }
 
-        if (!found) {
-            return ResponseCode.INVALID_VALUE;
+        if (this.hasConstraint("value")) {
+            let valueConstraint = this.getConstraint("value");
+
+            const { type } = valueConstraint;
+
+            if (type === "pattern") {
+                const { value: patternValue } = valueConstraint["pattern"];
+
+                if (!(new RegExp(patternValue, "gi")).test(value)) {
+                    return {
+                        code: ResponseCode.PATTERN_ERROR,
+                        ctx: valueConstraint["pattern"]
+                    };
+                }
+            }
         }
 
-        return ResponseCode.SUCCESS;
+        if (this.hasConstraint("values")) {
+            let values = this.getConstraint("values").map(value => resolveValue.call(this, value)).flat();
+
+            let found = false;
+            for (let i = 0; !found && i < values.length; i++) {
+                const val = values[i];
+
+                if (isObject(val)) {
+                    found = val.value === value;
+                } else {
+                    found = val === value;
+                }
+            }
+
+            if (!found) {
+                return {
+                    code: ResponseCode.INVALID_VALUE,
+                    ctx: values
+                };
+            }
+        }
+
+        return {
+            code: ResponseCode.SUCCESS
+        };
     },
 
     build() {
@@ -223,6 +240,7 @@ const _StringConcept = {
 
         var copy = {
             name: this.name,
+            nature: this.nature,
             value: this.getValue()
         };
 
@@ -244,6 +262,23 @@ const _StringConcept = {
         return this.value;
     }
 };
+
+
+function resolveValue(value) {
+    if (value.type === "reference") {
+        let concepts = [];
+
+        if (this.model.isPrototype("model concept")) {
+            concepts = this.model.getConceptsByPrototype("model concept");
+        }
+
+        let values = concepts.map(c => c.getChildren(this.name)).flat().map(c => c.value);
+
+        return values;
+    }
+
+    return value;
+}
 
 export const StringConcept = Object.assign(
     Object.create(Concept),

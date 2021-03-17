@@ -82,7 +82,7 @@ const BaseStatic = {
         return true;
     },
     delete() {
-        this.environment.notify("This element cannot be removed", NotificationType.WARNING, 2000);
+        this.environment.notify("This element cannot be removed", NotificationType.WARNING, 1500);
         shake(this.element);
     },
     /**
@@ -126,7 +126,10 @@ const BaseStatic = {
      * @param {HTMLElement} target 
      */
     deleteHandler(target) {
-        console.warn(`DELETE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        this.environment.notify("This element cannot be removed", NotificationType.WARNING, 1500);
+        shake(this.element);
+
+        return false;
     },
     /**
      * Handles the `backspace` command

@@ -8,6 +8,7 @@ function init(model, schema) {
         object: { value: "concept" },
         model: { value: model },
         name: { value: schema.name },
+        base: { value: schema.base },
         schema: { value: schema, writable: true },
     };
 }

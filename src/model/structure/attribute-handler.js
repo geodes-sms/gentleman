@@ -92,10 +92,20 @@ export const AttributeHandler = {
             throw new Error(`Attribute not found: The concept '${this.name}' does not contain an attribute named '${name}'`);
         }
 
-        const schema = this.attributeSchema.find(attr => attr.name === name);
+        if (this.isAttributeCreated(name)) {
+            let attribute = this.getAttributeByName(name);
+
+            if (_value) {
+                attribute.target.initValue(_value);
+            }
+
+            return attribute;
+        }
+
+        const schema = this.getAttributeSchema(name);
 
         let value = this.model.getValue(_value);
-        
+
         var attribute = Attribute.create(this, schema).init(value);
 
         this.addAttribute(attribute);
@@ -140,9 +150,9 @@ export const AttributeHandler = {
      * @returns {boolean}
      */
     isAttributeRequired(name) {
-        const attribute = this.attributeSchema.find(attr => attr.name === name);
+        const schema = this.getAttributeSchema(name);
 
-        return valOrDefault(attribute.required, true);
+        return valOrDefault(schema.required, true);
     },
     /**
      * Returns a value indicating whether the attribute has been created

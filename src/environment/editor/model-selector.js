@@ -1,6 +1,6 @@
 import {
     createDocFragment, createDiv, createSpan, createUnorderedList, createListItem,
-    createH4, createInput, createButton, removeChildren, isHTMLElement, toBoolean, 
+    createH4, createInput, createButton, removeChildren, isHTMLElement, toBoolean,
     isNullOrUndefined, createEmphasis, createI, createHeader, formatCase,
 } from 'zenkai';
 import { show, hide, Key, Events } from '@utils/index.js';
@@ -77,7 +77,7 @@ export const EditorSelector = {
 
         this.dataList.forEach(data => {
             // Create header
-            const { concept } = data;
+            const { concept, accept } = data;
 
             // Create header
             let title = createH4({
@@ -87,7 +87,13 @@ export const EditorSelector = {
             if (concept) {
                 title.append(createSpan({
                     class: ["editor-selector__title-concept"]
-                },  (concept.name || concept.prototype).replace(" ", "-").toLowerCase()));
+                }, (concept.name || concept.prototype).replace(" ", "-").toLowerCase()));
+            }
+
+            if (accept) {
+                title.append(createSpan({
+                    class: ["editor-selector__title-accept"]
+                }, accept.name));
             }
 
             let btnCollapse = createButton({
@@ -163,7 +169,7 @@ export const EditorSelector = {
 
 const PreviewHandler = {
     "projection": (projection) => {
-        const { concept, tags =[] } = projection;
+        const { concept, tags = [] } = projection;
 
         const fragment = createDocFragment();
 
@@ -191,7 +197,7 @@ const PreviewHandler = {
             }, "null");
         }
 
-        const { name, value, attributes } = conceptValue;
+        const { name, nature, value, attributes } = conceptValue;
 
         if (["string", "number", "boolean"].includes(name)) {
             return createSpan({
@@ -211,6 +217,16 @@ const PreviewHandler = {
             });
 
             return list;
+        } else if (nature === "prototype") {
+            let fragment = createDocFragment();
+
+            let target = createSpan({
+                class: ["editor-selector__preview-text"]
+            }, value.name);
+
+            fragment.append(target, PreviewHandler.value(value));
+
+            return fragment;
         } else if (attributes) {
             let list = createUnorderedList({
                 class: ["bare-list", "editor-selector__preview-attributes"]
@@ -246,14 +262,21 @@ const PreviewHandler = {
             });
 
             concept.attributes.forEach(attr => {
-                const { name, required, target } = attr;
+                const { name, required, target = {} } = attr;
 
                 let attrElement = createSpan({
                     class: ["editor-selector__preview-text", "editor-selector__preview-text--attribute"]
                 }, name);
+                
                 let targetElement = createSpan({
                     class: ["editor-selector__preview-text", "editor-selector__preview-text--target"]
                 }, target.name);
+
+                if (target.accept) {
+                    targetElement.append(createSpan({
+                        class: ["editor-selector__preview-text--target-accept"]
+                    }, target.accept.name));
+                }
 
                 /** @type {HTMLElement} */
                 let item = createListItem({
@@ -273,6 +296,11 @@ const PreviewHandler = {
 
             fragment.append(attrList);
         }
+
+        return fragment;
+    },
+    "resource": (resource) => {
+        const fragment = createDocFragment();
 
         return fragment;
     }
@@ -344,5 +372,22 @@ const ActionHandler = {
         fragment.append(btnCreate);
 
         return fragment;
-    }
+    },
+    "resource": (file) => {
+        const fragment = createDocFragment();
+        console.log(file);
+
+        let btnDelete = createButton({
+            class: ["btn", "editor-selector__action-bar-button", "editor-selector__action-bar-button--delete"],
+            dataset: {
+                action: "delete-resource",
+                id: file.name,
+            }
+        }, "Delete");
+
+
+        fragment.append(btnDelete);
+
+        return fragment;
+    },
 };

@@ -36,6 +36,8 @@ export const EditorSection = {
     editor: null,
     /** @type {number} */
     valueCount: 0,
+    /** @type {number} */
+    fileCount: 0,
 
     /** @type {HTMLElement} */
     container: null,
@@ -53,11 +55,15 @@ export const EditorSection = {
     /** @type {HTMLElement} */
     tabProjection: null,
     /** @type {HTMLElement} */
+    tabResource: null,
+    /** @type {HTMLElement} */
     tabConceptNotification: null,
     /** @type {HTMLElement} */
     tabValueNotification: null,
     /** @type {HTMLElement} */
     tabProjectionNotification: null,
+    /** @type {HTMLElement} */
+    tabResourceNotification: null,
     /** @type {HTMLElement} */
     activeTab: null,
     /** @type {string} */
@@ -88,6 +94,10 @@ export const EditorSection = {
 
         this._projectionSelector = createModelSelector("projection", this.editor).init(
             () => this.editor.hasProjectionModel ? this.editor.projectionModel.schema.filter(p => p.type !== "template") : []
+        );
+
+        this._resourceSelector = createModelSelector("resource", this.editor).init(
+            () => this.editor.resources
         );
 
         return this;
@@ -130,12 +140,17 @@ export const EditorSection = {
         });
         this.tabProjection.prepend(this.tabProjectionNotification);
 
-        this.tabs.append(this.tabConcept, this.tabValue);
+        this.tabResource = createTab("resource");
+        this.tabResourceNotification = createI({
+            class: ["editor-selector__notification", "hidden"],
+        });
+        this.tabResource.prepend(this.tabResourceNotification);
+
+        this.tabs.append(this.tabConcept, this.tabValue, this.tabResource);
 
         this.activeTab = this.tabs.children[0];
         this.activeTab.classList.add("selected");
         this.activeTabValue = this.activeTab.dataset.value;
-
 
         this.btnClose = createButton({
             class: ["btn", "btn-close"],
@@ -190,6 +205,10 @@ export const EditorSection = {
             this.body.append(this._projectionSelector.render());
         }
 
+        if (!isHTMLElement(this._resourceSelector.container)) {
+            this.body.append(this._resourceSelector.render());
+        }
+
         if (fragment.hasChildNodes()) {
             this.container.appendChild(fragment);
 
@@ -205,7 +224,7 @@ export const EditorSection = {
             this.title.textContent = `Editor – ${this.editor.config["name"]}`;
         }
 
-        if(this.editor.concept) {
+        if (this.editor.concept) {
             this.title.textContent = `Editor – ${this.editor.config["name"]} : ${this.editor.concept["name"]}`;
             hide(this.tabs);
             hide(this.body);
@@ -231,6 +250,13 @@ export const EditorSection = {
             show(this.tabValueNotification);
         } else {
             hide(this.tabValueNotification);
+        }
+
+        if (this.fileCount > 0) {
+            this.tabResourceNotification.textContent = this.fileCount;
+            show(this.tabResourceNotification);
+        } else {
+            hide(this.tabResourceNotification);
         }
 
         return this;
@@ -316,6 +342,8 @@ export const EditorSection = {
                 // this.editor.manager.createEditor().init().initProjection([JSON.parse(projection)]).open();
             } else if (action === "create") {
                 this.editor.createInstance(concept);
+            }else if (action === "delete-resource") {
+                this.editor.removeResource(id);
             }
         });
 
@@ -327,6 +355,16 @@ export const EditorSection = {
         Events.on("value.removed", (value) => {
             this.refresh();
         });
+
+
+        Events.on("resource.added", (value) => {
+            this.fileCount++;
+            this.refresh();
+        });
+
+        Events.on("resource.removed", (value) => {
+            this.refresh();
+        });
     }
 };
 
@@ -334,6 +372,7 @@ const SelectorHandler = {
     "concept": SelectorConceptHandler,
     "projection": SelectorProjectionHandler,
     "value": SelectorValueHandler,
+    "resource": SelectorResourceHandler,
 };
 
 /**
@@ -351,6 +390,7 @@ function SelectorConceptHandler() {
     // update other selectors
     this._valueSelector.hide();
     this._projectionSelector.hide();
+    this._resourceSelector.hide();
 }
 
 /**
@@ -370,6 +410,7 @@ function SelectorValueHandler() {
     // update other selectors
     this._conceptSelector.hide();
     this._projectionSelector.hide();
+    this._resourceSelector.hide();
 }
 
 /**
@@ -386,6 +427,27 @@ function SelectorProjectionHandler() {
 
     // update other selectors
     this._conceptSelector.hide();
+    this._valueSelector.hide();
+    this._resourceSelector.hide();
+}
+
+/**
+ * Selector handler for resource menu item
+ * @returns {HTMLElement}
+ * @this {EditorSection}
+ */
+function SelectorResourceHandler() {
+    this._resourceSelector.update();
+
+    this.fileCount = 0;
+
+    // update current selector
+    this._resourceSelector.show();
+    hide(this.tabResourceNotification);
+
+    // update other selectors
+    this._conceptSelector.hide();
+    this._projectionSelector.hide();
     this._valueSelector.hide();
 }
 

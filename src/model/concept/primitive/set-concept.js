@@ -9,11 +9,9 @@ const _SetConcept = {
         this.parent = args.parent;
         this.ref = args.ref;
         this.accept = this.schema.accept;
-        this.path = this.schema.path;
-        this.values = valOrDefault(this.schema.values, []);
-        this.alias = this.schema.alias;
         this.description = this.schema.description;
-        this.cardinality = this.schema.cardinality;
+        this.constraint = this.schema.constraint;
+
         this.value = [];
 
         this.initObserver();
@@ -26,30 +24,28 @@ const _SetConcept = {
         this.removeAllElement();
 
         if (isNullOrUndefined(args)) {
-            if (this.cardinality) {
-                const { min = 0 } = this.cardinality;
+            let remaining = valOrDefault(getMin.call(this), 0);
 
-                for (let i = 0; i < min; i++) {
-                    this.createElement();
-                }
+            for (let i = 0; i < remaining; i++) {
+                this.createElement();
             }
 
             return this;
         }
 
-        const { id, value } = args;
+        const { id = "", value } = args;
+
+        if (id.length > 10) {
+            this.id = id;
+        }
 
         for (let i = 0; i < value.length; i++) {
             this.createElement(value[i]);
         }
 
-        if (this.cardinality) {
-            const { min = 0 } = this.cardinality;
-
-            let remaining = min - value.length;
-            for (let i = 0; i < remaining; i++) {
-                this.createElement();
-            }
+        let remaining = valOrDefault(getMin.call(this), 0) - value.length;
+        for (let i = 0; i < remaining; i++) {
+            this.createElement();
         }
 
 
@@ -163,7 +159,7 @@ const _SetConcept = {
         return this;
     },
     removeElement(element) {
-        var index = this.value.indexOf(element.id);
+        let index = this.value.indexOf(element.id);
 
         if (index === -1) {
             return false;
@@ -172,12 +168,14 @@ const _SetConcept = {
         return this.removeElementAt(index);
     },
     removeElementAt(index) {
-        // if (this.value.length === this.min) {
-        //     return {
-        //         message: `The element could not be removed. The set needs at least ${this.min} element.`,
-        //         success: false,
-        //     };
-        // }
+        let min = valOrDefault(getMin.call(this), 0);
+
+        if (this.value.length <= min) {
+            return {
+                message: `The set needs at least ${min} element.`,
+                success: false,
+            };
+        }
 
         if (!Number.isInteger(index) || index < 0) {
             return {
@@ -186,7 +184,7 @@ const _SetConcept = {
             };
         }
 
-        var concept = this.getElementAt(index);
+        let concept = this.getElementAt(index);
 
         if (isNullOrUndefined(concept)) {
             return {
@@ -232,14 +230,6 @@ const _SetConcept = {
             ref: this,
         };
 
-        // var element = null;
-
-        // if (this.model.isPrototype(this.accept.name)) {
-        //     element = { type: "prototype", name: this.accept.name };
-        // } else {
-        //     element = this.model.createConcept(this.accept, options);
-        // }
-
         const element = this.model.createConcept(this.accept, options);
 
         this.addElement(element);
@@ -275,8 +265,10 @@ const _SetConcept = {
         return this.getValue().map(concept => concept.build());
     },
     copy(save = true) {
-        var copy = {
+        const copy = {
             name: this.name,
+            accept: this.accept,
+            nature: this.nature,
             value: this.exportValue()
         };
 
@@ -291,7 +283,7 @@ const _SetConcept = {
             id: this.id,
             name: this.name,
             root: this.isRoot(),
-            value: this.getValue().map(concept => concept.export())
+            value: this.value,
         };
     },
     toString() {
@@ -312,6 +304,49 @@ function resolveAccept(accept) {
     return candidates;
 }
 
+function getMin() {
+    if (!this.hasConstraint("cardinality")) {
+        return null;
+    }
+
+    const cardinality = this.getConstraint("cardinality");
+
+    const { type } = cardinality;
+
+    if (type === "range") {
+        const { min } = cardinality[type];
+
+        return min.value;
+    } else if (type === "fixed") {
+        const { value } = cardinality[type];
+
+        return value;
+    }
+
+    return null;
+}
+
+function getMax() {
+    if (!this.hasConstraint("cardinality")) {
+        return null;
+    }
+
+    const cardinality = this.getConstraint("cardinality");
+
+    const { type } = cardinality;
+
+    if (type === "range") {
+        const { max } = cardinality[type];
+
+        return max.value;
+    } else if (type === "fixed") {
+        const { value } = cardinality[type];
+
+        return value;
+    }
+
+    return null;
+}
 
 
 export const SetConcept = Object.assign(

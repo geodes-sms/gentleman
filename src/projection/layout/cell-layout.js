@@ -116,6 +116,8 @@ export const BaseCellLayout = {
 
                 cell.style.display = "table-cell";
 
+                StyleHandler.call(this, cell, cellContent.style);
+
                 row.append(cell);
             }
 

@@ -185,6 +185,25 @@
                 color: #333;
             }
                 .editor-selector__title-concept:before { content: "@"; }
+            
+            .editor-selector__title-accept {
+                margin-left: 2px;
+                font-size: 0.95em;
+                white-space: nowrap;
+                text-transform: lowercase;
+                font-weight: 400; font-style: italic;
+                color: #555;
+            }
+                .editor-selector__title-accept:before,
+                .editor-selector__title-accept:after {
+                    font: bold 1.05em Consolas, 'Courier New', Courier, monospace; 
+                    color: #638AFF; 
+                }
+                .editor-selector__title-accept:before { content: "{"; }
+                .editor-selector__title-accept:after { content: "}"; }
+
+            
+                .editor-selector__title-accept:after { content: "}"; font-family: Consolas, 'Courier New', Courier, monospace;}
     
         .editor-selector__preview {
             padding: 2px 6px;
@@ -231,6 +250,26 @@
                 font-weight: 500;
                 color: #009473;
             }
+
+            .editor-selector__preview-text--target {
+                font-weight: 500;
+            }
+
+            .editor-selector__preview-text--target-accept {
+                margin-left: 2px;
+                font-size: 0.95em;
+                white-space: nowrap;
+                text-transform: lowercase;
+                font-weight: 400; font-style: italic;
+                color: #555;
+            }
+                .editor-selector__preview-text--target-accept:before,
+                .editor-selector__preview-text--target-accept:after {
+                    font: bold 1.05em Consolas, 'Courier New', Courier, monospace; 
+                    color: #638AFF; 
+                }
+                .editor-selector__preview-text--target-accept:before { content: "{"; }
+                .editor-selector__preview-text--target-accept:after { content: "}"; }
     
             .editor-selector__preview-text--attribute + .editor-selector__preview-text:before {
                 content: ": ";

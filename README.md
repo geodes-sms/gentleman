@@ -8,20 +8,23 @@ Gentleman aims to **to close the gap between models and domain experts**.
 |:-------------:|:-------------:|
 | ![Gentleman Screenshot](https://geodes-sms.github.io/gentleman/assets/images/concept.png "Concept definition")  | ![Gentleman Screenshot](https://geodes-sms.github.io/gentleman/assets/images/projection.png "projection definition") |
 
-> **Projectional-editing characteristics**
-> 1. No parser needed: the user manipulates the AST directly (through projections)
-> 2. Support of various notations: tables, math formulas, graphics...
-> 3. Composition of any language without introducing syntactic ambiguities
-
 ## Workflow
 
-1. **Design (Language enginneer)**
-   1. Create a metamodel, by defining your DSL concepts
-   2. Create a set of projections to interact with your DSL concepts
+### **Design**
 
-2. **Model (Domain expert)**
-   1. Create instances of a model with the chosen projections
-   2. Personnalize freely the presentation of your instance
+The *design* workflow includes every activity required to build an editor
+
+- `[M]` Create a metamodel
+- `[P]` Create projections
+- `[E]` Configure the editor
+
+### **Model**
+
+The *model* workflow begins with every design artefacts (M.P.E.) in place
+
+- `[m]` Create a model
+- `[p]` Manipulate projections
+- `[e]` Personnalize the editor
 
 ## Features
 
@@ -47,7 +50,8 @@ Take a look at the [demonstration (MODELS 2020) and see the tool in action](http
         ...
         <div data-gentleman="editor"></div>
         ...
-        <script src="gentleman.js"></script>
+        <script src="gentleman.mod.js"></script>  <!-- optional -->
+        <script src="gentleman.app.js"></script>
     </body>
 </html>
 ```
@@ -62,29 +66,82 @@ var editor = Gentleman.createEdiotr();
 editor.init(CONCEPT_MODEL, PROJECTION_MODEL)
 ```
 
-# Installation
-
-⚠️ **Gentleman is not recommended to be used in production.** ⚠️
-
-## Building the Code
-
-To build the code, follow these steps.
-
-1. Ensure that [NodeJS](http://nodejs.org/) is installed. This provides the platform on which the build tooling runs.
-2. From the project folder, execute the following command:
-
-```
-$ npm install
-```
-
 # Documentation
 
 ## Editor
 
 The editor configuration is done through a JSON file.
+It can be used to define the style of the editor components and register actions that will be made available in the menu.
 
+### Base config
 
-<!-- You can read the documentation for Gentleman [here](https://geodes-sms.github.io/gentleman/docs). If you would like to help improve this documentation, the source for many of the docs can be found in the doc folder within this repository.  -->
+- **name**: name of the editor
+- **root**: list of concepts made available for direct instanciation
+- **header**: header section config
+  - **css**: css classes added to the header container
+- **body**: body section config
+  - **css**: css classes added to the body container
+- **resource**: resource config
+  - **css**: css classes added to the body container
+- **menu**: menu config
+  - **actions**: list of actions available in the menu
+    - **name**: name of the action.
+    - **content**: content displayed in the menu
+    - **downloadable**: flag to indicate whether the result is downloadable
+    - **require**: list of resource dependancies
+  - **css**: css classes added to the menu container
+
+``` json
+{
+    "editor": {
+        "name": "...",
+        "root": ["..."],
+        "header": {
+            "css": ["..."]
+        },
+        "body": {
+            "css": ["..."]
+        },
+        "menu": {
+            "actions": [
+                { "name": "...", "content": "...", "downloadable": true }
+            ],
+            "css": ["..."]
+        }
+    }
+}
+
+```
+
+### Register actions
+
+``` json
+{
+    "menu": {
+        "actions": [
+            { "name": "...", "content": "...", "downloadable": true }
+        ],
+        "css": ["editor-menu"]
+    }
+}
+```
+
+### Require resource
+
+``` json
+{
+    "resource": {
+        "files": [
+            { "name": "...", "required": true }
+        ],
+        "css": ["editor-menu"]
+    }
+}
+```
+
+## Concept
+
+Gentleman defines a metamodel though concepts.
 
 ## Projection
 
@@ -106,21 +163,22 @@ They can be customized, individually or globally, directly with *style* rules or
 ### Layout
 
 A layout element is used to organize elements presented in the GUI.
-Predefined layouts:
+Gentleman defines the following layouts:
 
-- Wrap
-- Stack
-- Cell
+- WrapLayout
+- StackLayout
+- CellLayout
 
 ### Field
 
-A field element is used to receive and process input and output
+A field element is used to receive and process input and output.
+Gentleman defines the following fields:
 
-- Text
-- Binary
-- Choice
-- List
-- Table
+- TextField
+- BinaryField
+- ChoiceField
+- ListField
+- TableField
 
 ### Static
 
@@ -130,6 +188,24 @@ A static element is used to add element that do not accept any input and may onl
 - Image
 - Link
 - HTML
+
+# Installation
+
+⚠️ **Gentleman is not recommended to be used in production.** ⚠️
+
+## Building the Code
+
+To build the code, follow these steps.
+
+1. Ensure that [NodeJS](http://nodejs.org/) is installed. This provides the platform on which the build tooling runs.
+2. From the project folder, execute the following command:
+
+```
+$ npm install
+```
+
+
+<!-- You can read the documentation for Gentleman [here](https://geodes-sms.github.io/gentleman/docs). If you would like to help improve this documentation, the source for many of the docs can be found in the doc folder within this repository.  -->
   
 # Publication
 
@@ -141,8 +217,8 @@ This distribution contains the following files and folders:
 
 - src: the source code
 - demo: contains some metamodels
-- doc: the source code documentation
 - assets: contains static files
+<!-- - doc: the source code documentation -->
 
 # License
 

@@ -26,7 +26,7 @@ const _BaseConcept = {
         }
 
         const { id = "", attributes = [] } = args;
-
+        
         if (id.length > 10) {
             this.id = id;
         }
@@ -34,16 +34,7 @@ const _BaseConcept = {
         attributes.forEach(attr => {
             const { name, id, value } = attr;
 
-            let attribute = this.getAttributeByName(name);
-
-            if (value) {
-                attribute.target.initValue(value);
-            } else if (id) {
-                let _value = this.model.getValue(id);
-                if (_value) {
-                    attribute.target.initValue(_value);
-                }
-            }
+            this.createAttribute(name, value);
         });
 
         return true;

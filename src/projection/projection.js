@@ -30,7 +30,7 @@ const Projection = {
     handlers: null,
 
     init(args) {
-        this.containers = [];
+        this.containers = new Map();
         this.attributes = [];
         this.params = [];
         this.handlers = {};
@@ -48,7 +48,7 @@ const Projection = {
     environment: null,
     /** @type {Projection} */
     parent: null,
-    /** @type {HTMLElement[]} */
+    /** @type {Map} */
     containers: null,
     /** @type {Layout|Field} */
     element: null,
@@ -77,7 +77,7 @@ const Projection = {
         return this.schema[valOrDefault(index, this.index)];
     },
     getContainer(index) {
-        return this.containers[valOrDefault(index, this.index)];
+        return this.containers.get(valOrDefault(index, this.index));
     },
     getStyle() {
         const { style } = this.getSchema();
@@ -169,9 +169,12 @@ const Projection = {
 
         if (message === "delete") {
             this.concept = null;
-            
+
             this.containers.forEach(container => {
-                removeChildren(container).remove();
+                removeChildren(container);
+                if (isHTMLElement(container)) {
+                    container.remove();
+                }
             });
 
             this.model.removeProjection(this.id);
@@ -203,7 +206,7 @@ const Projection = {
                         const render = projection.render();
                         StyleHandler.call(this, render, schema.style);
 
-                        projection.element.parent = this.element;
+                        projection.element.parent = attr.parent;
                         attr.element = render;
 
                         if (attr.placeholder) {
@@ -292,11 +295,11 @@ const Projection = {
             this.element.focusable = true;
         }
 
-        if(!this.focusable) {
+        if (!this.focusable) {
             this.element.focusable = false;
         }
 
-        if(this.readonly) {
+        if (this.readonly) {
             this.element.readonly = true;
         }
 
@@ -304,6 +307,12 @@ const Projection = {
 
         if (!isNode(container)) {
             throw new Error("Projection element container could not be created");
+        }
+
+        if (this.element.containerless) {
+            this.containers.set(this.index, container);
+
+            return container;
         }
 
         Object.assign(container.dataset, {
@@ -316,13 +325,17 @@ const Projection = {
             /** @type {HTMLElement} */
             let btnDelete = createButton({
                 class: ["btn", "structure__btn-delete"],
-                title: `Delete`
+                title: `Delete`,
+                dataset: {
+                    "action": "delete"
+                }
             });
 
             btnDelete.addEventListener('click', (event) => {
                 this.concept.delete();
             });
 
+            container.dataset.deletable = true;
             container.classList.add("has-toolbar");
             container.prepend(btnDelete);
         }
@@ -338,17 +351,11 @@ const Projection = {
         // }
 
 
-        this.addContainer(container);
+        this.containers.set(this.index, container);
 
         return container;
     },
-    addContainer(container) {
-        if (!isHTMLElement(container)) {
-            throw new TypeError("Bad request: Missing container");
-        }
 
-        this.containers.push(container);
-    },
     refresh() {
         if (this.editing) {
             this.containers.forEach(container => {
@@ -367,10 +374,10 @@ const Projection = {
             return;
         }
 
-        var currentContainer = this.getContainer();
+        let currentContainer = this.getContainer();
 
         this.index = valOrDefault(index, (this.index + 1) % this.schema.length);
-        var container = this.getContainer();
+        let container = this.getContainer();
 
         if (!isHTMLElement(container)) {
             container = this.render();
@@ -378,11 +385,11 @@ const Projection = {
 
         currentContainer.replaceWith(container);
 
-        this.element = this.resolveElement(this.getContainer());
+        this.element = this.resolveElement(container);
 
-        if (this.parent) {
-            this.parent.update("view.changed", container, this);
-        }
+        // if (this.parent) {
+        //     this.parent.update("view.changed", container, this);
+        // }
 
         this.focus();
 
@@ -400,54 +407,6 @@ const Projection = {
     },
 
     bindEvents() {
-        if (this.schema.length > 1) {
-            if (!isHTMLElement(this.btnPrev)) {
-                this.btnPrev = createButton({
-                    type: "button",
-                    class: ["btn", "btn-projection", "btn-projection--previous", "hidden"],
-                    disabled: this.index <= 0,
-                    dataset: {
-                        context: "projection",
-                        action: "previous"
-                    }
-                }, "Previous Projection");
-            }
 
-            if (!isHTMLElement(this.btnNext)) {
-                this.btnNext = createButton({
-                    type: "button",
-                    class: ["btn", "btn-projection", "btn-projection--next", "hidden"],
-                    disabled: this.index >= this.schema.length - 1,
-                    dataset: {
-                        context: "projection",
-                        action: "next"
-                    }
-                }, "Next Projection");
-            }
-
-            this.container.addEventListener('click', (event) => {
-                var target = event.target;
-                var previousContainer = this.container;
-                var container = null;
-
-                hide(previousContainer);
-                if (target === this.btnPrev) {
-                    this.index -= 1;
-                    container = this.render();
-                    insertBeforeElement(previousContainer, container);
-
-                } else if (target === this.btnNext) {
-                    this.index += 1;
-                    container = this.render();
-                    insertAfterElement(previousContainer, container);
-                }
-                show(this.container);
-
-                this.btnPrev.disabled = this.index <= 0;
-                this.btnNext.disabled = this.index >= this.schema.length - 1;
-            });
-
-            this.container.append(this.btnNext, this.btnPrev);
-        }
     }
 };

@@ -52,11 +52,8 @@ const _Concept = {
 
 
         this.initObserver();
-
-        if (this.nature !== "fake") {
-            this.initAttribute();
-            this.initValue(args.value);
-        }
+        this.initAttribute();
+        this.initValue(args.value);
 
         return this;
     },
@@ -126,9 +123,17 @@ const _Concept = {
      * Gets the value of a property
      * @param {string} name 
      */
-    getProperty(name) {
+    getProperty(name, meta) {
         if (name === "refname") {
             return this.ref.name;
+        }
+
+        if (name === "name") {
+            return this.name;
+        }
+
+        if (name === "value") {
+            return this.value;
         }
 
         let propSchema = valOrDefault(this.schema.properties, []);
@@ -141,7 +146,7 @@ const _Concept = {
         const { type, value } = property;
 
         if (type === "string") {
-            return value.toString();
+            return StringProperty.call(this, value);
         }
 
         if (type === "number") {
@@ -153,6 +158,36 @@ const _Concept = {
         }
 
         return value;
+    },
+
+
+    /**
+     * Get constraint values
+     * @returns {string[]}
+     */
+    getConstraint(name) {
+        if (!this.hasConstraint(name)) {
+            return undefined;
+        }
+
+        return this.constraint[name];
+    },
+
+    /**
+     * Verifies if concept has constraint
+     * @param {string} name
+     * @returns {string[]}
+     */
+    hasConstraint(name) {
+        if (isNullOrUndefined(this.constraint)) {
+            return false;
+        }
+
+        if (isNullOrUndefined(name)) {
+            return true;
+        }
+
+        return hasOwn(this.constraint, name);
     },
 
     /**
@@ -255,7 +290,7 @@ const _Concept = {
         } else {
             this.getAttributes().forEach(attr => {
                 if (attr.target.name === name) {
-                    children.push(...attr.target);
+                    children.push(attr.target);
                 } else {
                     children.push(...attr.target.getChildren(name));
                 }
@@ -282,7 +317,16 @@ const _Concept = {
 
     delete(force = false) {
         if (!force) {
-            const result = this.getParent().removeAttribute(this.ref.name);
+            const { object } = this.ref;
+
+            let result = { success: true };
+
+            if (object === "concept") {
+                result = this.getParent().removeValue(this);
+            } else if (object === "attribute") {
+                result = this.getParent().removeAttribute(this.ref.name);
+            }
+
 
             if (!result.success) {
                 return result;
@@ -293,8 +337,16 @@ const _Concept = {
             child.delete(true);
         });
 
-        if (this.model.removeConcept(this.id)) {
-            this.notify("delete");
+        try {
+            if (this.model.removeConcept(this.id)) {
+                this.notify("delete");
+            }
+        } catch (error) {
+            console.log(this);
+            return {
+                message: `Concept not found`,
+                success: false,
+            };
         }
 
         return {
@@ -308,9 +360,10 @@ const _Concept = {
         return isNullOrUndefined(this.parent);
     },
 
-    copy() {
+    copy(save = true) {
         var copy = {
-            name: this.name
+            name: this.name,
+            nature: this.nature,
         };
 
         var attributes = [];
@@ -323,7 +376,9 @@ const _Concept = {
 
         copy.attributes = attributes;
 
-        this.model.addValue(copy);
+        if (save) {
+            this.model.addValue(copy);
+        }
 
         return copy;
     },
@@ -356,6 +411,57 @@ const _Concept = {
         return output;
     },
 };
+
+function StringProperty(value) {
+    if (isString(value)) {
+        return value;
+    }
+
+    const { type } = value;
+    switch (type) {
+        case "concat":
+            return concatHandler.call(this, value.concat);
+
+        default:
+            break;
+    }
+}
+
+
+function resolveTerm(term, defValue) {
+    const { type } = term;
+
+    if (type === "string") {
+        return StringProperty.call(this, term.value);
+    }
+
+    if (type === "property") {
+        return this.getProperty(term.name);
+    }
+
+    if (defValue) {
+        return defValue;
+    }
+
+    return term;
+}
+
+/**
+ * Check if two terms are equal
+ * @param {*[]} terms 
+ */
+function concatHandler(terms, separator = "") {
+    if (!Array.isArray(terms)) {
+        throw new TypeError("Terms need to be an array");
+    }
+
+    if (terms.length < 2) {
+        return resolveTerm.call(this, terms[0]);
+    }
+
+    return terms.map(term => resolveTerm.call(this, term)).join(separator);
+}
+
 
 export const Concept = Object.assign(
     _Concept,

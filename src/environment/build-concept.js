@@ -62,7 +62,7 @@ export function buildConceptHandler(model) {
         return false;
     }
 
-    this.notify("<strong>Build succeeded</strong>: The concept model was successfully built", NotificationType.SUCCESS);
+    this.notify("The concept model was <strong>successfully</strong> built", NotificationType.SUCCESS, 2000);
     console.log(result);
 
     return result;
@@ -73,7 +73,7 @@ function buildConcept(concept) {
 
     const name = getName(concept);
     const description = getDescription(concept);
-    const nature = concept.getBuildProperty(PROP_NATURE);
+    const nature = concept.getProperty(PROP_NATURE);
     const attributes = [];
     const properties = [];
 
@@ -190,7 +190,7 @@ function buildAttribute(attribute) {
  * @param {*} attribute
  */
 function buildTarget(target) {
-    let name = target.getBuildProperty("name");
+    let name = target.getProperty("cname");
 
     if (name === "concept") {
         name = getName(getReference(target, 'concept'));
@@ -210,49 +210,73 @@ function buildTarget(target) {
         }
     }
 
-    if (hasAttr(target, "scope") && hasValue(target, "scope")) {
-        result["scope"] = getName(getReference(target, 'scope'));
-    }
-
-    ["default", "rel", "ordered", "predefined", "pattern"].filter(prop => hasAttr(target, prop) && hasValue(target, prop))
+    ["default", "rel"].filter(prop => hasAttr(target, prop) && hasValue(target, prop))
         .forEach(prop => {
             result[prop] = getValue(target, prop);
         });
 
-    ["length", "value", "cardinality"].filter(prop => hasAttr(target, prop) && hasValue(target, prop))
+
+    if (hasAttr(target, "constraint")) {
+        result["constraint"] = buildConstraint.call(this, getAttr(target, "constraint"));
+    }
+
+    return result;
+}
+
+function buildConstraint(constraint) {
+    const result = {};
+
+    if (hasAttr(constraint, "scope") && hasValue(constraint, "scope")) {
+        result["scope"] = getName(getReference(constraint, 'scope'));
+    }
+
+    ["ordered", "pattern"].filter(prop => hasAttr(constraint, prop) && hasValue(constraint, prop))
         .forEach(prop => {
-            let constraint = getValue(target, prop);
+            result[prop] = getValue(constraint, prop);
+        });
+
+    ["length", "value", "cardinality"].filter(prop => hasAttr(constraint, prop) && hasValue(constraint, prop))
+        .forEach(prop => {
+            let numberConstraint = getValue(constraint, prop);
 
             let rules = {};
 
-            if (constraint.name === "number constraint value") {
-                if (hasValue(constraint, "value")) {
-                    rules["value"] = getValue(constraint, "value");
+            if (numberConstraint.name === "number constraint value") {
+                let fixed = {};
+
+                if (hasValue(numberConstraint, "value")) {
+                    fixed["value"] = getValue(numberConstraint, "value");
                 }
-            } else if (constraint.name === "number constraint range") {
-                let min = getAttr(constraint, "min");
+
+                rules["type"] = "fixed";
+                rules["fixed"] = fixed;
+            } else if (numberConstraint.name === "number constraint range") {
+                let range = {};
+
+                let min = getAttr(numberConstraint, "min");
                 if (hasValue(min, "value")) {
-                    rules["min"] = {
-                        "value": getValue(min, "value"),
-                        "included": getValue(min, "included"),
+                    range["min"] = {
+                        "value": getValue(min, "value")
                     };
                 }
 
-                let max = getAttr(constraint, "max");
+                let max = getAttr(numberConstraint, "max");
                 if (hasValue(max, "value")) {
-                    rules["max"] = {
-                        "value": getValue(max, "value"),
-                        "included": getValue(max, "included"),
+                    range["max"] = {
+                        "value": getValue(max, "value")
                     };
                 }
+
+                rules["type"] = "range";
+                rules["range"] = range;
             }
 
             result[prop] = rules;
 
         });
 
-    if (hasAttr(target, "values") && hasValue(target, "values")) {
-        result["values"] = getValue(target, "values", true);
+    if (hasAttr(constraint, "values") && hasValue(constraint, "values")) {
+        result["values"] = getValue(constraint, "values", true);
     }
 
     return result;

@@ -1,5 +1,7 @@
-import { isString, isNullOrUndefined, isObject, isNullOrWhitespace, isEmpty } from "zenkai";
-import { UUID } from "@utils/uuid.js";
+import {
+    isString, isNullOrUndefined, isObject, isNullOrWhitespace, isEmpty,
+    valOrDefault, toBoolean
+} from "zenkai";
 import { Concept } from "./concept.js";
 
 
@@ -62,7 +64,7 @@ const BasePrototypeConcept = {
 
     },
     setValue(_value) {
-        let value = _value.nature === "fake" ? _value.name : _value;
+        let value = _value;
 
         let result = this.validate(value);
 
@@ -85,15 +87,10 @@ const BasePrototypeConcept = {
         }
 
         if (this.value) {
-            this.value.getChildren().forEach(child => {
-                child.delete(true);
-                // this.model.removeConcept(this.value.id);
-            });
-
-            this.model.removeConcept(this.value.id);
-            this.value.notify("delete");
+            this.value.delete(true);
         }
 
+        this.target = concept;
         this.value = concept;
 
         this.notify("value.changed", this.value);
@@ -116,7 +113,7 @@ const BasePrototypeConcept = {
     hasValue() {
         return !isNullOrUndefined(this.value);
     },
-
+ 
     getCandidates() {
         if (this.candidates) {
             return this.candidates;
@@ -125,7 +122,7 @@ const BasePrototypeConcept = {
         this.candidates = resolveAccept.call(this, this.schema.accept).map(
             candidate => {
                 return {
-                    type: "meta-concept" ,
+                    type: "meta-concept",
                     name: candidate.name,
                 };
             }
@@ -172,16 +169,17 @@ const BasePrototypeConcept = {
         let value = this.model.getValue(_value);
 
         const options = {
-            parent: this.parent,
-            ref: this.ref,
+            parent: this,
+            ref: this,
         };
 
         if (value) {
             options.value = value;
         }
 
-        const schema = this.model.getCompleteModelConcept({ name: name });
-        const concept = this._createConcept(this.model, schema, options);
+        const concept = this.model.createConcept(name, options);
+        // const schema = this.model.getCompleteModelConcept({ name: name });
+        // const concept = this._createConcept(this.model, schema, options);
 
         concept.prototype = this;
 
@@ -230,6 +228,24 @@ const BasePrototypeConcept = {
             root: this.isRoot(),
             value: value,
         };
+    },
+    copy(save = true) {
+        var copy = {
+            name: this.name,
+            nature: this.nature,
+        };
+
+        if (this.hasValue()) {
+            let concept = this.getValue();
+
+            copy.value = concept.copy(false);
+        }
+
+        if (save) {
+            this.model.addValue(copy);
+        }
+
+        return copy;
     },
 };
 
