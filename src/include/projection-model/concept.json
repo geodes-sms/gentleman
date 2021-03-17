@@ -684,7 +684,7 @@
                     "target": {
                         "name": "string",
                         "constraint": {
-                            "values": ["text", "html", "property"]
+                            "values": ["raw", "html", "property"]
                         }
                     },
                     "value": "text"

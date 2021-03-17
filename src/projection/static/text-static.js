@@ -32,7 +32,7 @@ const BaseTextStatic = {
     init(args = {}) {
         Object.assign(this.schema, args);
 
-        const { contentType = "text", editable = false, focusable = valOrDefault(this.parent.schema.focusable, true) } = this.schema;
+        const { contentType = "raw", editable = false, focusable = valOrDefault(this.parent.schema.focusable, true) } = this.schema;
 
         this.contentType = contentType;
         this.editable = editable;

@@ -81,8 +81,6 @@ It can be used to define the style of the editor components and register actions
   - **css**: css classes added to the header container
 - **body**: body section config
   - **css**: css classes added to the body container
-- **resource**: resource config
-  - **css**: css classes added to the body container
 - **menu**: menu config
   - **actions**: list of actions available in the menu
     - **name**: name of the action.
@@ -115,6 +113,8 @@ It can be used to define the style of the editor components and register actions
 
 ### Register actions
 
+#### Declare action in the menu
+
 ``` json
 {
     "menu": {
@@ -126,22 +126,29 @@ It can be used to define the style of the editor components and register actions
 }
 ```
 
-### Require resource
+#### Define a handler for the action
 
-``` json
-{
-    "resource": {
-        "files": [
-            { "name": "...", "required": true }
-        ],
-        "css": ["editor-menu"]
+``` js
+  const handler = {
+      "preview-projection": function (target) {
+        this.triggerEvent({ "name": "build-projection" }, (pmodel) => {
+            ...
+        });
     }
-}
+  }
 ```
 
 ## Concept
 
 Gentleman defines a metamodel though concepts.
+
+### Attributes
+
+An attribute allows two concepts to communicate
+
+### Properties
+
+A property allows to define a value on a concept
 
 ## Projection
 
@@ -163,31 +170,110 @@ They can be customized, individually or globally, directly with *style* rules or
 ### Layout
 
 A layout element is used to organize elements presented in the GUI.
-Gentleman defines the following layouts:
 
-- WrapLayout
-- StackLayout
-- CellLayout
+#### WrapLayout
+
+The *WrapLayout* is the simplest of all the layouts. It groups its child elements in a container.
+
+- Properties
+  - **Containerless** `[boolean]`: indicates whether the elements are rendered without a container
+
+#### StackLayout
+
+The *StackLayout* adds control over one dimension. It arranges its child elements on either a vertical or a horizontal axis.
+
+- Properties
+  - **Orientation** `[string={horizontal|vertical}]` (*required*): indicates which direction the *StackLayout* should stack its children.
+
+#### FlexLayout
+
+The *FlexLayout* adds flexibility to the *StackLayout*. It offers the ability to wrap its children.
+
+- Properties
+  - **Orientation** `[string={row|column}]` (*required*): indicates which direction the *FlexLayout* should arrange its children.
+  - **Wrap** `boolean`: indicates whether a line can wrap its content on several lines.
+
+#### TableLayout
+
+The *TableLayout* adds control over two dimensions. It arranges its child elements on cells grouped in rows.
 
 ### Field
 
 A field element is used to receive and process input and output.
 Gentleman defines the following fields:
 
-- TextField
-- BinaryField
-- ChoiceField
-- ListField
-- TableField
+#### TextField
+
+The *TextField* can capture key input.
+
+- Potential targets
+  - String concept
+  - Number concept
+
+#### BinaryField
+
+The *BinaryField* can alternate between two states.
+
+- Potential targets
+  - Boolean concept
+  - Derivative concept with restricted values (enum)
+
+#### ChoiceField
+
+The *ChoiceField* can group related choices.
+
+- Potential targets
+  - Prototype concept
+  - Boolean concept
+  - Derivative concept with restricted values (enum)
+
+#### ListField
+
+The *ListField* can manage a collection of element.
+
+- Potential targets
+  - Set concept
+
+#### TableField
+
+The *TableField* can manage tabular data.
+
+- Potential targets
+  - Set concept
 
 ### Static
 
-A static element is used to add element that do not accept any input and may only react to changes in the environment.
+A static element is used to present static content.
 
-- Text
-- Image
-- Link
-- HTML
+#### Text
+
+The *Stactic text* is used to display textual content.
+
+- Properties
+  - **content** `[string]` (*required*): Defines how the text's content
+  - **contentType** `[string={raw|html}]`: Defines how the content should be processed
+
+#### Image
+
+The *Stactic image* is used to display images.
+
+- Properties
+  - **url** `[string]` (*required*): Defines the image's url
+  - **width** `[number]`: Defines the image width
+  - **height** `[number]`: Defines the image height
+
+#### Link
+
+The *Stactic link* is used to display links.
+
+- Properties
+  - **content** `[set:element]` (*required*): Defines link's displayed content
+  - **url** `[string]` (*required*): Defines the link's url
+  - **urlType** `[string={link|email|phone}]`: Defines how the link should be processed
+
+#### HTML
+
+The *Stactic HTML* is used to insert HTML Templates declared on the page.
 
 # Installation
 
@@ -198,10 +284,31 @@ A static element is used to add element that do not accept any input and may onl
 To build the code, follow these steps.
 
 1. Ensure that [NodeJS](http://nodejs.org/) is installed. This provides the platform on which the build tooling runs.
-2. From the project folder, execute the following command:
+2. From the project folder, execute the following command to install the dependencies
 
 ```
 $ npm install
+```
+
+### Development
+
+When working on the code, execute the following command
+
+```
+$ npm run start
+```
+
+This will start a development server (*webpack-dev-server*) that provides live reloading.
+
+### Production
+
+To deploy the code or test in a production environment, follow these steps.
+
+1. Ensure that you have updated [build file](scripts/build.js) with newly created css files
+2. From the project folder, execute the following command to build the code for production
+
+```
+$ npm run build
 ```
 
 
