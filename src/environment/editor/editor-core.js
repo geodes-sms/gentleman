@@ -1,10 +1,9 @@
 import {
-    createDocFragment, createSection, createDiv, createParagraph,
-    createAnchor, createInput, removeChildren, isHTMLElement, findAncestor,
-    isNullOrWhitespace, isNullOrUndefined, isEmpty, hasOwn, isFunction, valOrDefault,
-    copytoClipboard, toBoolean
+    createDocFragment, createSection, createDiv, createParagraph, createAnchor, createInput,
+    removeChildren, isHTMLElement, findAncestor, isNullOrWhitespace, isNullOrUndefined,
+    isEmpty, hasOwn, isFunction, valOrDefault, copytoClipboard,
 } from 'zenkai';
-import { Events, hide, show, toggle, Key, getEventTarget, NotificationType, LogType, EditorMode } from '@utils/index.js';
+import { Events, hide, show, toggle, Key, getEventTarget, NotificationType, EditorMode } from '@utils/index.js';
 import { buildProjectionHandler } from "../build-projection.js";
 import { buildConceptHandler } from "../build-concept.js";
 import { ConceptModelManager } from '@model/index.js';
@@ -14,7 +13,6 @@ import { EditorHome } from './editor-home.js';
 import { EditorBreadcrumb } from './editor-breadcrumb.js';
 import { EditorMenu } from './editor-menu.js';
 import { EditorStyle } from './editor-style.js';
-import { EditorFile } from './editor-file.js';
 import { EditorLog } from './editor-log.js';
 import { EditorResource } from './editor-resource.js';
 import { EditorSection } from './editor-section.js';
@@ -329,6 +327,7 @@ export const Editor = {
     removeInstance(id) {
         return this.instances.delete(id);
     },
+    
     // Model management
 
     /**
@@ -546,7 +545,7 @@ export const Editor = {
 
     // Editor actions
 
-    download(obj) {
+    download(obj, name, type) {
         const MIME_TYPE = 'application/json';
         window.URL = window.webkitURL || window.URL;
 
@@ -561,7 +560,7 @@ export const Editor = {
 
         var bb = new Blob([JSON.stringify(obj)], { type: MIME_TYPE });
         Object.assign(link, {
-            download: `model.json`,
+            download: `${valOrDefault(name, (new Date().getTime()))}.json`,
             href: window.URL.createObjectURL(bb),
         });
 
@@ -574,13 +573,6 @@ export const Editor = {
             window.URL.revokeObjectURL(link.href);
             link.remove();
         }, 1500);
-
-
-        // // Need a small delay for the revokeObjectURL to work properly.
-        // setTimeout(() => {
-        //     window.URL.revokeObjectURL(link.href);
-        //     link.remove();
-        // }, 1500);
 
         return obj;
     },
@@ -656,13 +648,6 @@ export const Editor = {
             notify.classList.remove("open");
             setTimeout(() => { notify.remove(); }, 500);
         }, time);
-    },
-    log(messages, title, type = LogType.NORMAL) {
-        this.logs.addLog(messages, title, type);
-
-        this.refresh();
-
-        return messages;
     },
     addResource(file) {
         this.resources.set(file.name, file);
@@ -1066,16 +1051,6 @@ export const Editor = {
         }
 
         this.activeProjection = projection;
-
-        // let parent = this.activeElement.parentElement;
-
-        // while (parent) {
-        //     if (hasOwn(parent.dataset, 'projection')) {
-        //         parent.classList.add("active-parent");
-        //     }
-
-        //     parent = parent.parentElement;
-        // }
 
         this.refresh();
 

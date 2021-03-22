@@ -346,7 +346,7 @@ const _Concept = {
                 this.notify("delete");
             }
         } catch (error) {
-            console.log(this);
+            console.error(this);
             return {
                 message: `Concept not found`,
                 success: false,

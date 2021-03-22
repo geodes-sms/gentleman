@@ -163,9 +163,6 @@ function createMenu() {
         class: ["editor-home-section__menu"],
     }, [this.projectionFileIO.render(), this.btnCreateProjection]);
 
-    console.log(modelMenu);
-    console.log(projectionMenu);
-
     content.append(modelMenu, projectionMenu);
 
     this.btnStart = createButton({
@@ -174,7 +171,7 @@ function createMenu() {
             action: "close",
             context: "home"
         }
-    }, `Start modelling`);
+    }, "Start");
 
     section.append(content, this.btnStart);
 

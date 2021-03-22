@@ -377,7 +377,6 @@ const ActionHandler = {
     },
     "resource": (file) => {
         const fragment = createDocFragment();
-        console.log(file);
 
         let btnDelete = createButton({
             class: ["btn", "editor-selector__action-bar-button", "editor-selector__action-bar-button--delete"],

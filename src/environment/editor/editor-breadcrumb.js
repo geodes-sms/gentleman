@@ -95,11 +95,11 @@ export const EditorBreadcrumb = {
         }
 
         const rootConcept = activeInstance.concept;
-
+        
         const fragment = createDocFragment();
-
+        
         fragment.append(createSelectorItem("root", rootConcept));
-
+        
         if (!hasActiveConcept || rootConcept === activeConcept) {
             removeChildren(this.conceptList).append(fragment);
             return this;

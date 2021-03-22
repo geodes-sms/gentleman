@@ -6,7 +6,7 @@ Gentleman aims to **to close the gap between models and domain experts**.
 
 | Concept defintion        | Projection definition           |
 |:-------------:|:-------------:|
-| ![Gentleman Screenshot](https://geodes-sms.github.io/gentleman/assets/images/concept.png "Concept definition")  | ![Gentleman Screenshot](https://geodes-sms.github.io/gentleman/assets/images/projection.png "projection definition") |
+| ![Concept definition screenshot](https://geodes-sms.github.io/gentleman/assets/images/concept-definition.png "Concept definition")  | ![Projection definition screenshot](https://geodes-sms.github.io/gentleman/assets/images/projection-definition.png "projection definition") |
 
 ## Workflow
 
@@ -50,7 +50,7 @@ Take a look at the [demonstration (MODELS 2020) and see the tool in action](http
         ...
         <div data-gentleman="editor"></div>
         ...
-        <script src="gentleman.mod.js"></script>  <!-- optional -->
+        <script src="gentleman.mod.js"></script>  <!-- required for << design workflow >> -->
         <script src="gentleman.app.js"></script>
     </body>
 </html>
@@ -59,11 +59,15 @@ Take a look at the [demonstration (MODELS 2020) and see the tool in action](http
 ### Create an instance in JS
 
 ```javascript
-const CONCEPT_MODEL = {JSON};
-const PROJECTION_MODEL = {JSON}
+const options = {
+    concept: null,
+    projection: null, 
+    config: null, 
+    handlers: null
+};
 
-var editor = Gentleman.createEdiotr();
-editor.init(CONCEPT_MODEL, PROJECTION_MODEL)
+let editor = Gentleman.createEditor();
+editor.init(options)
 ```
 
 # Documentation

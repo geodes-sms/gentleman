@@ -107,6 +107,21 @@
                                     "param": [
                                         { "name": "conceptType", "value": "prototype concept" }
                                     ]
+                                },
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "from",
+                                        "style": {
+                                            "css": ["keyword", "model-concept__keyword"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "prototype",
+                                    "tag": "textual"
                                 }
                             ],
                             "style": {
@@ -807,7 +822,7 @@
                                                 "type": "text",
                                                 "content": "Value",
                                                 "style": {
-                                                    "css": ["textual-option", "textual-option--constraint"]
+                                                    "css": ["textual-option", "textual-option--style"]
                                                 }
                                             }
                                         }

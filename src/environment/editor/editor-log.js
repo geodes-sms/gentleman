@@ -21,14 +21,11 @@ export const EditorLog = {
     btnStart: null,
     /** @type {HTMLElement} */
     logList: null,
-    /** @type {Map} */
-    files: null,
 
     init(schema) {
         if (schema) {
             this.schema = schema;
         }
-        this.files = new Map();
 
         return this;
     },
@@ -74,7 +71,7 @@ export const EditorLog = {
      * @param {string} title 
      * @param {LogType} level 
      */
-    addLog(messages, title, level) {
+    add(messages, title, level = LogType.NORMAL) {
         let content = createUnorderedList({
             class: ["bare-list", "log-item-messages"]
         });
@@ -108,10 +105,14 @@ export const EditorLog = {
         item.append(btnDelete, titleElement, content);
 
         this.logList.append(item);
+
+        this.refresh();
+
+        return this;
     },
 
     clear() {
-        removeChildren(this.container);
+        removeChildren(this.logList);
 
         return this;
     },

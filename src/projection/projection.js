@@ -29,13 +29,13 @@ export const ProjectionFactory = {
 const Projection = {
     handlers: null,
 
-    init(args) {
+    init(args = {}) {
         this.containers = new Map();
         this.attributes = [];
         this.params = [];
         this.handlers = {};
 
-        this.args = valOrDefault(args, {});
+        this.args = args;
 
         this.concept.register(this);
 
@@ -229,13 +229,12 @@ const Projection = {
     delete() {
         if (this.concept) {
             this.concept.unregister(this);
-            this.concept = null;
         }
 
-        if(this.placeholder) {
+        if (this.placeholder) {
             this.getContainer().after(this.placeholder);
         }
-        
+
         this.containers.forEach(container => {
             removeChildren(container);
             if (isHTMLElement(container)) {

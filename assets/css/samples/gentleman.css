@@ -1140,8 +1140,7 @@
 
     .reference-choice--textual:not(.active) .reference-choice--textual__list-option.selected { 
         margin: 0;
-        background-color: #fff;
-        font-size: 1em; 
+        font-size: 1em; font-weight: bold;
     }
 
     .reference-choice--textual:not(.active):not(.empty) .reference-choice--textual__input { display: none; }
@@ -1181,10 +1180,6 @@
     .reference-choice--textual__list-option:focus {
         background-color: #1f75fe;
         color: #fff;
-    }
-    
-    .reference-choice--textual__list-option.selected {
-        font-weight: bold;
     }
 
 

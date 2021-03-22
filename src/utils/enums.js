@@ -61,3 +61,48 @@ export const EditorMode = {
     MODEL: "model",
     DESIGN: "design"
 };
+
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+export const DocumentType = {
+    AAC: {
+        type: "audio/aac",
+        extension: "aac"
+    },
+    BIN: {
+        type: "application/octet-stream",
+        extension: "bin"
+    },
+    JPEG: {
+        type: "image/jpeg",
+        extension: "jpeg"
+    },
+    JSON: {
+        type: "application/json",
+        extension: "json"
+    },
+    MP3: {
+        type: "audio/mpeg",
+        extension: "mp3"
+    },
+    PDF: {
+        type: "application/pdf",
+        extension: "pdf"
+    },
+    SVG: {
+        type: "image/svg+xml",
+        extension: "svg"
+    },
+    TEXT: {
+        type: "text/plain",
+        extension: "txt"
+    },
+    XML: {
+        type: "text/xml",
+        extension: "xml"
+    },
+    ZIP: {
+        type: "application/zip",
+        extension: "zip"
+    }
+};
+

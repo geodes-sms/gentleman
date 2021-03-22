@@ -49,6 +49,8 @@ export function buildProjectionHandler(model, _options = {}) {
     const result = [];
     const buildErrors = [];
 
+    this.logs.clear();
+
     const options = Object.assign({
         name: "projection",
         download: true
@@ -81,12 +83,13 @@ export function buildProjectionHandler(model, _options = {}) {
 
     if (!isEmpty(buildErrors)) {
         this.notify("<strong>Validation failed</strong>: The model could not be built.<br> <em>See Log for more details</em>.", NotificationType.ERROR);
-        this.log(buildErrors, "Validation error", LogType.ERROR);
+        this.logs.add(buildErrors, "Validation error", LogType.ERROR);
 
         return false;
     }
 
     this.notify("The projection model was <strong>successfully</strong> built", NotificationType.SUCCESS, 2000);
+    
     if (options.download) {
         this.download(result, options.name);
     }

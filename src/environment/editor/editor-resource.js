@@ -1,6 +1,6 @@
 import {
-    createDocFragment, createSpan, createDiv, createUnorderedList, createButton,
-    createListItem, removeChildren, valOrDefault, isHTMLElement, shortDateTime, isNullOrUndefined,
+    createDocFragment, createSpan, createButton, createListItem, removeChildren,
+    valOrDefault, isHTMLElement, shortDateTime, isNullOrUndefined,
 } from 'zenkai';
 import { hide, show, toggle, LogType } from '@utils/index.js';
 
@@ -71,7 +71,7 @@ export const EditorResource = {
         if (isNullOrUndefined(schema)) {
             return;
         }
-        
+
         this.schema = schema;
 
         const { files } = this.schema;
