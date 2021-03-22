@@ -1,8 +1,9 @@
 .editor-home-section {
-    display: flex; flex-direction: column;
+    display: flex; flex-direction: column; align-items: center;
     padding: 12px 24px 18px;
+    width: 100%;
     background-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 1px 2px #999;
+    box-shadow: 0 3px 2px -1px #999;
 }
     .editor-home-section:not(:last-child) {
         margin-right: calc(2% + 2px);
@@ -18,17 +19,15 @@
         display: flex;
     }
 
-    .editor-home-section--design__content {
-        flex-direction: column;
+    .editor-home-section__menu {
+        display: flex; flex-direction: column;
+        padding: 6px 12px;
     }
 
     .editor-home-section--model__content {
         flex-direction: row;
     }
 
-    .editor-home-section__drop-area:not(:last-child) {
-        margin-right: 6px;
-    }
 
 
     .editor-home-section__drop-area {
@@ -175,16 +174,10 @@
             cursor: pointer;  
         }
        
-    .loader-option--new {
-        margin-top: 4px;
-        display: flex; justify-content: flex-end;
-    }
-
     .editor-home-section__button {
         position: relative;
         display: flex; flex-direction: column; 
         justify-content: center; align-items: center;
-        margin-top: 6px;
         
         padding: 8px 12px; 
         font-size: 1.5em; font-weight: 600;
@@ -196,6 +189,9 @@
         cursor: pointer;
     }
 
+    .editor-home-section__button--new {
+        margin-top: 6px;
+    }
     
     .editor-home-section--model__button {
         position: relative;

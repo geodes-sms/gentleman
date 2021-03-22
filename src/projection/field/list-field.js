@@ -15,24 +15,24 @@ import { Field } from "./field.js";
 
 const actionDefaultSchema = {
     add: {
-        content: {
+        content: [{
             "type": "static",
             "static": {
                 "type": "text",
                 "content": "Add",
                 "focusable": false
             }
-        }
+        }]
     },
     remove: {
-        content: {
+        content: [{
             "type": "static",
             "static": {
                 "type": "text",
                 "content": "Remove",
                 "focusable": false
             }
-        }
+        }]
     }
 };
 

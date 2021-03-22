@@ -13,7 +13,7 @@
         },
         "menu": {
             "actions": [
-                { "name": "build-concept", "content": "Build", "downloadable": true },
+                { "name": "build-concept", "content": "Build" },
                 { "name": "export" }
             ],
             "css": ["editor-menu"]

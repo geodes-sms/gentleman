@@ -20,7 +20,7 @@
             "actions": [
                 { "name": "add-metamodel", "content": "Model" },
                 { "name": "preview-projection", "content": "Preview", "require": "metamodel" },
-                { "name": "build-projection", "content": "Build", "downloadable": true }
+                { "name": "build-projection", "content": "Build" }
             ],
             "css": ["editor-menu"]
         }

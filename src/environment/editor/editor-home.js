@@ -9,9 +9,7 @@ export const EditorHome = {
     /** @type {HTMLElement} */
     container: null,
     /** @type {HTMLElement} */
-    designMenu: null,
-    /** @type {HTMLElement} */
-    modelMenu: null,
+    menu: null,
     /** @type {*} */
     schema: null,
     /** @type {boolean} */
@@ -20,6 +18,10 @@ export const EditorHome = {
     visible: true,
     /** @type {HTMLButtonElement} */
     btnStart: null,
+    /** @type {HTMLButtonElement} */
+    btnCreateModel: null,
+    /** @type {HTMLButtonElement} */
+    btnCreateProjection: null,
     /** @type {FIleIO} */
     modelFileIO: null,
     /** @type {FIleIO} */
@@ -85,16 +87,10 @@ export const EditorHome = {
             });
         }
 
-        if (!isHTMLElement(this.designMenu)) {
-            this.designMenu = createDesignMenu.call(this);
+        if (!isHTMLElement(this.menu)) {
+            this.menu = createMenu.call(this);
 
-            fragment.append(this.designMenu);
-        }
-
-        if (!isHTMLElement(this.modelMenu)) {
-            this.modelMenu = createModelMenu.call(this);
-
-            fragment.append(this.modelMenu);
+            fragment.append(this.menu);
         }
 
         if (fragment.hasChildNodes()) {
@@ -111,9 +107,11 @@ export const EditorHome = {
         const { hasConceptModel, hasProjectionModel } = this.editor;
 
         if (this.editor.getMode() === EditorMode.DESIGN) {
-            show(this.designMenu);
+            show(this.btnCreateModel);
+            show(this.btnCreateProjection);
         } else {
-            hide(this.designMenu);
+            hide(this.btnCreateModel);
+            hide(this.btnCreateProjection);
         }
 
         if (!(hasConceptModel && hasProjectionModel)) {
@@ -135,30 +133,50 @@ export const EditorHome = {
 
 
 /**
- * Creates the design menu section
+ * Creates the model menu section
  * @returns {HTMLElement}
  * @this {EditorHome}
  */
-function createDesignMenu() {
+function createMenu() {
     const section = createSection({
-        class: ["editor-home-section", "editor-home-section--design"],
+        class: ["editor-home-section", "editor-home-section--model"],
     });
 
     let title = createH3({
         class: ["title", "editor-home-section__title", "font-ui"]
-    }, "Design ");
+    }, "Modelling activity");
 
     let content = createDiv({
-        class: ["editor-home-section__content", "editor-home-section--design__content"],
+        class: ["editor-home-section__content", "editor-home-section--model__content"],
     });
 
-    let btnCreateMetaModel = createMenuButton("metamodel");
+    this.modelFileIO = createFileIO.call(this, "model");
+    this.projectionFileIO = createFileIO.call(this, "projection");
+    this.btnCreateModel = createMenuButton("metamodel");
+    this.btnCreateProjection = createMenuButton("projection");
 
-    let btnCreateProjection = createMenuButton("projection");
+    let modelMenu = createDiv({
+        class: ["editor-home-section__menu"],
+    }, [this.modelFileIO.render(), this.btnCreateModel]);
 
-    content.append(btnCreateMetaModel, btnCreateProjection);
+    let projectionMenu = createDiv({
+        class: ["editor-home-section__menu"],
+    }, [this.projectionFileIO.render(), this.btnCreateProjection]);
 
-    section.append(title, content);
+    console.log(modelMenu);
+    console.log(projectionMenu);
+
+    content.append(modelMenu, projectionMenu);
+
+    this.btnStart = createButton({
+        class: ["btn", "editor-home-section--model__button", "editor-home-section__button--start"],
+        dataset: {
+            action: "close",
+            context: "home"
+        }
+    }, `Start modelling`);
+
+    section.append(content, this.btnStart);
 
     return section;
 }
@@ -178,42 +196,6 @@ function createMenuButton(type) {
     }, `Create a ${type}`);
 
     return button;
-}
-
-/**
- * Creates the model menu section
- * @returns {HTMLElement}
- * @this {EditorHome}
- */
-function createModelMenu() {
-    const section = createSection({
-        class: ["editor-home-section", "editor-home-section--model"],
-    });
-
-    let title = createH3({
-        class: ["title", "editor-home-section__title", "font-ui"]
-    }, "Modelling activity");
-
-    let content = createDiv({
-        class: ["editor-home-section__content", "editor-home-section--model__content"],
-    });
-
-    this.modelFileIO = createFileIO.call(this, "model");
-    this.projectionFileIO = createFileIO.call(this, "projection");
-
-    content.append(this.modelFileIO.render(), this.projectionFileIO.render());
-
-    this.btnStart = createButton({
-        class: ["btn", "editor-home-section--model__button", "editor-home-section__button--start"],
-        dataset: {
-            action: "close",
-            context: "home"
-        }
-    }, `Start modelling`);
-
-    section.append(content, this.btnStart);
-
-    return section;
 }
 
 /**

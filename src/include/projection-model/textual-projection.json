@@ -5,18 +5,23 @@
             "name": "nav-config",
             "content": [
                 {
-                    "type": "plink",
-                    "tag": "collapse",
-                    "content": {
-                        "type": "static", 
-                        "static": {
-                            "type": "text",
-                            "content": "",
-                            "help": "Collapse"
+                    "type": "static",
+                    "static": {
+                        "type": "plink",
+                        "tag": "collapse",
+                        "content": [
+                            {
+                                "type": "static", 
+                                "static": {
+                                    "type": "text",
+                                    "content": "",
+                                    "help": "Collapse"
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["nav-projection", "render__nav-projection", "render__nav-projection--collapse"]
                         }
-                    },
-                    "style": {
-                        "css": ["nav-projection", "render__nav-projection", "render__nav-projection--collapse"]
                     }
                 },
                 {
@@ -30,31 +35,41 @@
                     }
                 },
                 {
-                    "type": "plink",
-                    "tag": "field-state",
-                    "content": {
-                        "type": "static", 
-                        "static": {
-                            "type": "text",
-                            "content": "State"
+                    "type": "static",
+                    "static": {
+                        "type": "plink",
+                        "tag": "field-state",
+                        "content": [
+                            {
+                                "type": "static", 
+                                "static": {
+                                    "type": "text",
+                                    "content": "State"
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["nav-projection", "render__nav-projection", "render__nav-projection--state"]
                         }
-                    },
-                    "style": {
-                        "css": ["nav-projection", "render__nav-projection", "render__nav-projection--state"]
                     }
                 },
                 {
-                    "type": "plink",
-                    "tag": "style",
-                    "content": {
-                        "type": "static", 
-                        "static": {
-                            "type": "text",
-                            "content": "Style"
+                    "type": "static",
+                    "static": {
+                        "type": "plink",
+                        "tag": "style",
+                        "content": [
+                            {
+                                "type": "static", 
+                                "static": {
+                                    "type": "text",
+                                    "content": "Style"
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["nav-projection", "render__nav-projection", "render__nav-projection--style"]
                         }
-                    },
-                    "style": {
-                        "css": ["nav-projection", "render__nav-projection", "render__nav-projection--style"]
                     }
                 }
             ]
@@ -64,32 +79,42 @@
             "name": "nav-state",
             "content": [
                 {
-                    "type": "plink",
-                    "tag": "collapse",
-                    "content": {
-                        "type": "static", 
-                        "static": {
-                            "type": "text",
-                            "content": "",
-                            "help": "Collapse"
+                    "type": "static",
+                    "static": {
+                        "type": "plink",
+                        "tag": "collapse",
+                        "content": [
+                            {
+                                "type": "static", 
+                                "static": {
+                                    "type": "text",
+                                    "content": "",
+                                    "help": "Collapse"
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["nav-projection", "render__nav-projection", "render__nav-projection--collapse"]
                         }
-                    },
-                    "style": {
-                        "css": ["nav-projection", "render__nav-projection", "render__nav-projection--collapse"]
                     }
                 },
                 {
-                    "type": "plink",
-                    "tag": "choice-selection",
-                    "content": {
-                        "type": "static", 
-                        "static": {
-                            "type": "text",
-                            "content": "Config"
+                    "type": "static",
+                    "static": {
+                        "type": "plink",
+                        "tag": "choice-selection",
+                        "content": [
+                            {
+                                "type": "static", 
+                                "static": {
+                                    "type": "text",
+                                    "content": "Config"
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["nav-projection", "render__nav-projection", "render__nav-projection--config"]
                         }
-                    },
-                    "style": {
-                        "css": ["nav-projection", "render__nav-projection", "render__nav-projection--config"]
                     }
                 },
                 {
@@ -103,17 +128,22 @@
                     }
                 },
                 {
-                    "type": "plink",
-                    "tag": "style",
-                    "content": {
-                        "type": "static", 
-                        "static": {
-                            "type": "text",
-                            "content": "Style"
+                    "type": "static",
+                    "static": {
+                        "type": "plink",
+                        "tag": "style",
+                        "content": [
+                            {
+                                "type": "static", 
+                                "static": {
+                                    "type": "text",
+                                    "content": "Style"
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["nav-projection", "render__nav-projection", "render__nav-projection--style"]
                         }
-                    },
-                    "style": {
-                        "css": ["nav-projection", "render__nav-projection", "render__nav-projection--style"]
                     }
                 }
             ]
@@ -123,46 +153,61 @@
             "name": "nav-style",
             "content": [
                 {
-                    "type": "plink",
-                    "tag": "collapse",
-                    "content": {
-                        "type": "static", 
-                        "static": {
-                            "type": "text",
-                            "content": "",
-                            "help": "Collapse"
+                    "type": "static",
+                    "static": {
+                        "type": "plink",
+                        "tag": "collapse",
+                        "content": [
+                            {
+                                "type": "static", 
+                                "static": {
+                                    "type": "text",
+                                    "content": "",
+                                    "help": "Collapse"
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["nav-projection", "render__nav-projection", "render__nav-projection--collapse"]
                         }
-                    },
-                    "style": {
-                        "css": ["nav-projection", "render__nav-projection", "render__nav-projection--collapse"]
                     }
                 },
                 {
-                    "type": "plink",
-                    "tag": "config",
-                    "content": {
-                        "type": "static", 
-                        "static": {
-                            "type": "text",
-                            "content": "Config"
+                    "type": "static",
+                    "static": {
+                        "type": "plink",
+                        "tag": "config",
+                        "content": [
+                            {
+                                "type": "static", 
+                                "static": {
+                                    "type": "text",
+                                    "content": "Config"
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["nav-projection", "render__nav-projection", "render__nav-projection--config"]
                         }
-                    },
-                    "style": {
-                        "css": ["nav-projection", "render__nav-projection", "render__nav-projection--config"]
                     }
                 },
                 {
-                    "type": "plink",
-                    "tag": "state",
-                    "content": {
-                        "type": "static", 
-                        "static": {
-                            "type": "text",
-                            "content": "State"
+                    "type": "static",
+                    "static": {
+                        "type": "plink",
+                        "tag": "state",
+                        "content": [
+                            {
+                                "type": "static", 
+                                "static": {
+                                    "type": "text",
+                                    "content": "State"
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["nav-projection", "render__nav-projection", "render__nav-projection--state"]
                         }
-                    },
-                    "style": {
-                        "css": ["nav-projection", "render__nav-projection", "render__nav-projection--state"]
                     }
                 },
                 {
@@ -1720,17 +1765,22 @@
                         "name": "row template"
                     },
                     {
-                        "type": "plink",
-                        "tag": "style",
-                        "content": {
-                            "type": "static", 
-                            "static": {
-                                "type": "text",
-                                "content": "Style"
+                        "type": "static",
+                        "static": {
+                            "type": "plink",
+                            "tag": "style",
+                            "content": [
+                                {
+                                    "type": "static", 
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Style"
+                                    }
+                                }
+                            ],
+                            "style": {
+                                "css": ["nav-projection", "render__nav-projection"]
                             }
-                        },
-                        "style": {
-                            "css": ["nav-projection", "render__nav-projection"]
                         }
                     }
                 ]
@@ -1833,6 +1883,7 @@
                 ]
             }
         },
+
         {
             "concept": { "name": "stack layout" },
             "type": "layout",
@@ -1944,16 +1995,11 @@
                 "disposition": [
                     {
                         "type": "attribute",
-                        "name": "containerless",
+                        "name": "focusable",
                         "tag": "field-binary-state",
                         "style": {
                             "ref": ["pad-top"]
                         }
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "focusable",
-                        "tag": "field-binary-state"
                     },
                
                     {
@@ -1981,6 +2027,98 @@
                             "type": "text",
                             "help": "Wrap Layout",
                             "content": "Wrap-Layout"
+                        }
+                    }
+                ]
+            }
+        },
+
+        {
+            "concept": { "name": "flex layout" },
+            "type": "layout",
+            "tags": ["choice-selection", "field-config", "config"],
+            "projection": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "attribute",
+                        "name": "elements",
+                        "tag": "element-set"
+                    },
+                    {
+                        "type": "template",
+                        "name": "nav-config"
+                    }
+                ],
+
+                "style": {
+                    "css": ["layout-config", "layout-config--main"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "flex layout" },
+            "type": "layout",
+            "tags": ["choice-selection", "field-state", "state"],
+            "projection": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "attribute",
+                        "name": "orientation",
+                        "tag": "label-string",
+                        "style": {
+                            "ref": ["pad-top"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "align-items",
+                        "tag": "label-string"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "justify-content",
+                        "tag": "label-string"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "wrappable",
+                        "tag": "field-binary-state"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "focusable",
+                        "tag": "field-binary-state"
+                    },
+               
+                    {
+                        "type": "template",
+                        "name": "nav-state"
+                    }
+                ],
+                "style": {
+                    "css": ["field-config", "field-config--state"],
+                    "ref": ["pad-left"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "flex layout" },
+            "type": "layout",
+            "tags": ["choice"],
+            "projection": {
+                "type": "wrap",
+                "focusable": false,
+                "help": "Flex Layout",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static":   {
+                            "type": "text",
+                            "content": "Flex-Layout"
                         }
                     }
                 ]
@@ -2249,16 +2387,6 @@
                 "orientation": "vertical",
                 "disposition": [
                     {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "State",
-                            "style": {
-                                "css": ["title--small"]
-                            }
-                        }
-                    },
-                    {
                         "type": "attribute",
                         "name": "focusable",
                         "tag": "field-binary-state"
@@ -2300,19 +2428,54 @@
         {
             "concept": { "name": "static HTML" },
             "type": "layout",
-            "tags": ["choice-selection"],
+            "tags": ["choice-selection", "field-config", "config"],
             "projection": {
-                "type": "wrap",
-                "style": {
-                    "css": ["text-element"]
-                },
+                "type": "stack",
+                "orientation": "vertical",
                 "disposition": [
                     {
                         "type": "attribute",
                         "name": "selector",
                         "tag": "label-string"
+                    },
+                    {
+                        "type": "template",
+                        "name": "nav-config"
                     }
-                ]
+                ],
+                
+                "style": {
+                    "css": ["field-config", "field-config--main"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "static HTML" },
+            "type": "layout",
+            "tags": ["choice-selection", "field-state", "state"],
+            "projection": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "attribute",
+                        "name": "focusable",
+                        "tag": "field-binary-state"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "editable",
+                        "tag": "field-binary-state"
+                    },
+                
+                    {
+                        "type": "template",
+                        "name": "nav-state"
+                    }
+                ],
+                "style": {
+                    "css": ["field-config", "field-config--state"]
+                }
             }
         },
         {
@@ -2494,6 +2657,77 @@
                         "static": {
                             "type": "text",
                             "content": "Link"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "projection link" },
+            "tags": ["choice-selection", "field-config", "config"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "attribute",
+                        "name": "tag",
+                        "tag": "label-string"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "content",
+                        "tag": "element-set"
+                    },
+
+                    {
+                        "type": "template",
+                        "name": "nav-config"
+                    }
+                ],
+                "style": {
+                    "css": ["field-config", "field-config--main"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "projection link" },
+            "type": "layout",
+            "tags": ["choice-selection", "field-state", "state"],
+            "projection": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "attribute",
+                        "name": "focusable",
+                        "tag": "field-binary-state"
+                    },
+                
+                    {
+                        "type": "template",
+                        "name": "nav-state"
+                    }
+                ],
+                "style": {
+                    "css": ["field-config", "field-config--state"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "projection link" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "type": "static", 
+                        "static": {
+                            "type": "text",
+                            "content": "P-link"
                         }
                     }
                 ]
@@ -2694,14 +2928,6 @@
                             "style": {
                                 "css": ["title--small"]
                             }
-                        }
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "required",
-                        "tag": "field-binary-state",
-                        "style": {
-                            "ref": ["pad-top"]
                         }
                     },
                 
@@ -3930,17 +4156,22 @@
                     },
 
                     {
-                        "type": "plink",
-                        "tag": "config",
-                        "content": {
-                            "type": "static", 
-                            "static": {
-                                "type": "text",
-                                "content": ""
+                        "type": "static",
+                        "static": {
+                            "type": "plink",
+                            "tag": "config",
+                            "content": [
+                                {
+                                    "type": "static", 
+                                    "static": {
+                                        "type": "text",
+                                        "content": ""
+                                    }
+                                }
+                            ],
+                            "style": {
+                                "css": ["nav-projection", "render__nav-projection", "render__nav-projection--collapse"]
                             }
-                        },
-                        "style": {
-                            "css": ["nav-projection", "render__nav-projection", "render__nav-projection--collapse"]
                         }
                     }
                 ],

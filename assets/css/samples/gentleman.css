@@ -23,6 +23,10 @@
     padding-top: 12px;
 }
 
+    .model-concept--textual .field--textbox__input {
+        border: 0 none;
+    }
+
     .model-concept--textual .line {
         display: flex; flex-direction: row;
         line-height: 1.25;

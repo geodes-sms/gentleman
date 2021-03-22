@@ -63,8 +63,8 @@
             ]
         },
         {
-            "name": "property-definition",
             "type": "template",
+            "name": "property-definition",
             "content": [
                 {
                     "type": "static",
@@ -141,10 +141,7 @@
                                     "type": "template",
                                     "name": "concept-definition",
                                     "param": [
-                                        {
-                                            "name": "conceptType",
-                                            "value": "concrete concept"
-                                        }
+                                        { "name": "conceptType", "value": "concrete concept" }
                                     ]
                                 },
                                 {
@@ -224,6 +221,7 @@
                 }
             }
         },
+
         {
             "concept": { "prototype": "model concept" },
             "tags": ["choice", "choice-selection"],
@@ -240,6 +238,8 @@
                 ]
             }
         },
+
+
         {
             "concept": { "name": "attribute" },
             "tags": ["attribute-list-item--textual"],
@@ -360,6 +360,8 @@
                 }
             }
         },
+
+
         {
             "concept": { "name": "primitive" },
             "tags": ["textual"],
@@ -430,6 +432,7 @@
                 }
             }
         },
+        
         {
             "concept": { "name": "string primitive" },
             "tags": ["choice-selection"],

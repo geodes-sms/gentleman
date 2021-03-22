@@ -101,7 +101,7 @@ export const EditorSelector = {
                 dataset: {
                     action: "collapse",
                     rel: "parent",
-                    target: "selector",
+                    target: "selector"
                 }
             });
 
@@ -134,6 +134,8 @@ export const EditorSelector = {
                     projection: data.id
                 }
             }, [header, preview, actionBar]);
+
+            btnCollapse.dataset.state = item.classList.contains("collapsed") ? "ON" : "OFF";
 
             this.list.appendChild(item);
         });
@@ -323,7 +325,7 @@ const ActionHandler = {
         let btnEdit = createButton({
             class: ["btn", "editor-selector__action-bar-button", "editor-selector__action-bar-button", "editor-selector__action-bar-button--clone"],
             dataset: {
-                action: "edit",
+                action: "edit:projection",
                 id: projection.id,
             }
         }, "Edit");
@@ -339,15 +341,15 @@ const ActionHandler = {
         let btnClone = createButton({
             class: ["btn", "editor-selector__action-bar-button", "editor-selector__action-bar-button--clone"],
             dataset: {
-                action: "clone",
+                action: "copy:value",
                 id: value.id,
             }
-        }, "Clone");
+        }, "Copy");
 
         let btnDelete = createButton({
             class: ["btn", "editor-selector__action-bar-button", "editor-selector__action-bar-button--delete"],
             dataset: {
-                action: "delete",
+                action: "delete:value",
                 id: value.id,
             }
         }, "Delete");
@@ -363,7 +365,7 @@ const ActionHandler = {
         let btnCreate = createButton({
             class: ["btn", "editor-selector__action-bar-button", "editor-selector__action-bar-button--clone"],
             dataset: {
-                action: "create",
+                action: "create-instance",
                 concept: concept.name
             }
         }, "Create");
@@ -380,7 +382,7 @@ const ActionHandler = {
         let btnDelete = createButton({
             class: ["btn", "editor-selector__action-bar-button", "editor-selector__action-bar-button--delete"],
             dataset: {
-                action: "delete-resource",
+                action: "delete:resource",
                 id: file.name,
             }
         }, "Delete");

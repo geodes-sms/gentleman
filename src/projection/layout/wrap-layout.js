@@ -89,6 +89,7 @@ export const BaseWrapLayout = {
         }
 
         this.container.style.display = "inline-flex";
+        this.container.style.alignItems = "center";
 
         this.refresh();
 

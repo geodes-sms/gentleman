@@ -22,8 +22,9 @@ const _SetConcept = {
     },
     initValue(args) {
         this.removeAllElement();
-
+        
         if (isNullOrUndefined(args)) {
+            
             let remaining = valOrDefault(getMin.call(this), 0);
 
             for (let i = 0; i < remaining; i++) {
@@ -33,7 +34,7 @@ const _SetConcept = {
             return this;
         }
 
-        const { id = "", value } = args;
+        const { id = "", name, value } = args;
 
         if (id.length > 10) {
             this.id = id;
@@ -134,12 +135,6 @@ const _SetConcept = {
         if (isNullOrUndefined(element)) {
             return false;
         }
-
-        // if (element.type === "prototype") {
-        //     this.value.push(element);
-        // } else {
-        //     this.value.push(element.id);
-        // }
 
         this.value.push(element.id);
 

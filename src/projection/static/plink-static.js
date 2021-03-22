@@ -4,12 +4,12 @@ import {
 } from "zenkai";
 import { hide, show, getCaretIndex } from "@utils/index.js";
 import { StyleHandler } from "../style-handler.js";
-import { ContentHandler } from "./../content-handler.js";
+import { ContentHandler } from "../content-handler.js";
 import { Static } from "./static.js";
 
 
 // TODO: Change to projection window
-const BaseButtonStatic = {
+const BaseProjectionLinkStatic = {
     /** @type {string} */
     contentType: null,
     /** @type {boolean} */
@@ -24,10 +24,6 @@ const BaseButtonStatic = {
 
         this.focusable = focusable;
 
-        if (!hasOwn(this.schema, "action")) {
-            this.schema.action = {};
-        }
-
         return this;
     },
 
@@ -41,15 +37,21 @@ const BaseButtonStatic = {
                 class: ["btn"],
                 dataset: {
                     nature: "static",
-                    view: "button",
+                    view: "plink",
                     id: this.id
                 }
-            }, ContentHandler.call(this, content, this.projection.concept, { focusable: false }));
+            });
 
             if (this.focusable) {
                 this.element.tabIndex = 0;
             }
         }
+
+        content.forEach(element => {
+            let content = ContentHandler.call(this, element, this.projection.concept, { focusable: false });
+
+            fragment.appendChild(content);
+        });
 
         if (!isNullOrUndefined(help)) {
             this.element.title = help;
@@ -98,7 +100,7 @@ const BaseButtonStatic = {
                 return this.parent.arrowHandler(dir, target);
             }
         }
-        
+
         if (this.parent) {
             return this.parent.arrowHandler(dir, target);
         }
@@ -121,30 +123,22 @@ const BaseButtonStatic = {
      * @param {HTMLElement} target 
      */
     enterHandler(target) {
-        const { name, arg } = this.schema.action;
+        const index = this.projection.schema.findIndex((x) => x.tags.includes(this.schema.tag));
 
-        const handler = this.projection[name];
+        this.projection.changeView(index);
 
-        if (isFunction(handler)) {
-            handler.call(this.projection, ...arg);
-
-            return false;
-        }
+        return false;
     },
     /**
      * Handles the `click` command
      * @param {HTMLElement} target 
      */
     clickHandler(target) {
-        const { name, arg } = this.schema.action;
+        const index = this.projection.schema.findIndex((x) => x.tags.includes(this.schema.tag));
 
-        const handler = this.projection[name];
+        this.projection.changeView(index);
 
-        if (isFunction(handler)) {
-            handler.call(this.projection, ...arg);
-
-            return false;
-        }
+        return false;
     },
     refresh() {
         return this;
@@ -154,7 +148,7 @@ const BaseButtonStatic = {
     },
 };
 
-export const ButtonStatic = Object.assign(
+export const ProjectionLinkStatic = Object.assign(
     Object.create(Static),
-    BaseButtonStatic
+    BaseProjectionLinkStatic
 );

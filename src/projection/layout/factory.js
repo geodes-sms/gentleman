@@ -2,11 +2,11 @@ import { isNullOrUndefined } from "zenkai";
 import { StackLayout } from "./stack-layout.js";
 import { WrapLayout } from "./wrap-layout.js";
 import { CellLayout } from "./cell-layout.js";
+import { FlexLayout } from "./flex-layout.js";
 
 
 var inc = 0;
 const nextId = () => `layout${inc++}`;
-
 
 const Handler = {
     'stack': (model, schema, projection) => Object.create(StackLayout, {
@@ -33,6 +33,16 @@ const Handler = {
         object: { value: "layout" },
         name: { value: "table-layout" },
         type: { value: "table" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept },
+    }),
+    'flex': (model, schema, projection) => Object.create(FlexLayout, {
+        object: { value: "layout" },
+        name: { value: "flex-layout" },
+        type: { value: "flex" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },

@@ -43,6 +43,10 @@
     width: 100%;
 }
 
+.model-projection .field--textbox__input {
+    border: 0 none;
+}
+
 .model-projection .block__line {
     font-size: 1.4rem;
 }

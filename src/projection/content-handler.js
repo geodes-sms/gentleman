@@ -65,7 +65,7 @@ export function ContentHandler(schema, concept, args = {}) {
         return fragment;
     } else if (schema.type === "projection") {
         const { tag, style } = schema;
-        
+
         const bindElement = {
             schema: schema,
             placeholder: createI({
@@ -78,28 +78,27 @@ export function ContentHandler(schema, concept, args = {}) {
         };
 
         bindElement.update = function (message, value, from) {
-            if (contentConcept.hasValue()) {
+            const clear = () => {
                 if (bindElement.element) {
-                    removeChildren(bindElement.element);
-
-                    if (isHTMLElement(bindElement.element)) {
-                        bindElement.element.remove();
-                    }
-
+                    bindElement.element.remove();
                     bindElement.element = null;
                 }
+            };
 
+            clear();
+
+            if (contentConcept.hasValue()) {
                 let concept = contentConcept.getValue();
 
                 let projection = this.projection.model.createProjection(concept, tag).init();
                 projection.optional = true;
+                projection.placeholder = bindElement.placeholder;
                 projection.parent = this.projection;
 
                 bindElement.element = projection.render();
 
                 if (bindElement.placeholder) {
                     bindElement.placeholder.after(bindElement.element);
-                    hide(bindElement.placeholder);
                 }
 
                 if (isHTMLElement(bindElement.element)) {
@@ -107,11 +106,6 @@ export function ContentHandler(schema, concept, args = {}) {
                 }
 
                 projection.element.parent = this.projection.element;
-            } else {
-                if (bindElement.element) {
-                    bindElement.element.remove();
-                    bindElement.element = null;
-                }
             }
         };
 
@@ -119,23 +113,6 @@ export function ContentHandler(schema, concept, args = {}) {
         bindElement.update();
 
         return bindElement.element || bindElement.placeholder;
-    } else if (schema.type === "plink") {
-        const index = this.projection.schema.findIndex((x) => x.tags.includes(schema.tag));
-
-        let _schema = {
-            "type": "static",
-            "static": {
-                "type": "button",
-                "content": schema.content,
-                "action": {
-                    "name": "changeView",
-                    "arg": [index]
-                },
-                "style": schema.style
-            }
-        };
-
-        return ContentHandler.call(this, _schema, concept, args);
     } else if (schema.type === "property") {
         const { name } = schema;
 

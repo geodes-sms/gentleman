@@ -49,7 +49,6 @@ export function ReferenceStyleHandler(element, schema) {
 
     schema.forEach(ref => {
         const { style = {} } = valOrDefault(this.model.getStyleSchema(ref), {});
-        console.log(ref,style);
 
         StyleHandler.call(this, element, style);
     });

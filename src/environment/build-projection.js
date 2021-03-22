@@ -45,9 +45,14 @@ const ProjectionHandler = {
     "field": buildField,
 };
 
-export function buildProjectionHandler(model) {
+export function buildProjectionHandler(model, _options = {}) {
     const result = [];
     const buildErrors = [];
+
+    const options = Object.assign({
+        name: "projection",
+        download: true
+    }, _options);
 
     const concepts = model.getConcepts(["projection", "template", "style rule"]);
 
@@ -82,6 +87,10 @@ export function buildProjectionHandler(model) {
     }
 
     this.notify("The projection model was <strong>successfully</strong> built", NotificationType.SUCCESS, 2000);
+    if (options.download) {
+        this.download(result, options.name);
+    }
+
     console.log(result);
 
     return result;
@@ -241,8 +250,17 @@ function buildLayout(layout) {
             const element = proto.getValue();
             disposition.push(buildElement.call(this, element));
         });
+    } else if (elementType === "flex") {
+        schema.orientation = getValue(layout, 'orientation');
+        schema.wrappable = getValue(layout, 'wrappable');
+        schema.alignItems = getValue(layout, 'align-items');
+        schema.justifyContent = getValue(layout, 'justify-content');
+
+        getValue(layout, "elements").filter(proto => proto.hasValue()).forEach(proto => {
+            const element = proto.getValue();
+            disposition.push(buildElement.call(this, element));
+        });
     } else if (elementType === "wrap") {
-        schema.containerless = getValue(layout, 'containerless');
 
         getValue(layout, "elements").filter(proto => proto.hasValue()).forEach(proto => {
             const element = proto.getValue();
@@ -378,6 +396,14 @@ function buildStatic(element, type) {
     } else if (type === "link") {
         schema.url = getValue(element, "url");
         schema.urlType = getValue(element, "url type");
+        schema.content = [];
+
+        getValue(element, "content").filter(proto => proto.hasValue()).forEach(proto => {
+            const element = proto.getValue();
+            schema.content.push(buildElement.call(this, element));
+        });
+    } else if (type === "plink") {
+        schema.tag = getValue(element, "tag");
         schema.content = [];
 
         getValue(element, "content").filter(proto => proto.hasValue()).forEach(proto => {

@@ -6,20 +6,29 @@ import { Layout } from "./layout.js";
 
 
 const Orientation = {
-    HORIZONTAL: "horizontal",
-    VERTICAL: "vertical"
+    ROW: "row",
+    COLUMN: "column"
 };
 
-export const BaseStackLayout = {
+export const BaseFlexLayout = {
     /** @type {string} */
     orientation: null,
+    /** @type {boolean} */
+    wrappable: null,
+    /** @type {string} */
+    alignItems: null,
+    /** @type {string} */
+    justifyContent: null,
     /** @type {*} */
     args: null,
 
     init(args = {}) {
-        const { orientation = Orientation.HORIZONTAL, editable = true, focusable = false } = this.schema;
+        const { orientation = Orientation.ROW, wrappable = true, alignItems, justifyContent, editable = true, focusable = false } = this.schema;
 
         this.orientation = orientation;
+        this.wrappable = wrappable;
+        this.alignItems = alignItems;
+        this.justifyContent = justifyContent;
         this.focusable = focusable;
         this.editable = editable;
         this.elements = [];
@@ -121,18 +130,25 @@ export const BaseStackLayout = {
             this.bindEvents();
         }
 
+        if (this.collapsed) {
+            this.collapse(true);
+        }
+
         this.container.style.display = "flex";
-        this.container.style.flexWrap = "no-wrap";
 
         this.refresh();
 
         return this.container;
     },
     refresh() {
-        if (this.orientation === Orientation.VERTICAL) {
-            this.container.style.flexDirection = "column";
-        } else if (this.orientation === Orientation.HORIZONTAL) {
-            this.container.style.flexDirection = "row";
+        this.container.style.flexDirection = this.orientation;
+        this.container.style.justifyContent = this.justifyContent;
+        this.container.style.alignItems = this.alignItems;
+
+        if (this.wrappable) {
+            this.container.style.flexWrap = "wrap";
+        } else {
+            this.container.style.flexWrap = "nowrap";
         }
 
         return this;
@@ -232,7 +248,7 @@ export const BaseStackLayout = {
     }
 };
 
-export const StackLayout = Object.assign({},
+export const FlexLayout = Object.assign({},
     Layout,
-    BaseStackLayout
+    BaseFlexLayout
 );

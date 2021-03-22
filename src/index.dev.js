@@ -61,7 +61,7 @@ const EDITOR_HANDLER = {
         this.triggerEvent({ "name": "load-resource" });
     },
     "preview-projection": function (target) {
-        this.triggerEvent({ "name": "build-projection" }, (pmodel) => {
+        this.triggerEvent({ "name": "build-projection", options: { download: false } }, (pmodel) => {
             if (!pmodel) {
                 return;
             }

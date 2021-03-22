@@ -1,8 +1,8 @@
 import {
-    createDocFragment, createHeader, createSection, createH3, createDiv,
-    createParagraph, createButton, createAnchor, createInput, removeChildren,
-    isHTMLElement, findAncestor, isNullOrWhitespace, isNullOrUndefined, isEmpty,
-    hasOwn, isFunction, valOrDefault, copytoClipboard, toBoolean
+    createDocFragment, createSection, createDiv, createParagraph,
+    createAnchor, createInput, removeChildren, isHTMLElement, findAncestor,
+    isNullOrWhitespace, isNullOrUndefined, isEmpty, hasOwn, isFunction, valOrDefault,
+    copytoClipboard, toBoolean
 } from 'zenkai';
 import { Events, hide, show, toggle, Key, getEventTarget, NotificationType, LogType, EditorMode } from '@utils/index.js';
 import { buildProjectionHandler } from "../build-projection.js";
@@ -11,13 +11,19 @@ import { ConceptModelManager } from '@model/index.js';
 import { createProjectionModel } from '@projection/index.js';
 import { ProjectionWindow } from '../projection-window.js';
 import { EditorHome } from './editor-home.js';
+import { EditorBreadcrumb } from './editor-breadcrumb.js';
 import { EditorMenu } from './editor-menu.js';
 import { EditorStyle } from './editor-style.js';
 import { EditorFile } from './editor-file.js';
 import { EditorLog } from './editor-log.js';
 import { EditorResource } from './editor-resource.js';
 import { EditorSection } from './editor-section.js';
+import { EditorInstance } from './editor-instance.js';
 
+
+var inc = 0;
+
+const nextInstanceId = () => `instance${inc++}`;
 
 /**
  * Creates an editor's header
@@ -58,6 +64,19 @@ function createEditorMenu() {
 }
 
 /**
+ * Creates an editor breadcrumb
+ * @returns {EditorBreadcrumb}
+ */
+function createEditorBreadcrumb() {
+    return Object.create(EditorBreadcrumb, {
+        object: { value: "environment" },
+        name: { value: "editor-breadcrumb" },
+        type: { value: "breadcrumb" },
+        editor: { value: this }
+    });
+}
+
+/**
  * Creates an editor home
  * @returns {EditorHome}
  */
@@ -79,19 +98,6 @@ function createEditorStyle() {
         object: { value: "environment" },
         name: { value: "editor-style" },
         type: { value: "style" },
-        editor: { value: this }
-    });
-}
-
-/**
- * Creates an editor file manager
- * @returns {EditorFile}
- */
-function createEditorFile() {
-    return Object.create(EditorFile, {
-        object: { value: "environment" },
-        name: { value: "editor-file" },
-        type: { value: "file" },
         editor: { value: this }
     });
 }
@@ -158,6 +164,8 @@ export const Editor = {
     activeConcept: null,
     /** @type {Projection} */
     activeProjection: null,
+    /** @type {EditorInstance} */
+    activeInstance: null,
 
     /** @type {HTMLElement} */
     container: null,
@@ -167,16 +175,18 @@ export const Editor = {
     body: null,
     /** @type {HTMLElement} */
     footer: null,
-    /** @type {ProjectionWindow} */
-    projectionWindow: null,
+    /** @type {HTMLElement} */
+    instanceSection: null,
+    /** @type {HTMLElement} */
+    navigationSection: null,
+    /** @type {EditorBreadcrumb} */
+    breadcrumb: null,
     /** @type {EditorMenu} */
     menu: null,
     /** @type {EditorHome} */
     home: null,
     /** @type {EditorStyle} */
     style: null,
-    /** @type {EditorFile} */
-    files: null,
     /** @type {EditorLog} */
     logs: null,
 
@@ -195,21 +205,23 @@ export const Editor = {
     active: false,
     /** @type {boolean} */
     visible: false,
+    /** @type {Map} */
     handlers: null,
+    /** @type {Map} */
+    instances: null,
     /** @type {Map} */
     resources: null,
 
     init(args = {}) {
-        const { conceptModel, projectionModel, concept, projection, config = EDITOR_CONFIG, handlers = {} } = args;
+        const { conceptModel, projectionModel, config = EDITOR_CONFIG, handlers = {} } = args;
 
         this.conceptModel = conceptModel;
         this.projectionModel = projectionModel;
-        this.concept = concept;
-        this.projection = projection;
 
         // Editor configuration
         this.config = config;
         this.handlers = {};
+        this.instances = new Map();
         this.resources = new Map();
 
         for (const key in handlers) {
@@ -221,15 +233,19 @@ export const Editor = {
             this.header = createEditorHeader.call(this).init();
         }
 
-        this.projectionWindow = createProjectionWindow.call(this).init();
-
         this.menu = createEditorMenu.call(this).init(this.config.menu);
         this.home = createEditorHome.call(this).init(this.config.home);
+        this.breadcrumb = createEditorBreadcrumb.call(this).init(this.config.breadcrumb);
         this.style = createEditorStyle.call(this).init(this.config.style);
-        this.files = createEditorFile.call(this).init(this.config.files);
         this.logs = createEditorLog.call(this).init(this.config.logs);
 
         this.render();
+
+        if (this.isReady) {
+            this.conceptModel.getRootConcepts().forEach(concept => {
+                this.createInstance(concept);
+            });
+        }
 
         return this;
     },
@@ -244,7 +260,6 @@ export const Editor = {
         this.menu.update(this.config.menu);
         this.home.update(this.config.home);
         this.style.update(this.config.style);
-        this.files.update(this.config.files);
         this.logs.update(this.config.logs);
     },
     getRoots() {
@@ -264,126 +279,56 @@ export const Editor = {
      * Creates a concept instance
      * @param {string} name 
      */
-    createInstance(name) {
-        if (!this.conceptModel.isConcept(name)) {
-            this.notify(`The concept '${name}' is not defined in the model`, NotificationType.ERROR);
-            return false;
-        }
-
-        let concept = this.conceptModel.createConcept(name);
-
-        return this.addInstance(concept);
-    },
-    /**
-     * Creates a projection for a concept instance
-     * @param {*} concept 
-     * @param {boolean} hasToolbar 
-     * @returns {HTMLElement}
-     */
-    addInstance(concept, schema = {}, hasToolbar = true) {
+    createInstance(concept, _projection, _options) {
         if (isNullOrUndefined(concept)) {
             this.notify(`The concept is not valid`, NotificationType.ERROR);
             return false;
         }
 
-        const { name } = concept;
+        let projection = valOrDefault(_projection, this.projectionModel.createProjection(concept).init());
 
-        let projection = this.projectionModel.createProjection(concept, schema.tag).init();
-
-        let title = createH3({
-            class: ["title", "editor-concept-title", "fit-content"],
-        }, name);
-
-        let header = createHeader({
-            class: ["editor-concept-header"],
-        }, [title]);
-
-        let instanceContainer = createDiv({
-            class: ["editor-concept"],
-            draggable: false,
-            dataset: {
-                nature: "concept-container",
-                size: 1,
-            }
-        }, [header, projection.render()]);
-
-        if (hasToolbar) {
-            let btnDelete = createButton({
-                class: ["btn", "editor-concept-toolbar__btn-delete"],
-                title: `Delete ${name.toLowerCase()}`
-            });
-            btnDelete.addEventListener('click', (event) => {
-                if (concept.delete(true)) {
-                    removeChildren(instanceContainer);
-                    instanceContainer.remove();
-                }
-            });
-
-            let btnNew = createButton({
-                class: ["btn", "editor-concept-toolbar__btn-new"],
-                title: `New ${name.toLowerCase()}`
-            });
-            btnNew.addEventListener('click', (event) => {
-                this.createInstance(name);
-            });
-
-            let btnCollapse = createButton({
-                class: ["btn", "editor-concept-toolbar__btn-collapse"],
-                title: `Collapse ${name.toLowerCase()}`
-            });
-            btnCollapse.addEventListener('click', (event) => {
-                instanceContainer.classList.toggle('collapsed');
-            });
-
-            let btnMaximize = createButton({
-                class: ["btn", "editor-concept-toolbar__btn-maximize"],
-                title: `Maximize ${name.toLowerCase()}`
-            });
-            btnMaximize.addEventListener('click', (event) => {
-                instanceContainer.classList.toggle('focus');
-            });
-
-            let btnResize = createButton({
-                class: ["btn", "editor-concept-toolbar__btn-resize"],
-                title: `Resize ${name.toLowerCase()}`
-            });
-            btnResize.addEventListener('click', (event) => {
-                const { size } = instanceContainer.dataset;
-                instanceContainer.dataset.size = `${+size % 3 + 1}`;
-            });
-
-            let toolbar = createDiv({
-                class: ["editor-concept-toolbar"],
-            }, [btnCollapse, btnResize, btnMaximize, btnDelete]);
-
-            header.append(toolbar);
-        }
-
-        this.conceptSection.appendChild(instanceContainer);
-
-        projection.focus();
-
-        return instanceContainer;
-    },
-    initInstance() {
-        if (!this.isReady) {
-            return;
-        }
-
-        if (this.concept) {
-            let container = this.addInstance(this.concept, this.projection, false);
-            container.classList.add("focus");
-
-            return true;
-        }
-
-        this.conceptModel.getRootConcepts().forEach(concept => {
-            this.addInstance(concept);
+        let instance = Object.create(EditorInstance, {
+            id: { value: nextInstanceId() },
+            object: { value: "environment" },
+            name: { value: "editor-instance" },
+            type: { value: "instance" },
+            concept: { value: concept },
+            projection: { value: projection },
+            editor: { value: this }
         });
 
-        return this;
-    },
+        const options = Object.assign({
+            minimize: true,
+            resize: true,
+            maximize: true,
+            close: "DELETE-CONCEPT"
+        }, _options);
 
+        instance.init(options);
+
+        return this.addInstance(instance);
+    },
+    getInstance(id) {
+        return this.instances.get(id);
+    },
+    /**
+     * Adds instance to editor
+     * @param {EditorInstance} instance 
+     * @returns {HTMLElement}
+     */
+    addInstance(instance) {
+        if (!instance.isRendered) {
+            this.instanceSection.appendChild(instance.render());
+        }
+
+        this.instances.set(instance.id, instance);
+        this.updateActiveInstance(instance);
+
+        return instance;
+    },
+    removeInstance(id) {
+        return this.instances.delete(id);
+    },
     // Model management
 
     /**
@@ -401,9 +346,47 @@ export const Editor = {
      * @returns {boolean} Value indicating whether the editor has both model loaded
      */
     get isReady() { return this.hasConceptModel && this.hasProjectionModel; },
+    /**
+     * Verifies that the editor has an active concept
+     * @returns {boolean} Value indicating whether the editor has an active concept
+     */
+    get hasActiveConcept() { return !isNullOrUndefined(this.activeConcept); },
+    /**
+     * Verifies that the editor has an active projection
+     * @returns {boolean} Value indicating whether the editor has an active projection
+     */
+    get hasActiveProjection() { return !isNullOrUndefined(this.activeProjection); },
+    /**
+     * Verifies that the editor has an active instance
+     * @returns {boolean} Value indicating whether the editor has an active instance
+     */
+    get hasActiveInstance() { return !isNullOrUndefined(this.activeInstance); },
 
     // Model concept operations
 
+    /**
+     * Creates a concept
+     * @param {string} name 
+     * @returns {Concept}
+     */
+    createConcept(name) {
+        if (isNullOrUndefined(name)) {
+            throw new TypeError("Missing argument: The 'name' is required to create a concept");
+        }
+
+        if (!this.conceptModel.isConcept(name)) {
+            this.notify(`The concept '${name}' is not defined in the model`, NotificationType.ERROR);
+            return false;
+        }
+
+        let concept = this.conceptModel.createConcept(name);
+
+        return concept;
+    },
+    /**
+     * Adds concepts schema to model
+     * @param {Concept[]|Concept} concepts 
+     */
     addConcept(concepts) {
         if (Array.isArray(concepts)) {
             this.conceptModel.schema.push(...concepts);
@@ -416,6 +399,30 @@ export const Editor = {
 
     // Model projection operations
 
+    /**
+     * Creates a concept
+     * @param {Concept} concept 
+     * @param {string} [tag] 
+     * @returns {Concept}
+     */
+    createProjection(concept, tag) {
+        if (isNullOrUndefined(concept)) {
+            throw new TypeError("Missing argument: The 'concept' is required to create a projection");
+        }
+
+        if (!this.projectionModel.hasConceptProjection(concept, tag)) {
+            this.notify(`The projection for the concept '${concept.name}' is not defined in the model`, NotificationType.ERROR);
+            return false;
+        }
+
+        let projection = this.projectionModel.createProjection(concept, tag).init();
+
+        return projection;
+    },
+    /**
+     * Adds projections schema to model
+     * @param {Projection[]|Projection} projections 
+     */
     addProjection(projections) {
         if (Array.isArray(projections)) {
             this.projectionModel.schema.push(...projections);
@@ -540,9 +547,40 @@ export const Editor = {
     // Editor actions
 
     download(obj) {
-        this.files.addFile(obj);
+        const MIME_TYPE = 'application/json';
+        window.URL = window.webkitURL || window.URL;
 
-        this.refresh();
+        /** @type {HTMLAnchorElement} */
+        var link = createAnchor({
+            class: ["bare-link", "download-item__link"]
+        }, `Download`);
+
+        if (!isNullOrWhitespace(link.href)) {
+            window.URL.revokeObjectURL(link.href);
+        }
+
+        var bb = new Blob([JSON.stringify(obj)], { type: MIME_TYPE });
+        Object.assign(link, {
+            download: `model.json`,
+            href: window.URL.createObjectURL(bb),
+        });
+
+        link.dataset.downloadurl = [MIME_TYPE, link.download, link.href].join(':');
+        link.click();
+        this.notify("The model has been downloaded", NotificationType.SUCCESS);
+
+        // Need a small delay for the revokeObjectURL to work properly.
+        setTimeout(() => {
+            window.URL.revokeObjectURL(link.href);
+            link.remove();
+        }, 1500);
+
+
+        // // Need a small delay for the revokeObjectURL to work properly.
+        // setTimeout(() => {
+        //     window.URL.revokeObjectURL(link.href);
+        //     link.remove();
+        // }, 1500);
 
         return obj;
     },
@@ -639,18 +677,24 @@ export const Editor = {
         this.resources.delete(name);
 
         Events.emit("resource.removed", name);
-        
+
         this.refresh();
 
         return true;
     },
     copy(value) {
         this.copyValue = value;
+
         this.notify(`${value.name} copied`, NotificationType.NORMAL);
+
         return this;
     },
-    paste(concept, value) {
-        concept.initValue(valOrDefault(value, this.copyValue));
+    paste(concept, _value) {
+        let value = valOrDefault(_value, this.copyValue);
+
+        concept.initValue(value);
+
+        return this;
     },
 
     // Editor window actions
@@ -741,7 +785,8 @@ export const Editor = {
             this.projectionModel.done();
         }
 
-        this.initInstance();
+        Events.emit("model.changed", this.conceptModel);
+
         this.refresh();
 
         return this;
@@ -778,7 +823,7 @@ export const Editor = {
             // TODO: add validation and notify of errors
         }
 
-        this.initInstance();
+        Events.emit("model.changed", this.projectionModel);
         this.refresh();
 
         return this;
@@ -860,8 +905,8 @@ export const Editor = {
         return this;
     },
     clear() {
-        if (this.conceptSection) {
-            removeChildren(this.conceptSection);
+        if (this.instanceSection) {
+            removeChildren(this.instanceSection);
         }
 
         this.activeElement = null;
@@ -902,11 +947,16 @@ export const Editor = {
                 tabindex: 0,
             });
 
-            this.conceptSection = createSection({
+
+            this.navigationSection = createSection({
+                class: ["model-navigation-section"],
+            });
+
+            this.instanceSection = createSection({
                 class: ["model-concept-section"],
             });
 
-            this.body.append(this.conceptSection);
+            this.body.append(this.navigationSection, this.instanceSection);
 
             fragment.appendChild(this.body);
         }
@@ -917,10 +967,6 @@ export const Editor = {
                 tabindex: 0,
             });
 
-            if (!this.files.isRendered) {
-                this.footer.append(this.files.render());
-            }
-
             if (!this.logs.isRendered) {
                 this.footer.append(this.logs.render());
             }
@@ -928,8 +974,8 @@ export const Editor = {
             fragment.appendChild(this.footer);
         }
 
-        if (!isHTMLElement(this.projectionWindow.container)) {
-            fragment.appendChild(this.projectionWindow.render());
+        if (!this.breadcrumb.isRendered) {
+            this.navigationSection.appendChild(this.breadcrumb.render());
         }
 
         if (!this.menu.isRendered) {
@@ -956,7 +1002,6 @@ export const Editor = {
             container.appendChild(this.container);
         }
 
-        this.initInstance();
         this.refresh();
 
         return this.container;
@@ -975,12 +1020,11 @@ export const Editor = {
         }
 
         this.header.refresh();
+        this.breadcrumb.refresh();
         this.menu.refresh();
         this.home.refresh();
         this.style.refresh();
-        this.files.refresh();
         this.logs.refresh();
-        this.projectionWindow.refresh();
 
         return this;
     },
@@ -990,7 +1034,7 @@ export const Editor = {
      */
     updateActiveElement(element) {
         if (this.activeElement && this.activeElement === element) {
-            return;
+            return this;
         }
 
         this.activeElement = element;
@@ -1002,6 +1046,10 @@ export const Editor = {
      * @param {Concept} concept 
      */
     updateActiveConcept(concept) {
+        if (this.activeConcept && this.activeConcept === concept) {
+            return this;
+        }
+
         this.activeConcept = concept;
 
         this.refresh();
@@ -1013,6 +1061,10 @@ export const Editor = {
      * @param {Projection} projection 
      */
     updateActiveProjection(projection) {
+        if (this.activeProjection && this.activeProjection === projection) {
+            return this;
+        }
+
         this.activeProjection = projection;
 
         // let parent = this.activeElement.parentElement;
@@ -1024,6 +1076,26 @@ export const Editor = {
 
         //     parent = parent.parentElement;
         // }
+
+        this.refresh();
+
+        return this;
+    },
+    /**
+     * Updates the active instance
+     * @param {EditorInstance} instance 
+     */
+    updateActiveInstance(instance) {
+        if (this.activeInstance) {
+            if (this.activeInstance === instance) {
+                return this;
+            }
+
+            this.activeInstance.container.classList.remove("active");
+        }
+
+        this.activeInstance = instance;
+        this.activeInstance.container.classList.add("active");
 
         this.refresh();
 
@@ -1046,12 +1118,12 @@ export const Editor = {
      * @param {*} event 
      */
     triggerEvent(event, callback) {
-        const { name, downloadable, } = event;
+        const { name, options } = event;
 
         const handlers = this.getHandlers(name);
 
         handlers.forEach((handler) => {
-            let result = handler.call(this, this.conceptModel);
+            let result = handler.call(this, this.conceptModel, options);
 
             if (isFunction(callback)) {
                 callback.call(this, result);
@@ -1059,10 +1131,6 @@ export const Editor = {
 
             if (result === false) {
                 return;
-            }
-
-            if (toBoolean(downloadable)) {
-                this.download(result);
             }
         });
 
@@ -1120,7 +1188,7 @@ export const Editor = {
                 }
             },
             "close": (target) => {
-                const { context } = target.dataset;
+                const { context, id, type } = target.dataset;
 
                 if (context) {
                     this[context].close();
@@ -1135,6 +1203,7 @@ export const Editor = {
                     let parent = findAncestor(target, (el) => el.dataset.name === actionTarget);
                     if (isHTMLElement(parent)) {
                         parent.classList.toggle("collapsed");
+                        target.dataset.state = parent.classList.contains("collapsed") ? "ON" : "OFF";
                     }
                 }
             },
@@ -1147,14 +1216,36 @@ export const Editor = {
                     parent.remove();
                 }
             },
+            "delete:value": (target) => {
+                const { id } = target.dataset;
+
+                this.conceptModel.removeValue(id);
+            },
+            "delete:resource": (target) => {
+                const { id } = target.dataset;
+
+                this.editor.removeResource(id);
+            },
 
             "style": (target) => { this.style.toggle(); },
             "home": (target) => { this.home.toggle(); },
-            "files": (target) => { this.files.toggle(); },
             "logs": (target) => { this.logs.toggle(); },
 
             "export": (target) => { this.export(); },
-            "copy": (target) => { this.export(true); },
+            "export--copy": (target) => { this.export(true); },
+
+            "create-instance": (target) => {
+                const { concept } = target.dataset;
+
+                this.createInstance(this.createConcept(concept));
+            },
+            "copy:value": (target) => {
+                const { id } = target.dataset;
+
+                let value = this.conceptModel.getValue(id);
+                this.copy(value);
+            },
+
 
 
             "load-resource": (target) => {
@@ -1209,7 +1300,13 @@ export const Editor = {
         this.container.addEventListener('click', (event) => {
             var target = getEventTarget(event.target);
 
-            const { action, handler, downloadable } = target.dataset;
+            const { action, context, id, handler } = target.dataset;
+
+            if (context === "instance") {
+                let instance = this.getInstance(id);
+                instance.actionHandler(action);
+                return;
+            }
 
             if (this.activeElement) {
                 this.activeElement.clickHandler(target);
@@ -1219,8 +1316,7 @@ export const Editor = {
 
             if (handler && action) {
                 this.triggerEvent({
-                    "name": action,
-                    "downloadable": downloadable,
+                    "name": action
                 });
             } else if (isFunction(actionHandler)) {
                 actionHandler(target);
@@ -1394,12 +1490,8 @@ export const Editor = {
                     break;
                 case "e":
                     if (lastKey === Key.ctrl && this.activeConcept) {
-                        let editor = this.manager.createEditor().init({
-                            conceptModel: this.conceptModel,
-                            projectionModel: this.projectionModel,
-                            concept: this.activeConcept,
-                            projection: this.activeProjection,
-                            config: this.config,
+                        this.createInstance(this.activeConcept, this.activeProjection, {
+                            close: "DELETE-PROJECTION"
                         });
 
                         event.preventDefault();
@@ -1528,6 +1620,16 @@ export const Editor = {
             fileType = "resource";
 
             this.input.dispatchEvent(event);
+        });
+
+        Events.on("model.changed", () => {
+            if (!this.isReady) {
+                return;
+            }
+
+            this.conceptModel.getRootConcepts().forEach(concept => {
+                this.createInstance(concept);
+            });
         });
     }
 };

@@ -84,13 +84,12 @@ export const EditorMenu = {
 
         actions.filter(action => valOrDefault(action.default, true))
             .forEach(action => {
-                const { name, content, downloadable, handler } = action;
+                const { name, content, handler } = action;
 
                 let button = createButton({
                     class: ["btn", "menu-action__button"],
                     dataset: {
                         "action": name,
-                        "downloadable": downloadable,
                         "handler": true
                     }
                 }, valOrDefault(content, name));

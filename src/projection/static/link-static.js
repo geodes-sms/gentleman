@@ -81,7 +81,7 @@ const BaseLinkStatic = {
         }
 
         this.content.forEach(element => {
-            let content = ContentHandler.call(this, element);
+            let content = ContentHandler.call(this, element, this.projection.concept, { focusable: false });
 
             fragment.appendChild(content);
         });

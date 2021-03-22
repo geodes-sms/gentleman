@@ -1,6 +1,6 @@
 import { isNullOrUndefined } from 'zenkai';
 import { AudioStatic } from './audio-static.js';
-import { ButtonStatic } from './button-static.js';
+import { ProjectionLinkStatic } from './plink-static.js';
 import { HTMLStatic } from './html-static.js';
 import { ImageStatic } from './image-static.js';
 import { LinkStatic } from './link-static.js';
@@ -21,10 +21,10 @@ const Handler = {
         schema: { value: schema },
         projection: { value: projection },
     }),
-    'button': (model, schema, projection) => Object.create(ButtonStatic, {
+    'plink': (model, schema, projection) => Object.create(ProjectionLinkStatic, {
         object: { value: "static" },
-        name: { value: "button-static" },
-        type: { value: "button" },
+        name: { value: "plink-static" },
+        type: { value: "plink" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
@@ -41,8 +41,8 @@ const Handler = {
     }),
     'link': (model, schema, projection) => Object.create(LinkStatic, {
         object: { value: "field" },
-        name: { value: "image-static" },
-        type: { value: "image" },
+        name: { value: "link-static" },
+        type: { value: "link" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },

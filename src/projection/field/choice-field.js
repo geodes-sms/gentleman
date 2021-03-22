@@ -165,7 +165,7 @@ const BaseChoiceField = {
         this.refresh();
     },
 
-    
+
     refresh() {
         if (this.hasValue()) {
             this.element.classList.remove("empty");
@@ -241,7 +241,7 @@ const BaseChoiceField = {
 
         if (!isHTMLElement(this.statusElement)) {
             this.statusElement = createI({
-                class: ["field-status"],
+                class: ["field-status", "hidden"],
                 dataset: {
                     nature: "field-component",
                     view: "choice",
@@ -441,9 +441,10 @@ const BaseChoiceField = {
         for (let i = 0; i < children.length; i++) {
             const item = children[i];
 
-            let value = getItemValue(item);
+            let value = getItemValue(item).toLowerCase();
+            let _value = value.replace(/[_-]+/g, " ").replace(/\s+/g, "").trim();
 
-            let match = parts.some(q => value.toLowerCase().includes(q));
+            let match = parts.some(q => value.includes(q) || _value.includes(q));
 
             if (match) {
                 show(item);

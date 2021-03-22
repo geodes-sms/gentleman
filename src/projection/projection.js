@@ -1,6 +1,6 @@
 import {
-    createButton, createI, removeChildren, insertAfterElement, insertBeforeElement,
-    isNode, isHTMLElement, hasOwn, isNullOrUndefined, valOrDefault, isEmpty, toBoolean,
+    createButton, createI, removeChildren, isNode, isHTMLElement,
+    hasOwn, isNullOrUndefined, valOrDefault, isEmpty, toBoolean,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
 import { LayoutFactory } from "./layout/index.js";
@@ -50,6 +50,8 @@ const Projection = {
     parent: null,
     /** @type {Map} */
     containers: null,
+    /** @type {HTMLElement} */
+    placeholder: null,
     /** @type {Layout|Field} */
     element: null,
     /** @type {string[]} */
@@ -168,17 +170,7 @@ const Projection = {
         }
 
         if (message === "delete") {
-            this.concept = null;
-
-            this.containers.forEach(container => {
-                removeChildren(container);
-                if (isHTMLElement(container)) {
-                    container.remove();
-                }
-            });
-
-            this.model.removeProjection(this.id);
-
+            this.delete();
             return;
         }
 
@@ -233,6 +225,27 @@ const Projection = {
                     break;
             }
         }
+    },
+    delete() {
+        if (this.concept) {
+            this.concept.unregister(this);
+            this.concept = null;
+        }
+
+        if(this.placeholder) {
+            this.getContainer().after(this.placeholder);
+        }
+        
+        this.containers.forEach(container => {
+            removeChildren(container);
+            if (isHTMLElement(container)) {
+                container.remove();
+            }
+        });
+
+        this.model.removeProjection(this.id);
+
+        return true;
     },
 
     /**
@@ -291,9 +304,7 @@ const Projection = {
             this.model.registerField(this.element);
         }
 
-        if (this.isRoot() || this.optional) {
-            this.element.focusable = true;
-        }
+        this.element.focusable = true;
 
         if (!this.focusable) {
             this.element.focusable = false;
@@ -407,6 +418,5 @@ const Projection = {
     },
 
     bindEvents() {
-
     }
 };

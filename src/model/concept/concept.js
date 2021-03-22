@@ -64,7 +64,11 @@ const _Concept = {
      * @returns {string}
      */
     getName() {
-        return valOrDefault(this.ref.name, this.name);
+        if (this.ref && this.ref.object === "attribute") {
+            return this.ref.name;
+        }
+
+        return this.name;
     },
     /**
      * Gets the alias or the name
@@ -381,6 +385,9 @@ const _Concept = {
         }
 
         return copy;
+    },
+    paste(value) {
+        this.initValue(value);
     },
     export() {
         var output = {

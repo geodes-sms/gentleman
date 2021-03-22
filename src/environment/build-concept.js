@@ -29,9 +29,14 @@ const getName = (concept) => getValue(concept, ATTR_NAME).toLowerCase();
 const getDescription = (concept) => getValue(concept, ATTR_DESCRIPTION);
 
 
-export function buildConceptHandler(model) {
+export function buildConceptHandler(model, _options = {}) {
     const result = [];
     const buildErrors = [];
+
+    const options = Object.assign({
+        name: "metamodel",
+        download: true
+    }, _options);
 
     const concepts = model.getConcepts(["prototype concept", "concrete concept", "derivative concept"]);
 
@@ -63,6 +68,10 @@ export function buildConceptHandler(model) {
     }
 
     this.notify("The concept model was <strong>successfully</strong> built", NotificationType.SUCCESS, 2000);
+    if (options.download) {
+        this.download(result, options.name);
+    }
+
     console.log(result);
 
     return result;

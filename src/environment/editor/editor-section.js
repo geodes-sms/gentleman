@@ -108,7 +108,10 @@ export const EditorSection = {
 
         if (!isHTMLElement(this.container)) {
             this.container = createDiv({
-                class: ["editor-header"]
+                class: ["editor-header"],
+                dataset: {
+                    name: "editor-header"
+                }
             });
         }
 
@@ -153,23 +156,16 @@ export const EditorSection = {
         this.activeTabValue = this.activeTab.dataset.value;
 
         this.btnClose = createButton({
-            class: ["btn", "btn-close"],
+            class: ["btn", "editor-toolbar__button", "btn-close"],
             dataset: {
                 action: "close"
             }
         });
 
         this.btnHome = createButton({
-            class: ["btn", "btn-home"],
+            class: ["btn", "editor-toolbar__button", "btn-home"],
             dataset: {
                 action: "home"
-            }
-        });
-
-        let btnStyle = createButton({
-            class: ["btn", "btn-style", "hidden"],
-            dataset: {
-                action: "style"
             }
         });
 
@@ -193,6 +189,19 @@ export const EditorSection = {
             fragment.append(this.body);
         }
 
+        if (!isHTMLElement(this.btnCollapse)) {
+            this.btnCollapse = createButton({
+                class: ["btn", "editor-header__button", "btn-collapse"],
+                dataset: {
+                    action: "collapse",
+                    rel: "parent",
+                    target: "editor-header",
+                }
+            });
+
+            fragment.append(this.btnCollapse);
+        }
+
         if (!isHTMLElement(this._conceptSelector.container)) {
             this.body.append(this._conceptSelector.render());
         }
@@ -208,6 +217,8 @@ export const EditorSection = {
         if (!isHTMLElement(this._resourceSelector.container)) {
             this.body.append(this._resourceSelector.render());
         }
+
+        this.btnCollapse.dataset.state = this.container.classList.contains("collapsed") ? "ON" : "OFF";
 
         if (fragment.hasChildNodes()) {
             this.container.appendChild(fragment);
@@ -234,9 +245,11 @@ export const EditorSection = {
         if (this.editor.hasConceptModel) {
             show(this.tabs);
             show(this.body);
+            show(this.btnCollapse);
         } else {
             hide(this.tabs);
             hide(this.body);
+            hide(this.btnCollapse);
         }
 
         let handler = SelectorHandler[this.activeTabValue];
@@ -304,47 +317,12 @@ export const EditorSection = {
     },
 
     bindEvents() {
-
-        this.container.addEventListener("keydown", (event) => {
-            const { target } = event;
-
-            switch (event.key) {
-                case Key.enter:
-                    target.click();
-
-                    break;
-                default:
-                    break;
-            }
-        });
-
         this.tabs.addEventListener('click', (event) => {
             const { target } = event;
 
             let selector = getSelector.call(this, target);
 
             this.updateSelector(selector);
-        });
-
-        this.body.addEventListener("click", (event) => {
-            const { target } = event;
-
-            const { action, id, concept, handler } = target.dataset;
-
-            if (action === "clone") {
-                let value = this.editor.conceptModel.getValue(id);
-
-                this.editor.activeConcept.initValue(value);
-            } else if (action === "delete") {
-                this.editor.conceptModel.removeValue(id);
-            } else if (action === "edit") {
-                let projection = this.editor.projectionModel.getMetadata(id);
-                // this.editor.manager.createEditor().init().initProjection([JSON.parse(projection)]).open();
-            } else if (action === "create") {
-                this.editor.createInstance(concept);
-            }else if (action === "delete-resource") {
-                this.editor.removeResource(id);
-            }
         });
 
         Events.on("value.added", (value) => {
@@ -355,7 +333,6 @@ export const EditorSection = {
         Events.on("value.removed", (value) => {
             this.refresh();
         });
-
 
         Events.on("resource.added", (value) => {
             this.fileCount++;
@@ -470,120 +447,4 @@ function getSelector(element) {
     }
 
     return findAncestor(element, isValid, 10);
-}
-
-/**
- * Creates a selector between a root concept and the active concept
- * @param {Concept!} rootConcept 
- * @param {Concept} [activeConcept] 
- * @returns {Node}
- */
-function conceptSelectorHandler(rootConcept, activeConcept) {
-
-    if (isNullOrUndefined(rootConcept)) {
-        throw new TypeError("Bad argument: rootConcept must be a Concept");
-    }
-
-    /**
-     * Createa a selector item
-     * @param {string} type 
-     * @param {Concept} concept 
-     * @returns {HTMLElement}
-     */
-    const createSelectorItem = (type, concept, source = false) => {
-        const { name, alias, object, ref } = concept;
-
-        const typeHandler = {
-            "root": `${valOrDefault(alias, name)}`,
-            "parent": `${valOrDefault(alias, name)}`,
-            "ancestor": `${valOrDefault(alias, name)}`,
-            "active": `${valOrDefault(ref.name, name)}`,
-        };
-
-        const fragment = createDocFragment();
-
-        if (type === "active") {
-            fragment.appendChild(createI({
-                class: [`selector-concept-nature`]
-            }, name));
-        }
-
-        /** @type {HTMLElement} */
-        var content = createSpan({
-            class: ["selector-concept-content"],
-        }, typeHandler[type]);
-
-        fragment.appendChild(content);
-
-        if (type === "ancestor") {
-            content.classList.add("fit-content");
-        }
-
-
-        /** @type {HTMLElement} */
-        var item = createListItem({
-            class: ["selector-concept", `selector-concept--${type}`],
-            dataset: {
-                object: object
-            }
-        }, fragment);
-
-        if (source) {
-            item.classList.add("source");
-        }
-
-        return item;
-    };
-
-    const fragment = createDocFragment();
-    const hasActiveConcept = !isNullOrUndefined(activeConcept);
-
-    fragment.appendChild(createSelectorItem("root", rootConcept, hasActiveConcept));
-
-    if (!hasActiveConcept) {
-        return fragment;
-    }
-
-    let activeParent = activeConcept.getParent();
-
-    if (activeParent !== rootConcept) {
-        let parent = activeParent;
-        let parentItem = null;
-
-        parentItem = createSelectorItem("parent", activeParent, true);
-
-        let ancestor = parent.getAncestor().filter(val => val.object === "concept" && val.nature !== "primitive" && val !== rootConcept);
-
-        if (!isEmpty(ancestor)) {
-            ancestor = ancestor.reverse();
-            let ancestorItem = createListItem({
-                class: ["selector-concept", `selector-concept--ancestor`, "source", "collapse"]
-            });
-
-            let list = createUnorderedList({
-                class: ["bare-list", "selector-ancestor-concepts"]
-            });
-            ancestor.forEach(concept => {
-                list.appendChild(createListItem({
-                    class: ["selector-ancestor-concept", "fit-content"],
-                }, concept.name));
-            });
-
-            ancestorItem.appendChild(list);
-
-            fragment.appendChild(ancestorItem);
-
-            // ancestor.forEach(concept => {
-            //     fragment.appendChild(createSelectorItem("ancestor", concept, true));
-            // });
-        }
-
-        fragment.appendChild(parentItem);
-    } else {
-        // TODO: mark root as parent
-    }
-
-    fragment.appendChild(createSelectorItem("active", activeConcept));
-
-    return fragment;
 }

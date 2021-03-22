@@ -25,6 +25,7 @@
                         "accept": [
                             { "name": "stack layout" },
                             { "name": "wrap layout" },
+                            { "name": "flex layout" },
                             { "name": "text field" },
                             { "name": "binary field" },
                             { "name": "choice field" },
@@ -68,12 +69,15 @@
                             "accept": [
                                 { "name": "stack layout" },
                                 { "name": "wrap layout" },
+                                { "name": "flex layout" },
                                 { "name": "text field" },
                                 { "name": "binary field" },
                                 { "name": "choice field" },
                                 { "name": "list field" },
                                 { "name": "static text" },
                                 { "name": "static image" },
+                                { "name": "static link" },
+                                { "name": "projection link" },
                                 { "name": "attribute element" },
                                 { "name": "projection element" },
                                 { "name": "template element" }
@@ -502,6 +506,7 @@
                 }
             ]
         },
+
         {
             "name": "layout",
             "nature": "prototype",
@@ -516,12 +521,15 @@
                             "accept": [
                                 { "name": "stack layout" },
                                 { "name": "wrap layout" },
+                                { "name": "flex layout" },
                                 { "name": "text field" },
                                 { "name": "binary field" },
                                 { "name": "choice field" },
                                 { "name": "list field" },
                                 { "name": "static text" },
                                 { "name": "static image" },
+                                { "name": "static link" },
+                                { "name": "projection link" },
                                 { "name": "attribute element" },
                                 { "name": "projection element" },
                                 { "name": "template element" }
@@ -557,6 +565,54 @@
             "properties": [
                 { "name": "contentType", "type": "string", "value": "layout" },
                 { "name": "elementType", "type": "string", "value": "stack" }
+            ]
+        },
+        {
+            "name": "flex layout",
+            "nature": "concrete",
+            "prototype": "layout",
+            "attributes": [
+                {
+                    "name": "orientation",
+                    "target": {
+                        "name": "string",
+                        "default": "row",
+                        "constraint": {
+                            "values": ["row", "column"]
+                        }
+                    }
+                },
+                {
+                    "name": "wrappable",
+                    "target": {
+                        "name": "boolean",
+                        "default": true
+                    }
+                },
+                {
+                    "name": "align-items",
+                    "target": {
+                        "name": "string",
+                        "default": "start",
+                        "constraint": {
+                            "values": ["start", "end", "center", "stretch", "baseline"]
+                        }
+                    }
+                },
+                {
+                    "name": "justify-content",
+                    "target": {
+                        "name": "string",
+                        "default": "start",
+                        "constraint": {
+                            "values": ["start", "end", "center", "space-between", "space-around", "space-evenly"]
+                        }
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "layout" },
+                { "name": "elementType", "type": "string", "value": "flex" }
             ]
         },
         {
@@ -752,7 +808,7 @@
         {
             "name": "static link",
             "nature": "concrete",
-            "prototype": "$static element",
+            "prototype": "static element",
             "attributes": [
                 {
                     "name": "url",
@@ -776,7 +832,12 @@
                     "target": {
                         "name": "set",
                         "accept": {
-                            "name": "static element"
+                            "name": "element",
+                            "accept": [
+                                { "name": "static text" },
+                                { "name": "static image" },
+                                { "name": "template element" }
+                            ]
                         }
                     }
                 },
@@ -790,6 +851,39 @@
             "properties": [
                 { "name": "contentType", "type": "string", "value": "static" },
                 { "name": "elementType", "type": "string", "value": "link" }
+            ]
+        },
+
+        {
+            "name": "projection link",
+            "nature": "concrete",
+            "prototype": "element",
+            "attributes": [
+                {
+                    "name": "tag",
+                    "alias": "href",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "element",
+                            "accept": [
+                                { "name": "static text" },
+                                { "name": "static image" },
+                                { "name": "template element" }
+                            ]
+                        }
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "static" },
+                { "name": "elementType", "type": "string", "value": "plink" }
             ]
         },
       

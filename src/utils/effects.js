@@ -1,10 +1,9 @@
 import { isHTMLElement } from 'zenkai';
 
 const HIDDEN = 'hidden';
-const COLLAPSE = 'collapse';
+const COLLAPSED = 'collapsed';
 const CHECKED = 'checked';
 const DISABLED = 'disabled';
-const EMPTY = 'empty';
 const SHAKE = 'shake';
 const SELECTED = 'selected';
 
@@ -81,6 +80,32 @@ export function highlight(element) {
 export function unhighlight(element) {
     if (isHTMLElement(element)) {
         element.classList.remove(SELECTED);
+    }
+
+    return element;
+}
+
+/**
+ * Adds collapse style of an element
+ * @param {HTMLElement} element element
+ * @returns {HTMLElement} element
+ */
+export function collapse(element) {
+    if (isHTMLElement(element)) {
+        element.classList.add(COLLAPSED);
+    }
+
+    return element;
+}
+
+/**
+ * Removes collapse style of an element
+ * @param {HTMLElement} element element
+ * @returns {HTMLElement} element
+ */
+export function expand(element) {
+    if (isHTMLElement(element)) {
+        element.classList.remove(COLLAPSED);
     }
 
     return element;

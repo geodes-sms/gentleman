@@ -6,13 +6,12 @@
     z-index: 1;
 }
     .editor-container .editor-header {
-        border-bottom: 4px solid #8095d9;
+        border-bottom: 2px solid #c0c0c0;
     }
-        .editor-container .editor-header:hover { border-color: #0087bd; }
 
     .editor-container.no-concept-model .editor-header {
         background-color: #fff;
-        border-bottom: 2px solid #c0c0c0;
+        border-bottom: 2px solid #d5d5d5;
     }
     
     .editor-container.no-concept-model .editor-body {
@@ -20,9 +19,10 @@
     }
 
 .editor-body {
-    position: relative;
     flex-grow: 1;
-    padding: 20px calc(1% + 6px) 12px;
+
+    position: relative;
+    display: flex; flex-direction: column;
     background-color: #fefefe;
     overflow-y: auto; overflow-x: visible;
     scrollbar-color: #c0c0c0; scrollbar-width: thin;
@@ -53,30 +53,48 @@
     z-index: 100;
 }
 
+
+/*
+  Breadcrumb concept section
+-----------------------------------------------------------------------------*/
+
+.model-navigation-section {
+    position: relative;
+    display: flex; 
+}
+
 /*
   Editor concept section
 -----------------------------------------------------------------------------*/
 
 .model-concept-section {
-    display: flex; flex-wrap: wrap; align-items: flex-start;
+    position: relative;
+    display: flex; flex-wrap: wrap; 
+    padding: 18px calc(1% + 6px) 12px;
 }
 
     .editor-concept {
         position: relative;
         margin-right: 12px; margin-bottom: 12px;
+        font-size: 1.4rem;
         border-radius: 4px;
         box-shadow: 0 0 0 1px #d5d5d5;
         transition: .2s;
+        opacity: 0.9;
         overflow: auto;
     }
+        .editor-concept > .layout-container { background-color:#fbfbfb; overflow: auto; }
 
-        .editor-concept.active-parent {
-            box-shadow: 0 0 0 1px #555;
+        .editor-concept.active {
+            box-shadow: 1px 1px 2px 1px #c0c0c0;
+            opacity: 1;
             overflow: unset;
         }
+            .editor-concept.active > .layout-container { background-color: #fff; }
+    
         .editor-concept.focus {
             position: absolute;
-            top: 0; right: 0; bottom: 0; left: 0;
+            top: 18px; right: 0; bottom: 0; left: 0;
             margin: 0;
             width: 100%;
             height: 100%;
@@ -84,22 +102,25 @@
             min-width: auto!important;
             max-width: none!important;
             border-radius: 0;
+            opacity: 1;
             background-color: #f5f5f5;
             z-index: 20;
             overflow: auto;
         }
+            .editor-concept.focus > .layout-container { height: 100%; }
+
         .editor-concept.collapsed {
-            background-color: #555;
             overflow: hidden;
-            flex: none!important;
-            width: 240px;
-            height: 120px;
-            min-width: auto!important;
+            background-color: rgba(100, 100, 100, 0.5);
+            height: 72px;
             opacity: 0.8;
         }
-        .editor-concept:hover {
-            opacity: 1;
-        }
+            .editor-concept.collapsed > .layout-container { opacity: 0.5; z-index: -20; }
+            .editor-concept.collapsed [data-nature="layout"],
+            .editor-concept.collapsed [data-nature="field"] {
+                font-size: 0.8rem;
+            }
+
 
     .editor-concept-header {
         display: flex; align-items: center;
@@ -110,7 +131,7 @@
     .editor-concept-title {
         margin: 0;
         padding-left: 6px;
-        font-size: 1.4em;
+        font-size: 1.1em;
         font-family: inherit; font-weight: 600;
         text-transform: capitalize;
         color: #555;
@@ -216,7 +237,7 @@
             display: block;
             transition: .4s;
         }
-        .editor-concept[data-size="1"] { flex: 1 1; min-width: 300px; max-width: 50%; }
+        .editor-concept[data-size="1"] { flex: 1 1; min-width: 360px; max-width: 50%; }
             .editor-concept[data-size="1"] .editor-concept-toolbar__btn-resize:before { content: '⇹'; transform: scale(1.3) translateY(-1px) translateX(-1px); }
         .editor-concept[data-size="2"] { flex-grow: 2; min-width: 50%; }
             .editor-concept[data-size="2"] .editor-concept-toolbar__btn-resize { width: 30px; }
@@ -259,28 +280,7 @@
                 transform: rotate(-90deg) scale(2) translateY(-2px);
             }
 
-    .editor-concept > .layout-container { 
-        background-color:#fbfbfb; 
-        overflow: auto;
-    }
 
-    .editor-concept.active-parent > .layout-container {
-        background-color: #fff;
-        /* overflow: visible; */
-        /* overflow-y: auto; */
-    }
-
-    .editor-concept.focus > .layout-container {
-        height: 100%;
-    }
-    .editor-concept.collapsed > .layout-container {
-        max-height: 48px;
-        opacity: 0.5;
-    }
-    .editor-concept.collapsed [data-nature="layout"],
-    .editor-concept.collapsed [data-nature="field"] {
-        font-size: 0.8rem;
-    }
 
 
 /*
