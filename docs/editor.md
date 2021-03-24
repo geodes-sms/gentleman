@@ -12,7 +12,7 @@ Once loaded and validated (automatically), you will be able to start or resume y
 ## User interface
 
 Gentleman adopts a minimalistic approach to its design. The UI is divided between a
-header which contains global actions (model and editor) and a body where you will play with your instaces.
+header which contains global actions (model and editor) and a body where you will play with your instances.
 
 ![Editor UI screenshot](https://geodes-sms.github.io/gentleman/assets/images/doc_editor_ui.png "Editor User interface")
 
@@ -28,11 +28,11 @@ The header's main component is the ribbon which gives you access to
 
 ### Toolbar
 
-The toolbar provides you with two buttons to either access the editor settings or simply close the editor
+The toolbar provides you with two buttons to access the editor settings and simply close the editor respectively.
 
 ### Breadcrumbs
 
-The editor has a navigation bar at the top of the body called Breadcrumbs, telling you the current location.
+The editor has a navigation bar at the top of the body called *Breadcrumbs*, telling you the current location in an active instance.
 
 ![Editor breadcrumbs screenshot](https://geodes-sms.github.io/gentleman/assets/images/doc_editor_breadcrumbs.png "Editor breadcrumbs")
 
@@ -58,7 +58,7 @@ In Gentleman copy/paste works just as with any editor.
 3. Select target element
 4. Copy value: `Ctrl + V`
 
-> A value is attached to a concept, not a projection. Therefore copying does not include the projection (visuals) but only the value attached to the concept.
+> Note: A value is attached to a concept, not a projection. Therefore copying does not include the projection (visuals) but only the value attached to the concept.
 
 ### Save value
 
@@ -68,14 +68,14 @@ In Gentleman values can be manipulated freely. As such any value can be saved an
 2. Save value: `Ctrl + S`
 3. Value shows up in the Ribbon
 
-When you need a value, head to the ribbon and select `copy` on the desired value.
-This action will copy the value and you can paste it in a valid instance.
+When you need a value, head to the ribbon and select `[COPY]` on the desired value.
+This action will copy the value which you can then paste in a valid instance.
 
 ### Navigation
 
 Gentleman support mouse and keyboard navigation.
 With the mouse it's simply a matter of clicking on the element you want to focus on.
-With the keyboard you can use the arrows for a direction based navigation or the `tab` key to iterate over the elements. When the focus element has children elements, press `enter` to focus on its children.
+With the keyboard you can use the arrows to access close-by elements or the `Tab` key to iterate over the elements. When the focus element has children elements, press `Enter` to focus on its children.
 
 ## Configuration
 
@@ -92,7 +92,7 @@ It can be used to define the style of the editor components and register actions
   - **actions**: list of actions available in the menu
     - **name**: name of the action.
     - **content**: content displayed in the menu
-    - **require**: list of resource dependancies
+    - **require**: list of resource dependencies
   - **css**: css classes added to the menu container
 
 ``` json
