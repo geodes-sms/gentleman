@@ -24,7 +24,7 @@ The header's main component is the ribbon which gives you access to
 - **value**: Values saved during the editing experience
 - **resource**: Resources added to the editor
 
-![Editor ribbon](https://geodes-sms.github.io/gentleman/assets/images/doc_editor_ui.png "Editor Ribbon")
+![Editor ribbon](https://geodes-sms.github.io/gentleman/assets/images/doc_editor_ribbon.png "Editor Ribbon")
 
 ### Toolbar
 
