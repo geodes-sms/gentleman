@@ -991,10 +991,15 @@
                             "orientation": "horizontal",
                             "disposition": [
                                 {
+                                    "type": "attribute",
+                                    "name": "ordered",
+                                    "tag": "field-binary-state--ordered"
+                                },
+                                {
                                     "type": "static",
                                     "static": {
                                         "type": "text",
-                                        "content": "Set of",
+                                        "content": "set of",
                                         "style": {
                                             "css": ["keyword", "keyword--padright"]
                                         }
@@ -1294,6 +1299,51 @@
                                 "static": {
                                     "type": "text",
                                     "content": "optional"
+                                }
+                            }
+                        ]
+                    }
+                },
+                "input": {
+                    "style": {
+                        "css": ["yesno-field__input"]
+                    }
+                },
+                "label": {
+                    "style": {
+                        "css": ["yesno-field__value"]
+                    }
+                },
+                "style": {
+                    "css": ["yesno-field"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "boolean" },
+            "tags": ["field-binary-state--ordered"],
+            "type": "field",
+            "content": {
+                "type": "binary",
+                "state": {
+                    "true": {
+                        "content": [
+                            {
+                                "type": "static",
+                                "static": {
+                                    "type": "text",
+                                    "content": "Ordered"
+                                }
+                            }
+                        ]
+                    },
+                    "false": {
+                        "content": [
+                            {
+                                "type": "static",
+                                "static": {
+                                    "type": "text",
+                                    "content": "Non-ordered"
                                 }
                             }
                         ]

@@ -152,7 +152,7 @@ const BaseField = {
      * @param {HTMLElement} target 
      */
     backspaceHandler(target) {
-        console.warn("BACKSPACE_HANDLER NOT IMPLEMENTED");
+        console.warn(`BACKSPACE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
 
         return false;
     },
@@ -162,7 +162,16 @@ const BaseField = {
      * @param {HTMLElement} target 
      */
     arrowHandler(dir, target) {
-        console.warn("ARROW_HANDLER NOT IMPLEMENTED");
+        console.warn(`ARROW_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+
+        return false;
+    },
+    /**
+     * Handles the `arrow` command
+     * @param {HTMLElement} target 
+     */
+    _arrowHandler(dir, target) {
+        console.warn(`CTRL_ARROW_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
 
         return false;
     },
@@ -171,7 +180,7 @@ const BaseField = {
      * @param {HTMLElement} target 
      */
     clickHandler(target) {
-        console.warn("CLICK_HANDLER NOT IMPLEMENTED");
+        console.warn(`CLICK_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
 
         return false;
     },

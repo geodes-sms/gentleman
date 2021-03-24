@@ -70,7 +70,7 @@ export function buildConceptHandler(model, _options = {}) {
     }
 
     this.notify("The concept model was <strong>successfully</strong> built", NotificationType.SUCCESS, 2000);
-    
+
     if (options.download) {
         this.download(result, options.name);
     }
@@ -222,7 +222,7 @@ function buildTarget(target) {
         }
     }
 
-    ["default", "rel"].filter(prop => hasAttr(target, prop) && hasValue(target, prop))
+    ["default", "ordered", "rel"].filter(prop => hasAttr(target, prop) && hasValue(target, prop))
         .forEach(prop => {
             result[prop] = getValue(target, prop);
         });

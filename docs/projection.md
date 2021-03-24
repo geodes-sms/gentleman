@@ -122,3 +122,22 @@ The *Stactic link* is used to display links.
 ### HTML
 
 The *Stactic HTML* is used to insert HTML Templates declared on the page.
+
+## Style
+
+To style your elements, you can do it directly when defining a projection or though CSS.
+
+### CSS
+
+Gentleman support CSS class selectors by allowing you to declare them in your projections and by exposing for each rendered element, a class selector.
+
+### Inline
+
+
+### Style rule
+
+A style rule is defined by a name with a list of rule.
+
+## Template
+
+A template allows you to declare reusable block of elements.

@@ -416,6 +416,10 @@ const BaseBinaryField = {
         this.element.addEventListener('change', (event) => {
             this.setValue(this.getValue(), true);
         });
+
+        this.projection.registerHandler("value.changed", (value) => {
+            this.setValue(value);
+        });
     },
 };
 

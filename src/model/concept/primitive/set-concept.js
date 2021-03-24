@@ -10,6 +10,7 @@ const _SetConcept = {
         this.ref = args.ref;
         this.accept = this.schema.accept;
         this.description = this.schema.description;
+        this.ordered = valOrDefault(this.schema.ordered, true);
         this.constraint = this.schema.constraint;
 
         this.value = [];
@@ -22,9 +23,9 @@ const _SetConcept = {
     },
     initValue(args) {
         this.removeAllElement();
-        
+
         if (isNullOrUndefined(args)) {
-            
+
             let remaining = valOrDefault(getMin.call(this), 0);
 
             for (let i = 0; i < remaining; i++) {
@@ -144,12 +145,43 @@ const _SetConcept = {
 
         return true;
     },
+    /**
+     * Adds element to set
+     * @param {*} element 
+     * @param {number} index 
+     * @returns 
+     */
     addElementAt(element, index = 0) {
         if (isNullOrUndefined(element)) {
             element = this.createElement();
         }
 
         this.value.splice(index, 0, element.id);
+
+        return this;
+    },
+    /**
+     * Swaps element of the set
+     * @param {number} index1 
+     * @param {number} index2 
+     * @returns 
+     */
+    swapElement(index1, index2) {
+        if (!this.ordered) {
+            return this;
+        }
+
+        let temp = this.value[index1];
+        this.value[index1] = this.value[index2];
+        this.value[index2] = temp;
+
+        let element1 = this.getElementAt(index1);
+        element1.index = +index1;
+        
+        let element2 = this.getElementAt(index2);
+        element2.index = +index2;
+
+        this.notify("value.swapped", [element1, element2]);
 
         return this;
     },

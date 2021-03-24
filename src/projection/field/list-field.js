@@ -253,8 +253,23 @@ const BaseListField = {
     createElement() {
         return this.source.createElement();
     },
-    getItem(id) {
-        return this.items.get(id);
+    getItem(arg) {
+        if (isNullOrUndefined(arg)) {
+            return null;
+        }
+
+        if (hasOwn(arg, "id")) {
+            return this.items.get(arg.id);
+        }
+
+        return this.items.get(arg);
+    },
+    getItemIndex(item) {
+        if (!isHTMLElement(item)) {
+            return null;
+        }
+
+        return item.dataset.index;
     },
 
     /**
@@ -339,7 +354,7 @@ const BaseListField = {
             throw new Error("List error: Item not found");
         }
 
-        const index = +item.dataset.index;
+        const index = +this.getItemIndex(item);
 
         this.items.delete(value.id);
 
@@ -357,6 +372,29 @@ const BaseListField = {
         }
 
         this.refresh();
+    },
+    moveItem(item, index, update = false) {
+        this.list.children[index].before(item);
+        item.dataset.index = index;
+
+        if (update) {
+            this.source.swapElement(+this.getItemIndex(item), +index);
+        }
+
+        return this;
+    },
+    swapItem(item1, item2, update = false) {
+        const index1 = this.getItemIndex(item1);
+        const index2 = this.getItemIndex(item2);
+
+        this.moveItem(item2, index1);
+        this.moveItem(item1, index2);
+
+        if (update) {
+            this.source.swapElement(+index1, +index2);
+        }
+
+        return this;
     },
     /**
      * Appends an element to the field container
@@ -579,7 +617,6 @@ const BaseListField = {
 
         show(this.messageElement);
     },
-
     /**
      * Handles the `space` command
      * @param {HTMLElement} target 
@@ -716,6 +753,33 @@ const BaseListField = {
      * Handles the `arrow` command
      * @param {HTMLElement} target 
      */
+    _arrowHandler(dir, target) {
+        if (!isHTMLElement(target)) {
+            return false;
+        }
+
+        // gets the parent list item if target is a children
+        let item = getItem.call(this, target);
+
+        if (item) {
+            let closestItem = getClosest(item, dir, this.list);
+
+            if (!isHTMLElement(closestItem)) {
+                return false;
+            }
+
+            this.swapItem(item, closestItem, true);
+            item.focus();
+
+            return true;
+        }
+
+        return false;
+    },
+    /**
+     * Handles the `arrow` command
+     * @param {HTMLElement} target 
+     */
     arrowHandler(dir, target) {
         if (!isHTMLElement(target)) {
             return false;
@@ -789,6 +853,19 @@ const BaseListField = {
                 let item = this.createItem(value);
                 this.list.appendChild(item);
             });
+        });
+        this.projection.registerHandler("value.swapped", (values) => {
+            const [value1, value2] = values;
+
+            let item1 = this.getItem(value1);
+            let item2 = this.getItem(value2);
+
+            let index1 = +this.getItemIndex(item1);
+            let index2 = +this.getItemIndex(item2);
+            
+            if (index1 !== value1.index) {
+                this.swapItem(item1, item2);
+            }
         });
     }
 };

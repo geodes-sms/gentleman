@@ -1,30 +1,13 @@
-# Gentleman - A lightweight web-based projectional editor generator
+# **Gentleman**
 
 [![Build Status](https://travis-ci.org/geodes-sms/gentleman.svg?branch=master)](https://travis-ci.org/geodes-sms/gentleman)
 
+Gentleman is a lightweight web-based projectional editor generator.  
 Gentleman aims to **to close the gap between models and domain experts**.
 
 | Concept defintion        | Projection definition           |
 |:-------------:|:-------------:|
 | ![Concept definition screenshot](https://geodes-sms.github.io/gentleman/assets/images/concept-definition.png "Concept definition")  | ![Projection definition screenshot](https://geodes-sms.github.io/gentleman/assets/images/projection-definition.png "projection definition") |
-
-## Workflow
-
-### **Design**
-
-The *design* workflow includes every activity required to build an editor
-
-- `[M]` Create a metamodel
-- `[P]` Create projections
-- `[E]` Configure the editor
-
-### **Model**
-
-The *model* workflow begins with every design artefacts (M.P.E.) in place
-
-- `[m]` Create a model
-- `[p]` Manipulate projections
-- `[e]` Personnalize the editor
 
 ## Features
 
@@ -33,14 +16,34 @@ The *model* workflow begins with every design artefacts (M.P.E.) in place
 - Offer specialized UI units for projection layout and fields
 - Integration with Ecore: Define an Ecore model and use it with Gentleman projections
 
-### 👉 Demonstration
+## Workflow
 
-Take a look at the [demonstration (MODELS 2020) and see the tool in action](https://youtu.be/wJ4hVZjmrv4).
+### **Metamodelling**
 
-⭐⭐⭐ **[Play with it](https://geodes-sms.github.io/gentleman/demo/index.html)** ⭐⭐⭐
+The *metamodelling* workflow includes every activity required to build an editor
 
+- `[M]` Create concepts (metamodel)
+- `[P]` Create projections
+- `[E]` Configure the editor
+
+**Required scripts:** `gentleman.mod.js` **+** `gentleman.app.js`
+
+### **Modelling**
+
+The *modelling* workflow begins with every design artefacts (M.P.E.) in place
+
+- `[m]` Create instances (model)
+- `[p]` Manipulate projections
+- `[e]` Personnalize the editor
+
+**Required scripts:** `gentleman.app.js`
 
 ## Integration
+
+Gentleman can be added to any web application in 2 steps:
+
+1. Add the required scripts to your page
+2. [Decorate an HTML Tag](#decorate-an-html-tag) **OR** [Dynamically create an instance](#dynamically-create-an-instance)
 
 ### Decorate an HTML Tag
 
@@ -56,7 +59,7 @@ Take a look at the [demonstration (MODELS 2020) and see the tool in action](http
 </html>
 ```
 
-### Create an instance in JS
+### Dynamically create an instance
 
 ```javascript
 const options = {
@@ -70,31 +73,37 @@ let editor = Gentleman.createEditor();
 editor.init(options)
 ```
 
+## Demonstration
+
+Take a look at the [demonstration (MODELS 2020) and see the tool in action](https://youtu.be/wJ4hVZjmrv4).
+
+⭐⭐⭐ **[Play with Gentleman](https://geodes-sms.github.io/gentleman/demo/index.html)** ⭐⭐⭐
+
 # Documentation
 
-## Editor
+<!-- You can read the documentation for Gentleman [here](https://geodes-sms.github.io/gentleman/docs). If you would like to help improve this documentation, the source for many of the docs can be found in the doc folder within this repository.  -->
 
-The editor configuration is done through a JSON file.
-It can be used to define the style of the editor components and register actions that will be made available in the menu.
+- [**Editor**](docs/editor.md)
+  - [Getting started](docs/editor.md#interaction)
+  - [User interface](docs/editor.md#user-interface)
+  - [Interaction](docs/editor.md#interaction)
+  - [Configuration](docs/editor.md#configuration)
+- [**Concept**](docs/concept.md)
+  - [Primitive](docs/concept.md#primitive)
+  - [Concrete](docs/concept.md#concrete)
+  - [Prototype](docs/concept.md#prototype)
+  - [Derivative](docs/concept.md#derivative)
+  - [Attribute](docs/concept.md#attribute)
+  - [Property](docs/concept.md#property)
+- [**Projection**](docs/projection.md)
+  - [Layout](docs/projection.md#layout)
+  - [Field](docs/projection.md#field)
+  - [Static](docs/projection.md#static)
+  - [Style](docs/projection.md#style)
+  - [Template](docs/projection.md#template)
 
-[Learn more](docs/editor.md)
-
-## Concept
-
-Gentleman defines a metamodel though concepts.
-
-[Learn more](docs/concept.md)
-
-## Projection
-
-A projection is a representation of a concept that can be visualized and interacted with in the graphical user interface (GUI).
-Multiple projections may be defined for a single concept so as to allow different representation and level of granularity.
-
-[Learn more](docs/projection.md)
 
 # Installation
-
-⚠️ **Gentleman is not recommended to be used in production.** ⚠️
 
 ## Building the Code
 
@@ -127,8 +136,6 @@ To deploy the code or test in a production environment, follow these steps.
 ```
 $ npm run build
 ```
-
-<!-- You can read the documentation for Gentleman [here](https://geodes-sms.github.io/gentleman/docs). If you would like to help improve this documentation, the source for many of the docs can be found in the doc folder within this repository.  -->
   
 # Publication
 
@@ -139,9 +146,9 @@ $ npm run build
 This distribution contains the following files and folders:
 
 - src: the source code
-- demo: contains some metamodels
+- dist: the distributed library
+- docs: the app documentation
 - assets: contains static files
-<!-- - doc: the source code documentation -->
 
 # License
 

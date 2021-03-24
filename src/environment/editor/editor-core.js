@@ -325,9 +325,23 @@ export const Editor = {
         return instance;
     },
     removeInstance(id) {
-        return this.instances.delete(id);
+        let instance = this.getInstance(id);
+
+        if (isNullOrUndefined(instance)) {
+            return false;
+        }
+
+        if (instance === this.activeInstance) {
+            this.activeInstance = null;
+        }
+
+        this.instances.delete(id);
+
+        this.refresh();
+
+        return true;
     },
-    
+
     // Model management
 
     /**
@@ -1395,7 +1409,7 @@ export const Editor = {
 
                     break;
                 case Key.up_arrow:
-                    if (this.activeElement) {
+                    if (this.activeElement && lastKey !== Key.ctrl) {
                         const handled = this.activeElement.arrowHandler("up", target) === true;
 
                         if (handled) {
@@ -1405,7 +1419,7 @@ export const Editor = {
 
                     break;
                 case Key.down_arrow:
-                    if (this.activeElement) {
+                    if (this.activeElement && lastKey !== Key.ctrl) {
                         const handled = this.activeElement.arrowHandler("down", target) === true;
 
                         if (handled) {
@@ -1415,7 +1429,7 @@ export const Editor = {
 
                     break;
                 case Key.right_arrow:
-                    if (this.activeElement) {
+                    if (this.activeElement && lastKey !== Key.ctrl) {
                         const handled = this.activeElement.arrowHandler("right", target) === true;
 
                         if (handled) {
@@ -1425,7 +1439,7 @@ export const Editor = {
 
                     break;
                 case Key.left_arrow:
-                    if (this.activeElement) {
+                    if (this.activeElement && lastKey !== Key.ctrl) {
                         const handled = this.activeElement.arrowHandler("left", target) === true;
 
                         if (handled) {
@@ -1488,37 +1502,64 @@ export const Editor = {
 
             switch (event.key) {
                 case Key.spacebar:
-                    if (lastKey === Key.ctrl) {
-                        if (this.activeElement) {
-                            this.activeElement._spaceHandler(target);
-                        }
+                    if (this.activeElement && lastKey === Key.ctrl) {
+                        this.activeElement._spaceHandler(target);
                     }
 
                     break;
                 case Key.delete:
-                    if (lastKey === Key.ctrl) {
-                        if (this.activeElement) {
-                            this.activeElement.delete(target);
+                    if (this.activeElement && lastKey === Key.ctrl) {
+                        this.activeElement.delete(target);
+                    }
+
+                    break;
+                case Key.up_arrow:
+                    if (this.activeElement && lastKey === Key.ctrl) {
+                        const handled = this.activeElement._arrowHandler("up", target) === true;
+
+                        if (handled) {
+                            event.preventDefault();
                         }
                     }
 
                     break;
-                case Key.ctrl:
-                    if (lastKey === Key.ctrl) {
-                        if (this.activeElement) {
-                            this.activeElement.controlHandler(target);
+                case Key.down_arrow:
+                    if (this.activeElement && lastKey === Key.ctrl) {
+                        const handled = this.activeElement._arrowHandler("down", target) === true;
+
+                        if (handled) {
+                            event.preventDefault();
                         }
                     }
 
                     break;
-                case Key.alt:
+                case Key.right_arrow:
+                    if (this.activeElement && lastKey === Key.ctrl) {
+                        const handled = this.activeElement._arrowHandler("right", target) === true;
+
+                        if (handled) {
+                            event.preventDefault();
+                        }
+                    }
+
+                    break;
+                case Key.left_arrow:
+                    if (this.activeElement && lastKey === Key.ctrl) {
+                        const handled = this.activeElement._arrowHandler("left", target) === true;
+
+                        if (handled) {
+                            event.preventDefault();
+                        }
+                    }
 
                     break;
                 default:
                     break;
             }
 
-            lastKey = -1;
+            if (lastKey === event.key) {
+                lastKey = -1;
+            }
         }, false);
 
         this.body.addEventListener('focusin', (event) => {

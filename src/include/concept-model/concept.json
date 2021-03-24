@@ -320,6 +320,14 @@
                     "required": true
                 },
                 {
+                    "name": "ordered",
+                    "target": {
+                        "name": "boolean",
+                        "default": true
+                    },
+                    "required": true
+                },
+                {
                     "name": "constraint",
                     "target": {
                         "name": "set primitive constraint"
@@ -336,13 +344,6 @@
             "name": "set primitive constraint",
             "nature": "concrete",
             "attributes": [
-                {
-                    "name": "ordered",
-                    "target": {
-                        "name": "boolean"
-                    },
-                    "required": true
-                },
                 {
                     "name": "cardinality",
                     "target": {
