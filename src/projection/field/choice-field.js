@@ -305,7 +305,7 @@ const BaseChoiceField = {
             fragment.appendChild(this.choices);
         }
 
-        StyleHandler.call(this.projection, this.element, style);
+        StyleHandler.call(this, this.element, style);
 
         if (fragment.hasChildNodes()) {
             this.element.appendChild(fragment);
@@ -395,6 +395,17 @@ const BaseChoiceField = {
         this.focused = false;
 
         return this;
+    },
+    showChoices() {
+        const { children } = this.choices;
+
+        for (let i = 0; i < children.length; i++) {
+            /** @type {HTMLElement} */
+            const item = children[i];
+
+            show(item);
+            item.hidden = false;
+        }
     },
     enable() {
         if (this.input) {
@@ -497,7 +508,7 @@ const BaseChoiceField = {
             container.append(value.toString());
         }
 
-        StyleHandler.call(this.projection, container, style);
+        StyleHandler.call(this, container, style);
 
         this.items.set(value.id, container);
 
@@ -678,7 +689,6 @@ const BaseChoiceField = {
 
         if (isHTMLElement(item) && this.selection !== item) {
             this.setValue(getValue(item), true);
-            this.focusOut();
         }
     },
     /**

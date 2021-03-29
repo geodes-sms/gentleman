@@ -1,4 +1,4 @@
-import { hasOwn, isNullOrUndefined, isString, isEmpty, valOrDefault } from "zenkai";
+import { isNullOrUndefined, isEmpty, valOrDefault } from "zenkai";
 import { Concept } from "./../concept.js";
 
 

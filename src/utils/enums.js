@@ -27,6 +27,7 @@ export const Key = {
     tab: "Tab",
     enter: "Enter",
     ctrl: "Control",
+    shift: "Shift",
     alt: "Alt",
     escape: "Escape",
     spacebar: " ",

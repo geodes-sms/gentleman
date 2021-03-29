@@ -65,7 +65,8 @@
                         "accept": { 
                             "name": "prototype concept" 
                         }
-                    }
+                    },
+                    "required": false
                 }
             ],
             "properties": [
@@ -96,7 +97,8 @@
                         "accept": { 
                             "name": "prototype concept" 
                         }
-                    }
+                    },
+                    "required": false
                 }
             ],
             "properties": [
@@ -362,10 +364,12 @@
                     "name": "accept",
                     "target": {
                         "name": "name",
-                        "values": [
-                            "string", "number", "boolean", "set", "reference", 
-                            { "type": "reference", "rel": "parent", "scope": "model concept" }
-                        ]
+                        "constraint": {
+                            "values": [
+                                "string", "number", "boolean", "set", "reference", 
+                                { "type": "reference", "rel": "parent", "scope": "model concept" }
+                            ]
+                        }
                     }
                 },
                 {
@@ -474,31 +478,19 @@
             "attributes": [
                 {
                     "name": "value",
-                    "accept": {
+                    "target": {
                         "name": "string"
                     }
                 },
                 {
                     "name": "insensitive",
-                    "accept": {
-                        "name": "boolean"
-                    }
-                },
-                {
-                    "name": "multiline",
-                    "accept": {
-                        "name": "boolean"
-                    }
-                },
-                {
-                    "name": "singleline",
-                    "accept": {
+                    "target": {
                         "name": "boolean"
                     }
                 },
                 {
                     "name": "global",
-                    "accept": {
+                    "target": {
                         "name": "boolean"
                     }
                 }
@@ -511,33 +503,14 @@
             "attributes": [
                 {
                     "name": "start",
-                    "accept": {
+                    "target": {
                         "name": "string constraint value"
                     }
                 },
                 {
                     "name": "end",
-                    "accept": {
+                    "target": {
                         "name": "string constraint value"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "string contain constraint",
-            "nature": "concrete",
-            "prototype": "string constraint",
-            "attributes": [
-                {
-                    "name": "contain",
-                    "accept": {
-                        "name": "string constraint value"
-                    }
-                },
-                {
-                    "name": "occurence",
-                    "accept": {
-                        "name": "number"
                     }
                 }
             ]
@@ -554,8 +527,9 @@
                 },
                 {
                     "name": "insensitive",
-                    "accept": {
-                        "name": "boolean"
+                    "target": {
+                        "name": "boolean",
+                        "default": false
                     }
                 }
             ]

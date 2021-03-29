@@ -107,8 +107,6 @@ export const ConceptModel = {
 
         this.concepts.push(concept);
 
-        Events.emit("concept.added", concept);
-
         return this;
     },
     /**
@@ -128,8 +126,6 @@ export const ConceptModel = {
         }
 
         let removedConcept = this.concepts.splice(index, 1)[0];
-
-        Events.emit("concept.removed", removedConcept);
 
         return removedConcept;
     },

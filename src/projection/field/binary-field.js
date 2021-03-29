@@ -2,11 +2,12 @@ import {
     createDocFragment, createSpan, createDiv, createI, createInput, createLabel,
     removeChildren, findAncestor, isHTMLElement, valOrDefault,
 } from "zenkai";
-import { hide, isHidden, show } from "@utils/index.js";
+import { hide, isHidden, NotificationType } from "@utils/index.js";
 import { StyleHandler } from "../style-handler.js";
 import { ContentHandler } from "./../content-handler.js";
 import { StateHandler } from "./../state-handler.js";
 import { Field } from "./field.js";
+import { createNotificationMessage } from "./notification.js";
 
 
 /**
@@ -34,7 +35,7 @@ function createFieldElement(id) {
  */
 function createFieldNotificationElement(id) {
     var element = createDiv({
-        class: ["field-notification"],
+        class: ["field-notification", "hidden"],
         dataset: {
             nature: "field-component",
             view: "binary",
@@ -51,7 +52,7 @@ function createFieldNotificationElement(id) {
  */
 function createFieldStatusElement(id) {
     var element = createI({
-        class: ["field-status"],
+        class: ["field-status", "hidden"],
         dataset: {
             nature: "field-component",
             view: "binary",
@@ -83,29 +84,6 @@ function createFieldInput(id) {
     return input;
 }
 
-
-const NotificationType = {
-    INFO: "info",
-    ERROR: "error"
-};
-
-/**
- * Creates a notification message
- * @param {string} type 
- * @param {string} message 
- * @returns {HTMLElement}
- */
-function createNotificationMessage(type, message) {
-    var element = createSpan({ class: ["notification-message", `notification-message--${type}`] }, message);
-
-    if (Array.isArray(message)) {
-        element.style.minWidth = `${Math.min(message[0].length * 0.5, 30)}em`;
-    } else {
-        element.style.minWidth = `${Math.min(message.length * 0.5, 30)}em`;
-    }
-
-    return element;
-}
 
 /**
  * Resolves the value of the input
@@ -351,19 +329,7 @@ const BaseBinaryField = {
             this.statusElement.classList.remove("error");
         }
     },
-    /**
-     * Appends an element to the field container
-     * @param {HTMLElement} element 
-     */
-    append(element) {
-        if (!isHTMLElement(element)) {
-            throw new TypeError("Bad argument: The 'element' argument must be an HTML Element");
-        }
 
-        this.element.appendChild(element);
-
-        return this;
-    },
     /**
      * Handles the `escape` command
      * @param {HTMLElement} target 

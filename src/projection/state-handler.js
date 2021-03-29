@@ -1,6 +1,6 @@
-import { 
+import {
     isEmpty, isObject, isFunction, isIterable, isNullOrUndefined, toBoolean,
-    pascalCase, valOrDefault, 
+    pascalCase, valOrDefault,
 } from "zenkai";
 
 
@@ -61,6 +61,16 @@ function referenceHandler(name) {
 }
 
 function resolveTerm(term, defValue) {
+    if (term && term.type === "property") {
+        const { name } = term;
+        let propGetter = `get${pascalCase(name)}`;
+
+        if (this[propGetter]) {
+            return this[propGetter]();
+        }
+
+        return this[name];
+    }
     if (isObject(term)) {
         let propGetter = `get${pascalCase(term.prop)}`;
 
@@ -252,7 +262,7 @@ function greaterEqualHandler(terms) {
  */
 function noHandler(term) {
     let val = resolveTerm.call(this, term);
-
+    console.log(term, val);
     if (isIterable(val)) {
         return isEmpty(val);
     }

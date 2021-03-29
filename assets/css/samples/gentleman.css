@@ -20,7 +20,7 @@
 }
 
 .model-concept--textual {
-    padding-top: 12px;
+    padding-top: 6px;
 }
 
     .model-concept--textual .field--textbox__input {
@@ -72,17 +72,83 @@
     }
 
     .primitive-constraint__attribute {
+        margin-top: 6px;
         width: 100%;
-        display: block;
+        padding: 2px 6px 4px;
+        color: #222;
+        border-radius: 2px;
+        background-color: #f5f5f5;
+        transition: .2s;
+        order: 1;
     }
     
-    .primitive-constraint__options {
-        align-items: flex-start;
-    }
+        .primitive-constraint__attribute .keyword,
+        .primitive-constraint__attribute .title--small {
+            margin-top: 0;
+            color: inherit;
+            text-transform: capitalize;
+        }
+
+        .primitive-constraint__attribute .title--small {
+            margin-bottom: 6px;
+        }
+    
+        .primitive-constraint__attribute > .structure__btn-delete {
+            top: 0; right: 0;
+            padding: 2px 8px;
+            font-size: 1.2rem; font-weight: 300;
+            color: #808080;
+            background-color: #f0f0f0;
+        }
+            .primitive-constraint__attribute > .structure__btn-delete:before {
+                content: "✖";
+            }
+            .primitive-constraint__attribute > .structure__btn-delete:hover {
+                color: #fff;
+                background-color: rgb(223, 27, 67);
+            }
 
     .primitive-constraint > .structure__btn-delete {
         display: none;
     }
+
+    .primitive-constraint-option {
+        width: 100%;
+        margin-right: 6px; margin-bottom: 6px;
+        padding: 2px 6px 6px; padding-right: 36px;
+        color: #222;
+        border-radius: 2px;
+        background-color: #d5d5d5;
+        order: 1;      
+    }
+
+    .primitive-constraint-option > .structure__btn-delete {
+        top: 0; right: 0;
+        padding: 2px 8px;
+        font-size: 1.1rem; font-weight: 300;
+        color: #555;
+        background-color: #c0c0c0;
+    }
+        .primitive-constraint-option > .structure__btn-delete:before {
+            content: "✖";
+        }
+        .primitive-constraint-option > .structure__btn-delete:hover {
+            color: #fff;
+            background-color: rgb(223, 27, 67);
+        }
+
+        .primitive-constraint-option .field--textbox {
+            padding-top: 6px;
+        }
+
+        .primitive-constraint-option .field--textbox__input {
+            padding: 2px 6px;
+            border-radius: 2px;
+            background-color: #fff;
+        }
+
+
+
 
     .primitive-sub {
         padding-left: 12px;
@@ -240,6 +306,67 @@
             content: "✖";
         }
 
+.primitive-config {
+    padding-top: 18px;
+    min-width: 180px;
+}
+
+.primitive-config--collapse {
+    padding-top: 6px;
+    width: 100%;
+    text-transform: uppercase;
+}
+
+    .primitive-config .structure__btn-delete {
+        display: none;
+    }
+
+    .primitive-config--collapse .render__nav-projection--collapse:after { content: "+"; transform: scale(1.2) translateY(-1px); }
+
+
+
+/*
+  Toggle Field
+-----------------------------------------------------------------------------*/
+
+.toggle-field {
+    margin-top: 2px; margin-bottom: 4px;
+    font-weight: 500;
+    padding: 0;
+    border-radius: 3px;
+    box-shadow: 0 2px 1px -1px #999;
+    transition: transform, opacity .2s;
+}
+
+    .toggle-field[data-state="off"] {
+        background-color: #c0c0c0;
+        opacity: 0.9;
+        transform: scale(0.95);
+    }
+        .toggle-field[data-state="off"]:hover,
+        .toggle-field[data-state="off"]:active {
+            color: #fff;
+            background-color: #555;
+            opacity: 1;
+        }
+
+    .toggle-field[data-state="on"] {
+        color: #fff;
+        background-color: #1f75fe;
+    }
+
+    .toggle-field__label {
+        padding: 2px 6px 3px;
+    }
+
+    .toggle-field .field--binary__input {
+        display: none;
+    }
+
+    .toggle-field + .toggle-field {
+        margin-left: 4px;
+    }
+
         
 /*
   Textual list
@@ -248,6 +375,7 @@
 .textual-list {
     display: inline-flex; flex-direction: column;
     padding: 0;
+    max-width: 100%;
 }
 
 .textual-list__list {
@@ -324,7 +452,7 @@
     .textual-list__list-item--block:after {
         content: "";
         position: absolute;
-        top: 24px; bottom: 0; right: 12px;
+        top: 20px; bottom: 0; right: 12px;
         border-right: 1px dashed #c0c0c0;
     }
 
@@ -336,8 +464,8 @@
 .textual-list__list-item--block > .btn-remove {
     position: absolute;
     top: 0; right: 0;
-    width: 24px; height: 24px;
-    font-size: 1.4em; font-weight: 300;
+    width: 22px; height: 22px;
+    font-size: 1.3em; font-weight: 300;
     color: #999;
     padding: 0;
     border: 1px solid #c0c0c0;
@@ -348,7 +476,7 @@
     .textual-list__list-item--block > .btn-remove:hover {
         color: #555;
         border-color: #a9a9a9;
-        transform: scale(1);
+        transform: scale(0.9);
     }
     .textual-list__list-item--block > .btn-remove:before {
         content: "✖";
@@ -406,18 +534,20 @@
 .textual-list__list-item--inline {
     display: inline-flex;
     margin-right: 6px; margin-bottom: 6px;
+    padding: 0;
     align-items: center;
     border-radius: 2px;
 }
 
 .textual-list__list-item--inline > .textual-list__btn-remove {
     order: 2;
-    display: inline-flex;
+    display: inline-flex; align-items: center;
     position: relative;
+    height: 100%;
     padding-left: 4px; padding-right: 4px;
     font-size: 0.9em; font-weight: 600;
-    color: #fff;
-    background-color: #555;
+    color: #555;
+    background-color: #d5d5d5;
     z-index: 5;
 }
     .textual-list__list-item--inline > .textual-list__btn-remove:before {
@@ -440,12 +570,13 @@
 
         margin: 0; margin-right: 4px;
         height: 24px;
-        min-width: 72px;
+        min-width: 60px;
         padding-bottom: 2px;
         font-size: 0.9em;
         border-radius: 180px;
         transform: none;
     }
+
 
 
 .model-concept--textual .textual-list--attribute {
@@ -997,7 +1128,6 @@
         padding-left: 4px; padding-right: 4px;
         flex: 1 1;
         font-style: italic;
-        background-color: #d5d5d5;
         color: #555;
     }
 
@@ -1059,18 +1189,21 @@
         box-shadow: 0 2px 1px -1px royalblue;
     }
 
+    .textfield--labeled.empty {
+        padding: 0;
+    }
+
     .textfield--labeled.empty .textfield--labeled__input:before {
         content: attr(data-placeholder);
         flex: 1 1;
         padding-left: 4px; padding-right: 4px;
-        font-style: italic;
-        background-color: #e5e5e5;
+        font-style: italic; font-weight: normal;
         color: #555;
     }
 
-    .textfield--labeled.empty .textfield--labeled__input:active:before,
-    .textfield--labeled.empty .textfield--labeled__input:focus:before {
-        background-color: #eee;
+    .textfield--labeled__input--tag {
+        display: inline-flex; align-items: center;
+        border: 1px solid #555;
     }
 
 .model-concept__keyword + .reference-choice--textual,
@@ -1098,11 +1231,15 @@
     margin-left: 0.5em;
 }
 
-.reference-choice--textual {
+.reference-choice--textual,
+.reference-choice--textual.has-toolbar {
     display: flex; flex-direction: row;
     padding: 0;
     font-size: 1.4rem;
 }
+    .reference-choice--textual > .structure__btn-delete {
+        display: none;
+    }
     .reference-choice--textual.empty:not(.querying) .reference-choice--textual__list {
         display: none;
     }
@@ -1151,10 +1288,8 @@
     .reference-choice--textual__list-option {
         position: relative;
         font-size: 0.95em;
-        padding: 2px 6px;
+        padding: 0;
         color: #1f75fe;
-        border: 1px solid currentColor;
-        border-radius: 1px;
         transition: transform .2s;
     }
         
@@ -1267,15 +1402,21 @@
     font-size: 1.4rem;
 }
 
+    .constraint-choice--textual__title {
+        text-transform: capitalize;
+        margin: 0;
+    }
+
     .constraint-choice--textual__choice-list {
         display: flex; flex-direction: row; align-items: center;
-        background-color: #999;
+        background-color: #777;
         overflow: hidden;
         max-width: 240px;
         border-radius: 180px;
     }
 
     .constraint-choice--textual__choice-list .constraint-choice--textual__choice-option.selected {
+        color: #fff;
         background-color: #1f75fe;
     }
         
@@ -1283,25 +1424,20 @@
         flex: 1 1;
 
         display: flex; justify-content: center;
-        padding: 2px 4px;
+        padding: 3px 12px 4px;
         color: #fff;
-        font-size: 0.95em;
+        font-size: 0.95em; font-weight: 500;
         border-radius: 1px;
         overflow: hidden;
     }
 
-    .constraint-choice--textual__choice-option .text,
-    .constraint-choice--textual__choice-option .keyword {
-        color: #333;
-    }
-    
     .constraint-choice--textual__choice-option:not(:last-child) {
         border-right: 2px solid #555;
     }
     
     .constraint-choice--textual__choice-option:hover,
     .constraint-choice--textual__choice-option:focus {
-        background-color: #777;
+        background-color: #555;
     }
     
     .constraint-choice--textual__choice-option.selected {

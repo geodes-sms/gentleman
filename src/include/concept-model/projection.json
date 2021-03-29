@@ -11,16 +11,6 @@
                     "type": "static",
                     "static": {
                         "type": "text",
-                        "content": "Define",
-                        "style": {
-                            "css": ["keyword", "model-concept__keyword"]
-                        }
-                    }
-                },
-                {
-                    "type": "static",
-                    "static": {
-                        "type": "text",
                         "content": { "type": "param", "name": "conceptType" },
                         "style": {
                             "css": ["keyword", "model-concept__keyword"],
@@ -45,7 +35,7 @@
                     "type": "static",
                     "static": {
                         "type": "text",
-                        "content": "Attribute definition",
+                        "content": "Attributes",
                         "style": {
                             "css": ["title", "model-projection__line"]
                         }
@@ -70,7 +60,7 @@
                     "type": "static",
                     "static": {
                         "type": "text",
-                        "content": "Property definition",
+                        "content": "Properties",
                         "style": {
                             "css": ["title", "model-projection__line"]
                         }
@@ -82,6 +72,32 @@
                     "tag": "property-set",
                     "style": {
                         "css": ["model-projection__line"]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "template",
+            "name": "collapse-menu",
+            "content": [
+                {
+                    "type": "static",
+                    "static": {
+                        "type": "plink",
+                        "tag": "collapse",
+                        "content": [
+                            {
+                                "type": "static", 
+                                "static": {
+                                    "type": "text",
+                                    "content": "",
+                                    "help": "Collapse"
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["nav-projection", "render__nav-projection", "render__nav-projection--collapse"]
+                        }
                     }
                 }
             ]
@@ -105,23 +121,41 @@
                                     "type": "template",
                                     "name": "concept-definition",
                                     "param": [
-                                        { "name": "conceptType", "value": "prototype concept" }
+                                        { "name": "conceptType", "value": "Prototype concept" }
                                     ]
                                 },
                                 {
                                     "type": "static",
                                     "static": {
                                         "type": "text",
-                                        "content": "from",
+                                        "content": "|",
                                         "style": {
-                                            "css": ["keyword", "model-concept__keyword"]
+                                            "css": ["keyword"],
+                                            "gss": {
+                                                "text": {
+                                                    "bold": true,
+                                                    "size": { "value": 1.1, "unit": "em" }
+                                                }
+                                            }
                                         }
                                     }
                                 },
                                 {
                                     "type": "attribute",
                                     "name": "prototype",
-                                    "tag": "textual"
+                                    "tag": "label-reference",
+                                    "placeholder": {
+                                        "content": {
+                                            "type": "static",
+                                            "static": {
+                                                "type": "text",
+                                                "content": "Use a prototype",
+                                                "style": {
+                                                    "css": ["btn", "textual-option", "textual-option--constraint"]
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             ],
                             "style": {
@@ -156,23 +190,41 @@
                                     "type": "template",
                                     "name": "concept-definition",
                                     "param": [
-                                        { "name": "conceptType", "value": "concrete concept" }
+                                        { "name": "conceptType", "value": "Concrete concept" }
                                     ]
                                 },
                                 {
                                     "type": "static",
                                     "static": {
                                         "type": "text",
-                                        "content": "as",
+                                        "content": "|",
                                         "style": {
-                                            "css": ["keyword", "model-concept__keyword"]
+                                            "css": ["keyword"],
+                                            "gss": {
+                                                "text": {
+                                                    "bold": true,
+                                                    "size": { "value": 1.1, "unit": "em" }
+                                                }
+                                            }
                                         }
                                     }
                                 },
                                 {
                                     "type": "attribute",
                                     "name": "prototype",
-                                    "tag": "textual"
+                                    "tag": "label-reference",
+                                    "placeholder": {
+                                        "content": {
+                                            "type": "static",
+                                            "static": {
+                                                "type": "text",
+                                                "content": "Add a prototype",
+                                                "style": {
+                                                    "css": ["btn", "textual-option", "textual-option--constraint"]
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             ],
                             "style": {
@@ -207,7 +259,7 @@
                                     "type": "template",
                                     "name": "concept-definition",
                                     "param": [
-                                        { "name": "conceptType", "value": "derivative concept" }
+                                        { "name": "conceptType", "value": "Derivative concept" }
                                     ]
                                 }
                             ],
@@ -220,7 +272,7 @@
                         "type": "static",
                         "static": {
                             "type": "text",
-                            "content": "Base definition",
+                            "content": "Base",
                             "style": {
                                 "css": ["title"]
                             }
@@ -261,48 +313,42 @@
             "type": "layout",
             "content": {
                 "type": "stack",
-                "orientation": "horizontal",
+                "orientation": "vertical",
                 "disposition": [
                     {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "Define",
-                            "style": {
-                                "css": ["keyword", "keyword--padright"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "required",
-                        "tag": "field-binary-state"
-                    },
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "attribute",
-                            "style": {
-                                "css": ["keyword"],
-                                "gss": {
-                                    "text": { "bold": true }
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "name",
+                                    "tag": "textual"
+                                },
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "|",
+                                        "style": {
+                                            "css": ["keyword", "keyword--padright"],
+                                            "gss": {
+                                                "text": {
+                                                    "bold": true,
+                                                    "size": { "value": 1.2, "unit": "em" }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "required",
+                                    "tag": "field-binary-state"
                                 }
-                            }
-                        }
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "name",
-                        "tag": "textual"
-                    },
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "as",
+                            ],
                             "style": {
-                                "css": ["keyword", "keyword--padright"]
+                                "css": ["model-concept__line"]
                             }
                         }
                     },
@@ -382,8 +428,8 @@
             "tags": ["textual"],
             "type": "layout",
             "content": {
-                "type": "wrap",
-                "containerless": true,
+                "type": "stack",
+                "orientation": "vertical",
                 "disposition": [
                     {
                         "type": "field",
@@ -450,12 +496,16 @@
         
         {
             "concept": { "name": "string primitive" },
-            "tags": ["choice-selection"],
+            "tags": ["choice-selection", "config"],
             "type": "layout",
             "content": {
                 "type": "stack",
                 "orientation": "vertical",
                 "disposition": [
+                    {
+                        "type": "template",
+                        "name": "collapse-menu"
+                    },
                     {
                         "type": "attribute",
                         "name": "default",
@@ -523,7 +573,26 @@
                                         }
                                     },
                                     "style": {
-                                        "css": ["text-style__attribute"]
+                                        "css": ["primitive-constraint-option"]
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "value",
+                                    "placeholder": {
+                                        "content": {
+                                            "type": "static",
+                                            "static": {
+                                                "type": "text",
+                                                "content": "Value",
+                                                "style": {
+                                                    "css": ["textual-option", "textual-option--style"]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "style": {
+                                        "css": ["primitive-constraint-option"]
                                     }
                                 },
                                 {
@@ -543,7 +612,7 @@
                                         }
                                     },
                                     "style": {
-                                        "css": ["text-style__attribute"]
+                                        "css": ["primitive-constraint-option"]
                                     }
                                 }
                             ],
@@ -575,13 +644,164 @@
             }
         },
         {
-            "concept": { "name": "number constraint" },
-            "tags": [],
+            "concept": { "name": "number primitive" },
+            "tags": ["choice-selection", "config"],
             "type": "layout",
             "content": {
                 "type": "stack",
                 "orientation": "vertical",
                 "disposition": [
+                    {
+                        "type": "template",
+                        "name": "collapse-menu"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "default",
+                        "tag": "default-number"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "constraint",
+                        "placeholder": {
+                            "content": {
+                                "type": "static",
+                                "static": {
+                                    "type": "text",
+                                    "content": "Add constraint",
+                                    "style": {
+                                        "css": ["btn", "textual-option", "textual-option--constraint"]
+                                    }
+                                }
+                            }
+                        },
+                        "style": {
+                            "css": ["primitive-constraint__attribute"]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "number primitive constraint" },
+            "tags": ["choice-selection"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Constraint",
+                            "style": {
+                                "css": ["title--small", "primitive-constraint__title--small"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "value",
+                                    "placeholder": {
+                                        "content": {
+                                            "type": "static",
+                                            "static": {
+                                                "type": "text",
+                                                "content": "Value",
+                                                "style": {
+                                                    "css": ["textual-option", "textual-option--style"]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "style": {
+                                        "css": ["primitive-constraint-option"]
+                                    }
+                                }
+                            ],
+                            "style": {
+                                "css": ["primitive-constraint__options"]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "number primitive" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Number"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "boolean primitive" },
+            "tags": ["choice-selection", "config"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "template",
+                        "name": "collapse-menu"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "default",
+                        "tag": "default-boolean"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "boolean primitive" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Boolean"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "reference primitive" },
+            "tags": ["choice-selection", "config"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "template",
+                        "name": "collapse-menu"
+                    },
                     {
                         "type": "layout",
                         "layout": {
@@ -591,22 +811,244 @@
                                     "type": "static",
                                     "static": {
                                         "type": "text",
-                                        "content": "Restrict"
+                                        "content": "Target",
+                                        "style": {
+                                            "css": ["keyword", "label"]
+                                        }
                                     }
                                 },
                                 {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": { 
-                                            "type": "property", 
-                                            "name": "refname" 
+                                    "type": "attribute",
+                                    "name": "accept",
+                                    "tag": "textual"
+                                }
+                            ],
+                            "style": {
+                                "css": ["line"]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "reference primitive" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Reference",
+                            "focusable": false
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set primitive" },
+            "tags": ["choice-selection", "config"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "template",
+                        "name": "collapse-menu"
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "disposition": [
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            {
+                                                "type": "attribute",
+                                                "name": "ordered",
+                                                "tag": "field-binary-state--ordered"
+                                            },
+                                            {
+                                                "type": "static",
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": "set of",
+                                                    "style": {
+                                                        "css": ["keyword"]
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "accept",
+                                    "tag": "textual"
+                                }
+                            ],
+                            "style": {
+                                "css": ["primitive-sub"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "constraint",
+                        "placeholder": {
+                            "content": {
+                                "type": "static",
+                                "static": {
+                                    "type": "text",
+                                    "content": "Add constraint",
+                                    "style": {
+                                        "css": ["btn", "textual-option", "textual-option--constraint"]
+                                    }
+                                }
+                            }
+                        },
+                        "style": {
+                            "css": ["primitive-constraint__attribute"]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set primitive constraint" },
+            "tags": ["choice-selection"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Constraint",
+                            "style": {
+                                "css": ["title--small", "primitive-constraint__title--small"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "cardinality",
+                                    "placeholder": {
+                                        "content": {
+                                            "type": "static",
+                                            "static": {
+                                                "type": "text",
+                                                "content": "Cardinality",
+                                                "style": {
+                                                    "css": ["textual-option", "textual-option--style"]
+                                                }
+                                            }
                                         }
+                                    },
+                                    "style": {
+                                        "css": ["primitive-constraint-option"]
                                     }
                                 }
                             ],
                             "style": {
-                                "css": ["title--small", "constraint-choice--textual__title--small"]
+                                "css": ["primitive-constraint__options"]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set primitive" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Set",
+                            "focusable": false
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "concept primitive" },
+            "tags": ["choice-selection"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "disposition": [
+                    {
+                        "type": "attribute",
+                        "name": "concept",
+                        "tag": "textual"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "concept primitive" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "User-defined",
+                            "focusable": false
+                        }
+                    }
+                ]
+            }
+        },
+
+
+        {
+            "concept": { "name": "string constraint" },
+            "tags": [],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": { 
+                                "type": "property", 
+                                "name": "refname" 
+                            },
+                            "style": {
+                                "css": ["title--small", "constraint-choice--textual__title"]
                             }
                         }
                     },
@@ -621,7 +1063,207 @@
                                 },
                                 "option": {
                                     "style": {
-                                        "css": ["constraint-choice--textual__choice-option"]
+                                        "css": ["constraint-choice--textual__choice-option", "font-ui"]
+                                    }
+                                }
+                            },
+                            "style": {
+                                "css": ["constraint-choice--textual__choice"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "projection",
+                        "bind": "value",
+                        "placeholder": false,
+                        "tag": "choice-selection",
+                        "style": {
+                            "css": ["number-constraint"]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string pattern constraint" },
+            "tags": ["choice-selection"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "insensitive",
+                                    "tag": "toggle-field"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "global",
+                                    "tag": "toggle-field"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "value",
+                        "tag": "textual"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string pattern constraint" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Regex"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string match constraint" },
+            "tags": ["choice-selection"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Start:"
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "start",
+                                    "tag": "textual"
+                                }
+                            ],
+                            "style": {
+                                "css": ["constraint-range"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "End:"
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "end",
+                                    "tag": "textual"
+                                }
+                            ],
+                            "style": {
+                                "css": ["constraint-range"]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string match constraint" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Match",
+                            "focusable": false
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string constraint value" },
+            "tags": ["textual"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "horizontal",
+                "disposition": [
+                    {
+                        "type": "attribute",
+                        "name": "value",
+                        "tag": "textual"
+                    }
+                ]
+            }
+        },
+
+
+        {
+            "concept": { "name": "number constraint" },
+            "tags": [],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": { 
+                                "type": "property", 
+                                "name": "refname"
+                            },
+                            "style": {
+                                "css": ["title--small", "constraint-choice--textual__title"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "field",
+                        "field": {
+                            "type": "choice",
+                            "input": false,
+                            "choice": {
+                                "style": {
+                                    "css": ["constraint-choice--textual__choice-list"]
+                                },
+                                "option": {
+                                    "style": {
+                                        "css": ["constraint-choice--textual__choice-option", "font-ui"]
                                     }
                                 }
                             },
@@ -744,8 +1386,7 @@
                         "type": "static",
                         "static": {
                             "type": "text",
-                            "content": "Range",
-                            "focusable": false
+                            "content": "Range"
                         }
                     }
                 ]
@@ -753,396 +1394,8 @@
         },
 
 
-        {
-            "concept": { "name": "number primitive" },
-            "tags": ["choice-selection"],
-            "type": "layout",
-            "content": {
-                "type": "stack",
-                "orientation": "vertical",
-                "disposition": [
-                    {
-                        "type": "attribute",
-                        "name": "default",
-                        "tag": "default-number"
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "constraint",
-                        "placeholder": {
-                            "content": {
-                                "type": "static",
-                                "static": {
-                                    "type": "text",
-                                    "content": "Add constraint",
-                                    "style": {
-                                        "css": ["btn", "textual-option", "textual-option--constraint"]
-                                    }
-                                }
-                            }
-                        },
-                        "style": {
-                            "css": ["primitive-constraint__attribute"]
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "number primitive constraint" },
-            "tags": ["choice-selection"],
-            "type": "layout",
-            "content": {
-                "type": "stack",
-                "orientation": "vertical",
-                "disposition": [
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "Constraint",
-                            "style": {
-                                "css": ["title--small", "primitive-constraint__title--small"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "layout",
-                        "layout": {
-                            "type": "stack",
-                            "orientation": "horizontal",
-                            "disposition": [
-                                {
-                                    "type": "attribute",
-                                    "name": "value",
-                                    "placeholder": {
-                                        "content": {
-                                            "type": "static",
-                                            "static": {
-                                                "type": "text",
-                                                "content": "Value",
-                                                "style": {
-                                                    "css": ["textual-option", "textual-option--style"]
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "style": {
-                                        "css": ["text-style__attribute"]
-                                    }
-                                }
-                            ],
-                            "style": {
-                                "css": ["primitive-constraint__options"]
-                            }
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "number primitive" },
-            "tags": ["choice"],
-            "type": "layout",
-            "content": {
-                "type": "wrap",
-                "focusable": false,
-                "disposition": [
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "Number",
-                            "focusable": false
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "boolean primitive" },
-            "tags": ["choice-selection"],
-            "type": "layout",
-            "content": {
-                "type": "stack",
-                "orientation": "vertical",
-                "disposition": [
-                    {
-                        "type": "attribute",
-                        "name": "default",
-                        "tag": "default-boolean"
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "boolean primitive" },
-            "tags": ["choice"],
-            "type": "layout",
-            "content": {
-                "type": "wrap",
-                "focusable": false,
-                "disposition": [
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "Boolean",
-                            "focusable": false
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "reference primitive" },
-            "tags": ["choice-selection"],
-            "type": "layout",
-            "content": {
-                "type": "stack",
-                "orientation": "vertical",
-                "disposition": [
-                    {
-                        "type": "layout",
-                        "layout": {
-                            "type": "wrap",
-                            "disposition": [
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Reference of",
-                                        "style": {
-                                            "css": ["keyword"]
-                                        }
-                                    }
-                                },
-                                {
-                                    "type": "attribute",
-                                    "name": "accept",
-                                    "tag": "textual"
-                                }
-                            ],
-                            "style": {
-                                "css": ["line"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "layout",
-                        "layout": {
-                            "type": "wrap",
-                            "disposition": [
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Relationship",
-                                        "style": {
-                                            "css": ["label"]
-                                        }
-                                    }
-                                },
-                                {
-                                    "type": "attribute",
-                                    "name": "rel",
-                                    "tag": "textual"
-                                }
-                            ],
-                            "style": {
-                                "css": ["line"]
-                            }
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "reference primitive" },
-            "tags": ["choice"],
-            "type": "layout",
-            "content": {
-                "type": "wrap",
-                "focusable": false,
-                "disposition": [
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "Reference",
-                            "focusable": false
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "set primitive" },
-            "tags": ["choice-selection", "base"],
-            "type": "layout",
-            "content": {
-                "type": "stack",
-                "orientation": "vertical",
-                "disposition": [
-                    {
-                        "type": "layout",
-                        "layout": {
-                            "type": "stack",
-                            "orientation": "horizontal",
-                            "disposition": [
-                                {
-                                    "type": "attribute",
-                                    "name": "ordered",
-                                    "tag": "field-binary-state--ordered"
-                                },
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "set of",
-                                        "style": {
-                                            "css": ["keyword", "keyword--padright"]
-                                        }
-                                    }
-                                },
-                                {
-                                    "type": "attribute",
-                                    "name": "accept",
-                                    "tag": "textual"
-                                }
-                            ],
-                            "style": {
-                                "css": ["primitive-sub"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "constraint",
-                        "placeholder": {
-                            "content": {
-                                "type": "static",
-                                "static": {
-                                    "type": "text",
-                                    "content": "Add constraint",
-                                    "style": {
-                                        "css": ["btn", "textual-option", "textual-option--constraint"]
-                                    }
-                                }
-                            }
-                        },
-                        "style": {
-                            "css": ["primitive-constraint__attribute"]
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "set primitive constraint" },
-            "tags": ["choice-selection"],
-            "type": "layout",
-            "content": {
-                "type": "stack",
-                "orientation": "vertical",
-                "disposition": [
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "Constraint",
-                            "style": {
-                                "css": ["title--small", "primitive-constraint__title--small"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "layout",
-                        "layout": {
-                            "type": "stack",
-                            "orientation": "horizontal",
-                            "disposition": [
-                                {
-                                    "type": "attribute",
-                                    "name": "cardinality",
-                                    "placeholder": {
-                                        "content": {
-                                            "type": "static",
-                                            "static": {
-                                                "type": "text",
-                                                "content": "Cardinality",
-                                                "style": {
-                                                    "css": ["textual-option", "textual-option--style"]
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "style": {
-                                        "css": ["text-style__attribute"]
-                                    }
-                                }
-                            ],
-                            "style": {
-                                "css": ["primitive-constraint__options"]
-                            }
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "set primitive" },
-            "tags": ["choice"],
-            "type": "layout",
-            "content": {
-                "type": "wrap",
-                "focusable": false,
-                "disposition": [
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "Set",
-                            "focusable": false
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "concept primitive" },
-            "tags": ["choice-selection"],
-            "type": "layout",
-            "content": {
-                "type": "wrap",
-                "disposition": [
-                    {
-                        "type": "attribute",
-                        "name": "concept",
-                        "tag": "textual"
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "concept primitive" },
-            "tags": ["choice"],
-            "type": "layout",
-            "content": {
-                "type": "wrap",
-                "focusable": false,
-                "disposition": [
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "User-defined",
-                            "focusable": false
-                        }
-                    }
-                ]
-            }
-        },
+
+
         {
             "concept": { "name": "value" },
             "tags": ["textual"],
@@ -1366,6 +1619,48 @@
         },
         {
             "concept": { "name": "boolean" },
+            "tags": ["toggle-field"],
+            "type": "field",
+            "content": {
+                "type": "binary",
+                "state": {
+                    "true": {
+                        "content": [
+                            {
+                                "type": "static",
+                                "static": {
+                                    "type": "text",
+                                    "content": "refname",
+                                    "contentType": "property"
+                                }
+                            }
+                        ]
+                    },
+                    "false": {
+                        "content": [
+                            {
+                                "type": "static",
+                                "static": {
+                                    "type": "text",
+                                    "content": "refname",
+                                    "contentType": "property"
+                                }
+                            }
+                        ]
+                    }
+                },
+                "label": {
+                    "style": {
+                        "css": ["toggle-field__label"]
+                    }
+                },
+                "style": {
+                    "css": ["toggle-field", "font-ui"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "boolean" },
             "tags": ["default-boolean"],
             "type": "field",
             "content": {
@@ -1559,7 +1854,7 @@
             "type": "layout",
             "content": {
                 "type": "stack",
-                "orientation": "vertical",
+                "orientation": "horizontal",
                 "disposition": [
                     {
                         "type": "static",
@@ -1568,7 +1863,17 @@
                             "content": { "type": "property", "name": "refname" }
                         },
                         "style": {
-                            "css": ["title--small", "reference-choice--textual__title--small"]
+                            "css": ["keyword", "label"]
+                        }
+                    },
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": ":",
+                            "style": {
+                                "css": ["keyword"]
+                            }
                         }
                     },
                     {
@@ -1725,7 +2030,7 @@
                         "type": "static",
                         "static": {
                             "type": "text",
-                            "content": "Restrict values",
+                            "content": "Values accepted",
                             "style": {
                                 "css": ["title--small", "value-list__title--small"]
                             }
@@ -1929,6 +2234,48 @@
                 ],
                 "style": {
                     "css": ["name-field", "name-field--textual"]
+                }
+            }
+        },
+
+        {
+            "concept": { "prototype": "primitive" },
+            "type": "layout",
+            "tags": ["choice-selection", "collapse"],
+            "projection": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "..."
+                        }
+                    },
+
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "plink",
+                            "tag": "config",
+                            "content": [
+                                {
+                                    "type": "static", 
+                                    "static": {
+                                        "type": "text",
+                                        "content": ""
+                                    }
+                                }
+                            ],
+                            "style": {
+                                "css": ["nav-projection", "render__nav-projection", "render__nav-projection--collapse"]
+                            }
+                        }
+                    }
+                ],
+                "style": {
+                    "css": ["primitive-config", "primitive-config--collapse"]
                 }
             }
         }

@@ -18,6 +18,7 @@ The string concept allows you to store and manipulate sequence of characters
 
 - **default** `[string]`: Default value. This value is assigned to all newly created instance.
 - **length** `[string]`: Number of characters of the sequence. This property can be constrained to a fix value or a range.
+- **value** `[number]`: Value assigned to the instance. This property can be constrained with a Regex pattern or a match against the start or end of the sequence.
 - **values** `[set:string]`: List of valid sequences. This property can be used to restrict the list of accepted string values.
 
 ### Number
@@ -27,7 +28,7 @@ The number concept allows you to store and manipulate numbers
 #### Properties
 
 - **default** `[number]`: Default value. This value is assigned to all newly created instance.
-- **value** `[number]`: Defines how the link should be processed
+- **value** `[number]`: Value assigned to the instance. This property can be constrained to a fix value or a range.
 - **values** `[set:number]`: List of valid numbers. This property can be used to restrict the list of accepted number values.
 
 ### Boolean

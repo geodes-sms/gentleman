@@ -84,21 +84,51 @@ export const EditorSection = {
             this.editor = editor;
         }
 
-        this._conceptSelector = createModelSelector("concept", this.editor).init(
-            () => this.editor.hasConceptModel ? this.editor.getRoots().map(concept => this.editor.conceptModel.getCompleteModelConcept(concept)) : []
-        );
+        this._conceptSelector = createModelSelector("concept", this.editor).init(() => {
+            if (!this.editor.hasConceptModel) {
+                return [];
+            }
 
-        this._valueSelector = createModelSelector("value", this.editor).init(
-            () => this.editor.hasConceptModel ? this.editor.conceptModel.getValues() : []
-        );
+            const { conceptModel } = this.editor;
 
-        this._projectionSelector = createModelSelector("projection", this.editor).init(
-            () => this.editor.hasProjectionModel ? this.editor.projectionModel.schema.filter(p => p.type !== "template") : []
-        );
+            let concepts = this.editor.getConfig("concepts");
 
-        this._resourceSelector = createModelSelector("resource", this.editor).init(
-            () => this.editor.resources
-        );
+            if (isNullOrUndefined(concepts)) {
+                concepts = conceptModel.getSchema("concrete");
+            }
+
+            return concepts.map(concept => conceptModel.getCompleteModelConcept(concept));
+        });
+
+        this._valueSelector = createModelSelector("value", this.editor).init(() => {
+            if (!this.editor.hasConceptModel) {
+                return [];
+            }
+
+            const { conceptModel } = this.editor;
+
+            return conceptModel.getValues();
+        });
+
+        this._projectionSelector = createModelSelector("projection", this.editor).init(() => {
+            if (!this.editor.hasProjectionModel) {
+                return [];
+            }
+
+            const { projectionModel } = this.editor;
+
+            return projectionModel.schema.filter(p => p.type !== "template");
+        });
+
+        this._resourceSelector = createModelSelector("resource", this.editor).init(() => {
+            let resources = this.editor.getConfig("resources");
+
+            if (isNullOrUndefined(resources)) {
+                return [];
+            }
+
+            return resources;
+        });
 
         return this;
     },
@@ -251,6 +281,8 @@ export const EditorSection = {
             hide(this.body);
             hide(this.btnCollapse);
         }
+
+        this.editor.getConfig("resources") ? show(this.tabResource) : hide(this.tabResource);
 
         let handler = SelectorHandler[this.activeTabValue];
 

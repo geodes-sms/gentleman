@@ -20,7 +20,6 @@
 .structure__btn-delete {
     position: absolute;
     top: 0; right: 0;
-    width: 24px; height: 24px;
     font-weight: 600;
     z-index: 5;
 }

@@ -43,6 +43,8 @@ function responseHandler(code) {
     }
 }
 
+const isNumber = (value) => typeof value === 'number' && !isNaN(value);
+
 const _NumberConcept = {
     nature: 'primitive',
 
@@ -106,7 +108,10 @@ const _NumberConcept = {
             };
         }
 
-        if (isNullOrWhitespace(value)) {
+        if (isNumber(value)) {
+            this.value = value;
+        }
+        else if (isNullOrWhitespace(value)) {
             this.value = null;
         } else {
             this.value = +value;
@@ -123,13 +128,13 @@ const _NumberConcept = {
         this.value = null;
 
         this.notify("value.changed", this.value);
-        
+
         return {
             success: true,
             message: "The value has been successfully updated."
         };
     },
-    
+
     getCandidates() {
         this.values.forEach(value => {
             if (isObject(value)) {

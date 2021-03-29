@@ -71,7 +71,7 @@ const _StringConcept = {
             if (id.length > 10) {
                 this.id = id;
             }
-            
+
             this.setValue(value);
         } else {
             this.setValue(args);
@@ -275,10 +275,21 @@ function resolveValue(value) {
         let values = concepts.map(c => c.getChildren(this.name)).flat().map(c => c.value);
 
         return values;
+    } else if (value.type === "meta-reference") {
+        let concepts = [];
+
+        if (this.model.isPrototype("model concept")) {
+            concepts = this.model.getConceptsByPrototype("model concept");
+        }
+
+        let values = concepts.map(c => c.getChildren(this.name)).flat().map(c => c.value);
+
+        return values;
     }
 
     return value;
 }
+
 
 export const StringConcept = Object.assign(
     Object.create(Concept),

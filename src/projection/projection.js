@@ -98,16 +98,22 @@ const Projection = {
 
         const { type = "string", value } = param;
 
+        let pValue = valOrDefault(value, param.default);
+
+        if (isNullOrUndefined(pValue)) {
+            return null;
+        }
+
         if (type === "string") {
-            return value.toString();
+            return pValue.toString();
         }
 
         if (type === "number") {
-            return +value;
+            return +pValue;
         }
 
         if (type === "boolean") {
-            return toBoolean(value);
+            return toBoolean(pValue);
         }
     },
     /**

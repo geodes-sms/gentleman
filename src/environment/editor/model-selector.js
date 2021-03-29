@@ -114,14 +114,14 @@ export const EditorSelector = {
             let previewHandler = PreviewHandler[this.type];
             let preview = createDiv({
                 class: ["editor-selector__preview"]
-            }, previewHandler(data));
+            }, previewHandler.call(this, data));
 
 
             // Create action bar
             let actionHandler = ActionHandler[this.type];
             let actionBar = createDiv({
                 class: ["editor-selector__action-bar"]
-            }, actionHandler(data));
+            }, actionHandler.call(this, data));
 
             // Create item container
             let item = createListItem({
@@ -170,7 +170,7 @@ export const EditorSelector = {
 };
 
 const PreviewHandler = {
-    "projection": (projection) => {
+    "projection": function (projection) {
         const { concept, tags = [] } = projection;
 
         const fragment = createDocFragment();
@@ -192,7 +192,7 @@ const PreviewHandler = {
 
         return fragment;
     },
-    "value": (conceptValue) => {
+    "value": function (conceptValue) {
         if (isNullOrUndefined(conceptValue)) {
             return createEmphasis({
                 class: ["editor-selector__preview-null"]
@@ -255,7 +255,7 @@ const PreviewHandler = {
 
         return conceptValue.toString();
     },
-    "concept": (concept) => {
+    "concept": function (concept) {
         const fragment = createDocFragment();
 
         if (Array.isArray(concept.attributes)) {
@@ -269,7 +269,7 @@ const PreviewHandler = {
                 let attrElement = createSpan({
                     class: ["editor-selector__preview-text", "editor-selector__preview-text--attribute"]
                 }, name);
-                
+
                 let targetElement = createSpan({
                     class: ["editor-selector__preview-text", "editor-selector__preview-text--target"]
                 }, target.name);
@@ -301,7 +301,7 @@ const PreviewHandler = {
 
         return fragment;
     },
-    "resource": (resource) => {
+    "resource": function (resource) {
         const fragment = createDocFragment();
 
         return fragment;
@@ -309,7 +309,7 @@ const PreviewHandler = {
 };
 
 const ActionHandler = {
-    "projection": (projection) => {
+    "projection": function (projection) {
         const fragment = createDocFragment();
 
         let chkGlobal = createInput({
@@ -335,7 +335,7 @@ const ActionHandler = {
 
         return fragment;
     },
-    "value": (value) => {
+    "value": function (value) {
         const fragment = createDocFragment();
 
         let btnClone = createButton({
@@ -359,7 +359,7 @@ const ActionHandler = {
 
         return fragment;
     },
-    "concept": (concept) => {
+    "concept": function (concept) {
         const fragment = createDocFragment();
 
         let btnCreate = createButton({
@@ -375,19 +375,32 @@ const ActionHandler = {
 
         return fragment;
     },
-    "resource": (file) => {
+    "resource": function (rscx) {
+        const { name, type, required } = rscx;
+
         const fragment = createDocFragment();
+
+        let btnAdd = createButton({
+            class: ["btn", "editor-selector__action-bar-button", "editor-selector__action-bar-button--add"],
+            dataset: {
+                action: "load-resource",
+                id: name
+            }
+        }, "Add");
 
         let btnDelete = createButton({
             class: ["btn", "editor-selector__action-bar-button", "editor-selector__action-bar-button--delete"],
             dataset: {
                 action: "delete:resource",
-                id: file.name,
+                id: name,
             }
-        }, "Delete");
+        }, "Remove");
 
-
-        fragment.append(btnDelete);
+        if (this.editor.getResource(name)) {
+            fragment.append(btnDelete);
+        } else {
+            fragment.append(btnAdd);
+        }
 
         return fragment;
     },

@@ -52,8 +52,12 @@ export function ContentHandler(schema, concept, args = {}) {
         let template = this.model.getTemplateSchema(schema.name);
 
         if (template.param) {
-            // TODO: Merge and validate template.param and schema.param
-            this.projection.addParam(schema.param);
+            if (schema.param) {
+                template.param.forEach(param => {
+                    Object.assign(param, schema.param.find(p => p.name === param.name));
+                });
+            }
+            this.projection.addParam(template.param);
         }
 
         const fragment = createDocFragment();

@@ -1,6 +1,6 @@
-import { removeChildren, isEmpty, isFunction } from 'zenkai';
+import { removeChildren, isEmpty, isFunction, isHTMLElement, createI } from 'zenkai';
 import { shake, show, hide, toggle } from '@utils/index.js';
-
+import { createNotificationMessage } from "./notification.js";
 
 const BaseField = {
     init() {
@@ -44,6 +44,21 @@ const BaseField = {
 
         return this.attached.filter(element => pred(element));
     },
+    getMessageElement() {
+        if (!isHTMLElement(this.messageElement)) {
+            this.messageElement = createI({
+                class: ["field-message", "hidden"],
+                dataset: {
+                    nature: "field-component",
+                    view: this.type,
+                    id: this.id,
+                }
+            });
+            this.notification.append(this.messageElement);
+        }
+
+        return this.messageElement;
+    },
 
     show() {
         show(this.element);
@@ -71,6 +86,29 @@ const BaseField = {
 
         return this;
     },
+    getContainer() { return this.element; },
+    notify(message, type, time = 4500) {
+        let msgElement = this.getMessageElement();
+
+        removeChildren(msgElement);
+        msgElement.append(createNotificationMessage(type, message));
+
+        show(msgElement);
+    },
+    /**
+     * Appends an element to the field container
+     * @param {HTMLElement} element 
+     */
+    append(element) {
+        if (!isHTMLElement(element)) {
+            throw new TypeError("Bad argument: The 'element' argument must be an HTML Element");
+        }
+
+        this.element.append(element);
+
+        return this;
+    },
+
     /**
      * Component Focus in handler
      * @param {HTMLElement} target 
@@ -215,6 +253,11 @@ const BaseField = {
         // this.element.append(this.toolbar, this.body);
         // this.element.classList.add("control");
     },
+    shiftHandler(dir, target) {
+        console.warn(`SHIFT_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+
+        return false;
+    }
 };
 
 

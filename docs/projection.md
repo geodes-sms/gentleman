@@ -23,8 +23,6 @@ A layout element is used to organize elements presented in the GUI.
 
 The *WrapLayout* is the simplest of all the layouts. It groups its child elements in a container.
 
-- Properties
-  - **Containerless** `[boolean]`: indicates whether the elements are rendered without a container
 
 ### StackLayout
 

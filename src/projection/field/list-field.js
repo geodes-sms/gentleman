@@ -11,6 +11,7 @@ import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler } from "./../content-handler.js";
 import { StateHandler } from "./../state-handler.js";
 import { Field } from "./field.js";
+import { createNotificationMessage } from "./notification.js";
 
 
 const actionDefaultSchema = {
@@ -35,42 +36,6 @@ const actionDefaultSchema = {
         }]
     }
 };
-
-function createMessageElement() {
-    if (!isHTMLElement(this.messageElement)) {
-        this.messageElement = createI({
-            class: ["field-message", "hidden"],
-            dataset: {
-                nature: "field-component",
-                view: "text",
-                id: this.id,
-            }
-        });
-        this.notification.appendChild(this.messageElement);
-    }
-
-    return this.messageElement;
-}
-
-
-
-/**
- * Creates a notification message
- * @param {string} type 
- * @param {string} message 
- * @returns {HTMLElement}
- */
-function createNotificationMessage(type, message) {
-    var element = createSpan({ class: ["notification-message", `notification-message--${type}`] }, message);
-
-    if (Array.isArray(message)) {
-        element.style.minWidth = `${Math.min(message[0].length * 0.5, 30)}em`;
-    } else {
-        element.style.minWidth = `${Math.min(message.length * 0.5, 30)}em`;
-    }
-
-    return element;
-}
 
 /**
  * Verifies whether this element is valid
@@ -396,19 +361,6 @@ const BaseListField = {
 
         return this;
     },
-    /**
-     * Appends an element to the field container
-     * @param {HTMLElement} element 
-     */
-    append(element) {
-        if (!isHTMLElement(element)) {
-            throw new TypeError("Bad argument: The 'element' argument must be an HTML Element");
-        }
-
-        this.element.appendChild(element);
-
-        return this;
-    },
     delete(target) {
         if (target === this.element) {
             this.source.remove();
@@ -462,14 +414,20 @@ const BaseListField = {
                 return;
             }
 
-            let content = null;
+            let contentSchema = schema.content;
+
             if (result) {
-                content = ContentHandler.call(this, result.content, null);
-            } else {
-                content = ContentHandler.call(this, schema.content, null);
+                contentSchema = result.content;
             }
 
-            removeChildren(element).append(content);
+            let fragment = createDocFragment();
+            contentSchema.forEach(element => {
+                let content = ContentHandler.call(this, element, null, { focusable: false });
+
+                fragment.append(content);
+            });
+
+            removeChildren(element).append(fragment);
         });
 
         removeChildren(this.statusElement);
@@ -610,12 +568,7 @@ const BaseListField = {
      * @param {HTMLElement} target 
      */
     _spaceHandler(target) {
-        createMessageElement.call(this);
-
-        removeChildren(this.messageElement);
-        this.messageElement.appendChild(createNotificationMessage(NotificationType.INFO, "Enter any text."));
-
-        show(this.messageElement);
+        this.notify(`Add or remove ${this.source.accept.name}`);
     },
     /**
      * Handles the `space` command
@@ -846,6 +799,7 @@ const BaseListField = {
         this.projection.registerHandler("value.removed", (value) => {
             this.removeItem(value);
         });
+
         this.projection.registerHandler("value.changed", (value) => {
             this.clear();
 
@@ -854,6 +808,7 @@ const BaseListField = {
                 this.list.appendChild(item);
             });
         });
+
         this.projection.registerHandler("value.swapped", (values) => {
             const [value1, value2] = values;
 
@@ -862,7 +817,7 @@ const BaseListField = {
 
             let index1 = +this.getItemIndex(item1);
             let index2 = +this.getItemIndex(item2);
-            
+
             if (index1 !== value1.index) {
                 this.swapItem(item1, item2);
             }

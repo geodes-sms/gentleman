@@ -1,6 +1,6 @@
 import {
-    createDocFragment, createDiv, createH3, createButton, createHeader, removeChildren,
-    isHTMLElement,
+    createDocFragment, createDiv, createH3, createButton, createHeader,
+    removeChildren, isHTMLElement, valOrDefault,
 } from 'zenkai';
 import { show, hide, toggle, collapse, expand, NotificationType } from '@utils/index.js';
 
@@ -35,10 +35,15 @@ export const EditorInstance = {
     fullscreen: false,
     /** @type {boolean} */
     collapsed: false,
+    /** @type {*} */
+    schema: null,
+    /** @type {string} */
+    ctype: null,
 
     get isRendered() { return isHTMLElement(this.container); },
 
     init(args = {}) {
+        this.ctype = valOrDefault(args.type, "concept");
         this.schema = args;
 
         return this;
@@ -108,9 +113,10 @@ export const EditorInstance = {
 
         if (!isHTMLElement(this.container)) {
             this.container = createDiv({
-                class: ["editor-concept"],
+                class: ["editor-concept", `editor-concept--${this.ctype}`],
                 dataset: {
                     nature: "concept-container",
+                    type: this.ctype,
                     size: 1,
                 }
             });
@@ -204,15 +210,15 @@ export const EditorInstance = {
                 this.collapse();
                 break;
             case "resize":
-                this.resize(); 
+                this.resize();
                 break;
             case "maximize":
-                this.maximize(); 
+                this.maximize();
                 break;
             case "close":
                 this.delete();
                 break;
-        
+
             default:
                 break;
         }
@@ -242,7 +248,7 @@ export const EditorInstance = {
         this.editor.removeInstance(this.id);
     },
 
-    bindEvents(){
+    bindEvents() {
         this.container.addEventListener('focusin', (event) => {
             this.editor.updateActiveInstance(this);
         });

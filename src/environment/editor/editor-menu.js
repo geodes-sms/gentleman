@@ -67,30 +67,39 @@ export const EditorMenu = {
 
         return this;
     },
-
     clear() {
         removeChildren(this.container);
 
         return this;
     },
+
+    /**
+     * Gets the declared actions
+     * @returns {*[]}
+     */
+    getActions() {
+        return valOrDefault(this.schema.actions, []);
+    },
+
     update(schema) {
         if (schema) {
             this.schema = schema;
         }
 
-        const { actions } = this.schema;
+        const { actions = [] } = this.schema;
 
         const fragment = createDocFragment();
 
         actions.filter(action => valOrDefault(action.default, true))
             .forEach(action => {
-                const { name, content, handler } = action;
+                const { name, content, help } = action;
 
                 let button = createButton({
                     class: ["btn", "menu-action__button"],
+                    title: help,
                     dataset: {
                         "action": name,
-                        "handler": true
+                        context: this.type,
                     }
                 }, valOrDefault(content, name));
 
@@ -191,6 +200,19 @@ export const EditorMenu = {
         }
 
         return this;
+    },
+
+
+    actionHandler(name) {
+        let action = this.getActions().find(action => action.name === name);
+
+        if (isNullOrUndefined(action)) {
+            return false;
+        }
+
+        this.editor.triggerEvent(action);
+
+        return true;
     },
 
     bindEvents() {

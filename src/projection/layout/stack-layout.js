@@ -1,4 +1,4 @@
-import { createDocFragment, createDiv, isHTMLElement, valOrDefault, hasOwn, } from "zenkai";
+import { createDocFragment, createDiv, isHTMLElement, valOrDefault, hasOwn, isNullOrUndefined, createInput, createLabel, } from "zenkai";
 import { getClosest, getVisibleElement } from "@utils/index.js";
 import { StyleHandler } from './../style-handler.js';
 import { ContentHandler } from './../content-handler.js';
@@ -9,6 +9,25 @@ const Orientation = {
     HORIZONTAL: "horizontal",
     VERTICAL: "vertical"
 };
+
+
+const PROJECTION_SCHEMA = [
+    {
+        "concept": { "name": "stack-layout" },
+        "type": "layout",
+        "tags": [],
+        "projection": {
+            "type": "stack",
+            "orientation": "vertical",
+            "disposition": [
+                {
+                    "type": "attribute",
+                    "name": "orientation"
+                }
+            ]
+        }
+    }
+];
 
 export const BaseStackLayout = {
     /** @type {string} */
@@ -33,10 +52,6 @@ export const BaseStackLayout = {
         return this.orientation;
     },
     setOrientation(value) {
-        if (!hasOwn(Orientation, value)) {
-            return;
-        }
-
         this.orientation = value;
         this.refresh();
     },
@@ -128,6 +143,36 @@ export const BaseStackLayout = {
 
         return this.container;
     },
+    design() {
+        const CONCEPT_SCHEMA = [
+            {
+                "name": "stack-layout",
+                "nature": "concrete",
+                "attributes": [
+                    {
+                        "name": "orientation",
+                        "target": {
+                            "name": "string",
+                            "default": this.orientation,
+                            "constraint": {
+                                "values": ["horizontal", "vertical"]
+                            }
+                        }
+                    }
+                ]
+            }
+        ];
+
+        return {
+            concept: CONCEPT_SCHEMA,
+            projection: PROJECTION_SCHEMA,
+            handlers: {
+                orientation: (message, value) => {
+                    this.setOrientation(value);
+                }
+            }
+        };
+    },
     refresh() {
         if (this.orientation === Orientation.VERTICAL) {
             this.container.style.flexDirection = "column";
@@ -178,29 +223,25 @@ export const BaseStackLayout = {
      */
     arrowHandler(dir, target) {
         if (target === this.container) {
-            if (this.parent) {
-                return this.parent.arrowHandler(dir, this.container);
+            if (isNullOrUndefined(this.parent) || this.parent.object !== "layout") {
+                return false;
             }
 
-            return false;
+            return this.parent.arrowHandler(dir, this.container);
         }
 
         let closestElement = getClosest(target, dir, this.container);
 
-        if (isHTMLElement(closestElement)) {
-            let element = this.environment.resolveElement(closestElement);
-            if (element) {
-                element.focus();
-            }
-
-            return true;
+        if (!isHTMLElement(closestElement)) {
+            return false;
         }
 
-        if (this.parent) {
-            return this.parent.arrowHandler(dir, this.container);
+        let element = this.environment.resolveElement(closestElement);
+        if (element) {
+            element.focus();
         }
 
-        return false;
+        return true;
     },
 
     bindEvents() {

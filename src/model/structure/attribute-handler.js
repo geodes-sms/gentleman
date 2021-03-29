@@ -5,13 +5,21 @@ import { Attribute } from "./attribute";
 export const AttributeHandler = {
     /** @type {Attribute[]} */
     attributes: null,
+    /** @type {Set} */
+    attributes_created: null,
 
     /** @returns {Attribute[]} */
     initAttribute() {
         this.attributes = [];
-        this.attributes._created = new Set();
-        this.attributes._updated = new Set();
-        this.attributes._deleted = new Set();
+        this.attributes_created = new Set();
+        this.attributes_updated = new Set();
+        this.attributes_deleted = new Set();
+
+        if (Array.isArray(this.attributeSchema)) {
+            this.attributeSchema
+                .filter(attr => valOrDefault(attr.required, true))
+                .forEach(attr => this.createAttribute(attr.name));
+        }
 
         return this;
     },
@@ -123,7 +131,7 @@ export const AttributeHandler = {
         }
 
         this.attributes.push(attribute);
-        this.attributes._created.add(attribute.name);
+        this.attributes_created.add(attribute.name);
 
         this.notify("attribute.added", attribute);
 
@@ -160,7 +168,7 @@ export const AttributeHandler = {
      * @returns {boolean}
      */
     isAttributeCreated(name) {
-        return this.attributes._created.has(name);
+        return this.attributes_created.has(name);
     },
     listAttributes() {
         const attributes = [];
@@ -202,7 +210,7 @@ export const AttributeHandler = {
         }
 
         var removedAttribute = this.attributes.splice(index, 1)[0];
-        this.attributes._created.delete(name);
+        this.attributes_created.delete(name);
 
         this.notify("attribute.removed", removedAttribute);
 

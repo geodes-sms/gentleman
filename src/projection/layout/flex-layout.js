@@ -1,4 +1,4 @@
-import { createDocFragment, createDiv, isHTMLElement, valOrDefault, hasOwn, } from "zenkai";
+import { createDocFragment, createDiv, isHTMLElement, valOrDefault, hasOwn, isNullOrUndefined } from "zenkai";
 import { getClosest, getVisibleElement } from "@utils/index.js";
 import { StyleHandler } from './../style-handler.js';
 import { ContentHandler } from './../content-handler.js';
@@ -194,29 +194,25 @@ export const BaseFlexLayout = {
      */
     arrowHandler(dir, target) {
         if (target === this.container) {
-            if (this.parent) {
-                return this.parent.arrowHandler(dir, this.container);
+            if (isNullOrUndefined(this.parent) || this.parent.object !== "layout") {
+                return false;
             }
 
-            return false;
+            return this.parent.arrowHandler(dir, this.container);
         }
 
         let closestElement = getClosest(target, dir, this.container);
 
-        if (isHTMLElement(closestElement)) {
-            let element = this.environment.resolveElement(closestElement);
-            if (element) {
-                element.focus();
-            }
-
-            return true;
+        if (!isHTMLElement(closestElement)) {
+            return false;
         }
 
-        if (this.parent) {
-            return this.parent.arrowHandler(dir, this.container);
+        let element = this.environment.resolveElement(closestElement);
+        if (element) {
+            element.focus();
         }
 
-        return false;
+        return true;
     },
 
     bindEvents() {

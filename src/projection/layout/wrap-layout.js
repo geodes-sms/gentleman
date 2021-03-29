@@ -1,4 +1,4 @@
-import { createDocFragment, createDiv, isHTMLElement, valOrDefault, } from "zenkai";
+import { createDocFragment, createDiv, isHTMLElement, valOrDefault, isNullOrUndefined } from "zenkai";
 import { getVisibleElement, getClosest } from "@utils/index.js";
 import { StyleHandler } from './../style-handler.js';
 import { ContentHandler } from './../content-handler.js';
@@ -140,33 +140,29 @@ export const BaseWrapLayout = {
      */
     arrowHandler(dir, target) {
         if (target === this.container) {
-            if (this.parent) {
-                return this.parent.arrowHandler(dir, this.container);
+            if (isNullOrUndefined(this.parent) || this.parent.object !== "layout") {
+                return false;
             }
 
-            return false;
-        }
-
-        if (this.containerless) {
-            return this.parent.arrowHandler(dir, target);
+            return this.parent.arrowHandler(dir, this.container);
         }
 
         let closestElement = getClosest(target, dir, this.container);
 
-        if (isHTMLElement(closestElement)) {
-            let element = this.environment.resolveElement(closestElement);
-            if (element) {
-                element.focus();
+        if (!isHTMLElement(closestElement)) {
+            if (isNullOrUndefined(this.parent) || this.parent.object !== "layout") {
+                return false;
             }
 
-            return true;
-        }
-
-        if (this.parent) {
             return this.parent.arrowHandler(dir, this.container);
         }
 
-        return false;
+        let element = this.environment.resolveElement(closestElement);
+        if (element) {
+            element.focus();
+        }
+
+        return true;
     },
 
     bindEvents() {

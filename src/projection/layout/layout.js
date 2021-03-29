@@ -1,6 +1,6 @@
 import { findAncestor, isNullOrUndefined } from "zenkai";
 import { StyleHandler } from './../style-handler.js';
-import { show, hide, toggle } from '@utils/index.js';
+import { show, hide, toggle, pixelToNumber } from '@utils/index.js';
 
 export const Layout = {
     /** @type {boolean} */
@@ -31,6 +31,7 @@ export const Layout = {
 
         return true;
     },
+    getContainer() { return this.container; },
     isRoot() { return isNullOrUndefined(this.parent); },
     /**
      * Get a the related field object
@@ -134,6 +135,13 @@ export const Layout = {
 
         return false;
     },
+    delete() {
+        var result = this.source.delete();
+
+        if (!result.success) {
+            this.environment.notify(result.message);
+        }
+    },
     /**
      * Handles the `delete` command
      * @param {HTMLElement} target 
@@ -167,6 +175,19 @@ export const Layout = {
         console.warn(`ARROW_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
 
         return false;
+    },
+    /**
+     * Handles the `shift` command
+     * @param {string} dir 
+     * @param {HTMLElement} target 
+     */
+    shiftHandler(dir, target) {
+        if (dir === "up") {
+            let space = pixelToNumber(window.getComputedStyle(this.container).marginTop);
+            this.container.style.marginTop = `${space + 1}px`;
+        }
+
+        return true;
     },
     /**
      * Handles the `arrow` command

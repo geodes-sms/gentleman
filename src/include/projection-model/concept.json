@@ -23,13 +23,13 @@
                     "target": {
                         "name": "render",
                         "accept": [
-                            { "name": "stack layout" },
-                            { "name": "wrap layout" },
-                            { "name": "flex layout" },
                             { "name": "text field" },
                             { "name": "binary field" },
                             { "name": "choice field" },
-                            { "name": "list field" }
+                            { "name": "list field" },
+                            { "name": "stack layout" },
+                            { "name": "wrap layout" },
+                            { "name": "flex layout" }
                         ]
                     },
                     "required": true
@@ -123,7 +123,13 @@
                     "name": "name",
                     "target": {
                         "name": "name",
-                        "src": ["string", "number", "boolean", "set", "reference"]
+                        "src": [
+                            "string", "number", "boolean", "set", "reference"
+                        ],
+                        "values": [
+                            "string", "number", "boolean", "set", "reference",
+                            { "type": "meta-reference", "source": "metamodel" }
+                        ]
                     }
                 },
                 {
@@ -536,13 +542,6 @@
                             ]
                         }
                     }
-                },
-                {
-                    "name": "collapsible",
-                    "target": {
-                        "name": "boolean",
-                        "default": false
-                    }
                 }
             ]
         },
@@ -744,6 +743,13 @@
                         }
                     },
                     "value": "text"
+                },
+                {
+                    "name": "nonbreakable",
+                    "target": {
+                        "name": "boolean",
+                        "default": true
+                    }
                 }
             ],
             "properties": [
@@ -1070,14 +1076,6 @@
                 },
                 {
                     "name": "strikethrough",
-                    "target": {
-                        "name": "boolean",
-                        "default": true
-                    },
-                    "required": false
-                },
-                {
-                    "name": "nonbreakable",
                     "target": {
                         "name": "boolean",
                         "default": true

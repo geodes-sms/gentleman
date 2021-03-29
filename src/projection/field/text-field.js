@@ -11,26 +11,12 @@ import { StyleHandler } from "./../style-handler.js";
 import { StateHandler } from "./../state-handler.js";
 import { resolveValue } from "./../content-handler.js";
 import { Field } from "./field.js";
+import { createNotificationMessage } from "./notification.js";
 
 
 const isInputOrTextarea = (element) => isHTMLElement(element, ["input", "textarea"]);
 
 
-function createMessageElement() {
-    if (!isHTMLElement(this.messageElement)) {
-        this.messageElement = createI({
-            class: ["field-message", "hidden"],
-            dataset: {
-                nature: "field-component",
-                view: "text",
-                id: this.id,
-            }
-        });
-        this.notification.appendChild(this.messageElement);
-    }
-
-    return this.messageElement;
-}
 
 /**
  * Creates a choice element
@@ -72,24 +58,6 @@ function createChoiceItemElement(value) {
             id: this.id,
         }
     }, value);
-}
-
-/**
- * Creates a notification message
- * @param {string} type 
- * @param {string} message 
- * @returns {HTMLElement}
- */
-function createNotificationMessage(type, message) {
-    var element = createSpan({ class: ["notification-message", `notification-message--${type}`] }, message);
-
-    if (Array.isArray(message)) {
-        element.style.minWidth = `${Math.min(message[0].length * 0.5, 30)}em`;
-    } else {
-        element.style.minWidth = `${Math.min(message.length * 0.5, 30)}em`;
-    }
-
-    return element;
 }
 
 /**
@@ -332,15 +300,17 @@ const BaseTextField = {
 
         removeChildren(this.statusElement);
 
+        const CSS_ERROR = "error";
+
         if (this.hasError) {
-            this.element.classList.add("error");
-            this.input.classList.add("error");
-            this.statusElement.classList.add("error");
-            this.statusElement.appendChild(createNotificationMessage(NotificationType.ERROR, this.errors));
+            this.element.classList.add(CSS_ERROR);
+            this.input.classList.add(CSS_ERROR);
+            this.statusElement.classList.add(CSS_ERROR);
+            this.statusElement.append(createNotificationMessage(NotificationType.ERROR, this.errors));
         } else {
-            this.element.classList.remove("error");
-            this.input.classList.remove("error");
-            this.statusElement.classList.remove("error");
+            this.element.classList.remove(CSS_ERROR);
+            this.input.classList.remove(CSS_ERROR);
+            this.statusElement.classList.remove(CSS_ERROR);
         }
 
         if (this.choice) {
@@ -498,37 +468,20 @@ const BaseTextField = {
 
         return this;
     },
-    /**
-     * Appends an element to the field container
-     * @param {HTMLElement} element 
-     */
-    append(element) {
-        if (!isHTMLElement(element)) {
-            throw new TypeError("Bad argument: The 'element' argument must be an HTML Element");
-        }
-
-        this.element.appendChild(element);
-
-        return this;
-    },
 
     /**
      * Handles the `space` command
      * @param {HTMLElement} target 
      */
     _spaceHandler(target) {
-        const candidates = this.getCandidates();
+        const candidates = valOrDefault(this.getCandidates(), []);
 
         if (!Array.isArray(candidates)) {
-            throw new TypeError("Bad values");
+            console.error("Bad values");
         }
 
-        createMessageElement.call(this);
-
-        removeChildren(this.messageElement);
         if (isEmpty(candidates)) {
-            this.messageElement.appendChild(createNotificationMessage(NotificationType.INFO, "Enter any text."));
-            show(this.messageElement);
+            this.notify(NotificationType.INFO, "Enter any text.");
         } else {
             createChoiceElement.call(this);
 
@@ -666,14 +619,14 @@ const BaseTextField = {
                 if (!isAtStart) {
                     return false;
                 }
-            } 
+            }
 
             element = getClosest(target, dir, this.element, false);
         } else {
             element = getClosest(target, dir, this.element, false);
         }
 
-        
+
         if (!isHTMLElement(element)) {
             return exit();
         }

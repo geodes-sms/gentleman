@@ -22,12 +22,20 @@
     flex-grow: 1;
 
     position: relative;
-    display: flex; flex-direction: column;
+    display: flex; flex-direction: row;
     background-color: #fefefe;
     overflow-y: auto; overflow-x: visible;
     scrollbar-color: #c0c0c0; scrollbar-width: thin;
     outline: none;
 }
+
+    .editor-body-main {
+        flex-grow: 2;
+    }
+
+    .editor-body-aside {
+        border-left: 1px solid #c0c0c0;
+    }
 
 .editor-home {
     position: absolute;
@@ -83,7 +91,7 @@
         opacity: 0.9;
         overflow: auto;
     }
-        .editor-concept > .layout-container { background-color:#fbfbfb; overflow: auto; }
+        .editor-concept > .layout-container { background-color:#fbfbfb; }
 
         .editor-concept.active {
             opacity: 1;
@@ -121,6 +129,27 @@
                 font-size: 0.8rem;
             }
 
+    .editor-concept--projection {
+        box-shadow: 0 0 0 1px #555;
+        opacity: 0.8;
+    }
+
+        .editor-concept--projection .editor-concept-header {
+            background-color: #555;
+        }
+            .editor-concept--projection.active .editor-concept-header {
+                background-color: #444;
+            }
+        .editor-concept--projection .editor-concept-title {
+            font-style: italic;
+            color: #eee;
+        }
+        .editor-concept--projection .editor-concept-toolbar__btn-collapse,
+        .editor-concept--projection .editor-concept-toolbar__btn-resize,
+        .editor-concept--projection .editor-concept-toolbar__btn-maximize,
+        .editor-concept--projection .editor-concept-toolbar__btn-delete {
+            color: #f5f5f5;
+        }
 
     .editor-concept-header {
         display: flex; align-items: center;
@@ -278,6 +307,35 @@
             .editor-concept.collapsed .editor-concept-toolbar__btn-collapse:before {
                 transform: rotate(-90deg) scale(2) translateY(-2px);
             }
+
+
+
+/*
+  Editor element section
+-----------------------------------------------------------------------------*/
+
+.editor-element {
+    position: relative;
+    margin-bottom: 12px;
+    font-size: 1.4rem;
+    transition: .2s;
+    opacity: 0.9;
+    overflow: auto;
+}
+
+    .editor-element-header {
+        display: flex; align-items: center;
+        background-color: #eee;
+    }
+
+    .editor-concept-title {
+        margin: 0;
+        padding: 6px;
+        font-size: 1.1em;
+        font-family: inherit; font-weight: 600;
+        text-transform: capitalize;
+        color: #555;
+    }
 
 
 

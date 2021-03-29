@@ -1,4 +1,5 @@
 import { isNullOrUndefined, isEmpty, isIterable, isString } from "zenkai";
+import { deepCopy } from "@utils/index.js";
 import { ProjectionFactory } from "./projection.js";
 
 
@@ -310,7 +311,13 @@ export const ProjectionModel = {
      * @returns 
      */
     getTemplateSchema(name) {
-        return this.schema.find(p => p.type === "template" && p.name === name);
+        let schema = this.schema.find(p => p.type === "template" && p.name === name);
+
+        if (isNullOrUndefined(schema)) {
+            return null;
+        }
+
+        return deepCopy(schema);
     },
     /**
      * Gets a rule schema
@@ -318,7 +325,13 @@ export const ProjectionModel = {
      * @returns 
      */
     getRuleSchema(name) {
-        return this.schema.find(p => p.type === "rule" && p.name === name);
+        let schema = this.schema.find(p => p.type === "rule" && p.name === name);
+
+        if (isNullOrUndefined(schema)) {
+            return null;
+        }
+
+        return deepCopy(schema);
     },
     /**
      * Gets a style schema
@@ -326,7 +339,13 @@ export const ProjectionModel = {
      * @returns 
      */
     getStyleSchema(name) {
-        return this.schema.find(p => p.type === "style" && p.name === name);
+        let schema = this.schema.find(p => p.type === "style" && p.name === name);
+
+        if (isNullOrUndefined(schema)) {
+            return null;
+        }
+
+        return deepCopy(schema);
     },
 
     export() {

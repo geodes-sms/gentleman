@@ -1,7 +1,7 @@
 import {
     createDocFragment, createSection, createDiv, createParagraph, createAnchor, createInput,
     removeChildren, isHTMLElement, findAncestor, isNullOrWhitespace, isNullOrUndefined,
-    isEmpty, hasOwn, isFunction, valOrDefault, copytoClipboard,
+    isEmpty, hasOwn, isFunction, valOrDefault, copytoClipboard, createAside,
 } from 'zenkai';
 import { Events, hide, show, toggle, Key, getEventTarget, NotificationType, EditorMode } from '@utils/index.js';
 import { buildProjectionHandler } from "../build-projection.js";
@@ -17,6 +17,7 @@ import { EditorLog } from './editor-log.js';
 import { EditorResource } from './editor-resource.js';
 import { EditorSection } from './editor-section.js';
 import { EditorInstance } from './editor-instance.js';
+import { EditorDesign } from './editor-design.js';
 
 
 var inc = 0;
@@ -176,6 +177,8 @@ export const Editor = {
     /** @type {HTMLElement} */
     instanceSection: null,
     /** @type {HTMLElement} */
+    designSection: null,
+    /** @type {HTMLElement} */
     navigationSection: null,
     /** @type {EditorBreadcrumb} */
     breadcrumb: null,
@@ -231,11 +234,11 @@ export const Editor = {
             this.header = createEditorHeader.call(this).init();
         }
 
-        this.menu = createEditorMenu.call(this).init(this.config.menu);
-        this.home = createEditorHome.call(this).init(this.config.home);
-        this.breadcrumb = createEditorBreadcrumb.call(this).init(this.config.breadcrumb);
-        this.style = createEditorStyle.call(this).init(this.config.style);
-        this.logs = createEditorLog.call(this).init(this.config.logs);
+        this.menu = createEditorMenu.call(this).init(this.config);
+        this.home = createEditorHome.call(this).init();
+        this.breadcrumb = createEditorBreadcrumb.call(this).init();
+        this.style = createEditorStyle.call(this).init();
+        this.logs = createEditorLog.call(this).init();
 
         this.render();
 
@@ -255,19 +258,16 @@ export const Editor = {
 
         this.config = schema;
 
-        this.menu.update(this.config.menu);
-        this.home.update(this.config.home);
-        this.style.update(this.config.style);
-        this.logs.update(this.config.logs);
-    },
-    getRoots() {
-        const { root = [] } = this.config;
+        this.menu.update(this.config);
 
-        if (isEmpty(root)) {
-            return this.conceptModel.getSchema("concrete");
+        this.refresh();
+    },
+    getConfig(prop) {
+        if (isNullOrUndefined(prop)) {
+            return this.config;
         }
 
-        return root;
+        return this.config[prop];
     },
     getMode() {
         return valOrDefault(this.config.mode, EditorMode.MODEL);
@@ -296,6 +296,7 @@ export const Editor = {
         });
 
         const options = Object.assign({
+            type: "concept",
             minimize: true,
             resize: true,
             maximize: true,
@@ -317,6 +318,7 @@ export const Editor = {
     addInstance(instance) {
         if (!instance.isRendered) {
             this.instanceSection.appendChild(instance.render());
+            instance.projection.focus();
         }
 
         this.instances.set(instance.id, instance);
@@ -580,7 +582,6 @@ export const Editor = {
 
         link.dataset.downloadurl = [MIME_TYPE, link.download, link.href].join(':');
         link.click();
-        this.notify("The model has been downloaded", NotificationType.SUCCESS);
 
         // Need a small delay for the revokeObjectURL to work properly.
         setTimeout(() => {
@@ -648,6 +649,8 @@ export const Editor = {
             html: message
         });
 
+        const CSS_OPEN = "open";
+
         if (type) {
             notify.classList.add(type);
         }
@@ -655,23 +658,49 @@ export const Editor = {
         this.container.appendChild(notify);
 
         setTimeout(() => {
-            notify.classList.add("open");
+            notify.classList.add(CSS_OPEN);
         }, 50);
 
         setTimeout(() => {
-            notify.classList.remove("open");
+            notify.classList.remove(CSS_OPEN);
             setTimeout(() => { notify.remove(); }, 500);
         }, time);
     },
-    addResource(file) {
-        this.resources.set(file.name, file);
-
-        Events.emit("resource.added", file);
+    /**
+     * Adds a resource to the editor
+     * @param {File} file 
+     * @param {string} [_name] 
+     * @returns 
+     */
+    addResource(file, _name) {
+        let name = valOrDefault(_name, file.name.split(".")[0]);
+        this.resources.set(name, file);
 
         this.refresh();
 
         return file;
     },
+    /**
+     * Gets a resource from the register
+     * @param {string} name 
+     * @returns 
+     */
+    getResource(name) {
+        return this.resources.get(name);
+    },
+    /**
+     * Verifies the presence of a resource in the register
+     * @param {string} name 
+     * @returns 
+     */
+    hasResource(name) {
+        return this.resources.has(name);
+    },
+    /**
+     * Removes a resource from the register
+     * @param {string} name 
+     * @returns 
+     */
     removeResource(name) {
         this.resources.delete(name);
 
@@ -784,7 +813,7 @@ export const Editor = {
             this.projectionModel.done();
         }
 
-        Events.emit("model.changed", this.conceptModel);
+        this.triggerEvent({ name: "model.changed" });
 
         this.refresh();
 
@@ -822,7 +851,8 @@ export const Editor = {
             // TODO: add validation and notify of errors
         }
 
-        Events.emit("model.changed", this.projectionModel);
+        this.triggerEvent({ name: "model.changed" });
+
         this.refresh();
 
         return this;
@@ -832,7 +862,7 @@ export const Editor = {
      * @param {JSON} json 
      * @param {string} type 
      */
-    load(file, type) {
+    load(file, type, name) {
         let reader = new FileReader();
 
         if (type === "model") {
@@ -872,7 +902,7 @@ export const Editor = {
             };
             reader.readAsText(file);
         } else if (type === "resource") {
-            this.addResource(file);
+            this.addResource(file, name);
         } else {
             this.notify(`File type '${type}' is not handled`, NotificationType.WARNING);
 
@@ -916,7 +946,30 @@ export const Editor = {
 
         return this;
     },
+    design(element, _options) {
+        if (isNullOrUndefined(element)) {
+            return false;
+        }
 
+        /** @type {EditorDesign} */
+        let design = Object.create(EditorDesign, {
+            id: { value: nextInstanceId() },
+            object: { value: "environment" },
+            name: { value: "editor-instance" },
+            type: { value: "instance" },
+            element: { value: element },
+            editor: { value: this }
+        });
+
+        const options = Object.assign({
+            minimize: true,
+            close: true
+        }, _options);
+
+        design.init(options);
+
+        return this.designSection.append(design.render());
+    },
 
     // Rendering and interaction management
 
@@ -926,7 +979,6 @@ export const Editor = {
      */
     render(container) {
         const fragment = createDocFragment();
-
 
         if (!this.home.isRendered) {
             fragment.appendChild(this.home.render());
@@ -946,6 +998,10 @@ export const Editor = {
                 tabindex: 0,
             });
 
+            let mainSection = createDiv({
+                class: ["editor-body-main"],
+                tabindex: 0,
+            });
 
             this.navigationSection = createSection({
                 class: ["model-navigation-section"],
@@ -955,7 +1011,13 @@ export const Editor = {
                 class: ["model-concept-section"],
             });
 
-            this.body.append(this.navigationSection, this.instanceSection);
+            mainSection.append(this.navigationSection, this.instanceSection);
+
+            this.designSection = createAside({
+                class: ["editor-body-aside", "model-design-section"],
+            });
+
+            this.body.append(mainSection, this.designSection);
 
             fragment.appendChild(this.body);
         }
@@ -1165,6 +1227,7 @@ export const Editor = {
     bindEvents() {
         var lastKey = null;
         var fileType = null;
+        var fileName = null;
 
         const ActionHandler = {
             "open": (target) => {
@@ -1213,7 +1276,7 @@ export const Editor = {
             "delete:resource": (target) => {
                 const { id } = target.dataset;
 
-                this.editor.removeResource(id);
+                this.removeResource(id);
             },
 
             "style": (target) => { this.style.toggle(); },
@@ -1238,12 +1301,15 @@ export const Editor = {
 
 
             "load-resource": (target) => {
+                const { id } = target.dataset;
+
                 let event = new MouseEvent('click', {
                     view: window,
                     bubbles: true,
                     cancelable: true,
                 });
                 fileType = "resource";
+                fileName = id;
 
                 this.input.dispatchEvent(event);
             },
@@ -1297,6 +1363,11 @@ export const Editor = {
                 return;
             }
 
+            if (context === "menu") {
+                this.menu.actionHandler(action);
+                return;
+            }
+
             if (this.activeElement) {
                 this.activeElement.clickHandler(target);
             }
@@ -1319,7 +1390,7 @@ export const Editor = {
 
         this.input.addEventListener('change', (event) => {
             let file = this.input.files[0];
-            this.load(file, fileType);
+            this.load(file, fileType, fileName);
             fileType = null;
             this.input.value = "";
         });
@@ -1343,6 +1414,11 @@ export const Editor = {
 
                     break;
                 case Key.ctrl:
+                    event.preventDefault();
+
+                    rememberKey = true;
+                    break;
+                case Key.shift:
                     event.preventDefault();
 
                     rememberKey = true;
@@ -1373,8 +1449,6 @@ export const Editor = {
                     // if (this.activeProjection && this.activeProjection.hasMultipleViews) {
                     //     this.activeProjection.changeView();
                     // }
-
-                    rememberKey = true;
 
                     break;
                 case Key.enter:
@@ -1409,7 +1483,7 @@ export const Editor = {
 
                     break;
                 case Key.up_arrow:
-                    if (this.activeElement && lastKey !== Key.ctrl) {
+                    if (this.activeElement && ![Key.ctrl, Key.shift, Key.alt].includes(lastKey)) {
                         const handled = this.activeElement.arrowHandler("up", target) === true;
 
                         if (handled) {
@@ -1419,7 +1493,7 @@ export const Editor = {
 
                     break;
                 case Key.down_arrow:
-                    if (this.activeElement && lastKey !== Key.ctrl) {
+                    if (this.activeElement && ![Key.ctrl, Key.shift, Key.alt].includes(lastKey)) {
                         const handled = this.activeElement.arrowHandler("down", target) === true;
 
                         if (handled) {
@@ -1429,7 +1503,7 @@ export const Editor = {
 
                     break;
                 case Key.right_arrow:
-                    if (this.activeElement && lastKey !== Key.ctrl) {
+                    if (this.activeElement && ![Key.ctrl, Key.shift, Key.alt].includes(lastKey)) {
                         const handled = this.activeElement.arrowHandler("right", target) === true;
 
                         if (handled) {
@@ -1439,7 +1513,7 @@ export const Editor = {
 
                     break;
                 case Key.left_arrow:
-                    if (this.activeElement && lastKey !== Key.ctrl) {
+                    if (this.activeElement && ![Key.ctrl, Key.shift, Key.alt].includes(lastKey)) {
                         const handled = this.activeElement.arrowHandler("left", target) === true;
 
                         if (handled) {
@@ -1480,6 +1554,7 @@ export const Editor = {
                 case "e":
                     if (lastKey === Key.ctrl && this.activeConcept) {
                         this.createInstance(this.activeConcept, this.activeProjection, {
+                            type: "projection",
                             close: "DELETE-PROJECTION"
                         });
 
@@ -1510,6 +1585,12 @@ export const Editor = {
                 case Key.delete:
                     if (this.activeElement && lastKey === Key.ctrl) {
                         this.activeElement.delete(target);
+                    }
+
+                    break;
+                case Key.alt:
+                    if (this.activeElement && lastKey === Key.ctrl) {
+                        this.design(this.activeElement);
                     }
 
                     break;
@@ -1637,8 +1718,7 @@ export const Editor = {
 
             this.input.dispatchEvent(event);
         });
-
-        Events.on("model.changed", () => {
+        this.registerHandler("model.changed", () => {
             if (!this.isReady) {
                 return;
             }

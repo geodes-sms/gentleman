@@ -10,28 +10,14 @@ import { Manager } from '@environment/index.js';
 
 const CONCEPT_MODEL__CONFIG = require('@include/concept-model/editor-config.json');
 const CONCEPT_MODEL__CONCEPT = require('@include/concept-model/concept.json');
-const CONCEPT_MODEL__PROJECTION = require('@include/concept-model/textual-projection.json');
+const CONCEPT_MODEL__PROJECTION = require('@include/concept-model/projection.json');
 
 const PROJECTION_MODEL__CONFIG = require('@include/projection-model/editor-config.json');
 const PROJECTION_MODEL__CONCEPT = require('@include/projection-model/concept.json');
-const PROJECTION_MODEL__PROJECTION = require('@include/projection-model/textual-projection.json');
+const PROJECTION_MODEL__PROJECTION = require('@include/projection-model/projection.json');
 
 const EDITOR_CONFIG = {
-    "root": [],
-    "mode": "design",
-    "header": {
-        "css": ["editor-header"]
-    },
-    "body": {
-        "css": ["editor-body"]
-    },
-    "menu": {
-        "actions": [
-            { "name": "export" },
-            { "name": "import" }
-        ],
-        "css": ["editor-menu"]
-    }
+    "mode": "design"
 };
 
 const EDITOR_HANDLER = {
@@ -57,10 +43,13 @@ const EDITOR_HANDLER = {
         this.loadProjectionModel(projection, views);
         this.home.close();
     },
-    "add-metamodel": function (target) {
-        this.triggerEvent({ "name": "load-resource" });
-    },
     "preview-projection": function (target) {
+        if (!this.hasResource("metamodel")) {
+            this.notify("<strong>Metamodel not found</strong>: The <em>metamodel</em> might have not been loaded yet.<br> Add it in the resource tab and try again.", "error", 4000);
+
+            return false;
+        }
+
         this.triggerEvent({ "name": "build-projection", options: { download: false } }, (pmodel) => {
             if (!pmodel) {
                 return;
@@ -74,7 +63,7 @@ const EDITOR_HANDLER = {
                     this.manager.createEditor()
                         .init()
                         .hide()
-                        .loadConceptModel(schema)
+                        .loadConceptModel(schema.concept || schema)
                         .loadProjectionModel(pmodel)
                         .show();
                 };

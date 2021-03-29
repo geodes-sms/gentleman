@@ -13,12 +13,6 @@
     .field.has-toolbar { padding-top: 24px; }
 
     .field.active { z-index: 20; opacity: 1; }
-    
-        .field.active.has-toolbar { 
-            padding: 24px 12px 8px;
-            border-radius: 6px;
-            outline: none;
-        }
 
     .field.focus { z-index: 50; opacity: 1; }
 
@@ -26,10 +20,6 @@
         display: inline-flex;
         flex-direction: column;
     }
-
-        .field:hover > .field-notification .field-status {
-            opacity: 0.4;
-        }
 
         .field.active > .field-notification .field-status {
             opacity: 1;
@@ -72,7 +62,7 @@
 
     .field-notification {
         position: absolute;
-        top: -4px; right: 0;
+        top: -4px; left: 0;
         display: flex;
         justify-content: flex-end;
         min-width: 100%;
@@ -275,6 +265,7 @@
     display: inline-flex;
     flex-wrap: wrap;
     flex-direction: column;
+    padding: 0;
     font-size: 1em;
 }
 

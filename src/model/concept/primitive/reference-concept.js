@@ -160,7 +160,16 @@ const _ReferenceConcept = {
     },
     delete(force = false) {
         if (!force) {
-            let result = this.getParent().remove(this);
+            const { object } = this.ref;
+
+            let result = { success: true };
+
+            if (object === "concept") {
+                result = this.getParent().removeValue(this);
+            } else if (object === "attribute") {
+                result = this.getParent().removeAttribute(this.ref.name);
+            }
+
 
             if (!result.success) {
                 return result;

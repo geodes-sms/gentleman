@@ -33,7 +33,7 @@ export function isHidden(element) {
  * Converts a pixel value to a number
  * @param {string} px 
  */
-const pixelToNumber = (px) => +px.substring(0, px.indexOf("px"));
+export const pixelToNumber = (px) => +px.substring(0, px.indexOf("px"));
 
 /**
  * Computes the delta

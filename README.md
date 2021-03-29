@@ -102,7 +102,6 @@ Take a look at the [demonstration (MODELS 2020) and see the tool in action](http
   - [Style](docs/projection.md#style)
   - [Template](docs/projection.md#template)
 
-
 # Installation
 
 ## Building the Code

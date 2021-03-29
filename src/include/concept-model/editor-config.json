@@ -1,22 +1,23 @@
 {
     "editor": {
         "name": "Gentleman concept",
-        "root": ["prototype concept", "concrete concept", "derivative concept"],
-        "header": {
-            "css": ["editor-header"]
-        },
-        "body": {
-            "concept": {
-                "css": ["concept-section"]    
+        "concepts": [
+            {
+                "name": "concrete concept"
             },
-            "css": ["editor-body"]
-        },
-        "menu": {
-            "actions": [
-                { "name": "build-concept", "content": "Build" },
-                { "name": "export" }
-            ],
-            "css": ["editor-menu"]
-        }
+            {
+                "name": "prototype concept"
+            },
+            {
+                "name": "derivative concept"
+            }
+        ],
+        "actions": [
+            {
+                "name": "build-concept",
+                "content": "Build",
+                "help": "Build the concepts"
+            }
+        ]
     }
 }

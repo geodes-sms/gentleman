@@ -75,9 +75,9 @@ export function buildConceptHandler(model, _options = {}) {
         this.download(result, options.name);
     }
 
-    console.log(result);
-
-    return result;
+    return {
+        concept: result
+    };
 }
 
 function buildConcept(concept) {
@@ -281,6 +281,42 @@ function buildConstraint(constraint) {
 
                 rules["type"] = "range";
                 rules["range"] = range;
+            } else if (numberConstraint.name === "string pattern constraint") {
+                let fixed = {};
+
+                if (hasValue(numberConstraint, "value")) {
+                    fixed["value"] = getValue(numberConstraint, "value");
+                }
+
+                if (hasValue(numberConstraint, "insensitive")) {
+                    fixed["insensitive"] = getValue(numberConstraint, "insensitive");
+                }
+
+                if (hasValue(numberConstraint, "global")) {
+                    fixed["global"] = getValue(numberConstraint, "global");
+                }
+
+                rules["type"] = "pattern";
+                rules["pattern"] = fixed;
+            } else if (numberConstraint.name === "string match constraint") {
+                let range = {};
+
+                let start = getAttr(numberConstraint, "start");
+                if (hasValue(start, "value")) {
+                    range["start"] = {
+                        "value": getValue(start, "value")
+                    };
+                }
+
+                let end = getAttr(numberConstraint, "end");
+                if (hasValue(end, "value")) {
+                    range["end"] = {
+                        "value": getValue(end, "value")
+                    };
+                }
+
+                rules["type"] = "match";
+                rules["match"] = range;
             }
 
             result[prop] = rules;

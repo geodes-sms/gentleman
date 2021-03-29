@@ -1,28 +1,38 @@
 {
     "editor": {
         "name": "Gentleman projection",
-        "root": ["projection", "template", "style rule"],
-        "header": {
-            "css": ["editor-header"]
-        },
-        "body": {
-            "concept": {
-                "css": ["concept-section"]    
+        "concepts": [
+            {
+                "name": "projection"
             },
-            "css": ["editor-body"]
-        },
-        "resource": {
-            "files": [
-                { "name": "metamodel", "required": true }
-            ]
-        },
-        "menu": {
-            "actions": [
-                { "name": "add-metamodel", "content": "Model" },
-                { "name": "preview-projection", "content": "Preview", "require": "metamodel" },
-                { "name": "build-projection", "content": "Build" }
-            ],
-            "css": ["editor-menu"]
-        }
+            {
+                "name": "template"
+            },
+            {
+                "name": "style rule"
+            }
+        ],
+        "resources": [
+            {
+                "name": "metamodel",
+                "type": "json-model",
+                "required": true
+            }
+        ],
+        "actions": [
+            {
+                "name": "preview-projection",
+                "content": "Preview",
+                "help": "Preview the projections"
+            },
+            {
+                "name": "build-projection",
+                "content": "Build",
+                "help": "Build the projections",
+                "options": {
+                    "download": true
+                }
+            }
+        ]
     }
 }
