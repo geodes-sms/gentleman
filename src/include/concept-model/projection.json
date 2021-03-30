@@ -102,6 +102,22 @@
                 }
             ]
         },
+        {
+            "type": "template",
+            "name": "vertical-bar",
+            "content": [
+                {
+                    "type": "static",
+                    "static": {
+                        "type": "text",
+                        "content": "|",
+                        "style": {
+                            "css": ["separator", "vertical-bar"]
+                        }
+                    }
+                }
+            ]
+        },
 
 
         {
@@ -125,20 +141,8 @@
                                     ]
                                 },
                                 {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "|",
-                                        "style": {
-                                            "css": ["keyword"],
-                                            "gss": {
-                                                "text": {
-                                                    "bold": true,
-                                                    "size": { "value": 1.1, "unit": "em" }
-                                                }
-                                            }
-                                        }
-                                    }
+                                    "type": "template",
+                                    "name": "vertical-bar"
                                 },
                                 {
                                     "type": "attribute",
@@ -151,7 +155,7 @@
                                                 "type": "text",
                                                 "content": "Use a prototype",
                                                 "style": {
-                                                    "css": ["btn", "textual-option", "textual-option--constraint"]
+                                                    "css": ["btn", "textual-option", "textual-option--prototype"]
                                                 }
                                             }
                                         }
@@ -194,14 +198,8 @@
                                     ]
                                 },
                                 {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "|",
-                                        "style": {
-                                            "css": ["separator", "vertical-bar"]
-                                        }
-                                    }
+                                    "type": "template",
+                                    "name": "vertical-bar"
                                 },
                                 {
                                     "type": "attribute",
@@ -320,20 +318,8 @@
                                     "tag": "textual"
                                 },
                                 {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "|",
-                                        "style": {
-                                            "css": ["keyword", "keyword--padright"],
-                                            "gss": {
-                                                "text": {
-                                                    "bold": true,
-                                                    "size": { "value": 1.2, "unit": "em" }
-                                                }
-                                            }
-                                        }
-                                    }
+                                    "type": "template",
+                                    "name": "vertical-bar"
                                 },
                                 {
                                     "type": "attribute",
@@ -342,7 +328,14 @@
                                 }
                             ],
                             "style": {
-                                "css": ["model-concept__line"]
+                                "css": ["model-concept__line"],
+                                "gss": {
+                                    "box": {
+                                        "inner": { 
+                                            "bottom": { "value": 4, "unit": "px" } 
+                                        }
+                                    }
+                                }
                             }
                         }
                     },
@@ -718,6 +711,26 @@
                                     "style": {
                                         "css": ["primitive-constraint-option"]
                                     }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "values",
+                                    "tag": "value-set",
+                                    "placeholder": {
+                                        "content": {
+                                            "type": "static",
+                                            "static": {
+                                                "type": "text",
+                                                "content": "Values",
+                                                "style": {
+                                                    "css": ["textual-option", "textual-option--style"]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "style": {
+                                        "css": ["primitive-constraint-option"]
+                                    }
                                 }
                             ],
                             "style": {
@@ -882,7 +895,10 @@
                                                     }
                                                 }
                                             }
-                                        ]
+                                        ],
+                                        "style": {
+                                            "css": ["line"]
+                                        }
                                     }
                                 },
                                 {

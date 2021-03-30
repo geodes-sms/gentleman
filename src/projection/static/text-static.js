@@ -78,7 +78,7 @@ const BaseTextStatic = {
             this.element.title = help;
         }
 
-        StyleHandler.call(this.projection, this.element, style);
+        StyleHandler.call(this, this.element, style);
 
         if (bind) {
             this.bindEvents();

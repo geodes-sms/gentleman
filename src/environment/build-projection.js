@@ -389,6 +389,7 @@ function buildStatic(element, type) {
     if (type === "text") {
         schema.content = getValue(element, "content");
         schema.contentType = getValue(element, "content type");
+        schema.nonbreakable = getValue(element, "nonbreakable");
     } else if (type === "image") {
         schema.url = getValue(element, "url");
         schema.alt = getValue(element, "alternative text");

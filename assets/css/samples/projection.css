@@ -910,7 +910,10 @@
         display: none!important;
     }
 
-    .text-style__attribute > .structure__btn-delete {
+    .render-config .text-style__attribute > .structure__btn-delete,
+    .field-config .text-style__attribute > .structure__btn-delete {
+        display: block;
+        position: absolute;
         top: -2px; right: 0;
         width: 18px; height: 18px; 
         font-size: 0.9em; font-weight: 300;

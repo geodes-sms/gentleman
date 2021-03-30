@@ -142,7 +142,8 @@ export const EditorSection = {
             this.container = createDiv({
                 class: ["editor-header"],
                 dataset: {
-                    name: "editor-header"
+                    name: "editor-header",
+                    alias: `header`,
                 }
             });
         }
@@ -210,7 +211,7 @@ export const EditorSection = {
 
         let toolbar = createDiv({
             class: ["editor-toolbar"],
-        }, [this.btnHome, this.btnSave, this.btnClose]);
+        }, [this.btnSave, this.btnHome, this.btnClose]);
 
         if (!isHTMLElement(this.menu)) {
             this.menu = createDiv({
@@ -231,10 +232,11 @@ export const EditorSection = {
         if (!isHTMLElement(this.btnCollapse)) {
             this.btnCollapse = createButton({
                 class: ["btn", "editor-header__button", "editor-header__button--collapse"],
+                title: `Collapse ${this.container.dataset.alias}`,
                 dataset: {
                     action: "collapse",
                     rel: "parent",
-                    target: "editor-header",
+                    target: this.container.dataset.name,
                 }
             });
 
@@ -285,7 +287,7 @@ export const EditorSection = {
             hide(this.btnCollapse);
         }
 
-        this.btnSave.disabled = !this.editor.hasConceptModel;
+        this.btnSave.disabled = !this.editor.hasInstances;
 
         this.editor.getConfig("resources") ? show(this.tabResource) : hide(this.tabResource);
 

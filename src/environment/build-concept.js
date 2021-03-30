@@ -218,7 +218,7 @@ function buildTarget(target) {
         if (isObject(accept)) {
             result["accept"] = buildTarget.call(this, accept);
         } else {
-            result["accept"] = { "name": accept };
+            result["accept"] = { "name": accept.toLowerCase() };
         }
     }
 

@@ -229,7 +229,9 @@ const _NumberConcept = {
     },
     export() {
         return {
+            id: this.id,
             name: this.name,
+            root: this.isRoot(),
             value: this.getValue()
         };
     },

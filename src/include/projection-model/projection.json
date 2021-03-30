@@ -1845,7 +1845,10 @@
                     {
                         "type": "attribute",
                         "name": "nonbreakable",
-                        "tag": "field-binary-state"
+                        "tag": "field-binary-state",
+                        "style": {
+                            "ref": ["pad-top"]
+                        }
                     },
                     {
                         "type": "attribute",
@@ -1921,7 +1924,10 @@
                     {
                         "type": "attribute",
                         "name": "focusable",
-                        "tag": "field-binary-state"
+                        "tag": "field-binary-state",
+                        "style": {
+                            "ref": ["pad-top"]
+                        }
                     },
                     {
                         "type": "attribute",
@@ -1991,12 +1997,25 @@
                     {
                         "type": "attribute",
                         "name": "focusable",
-                        "tag": "field-binary-state"
+                        "tag": "field-binary-state",
+                        "style": {
+                            "ref": ["pad-top"]
+                        }
                     },
                     {
                         "type": "attribute",
                         "name": "editable",
                         "tag": "field-binary-state"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "width",
+                        "tag": "textual--labelled"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "height",
+                        "tag": "textual--labelled"
                     },
                 
                     {
@@ -2067,7 +2086,10 @@
                     {
                         "type": "attribute",
                         "name": "focusable",
-                        "tag": "field-binary-state"
+                        "tag": "field-binary-state",
+                        "style": {
+                            "ref": ["pad-top"]
+                        }
                     },
                     {
                         "type": "attribute",
@@ -2143,7 +2165,10 @@
                     {
                         "type": "attribute",
                         "name": "focusable",
-                        "tag": "field-binary-state"
+                        "tag": "field-binary-state",
+                        "style": {
+                            "ref": ["pad-top"]
+                        }
                     },
                 
                     {
@@ -3944,7 +3969,7 @@
                                 "name": "refname"
                             },
                             "style": {
-                                "css": ["name-field--textual__label"]
+                                "css": ["name-field--textual__label", "label"]
                             }
                         }
                     },

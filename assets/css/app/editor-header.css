@@ -13,7 +13,7 @@
     
     .editor-header.collapsed .editor-header-main {
         max-height: 24px;
-        opacity: 0.5;
+        opacity: 0.2;
         overflow: hidden;
     }
 
@@ -506,7 +506,7 @@
         .editor-toolbar__button--save:after {
             content: "➜";
             font-weight: 800;
-            transform: scale(1.2) rotate(90deg) translateX(-3px);
+            transform: scale(1.1) rotate(90deg) translate(-3px, 0);
         }
         .editor-toolbar__button--save:before {
             content: "";
@@ -518,16 +518,15 @@
         }
         .editor-toolbar__button--save:hover:after {
             color: #222;
-            transform: scale(1.1) rotate(90deg) translateX(-1px);
+            transform: scale(1.1) rotate(90deg) translate(-1px, -1px);
         }
 
             .editor-toolbar__button--home:after {
                 content: "•••";
             }
-            .editor-toolbar .btn-home:hover:after {
-                
+            .editor-toolbar__button--home:hover:after {
                 letter-spacing: -1px;
-                transform: rotate(-270deg) scale(1.3) translate(-1px, -2px);
+                transform: rotate(-270deg) scale(1.3) translate(-1px, -1px);
             }
 
     .editor-toolbar .btn-new {
@@ -594,10 +593,9 @@
         transform: translateY(50%);
         transition: .2s;
     }
-
-    .editor-header__button--resize:after {
-        content: "=";
-    }
+        .editor-header__button--resize:after {
+            content: "=";
+        }
 
 .editor-header__button--collapse {
     position: absolute;

@@ -301,6 +301,8 @@ export const Editor = {
         this.instances.set(instance.id, instance);
         this.updateActiveInstance(instance);
 
+        this.refresh();
+        
         return instance;
     },
     removeInstance(id) {
@@ -333,6 +335,11 @@ export const Editor = {
      * @returns {boolean} Value indicating whether the editor has a projection model loaded
      */
     get hasProjectionModel() { return !isNullOrUndefined(this.projectionModel); },
+    /**
+     * Verifies that the editor has a projection model loaded
+     * @returns {boolean} Value indicating whether the editor has a projection model loaded
+     */
+    get hasInstances() { return this.instances.size > 0; },
     /**
      * Verifies that the editor has both model loaded
      * @returns {boolean} Value indicating whether the editor has both model loaded
@@ -1235,8 +1242,11 @@ export const Editor = {
                 if (rel === "parent") {
                     let parent = findAncestor(target, (el) => el.dataset.name === actionTarget);
                     if (isHTMLElement(parent)) {
+                        const { alias = "" } = parent.dataset;
                         parent.classList.toggle("collapsed");
-                        target.dataset.state = parent.classList.contains("collapsed") ? "ON" : "OFF";
+                        let collapsed = parent.classList.contains("collapsed");
+                        target.dataset.state = collapsed ? "ON" : "OFF";
+                        target.title = collapsed ? `Expand ${alias.toLowerCase()}` : `Collapse ${alias.toLowerCase()}`;
                     }
                 }
             },

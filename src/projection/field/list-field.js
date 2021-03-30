@@ -20,7 +20,7 @@ const actionDefaultSchema = {
             "type": "static",
             "static": {
                 "type": "text",
-                "content": "Add",
+                "content": "+",
                 "focusable": false
             }
         }]
@@ -30,7 +30,7 @@ const actionDefaultSchema = {
             "type": "static",
             "static": {
                 "type": "text",
-                "content": "Remove",
+                "content": "✖",
                 "focusable": false
             }
         }]

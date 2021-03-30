@@ -130,6 +130,7 @@ export const EditorSelector = {
                 tabindex: 0,
                 dataset: {
                     type: this.type,
+                    alias: `${data.name || data.type}`,
                     name: "selector",
                     projection: data.id
                 }

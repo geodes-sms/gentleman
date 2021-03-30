@@ -106,6 +106,10 @@ const BaseChoiceField = {
             this.schema.choice = {};
         }
 
+        if (!hasOwn(this.schema.choice, "option")) {
+            this.schema.choice.option = {};
+        }
+
         return this;
     },
 
