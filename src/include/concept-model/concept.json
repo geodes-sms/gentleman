@@ -376,9 +376,8 @@
                     "name": "rel",
                     "target": {
                         "name": "string",
-                        "default": "origin",
                         "constraint": {
-                            "values": ["parent", "child", "sibling", "origin"]
+                            "values": ["parent", "child", "sibling"]
                         }
                     }
                 }

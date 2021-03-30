@@ -1,28 +1,37 @@
 # Concept
 
-In Gentleman, the language engineer defines his DSL concepts using a collection of structures called concept.
-A collection of concepts and their relations are aggregated into a model. In Gentleman, we distinguish between four types of concepts: primitive, concrete, prototype, or derivative concepts. Attributes are used to associate concepts.
+In Gentleman, we distinguish between four types of concepts: primitive, concrete, prototype and derivative. Attributes are used to associate concepts.
 
 ## Primitive
 
-Primitives are self-defined concepts and, therefore, not related to any other concepts: they have no attributes. For better model integration, primitives are accessible globally to any model.
-Every concept can be resolved to a composition of primitives.
-They contain specific properties on which constraints may be applied when
-defining an attribute to restrict the concept.
+Primitives are self-defined concepts (no attributes), accessible globally to any model. They contain specific properties on which constraints may be applied.
+> Every concept can be resolved to a composition of primitives.
 
 ### String
 
-The string concept allows you to store and manipulate sequence of characters
+The string concept allows you to store and manipulate sequence of characters.
 
 #### Properties
 
-- **default** `[string]`: Default value. This value is assigned to all newly created instance.
+- **Default** `[string]`: Default value. This value is assigned to all newly created instance.
 
 #### Constraints
 
-- **length** `[string]`: Number of characters of the sequence. This property can be constrained to a fix value or a range.
-- **value** `[number]`: Value assigned to the instance. This property can be constrained with a Regex pattern or a match against the start or end of the sequence.
-- **values** `[set:string]`: List of valid sequences. This property can be used to restrict the list of accepted string values.
+- **Length**: Number of characters of the sequence.
+  - Fix: Restrict the length to a fixed value
+    - value `[number]`: the fixed number of character
+  - Range: Restrict the length to a range (inclusive)
+    - min `[number]`: the minimum number of character
+    - max `[number]`: the maximum number of character
+- **Value**: Pattern used to validate a sequence.
+  - Regex: Define a regular expression
+    - insensitive `[boolean=true]`: indicates whether case should be ignored while attempting a match.
+    - global `[boolean=true]`: indicates whether the pattern should be tested against all possible matches.
+    - value `[string]`: the text of the pattern
+  - Assert: Define an assertion on part of the sequence
+    - start `[string]`: the characters to be searched for at the beginning of the sequence
+    - end `[string]`: the characters to be searched for at the end of the sequence
+- **Values** `[set:string]`: List of valid sequences used to restrict the list of accepted sequences.
 
 ### Number
 
@@ -30,12 +39,17 @@ The number concept allows you to store and manipulate numbers
 
 #### Properties
 
-- **default** `[number]`: Default value. This value is assigned to all newly created instance.
+- **Default** `[number]`: Default value. This value is assigned to all newly created instance.
 
 #### Constraints
 
-- **value** `[number]`: Value assigned to the instance. This property can be constrained to a fix value or a range.
-- **values** `[set:number]`: List of valid numbers. This property can be used to restrict the list of accepted number values.
+- **Value** `[number]`: Comparison used to validate the number.
+  - Fix: Restrict the value to a fixed number
+    - value `[number]`: the fixed number
+  - Range: Restrict the value to a range (inclusive)
+    - min `[number]`: the minimum value
+    - max `[number]`: the maximum value
+- **Values** `[set:number]`: List of valid numbers used to restrict the list of accepted numbers.
 
 ### Boolean
 
@@ -43,30 +57,41 @@ The boolean concept allows you to store and manipulate boolean values
 
 #### Properties
 
-- **default** `[boolean]`: Default value. This value is assigned to all newly created instance.
+- **Default** `[boolean]`: Default value. This value is assigned to all newly created instance.
 
 ### Set
 
-The set concept allows you to store and manipulate collections of distinct elements
+The set concept allows you to store and manipulate collections of distinct elements.
 
 #### Properties
 
-- **accept** `[concept]` (*required*): Defines link's displayed content
-- **ordered** `[boolean]`: Defines how the link should be processed
+- **accept** `[concept]`: the concept used for the set's element
+- **ordered** `[boolean=true]`: indicates whether the set is ordered
 
 #### Constraints
 
-- **cardinality** `[set:number]`: Defines how the link should be processed
+- **Cardinality**: Number of element in the set.
+  - Fix: Restrict the cardinality to a fixed value
+    - value `[number]`: the fixed number of element
+  - Range: Restrict the cardinality to a range (inclusive)
+    - min `[number]`: the minimum number of element
+    - max `[number]`: the maximum number of element
 
 ### Reference
 
-The reference concept allows you to store and manipulate elements references.
+The reference concept allows you to store and manipulate concepts references.
 
 #### Properties
 
-- **accept** `[set:element]` (*required*): Defines link's displayed content
-- **rel** `[string={parent|child|sibling|origin}]` (*required*): Defines the link's url
-- **scope** `[concept]`: Defines how the link should be processed
+- **accept** `[set:element]`: the target concept eligible for reference
+
+#### Constraints
+
+- **rel** `[string={parent|child|sibling}]`: specifies the relationship between the reference and the target reference.
+  - parent: the target is a parent of the reference
+  - child: the target is a child of the reference
+  - sibling: the target has the same parent as the reference
+- **scope** `[concept]`: defines the boundary of the potential target reference
 
 ## Concrete
 
