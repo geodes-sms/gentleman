@@ -58,7 +58,7 @@ const _StringConcept = {
 
         return this;
     },
-    initValue(args) {
+    initValue(args) {console.log(args);
         if (isNullOrUndefined(args)) {
             this.value = this.default;
 

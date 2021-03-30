@@ -1,6 +1,6 @@
 {
   "name": "gentleman",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Gentleman is a web-based projectionnal editor generator. It allows you to express and interact with your DSL.",
   "private": true,
   "directories": {

@@ -199,13 +199,7 @@
                                         "type": "text",
                                         "content": "|",
                                         "style": {
-                                            "css": ["keyword"],
-                                            "gss": {
-                                                "text": {
-                                                    "bold": true,
-                                                    "size": { "value": 1.1, "unit": "em" }
-                                                }
-                                            }
+                                            "css": ["separator", "vertical-bar"]
                                         }
                                     }
                                 },
@@ -220,7 +214,7 @@
                                                 "type": "text",
                                                 "content": "Add a prototype",
                                                 "style": {
-                                                    "css": ["btn", "textual-option", "textual-option--constraint"]
+                                                    "css": ["btn", "textual-option", "textual-option--prototype"]
                                                 }
                                             }
                                         }
@@ -1860,19 +1854,9 @@
                         "type": "static",
                         "static": {
                             "type": "text",
-                            "content": { "type": "property", "name": "refname" }
-                        },
-                        "style": {
-                            "css": ["keyword", "label"]
-                        }
-                    },
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": ":",
+                            "content": { "type": "property", "name": "refname" },
                             "style": {
-                                "css": ["keyword"]
+                                "css": ["keyword", "label"]
                             }
                         }
                     },

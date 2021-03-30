@@ -83,6 +83,7 @@
 
     .editor-concept {
         position: relative;
+        display: flex; flex-direction: column;
         margin-right: 12px; margin-bottom: 12px;
         font-size: 1.4rem;
         border-radius: 4px;
@@ -91,7 +92,7 @@
         opacity: 0.9;
         overflow: auto;
     }
-        .editor-concept > .layout-container { background-color:#fbfbfb; }
+        .editor-concept > .layout-container { flex-grow: 2; background-color:#fbfbfb; }
 
         .editor-concept.active {
             opacity: 1;

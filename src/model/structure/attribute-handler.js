@@ -104,7 +104,8 @@ export const AttributeHandler = {
             let attribute = this.getAttributeByName(name);
 
             if (_value) {
-                attribute.target.initValue(_value);
+                let value = this.model.getValue(_value);
+                attribute.target.initValue(value);
             }
 
             return attribute;

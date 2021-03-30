@@ -12,7 +12,7 @@
     }
     
     .editor-header.collapsed .editor-header-main {
-        max-height: 12px;
+        max-height: 24px;
         opacity: 0.5;
         overflow: hidden;
     }
@@ -464,60 +464,68 @@
         z-index: 10;
     }
 
-    .editor-toolbar .btn {
-        font-size: 1rem;
+    .editor-toolbar__button {
+        position: relative;
+        display: block;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+        font-size: 1.4rem; font-weight: 500;
+        border-radius: 50%;
+        background-color: #f0f0f0;
+        box-shadow: 0 1px 2px  #555;
+        transition: .2s;
     }
-        .editor-toolbar .btn:after {
+        .editor-toolbar__button:after {
             display: block;
             color: #555;
             transition: .4s;
         }
-        .editor-toolbar .btn:not(:last-child) {
+        .editor-toolbar__button:disabled {
+            background-color: #c0c0c0;
+            box-shadow: none;
+            opacity: 0.5;
+        }
+        .editor-toolbar__button:hover {
+            background-color: #fff; 
+        }
+            .editor-toolbar__button:hover:after {
+                color: #222;
+            }
+        .editor-toolbar__button:not(:last-child) {
             margin-right: 12px;
         }
 
-    .editor-toolbar .btn-close {
-        display: block;
-        width: 24px;
-        height: 24px;
-        padding: 0;
-        font-size: 1.4rem; font-weight: 500;
-        background-color: #f0f0f0;
-        box-shadow: 0 1px 2px  #555;
-        border-radius: 50%;
-        transition: .2s;
-    }
-        .editor-toolbar .btn-close:after {
+        .editor-toolbar__button--close:after {
             content: "✖";
         }
-        .editor-toolbar .btn-close:hover {
-            background-color: #fff; 
-        }
-        .editor-toolbar .btn-close:hover:after {
-            color: #222;
+        .editor-toolbar__button--close:hover:after {
             transform: rotate(-180deg) scale(1.2) translateY(-2px);
         }
 
-
-        .editor-toolbar .btn-home {
-            display: block;
-            width: 24px;
-            height: 24px;
-            padding: 0;
-            font-size: 1.4rem; font-weight: 500;
-            background-color: #f0f0f0;
-            box-shadow: 0 1px 2px  #555;
-            border-radius: 50%;
-            transition: .2s;
+        .editor-toolbar__button--save:after {
+            content: "➜";
+            font-weight: 800;
+            transform: scale(1.2) rotate(90deg) translateX(-3px);
         }
-            .editor-toolbar .btn-home:after {
+        .editor-toolbar__button--save:before {
+            content: "";
+            position: absolute;
+            height: 3px;
+            bottom: 4px; left: 4px; right: 4px;
+            background-color: #555;
+            border-radius: 180px;
+        }
+        .editor-toolbar__button--save:hover:after {
+            color: #222;
+            transform: scale(1.1) rotate(90deg) translateX(-1px);
+        }
+
+            .editor-toolbar__button--home:after {
                 content: "•••";
             }
-            .editor-toolbar .btn-home:hover {
-                background-color: #fff; 
-            }
             .editor-toolbar .btn-home:hover:after {
-                color: #222;
+                
                 letter-spacing: -1px;
                 transform: rotate(-270deg) scale(1.3) translate(-1px, -2px);
             }
@@ -591,5 +599,43 @@
         content: "=";
     }
 
-.editor-header__button.btn-collapse { transform: scale(1.2); }
-    .editor-header__button.btn-collapse:hover { transform: scale(1.4); }
+.editor-header__button--collapse {
+    position: absolute;
+    display: flex; justify-content: center; align-items: flex-end;
+    bottom: 0; right: 24px;
+    width: 30px; height: 18px;
+    font-size: 1rem; font-weight: bold;
+    color: #555;
+    border-top-left-radius: 2px; border-top-right-radius: 2px;
+    background-color: #d5d5d5;
+    outline: none;
+    transition: .2s;
+    z-index: 5;
+}
+
+    .editor-header__button--collapse:hover {
+        transform: scale(1.1);
+    }
+    .editor-header__button--collapse[data-state="ON"] {
+        align-items: center;
+    }
+
+    .editor-header__button--collapse:after {
+        content: "❯"; 
+        text-shadow: 0 0 0;
+        transition: .2s;
+    }
+        .editor-header__button--collapse[data-state="ON"]:after {
+            transform: scale(2) rotate(90deg);
+        }
+            .editor-header__button--collapse[data-state="ON"]:hover:after {
+                text-shadow: 2px 0 0 #777;
+                transform: scale(2,2.2) rotate(90deg);
+            }
+        .editor-header__button--collapse[data-state="OFF"]:after {
+            transform: scale(2) rotate(-90deg);
+        }
+            .editor-header__button--collapse[data-state="OFF"]:hover:after {
+                text-shadow: 2px 0 0 #777;
+                transform: scale(2,2.2) rotate(-90deg);
+            }

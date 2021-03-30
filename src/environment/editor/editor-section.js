@@ -76,6 +76,8 @@ export const EditorSection = {
     btnClose: null,
     /** @type {HTMLButtonElement} */
     btnHome: null,
+    /** @type {HTMLButtonElement} */
+    btnSave: null,
 
     get isRendered() { return isHTMLElement(this.container); },
 
@@ -186,14 +188,21 @@ export const EditorSection = {
         this.activeTabValue = this.activeTab.dataset.value;
 
         this.btnClose = createButton({
-            class: ["btn", "editor-toolbar__button", "btn-close"],
+            class: ["btn", "editor-toolbar__button", "editor-toolbar__button--close"],
             dataset: {
                 action: "close"
             }
         });
 
+        this.btnSave = createButton({
+            class: ["btn", "editor-toolbar__button", "editor-toolbar__button--save"],
+            dataset: {
+                action: "export"
+            }
+        });
+
         this.btnHome = createButton({
-            class: ["btn", "editor-toolbar__button", "btn-home"],
+            class: ["btn", "editor-toolbar__button", "editor-toolbar__button--home"],
             dataset: {
                 action: "home"
             }
@@ -201,7 +210,7 @@ export const EditorSection = {
 
         let toolbar = createDiv({
             class: ["editor-toolbar"],
-        }, [this.btnHome, this.btnClose]);
+        }, [this.btnHome, this.btnSave, this.btnClose]);
 
         if (!isHTMLElement(this.menu)) {
             this.menu = createDiv({
@@ -221,7 +230,7 @@ export const EditorSection = {
 
         if (!isHTMLElement(this.btnCollapse)) {
             this.btnCollapse = createButton({
-                class: ["btn", "editor-header__button", "btn-collapse"],
+                class: ["btn", "editor-header__button", "editor-header__button--collapse"],
                 dataset: {
                     action: "collapse",
                     rel: "parent",
@@ -261,15 +270,9 @@ export const EditorSection = {
         return this.container;
     },
     refresh() {
-        if (hasOwn(this.editor.config, "name")) {
+        let name = this.editor.getConfig("name");
+        if (name) {
             this.title.textContent = `Editor – ${this.editor.config["name"]}`;
-        }
-
-        if (this.editor.concept) {
-            this.title.textContent = `Editor – ${this.editor.config["name"]} : ${this.editor.concept["name"]}`;
-            hide(this.tabs);
-            hide(this.body);
-            return;
         }
 
         if (this.editor.hasConceptModel) {
@@ -281,6 +284,8 @@ export const EditorSection = {
             hide(this.body);
             hide(this.btnCollapse);
         }
+
+        this.btnSave.disabled = !this.editor.hasConceptModel;
 
         this.editor.getConfig("resources") ? show(this.tabResource) : hide(this.tabResource);
 

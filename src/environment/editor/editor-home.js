@@ -2,7 +2,7 @@ import {
     createDocFragment, createH3, createDiv, createParagraph, createSection, createI,
     createButton, removeChildren, valOrDefault, isHTMLElement, isNullOrUndefined,
 } from 'zenkai';
-import { hide, show, toggle, EditorMode } from '@utils/index.js';
+import { hide, show, toggle } from '@utils/index.js';
 
 
 export const EditorHome = {
@@ -106,13 +106,8 @@ export const EditorHome = {
     refresh() {
         const { hasConceptModel, hasProjectionModel } = this.editor;
 
-        if (this.editor.getMode() === EditorMode.DESIGN) {
-            show(this.btnCreateModel);
-            show(this.btnCreateProjection);
-        } else {
-            hide(this.btnCreateModel);
-            hide(this.btnCreateProjection);
-        }
+        this.editor.hasHanlder("create-metamodel") ? show(this.btnCreateModel) : hide(this.btnCreateModel);
+        this.editor.hasHanlder("create-projection") ? show(this.btnCreateProjection) : hide(this.btnCreateProjection);
 
         if (!(hasConceptModel && hasProjectionModel)) {
             this.show();
@@ -156,11 +151,11 @@ function createMenu() {
     this.btnCreateProjection = createMenuButton("projection");
 
     let modelMenu = createDiv({
-        class: ["editor-home-section__menu"],
+        class: ["editor-home-section__menu", "editor-home-section__menu--concept"],
     }, [this.modelFileIO.render(), this.btnCreateModel]);
 
     let projectionMenu = createDiv({
-        class: ["editor-home-section__menu"],
+        class: ["editor-home-section__menu", "editor-home-section__menu--projection"],
     }, [this.projectionFileIO.render(), this.btnCreateProjection]);
 
     content.append(modelMenu, projectionMenu);
@@ -186,7 +181,7 @@ function createMenu() {
 function createMenuButton(type) {
     /** @type {HTMLElement} */
     let button = createButton({
-        class: ["btn", "editor-home-section__button", "editor-home-section__button--new"],
+        class: ["btn", "editor-home-section__button", `editor-home-section__button--${type}`],
         dataset: {
             action: `create-${type}`,
         }

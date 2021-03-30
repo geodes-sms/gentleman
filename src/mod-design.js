@@ -6,10 +6,6 @@ const PROJECTION_MODEL__CONFIG = require('@include/projection-model/editor-confi
 const PROJECTION_MODEL__CONCEPT = require('@include/projection-model/concept.json');
 const PROJECTION_MODEL__PROJECTION = require('@include/projection-model/projection.json');
 
-const EDITOR_CONFIG = {
-    "mode": "design"
-};
-
 const EDITOR_HANDLER = {
     "create-metamodel": function (target) {
         const { concept, values = [] } = CONCEPT_MODEL__CONCEPT;
@@ -65,7 +61,7 @@ const EDITOR_HANDLER = {
 
 window.GENTLEMAN_CONFIG = {
     editor: {
-        config: EDITOR_CONFIG,
+        config: null,
         handlers: EDITOR_HANDLER
     }
 };

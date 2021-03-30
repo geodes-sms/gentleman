@@ -3,7 +3,7 @@ import {
     removeChildren, isHTMLElement, findAncestor, isNullOrWhitespace, isNullOrUndefined,
     isEmpty, hasOwn, isFunction, valOrDefault, copytoClipboard, createAside,
 } from 'zenkai';
-import { Events, hide, show, toggle, Key, getEventTarget, NotificationType, EditorMode } from '@utils/index.js';
+import { Events, hide, show, toggle, Key, getEventTarget, NotificationType } from '@utils/index.js';
 import { buildProjectionHandler } from "../build-projection.js";
 import { buildConceptHandler } from "../build-concept.js";
 import { ConceptModelManager } from '@model/index.js';
@@ -127,22 +127,6 @@ function createEditorResource() {
     });
 }
 
-const EDITOR_CONFIG = {
-    "root": [],
-    "mode": EditorMode.MODEL,
-    "header": {
-        "css": ["editor-header"]
-    },
-    "body": {
-        "css": ["editor-body"]
-    },
-    "menu": {
-        "actions": [
-            { "name": "export" }
-        ],
-        "css": ["editor-menu"]
-    }
-};
 
 /**
  * 
@@ -214,14 +198,13 @@ export const Editor = {
     resources: null,
 
     init(args = {}) {
-        const { conceptModel, projectionModel, config = EDITOR_CONFIG, handlers = {} } = args;
+        const { conceptModel, projectionModel, config = {}, handlers = {} } = args;
 
         this.conceptModel = conceptModel;
         this.projectionModel = projectionModel;
 
-        // Editor configuration
-        this.config = config;
-        this.handlers = {};
+        this.config = valOrDefault(config, {});
+        this.handlers = new Map();
         this.instances = new Map();
         this.resources = new Map();
 
@@ -230,10 +213,7 @@ export const Editor = {
             this.registerHandler(key, handler);
         }
 
-        if (this.config) {
-            this.header = createEditorHeader.call(this).init();
-        }
-
+        this.header = createEditorHeader.call(this).init();
         this.menu = createEditorMenu.call(this).init(this.config);
         this.home = createEditorHome.call(this).init();
         this.breadcrumb = createEditorBreadcrumb.call(this).init();
@@ -268,9 +248,6 @@ export const Editor = {
         }
 
         return this.config[prop];
-    },
-    getMode() {
-        return valOrDefault(this.config.mode, EditorMode.MODEL);
     },
 
     /**
@@ -576,7 +553,7 @@ export const Editor = {
 
         var bb = new Blob([JSON.stringify(obj)], { type: MIME_TYPE });
         Object.assign(link, {
-            download: `${valOrDefault(name, (new Date().getTime()))}.json`,
+            download: `${valOrDefault(name, (new Date().getTime()))}.jsoncp`,
             href: window.URL.createObjectURL(bb),
         });
 
@@ -616,7 +593,7 @@ export const Editor = {
 
         var bb = new Blob([JSON.stringify(result)], { type: MIME_TYPE });
         Object.assign(link, {
-            download: `model.json`,
+            download: `model.jsoncp`,
             href: window.URL.createObjectURL(bb),
         });
 
@@ -1047,7 +1024,7 @@ export const Editor = {
             this.input = createInput({
                 type: "file",
                 class: ["hidden"],
-                accept: '.json'
+                accept: '.json,.jsoncp'
             });
 
             fragment.appendChild(this.input);
@@ -1162,7 +1139,7 @@ export const Editor = {
      * @returns {*[]} List of registered handlers
      */
     getHandlers(name) {
-        return valOrDefault(this.handlers[name], []);
+        return valOrDefault(this.handlers.get(name), []);
     },
     /**
      * Triggers an event, invoking the attached handler in the registered order
@@ -1193,11 +1170,11 @@ export const Editor = {
      * @param {Function} handler The function that receives a notification
      */
     registerHandler(name, handler) {
-        if (!Array.isArray(this.handlers[name])) {
-            this.handlers[name] = [];
+        if (!this.hasHanlder(name)) {
+            this.handlers.set(name, []);
         }
 
-        this.handlers[name].push(handler);
+        this.handlers.get(name).push(handler);
 
         return true;
     },
@@ -1207,19 +1184,23 @@ export const Editor = {
      * @param {Function} handler The function that receives a notification
      */
     unregisterHandler(name, handler) {
-        if (!hasOwn(this.handlers, name)) {
+        if (!this.hasHanlder(name)) {
             return false;
         }
 
-        for (let i = 0; i < this.handlers[name].length; i++) {
-            if (this.handlers[name][i] === handler) {
-                this.handlers[name].splice(i, 1);
+        let handlers = this.getHandlers(name);
+        for (let i = 0; i < handlers.length; i++) {
+            if (handlers[i] === handler) {
+                handlers.splice(i, 1);
 
                 return true;
             }
         }
 
         return false;
+    },
+    hasHanlder(name) {
+        return this.handlers.has(name);
     },
 
     // Default events management

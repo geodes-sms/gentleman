@@ -82,6 +82,7 @@ export const EditorSelector = {
             // Create header
             let title = createH4({
                 class: ["title", "editor-selector__title"],
+                title: data.description,
             }, `${data.name || data.type}`);
 
             if (concept) {
@@ -126,7 +127,6 @@ export const EditorSelector = {
             // Create item container
             let item = createListItem({
                 class: ["editor-selector", "collapsed", "font-ui"],
-                title: data.description,
                 tabindex: 0,
                 dataset: {
                     type: this.type,
@@ -274,7 +274,7 @@ const PreviewHandler = {
                     class: ["editor-selector__preview-text", "editor-selector__preview-text--target"]
                 }, target.name);
 
-                if (target.accept) {
+                if (target.accept && target.accept.name) {
                     targetElement.append(createSpan({
                         class: ["editor-selector__preview-text--target-accept"]
                     }, target.accept.name));

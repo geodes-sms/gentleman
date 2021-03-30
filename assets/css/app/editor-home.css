@@ -179,6 +179,7 @@
         display: flex; flex-direction: column; 
         justify-content: center; align-items: center;
         
+        margin-top: 12px;
         padding: 8px 12px; 
         font-size: 1.5em; font-weight: 600;
         text-align: center;
@@ -189,8 +190,8 @@
         cursor: pointer;
     }
 
-    .editor-home-section__button--new {
-        margin-top: 6px;
+    .editor-home-section__button--projection {
+        background-color: #b52d44;
     }
     
     .editor-home-section--model__button {

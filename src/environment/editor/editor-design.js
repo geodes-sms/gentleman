@@ -4,7 +4,7 @@ import {
 } from 'zenkai';
 import { ConceptModelManager } from '@model/index.js';
 import { createProjectionModel } from '@projection/index.js';
-import { show, hide, toggle, Events, Key, getEventTarget, NotificationType, EditorMode } from '@utils/index.js';
+import { show, hide, toggle, Events, Key, getEventTarget, NotificationType } from '@utils/index.js';
 
 
 
