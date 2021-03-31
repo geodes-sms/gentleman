@@ -327,9 +327,12 @@
                                     "type": "static",
                                     "static": {
                                         "type": "text",
-                                        "content": "Define template",
+                                        "content": "Template",
                                         "style": {
-                                            "css": ["keyword"]
+                                            "css": ["keyword"],
+                                            "gss": {
+                                                "text": { "bold": true }
+                                            }
                                         }
                                     }
                                 },
@@ -469,9 +472,12 @@
                                     "type": "static",
                                     "static": {
                                         "type": "text",
-                                        "content": "Define style rule",
+                                        "content": "Style rule",
                                         "style": {
-                                            "css": ["keyword"]
+                                            "css": ["keyword"],
+                                            "gss": {
+                                                "text": { "bold": true }
+                                            }
                                         }
                                     }
                                 },
@@ -538,8 +544,10 @@
                                     "css": ["select-choice__list"]
                                 }
                             },
+                            "placeholder": "None",
+                            "expanded": false,
                             "input": {
-                                "placeholder": "Select a layout or field",
+                                "placeholder": "filter",
                                 "style": {
                                     "css": ["select-choice__input"]
                                 }
@@ -999,62 +1007,6 @@
 
 
         {
-            "concept": { "name": "field" },
-            "type": "layout",
-            "tags": [],
-            "projection": {
-                "type": "stack",
-                "orientation": "vertical",
-                "disposition": [
-                    {
-                        "type": "static",
-                        "static":  {
-                            "type": "text",
-                            "help": "Layout component",
-                            "content": "Define field as",
-                            "style": {
-                                "css": ["keyword"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "field",
-                        "field": {
-                            "type": "choice",
-                            "choice": {
-                                "option": {
-                                    "style": {
-                                        "css": ["bracket-choice__list-option"]
-                                    }
-                                },
-                                "style": {
-                                    "css": ["bracket-choice__list"]
-                                }
-                            },
-                            "input": {
-                                "placeholder": "type",
-                                "style": {
-                                    "css": ["bracket-choice__input"]
-                                }
-                            },
-                            "style": {
-                                "css": ["bracket-choice"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "projection",
-                        "bind": "value",
-                        "placeholder": false,
-                        "tag": "choice-selection",
-                        "style": {
-                            "css": ["primitive-constraint"]
-                        }
-                    }
-                ]
-            }
-        },
-        {
             "concept": { "name": "text field" },
             "type": "layout",
             "tags": ["choice-selection", "field-config", "config"],
@@ -1310,6 +1262,49 @@
                 "orientation": "vertical",
                 "disposition": [
                     {
+                        "type": "attribute",
+                        "name": "expanded",
+                        "tag": "field-binary-state",
+                        "style": {
+                            "ref": ["pad-left"]
+                        }  
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "placeholder",
+                        "tag": "textual--labelled",
+                        "placeholder": {
+                            "content": {
+                                "type": "static",
+                                "static": {
+                                    "type": "text",
+                                    "content": "Add placeholder",
+                                    "help": "The placeholder represents the 'empty' option",
+                                    "style": {
+                                        "css": ["field-config-option", "font-ui"]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "input",
+                        "placeholder": {
+                            "content": {
+                                "type": "static",
+                                "static": {
+                                    "type": "text",
+                                    "content": "Add input",
+                                    "help": "The input is used to filter the options",
+                                    "style": {
+                                        "css": ["field-config-option", "font-ui"]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
                         "type": "static",
                         "static": {
                             "type": "text",
@@ -1323,7 +1318,7 @@
                         "type": "attribute",
                         "name": "choice template"
                     },
-                  
+
                     {
                         "type": "template",
                         "name": "nav-config"
@@ -1826,7 +1821,10 @@
                     },
                     {
                         "type": "template",
-                        "name": "nav-config"
+                        "name": "nav-config",
+                        "param": [
+                            { "name": "main", "value": "Content" }
+                        ]
                     }
                 ],
                 "style": {
@@ -1860,6 +1858,11 @@
                         "name": "editable",
                         "tag": "field-binary-state"
                     },
+                    {
+                        "type": "attribute",
+                        "name": "content type",
+                        "tag": "textual--labelled"
+                    },
                 
                     {
                         "type": "template",
@@ -1867,7 +1870,8 @@
                     }
                 ],
                 "style": {
-                    "css": ["field-config", "field-config--state"]
+                    "css": ["field-config", "field-config--state"],
+                    "ref": ["pad-left", "pad-right", "pad-bottom"]
                 }
             }
         },
@@ -1974,7 +1978,10 @@
                     {
                         "type": "attribute",
                         "name": "url",
-                        "tag": "label-string"
+                        "tag": "textual--labelled",
+                        "style": {
+                            "ref": ["pad-top", "pad-left"]
+                        }
                     },
                     {
                         "type": "template",
@@ -1997,10 +2004,7 @@
                     {
                         "type": "attribute",
                         "name": "focusable",
-                        "tag": "field-binary-state",
-                        "style": {
-                            "ref": ["pad-top"]
-                        }
+                        "tag": "field-binary-state"
                     },
                     {
                         "type": "attribute",
@@ -2057,7 +2061,20 @@
                     {
                         "type": "attribute",
                         "name": "url",
-                        "tag": "label-string"
+                        "tag": "textual--labelled",
+                        "style": {
+                            "ref": ["pad-left"]
+                        }
+                    },
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Content",
+                            "style": {
+                                "css": ["config-title", "font-ui"]
+                            }
+                        }
                     },
                     {
                         "type": "attribute",
@@ -2136,7 +2153,20 @@
                     {
                         "type": "attribute",
                         "name": "tag",
-                        "tag": "label-string"
+                        "tag": "textual--labelled",
+                        "style": {
+                            "ref": ["pad-left"]
+                        }
+                    },
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Content",
+                            "style": {
+                                "css": ["config-title", "font-ui"]
+                            }
+                        }
                     },
                     {
                         "type": "attribute",
@@ -2227,14 +2257,7 @@
                                 }
                             ],
                             "style": {
-                                "css": ["field-config__content"],
-                                "gss": {
-                                    "box": {
-                                        "outer": {
-                                            "top": { "value": 6, "unit": "px" }
-                                        }
-                                    }
-                                }
+                                "css": ["field-config__content"]
                             }
                         }
                     },
@@ -2339,14 +2362,7 @@
                                 }
                             ],
                             "style": {
-                                "css": ["field-config__content"],
-                                "gss": {
-                                    "box": {
-                                        "outer": {
-                                            "top": { "value": 6, "unit": "px" }
-                                        }
-                                    }
-                                }
+                                "css": ["field-config__content"]
                             }
                         }
                     },
@@ -2431,7 +2447,8 @@
                     }
                 ],
                 "style": {
-                    "css": ["attribute-element"]
+                    "css": ["attribute-element"],
+                    "ref": ["pad-all"]
                 }
             }
         },
@@ -4069,7 +4086,7 @@
         },
         {
             "concept": { "name": "string" },
-            "tags": ["label-string"],
+            "tags": ["label-string", "textual--labelled"],
             "type": "layout",
             "content": {
                 "type": "wrap",

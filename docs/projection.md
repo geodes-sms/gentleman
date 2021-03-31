@@ -21,8 +21,7 @@ A layout element is used to organize elements presented in the GUI.
 
 ### WrapLayout
 
-The *WrapLayout* is the simplest of all the layouts. It groups its child elements in a container.
-
+The *WrapLayout* is the simplest of all the layouts. It groups its child elements in a container that is fit to its children
 
 ### StackLayout
 
@@ -37,7 +36,9 @@ The *FlexLayout* adds flexibility to the *StackLayout*. It offers the ability to
 
 - Properties
   - **Orientation** `[string={row|column}]` (*required*): indicates which direction the *FlexLayout* should arrange its children.
-  - **Wrap** `boolean`: indicates whether a line can wrap its content on several lines.
+  - **Wrappable** `[boolean]`: indicates whether a line can wrap its content on several lines.
+  - **Align-items** `[string={start|end|center|stretch|baseline}]`: indicates whether a line can wrap its content on several lines.
+  - **Justify-content** `[string={start|end|center|space-between|space-around|space-evenly}]`: indicates whether a line can wrap its content on several lines.
 
 ### TableLayout
 
@@ -52,39 +53,72 @@ Gentleman defines the following fields:
 
 The *TextField* can capture key input.
 
-- Potential targets
-  - String concept
-  - Number concept
+#### Compatibility
+
+- String concept
+- Number concept
+
+#### Properties
+
+- **resizable** `[boolean]`: indicates whether the control should fit its content
+- **multiline** `[boolean]` (*required*): indicates whether the content can span across multiple lines
+- **input**: The field control receiving the input
+  - **type**`[string={text|number|email|tel|url}]: type of expected input
+  - **placeholder**`[string]: Text that appears in the control when it is empty (no value set)
 
 ### BinaryField
 
 The *BinaryField* can alternate between two states.
 
-- Potential targets
-  - Boolean concept
-  - Derivative concept with restricted values (enum)
+#### Compatibility
+
+- Boolean concept
+- Derivative concept with restricted values (enum)
+
+#### Properties
+
+- **True-state** `[element]`: content displayed when the state is true
+- **False-state** `[element]`: content displayed when the state is false
 
 ### ChoiceField
 
 The *ChoiceField* can group related choices.
 
-- Potential targets
-  - Prototype concept
-  - Boolean concept
-  - Derivative concept with restricted values (enum)
+#### Compatibility
+
+- Prototype concept
+- Boolean concept
+- Derivative concept with restricted values (enum)
+
+#### Properties
+
+- **expanded** `[boolean=true]`: indicates whether the options are enumerated or put in a drop-down list
+- **placeholder** `[string]`: The placeholder represents the 'empty' option
+- **input**: filter control to search the list of option
+  - **type**`[string={text|number|email|tel|url}]: type of expected input
+  - **placeholder**`[string]: Text that appears in the control when it is empty (no value set)
+- **choice template**: Template used for the choice options
 
 ### ListField
 
 The *ListField* can manage a collection of element.
 
-- Potential targets
-  - Set concept
+#### Compatibility
+
+- Set concept
+
+#### Properties
+
+- **action**: actions available for the list
+  - **add**`[element]: Content displayed for the add *action* button
+  - **remove**`[element]: Content displayed for the *remove* action button
+- **choice template**: Template used for the list items
 
 ### TableField
 
 The *TableField* can manage tabular data.
 
-- Potential targets
+- Compatibility
   - Set concept
 
 ## Static
@@ -95,27 +129,30 @@ A static element is used to present static content.
 
 The *Stactic text* is used to display textual content.
 
-- Properties
-  - **content** `[string]` (*required*): Defines how the text's content
-  - **contentType** `[string={raw|html}]`: Defines how the content should be processed
+#### Properties
+
+- **content** `[string]` (*required*): Text content.
+- **contentType** `[string={raw|html|property}]`: Defines how the content should be processed
 
 ### Image
 
 The *Stactic image* is used to display images.
 
-- Properties
-  - **url** `[string]` (*required*): Defines the image's url
-  - **width** `[number]`: Defines the image width
-  - **height** `[number]`: Defines the image height
+#### Properties
+
+- **url** `[string]` (*required*): Defines the image's url
+- **width** `[number]`: Defines the image width
+- **height** `[number]`: Defines the image height
 
 ### Link
 
 The *Stactic link* is used to display links.
 
-- Properties
-  - **content** `[set:element]` (*required*): Defines link's displayed content
-  - **url** `[string]` (*required*): Defines the link's url
-  - **urlType** `[string={link|email|phone}]`: Defines how the link should be processed
+#### Properties
+
+- **content** `[set:element]` (*required*): Defines link's displayed content
+- **url** `[string]` (*required*): Defines the link's url
+- **urlType** `[string={link|email|phone}]`: Defines how the link should be processed
 
 ### HTML
 
@@ -127,10 +164,9 @@ To style your elements, you can do it directly when defining a projection or tho
 
 ### CSS
 
-Gentleman support CSS class selectors by allowing you to declare them in your projections and by exposing for each rendered element, a class selector.
+Gentleman support CSS class selectors by allowing you to declare them in your projections and by exposing for each rendered element, some class selectors.
 
 ### Inline
-
 
 ### Style rule
 

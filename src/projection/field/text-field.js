@@ -10,8 +10,8 @@ import {
 import { StyleHandler } from "./../style-handler.js";
 import { StateHandler } from "./../state-handler.js";
 import { resolveValue } from "./../content-handler.js";
-import { Field } from "./field.js";
 import { createNotificationMessage } from "./notification.js";
+import { Field } from "./field.js";
 
 
 const isInputOrTextarea = (element) => isHTMLElement(element, ["input", "textarea"]);

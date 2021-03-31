@@ -89,7 +89,7 @@ export function buildProjectionHandler(model, _options = {}) {
     }
 
     this.notify("The projection model was <strong>successfully</strong> built", NotificationType.SUCCESS, 2000);
-    
+
     if (options.download) {
         this.download(result, options.name);
     }
@@ -319,6 +319,10 @@ function buildElement(element) {
             schema.tag = getValue(element, "tag");
         }
 
+        if (hasAttr(element, "required")) {
+            schema.required = getValue(element, "required");
+        }
+
         if (hasAttr(element, "placeholder")) {
             const content = [];
 
@@ -452,6 +456,14 @@ function buildField(field) {
         };
     } else if (elementType === "choice") {
         schema.choice = {};
+
+        if (hasAttr(field, "placeholder")) {
+            schema.placeholder = getValue(field, "placeholder");
+        }
+
+        if (hasAttr(field, "input")) {
+            schema.input = buildInput.call(this, getAttr(field, "input"));
+        }
 
         if (hasAttr(field, "choice template")) {
             schema.choice.option = {

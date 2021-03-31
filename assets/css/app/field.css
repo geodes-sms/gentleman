@@ -12,7 +12,7 @@
 
     .field.has-toolbar { padding-top: 24px; }
 
-    .field.active { z-index: 20; opacity: 1; }
+    .field.active { z-index: 30; opacity: 1; }
 
     .field.focus { z-index: 50; opacity: 1; }
 
@@ -271,24 +271,56 @@
 
     .field--choice__input {
         font-size: 1em;
+        margin-bottom: 2px;
         overflow: hidden;
         outline: none;
+        background-color: #fefefe;
         z-index: 5;
-    }
-
-    .field--choice__input:empty {
-        white-space: nowrap;
-        font-size: 0.9em;
-        overflow: hidden;
-        text-overflow: ellipsis;
     }
 
     .field--choice__choices {
         position: relative;
+        display: flex;
+        margin: 0; padding: 0; list-style: none;
         z-index: 2;
         cursor: pointer;
     }
-
-    .field--choice__selection {
-        width: 100%;
+    .field--choice__choice {
+        list-style: none;
     }
+
+
+.field--choice__select-wrapper {
+    display: flex; flex-direction: row;
+    border: 1px solid #c0c0c0;
+    border-radius: 2px;
+}
+
+.field--choice__select-value {
+    display: flex; flex-direction: row;
+    flex-grow: 2;
+}
+
+.field--choice__select-icon {
+    display: block;
+    padding: 2px 4px;
+}
+    .field--choice__select-icon:before {
+        content: '▼';
+    }
+
+    .field--choice__select-list {
+        position: absolute;
+        top: 100%;
+        display: flex; flex-direction: column;
+        background-color: #fff;
+        box-shadow: 1px 0 1px #c0c0c0;
+        z-index: 50;
+    }
+
+    .field--choice__select-list .field--choice__choices {
+        flex-direction: column;
+        max-height: 300px;
+        overflow: auto;
+    }
+    

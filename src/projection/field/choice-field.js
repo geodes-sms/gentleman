@@ -9,26 +9,10 @@ import {
 } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler, resolveValue } from "./../content-handler.js";
+import { createNotificationMessage } from "./notification.js";
 import { Field } from "./field.js";
 
 
-/**
- * Creates a notification message
- * @param {string} type 
- * @param {string} message 
- * @returns {HTMLElement}
- */
-function createNotificationMessage(type, message) {
-    var element = createSpan({ class: ["notification-message", `notification-message--${type}`] }, message);
-
-    if (Array.isArray(message)) {
-        element.style.minWidth = `${Math.min(message[0].length * 0.5, 30)}em`;
-    } else {
-        element.style.minWidth = `${Math.min(message.length * 0.5, 30)}em`;
-    }
-
-    return element;
-}
 
 /**
  * Get the choice element
@@ -47,13 +31,45 @@ function getItem(element) {
 }
 
 /**
+ * Get the option type
+ * @param {HTMLElement} element 
+ * @this {BaseChoiceField}
+ * @returns {string}
+ */
+function getItemType(item) {
+    const { type } = item.dataset;
+
+    return type;
+}
+
+
+/**
  * Get the choice element value
  * @param {HTMLElement} item
  * @returns {string} 
  */
 function getItemValue(item) {
-    return item.textContent;
+    const { type, value } = item.dataset;
+
+    if (type === "concept") {
+        return this.values.find(val => val.id === value);
+    }
+
+    if (type === "meta-concept") {
+        return this.values.find(val => val.name === value);
+    }
+
+    if (type === "value") {
+        return value;
+    }
+
+    if (type === "placeholder") {
+        return null;
+    }
+
+    return value;
 }
+
 
 const isSame = (val1, val2) => {
     if (val1.type === "concept") {
@@ -65,23 +81,14 @@ const isSame = (val1, val2) => {
     return val1 === val2;
 };
 
-const actionDefaultSchema = {
-    reset: {
-        content: {
-            "type": "static",
-            "static": {
-                "type": "text",
-                "content": "Reset",
-                "focusable": false
-            }
-        }
-    },
-};
-
 
 const BaseChoiceField = {
     /** @type {string} */
     value: null,
+    /** @type {string|boolean} */
+    placeholder: null,
+    /** @type {boolean} */
+    expanded: null,
     /** @type {string} */
     values: null,
     /** @type {HTMLElement} */
@@ -92,13 +99,21 @@ const BaseChoiceField = {
     items: null,
     /** @type {HTMLElement} */
     selection: null,
+    /** @type {HTMLElement} */
+    selectList: null,
+    /** @type {HTMLElement} */
+    selectListValue: null,
+    /** @type {HTMLElement} */
+    icoToggle: null,
 
 
     init() {
-        const { focusable = true } = this.schema;
+        const { focusable = true, placeholder = false, expanded = true } = this.schema;
 
         this.items = new Map();
         this.focusable = focusable;
+        this.expanded = expanded;
+        this.placeholder = placeholder;
 
         // TODO: Add group support
 
@@ -189,6 +204,20 @@ const BaseChoiceField = {
             this.element.dataset.input = this.input.value;
         }
 
+        if (!this.expanded) {
+            const { children } = this.choices;
+
+            if (this.selection) {
+                let clone = this.selection.cloneNode(true);
+                removeChildren(this.selectListValue);
+                while (clone.childNodes.length > 0) {
+                    this.selectListValue.append(clone.childNodes[0]);
+                }
+            } else if (this.placeholder) {
+                removeChildren(this.selectListValue).append(this.placeholder);
+            }
+        }
+
 
         this.element.classList.remove("querying");
 
@@ -200,7 +229,7 @@ const BaseChoiceField = {
                 this.input.classList.add("error");
             }
             this.statusElement.classList.add("error");
-            this.statusElement.appendChild(createNotificationMessage(NotificationType.ERROR, this.errors));
+            this.statusElement.append(createNotificationMessage(NotificationType.ERROR, this.errors));
         } else {
             this.element.classList.remove("error");
             if (this.input) {
@@ -240,7 +269,7 @@ const BaseChoiceField = {
                 }
             });
 
-            fragment.appendChild(this.notification);
+            fragment.append(this.notification);
         }
 
         if (!isHTMLElement(this.statusElement)) {
@@ -253,7 +282,7 @@ const BaseChoiceField = {
                 }
             });
 
-            this.notification.appendChild(this.statusElement);
+            this.notification.append(this.statusElement);
         }
 
         if (!isHTMLElement(this.messageElement)) {
@@ -266,7 +295,7 @@ const BaseChoiceField = {
                 }
             });
 
-            this.notification.appendChild(this.messageElement);
+            this.notification.append(this.messageElement);
         }
 
         if (!isHTMLElement(this.input) && input) {
@@ -306,21 +335,90 @@ const BaseChoiceField = {
 
             StyleHandler.call(this, this.choices, style);
 
-            fragment.appendChild(this.choices);
+            fragment.append(this.choices);
+        }
+
+        if (!this.expanded) {
+            let wrapper = createDiv({
+                class: ["field--choice__select-wrapper"],
+                tabindex: -1,
+                dataset: {
+                    nature: "field-component",
+                    view: "choice",
+                    id: this.id
+                }
+            });
+            this.selectListValue = createDiv({
+                class: ["field--choice__select-value"],
+                tabindex: 0,
+                dataset: {
+                    nature: "field-component",
+                    view: "choice",
+                    id: this.id
+                }
+            });
+
+            this.icoToggle = createI({
+                class: ["field--choice__select-icon"],
+                dataset: {
+                    nature: "field-component",
+                    view: "choice",
+                    id: this.id,
+                }
+            });
+
+            wrapper.append(this.selectListValue, this.icoToggle);
+
+            this.selectList = createDiv({
+                class: ["field--choice__select-list", "hidden"],
+                dataset: {
+                    nature: "field-component",
+                    view: "choice",
+                    id: this.id
+                }
+            });
+
+            if (this.input) {
+                this.selectList.append(this.input);
+            }
+
+            this.selectList.append(this.choices);
+
+            fragment.append(wrapper);
+            fragment.append(this.selectList);
         }
 
         StyleHandler.call(this, this.element, style);
 
         if (fragment.hasChildNodes()) {
-            this.element.appendChild(fragment);
+            this.element.append(fragment);
             this.bindEvents();
         }
 
         removeChildren(this.choices);
 
+        if (this.placeholder) {
+            const { style } = this.schema.choice.option;
+
+            let item = createListItem({
+                class: ["field--choice__choice", "field--choice__choice--placeholder"],
+                tabindex: 0,
+                dataset: {
+                    nature: "field-component",
+                    view: "choice",
+                    id: this.id,
+                    type: "placeholder"
+                }
+            }, this.placeholder);
+
+            this.choices.append(item);
+            
+            StyleHandler.call(this, item, style);
+        }
+
         this.values = this.source.getCandidates();
         this.values.forEach(value => {
-            this.choices.appendChild(this.createChoiceOption(value));
+            this.choices.append(this.createChoiceOption(value));
         });
 
         if (this.source.hasValue()) {
@@ -332,7 +430,9 @@ const BaseChoiceField = {
         return this.element;
     },
     focus(target) {
-        if (this.choices.hasChildNodes()) {
+        if (!this.expanded) {
+            this.selectListValue.focus();
+        } else if (this.choices.hasChildNodes()) {
             let firstChild = getVisibleElement(this.choices);
             if (firstChild) {
                 firstChild.focus();
@@ -363,6 +463,10 @@ const BaseChoiceField = {
 
         this.choices.append(fragment);
 
+        if (!this.expanded) {
+            show(this.selectList);
+        }
+
         return this;
     },
     focusOut() {
@@ -387,13 +491,16 @@ const BaseChoiceField = {
         this.element.classList.remove("querying");
 
         const { children } = this.choices;
-
         for (let i = 0; i < children.length; i++) {
             /** @type {HTMLElement} */
             const item = children[i];
 
             show(item);
             item.hidden = false;
+        }
+
+        if (!this.expanded) {
+            hide(this.selectList);
         }
 
         this.focused = false;
@@ -456,7 +563,7 @@ const BaseChoiceField = {
         for (let i = 0; i < children.length; i++) {
             const item = children[i];
 
-            let value = getItemValue(item).toLowerCase();
+            let value = item.textContent.toLowerCase();
             let _value = value.replace(/[_-]+/g, " ").replace(/\s+/g, "").trim();
 
             let match = parts.some(q => value.includes(q) || _value.includes(q));
@@ -490,14 +597,15 @@ const BaseChoiceField = {
         const { template = {}, style } = this.schema.choice.option;
 
         if (value.type === "meta-concept") {
-            let choiceProjectionSchema = this.model.getProjectionSchema(value.name, valOrDefault(template.tag, "choice"))[0];
+            let choiceProjectionSchema = this.model.getProjectionSchema(value.concept, valOrDefault(template.tag, "choice"))[0];
+
             let type = choiceProjectionSchema.type;
             let schema = {
                 "type": type,
                 [type]: choiceProjectionSchema.content || choiceProjectionSchema.projection,
             };
 
-            let render = ContentHandler.call(this, schema, null, { focusable: false, meta: value.name });
+            let render = ContentHandler.call(this, schema, value.concept, { focusable: false, meta: value.name });
             container.dataset.type = "meta-concept";
             container.dataset.value = value.name;
             container.append(render);
@@ -521,28 +629,13 @@ const BaseChoiceField = {
     setChoice(value) {
         const { children } = this.choices;
 
-        const getValue = (item) => {
-            const { type, value } = item.dataset;
-
-            if (type === "concept") {
-                return this.values.find(val => val.id === value);
-            }
-
-            if (type === "meta-concept") {
-                return this.values.find(val => val.name === value);
-            }
-
-            if (type === "value") {
-                return value;
-            }
-        };
-
         let found = false;
         for (let i = 0; i < children.length; i++) {
             /** @type {HTMLElement} */
             const item = children[i];
 
-            if (isSame(getValue(item), value)) {
+            let itemValue = getItemValue.call(this, item);
+            if (itemValue && isSame(itemValue, value)) {
                 item.classList.add("selected");
                 item.dataset.selected = "selected";
                 this.selection = item;
@@ -584,7 +677,7 @@ const BaseChoiceField = {
         let candidates = this.source.getCandidates();
 
         if (isEmpty(candidates)) {
-            this.messageElement.appendChild(createNotificationMessage(NotificationType.INFO, "No candidates found."));
+            this.messageElement.append(createNotificationMessage(NotificationType.INFO, "No candidates found."));
             show(this.messageElement);
 
             return;
@@ -593,10 +686,31 @@ const BaseChoiceField = {
         const fragment = createDocFragment();
 
         candidates.forEach(value => {
-            fragment.appendChild(this.createChoiceOption(value));
+            fragment.append(this.createChoiceOption(value));
         });
 
-        removeChildren(this.choices).appendChild(fragment);
+        removeChildren(this.choices);
+
+        if (this.placeholder) {
+            const { style } = this.schema.choice.option;
+
+            let item = createListItem({
+                class: ["field--choice__choice", "field--choice__choice--placeholder"],
+                tabindex: 0,
+                dataset: {
+                    nature: "field-component",
+                    view: "choice",
+                    id: this.id,
+                    type: "placeholder"
+                }
+            }, this.placeholder);
+
+            this.choices.append(item);
+            
+            StyleHandler.call(this, item, style);
+        }
+
+        this.choices.append(fragment);
 
         this.filterChoice(this.input.value);
         show(this.choices);
@@ -633,26 +747,18 @@ const BaseChoiceField = {
     enterHandler(target) {
         const item = getItem.call(this, target);
 
-        const getValue = (item) => {
-            const { type, value } = item.dataset;
-
-            if (type === "concept") {
-                return this.values.find(val => val.id === value);
-            }
-
-            if (type === "meta-concept") {
-                return value;
-            }
-
-            if (type === "value") {
-                return value;
-            }
-
-            return value;
-        };
-
         if (isHTMLElement(item) && this.selection !== item) {
-            this.setValue(getValue(item), true);
+            let type = getItemType(item);
+
+            if (type === "placeholder") {
+                this.source.removeValue();
+            } else {
+                this.setValue(getItemValue.call(this, item), true);
+            }
+
+            if (!this.expanded) {
+                hide(this.selectList);
+            }
         }
     },
     /**
@@ -673,26 +779,20 @@ const BaseChoiceField = {
     clickHandler(target) {
         const item = getItem.call(this, target);
 
-        const getValue = (item) => {
-            const { type, value } = item.dataset;
-
-            if (type === "concept") {
-                return this.values.find(val => val.id === value);
-            }
-
-            if (type === "meta-concept") {
-                return value;
-            }
-
-            if (type === "value") {
-                return value;
-            }
-
-            return value;
-        };
-
         if (isHTMLElement(item) && this.selection !== item) {
-            this.setValue(getValue(item), true);
+            let type = getItemType(item);
+
+            if (type === "placeholder") {
+                this.source.removeValue();
+            } else {
+                this.setValue(getItemValue.call(this, item), true);
+            }
+
+            if (!this.expanded) {
+                hide(this.selectList);
+            }
+        } else if (target === this.selectListValue) {
+            show(this.selectList);
         }
     },
     /**
@@ -714,11 +814,17 @@ const BaseChoiceField = {
             return false;
         };
 
+        if (!this.expanded) {
+            if (target === this.selectListValue) {
+                return this.arrowHandler(dir, this.selectListValue.parentElement);
+            }
+        }
+
         // gets the parent choice item if target is a children
         let item = getItem.call(this, target);
 
         if (item) {
-            let closestItem = getClosest(item, dir, this.choices);
+            let closestItem = getClosest(item, dir, this.choices, false);
 
             if (!isHTMLElement(closestItem)) {
                 return this.arrowHandler(dir, this.choices);
@@ -729,14 +835,18 @@ const BaseChoiceField = {
             return true;
         }
 
-        if (parentElement !== this.element) {
+        if (this.expanded && parentElement !== this.element) {
             return exit();
         }
 
-        let closestItem = getClosest(target, dir, this.element);
+        let closestItem = getClosest(target, dir, parentElement, false);
 
         if (!isHTMLElement(closestItem)) {
             return exit();
+        }
+
+        if (closestItem === this.selectList) {
+            closestItem = this.input || this.choices;
         }
 
         if (closestItem === this.choices && this.choices.hasChildNodes()) {

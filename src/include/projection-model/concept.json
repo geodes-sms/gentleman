@@ -325,7 +325,22 @@
                     "name": "choice template",
                     "target": {
                         "name": "template reference"
-                    }
+                    },
+                    "required": true
+                },
+                {
+                    "name": "expanded",
+                    "target": {
+                        "name": "boolean"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "placeholder",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": false
                 },
                 {
                     "name": "input",

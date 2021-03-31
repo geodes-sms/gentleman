@@ -6,15 +6,12 @@ import { Layout } from "./layout.js";
 
 
 export const BaseWrapLayout = {
-    /** @type {boolean} */
-    containerless: false,
     /** @type {*} */
     args: null,
 
     init(args = {}) {
-        const { containerless = false, editable = true, focusable = false } = this.schema;
+        const { editable = true, focusable = false } = this.schema;
 
-        this.containerless = containerless;
         this.focusable = focusable;
         this.editable = editable;
 
@@ -39,10 +36,7 @@ export const BaseWrapLayout = {
 
         const fragment = createDocFragment();
 
-
-        if (this.containerless) {
-            this.container = fragment;
-        } else if (!isHTMLElement(this.container)) {
+        if (!isHTMLElement(this.container)) {
             this.container = createDiv({
                 class: ["layout-container"],
                 title: help,
@@ -55,7 +49,7 @@ export const BaseWrapLayout = {
         }
 
         for (let i = 0; i < disposition.length; i++) {
-            let render = ContentHandler.call(this, disposition[i], null, this.args);
+            let render = ContentHandler.call(this, disposition[i], this.source, this.args);
 
             let element = this.environment.resolveElement(render);
             if (element) {
@@ -65,10 +59,6 @@ export const BaseWrapLayout = {
             this.elements.push(render);
 
             fragment.appendChild(render);
-        }
-
-        if (this.containerless) {
-            return this.container;
         }
 
         if (this.focusable) {

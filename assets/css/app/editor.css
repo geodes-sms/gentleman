@@ -31,6 +31,7 @@
 
     .editor-body-main {
         flex-grow: 2;
+        display: flex; flex-direction: column;
     }
 
     .editor-body-aside {
@@ -76,6 +77,8 @@
 -----------------------------------------------------------------------------*/
 
 .model-concept-section {
+    flex-grow: 2;
+    
     position: relative;
     display: flex; flex-wrap: wrap; 
     padding: 18px calc(1% + 6px) 12px;

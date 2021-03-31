@@ -508,7 +508,7 @@
 -----------------------------------------------------------------------------*/
 
 .textual-list__list-item--box {
-    max-width: 100%;
+    max-width: 100%; min-width: 120px;
     padding: 6px 0 2px;
     background-color: #f9f9f9;
 }

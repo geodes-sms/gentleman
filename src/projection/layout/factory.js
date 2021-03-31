@@ -17,7 +17,7 @@ const Handler = {
         model: { value: model },
         schema: { value: schema },
         projection: { value: projection },
-        source: { value: projection.concept },
+        source: { value: projection.concept, writable: true },
     }),
     'wrap': (model, schema, projection) => Object.create(WrapLayout, {
         object: { value: "layout" },
@@ -27,7 +27,7 @@ const Handler = {
         model: { value: model },
         schema: { value: schema },
         projection: { value: projection },
-        source: { value: projection.concept },
+        source: { value: projection.concept, writable: true },
     }),
     'table': (model, schema, projection) => Object.create(CellLayout, {
         object: { value: "layout" },
@@ -37,7 +37,7 @@ const Handler = {
         model: { value: model },
         schema: { value: schema },
         projection: { value: projection },
-        source: { value: projection.concept },
+        source: { value: projection.concept, writable: true },
     }),
     'flex': (model, schema, projection) => Object.create(FlexLayout, {
         object: { value: "layout" },
@@ -47,7 +47,7 @@ const Handler = {
         model: { value: model },
         schema: { value: schema },
         projection: { value: projection },
-        source: { value: projection.concept },
+        source: { value: projection.concept, writable: true },
     }),
 };
 

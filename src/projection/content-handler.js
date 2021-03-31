@@ -24,6 +24,8 @@ export function ContentHandler(schema, concept, args = {}) {
 
     if (schema.type === "layout") {
         let layout = LayoutFactory.createLayout(this.model, schema.layout, this.projection);
+
+        layout.source = contentConcept;
         layout.parent = this;
         layout.init(args);
 
@@ -40,6 +42,8 @@ export function ContentHandler(schema, concept, args = {}) {
         return field.render();
     } else if (schema.type === "static") {
         let staticContent = StaticFactory.createStatic(this.model, schema.static, this.projection);
+        
+        staticContent.source = contentConcept;
         staticContent.parent = this;
         staticContent.init(args);
 

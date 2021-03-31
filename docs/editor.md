@@ -31,9 +31,7 @@ The *metamodelling* workflow is reserved for the creation of concepts and projec
      1. New projections (from scratch): Select `[Create a projection]`
      2. Edit existing: Load the saved model in the model area (on the left)
   3. Start metamodelling
-  4. Preview the projections
-     1. Load the concepts: Select `[Concepts]` from the floating menu
-     2. Select `[Preview]` from the floating menu
+  4. Preview the projections: Select `[Preview]` from the floating menu
   5. Build the projections: Select `[Build]` from the floating menu
 
 When *Build* is selected, it validates the model and generates a metamodel or a collection of projections depending on the task, which can then be used in the *[modelling workflow](#modelling)*
@@ -77,7 +75,11 @@ The header's main component is the ribbon (set of tabs). Each tab's content is p
 
 ### Settings
 
-The menu bar provides you with two buttons to access the editor settings and simply close the editor respectively.
+The *settings* button toggles the home page where you can change the loaded concepts and projections.
+
+### Export
+
+The *export* button saves the state of the model and download it so you can get back to this version later.
 
 ### Breadcrumbs
 
@@ -87,8 +89,12 @@ The editor has a navigation bar at the top of the body called *Breadcrumbs*, tel
 
 ### Instances
 
-Every concept instance created have a corresponding window with a header containing its name and a toolbar.  
-As they are windows, they can be collapsed, resized (resize or fullscreen) or closed (delete instance).
+Every concept instance created have a corresponding window with a header containing its name and a toolbar
+
+- Collapse: Toggle between collapsed and expanded window
+- Resize: Toggle between large (at least half the width of the body) and normal
+- Maximize: Toggle between fullscreen and normal
+- Close: delete the instance except for linked instances where it is simply removed.
 
 ![Editor instances screenshot](https://geodes-sms.github.io/gentleman/assets/images/doc_editor_instance.png "Editor instances")
 
@@ -103,22 +109,22 @@ The floating menu (*you can drag it*) groups the actions found in the editor con
 Every editor exposes the concepts available for instanciation in the Ribbon concept tab.
 To create a new instance, select `[CREATE]` on the desired concept.
 
-### Navigation
-
-Gentleman supports both mouse and keyboard navigation.
-With the mouse it's simply a matter of clicking on the element you want to focus on.
-With the keyboard you can use the arrows to access close-by elements or the `Tab` key to iterate over the elements. When the focus element has children elements, press `Enter` to focus on its children and `Esc` to exit the container.
-
-### Focus on element
+#### Linked instance
 
 An instance can quickly become too crowded as you modify it. Fortunately, because the view is a composition
 of projections, they can each be manipulated separetely.
-To open a projection in a separate window (instance),
+To open part of an instance in a separate window (linked instance),
 
 1. Select an element
 2. Open in new window: `Ctrl + E`
 
 > Note: As this is a projection window and not an actual instance, closing it will have no side effects on your values.
+
+### Navigation
+
+Gentleman supports both mouse and keyboard navigation.
+With the mouse it's simply a matter of clicking on the element you want to focus on.
+With the keyboard you can use the arrows to access close-by elements or the `Tab` key to iterate over the elements. When the focus element has children elements, press `Enter` to focus on its children and `Esc` to exit the container.
 
 ### Copy/Paste
 
@@ -152,7 +158,7 @@ It can be used to define elements of the Ribbon and register actions that will b
   - **name** `[string]`: name of the concept
 - **resources** `[array:resource]`: list of resources available for registered handlers
   - **name** `[string]`: name of the resource used as reference
-  - **type** `[string=json-model]`: type of resource
+  - **type** `[string=json-cp]`: type of resource
   - **required** `[boolean]`: indicates whether the resource is required
 - **actions** `[array:action]`: list of actions available in the floating menu
   - **name** `[string]`: name of the action used as reference by the registered handlers
@@ -174,7 +180,7 @@ It can be used to define elements of the Ribbon and register actions that will b
         "resources": [
             { 
                 "name": "metamodel", 
-                "type": "json-model",
+                "type": "json-cp",
                 "required": true 
             }
         ],

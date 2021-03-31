@@ -13,28 +13,20 @@ Gentleman aims to **to close the gap between models and domain experts**.
 
 - Platform agnostic: Gentleman target the web (no installation required)
 - Support textual and tabular notations and multimedia content
-- Offer specialized UI units for projection layout and fields
+- Projections are defined with specialized UI elements for layouts and fields
 - Integration with Ecore: Define an Ecore model and use it with Gentleman projections
 
 ## Workflow
 
 ### **Metamodelling**
 
-The *metamodelling* workflow includes every activity required to build an editor
-
-- `[M]` Create concepts (metamodel)
-- `[P]` Create projections
-- `[E]` Configure the editor
+The *metamodelling* workflow is reserved for the creation of concepts and projections.
 
 **Required scripts:** `gentleman.mod.js` **+** `gentleman.app.js`
 
 ### **Modelling**
 
-The *modelling* workflow begins with every design artefacts (M.P.E.) in place
-
-- `[m]` Create instances (model)
-- `[p]` Manipulate projections
-- `[e]` Personnalize the editor
+The *modelling* workflow is reserved for the creation of concept instances using a projection ensemble.
 
 **Required scripts:** `gentleman.app.js`
 
@@ -53,7 +45,7 @@ Gentleman can be added to any web application in 2 steps:
         ...
         <div data-gentleman="editor"></div>
         ...
-        <script src="gentleman.mod.js"></script>  <!-- required for << design workflow >> -->
+        <script src="gentleman.mod.js"></script>  <!-- required for << metamodelling workflow >> -->
         <script src="gentleman.app.js"></script>
     </body>
 </html>
@@ -84,7 +76,7 @@ Take a look at the [demonstration (MODELS 2020) and see the tool in action](http
 <!-- You can read the documentation for Gentleman [here](https://geodes-sms.github.io/gentleman/docs). If you would like to help improve this documentation, the source for many of the docs can be found in the doc folder within this repository.  -->
 
 - [**Editor**](docs/editor.md)
-  - [Getting started](docs/editor.md#interaction)
+  - [Getting started](docs/editor.md#getting-started)
   - [User interface](docs/editor.md#user-interface)
   - [Interaction](docs/editor.md#interaction)
   - [Configuration](docs/editor.md#configuration)
@@ -129,7 +121,7 @@ This will start a development server (*webpack-dev-server*) that provides live r
 
 To deploy the code or test in a production environment, follow these steps.
 
-1. Ensure that you have updated [build file](scripts/build.js) with newly created css files
+1. Update the [build file](scripts/build.js) with newly created css files
 2. From the project folder, execute the following command to build the code for production
 
 ```

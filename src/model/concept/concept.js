@@ -110,19 +110,7 @@ const _Concept = {
     exportValue() {
         return this.getValue();
     },
-    /**
-     * Gets the value of a build property
-     * @param {string} prop 
-     */
-    getBuildProperty(prop) {
-        const { build } = this.schema;
-
-        if (isNullOrUndefined(build) || !hasOwn(build, prop)) {
-            return null;
-        }
-
-        return build[prop];
-    },
+  
     /**
      * Gets the value of a property
      * @param {string} name 
@@ -249,7 +237,7 @@ const _Concept = {
         if (isNullOrUndefined(this.schema.prototype)) {
             return false;
         }
-
+        
         let prototype = this.model.getConceptSchema(this.schema.prototype);
 
         while (!isNullOrUndefined(prototype)) {

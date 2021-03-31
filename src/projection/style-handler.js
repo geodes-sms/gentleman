@@ -45,7 +45,7 @@ const PROJECTION_SCHEMA = [
         "concept": { "name": "text-style" },
         "tags": [],
         "type": "layout",
-        "content":  {
+        "content": {
             "type": "stack",
             "orientation": "horizontal",
             "disposition": [
@@ -103,12 +103,12 @@ const PROJECTION_SCHEMA = [
                 "css": ["text-style-container"]
             }
         }
-    },    
+    },
     {
         "concept": { "name": "box-style" },
         "tags": [],
         "type": "layout",
-        "content":  {
+        "content": {
             "type": "stack",
             "orientation": "horizontal",
             "disposition": [
@@ -157,7 +157,7 @@ const PROJECTION_SCHEMA = [
         "concept": { "name": "multi-size" },
         "tags": [],
         "type": "field",
-        "content":  {
+        "content": {
             "type": "choice",
             "choice": {
                 "style": {
@@ -232,7 +232,7 @@ const PROJECTION_SCHEMA = [
             "disposition": [
                 {
                     "type": "static",
-                    "static":  {
+                    "static": {
                         "type": "text",
                         "content": { "type": "property", "name": "refname" },
                         "style": {
@@ -308,7 +308,7 @@ const PROJECTION_SCHEMA = [
             "disposition": [
                 {
                     "type": "static",
-                    "static":  {
+                    "static": {
                         "type": "text",
                         "content": { "type": "property", "name": "refname" },
                         "style": {
@@ -374,7 +374,7 @@ const PROJECTION_SCHEMA = [
             "focusable": false,
             "disposition": [
                 {
-                    "type": "static", 
+                    "type": "static",
                     "static": {
                         "type": "text",
                         "content": "name"
@@ -418,7 +418,7 @@ const PROJECTION_SCHEMA = [
             "focusable": false,
             "disposition": [
                 {
-                    "type": "static", 
+                    "type": "static",
                     "static": {
                         "type": "text",
                         "content": "RGB"
@@ -841,7 +841,11 @@ export function ReferenceStyleHandler(element, schema) {
     schema.forEach(ref => {
         const { style = {} } = valOrDefault(this.model.getStyleSchema(ref), {});
 
-        GentlemanStyleHandler.call(this, element, style);
+        if (style.gss) {
+            StyleHandler.call(this, element, style);
+        } else {
+            GentlemanStyleHandler.call(this, element, style);
+        }
     });
 
     return element;

@@ -1,7 +1,7 @@
 # Gentleman documentation
 
 - [**Editor**](editor.md)
-  - [Getting started](editor.md#interaction)
+  - [Getting started](editor.md#getting-started)
   - [User interface](editor.md#user-interface)
   - [Interaction](editor.md#interaction)
   - [Configuration](editor.md#configuration)

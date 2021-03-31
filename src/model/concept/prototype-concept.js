@@ -61,10 +61,9 @@ const BasePrototypeConcept = {
         let concept = this.getValue();
 
         return concept.exportValue();
-
     },
     setValue(_value) {
-        let value = _value;
+        let value = _value.name || _value;
 
         let result = this.validate(value);
 
@@ -101,6 +100,13 @@ const BasePrototypeConcept = {
         };
     },
     removeValue() {
+        if (isNullOrUndefined(this.value)) {
+            return {
+                success: true,
+                message: "The value has been successfully updated."
+            };
+        }
+
         this.value = null;
 
         this.notify("value.changed", this.value);
@@ -113,7 +119,7 @@ const BasePrototypeConcept = {
     hasValue() {
         return !isNullOrUndefined(this.value);
     },
- 
+
     getCandidates() {
         if (this.candidates) {
             return this.candidates;
@@ -124,6 +130,12 @@ const BasePrototypeConcept = {
                 return {
                     type: "meta-concept",
                     name: candidate.name,
+                    concept: Object.create(metaConcept, {
+                        object: { value: "meta-concept" },
+                        name: { value: candidate.name },
+                        model: { value: this.model },
+                        schema: { value: candidate }
+                    })
                 };
             }
         );
@@ -262,6 +274,62 @@ function resolveAccept(accept) {
 
     return candidates.filter(candidate => accept === candidate.name);
 }
+
+const metaConcept = {
+    /**
+     * Gets the value of a property
+     * @param {string} name 
+     */
+    getProperty(name, meta) {
+        if (name === "refname") {
+            return this.name;
+        }
+
+        if (name === "name") {
+            return this.name;
+        }
+
+        let propSchema = valOrDefault(this.schema.properties, []);
+        let property = propSchema.find(prop => prop.name === name);
+
+        if (isNullOrUndefined(property)) {
+            return undefined;
+        }
+
+        const { type, value } = property;
+
+        if (type === "string") {
+            return value;
+        }
+
+        if (type === "number") {
+            return +value;
+        }
+
+        if (type === "boolean") {
+            return toBoolean(value);
+        }
+
+        return value;
+    },
+    hasPrototype(name) {
+        if (isNullOrUndefined(this.schema.prototype)) {
+            return false;
+        }
+
+        let prototype = this.model.getConceptSchema(this.schema.prototype);
+
+        while (!isNullOrUndefined(prototype)) {
+            if (prototype.name === name) {
+                return true;
+            }
+
+            prototype = this.model.getConceptSchema(prototype.prototype);
+        }
+
+        return false;
+    }
+};
 
 
 export const PrototypeConcept = Object.assign({},

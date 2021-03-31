@@ -11,7 +11,7 @@ function resolveValue(content) {
     const { type, name } = content;
 
     if (type === "property") {
-        return this.projection.concept.getProperty(name);
+        return this.source.getProperty(name);
     }
 
     if (type === "param") {
@@ -66,7 +66,7 @@ const BaseTextStatic = {
             if (this.contentType === "html") {
                 this.element.append(htmlToElement(value));
             } else if (this.contentType === "property") {
-                this.element.textContent = this.projection.concept.getProperty(value);
+                this.element.textContent = this.source.getProperty(value);
             } else {
                 this.element.textContent = value.trim();
             }
