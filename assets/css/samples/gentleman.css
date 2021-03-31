@@ -509,7 +509,7 @@
 
 .textual-list__list-item--box {
     max-width: 100%; min-width: 120px;
-    padding: 6px 0 2px;
+    padding: 0 0 2px;
     background-color: #f9f9f9;
 }
     .textual-list__list-item--box:before {
@@ -520,13 +520,13 @@
     }
 
     .textual-list__list-item--box:not(:last-child) {
-        margin-right: 6px; margin-bottom: 6px;
+        margin-right: 6px; margin-bottom: 12px;
     }
     
 
 .textual-list__list-item--box > .btn-remove {
     position: absolute;
-    top: 0; right: 0;
+    bottom: 100%; right: 0;
     width: 15px; height: 15px;
     font-size: 0.85em; font-weight: 300;
     color: #999;

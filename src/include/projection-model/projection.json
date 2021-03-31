@@ -544,7 +544,7 @@
                                     "css": ["select-choice__list"]
                                 }
                             },
-                            "placeholder": "None",
+                            "placeholder": "Select an element",
                             "expanded": false,
                             "input": {
                                 "placeholder": "filter",
@@ -1762,6 +1762,8 @@
                                     "css": ["select-choice__list"]
                                 }
                             },
+                            "placeholder": "Select an element",
+                            "expanded": false,
                             "input": {
                                 "placeholder": "Select an element",
                                 "style": {

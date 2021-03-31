@@ -37,8 +37,8 @@ The *FlexLayout* adds flexibility to the *StackLayout*. It offers the ability to
 - Properties
   - **Orientation** `[string={row|column}]` (*required*): indicates which direction the *FlexLayout* should arrange its children.
   - **Wrappable** `[boolean]`: indicates whether a line can wrap its content on several lines.
-  - **Align-items** `[string={start|end|center|stretch|baseline}]`: indicates whether a line can wrap its content on several lines.
-  - **Justify-content** `[string={start|end|center|space-between|space-around|space-evenly}]`: indicates whether a line can wrap its content on several lines.
+  - **Align-items** `[string={start|end|center|stretch|baseline}]`: defines the children alignment.
+  - **Justify-content** `[string={start|end|center|space-between|space-around|space-evenly}]`: defines the anchoring of the children
 
 ### TableLayout
 
@@ -68,7 +68,7 @@ The *TextField* can capture key input.
 
 ### BinaryField
 
-The *BinaryField* can alternate between two states.
+The *BinaryField* can alternate between two states: *true-state* and *false-state*.
 
 #### Compatibility
 
@@ -77,8 +77,8 @@ The *BinaryField* can alternate between two states.
 
 #### Properties
 
-- **True-state** `[element]`: content displayed when the state is true
-- **False-state** `[element]`: content displayed when the state is false
+- **True-state** `[set:element]`: content displayed when the state is *true*
+- **False-state** `[set:element]`: content displayed when the state is *false*
 
 ### ChoiceField
 
@@ -93,10 +93,10 @@ The *ChoiceField* can group related choices.
 #### Properties
 
 - **expanded** `[boolean=true]`: indicates whether the options are enumerated or put in a drop-down list
-- **placeholder** `[string]`: The placeholder represents the 'empty' option
+- **placeholder** `[string]`: represents the 'empty' option
 - **input**: filter control to search the list of option
-  - **type**`[string={text|number|email|tel|url}]: type of expected input
-  - **placeholder**`[string]: Text that appears in the control when it is empty (no value set)
+  - **type** `[string=text]`: type of expected input
+  - **placeholder** `[string]`: Text that appears in the control when it is empty (no value set)
 - **choice template**: Template used for the choice options
 
 ### ListField
@@ -112,7 +112,7 @@ The *ListField* can manage a collection of element.
 - **action**: actions available for the list
   - **add**`[element]: Content displayed for the add *action* button
   - **remove**`[element]: Content displayed for the *remove* action button
-- **choice template**: Template used for the list items
+- **item template**: Template used for the list items
 
 ### TableField
 
@@ -140,9 +140,9 @@ The *Stactic image* is used to display images.
 
 #### Properties
 
-- **url** `[string]` (*required*): Defines the image's url
-- **width** `[number]`: Defines the image width
-- **height** `[number]`: Defines the image height
+- **url** `[string]`: Defines the image's url
+- **width** `[number]` (*optional*): Defines the image width
+- **height** `[number]` (*optional*): Defines the image height
 
 ### Link
 
@@ -165,8 +165,6 @@ To style your elements, you can do it directly when defining a projection or tho
 ### CSS
 
 Gentleman support CSS class selectors by allowing you to declare them in your projections and by exposing for each rendered element, some class selectors.
-
-### Inline
 
 ### Style rule
 
