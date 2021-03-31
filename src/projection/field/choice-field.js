@@ -1,7 +1,7 @@
 import {
     createDocFragment, createSpan, createDiv, createI, createInput, createUnorderedList,
     createListItem, findAncestor, isHTMLElement, removeChildren, isNullOrUndefined,
-    isNullOrWhitespace, isObject, valOrDefault, hasOwn, capitalizeFirstLetter, isEmpty
+    isNullOrWhitespace, isObject, valOrDefault, hasOwn, isEmpty
 } from "zenkai";
 import {
     getClosest, NotificationType, getVisibleElement, hide, isHidden, show, shake,
@@ -42,7 +42,6 @@ function getItemType(item) {
     return type;
 }
 
-
 /**
  * Get the choice element value
  * @param {HTMLElement} item
@@ -52,11 +51,11 @@ function getItemValue(item) {
     const { type, value } = item.dataset;
 
     if (type === "concept") {
-        return this.values.find(val => val.id === value);
+        return this.values.find(val => val.id === value).id;
     }
 
     if (type === "meta-concept") {
-        return this.values.find(val => val.name === value);
+        return this.values.find(val => val.name === value).name;
     }
 
     if (type === "value") {
@@ -70,14 +69,23 @@ function getItemValue(item) {
     return value;
 }
 
-
 const isSame = (val1, val2) => {
     if (val1.type === "concept") {
-        return val1.id === val2.id;
+        return isSame(val1.id, val2);
     }
+
+    if (val2.type === "concept") {
+        return isSame(val1, val2.id);
+    }
+
     if (val1.type === "meta-concept") {
-        return val1.name === val2.name;
+        return isSame(val1.name, val2);
     }
+
+    if (val2.type === "meta-concept") {
+        return isSame(val1, val2.name);
+    }
+
     return val1 === val2;
 };
 
@@ -133,7 +141,7 @@ const BaseChoiceField = {
      * @returns {boolean}
      */
     hasChanges() {
-        return this.value != this.source.getValue(true);
+        return this.value != this.source.getValue();
     },
     reset() {
         // TODO: Get initial value
@@ -170,6 +178,7 @@ const BaseChoiceField = {
 
         if (isNullOrUndefined(value)) {
             if (this.selection) {
+                this.selection.remove();
                 this.selection.classList.remove("selected");
             }
             this.selection = null;
@@ -179,7 +188,15 @@ const BaseChoiceField = {
 
         this.errors = [];
 
-        this.value = value;
+        if (isNullOrUndefined(value)) {
+            this.value = null;
+        } else if (value.object === "concept") {
+            this.value = value.id;
+        } else if (value.object === "meta-concept") {
+            this.value = value.name;
+        } else {
+            this.value = value;
+        }
 
         this.refresh();
     },
@@ -210,8 +227,11 @@ const BaseChoiceField = {
             if (this.selection) {
                 let clone = this.selection.cloneNode(true);
                 removeChildren(this.selectListValue);
+                while (this.selection.childNodes.length > 0) {
+                    this.selectListValue.append(this.selection.childNodes[0]);
+                }
                 while (clone.childNodes.length > 0) {
-                    this.selectListValue.append(clone.childNodes[0]);
+                    this.selection.append(clone.childNodes[0]);
                 }
             } else if (this.placeholder) {
                 removeChildren(this.selectListValue).append(this.placeholder);
@@ -412,7 +432,7 @@ const BaseChoiceField = {
             }, this.placeholder);
 
             this.choices.append(item);
-            
+
             StyleHandler.call(this, item, style);
         }
 
@@ -422,7 +442,7 @@ const BaseChoiceField = {
         });
 
         if (this.source.hasValue()) {
-            this.setValue(this.source.getValue(true));
+            this.setValue(this.source.getValue());
         }
 
         this.refresh();
@@ -464,6 +484,13 @@ const BaseChoiceField = {
         this.choices.append(fragment);
 
         if (!this.expanded) {
+            if(this.hasValue()) {
+                let clone = this.selectListValue.cloneNode(true);
+                removeChildren(this.selection);
+                while (clone.childNodes.length > 0) {
+                    this.selection.append(clone.childNodes[0]);
+                }
+            }
             show(this.selectList);
         }
 
@@ -635,6 +662,7 @@ const BaseChoiceField = {
             const item = children[i];
 
             let itemValue = getItemValue.call(this, item);
+
             if (itemValue && isSame(itemValue, value)) {
                 item.classList.add("selected");
                 item.dataset.selected = "selected";
@@ -706,7 +734,7 @@ const BaseChoiceField = {
             }, this.placeholder);
 
             this.choices.append(item);
-            
+
             StyleHandler.call(this, item, style);
         }
 

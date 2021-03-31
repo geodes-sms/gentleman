@@ -591,7 +591,7 @@
                                             "type": "static",
                                             "static": {
                                                 "type": "text",
-                                                "content": "Values",
+                                                "content": "Fixed values",
                                                 "style": {
                                                     "css": ["textual-option", "textual-option--style"]
                                                 }
@@ -721,7 +721,7 @@
                                             "type": "static",
                                             "static": {
                                                 "type": "text",
-                                                "content": "Values",
+                                                "content": "Fixed values",
                                                 "style": {
                                                     "css": ["textual-option", "textual-option--style"]
                                                 }
@@ -1836,24 +1836,26 @@
             "type": "field",
             "content": {
                 "type": "choice",
-                "input": {
-                    "placeholder": { "type": "property", "name": "refname" },
-                    "style": {
-                        "css": ["reference-choice--textual__input"]
-                    }
-                },
                 "choice": {
-                    "style": {
-                        "css": ["reference-choice--textual__list"]
-                    },
                     "option": {
                         "style": {
-                            "css": ["reference-choice--textual__list-option"]
+                            "css": ["select-choice__list-option"]
                         }
+                    },
+                    "style": {
+                        "css": ["select-choice__list"]
+                    }
+                },
+                "placeholder": "Select a reference",
+                "expanded": false,
+                "input": {
+                    "placeholder": "filter",
+                    "style": {
+                        "css": ["select-choice__input"]
                     }
                 },
                 "style": {
-                    "css": ["reference-choice--textual"]
+                    "css": ["select-choice", "select-choice--component"]
                 }
             }
         },
@@ -1880,24 +1882,26 @@
                         "type": "field",
                         "field": {
                             "type": "choice",
-                            "input": {
-                                "placeholder": { "type": "property", "name": "refname" },
-                                "style": {
-                                    "css": ["reference-choice--textual__input"]
-                                }
-                            },
                             "choice": {
-                                "style": {
-                                    "css": ["reference-choice--textual__list"]
-                                },
                                 "option": {
                                     "style": {
-                                        "css": ["reference-choice--textual__list-option"]
+                                        "css": ["select-choice__list-option"]
                                     }
+                                },
+                                "style": {
+                                    "css": ["select-choice__list"]
+                                }
+                            },
+                            "placeholder": "Select a reference",
+                            "expanded": false,
+                            "input": {
+                                "placeholder": "filter",
+                                "style": {
+                                    "css": ["select-choice__input"]
                                 }
                             },
                             "style": {
-                                "css": ["reference-choice--textual"]
+                                "css": ["select-choice", "select-choice--component"]
                             }
                         }
                     }

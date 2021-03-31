@@ -1,6 +1,6 @@
 import {
     isString, isNullOrUndefined, isObject, isNullOrWhitespace, isEmpty,
-    valOrDefault, toBoolean
+    valOrDefault, toBoolean, hasOwn
 } from "zenkai";
 import { Concept } from "./concept.js";
 
@@ -34,24 +34,38 @@ const BasePrototypeConcept = {
             return this;
         }
 
-        const { id, value, name } = args;
+        const { id = "", value, name } = args;
 
-        // this.id = id;
+        if (id.length > 10) {
+            this.id = id;
+        }
 
+        let concept = null;
         if (value) {
-            let concept = this.createConcept(value.name, value);
-            // console.log(concept);
-            // return;
-            this.setValue(concept);
+            concept = this.createConcept(value.name, value);
         } else if (name) {
-            let concept = this.createConcept(name, args);
+            concept = this.createConcept(name, args);
+        }
+
+        if (concept) {
             this.setValue(concept);
         }
 
         return this;
     },
-    getValue() {
+    getValue(deep = false) {
+        if (isNullOrUndefined(this.value)) {
+            return null;
+        }
+
+        if (deep) {
+            return this.target;
+        }
+
         return this.value;
+    },
+    getTarget() {
+        return this.target;
     },
     exportValue() {
         if (!this.hasValue()) {
@@ -64,7 +78,7 @@ const BasePrototypeConcept = {
     },
     setValue(_value) {
         let value = _value.name || _value;
-
+        
         let result = this.validate(value);
 
         if (result !== ResponseCode.SUCCESS) {
@@ -77,20 +91,19 @@ const BasePrototypeConcept = {
             };
         }
 
-        var concept = value;
-        if (isString(value)) {
+        let concept = _value;
+        let isConcept = _value && _value.object === "concept" && hasOwn(_value, "id");
+
+        if (!isConcept) {
             concept = this.createConcept(value);
-            if (isObject(_value)) {
-                concept.id = _value.id;
-            }
         }
 
-        if (this.value) {
-            this.value.delete(true);
+        if (this.target) {
+            this.target.delete(true);
         }
 
         this.target = concept;
-        this.value = concept;
+        this.value = value;
 
         this.notify("value.changed", this.value);
 
@@ -132,6 +145,7 @@ const BasePrototypeConcept = {
                     name: candidate.name,
                     concept: Object.create(metaConcept, {
                         object: { value: "meta-concept" },
+                        type: { value: "meta-concept" },
                         name: { value: candidate.name },
                         model: { value: this.model },
                         schema: { value: candidate }
@@ -190,6 +204,7 @@ const BasePrototypeConcept = {
         }
 
         const concept = this.model.createConcept(name, options);
+
         // const schema = this.model.getCompleteModelConcept({ name: name });
         // const concept = this._createConcept(this.model, schema, options);
 
@@ -226,11 +241,9 @@ const BasePrototypeConcept = {
         let value = null;
 
         if (this.hasValue()) {
-            let concept = this.getValue();
-
             value = {
-                id: concept.id,
-                name: concept.name
+                id: this.target.id,
+                name: this.target.name
             };
         }
 

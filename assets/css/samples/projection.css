@@ -242,7 +242,6 @@
 
 .select-choice {
     display: flex; 
-    width: 100%;
     border-bottom: 2px solid #c0c0c0;
 }
 
@@ -599,10 +598,6 @@
         padding-top: 1px; padding-bottom: 2px;
         color: #555;
         background-color: #a9a9a9;
-    }
-
-    .reference-choice--textual:not(.empty) .field--choice__selection {
-        display: none!important;
     }
 
     .render-config .text-style__attribute > .structure__btn-delete,

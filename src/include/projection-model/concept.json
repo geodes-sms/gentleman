@@ -265,7 +265,7 @@
                         "name": "string",
                         "default": "text",
                         "constraint": {
-                            "values": ["text", "number", "email", "tel", "url"]
+                            "values": ["text", "number", "email", "tel", "url", "color", "date", "range"]
                         }
                     }
                 },

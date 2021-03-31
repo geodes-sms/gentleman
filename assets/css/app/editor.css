@@ -24,9 +24,8 @@
     position: relative;
     display: flex; flex-direction: row;
     background-color: #fefefe;
-    overflow-y: auto; overflow-x: visible;
-    scrollbar-color: #c0c0c0; scrollbar-width: thin;
     outline: none;
+    overflow: auto;
 }
 
     .editor-body-main {
@@ -48,7 +47,7 @@
 }
 
 .editor-footer {
-    max-height: 10%;
+    max-height: 20%;
     border-top: 2px solid #555;
     overflow: auto;
 }
@@ -82,6 +81,9 @@
     position: relative;
     display: flex; flex-wrap: wrap; 
     padding: 18px calc(1% + 6px) 12px;
+    
+    overflow-y: auto; overflow-x: visible;
+    scrollbar-color: #c0c0c0; scrollbar-width: thin;
 }
 
     .editor-concept {
@@ -389,7 +391,7 @@
 -----------------------------------------------------------------------------*/
 
 .log-list {
-    display: flex; flex-direction: column-reverse;
+    display: flex; flex-direction: column;
     background-color: #d5d5d5;
 } 
     .log-list:not(:empty) {

@@ -6,6 +6,7 @@ import { StringConcept, SetConcept, BooleanConcept, NumberConcept, ReferenceConc
 function init(model, schema) {
     return {
         object: { value: "concept" },
+        type: { value: "concept" },
         model: { value: model },
         name: { value: schema.name },
         base: { value: schema.base },

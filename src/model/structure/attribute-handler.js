@@ -110,7 +110,7 @@ export const AttributeHandler = {
 
             return attribute;
         }
-
+// console.log(name);
         const schema = this.getAttributeSchema(name);
 
         let value = this.model.getValue(_value);
@@ -118,7 +118,7 @@ export const AttributeHandler = {
         var attribute = Attribute.create(this, schema).init(value);
 
         this.addAttribute(attribute);
-
+// console.log(this.attributes_created);
         return attribute;
     },
 

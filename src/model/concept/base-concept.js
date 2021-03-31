@@ -16,7 +16,7 @@ const _BaseConcept = {
         if (id.length > 10) {
             this.id = id;
         }
-
+        
         attributes.forEach(attr => {
             const { name, id, value } = attr;
 

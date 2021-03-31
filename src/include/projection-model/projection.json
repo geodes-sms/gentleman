@@ -3465,24 +3465,26 @@
             "tags": ["template-reference"],
             "content": {
                 "type": "choice",
-                "input": {
-                    "placeholder": "null",
-                    "style": {
-                        "css": ["reference-choice--textual__input"]
-                    }
-                },
                 "choice": {
-                    "style": {
-                        "css": ["reference-choice--textual__list"]
-                    },
                     "option": {
                         "style": {
-                            "css": ["reference-choice--textual__list-option"]
+                            "css": ["select-choice__list-option"]
                         }
+                    },
+                    "style": {
+                        "css": ["select-choice__list"]
+                    }
+                },
+                "placeholder": "Select a template",
+                "expanded": false,
+                "input": {
+                    "placeholder": "filter",
+                    "style": {
+                        "css": ["select-choice__input"]
                     }
                 },
                 "style": {
-                    "css": ["reference-choice--textual"]
+                    "css": ["select-choice"]
                 }
             }
         },

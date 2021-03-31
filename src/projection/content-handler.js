@@ -95,7 +95,7 @@ export function ContentHandler(schema, concept, args = {}) {
             clear();
 
             if (contentConcept.hasValue()) {
-                let concept = contentConcept.getValue();
+                let concept = contentConcept.getValue(true);
 
                 let projection = this.projection.model.createProjection(concept, tag).init();
                 projection.optional = true;
