@@ -177,18 +177,14 @@ const BasePrototypeConcept = {
         }
 
         const children = [];
-        const concept = this.getValue();
 
         if (isNullOrUndefined(name)) {
-            children.push(concept);
-        } else if (concept.name === name) {
-            children.push(concept);
+            children.push(this.target);
+        } else if (this.target.name === name) {
+            children.push(this.target);
         }
 
         return children;
-    },
-    getDescendant(name) {
-        return [];
     },
 
     createConcept(name, _value) {

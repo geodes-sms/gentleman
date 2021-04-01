@@ -72,12 +72,12 @@ export function buildConceptHandler(model, _options = {}) {
     this.notify("The concept model was <strong>successfully</strong> built", NotificationType.SUCCESS, 2000);
 
     if (options.download) {
-        this.download(result, options.name);
+        this.download({
+            concept: result
+        }, options.name);
     }
 
-    return {
-        concept: result
-    };
+    return result;
 }
 
 function buildConcept(concept) {
@@ -186,7 +186,7 @@ function buildAttribute(attribute) {
 
     const schema = {
         "name": name,
-        "target": buildTarget.call(this, getValue(attribute, "target")),
+        "target": buildTarget.call(this, getValue(attribute, "target", true)),
         "required": required,
         "description": description,
     };
@@ -213,7 +213,7 @@ function buildTarget(target) {
     };
 
     if (hasAttr(target, "accept")) {
-        let accept = getValue(target, "accept");
+        let accept = getValue(target, "accept", true);
 
         if (isObject(accept)) {
             result["accept"] = buildTarget.call(this, accept);
@@ -356,7 +356,7 @@ function buildProperty(property) {
         };
     }
 
-    const target = getValue(property, "target");
+    const target = getValue(property, "target", true);
 
     const type = target.getProperty(PROP_TYPE);
 

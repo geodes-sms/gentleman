@@ -196,6 +196,8 @@ export const Editor = {
     instances: null,
     /** @type {Map} */
     resources: null,
+    /** @type {Map} */
+    models: null,
 
     init(args = {}) {
         const { conceptModel, projectionModel, config = {}, handlers = {} } = args;
@@ -207,6 +209,7 @@ export const Editor = {
         this.handlers = new Map();
         this.instances = new Map();
         this.resources = new Map();
+        this.models = new Map();
 
         for (const key in handlers) {
             const handler = handlers[key];
@@ -302,7 +305,7 @@ export const Editor = {
         this.updateActiveInstance(instance);
 
         this.refresh();
-        
+
         return instance;
     },
     removeInstance(id) {
@@ -659,6 +662,13 @@ export const Editor = {
     addResource(file, _name) {
         let name = valOrDefault(_name, file.name.split(".")[0]);
         this.resources.set(name, file);
+        console.log(file.type);
+        // if(file.type==="json"){}
+        let reader = new FileReader();
+        reader.onload = (event) => {
+            this.models.set(name, reader.result);
+        };
+        reader.readAsText(file);
 
         this.refresh();
 
@@ -671,6 +681,20 @@ export const Editor = {
      */
     getResource(name) {
         return this.resources.get(name);
+    },
+    /**
+     * Gets a model from the register
+     * @param {string} name 
+     * @returns 
+     */
+    getModel(name) {
+        let schema = this.models.get(name);
+
+        if (isNullOrUndefined(schema)) {
+            return null;
+        }
+
+        return JSON.parse(schema);
     },
     /**
      * Verifies the presence of a resource in the register
@@ -787,7 +811,7 @@ export const Editor = {
         this.unloadConceptModel();
         this.clear();
 
-        this.conceptModel = ConceptModelManager.createModel(schema).init(values);
+        this.conceptModel = ConceptModelManager.createModel(schema, this).init(values);
 
         if (isNullOrUndefined(this.conceptModel)) {
             // TODO: add validation and notify of errors

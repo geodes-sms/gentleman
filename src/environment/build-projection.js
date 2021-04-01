@@ -123,7 +123,7 @@ function buildProjection(concept) {
         };
     }
 
-    const content = getValue(concept, ATTR_CONTENT);
+    const content = getValue(concept, ATTR_CONTENT, true);
 
     const contentType = content.getProperty("contentType");
 
@@ -170,7 +170,7 @@ function buildTemplate(concept) {
     const content = [];
 
     getValue(concept, ATTR_CONTENT).filter(proto => proto.hasValue()).forEach(proto => {
-        const element = proto.getValue();
+        const element = proto.getValue(true);
         content.push(buildElement.call(this, element));
     });
 
@@ -250,7 +250,7 @@ function buildLayout(layout) {
         schema.orientation = getValue(layout, 'orientation');
 
         getValue(layout, "elements").filter(proto => proto.hasValue()).forEach(proto => {
-            const element = proto.getValue();
+            const element = proto.getValue(true);
             disposition.push(buildElement.call(this, element));
         });
     } else if (elementType === "flex") {
@@ -260,13 +260,13 @@ function buildLayout(layout) {
         schema.justifyContent = getValue(layout, 'justify-content');
 
         getValue(layout, "elements").filter(proto => proto.hasValue()).forEach(proto => {
-            const element = proto.getValue();
+            const element = proto.getValue(true);
             disposition.push(buildElement.call(this, element));
         });
     } else if (elementType === "wrap") {
 
         getValue(layout, "elements").filter(proto => proto.hasValue()).forEach(proto => {
-            const element = proto.getValue();
+            const element = proto.getValue(true);
             disposition.push(buildElement.call(this, element));
         });
     } else if (elementType === "cell") {
@@ -327,7 +327,7 @@ function buildElement(element) {
             const content = [];
 
             getValue(element, "placeholder").filter(proto => proto.hasValue()).forEach(proto => {
-                const element = proto.getValue();
+                const element = proto.getValue(true);
                 content.push(buildElement.call(this, element));
             });
             schema.placeholder = content;
@@ -350,7 +350,7 @@ function buildElement(element) {
             const content = [];
 
             getValue(element, "placeholder").filter(proto => proto.hasValue()).forEach(proto => {
-                const element = proto.getValue();
+                const element = proto.getValue(true);
                 content.push(buildElement.call(this, element));
             });
             schema.placeholder = content;
@@ -407,7 +407,7 @@ function buildStatic(element, type) {
         schema.content = [];
 
         getValue(element, "content").filter(proto => proto.hasValue()).forEach(proto => {
-            const element = proto.getValue();
+            const element = proto.getValue(true);
             schema.content.push(buildElement.call(this, element));
         });
     } else if (type === "plink") {
@@ -415,7 +415,7 @@ function buildStatic(element, type) {
         schema.content = [];
 
         getValue(element, "content").filter(proto => proto.hasValue()).forEach(proto => {
-            const element = proto.getValue();
+            const element = proto.getValue(true);
             schema.content.push(buildElement.call(this, element));
         });
     }
@@ -447,11 +447,11 @@ function buildField(field) {
         schema.state = {
             "true": {
                 "content": getValue(field, "true-state").filter(proto => proto.hasValue())
-                    .map(proto => buildElement.call(this, proto.getValue()))
+                    .map(proto => buildElement.call(this, proto.getValue(true)))
             },
             "false": {
                 "content": getValue(field, "false-state").filter(proto => proto.hasValue())
-                    .map(proto => buildElement.call(this, proto.getValue()))
+                    .map(proto => buildElement.call(this, proto.getValue(true)))
             }
         };
     } else if (elementType === "choice") {
@@ -489,7 +489,7 @@ function buildField(field) {
                 const content = [];
 
                 getValue(add, ATTR_CONTENT).filter(proto => proto.hasValue()).forEach(proto => {
-                    const element = proto.getValue();
+                    const element = proto.getValue(true);
                     content.push(buildElement.call(this, element));
                 });
                 schema.action.add.content = content;
@@ -501,7 +501,7 @@ function buildField(field) {
                 const content = [];
 
                 getValue(remove, ATTR_CONTENT).filter(proto => proto.hasValue()).forEach(proto => {
-                    const element = proto.getValue();
+                    const element = proto.getValue(true);
                     content.push(buildElement.call(this, element));
                 });
                 schema.action.remove.content = content;
@@ -616,7 +616,7 @@ function buildTextStyle(style) {
     }
 
     if (hasAttr(style, "colour") && hasValue(style, "colour")) {
-        schema.color = buildColour.call(this, getValue(style, 'colour'));
+        schema.color = buildColour.call(this, getValue(style, 'colour', true));
     }
 
     if (hasAttr(style, "opacity") && hasValue(style, "opacity")) {
@@ -650,7 +650,7 @@ function buildBoxStyle(style) {
     }
 
     if (hasAttr(style, "background") && hasValue(style, "background")) {
-        schema.background = buildColour.call(this, getValue(style, "background"));
+        schema.background = buildColour.call(this, getValue(style, "background", true));
     }
 
     if (hasAttr(style, "width")) {

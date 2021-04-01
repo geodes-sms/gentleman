@@ -3,7 +3,6 @@
 // Import CSS
 import './stylesheets.js';
 import '@css/samples/gentleman.css';
-import '@css/samples/projection.css';
 
 import { Manager } from '@environment/index.js';
 

@@ -288,6 +288,11 @@
     .field--choice__choice {
         list-style: none;
     }
+    .field--choice__choice {
+        list-style: none;
+        margin-right: 4px;
+        border: 1px solid #555;
+    }
 
 
 .field--choice__select-wrapper {

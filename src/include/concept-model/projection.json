@@ -227,6 +227,10 @@
                     {
                         "type": "template",
                         "name": "attribute-definition"
+                    },
+                    {
+                        "type": "template",
+                        "name": "property-definition"
                     }
                 ],
                 "style": {
@@ -450,33 +454,6 @@
                 ],
                 "style": {
                     "css": ["inline"]
-                }
-            }
-        },
-        {
-            "concept": { "name": "primitive" },
-            "tags": ["textual-reference"],
-            "type": "field",
-            "content": {
-                "type": "choice",
-                "input": {
-                    "placeholder": "concept's name",
-                    "style": {
-                        "css": ["target-choice--textual__input"]
-                    }
-                },
-                "choice": {
-                    "style": {
-                        "css": ["target-choice--textual__list"]
-                    },
-                    "option": {
-                        "style": {
-                            "css": ["target-choice--textual__list-option"]
-                        }
-                    }
-                },
-                "style": {
-                    "css": ["target-choice--textual"]
                 }
             }
         },
@@ -1409,27 +1386,43 @@
         {
             "concept": { "name": "value" },
             "tags": ["textual"],
-            "type": "field",
+            "type": "layout",
             "content": {
-                "type": "choice",
-                "input": {
-                    "placeholder": "primitive",
-                    "style": {
-                        "css": ["target-choice--textual__input"]
-                    }
-                },
-                "choice": {
-                    "style": {
-                        "css": ["target-choice--textual__list"]
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "field",
+                        "field": {
+                            "type": "choice",
+                            "choice": {
+                                "option": {
+                                    "style": {
+                                        "css": ["target-choice--textual__list-option"]
+                                    }
+                                },
+                                "style": {
+                                    "css": ["target-choice--textual__list"]
+                                }
+                            },
+                            "input": false,
+                            "style": {
+                                "css": ["target-choice--textual"]
+                            }
+                        }
                     },
-                    "option": {
+                    {
+                        "type": "projection",
+                        "bind": "value",
+                        "placeholder": false,
+                        "tag": "choice-selection",
                         "style": {
-                            "css": ["target-choice--textual__list-option"]
+                            "css": ["primitive-constraint"]
                         }
                     }
-                },
+                ],
                 "style": {
-                    "css": ["target-choice--textual"]
+                    "css": ["inline"]
                 }
             }
         },

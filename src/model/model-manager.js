@@ -95,9 +95,10 @@ const MM_Model = {
 const models = [];
 
 export const ConceptModelManager = {
-    createModel(schema) {
+    createModel(schema, environment) {
         var model = Object.create(ConceptModel, {
-            schema: { value: schema }
+            schema: { value: schema },
+            environment: { value: environment },
         });
 
         models.push(model);

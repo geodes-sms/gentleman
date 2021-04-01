@@ -124,11 +124,18 @@
                     "target": {
                         "name": "name",
                         "src": [
-                            "string", "number", "boolean", "set", "reference"
-                        ],
-                        "values": [
                             "string", "number", "boolean", "set", "reference",
-                            { "type": "meta-reference", "source": "metamodel" }
+                            { 
+                                "type": "meta-reference", 
+                                "target": {
+                                    "type": "property",
+                                    "name": "name"
+                                },
+                                "source": {
+                                    "type": "resource",
+                                    "name": "metamodel"
+                                } 
+                            }
                         ]
                     }
                 },

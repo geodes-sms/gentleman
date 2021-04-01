@@ -127,7 +127,26 @@ const _StringConcept = {
                 this.model.getConcepts(this.name)
                     .filter(c => c.hasValue() && c.value !== this.value)
                     .map(c => c.getValue()));
-            return [...uniqueValues, ...this.src];
+            return [...uniqueValues, ...this.src.map(val => {
+                if (val.type === "meta-reference") {
+                    const { source, target } = val;
+
+                    let model = this.model.environment.getModel(source.name || source);
+                    if (isNullOrUndefined(model)) {
+                        return null;
+                    }
+
+                    let targetSource = model.concept || model;
+
+                    if (!Array.isArray(targetSource)) {
+                        return null;
+                    }
+
+                    return targetSource.map(x => x[target.name]);
+                }
+
+                return val;
+            })].flat();
         }
 
         return values.map(value => resolveValue.call(this, value)).flat().filter(val => !isNullOrWhitespace(val));
