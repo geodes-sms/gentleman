@@ -124,12 +124,15 @@
                     "target": {
                         "name": "name",
                         "src": [
-                            "string", "number", "boolean", "set", "reference",
+                            "string", 
+                            "number", 
+                            "boolean", 
+                            "set", 
+                            "reference",
                             { 
-                                "type": "meta-reference", 
+                                "type": "reference", 
                                 "target": {
-                                    "type": "property",
-                                    "name": "name"
+                                    "value": "name"
                                 },
                                 "source": {
                                     "type": "resource",
@@ -761,7 +764,7 @@
                     "target": {
                         "name": "string",
                         "constraint": {
-                            "values": ["raw", "html", "property"]
+                            "values": ["raw", "html", "property", "attribute"]
                         }
                     },
                     "value": "text"
@@ -924,7 +927,35 @@
                 {
                     "name": "value",
                     "target": {
-                        "name": "name"
+                        "name": "attribute",
+                        "src": [
+                            { 
+                                "type": "reference", 
+                                "target": {
+                                    "name": "attributes",
+                                    "rel": "children",
+                                    "value": "name",
+                                    "source": {
+                                        "type": "reference",
+                                        "rel": "parent",
+                                        "name": "projection",
+                                        "value": {
+                                            "type": "reference",
+                                            "rel": "children",
+                                            "name": "concept",
+                                            "value": {
+                                                "type": "attribute",
+                                                "name": "name"
+                                            }
+                                        }
+                                    }
+                                },
+                                "source": {
+                                    "type": "resource",
+                                    "name": "metamodel"
+                                } 
+                            }
+                        ]
                     }
                 },
                 {
@@ -1156,16 +1187,16 @@
             "nature": "concrete",
             "attributes": [
                 {
-                    "name": "inner space",
+                    "name": "inner",
                     "target": {
-                        "name": "direction size"
+                        "name": "spacing"
                     },
                     "required": false
                 },
                 {
-                    "name": "outer space",
+                    "name": "outer",
                     "target": {
-                        "name": "direction size"
+                        "name": "spacing"
                     },
                     "required": false
                 },
@@ -1187,6 +1218,13 @@
                     "name": "height",
                     "target": {
                         "name": "size"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "border",
+                    "target": {
+                        "name": "border"
                     },
                     "required": false
                 },
@@ -1255,6 +1293,27 @@
             ]
         },
         {
+            "name": "hex colour",
+            "nature": "concrete",
+            "prototype": "colour",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "value": {
+                                "type": "regex",
+                                "regex": {
+                                    "pattern": "^#\\w+$"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
             "name": "rgb colour",
             "nature": "concrete",
             "prototype": "colour",
@@ -1282,34 +1341,8 @@
 
         
         {
-            "name": "multi size",
-            "nature": "prototype",
-            "attributes": []
-        },
-        {
-            "name": "omni size",
+            "name": "spacing",
             "nature": "concrete",
-            "prototype": "multi size",
-            "attributes": [
-                {
-                    "name": "value",
-                    "target": {
-                        "name": "size"
-                    }
-                },
-                {
-                    "name": "type",
-                    "target": {
-                        "name": "direction"
-                    },
-                    "required": false
-                }
-            ]
-        },
-        {
-            "name": "direction size",
-            "nature": "concrete",
-            "prototype": "multi size",
             "attributes": [
                 {
                     "name": "top",
@@ -1337,6 +1370,64 @@
                 }
             ]
         },
+
+
+        {
+            "name": "border",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "top",
+                    "target": {
+                        "name": "border value"
+                    }
+                },
+                {
+                    "name": "right",
+                    "target": {
+                        "name": "border value"
+                    }
+                },
+                {
+                    "name": "bottom",
+                    "target": {
+                        "name": "border value"
+                    }
+                },
+                {
+                    "name": "left",
+                    "target": {
+                        "name": "border value"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "border value",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "width",
+                    "target": {
+                        "name": "size"
+                    }
+                },
+                {
+                    "name": "colour",
+                    "target": {
+                        "name": "colour"
+                    }
+                },
+                {
+                    "name": "type",
+                    "target": {
+                        "name": "border type",
+                        "default": "solid"
+                    }
+                }
+            ]
+        },
+
 
         {
             "name": "rgb",
@@ -1426,6 +1517,14 @@
             }
         },
         {
+            "name": "border type",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "values": ["solid", "dotted", "dashed", "double", "inset", "outset"]
+            }
+        },
+        {
             "name": "direction",
             "nature": "derivative",
             "base": "string",
@@ -1450,6 +1549,19 @@
                     "type": "regex",
                     "regex": {
                         "pattern": "^\\w+(-\\w+)*$"
+                    }
+                }
+            }
+        },
+        {
+            "name": "attribute",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "length": {
+                    "type": "range",
+                    "range": {
+                        "min": 1
                     }
                 }
             }

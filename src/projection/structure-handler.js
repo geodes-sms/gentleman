@@ -12,7 +12,11 @@ export function AttributeHandler(schema, concept) {
     const { name, merge = false, required = concept.isAttributeRequired(name), tag, placeholder = {}, style } = schema;
 
     if (!concept.hasAttribute(name)) {
-        throw new Error(`Attribute '${name}' does not exist in the concept '${concept.name}'`);
+        console.error(`Attribute '${name}' does not exist in the concept '${concept.name}'`);
+        return createI({
+            class: ["missing-attribute"],
+            hidden: true,
+        }, name);
     }
 
     if (required) {

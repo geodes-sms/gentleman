@@ -1,20 +1,19 @@
-.editor-container {
+.gentleman-editor {
     position: relative;
     display: flex; flex-direction: column;
     width: 100%;
-    box-shadow: 0 1px 2px rgba(100, 100, 100, 0.95);
     z-index: 1;
 }
-    .editor-container .editor-header {
+    .gentleman-editor .editor-header {
         border-bottom: 2px solid #c0c0c0;
     }
 
-    .editor-container.no-concept-model .editor-header {
+    .gentleman-editor.no-concept-model .editor-header {
         background-color: #fff;
         border-bottom: 2px solid #d5d5d5;
     }
     
-    .editor-container.no-concept-model .editor-body {
+    .gentleman-editor.no-concept-model .editor-body {
         padding: 0;
     }
 

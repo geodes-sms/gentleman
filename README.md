@@ -22,13 +22,13 @@ Gentleman aims to **to close the gap between models and domain experts**.
 
 The *metamodelling* workflow is reserved for the creation of concepts and projections.
 
-**Required scripts:** `gentleman.mod.js` **+** `gentleman.app.js`
+**Required scripts:** `gentleman.core.js` **+** `gentleman.models.js`
 
 ### **Modelling**
 
 The *modelling* workflow is reserved for the creation of concept instances using a projection ensemble.
 
-**Required scripts:** `gentleman.app.js`
+**Required scripts:** `gentleman.core.js`
 
 ## Integration
 
@@ -45,8 +45,8 @@ Gentleman can be added to any web application in 2 steps:
         ...
         <div data-gentleman="editor"></div>
         ...
-        <script src="gentleman.mod.js"></script>  <!-- required for << metamodelling workflow >> -->
-        <script src="gentleman.app.js"></script>
+        <script src="gentleman.core.js"></script>
+        <script src="gentleman.models.js"></script>  <!-- required for << metamodelling workflow >> -->
     </body>
 </html>
 ```

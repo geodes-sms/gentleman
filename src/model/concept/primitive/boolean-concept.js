@@ -42,7 +42,7 @@ const _BooleanConcept = {
     initValue(args) {
         if (isNullOrUndefined(args)) {
             this.value = this.default;
-            
+
             return this;
         }
 
@@ -81,6 +81,7 @@ const _BooleanConcept = {
 
         this.value = toBoolean(value);
         this.notify("value.changed", value);
+        this.model.notify("value.changed", this);
 
         return {
             success: true,
@@ -117,17 +118,20 @@ const _BooleanConcept = {
     },
 
 
-    build() {
-        return this.getValue();
-    },
-    copy() {
-        var copy = {
+    copy(save = true) {
+        if (!this.hasValue()) {
+            return null;
+        }
+
+        const copy = {
             name: this.name,
             nature: this.nature,
             value: this.getValue()
         };
 
-        this.model.addValue(copy);
+        if (save) {
+            this.model.addValue(copy);
+        }
 
         return copy;
     },

@@ -118,6 +118,7 @@ const _NumberConcept = {
         }
 
         this.notify("value.changed", value);
+        this.model.notify("value.changed", this);
 
         return {
             success: true,
@@ -128,6 +129,7 @@ const _NumberConcept = {
         this.value = null;
 
         this.notify("value.changed", this.value);
+        this.model.notify("value.changed", this);
 
         return {
             success: true,
@@ -206,18 +208,15 @@ const _NumberConcept = {
         return ResponseCode.SUCCESS;
     },
 
-    build() {
-        return this.getValue();
-    },
+
     copy(save = true) {
         if (!this.hasValue()) {
             return null;
         }
 
-        var copy = {
+        const copy = {
             name: this.name,
             nature: this.nature,
-            root: this.isRoot(),
             value: this.getValue()
         };
 

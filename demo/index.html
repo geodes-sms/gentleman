@@ -4,32 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Gentleman: design</title>
-    <meta name="desciption" content="A web-based projectional editor. Enjoy a new way to express and interact with your DSL.">
+    <title>Gentleman: Metamodelling</title>
+    <meta name="desciption"
+        content="A web-based projectional editor. Enjoy a new way to express and interact with your DSL.">
     <link rel="stylesheet" href="./../dist/style.min.css">
     <link rel="stylesheet" href="./../assets/css/samples/gentleman.css">
-    <link rel="stylesheet" href="./../assets/css/samples/projection.css">
-    <style>
-        main {
-            height: calc(100% - 20px);
-        }
-    </style>
+    <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
-    <header>
-        <div class="content-wrapper content-wrapper--header">
-            <a class="logo noselect" href="/" style="display: inline-block; background-color: #0d0d0d; color: #fff; font-size: 1.2rem; padding: 2px 4px 6px; font-weight: 500; text-decoration: none;">
-                Demo Gentleman <strong title="Last updated: 2021-03-31">0.2.5</strong>
+    <header class="page-header">
+        <div class="content-wrapper">
+            <a class="link header__link" href="https://geodes-sms.github.io/gentleman/">
+                <span class="link-logo">Gentleman</span>
+                <strong class="link-version font-code" title="Last updated: 2021-04-12">0.2.6</strong>
             </a>
         </div>
     </header>
-    <main>
-        <div data-gentleman="editor"></div>
+    <main class="page-body">
+        <section class="app">
+            <header class="app-menu">
+                <span class="app-menu-item">></span>
+                <button class="btn app-menu__button" data-action="load-model" data-name="concept-model">
+                    Metamodel
+                </button>
+                <button class="btn app-menu__button" data-action="load-model" data-name="projection-model">
+                    Projection
+                </button>
+            </header>
+            <div class="app-body">
+                <div class="app-editor" data-gentleman="editor"></div>
+            </div>
+        </section>
     </main>
 
-    <script src="./../dist/gentleman.mod.js"></script>
-    <script src="./../dist/gentleman.app.js"></script>
+    <script src="./../dist/gentleman.core.js"></script>
+    <script src="./../dist/gentleman.models.js"></script>
+    <script src="./app.js"></script>
 </body>
 
 </html>

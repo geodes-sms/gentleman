@@ -1,7 +1,5 @@
-import {
-    isString, isObject, isEmpty, hasOwn, isIterable, valOrDefault, isNullOrUndefined
-} from "zenkai";
-import { deepCopy, Events } from "@utils/index.js";
+import { isString, isObject, isEmpty, hasOwn, isIterable, valOrDefault, isNullOrUndefined } from "zenkai";
+import { deepCopy } from "@utils/index.js";
 import { ConceptFactory } from "./concept/factory.js";
 
 
@@ -15,10 +13,13 @@ export const ConceptModel = {
     concepts: null,
     /** @type {Concept[]} */
     values: null,
+    /** @type {*[]} */
+    listeners: null,
 
     init(values) {
         this.concepts = [];
         this.values = [];
+        this.listeners = [];
 
         if (Array.isArray(values)) {
             this.values = values;
@@ -176,7 +177,7 @@ export const ConceptModel = {
         value.id = nextValueId();
         this.values.push(value);
 
-        Events.emit("value.added", value);
+        this.notify("value.added", value);
 
         return this;
     },
@@ -198,9 +199,37 @@ export const ConceptModel = {
 
         let removedValue = this.values.splice(index, 1)[0];
 
-        Events.emit("value.removed", removedValue);
+        this.notify("value.removed", removedValue);
 
         return removedValue;
+    },
+
+
+    register(listener) {
+        if (!this.listeners.includes(listener)) {
+            this.listeners.push(listener);
+        }
+
+        return true;
+    },
+    unregister(listener) {
+        let index = this.listeners.indexOf(listener);
+
+        if (index !== -1) {
+            this.listeners.splice(index, 1);
+
+            return true;
+        }
+
+        return false;
+    },
+    unregisterAll() {
+        this.listeners = [];
+    },
+    notify(message, value) {
+        this.listeners.forEach(listener => {
+            listener.update(message, value);
+        });
     },
 
     /**
@@ -209,7 +238,7 @@ export const ConceptModel = {
      * @returns {boolean}
      */
     isConcept(name) {
-        if(!isString(name)) {
+        if (!isString(name)) {
             return false;
         }
 
@@ -221,7 +250,7 @@ export const ConceptModel = {
      * @returns {boolean}
      */
     isConcrete(name) {
-        if(!isString(name)) {
+        if (!isString(name)) {
             return false;
         }
 
@@ -239,10 +268,10 @@ export const ConceptModel = {
      * @returns {boolean}
      */
     isPrototype(name) {
-        if(!isString(name)) {
+        if (!isString(name)) {
             return false;
         }
-        
+
         const concept = this.schema.find(concept => concept.name === name);
 
         if (isNullOrUndefined(concept)) {

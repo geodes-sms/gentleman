@@ -18,37 +18,19 @@ export const BaseAttribute = {
         return this;
     },
     getValue() {
-        return this.target.value;
+        return this.target.getValue();
     },
     hasValue() {
         return this.target.hasValue();
     },
 
+
     copy() {
         if (!this.target.hasValue()) {
             return null;
         }
-
-        const { nature } = this.target;
-
-        let copy = {
-            name: this.target.name,
-        };
-
-        let value = this.target.exportValue();
-
-        if (nature === "primitive") {
-            copy.value = value;
-        } else if (nature === "prototype" && this.target.hasValue()) {
-            copy.value = {
-                name: this.target.value.name,
-                attributes: value
-            };
-        } else {
-            copy.attributes = value;
-        }
-
-        return copy;
+        
+        return this.target.copy(false);
     },
     export() {
         if (!this.target.hasValue()) {

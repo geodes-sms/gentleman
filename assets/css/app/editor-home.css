@@ -1,6 +1,6 @@
 .editor-home-section {
     display: flex; flex-direction: column; align-items: center;
-    padding: 12px 24px 18px;
+    padding-top: 12px; padding-bottom: 12px;
     width: 100%;
     background-color: rgba(255, 255, 255, 0.8);
     box-shadow: 0 3px 2px -1px #999;
@@ -21,7 +21,10 @@
 
     .editor-home-section__menu {
         display: flex; flex-direction: column;
-        padding: 6px 12px;
+    }
+
+    .editor-home-section__menu:not(:last-child) {
+        margin-right: 12px;
     }
 
     .editor-home-section--model__content {
@@ -37,7 +40,7 @@
         border: 2px solid #d5d5d5;
         background-color: #f5f5f5;
         overflow: hidden;
-        padding: 12px 24px 6px;
+        padding: 12px 18px 6px;
         border-radius: 6px;
     }
     .editor-home-section__drop-area.highlight {
@@ -88,7 +91,7 @@
         }
 
         .file-section__actionbar-button {
-            padding: 4px 6px;
+            padding: 4px 6px 5px;
             color: #fff;
             font-size: 1.2em;
             border-radius: 2px;
@@ -173,26 +176,7 @@
             transition: .2s;
             cursor: pointer;  
         }
-       
-    .editor-home-section__button {
-        position: relative;
-        display: flex; flex-direction: column; 
-        justify-content: center; align-items: center;
-        
-        margin-top: 12px;
-        padding: 8px 12px; 
-        font-size: 1.5em; font-weight: 600;
-        text-align: center;
-        border-radius: 2px;
-        color: #fff;
-        background-color: #2d71b5;
-        transition: .2s;
-        cursor: pointer;
-    }
 
-    .editor-home-section__button--projection {
-        background-color: #b52d44;
-    }
     
     .editor-home-section--model__button {
         position: relative;

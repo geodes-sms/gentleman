@@ -7,8 +7,11 @@ const path = require('path');
 module.exports = merge(common, {
     mode: 'production',
     entry: {
-        app: './src/index.js',
-        mod: './src/mod-design.js',
+        core: {
+            import: './src/index.js',
+            library: { name: 'Gentleman', type: "umd" },
+        },
+        models: './scripts/models.js',
     },
     output: {
         filename: 'gentleman.[name].js',

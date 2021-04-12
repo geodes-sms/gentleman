@@ -1,4 +1,4 @@
-import { isNullOrUndefined, isEmpty, valOrDefault } from "zenkai";
+import { isNullOrUndefined, isEmpty, valOrDefault, toBoolean } from "zenkai";
 import { Concept } from "./../concept.js";
 
 
@@ -65,32 +65,6 @@ const _SetConcept = {
 
         return concepts;
     },
-    exportValue() {
-        const concepts = this.value.map(id => this.model.getConcept(id));
-
-        return concepts.map(concept => {
-            let output = {
-                name: concept.name,
-            };
-
-            const { nature } = concept;
-
-            let value = concept.exportValue();
-
-            if (nature === "primitive") {
-                output.value = value;
-            } else if (nature === "prototype" && concept.hasValue()) {
-                output.value = {
-                    name: concept.value.name,
-                    attributes: value
-                };
-            } else {
-                output.attributes = value;
-            }
-
-            return output;
-        });
-    },
     setValue(value) {
         if (!Array.isArray(value)) {
             return;
@@ -103,6 +77,7 @@ const _SetConcept = {
         }
 
         this.notify("value.changed", value);
+        this.model.notify("value.changed", this);
     },
     /**
      * @returns {*[]}
@@ -142,6 +117,7 @@ const _SetConcept = {
         element.index = this.value.length - 1;
 
         this.notify("value.added", element);
+        this.model.notify("value.changed", this);
 
         return true;
     },
@@ -177,11 +153,12 @@ const _SetConcept = {
 
         let element1 = this.getElementAt(index1);
         element1.index = +index1;
-        
+
         let element2 = this.getElementAt(index2);
         element2.index = +index2;
 
         this.notify("value.swapped", [element1, element2]);
+        this.model.notify("value.changed", this);
 
         return this;
     },
@@ -231,6 +208,7 @@ const _SetConcept = {
         }
 
         this.notify("value.removed", concept);
+        this.model.notify("value.changed", this);
 
         return {
             message: `The element '${concept.name}' was successfully removed.`,
@@ -245,6 +223,7 @@ const _SetConcept = {
         this.value = [];
 
         this.notify("value.changed", this.value);
+        this.model.notify("value.changed", this);
 
         return this;
     },
@@ -262,6 +241,65 @@ const _SetConcept = {
         this.addElement(element);
 
         return element;
+    },
+
+    /**
+     * Gets the value of a property
+     * @param {string} name 
+     */
+    getProperty(name, meta) {
+        if (name === "refname") {
+            return this.ref.name;
+        }
+
+        if (name === "name") {
+            return this.name;
+        }
+
+        if (name === "value") {
+            return this.value;
+        }
+
+        if (name === "length" || name === "cardinality") {
+            return this.value.length;
+        }
+
+        let propSchema = valOrDefault(this.schema.properties, []);
+        let property = propSchema.find(prop => prop.name === name);
+
+        if (isNullOrUndefined(property)) {
+            return undefined;
+        }
+
+        const { type, value } = property;
+
+        if (type === "string") {
+            return value;
+        }
+
+        if (type === "number") {
+            return +value;
+        }
+
+        if (type === "boolean") {
+            return toBoolean(value);
+        }
+
+        return value;
+    },
+    /**
+     * Returns a value indicating whether the concept has a property
+     * @param {string} name Property's name
+     * @returns {boolean}
+     */
+    hasProperty(name) {
+        if (["refname", "name", "value", "length", "cardinality"].includes(name)) {
+            return true;
+        }
+
+        let propSchema = valOrDefault(this.schema.properties, []);
+
+        return propSchema.findIndex(prop => prop.name === name) !== -1;
     },
 
     getCandidates() {
@@ -288,15 +326,16 @@ const _SetConcept = {
         return concepts.filter(concept => concept.name === name);
     },
 
-    build() {
-        return this.getValue().map(concept => concept.build());
-    },
+
     copy(save = true) {
+        if (!this.hasValue()) {
+            return null;
+        }
+
         const copy = {
             name: this.name,
-            accept: this.accept,
             nature: this.nature,
-            value: this.exportValue()
+            value: this.getValue().map(c => c.copy(false))
         };
 
         if (save) {

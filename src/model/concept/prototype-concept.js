@@ -67,15 +67,6 @@ const BasePrototypeConcept = {
     getTarget() {
         return this.target;
     },
-    exportValue() {
-        if (!this.hasValue()) {
-            return null;
-        }
-
-        let concept = this.getValue();
-
-        return concept.exportValue();
-    },
     setValue(_value) {
         let value = _value.name || _value;
         
@@ -106,6 +97,7 @@ const BasePrototypeConcept = {
         this.value = value;
 
         this.notify("value.changed", this.value);
+        this.model.notify("value.changed", this);
 
         return {
             success: true,
@@ -123,6 +115,7 @@ const BasePrototypeConcept = {
         this.value = null;
 
         this.notify("value.changed", this.value);
+        this.model.notify("value.changed", this);
 
         return {
             success: true,
@@ -233,6 +226,24 @@ const BasePrototypeConcept = {
 
         return ResponseCode.SUCCESS;
     },
+
+    copy(save = true) {
+        if (!this.hasValue()) {
+            return null;
+        }
+
+        const copy = {
+            name: this.name,
+            nature: this.nature,
+            value: this.target.copy(false)
+        };
+
+        if (save) {
+            this.model.addValue(copy);
+        }
+
+        return copy;
+    },
     export() {
         let value = null;
 
@@ -249,24 +260,6 @@ const BasePrototypeConcept = {
             root: this.isRoot(),
             value: value,
         };
-    },
-    copy(save = true) {
-        var copy = {
-            name: this.name,
-            nature: this.nature,
-        };
-
-        if (this.hasValue()) {
-            let concept = this.getValue();
-
-            copy.value = concept.copy(false);
-        }
-
-        if (save) {
-            this.model.addValue(copy);
-        }
-
-        return copy;
     },
 };
 

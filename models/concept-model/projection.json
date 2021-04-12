@@ -277,6 +277,10 @@
                     {
                         "type": "attribute",
                         "name": "base"
+                    },
+                    {
+                        "type": "template",
+                        "name": "property-definition"
                     }
                 ],
                 "style": {
@@ -368,36 +372,20 @@
                             "type": "wrap",
                             "disposition": [
                                 {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Define",
-                                        "style": {
-                                            "css": ["keyword"]
-                                        }
-                                    }
-                                },
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "property",
-                                        "style": {
-                                            "css": ["keyword"],
-                                            "gss": {
-                                                "text": { "bold": true }
-                                            }
-                                        }
-                                    }
-                                },
-                                {
                                     "type": "attribute",
                                     "name": "name",
                                     "tag": "textual"
                                 }
                             ],
                             "style": {
-                                "css": ["line"]
+                                "css": ["model-concept__line"],
+                                "gss": {
+                                    "box": {
+                                        "inner": { 
+                                            "bottom": { "value": 4, "unit": "px" } 
+                                        }
+                                    }
+                                }
                             }
                         }
                     },
@@ -423,22 +411,55 @@
                 "orientation": "vertical",
                 "disposition": [
                     {
-                        "type": "field",
-                        "field": {
-                            "type": "choice",
-                            "choice": {
-                                "option": {
-                                    "style": {
-                                        "css": ["target-choice--textual__list-option"]
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Target",
+                                        "style": {
+                                            "css": ["label"]
+                                        }
                                     }
                                 },
-                                "style": {
-                                    "css": ["target-choice--textual__list"]
+                                {
+                                    "type": "field",
+                                    "field": {
+                                        "type": "choice",
+                                        "choice": {
+                                            "option": {
+                                                "template": { "tag": "choice" },
+                                                "style": {
+                                                    "css": ["target-choice--textual__list-option"]
+                                                }
+                                            },
+                                            "style": {
+                                                "css": ["target-choice--textual__list"]
+                                            }
+                                        },
+                                        "input": false,
+                                        "style": {
+                                            "css": ["target-choice--textual"]
+                                        }
+                                    }
                                 }
-                            },
-                            "input": false,
+                            ],
                             "style": {
-                                "css": ["target-choice--textual"]
+                                "gss": {
+                                    "box": {
+                                        "border": {
+                                            "bottom": {
+                                                "type": "solid",
+                                                "width": { "value": 2, "unit": "px" },
+                                                "color": { "type": "hexadecimal", "value": "#c0c0c0" }
+                                            }
+                                        },
+                                        "width": { "value": 100, "unit": "%" }
+                                    }
+                                }
                             }
                         }
                     },
@@ -1045,6 +1066,7 @@
                             "type": "choice",
                             "input": false,
                             "choice": {
+                                "template": { "tag": "choice" },
                                 "style": {
                                     "css": ["constraint-choice--textual__choice-list"]
                                 },
@@ -1245,6 +1267,7 @@
                             "type": "choice",
                             "input": false,
                             "choice": {
+                                "template": { "tag": "choice" },
                                 "style": {
                                     "css": ["constraint-choice--textual__choice-list"]
                                 },
@@ -1397,6 +1420,7 @@
                             "type": "choice",
                             "choice": {
                                 "option": {
+                                    "template": { "tag": "choice" },
                                     "style": {
                                         "css": ["target-choice--textual__list-option"]
                                     }
@@ -1831,6 +1855,7 @@
                 "type": "choice",
                 "choice": {
                     "option": {
+                        "template": { "tag": "choice" },
                         "style": {
                             "css": ["select-choice__list-option"]
                         }
@@ -1877,6 +1902,7 @@
                             "type": "choice",
                             "choice": {
                                 "option": {
+                                    "template": { "tag": "choice" },
                                     "style": {
                                         "css": ["select-choice__list-option"]
                                     }

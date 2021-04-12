@@ -1,11 +1,8 @@
 /* eslint-disable indent */
-import { Manager } from '@environment/index.js';
+import { Manager } from './manager.js';
 
-if (window.GENTLEMAN_CONFIG) {
-    Manager.init(window.GENTLEMAN_CONFIG);
-} else {
-    Manager.init();
-}
+const Models = new Map();
 
+Manager.init();
 
-export * from '@environment/index.js';
+export { Manager as Task, Models };

@@ -70,6 +70,7 @@ const _ReferenceConcept = {
         this.value = null;
 
         this.notify("value.changed", this.value);
+        this.model.notify("value.changed", this);
 
         return {
             success: true,
@@ -114,10 +115,12 @@ const _ReferenceConcept = {
                 this.reference = this.model.getConcept(value);
                 this.reference.register(this);
                 this.notify("value.changed", this.reference);
+                this.model.notify("value.changed", this);
             }, 20);
         } else {
             this.reference.register(this);
             this.notify("value.changed", this.reference);
+            this.model.notify("value.changed", this);
         }
 
         return {
@@ -198,6 +201,7 @@ const _ReferenceConcept = {
                 this.reference = null;
 
                 this.notify("value.changed", this.reference);
+                this.model.notify("value.changed", this);
                 break;
 
             default:
@@ -213,14 +217,15 @@ const _ReferenceConcept = {
         return ResponseCode.SUCCESS;
     },
 
-    build() {
-        return this.getValue();
-    },
+
     copy(save = true) {
-        var copy = {
+        if (!this.hasValue()) {
+            return null;
+        }
+
+        const copy = {
             name: this.name,
             nature: this.nature,
-            accept: this.accept,
             value: this.getValue()
         };
 
@@ -247,6 +252,7 @@ const _ReferenceConcept = {
         return output;
     }
 };
+
 
 function resolveAccept(accept) {
     const { name, scope, rel } = accept;

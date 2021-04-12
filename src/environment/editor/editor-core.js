@@ -3,7 +3,7 @@ import {
     removeChildren, isHTMLElement, findAncestor, isNullOrWhitespace, isNullOrUndefined,
     isEmpty, hasOwn, isFunction, valOrDefault, copytoClipboard, createAside,
 } from 'zenkai';
-import { Events, hide, show, toggle, Key, getEventTarget, NotificationType } from '@utils/index.js';
+import { hide, show, toggle, Key, getEventTarget, NotificationType } from '@utils/index.js';
 import { buildProjectionHandler } from "../build-projection.js";
 import { buildConceptHandler } from "../build-concept.js";
 import { ConceptModelManager } from '@model/index.js';
@@ -190,6 +190,8 @@ export const Editor = {
     active: false,
     /** @type {boolean} */
     visible: false,
+    /** @type {boolean} */
+    frozen: false,
     /** @type {Map} */
     handlers: null,
     /** @type {Map} */
@@ -244,6 +246,8 @@ export const Editor = {
         this.menu.update(this.config);
 
         this.refresh();
+
+        return this;
     },
     getConfig(prop) {
         if (isNullOrUndefined(prop)) {
@@ -662,11 +666,10 @@ export const Editor = {
     addResource(file, _name) {
         let name = valOrDefault(_name, file.name.split(".")[0]);
         this.resources.set(name, file);
-        console.log(file.type);
-        // if(file.type==="json"){}
+
         let reader = new FileReader();
         reader.onload = (event) => {
-            this.models.set(name, reader.result);
+            this.addModel(name, reader.result);
         };
         reader.readAsText(file);
 
@@ -683,6 +686,28 @@ export const Editor = {
         return this.resources.get(name);
     },
     /**
+     * Verifies the presence of a resource in the register
+     * @param {string} name 
+     * @returns {boolean}
+     */
+    hasResource(name) {
+        return this.resources.has(name);
+    },
+    /**
+     * Removes a resource from the register
+     * @param {string} name 
+     * @returns 
+     */
+    removeResource(name) {
+        this.resources.delete(name);
+
+        this.triggerEvent({ name: "resource.removed" });
+
+        this.refresh();
+
+        return true;
+    },
+    /**
      * Gets a model from the register
      * @param {string} name 
      * @returns 
@@ -697,32 +722,27 @@ export const Editor = {
         return JSON.parse(schema);
     },
     /**
-     * Verifies the presence of a resource in the register
+     * Adds a model to the register
      * @param {string} name 
-     * @returns 
+     * @param {*} schema 
      */
-    hasResource(name) {
-        return this.resources.has(name);
+    addModel(name, schema) {
+        this.models.set(name, schema);
     },
     /**
-     * Removes a resource from the register
+     * Verifies the presence of a model in the register
      * @param {string} name 
-     * @returns 
+     * @returns {boolean}
      */
-    removeResource(name) {
-        this.resources.delete(name);
-
-        Events.emit("resource.removed", name);
-
-        this.refresh();
-
-        return true;
+    hasModel(name) {
+        return this.models.has(name);
     },
+
     copy(value) {
         this.copyValue = value;
 
         this.notify(`${value.name} copied`, NotificationType.NORMAL);
-
+        console.log(value);
         return this;
     },
     paste(concept, _value) {
@@ -754,31 +774,51 @@ export const Editor = {
         return this;
     },
     open() {
-        this.show();
-        this.active = true;
+        this.triggerEvent({ name: "editor.open@pre" }, () => {
+            this.show();
+            this.active = true;
 
-        Events.emit('editor.open');
+            if (this.isReady) {
+                this.home.close();
+            }
 
-        return this;
-    },
-    reduce() {
-        this.hide();
-        this.active = true;
-
-        Events.emit('editor.reduce');
+            this.triggerEvent({ name: "editor.open@post" });
+        }, false);
 
         return this;
     },
     close() {
-        this.hide();
-        this.active = false;
+        this.triggerEvent({ name: "editor.close@pre" }, () => {
+            this.hide();
+            this.active = false;
 
-        // cleanup
-        this.clean();
-        this.container.remove();
-        this.manager.deleteEditor(this);
+            // cleanup
+            this.clean();
 
-        Events.emit('editor.close');
+            this.triggerEvent({ name: "editor.close@post" });
+        }, false);
+
+        return this;
+    },
+    destroy() {
+        this.triggerEvent({ name: "editor.destroy@pre" }, () => {
+            this.container.remove();
+            this.manager.deleteEditor(this);
+        }, false);
+
+        return true;
+    },
+    freeze() {
+        this.frozen = true;
+
+        this.refresh();
+
+        return this;
+    },
+    unfreeze() {
+        this.frozen = false;
+
+        this.refresh();
 
         return this;
     },
@@ -928,16 +968,14 @@ export const Editor = {
     },
     clean() {
         if (this.conceptModel) {
-            // TODO: Remove all concept listeners
+            this.conceptModel.done();
         }
 
         if (this.projectionModel) {
-            // TODO: Unregister all projections and their components
+            this.projectionModel.done();
         }
 
         removeChildren(this.container);
-
-        Events.emit('editor.clean');
 
         return this;
     },
@@ -950,7 +988,7 @@ export const Editor = {
         this.activeConcept = null;
         this.activeProjection = null;
 
-        Events.emit('editor.clear');
+        this.triggerEvent({ name: "editor.clear" });
 
         return this;
     },
@@ -1075,7 +1113,11 @@ export const Editor = {
 
         return this.container;
     },
-    refresh() {
+    refresh(force = false) {
+        if (this.frozen && !force) {
+            return this;
+        }
+
         if (!this.hasConceptModel) {
             this.container.classList.add("no-concept-model");
         } else {
@@ -1176,22 +1218,33 @@ export const Editor = {
      * Triggers an event, invoking the attached handler in the registered order
      * @param {*} event 
      */
-    triggerEvent(event, callback) {
+    triggerEvent(event, callback, oneach = true) {
         const { name, options } = event;
 
         const handlers = this.getHandlers(name);
+        const hasCallback = isFunction(callback);
+        let halt = false;
 
         handlers.forEach((handler) => {
             let result = handler.call(this, this.conceptModel, options);
 
-            if (isFunction(callback)) {
-                callback.call(this, result);
-            }
-
             if (result === false) {
+                halt = true;
                 return;
             }
+
+            if (oneach && hasCallback) {
+                callback.call(this, result);
+            }
         });
+
+        if (halt) {
+            return false;
+        }
+
+        if (!oneach && hasCallback) {
+            callback.call(this);
+        }
 
         return true;
     },
@@ -1390,16 +1443,12 @@ export const Editor = {
             const actionHandler = ActionHandler[action];
 
             if (handler && action) {
-                this.triggerEvent({
-                    "name": action
-                });
+                this.triggerEvent({ "name": action });
             } else if (isFunction(actionHandler)) {
                 actionHandler(target);
                 target.blur();
             } else if (action) {
-                this.triggerEvent({
-                    "name": action,
-                });
+                this.triggerEvent({ "name": action, });
             }
         }, true);
 

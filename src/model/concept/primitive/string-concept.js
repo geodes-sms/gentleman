@@ -1,4 +1,7 @@
-import { isNullOrWhitespace, valOrDefault, isNullOrUndefined, isObject, isEmpty, hasOwn } from "zenkai";
+import {
+    isNullOrWhitespace, valOrDefault, isNullOrUndefined, isObject, isEmpty,
+    hasOwn, isIterable, toBoolean
+} from "zenkai";
 import { Concept } from "./../concept.js";
 
 
@@ -90,6 +93,7 @@ const _StringConcept = {
         this.value = null;
 
         this.notify("value.changed", this.value);
+        this.model.notify("value.changed", this);
 
         return {
             success: true,
@@ -99,7 +103,12 @@ const _StringConcept = {
     setValue(value) {
         var { code, ctx } = this.validate(value);
 
-        this.value = value;
+        if (this.value !== value) {
+            this.value = value;
+
+            this.notify("value.changed", value);
+            this.model.notify("value.changed", this);
+        }
 
         if (code !== ResponseCode.SUCCESS) {
             return {
@@ -111,12 +120,68 @@ const _StringConcept = {
             };
         }
 
-        this.notify("value.changed", value);
-
         return {
             success: true,
             message: "The value has been successfully updated."
         };
+    },
+    /**
+     * Gets the value of a property
+     * @param {string} name 
+     */
+    getProperty(name, meta) {
+        if (name === "refname") {
+            return this.ref.name;
+        }
+
+        if (name === "name") {
+            return this.name;
+        }
+
+        if (name === "value") {
+            return this.value;
+        }
+
+        if (name === "length") {
+            return this.value.length;
+        }
+
+        let propSchema = valOrDefault(this.schema.properties, []);
+        let property = propSchema.find(prop => prop.name === name);
+
+        if (isNullOrUndefined(property)) {
+            return undefined;
+        }
+
+        const { type, value } = property;
+
+        if (type === "string") {
+            return value;
+        }
+
+        if (type === "number") {
+            return +value;
+        }
+
+        if (type === "boolean") {
+            return toBoolean(value);
+        }
+
+        return value;
+    },
+    /**
+     * Returns a value indicating whether the concept has a property
+     * @param {string} name Property's name
+     * @returns {boolean}
+     */
+    hasProperty(name) {
+        if (["refname", "name", "value", "length"].includes(name)) {
+            return true;
+        }
+
+        let propSchema = valOrDefault(this.schema.properties, []);
+
+        return propSchema.findIndex(prop => prop.name === name) !== -1;
     },
 
     getCandidates() {
@@ -128,7 +193,7 @@ const _StringConcept = {
                     .filter(c => c.hasValue() && c.value !== this.value)
                     .map(c => c.getValue()));
             return [...uniqueValues, ...this.src.map(val => {
-                if (val.type === "meta-reference") {
+                if (val.type === "reference") {
                     const { source, target } = val;
 
                     let model = this.model.environment.getModel(source.name || source);
@@ -136,17 +201,27 @@ const _StringConcept = {
                         return null;
                     }
 
-                    let targetSource = model.concept || model;
+                    let cmodel = model.concept || model;
 
-                    if (!Array.isArray(targetSource)) {
+                    if (!Array.isArray(cmodel)) {
                         return null;
                     }
 
-                    return targetSource.map(x => x[target.name]);
+                    if (isNullOrUndefined(target.rel)) {
+                        return cmodel.map(x => x[target.value]);
+                    }
+
+                    let result = resolveReference.call(this, target, cmodel);
+
+                    if (isNullOrUndefined(result)) {
+                        return [];
+                    }
+
+                    return result;
                 }
 
                 return val;
-            })].flat();
+            })].flat().filter(x => !isNullOrUndefined(x));
         }
 
         return values.map(value => resolveValue.call(this, value)).flat().filter(val => !isNullOrWhitespace(val));
@@ -249,15 +324,13 @@ const _StringConcept = {
         };
     },
 
-    build() {
-        return this.getValue();
-    },
+
     copy(save = true) {
         if (!this.hasValue()) {
             return null;
         }
 
-        var copy = {
+        const copy = {
             name: this.name,
             nature: this.nature,
             value: this.getValue()
@@ -281,7 +354,6 @@ const _StringConcept = {
         return this.value;
     }
 };
-
 
 function resolveValue(value) {
     if (value.type === "reference") {
@@ -308,6 +380,79 @@ function resolveValue(value) {
 
     return value;
 }
+
+function resolveReference(target, source) {
+    const { name, rel, scope, value } = target;
+
+    let targetSource = null;
+
+    if (rel === "parent") {
+        let parent = this.getParent(name);
+
+        if (isNullOrUndefined(value)) {
+            return parent;
+        }
+
+        if (value.type === "reference") {
+            return resolveReference.call(parent, value);
+        }
+
+        if (value.type === "attribute") {
+            return parent.getAttributeByName(value.name).getValue();
+        }
+    }
+
+    if (rel === "children") {
+        let children = this.getChildren(name);
+
+        if (isNullOrUndefined(value)) {
+            return children;
+        }
+
+        if (value.type === "reference") {
+            return children.map(c => resolveReference.call(c, value));
+        }
+
+        if (value.type === "attribute") {
+            return children.filter(c => hasAttr(c, value.name) && hasValue(c, value.name))
+                .map(c => getValue(c, value.name));
+        }
+    }
+
+    if (target.source) {
+        const { type, value } = target.source;
+
+        if (type === "reference") {
+            targetSource = resolveReference.call(this, target.source);
+        } else {
+            targetSource = value;
+        }
+    }
+
+    if (isNullOrUndefined(targetSource)) {
+        return source.map(x => x[name].map(attr => attr[value]));
+    }
+
+    if (isIterable(targetSource) && isEmpty(targetSource)) {
+        return [];
+    }
+
+    let concept = source.find(x => Array.isArray(targetSource) ? targetSource.includes(x.name) : x.name === targetSource);
+
+    if (isNullOrUndefined(concept) || !hasOwn(concept, name)) {
+        return [];
+    }
+
+    return concept[name].map(attr => attr[value]);
+}
+
+const getAttr = (concept, name) => concept.getAttributeByName(name).target;
+
+const getValue = (concept, attr) => getAttr(concept, attr).getValue();
+
+const hasValue = (concept, attr) => getAttr(concept, attr).hasValue();
+
+const hasAttr = (concept, name) => concept.isAttributeCreated(name);
 
 
 export const StringConcept = Object.assign(

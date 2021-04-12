@@ -1,0 +1,89 @@
+.content-wrapper {
+    padding-left: 5%; padding-right: 5%;
+}
+
+.page-header {
+    height: 24px;
+    background-color: #c0c0c0; 
+}
+
+.page-header > .content-wrapper {
+    display: flex;
+    justify-content: center;
+    height: 100%;
+}
+
+.page-body {
+    height: calc(100% - 24px);
+}
+
+.link {
+    display: inline-flex; align-items: center;
+    font-size: 1.4rem; font-weight: 300; 
+    text-decoration: none;
+    color: #fff; 
+    background-color: #5F4B8B; 
+}
+
+    .link-logo {
+        display: inline-block;
+        padding: 2px 12px 3px;
+    }
+
+    .link-version {
+        display: inline-block;
+        padding: 3px 6px;
+        background-color: #271C40; 
+    }
+
+.app {
+    display: flex; flex-direction: column;
+    background-color: #e5e5e5;
+    height: 100%;
+}
+
+.app-menu {
+    display: flex; flex-direction: row;
+    height: 30px;
+    width: 100%;
+    background-color: #d5d5d5;
+}
+
+    .app-menu-item {
+        display: block;
+        width: 30px; 
+        line-height: 24px;
+        text-align: center;
+        font-size: 2.6em; font-weight: 300;
+        text-transform: uppercase;
+        color: #555;
+    }
+
+    .btn.app-menu__button {
+        display: flex;
+        margin-right: 3px;
+        align-items: center;
+        padding-left: 12px; padding-right: 12px;
+        font-size: 1.3em; font-weight: 600;
+        text-align: center;
+        border-radius: 0;
+        color: #333;
+        background-color: #eee;
+        transition: .2s;
+        cursor: pointer;
+    }
+        .btn.app-menu__button:hover { background-color: #fff; }
+        .btn.app-menu__button--help {
+            justify-self: flex-end;
+            font-size: 2.4em; font-weight: 300;
+            color: #555;
+        }
+
+.app-body {
+    flex-grow: 2;
+    display: flex; flex-direction: row;
+}
+
+.app-body .gentleman-editor:not(:last-child) {
+    margin-right: 6px;
+}

@@ -172,6 +172,5 @@ const BaseStatic = {
 
 
 export const Static = Object.assign(
-    BaseStatic,
-    ObserverHandler
+    BaseStatic
 );

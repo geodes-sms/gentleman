@@ -84,8 +84,6 @@ export const StaticFactory = {
             throw new Error(`Bad request: The '${type}' static could not be created`);
         }
 
-        staticElement.initObserver();
-
         if (isNullOrUndefined(staticElement.id)) {
             staticElement.id = nextId();
         }

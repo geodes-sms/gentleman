@@ -12,11 +12,11 @@ const _BaseConcept = {
         }
 
         const { id = "", attributes = [] } = args;
-        
+
         if (id.length > 10) {
             this.id = id;
         }
-        
+
         attributes.forEach(attr => {
             const { name, id, value } = attr;
 
@@ -29,18 +29,14 @@ const _BaseConcept = {
         return true;
     },
     getValue() {
-        return this.getAttributes().map(attr => {
-            return {
-                "name": attr.name,
-                "value": attr.copy(false)
-            };
-        });
-    },
-
-    build() {
-        const ConceptNature = {
-            "concrete_concept": "concrete",
-            "prototype_concept": "prototype",
+        return {
+            name: this.name,
+            attributes: this.getAttributes().map(attr => {
+                return {
+                    "name": attr.name,
+                    "value": attr.copy(false)
+                };
+            })
         };
     }
 };

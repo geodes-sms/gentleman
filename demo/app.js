@@ -1,27 +1,3 @@
-/* eslint-disable indent */
-
-// Import CSS
-import './stylesheets.js';
-import '@css/samples/gentleman.css';
-
-import { Manager } from './manager.js';
-import { getElement, getElements, isNullOrUndefined, valOrDefault } from 'zenkai';
-
-const CMODEL__EDITOR = require('@models/concept-model/editor-config.json');
-const CMODEL__CONCEPT = require('@models/concept-model/concept.json');
-const CMODEL__PROJECTION = require('@models/concept-model/projection.json');
-
-const PMODEL__EDITOR = require('@models/projection-model/editor-config.json');
-const PMODEL__CONCEPT = require('@models/projection-model/concept.json');
-const PMODEL__PROJECTION = require('@models/projection-model/projection.json');
-
-const Models = new Map();
-
-Models.set("concept-model", Object.assign({}, CMODEL__EDITOR, CMODEL__CONCEPT, CMODEL__PROJECTION));
-Models.set("projection-model", Object.assign({}, PMODEL__EDITOR, PMODEL__CONCEPT, PMODEL__PROJECTION));
-
-Manager.init();
-
 const EDITOR_HANDLER = {
     "preview-projection": function (target) {
         const RESOURCE_NAME = "metamodel";
@@ -31,7 +7,7 @@ const EDITOR_HANDLER = {
 
             return false;
         }
-
+        
         this.triggerEvent({ "name": "build-projection", options: { download: false, notify: "error" } }, (pmodel) => {
             if (!pmodel) {
                 return;
@@ -55,8 +31,8 @@ const EDITOR_HANDLER = {
 };
 
 function initApp(container) {
-    let menu = getElement(".app-menu", container);
-    let editor = Manager.getEditor(".app-editor", container);
+    let menu = document.querySelector(".app-menu", container);
+    let editor = Gentleman.Task.getEditor(".app-editor", container);
     editor.init({
         handlers: EDITOR_HANDLER
     });
@@ -67,12 +43,13 @@ function initApp(container) {
         const { action, name } = target.dataset;
 
         if (action === "load-model") {
-            let model = Models.get(name);
+            const { concept, projection, editor: config } = Gentleman.Models.get(name);
+
             editor.unload()
                 .freeze()
-                .setConfig(model.editor)
-                .loadConceptModel(model.concept)
-                .loadProjectionModel(model.projection)
+                .setConfig(config)
+                .loadConceptModel(concept)
+                .loadProjectionModel(projection)
                 .unfreeze()
                 .open();
         }
@@ -81,7 +58,7 @@ function initApp(container) {
 
 let previewEditor = null;
 function getPreviewEditor() {
-    if (isNullOrUndefined(previewEditor)) {
+    if (!previewEditor) {
         let modelHanlder = {
             update: (message) => {
                 if (message === "value.changed") {
@@ -91,7 +68,7 @@ function getPreviewEditor() {
         };
         this.conceptModel.register(modelHanlder);
 
-        previewEditor = Manager.createEditor().init({
+        previewEditor = Gentleman.Task.createEditor().init({
             handlers: {
                 "editor.close": () => {
                     this.conceptModel.unregister(modelHanlder);
@@ -101,14 +78,14 @@ function getPreviewEditor() {
             }
         });
 
-        let app = getElement(".app-body");
+        let app = document.querySelector(".app-body");
         app.append(previewEditor.container);
     }
     return previewEditor;
 }
 
 (function init() {
-    const applications = getElements(".app");
+    const applications = document.querySelectorAll(".app");
 
     for (let i = 0; i < applications.length; i++) {
         const appContainer = applications[i];

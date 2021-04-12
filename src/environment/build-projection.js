@@ -53,7 +53,8 @@ export function buildProjectionHandler(model, _options = {}) {
 
     const options = Object.assign({
         name: "projection",
-        download: true
+        download: true,
+        notify: "always"
     }, _options);
 
     const concepts = model.getConcepts(["projection", "template", "style rule"]);
@@ -88,13 +89,13 @@ export function buildProjectionHandler(model, _options = {}) {
         return false;
     }
 
-    this.notify("The projection model was <strong>successfully</strong> built", NotificationType.SUCCESS, 2000);
+    if (options.notify === "always") {
+        this.notify("The projection model was <strong>successfully</strong> built", NotificationType.SUCCESS, 2000);
+    }
 
     if (options.download) {
         this.download(result, options.name);
     }
-
-    console.log(result);
 
     return result;
 }
@@ -103,7 +104,7 @@ export function buildProjectionHandler(model, _options = {}) {
 function buildProjection(concept) {
     const buildErrors = [];
 
-    const tags = hasAttr(concept, ATTR_TAGS) ? getAttr(concept, ATTR_TAGS).build() : [];
+    const tags = hasAttr(concept, ATTR_TAGS) ? getValue(concept, ATTR_TAGS, true) : [];
 
     const target = buildConcept.call(this, getAttr(concept, ATTR_CONCEPT));
 
@@ -568,7 +569,7 @@ function buildStyle(style) {
     let schema = {};
 
     if (hasAttr(style, "css")) {
-        schema.css = getAttr(style, "css").build();
+        schema.css = getAttr(style, "css", true);
     }
 
     if (hasAttr(style, "ref")) {
@@ -628,7 +629,7 @@ function buildTextStyle(style) {
     }
 
     if (hasAttr(style, "font") && hasValue(style, "font")) {
-        schema.font = getAttr(style, "font").build();
+        schema.font = getValue(style, "font", true);
     }
 
     if (hasAttr(style, "alignment") && hasValue(style, "alignment")) {
@@ -641,12 +642,12 @@ function buildTextStyle(style) {
 function buildBoxStyle(style) {
     let schema = {};
 
-    if (hasAttr(style, "inner space")) {
-        schema.inner = buildSpace.call(this, getAttr(style, "inner space"));
+    if (hasAttr(style, "inner")) {
+        schema.inner = buildSpace.call(this, getAttr(style, "inner"));
     }
 
-    if (hasAttr(style, "outer space")) {
-        schema.outer = buildSpace.call(this, getAttr(style, "outer space"));
+    if (hasAttr(style, "outer")) {
+        schema.outer = buildSpace.call(this, getAttr(style, "outer"));
     }
 
     if (hasAttr(style, "background") && hasValue(style, "background")) {
@@ -659,6 +660,10 @@ function buildBoxStyle(style) {
 
     if (hasAttr(style, "height")) {
         schema.height = buildSize.call(this, getAttr(style, "height"));
+    }
+
+    if (hasAttr(style, "border")) {
+        schema.border = buildBorder.call(this, getAttr(style, "border"));
     }
 
     if (hasAttr(style, "opacity") && hasValue(style, "opacity")) {
@@ -674,6 +679,25 @@ function buildSpace(style) {
     ["top", "right", "bottom", "left"].forEach(dir => {
         if (hasAttr(style, dir)) {
             schema[dir] = buildSize.call(this, getAttr(style, dir));
+        }
+    });
+
+    return schema;
+}
+
+
+function buildBorder(style) {
+    let schema = {};
+
+    ["top", "right", "bottom", "left"].forEach(dir => {
+        if (hasAttr(style, dir)) {
+            let value = getAttr(style, dir);
+
+            schema[dir] = {
+                width: buildSize.call(this, getAttr(value, "width")),
+                color: buildColour.call(this, getAttr(value, "colour")),
+                type: getValue(value, "type")
+            };
         }
     });
 

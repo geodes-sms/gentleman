@@ -1,4 +1,4 @@
-import { isString, valOrDefault, hasOwn, isNullOrUndefined, isIterable, isObject, isNullOrWhitespace, toBoolean } from "zenkai";
+import { isString, valOrDefault, hasOwn, isNullOrUndefined, isObject, isNullOrWhitespace, toBoolean } from "zenkai";
 import { AttributeHandler, ObserverHandler } from "@structure/index.js";
 
 
@@ -57,6 +57,8 @@ const _Concept = {
 
         return this;
     },
+    /** @returns {boolean} */
+    isRoot() { return isNullOrUndefined(this.parent); },
     initValue() { throw new Error("This function has not been implemented"); },
 
     /**
@@ -70,31 +72,8 @@ const _Concept = {
 
         return this.name;
     },
-    /**
-     * Gets the alias or the name
-     * @returns {string}
-     */
-    getAlias() {
-        return valOrDefault(this.alias, this.getName());
-    },
 
-    getAcceptedValues() {
-        if (!isIterable(this.accept) && isNullOrUndefined(this.accept.name)) {
-            return "";
-        }
 
-        if (isString(this.accept)) {
-            return this.accept;
-        }
-
-        if (hasOwn(this.accept, "name")) {
-            return this.accept.name;
-        }
-
-        if (Array.isArray(this.accept)) {
-            return this.accept.map(accept => this.getAcceptedValues.call({ accept: accept })).join(" or ");
-        }
-    },
     getCandidates() {
         this.values.forEach(value => {
             if (isObject(value)) {
@@ -107,10 +86,7 @@ const _Concept = {
     getStructure() {
         return [...this.listAttributes()];
     },
-    exportValue() {
-        return this.getValue();
-    },
-  
+
     /**
      * Gets the value of a property
      * @param {string} name 
@@ -128,12 +104,11 @@ const _Concept = {
             return this.value;
         }
 
-        let propSchema = valOrDefault(this.schema.properties, []);
-        let property = propSchema.find(prop => prop.name === name);
-
-        if (isNullOrUndefined(property)) {
+        if (!this.hasProperty(name)) {
             return undefined;
         }
+
+        let property = this.schema.properties.find(prop => prop.name === name);
 
         const { type, value } = property;
 
@@ -150,6 +125,20 @@ const _Concept = {
         }
 
         return value;
+    },
+    /**
+     * Returns a value indicating whether the concept has a property
+     * @param {string} name Property's name
+     * @returns {boolean}
+     */
+    hasProperty(name) {
+        if (["refname", "name", "value"].includes(name)) {
+            return true;
+        }
+
+        let propSchema = valOrDefault(this.schema.properties, []);
+
+        return propSchema.findIndex(prop => prop.name === name) !== -1;
     },
 
 
@@ -237,7 +226,7 @@ const _Concept = {
         if (isNullOrUndefined(this.schema.prototype)) {
             return false;
         }
-        
+
         let prototype = this.model.getConceptSchema(this.schema.prototype);
 
         while (!isNullOrUndefined(prototype)) {
@@ -347,13 +336,9 @@ const _Concept = {
         };
     },
 
-    /** @returns {boolean} */
-    isRoot() {
-        return isNullOrUndefined(this.parent);
-    },
 
     copy(save = true) {
-        var copy = {
+        const copy = {
             name: this.name,
             nature: this.nature,
         };
@@ -374,11 +359,8 @@ const _Concept = {
 
         return copy;
     },
-    paste(value) {
-        this.initValue(value);
-    },
     export() {
-        var output = {
+        const output = {
             id: this.id,
             root: this.isRoot(),
             name: this.name

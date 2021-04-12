@@ -624,7 +624,7 @@ const BaseChoiceField = {
         const { template = {}, style } = this.schema.choice.option;
 
         if (value.type === "meta-concept") {
-            let choiceProjectionSchema = this.model.getProjectionSchema(value.concept, valOrDefault(template.tag, "choice"))[0];
+            let choiceProjectionSchema = this.model.getProjectionSchema(value.concept, valOrDefault(template.tag))[0];
 
             let type = choiceProjectionSchema.type;
             let schema = {
@@ -637,7 +637,7 @@ const BaseChoiceField = {
             container.dataset.value = value.name;
             container.append(render);
         } else if (isConcept) {
-            let choiceProjection = this.model.createProjection(value, valOrDefault(template.tag, "choice")).init({ focusable: false });
+            let choiceProjection = this.model.createProjection(value, template.tag).init({ focusable: false });
             choiceProjection.readonly = true;
             choiceProjection.focusable = false;
             choiceProjection.parent = this.projection;

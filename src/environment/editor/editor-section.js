@@ -356,7 +356,7 @@ export const EditorSection = {
     },
 
     bindEvents() {
-        this.tabs.addEventListener('click', (event) => {
+        this.tabs.addEventListener("click", (event) => {
             const { target } = event;
 
             let selector = getSelector.call(this, target);
@@ -364,21 +364,21 @@ export const EditorSection = {
             this.updateSelector(selector);
         });
 
-        Events.on("value.added", (value) => {
+        this.editor.registerHandler("value.added", (value) => {
             this.valueCount++;
             this.refresh();
         });
 
-        Events.on("value.removed", (value) => {
+        this.editor.registerHandler("value.removed", (value) => {
             this.refresh();
         });
 
-        Events.on("resource.added", (value) => {
+        this.editor.registerHandler("resource.added", (value) => {
             this.fileCount++;
             this.refresh();
         });
 
-        Events.on("resource.removed", (value) => {
+        this.editor.registerHandler("resource.removed", (value) => {
             this.refresh();
         });
     }

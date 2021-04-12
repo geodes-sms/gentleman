@@ -18,10 +18,6 @@ export const EditorHome = {
     visible: true,
     /** @type {HTMLButtonElement} */
     btnStart: null,
-    /** @type {HTMLButtonElement} */
-    btnCreateModel: null,
-    /** @type {HTMLButtonElement} */
-    btnCreateProjection: null,
     /** @type {FIleIO} */
     modelFileIO: null,
     /** @type {FIleIO} */
@@ -106,9 +102,6 @@ export const EditorHome = {
     refresh() {
         const { hasConceptModel, hasProjectionModel } = this.editor;
 
-        this.editor.hasHanlder("create-metamodel") ? show(this.btnCreateModel) : hide(this.btnCreateModel);
-        this.editor.hasHanlder("create-projection") ? show(this.btnCreateProjection) : hide(this.btnCreateProjection);
-
         if (!(hasConceptModel && hasProjectionModel)) {
             this.show();
         }
@@ -147,16 +140,15 @@ function createMenu() {
 
     this.modelFileIO = createFileIO.call(this, "model");
     this.projectionFileIO = createFileIO.call(this, "projection");
-    this.btnCreateModel = createMenuButton("metamodel");
-    this.btnCreateProjection = createMenuButton("projection");
+  
 
     let modelMenu = createDiv({
         class: ["editor-home-section__menu", "editor-home-section__menu--concept"],
-    }, [this.modelFileIO.render(), this.btnCreateModel]);
+    }, [this.modelFileIO.render()]);
 
     let projectionMenu = createDiv({
         class: ["editor-home-section__menu", "editor-home-section__menu--projection"],
-    }, [this.projectionFileIO.render(), this.btnCreateProjection]);
+    }, [this.projectionFileIO.render()]);
 
     content.append(modelMenu, projectionMenu);
 
@@ -173,22 +165,6 @@ function createMenu() {
     return section;
 }
 
-/**
- * Creates a drop area
- * @param {string} type 
- * @returns {HTMLElement}
- */
-function createMenuButton(type) {
-    /** @type {HTMLElement} */
-    let button = createButton({
-        class: ["btn", "editor-home-section__button", `editor-home-section__button--${type}`],
-        dataset: {
-            action: `create-${type}`,
-        }
-    }, `Create a ${type}`);
-
-    return button;
-}
 
 /**
  * Verifies that a character is a vowel
@@ -276,7 +252,7 @@ const FileIO = {
         /** @type {HTMLElement} */
         let iconFile = createI({
             class: ["icon", "file-section__icon"]
-        }, `${this.type} {JSON}`);
+        }, `${this.type}`);
 
         let actionBar = createDiv({
             class: ["file-section__actionbar"]

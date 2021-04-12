@@ -475,13 +475,13 @@ const BaseTextField = {
      */
     _spaceHandler(target) {
         const candidates = valOrDefault(this.getCandidates(), []);
-
+        
         if (!Array.isArray(candidates)) {
             console.error("Bad values");
         }
 
         if (isEmpty(candidates)) {
-            this.notify(NotificationType.INFO, "Enter any text.");
+            this.notify("Enter any text.", NotificationType.INFO);
         } else {
             createChoiceElement.call(this);
 

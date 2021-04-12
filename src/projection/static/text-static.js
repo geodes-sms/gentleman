@@ -65,8 +65,10 @@ const BaseTextStatic = {
 
             if (this.contentType === "html") {
                 this.element.append(htmlToElement(value));
-            } else if (this.contentType === "property") {
+            } else if (this.contentType === "property" && this.source.hasProperty(value)) {
                 this.element.textContent = this.source.getProperty(value);
+            } else if (this.contentType === "attribute" && this.source.hasAttribute(value)) {
+                this.element.textContent = this.source.getAttribute(value).getValue().toString();
             } else {
                 this.element.textContent = value.trim();
             }
@@ -161,7 +163,7 @@ const BaseTextStatic = {
     },
 
     update() {
-        if(this.contentType !== "property") {
+        if (this.contentType !== "property") {
             return this;
         }
 

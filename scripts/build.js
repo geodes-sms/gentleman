@@ -9,7 +9,6 @@ const sources = [
     './assets/css/effect.css',
     './assets/css/app/layout.css',
     './assets/css/app/field.css',
-    './assets/css/app/manager.css',
     './assets/css/app/editor.css',
     './assets/css/app/editor-home.css',
     './assets/css/app/editor-header.css',

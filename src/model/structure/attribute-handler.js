@@ -36,9 +36,9 @@ export const AttributeHandler = {
             throw new TypeError("Bad argument");
         }
 
-        if (query.type === "id") {
-            return this.getAttributeById(query.value);
-        }
+        // if (query.type === "xyz") {
+        //     //TODO
+        // }
 
         return this.getAttributeByName(query);
     },
@@ -77,20 +77,6 @@ export const AttributeHandler = {
         return attribute;
     },
     /**
-     * Returns an attribute with the given id
-     * @param {string} id 
-     * @returns {Attribute}
-     */
-    getAttributeById(id) {
-        if (isNullOrWhitespace(id)) {
-            throw new TypeError("Bad argument");
-        }
-
-        var attribute = this.attributes.find((c) => c.id === id);
-
-        return attribute;
-    },
-    /**
      * Creates an attribute
      * @param {string} name 
      * @returns {Attribute}
@@ -110,7 +96,7 @@ export const AttributeHandler = {
 
             return attribute;
         }
-// console.log(name);
+
         const schema = this.getAttributeSchema(name);
 
         let value = this.model.getValue(_value);
@@ -118,7 +104,7 @@ export const AttributeHandler = {
         var attribute = Attribute.create(this, schema).init(value);
 
         this.addAttribute(attribute);
-// console.log(this.attributes_created);
+
         return attribute;
     },
 
@@ -135,6 +121,7 @@ export const AttributeHandler = {
         this.attributes_created.add(attribute.name);
 
         this.notify("attribute.added", attribute);
+        this.model.notify("value.changed", this);
 
         return this;
     },
@@ -214,6 +201,7 @@ export const AttributeHandler = {
         this.attributes_created.delete(name);
 
         this.notify("attribute.removed", removedAttribute);
+        this.model.notify("value.changed", this);
 
         return {
             message: `The attribute '${name}' was successfully removed.`,
