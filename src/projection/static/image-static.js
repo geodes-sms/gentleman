@@ -9,24 +9,14 @@ import { Static } from "./static.js";
 
 
 /**
- * Resolves the value of the input
- * @param {*} object 
- */
-function resolveValue(object) {
-    if (object.object === "concept") {
-        if (object.hasValue()) {
-            return object.getValue();
-        }
-    }
-
-    return false;
-}
-
-/**
  * Resolves the URL
  * @param {string} url 
  */
 function resolveURL(url) {
+    if (isNullOrWhitespace(url)) {
+        return "";
+    }
+
     if (url.startsWith("http://")) {
         return new URL(url).href;
     } else if (url.startsWith("https://")) {

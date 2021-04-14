@@ -1059,6 +1059,11 @@
                     },
                     {
                         "type": "attribute",
+                        "name": "resizable",
+                        "tag": "field-binary-state"
+                    },
+                    {
+                        "type": "attribute",
                         "name": "multiline",
                         "tag": "field-binary-state"
                     },
@@ -1648,7 +1653,7 @@
         {
             "concept": { "name": "input" },
             "type": "layout",
-            "tags": [],
+            "tags": ["config"],
             "projection": {
                 "type": "stack",
                 "orientation": "vertical",
@@ -1661,6 +1666,67 @@
                             "help": "Widget used to capture input",
                             "style": {
                                 "css": ["config-title", "font-ui"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Config",
+                                        "style": {
+                                            "css": ["component-nav-item", "component-nav-item--config", "current"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "plink",
+                                        "tag": "style",
+                                        "content": [
+                                            {
+                                                "type": "static", 
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": "Style"
+                                                }
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["component-nav-item", "component-nav-item--style"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "plink",
+                                        "tag": "collapse",
+                                        "content": [
+                                            {
+                                                "type": "static", 
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": "",
+                                                    "help": "Collapse"
+                                                }
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["component-nav-item", "component-nav-item--collapse"]
+                                        }
+                                    }
+                                }
+                            ],
+                            "style": {
+                                "css": ["nav", "component-nav"]
                             }
                         }
                     },
@@ -1680,7 +1746,95 @@
                 }
             }
         },
-  
+        {
+            "concept": { "name": "input" },
+            "type": "layout",
+            "tags": ["choice-selection", "style"],
+            "projection": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Input element",
+                            "help": "Widget used to capture input",
+                            "style": {
+                                "css": ["config-title", "font-ui"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "plink",
+                                        "tag": "config",
+                                        "content": [
+                                            {
+                                                "type": "static", 
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": "Config"
+                                                }
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["component-nav-item", "component-nav-item--config"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Style",
+                                        "style": {
+                                            "css": ["component-nav-item", "component-nav-item--style", "current"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "plink",
+                                        "tag": "collapse",
+                                        "content": [
+                                            {
+                                                "type": "static", 
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": "",
+                                                    "help": "Collapse"
+                                                }
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["component-nav-item", "component-nav-item--collapse"]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "style",
+                        "required": true
+                    }
+                ],
+                "style": {
+                    "css": ["input-config"]
+                }
+            }
+        },
+      
 
 
 
@@ -1708,34 +1862,76 @@
         {
             "concept": { "name": "template reference" },
             "type": "layout",
-            "tags": [],
+            "tags": ["config"],
             "projection": {
                 "type": "stack",
                 "orientation": "vertical",
                 "disposition": [
                     {
-                        "type": "attribute",
-                        "name": "tag",
-                        "tag": "label-string"
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Config",
+                                        "style": {
+                                            "css": ["component-nav-item", "component-nav-item--config", "current"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "plink",
+                                        "tag": "style",
+                                        "content": [
+                                            {
+                                                "type": "static", 
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": "Style"
+                                                }
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["component-nav-item", "component-nav-item--style"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "plink",
+                                        "tag": "collapse",
+                                        "content": [
+                                            {
+                                                "type": "static", 
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": "",
+                                                    "help": "Collapse"
+                                                }
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["component-nav-item", "component-nav-item--collapse"]
+                                        }
+                                    }
+                                }
+                            ],
+                            "style": {
+                                "css": ["nav", "component-nav"]
+                            }
+                        }
                     },
                     {
                         "type": "attribute",
-                        "name": "style",
-                        "placeholder": {
-                            "content": {
-                                "type": "static",
-                                "static": {
-                                    "type": "text",
-                                    "content": "Style",
-                                    "style": {
-                                        "css": ["textual-option", "textual-option--style"]
-                                    }
-                                }
-                            }
-                        },
-                        "style": {
-                            "css": ["text-style__attribute"]
-                        }
+                        "name": "tag",
+                        "tag": "label-string"
                     }
                 ],
                 "style": {
@@ -1743,6 +1939,85 @@
                 }
             }
         },
+        {
+            "concept": { "name": "template reference" },
+            "type": "layout",
+            "tags": ["choice-selection", "style"],
+            "projection": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "plink",
+                                        "tag": "config",
+                                        "content": [
+                                            {
+                                                "type": "static", 
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": "Config"
+                                                }
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["component-nav-item", "component-nav-item--config"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Style",
+                                        "style": {
+                                            "css": ["component-nav-item", "component-nav-item--style", "current"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "plink",
+                                        "tag": "collapse",
+                                        "content": [
+                                            {
+                                                "type": "static", 
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": "",
+                                                    "help": "Collapse"
+                                                }
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["component-nav-item", "component-nav-item--collapse"]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "style",
+                        "required": true
+                    }
+                ],
+                "style": {
+                    "css": ["template-config"]
+                }
+            }
+        },
+
+
         {
             "concept": { "name": "element" },
             "tags": ["list-item"],
@@ -2550,8 +2825,8 @@
             "tags": [],
             "type": "layout",
             "content":  {
-                "type": "stack",
-                "orientation": "horizontal",
+                "type": "flex",
+                "orientation": "row",
                 "disposition": [
                     {
                         "type": "attribute",
@@ -2805,8 +3080,8 @@
             "tags": [],
             "type": "layout",
             "content":  {
-                "type": "stack",
-                "orientation": "horizontal",
+                "type": "flex",
+                "orientation": "row",
                 "disposition": [
                     {
                         "type": "attribute",
@@ -3154,7 +3429,7 @@
                     {
                         "type": "attribute",
                         "name": "value",
-                        "tag": "label-string"
+                        "tag": "color-string"
                     }
                 ]
             }
@@ -3171,7 +3446,7 @@
                         "type": "static", 
                         "static": {
                             "type": "text",
-                            "content": "HEX"
+                            "content": "Picker"
                         }
                     }
                 ]
@@ -4199,6 +4474,48 @@
                             "type": "text",
                             "resizable": true,
                             "input": {
+                                "placeholder": "null",
+                                "style": {
+                                    "css": ["name-field--textual__input"]
+                                }
+                            },
+                            "style": {
+                                "css": ["name-field", "name-field--textual"]
+                            }
+                        }
+                    }
+                ],
+                "style": {
+                    "css": ["name-field", "name-field--textual"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["color-string"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": {
+                                "type": "property",
+                                "name": "refname"
+                            },
+                            "style": {
+                                "css": ["label", "name-field--textual__label"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "field",
+                        "field": {
+                            "type": "text",
+                            "input": {
+                                "type": "color",
                                 "placeholder": "null",
                                 "style": {
                                     "css": ["name-field--textual__input"]

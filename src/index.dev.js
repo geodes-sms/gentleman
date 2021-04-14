@@ -5,7 +5,7 @@ import './stylesheets.js';
 import '@css/samples/gentleman.css';
 
 import { Manager } from './manager.js';
-import { getElement, getElements, isNullOrUndefined, valOrDefault } from 'zenkai';
+import { getElement, getElements, isNullOrUndefined } from 'zenkai';
 
 const CMODEL__EDITOR = require('@models/concept-model/editor-config.json');
 const CMODEL__CONCEPT = require('@models/concept-model/concept.json');
@@ -45,8 +45,8 @@ const EDITOR_HANDLER = {
             if (editor.conceptModel) {
                 values = editor.conceptModel.export();
             }
-
-            editor.hide()
+            
+            editor.unload()
                 .loadConceptModel(model.concept || model, values)
                 .loadProjectionModel(pmodel)
                 .open();

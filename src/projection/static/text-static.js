@@ -24,6 +24,8 @@ function resolveValue(content) {
 const BaseTextStatic = {
     /** @type {string} */
     contentType: null,
+    /** @type {string} */
+    contentValue: null,
     /** @type {boolean} */
     editable: null,
     /** @type {boolean} */
@@ -32,9 +34,10 @@ const BaseTextStatic = {
     init(args = {}) {
         Object.assign(this.schema, args);
 
-        const { contentType = "raw", editable = false, focusable = valOrDefault(this.parent.schema.focusable, true) } = this.schema;
+        const { contentType = "raw", content, editable = false, focusable = valOrDefault(this.parent.schema.focusable, true) } = this.schema;
 
         this.contentType = contentType;
+        this.contentValue = resolveValue.call(this, content);
         this.editable = editable;
         this.focusable = focusable;
 
@@ -43,7 +46,7 @@ const BaseTextStatic = {
 
     render() {
         let bind = false;
-        const { help, style, content } = this.schema;
+        const { help, style } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createSpan({
@@ -61,16 +64,14 @@ const BaseTextStatic = {
                 this.element.tabIndex = 0;
             }
 
-            let value = resolveValue.call(this, content);
-
             if (this.contentType === "html") {
-                this.element.append(htmlToElement(value));
-            } else if (this.contentType === "property" && this.source.hasProperty(value)) {
-                this.element.textContent = this.source.getProperty(value);
-            } else if (this.contentType === "attribute" && this.source.hasAttribute(value)) {
-                this.element.textContent = this.source.getAttribute(value).getValue().toString();
+                this.element.append(htmlToElement(this.contentValue));
+            } else if (this.contentType === "property" && this.source.hasProperty(this.contentValue)) {
+                this.element.textContent = this.source.getProperty(this.contentValue);
+            } else if (this.contentType === "attribute" && this.source.hasAttribute(this.contentValue)) {
+                this.element.textContent = this.source.getAttribute(this.contentValue).getValue().toString();
             } else {
-                this.element.textContent = value.trim();
+                this.element.textContent = this.contentValue.trim();
             }
 
             bind = true;
@@ -163,11 +164,11 @@ const BaseTextStatic = {
     },
 
     update() {
-        if (this.contentType !== "property") {
-            return this;
+        if (this.contentType === "property") {
+            this.element.textContent = this.source.getProperty(this.contentValue);
+        } else if (this.contentType === "attribute") {
+            this.element.textContent = this.source.getAttribute(this.contentValue).getValue().toString();
         }
-
-        this.element.textContent = this.projection.concept.getProperty(this.schema.content);
 
         return this;
     },
@@ -179,6 +180,24 @@ const BaseTextStatic = {
         this.projection.registerHandler("value.changed", (value) => {
             this.update();
         });
+
+        if (this.contentType === "attribute") {
+            if (this.source.hasAttribute(this.contentValue)) {
+                this.source.getAttribute(this.contentValue).target.register(this);
+                this.update();
+            }
+            this.projection.registerHandler("attribute.added", (attr) => {
+                if (attr === this.contentValue) {
+                    attr.target.register(this);
+                }
+            });
+
+            this.projection.registerHandler("attribute.removed", (attr) => {
+                if (attr === this.contentValue) {
+                    this.element.textContent = "";
+                }
+            });
+        }
     },
 };
 

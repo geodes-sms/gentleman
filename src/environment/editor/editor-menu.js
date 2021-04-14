@@ -150,8 +150,7 @@ export const EditorMenu = {
                 draggable: true,
                 title: "Click to access the editor actions",
                 dataset: {
-                    action: "menu.click",
-                    handler: true,
+                    action: "menu.click"
                 }
             });
         }

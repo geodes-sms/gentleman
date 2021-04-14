@@ -357,7 +357,7 @@ const BaseTextField = {
                 }
             });
 
-            fragment.appendChild(this.notification);
+            fragment.append(this.notification);
         }
 
         if (!isHTMLElement(this.statusElement)) {
@@ -370,7 +370,7 @@ const BaseTextField = {
                 }
             });
 
-            this.notification.appendChild(this.statusElement);
+            this.notification.append(this.statusElement);
         }
 
         if (!isHTMLElement(this.input)) {
@@ -394,13 +394,13 @@ const BaseTextField = {
                 this.input.classList.add("field--textbox__input--multiline");
             }
 
-            fragment.appendChild(this.input);
+            fragment.append(this.input);
         }
 
         StyleHandler.call(this.projection, this.element, style);
 
         if (fragment.hasChildNodes()) {
-            this.element.appendChild(fragment);
+            this.element.append(fragment);
 
             this.bindEvents();
         }
@@ -487,9 +487,9 @@ const BaseTextField = {
 
             const fragment = createDocFragment();
 
-            candidates.forEach(value => fragment.appendChild(createChoiceItemElement.call(this, value)));
+            candidates.forEach(value => fragment.append(createChoiceItemElement.call(this, value)));
 
-            removeChildren(this.choice).appendChild(fragment);
+            removeChildren(this.choice).append(fragment);
             this.filterChoice(this.getValue());
             show(this.choice);
         }

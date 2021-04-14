@@ -57,7 +57,7 @@ export const EditorSelector = {
         }
 
         if (fragment.hasChildNodes()) {
-            this.container.appendChild(fragment);
+            this.container.append(fragment);
 
             this.bindEvents();
         }
@@ -138,7 +138,7 @@ export const EditorSelector = {
 
             btnCollapse.dataset.state = item.classList.contains("collapsed") ? "ON" : "OFF";
 
-            this.list.appendChild(item);
+            this.list.append(item);
         });
 
         this.refresh();
@@ -363,14 +363,21 @@ const ActionHandler = {
     "concept": function (concept) {
         const fragment = createDocFragment();
 
+        let hasProjection = this.editor.projectionModel.hasProjectionSchema(concept);
+
+        /** @type {HTMLButtonElement} */
         let btnCreate = createButton({
             class: ["btn", "editor-selector__action-bar-button", "editor-selector__action-bar-button--clone"],
+            disabled: !hasProjection,
             dataset: {
                 action: "create-instance",
                 concept: concept.name
             }
         }, "Create");
 
+        if (!hasProjection) {
+            btnCreate.title = `The concept ${concept.name} has no projection`;
+        }
 
         fragment.append(btnCreate);
 

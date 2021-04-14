@@ -122,13 +122,13 @@ export const BaseCellLayout = {
             }
 
 
-            fragment.appendChild(row);
+            fragment.append(row);
         }
 
         StyleHandler.call(this, this.container, style);
 
         if (fragment.hasChildNodes()) {
-            this.container.appendChild(fragment);
+            this.container.append(fragment);
             this.bindEvents();
         }
 
@@ -174,7 +174,7 @@ function tableHandler(layout) {
             nature: "layout"
         }
     });
-    table.appendChild(tableLayoutHandler[orientation].call(this, disposition));
+    table.append(tableLayoutHandler[orientation].call(this, disposition));
 
     return table;
 }
@@ -185,7 +185,7 @@ function crossTableHandler(layout, row, col) {
     const cellHandler = {
         "colspan": (cell, value) => cell.colSpan = value,
         "rowspan": (cell, value) => cell.rowSpan = value,
-        "layout": (cell, value) => cell.appendChild(ContentHandler.call(this, value)),
+        "layout": (cell, value) => cell.append(ContentHandler.call(this, value)),
     };
 
     for (let i = 0; i < layout.length; i++) {
@@ -208,11 +208,11 @@ function crossTableHandler(layout, row, col) {
                     }
                 }
             } else if (isString(content)) {
-                tableCell.appendChild(ContentHandler.call(this, content));
+                tableCell.append(ContentHandler.call(this, content));
             }
-            tableRow.appendChild(tableCell);
+            tableRow.append(tableCell);
         }
-        fragment.appendChild(tableRow);
+        fragment.append(tableRow);
     }
 
     return fragment;
@@ -223,7 +223,7 @@ function columnTableHandler(layout) {
 
     const cellHandler = {
         "span": (cell, value) => cell.colSpan = value,
-        "layout": (cell, value) => cell.appendChild(ContentHandler.call(this, value)),
+        "layout": (cell, value) => cell.append(ContentHandler.call(this, value)),
     };
 
     for (let i = 0; i < layout.length; i++) {
@@ -246,11 +246,11 @@ function columnTableHandler(layout) {
                     }
                 }
             } else if (isString(content)) {
-                tableCell.appendChild(ContentHandler.call(this, content));
+                tableCell.append(ContentHandler.call(this, content));
             }
-            tableRow.appendChild(tableCell);
+            tableRow.append(tableCell);
         }
-        fragment.appendChild(tableRow);
+        fragment.append(tableRow);
     }
 
     return fragment;
@@ -268,7 +268,7 @@ function rowTableHandler(layout) {
 
     const cellHandler = {
         "span": (cell, value) => cell.rowSpan = value,
-        "layout": (cell, value) => cell.appendChild(ContentHandler(value)),
+        "layout": (cell, value) => cell.append(ContentHandler(value)),
     };
 
     for (let i = 0; i < layout.length; i++) {
@@ -289,11 +289,11 @@ function rowTableHandler(layout) {
                     }
                 }
             } else if (isString(content)) {
-                tableCell.appendChild(ContentHandler(content));
+                tableCell.append(ContentHandler(content));
             }
-            tableRow.appendChild(tableCell);
+            tableRow.append(tableCell);
         }
-        fragment.appendChild(tableRow);
+        fragment.append(tableRow);
     }
 
     return fragment;

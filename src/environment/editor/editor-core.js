@@ -14,7 +14,6 @@ import { EditorBreadcrumb } from './editor-breadcrumb.js';
 import { EditorMenu } from './editor-menu.js';
 import { EditorStyle } from './editor-style.js';
 import { EditorLog } from './editor-log.js';
-import { EditorResource } from './editor-resource.js';
 import { EditorSection } from './editor-section.js';
 import { EditorInstance } from './editor-instance.js';
 import { EditorDesign } from './editor-design.js';
@@ -115,20 +114,6 @@ function createEditorLog() {
 }
 
 /**
- * Creates an editor resource manager
- * @returns {EditorResource}
- */
-function createEditorResource() {
-    return Object.create(EditorResource, {
-        object: { value: "environment" },
-        name: { value: "editor-resource" },
-        type: { value: "resource" },
-        editor: { value: this }
-    });
-}
-
-
-/**
  * 
  * @param {HTMLElement} element 
  * @returns 
@@ -194,7 +179,7 @@ export const Editor = {
     frozen: false,
     /** @type {Map} */
     handlers: null,
-    /** @type {Map} */
+    /** @type {Map<string,EditorInstance>} */
     instances: null,
     /** @type {Map} */
     resources: null,
@@ -291,6 +276,11 @@ export const Editor = {
 
         return this.addInstance(instance);
     },
+    /**
+     * Gets an instance in the editor
+     * @param {string} id 
+     * @returns {EditorInstance}
+     */
     getInstance(id) {
         return this.instances.get(id);
     },
@@ -301,8 +291,8 @@ export const Editor = {
      */
     addInstance(instance) {
         if (!instance.isRendered) {
-            this.instanceSection.appendChild(instance.render());
-            instance.projection.focus();
+            this.instanceSection.append(instance.render());
+            // instance.projection.focus();
         }
 
         this.instances.set(instance.id, instance);
@@ -312,6 +302,11 @@ export const Editor = {
 
         return instance;
     },
+    /**
+     * Removes an instance from the editor
+     * @param {string} id 
+     * @returns {boolean}
+     */
     removeInstance(id) {
         let instance = this.getInstance(id);
 
@@ -592,7 +587,7 @@ export const Editor = {
 
         /** @type {HTMLAnchorElement} */
         var link = createAnchor({});
-        this.container.appendChild(link);
+        this.container.append(link);
 
         if (!isNullOrWhitespace(link.href)) {
             window.URL.revokeObjectURL(link.href);
@@ -646,7 +641,7 @@ export const Editor = {
             notify.classList.add(type);
         }
 
-        this.container.appendChild(notify);
+        this.container.append(notify);
 
         setTimeout(() => {
             notify.classList.add(CSS_OPEN);
@@ -707,6 +702,7 @@ export const Editor = {
 
         return true;
     },
+
     /**
      * Gets a model from the register
      * @param {string} name 
@@ -728,6 +724,22 @@ export const Editor = {
      */
     addModel(name, schema) {
         this.models.set(name, schema);
+    },
+    /**
+     * Removes a model from the register
+     * @param {string} name 
+     * @returns 
+     */
+    removeModel(name) {
+        this.triggerEvent({ name: "model.remove@pre", args: [name] }, () => {
+            this.models.delete(name);
+
+            this.refresh();
+
+            this.triggerEvent({ name: "model.remove@post" });
+        }, false);
+
+        return true;
     },
     /**
      * Verifies the presence of a model in the register
@@ -755,21 +767,41 @@ export const Editor = {
 
     // Editor window actions
 
+    /**
+     * Makes the editor visible
+     * @returns {Editor}
+     */
     show() {
-        show(this.container);
-        this.visible = true;
+        this.triggerEvent({ name: "editor.show@pre" }, () => {
+            show(this.container);
+            this.visible = true;
+
+            this.triggerEvent({ name: "editor.show@post" });
+        }, false);
 
         return this;
     },
+    /**
+     * Hides the editor
+     * @returns {Editor}
+     */
     hide() {
-        hide(this.container);
-        this.visible = false;
+        this.triggerEvent({ name: "editor.hide@pre" }, () => {
+            hide(this.container);
+            this.visible = false;
+
+            this.triggerEvent({ name: "editor.hide@post" });
+        }, false);
 
         return this;
     },
     toggle() {
-        toggle(this.container);
-        this.visible = !this.visible;
+        this.triggerEvent({ name: "editor.toggle@pre" }, () => {
+            toggle(this.container);
+            this.visible = !this.visible;
+
+            this.triggerEvent({ name: "editor.toggle@post" });
+        }, false);
 
         return this;
     },
@@ -793,7 +825,8 @@ export const Editor = {
             this.active = false;
 
             // cleanup
-            this.clean();
+            this.done();
+            this.clear();
 
             this.triggerEvent({ name: "editor.close@post" });
         }, false);
@@ -809,9 +842,13 @@ export const Editor = {
         return true;
     },
     freeze() {
-        this.frozen = true;
+        this.triggerEvent({ name: "editor.freeze@pre" }, () => {
+            this.frozen = true;
 
-        this.refresh();
+            this.refresh();
+
+            this.triggerEvent({ name: "editor.freeze@post" });
+        }, false);
 
         return this;
     },
@@ -819,6 +856,17 @@ export const Editor = {
         this.frozen = false;
 
         this.refresh();
+
+        return this;
+    },
+    done() {
+        if (this.conceptModel) {
+            this.conceptModel.done();
+        }
+
+        if (this.projectionModel) {
+            this.projectionModel.done();
+        }
 
         return this;
     },
@@ -966,29 +1014,26 @@ export const Editor = {
 
         return this;
     },
-    clean() {
-        if (this.conceptModel) {
-            this.conceptModel.done();
-        }
-
-        if (this.projectionModel) {
-            this.projectionModel.done();
-        }
-
-        removeChildren(this.container);
-
-        return this;
-    },
+    /**
+     * Clears the editor
+     * @returns {Editor}
+     */
     clear() {
-        if (this.instanceSection) {
-            removeChildren(this.instanceSection);
-        }
+        this.triggerEvent({ name: "editor.clear@pre" }, () => {
+            this.instances.forEach(instance => instance.delete());
+            this.instances.clear();
+            this.resources.clear();
+            this.models.clear();
 
-        this.activeElement = null;
-        this.activeConcept = null;
-        this.activeProjection = null;
+            this.activeElement = null;
+            this.activeInstance = null;
+            this.activeConcept = null;
+            this.activeProjection = null;
 
-        this.triggerEvent({ name: "editor.clear" });
+            this.refresh();
+
+            this.triggerEvent({ name: "editor.clear@post" });
+        }, false);
 
         return this;
     },
@@ -1027,15 +1072,15 @@ export const Editor = {
         const fragment = createDocFragment();
 
         if (!this.home.isRendered) {
-            fragment.appendChild(this.home.render());
+            fragment.append(this.home.render());
         }
 
         if (!this.style.isRendered) {
-            fragment.appendChild(this.style.render());
+            fragment.append(this.style.render());
         }
 
         if (!this.header.isRendered) {
-            fragment.appendChild(this.header.render());
+            fragment.append(this.header.render());
         }
 
         if (!isHTMLElement(this.body)) {
@@ -1065,7 +1110,7 @@ export const Editor = {
 
             this.body.append(mainSection, this.designSection);
 
-            fragment.appendChild(this.body);
+            fragment.append(this.body);
         }
 
         if (!isHTMLElement(this.footer)) {
@@ -1078,15 +1123,15 @@ export const Editor = {
                 this.footer.append(this.logs.render());
             }
 
-            fragment.appendChild(this.footer);
+            fragment.append(this.footer);
         }
 
         if (!this.breadcrumb.isRendered) {
-            this.navigationSection.appendChild(this.breadcrumb.render());
+            this.navigationSection.append(this.breadcrumb.render());
         }
 
         if (!this.menu.isRendered) {
-            fragment.appendChild(this.menu.render());
+            fragment.append(this.menu.render());
         }
 
         if (!isHTMLElement(this.input)) {
@@ -1096,17 +1141,17 @@ export const Editor = {
                 accept: '.json,.jsoncp'
             });
 
-            fragment.appendChild(this.input);
+            fragment.append(this.input);
         }
 
         if (fragment.hasChildNodes()) {
-            this.container.appendChild(fragment);
+            this.container.append(fragment);
 
             this.bindEvents();
         }
 
         if (isHTMLElement(container)) {
-            container.appendChild(this.container);
+            container.append(this.container);
         }
 
         this.refresh();
@@ -1219,14 +1264,15 @@ export const Editor = {
      * @param {*} event 
      */
     triggerEvent(event, callback, oneach = true) {
-        const { name, options } = event;
+        const { name, options, args } = event;
 
         const handlers = this.getHandlers(name);
+
         const hasCallback = isFunction(callback);
         let halt = false;
 
         handlers.forEach((handler) => {
-            let result = handler.call(this, this.conceptModel, options);
+            let result = handler.call(this, args, options);
 
             if (result === false) {
                 halt = true;
@@ -1420,10 +1466,17 @@ export const Editor = {
             }
         };
 
+        const dir = {
+            [Key.up_arrow]: "up",
+            [Key.right_arrow]: "right",
+            [Key.down_arrow]: "down",
+            [Key.left_arrow]: "left",
+        };
+
         this.container.addEventListener('click', (event) => {
             var target = getEventTarget(event.target);
 
-            const { action, context, id, handler } = target.dataset;
+            const { action, context, id } = target.dataset;
 
             if (context === "instance") {
                 let instance = this.getInstance(id);
@@ -1442,9 +1495,7 @@ export const Editor = {
 
             const actionHandler = ActionHandler[action];
 
-            if (handler && action) {
-                this.triggerEvent({ "name": action });
-            } else if (isFunction(actionHandler)) {
+            if (isFunction(actionHandler)) {
                 actionHandler(target);
                 target.blur();
             } else if (action) {
@@ -1547,38 +1598,11 @@ export const Editor = {
 
                     break;
                 case Key.up_arrow:
-                    if (this.activeElement && ![Key.ctrl, Key.shift, Key.alt].includes(lastKey)) {
-                        const handled = this.activeElement.arrowHandler("up", target) === true;
-
-                        if (handled) {
-                            event.preventDefault();
-                        }
-                    }
-
-                    break;
-                case Key.down_arrow:
-                    if (this.activeElement && ![Key.ctrl, Key.shift, Key.alt].includes(lastKey)) {
-                        const handled = this.activeElement.arrowHandler("down", target) === true;
-
-                        if (handled) {
-                            event.preventDefault();
-                        }
-                    }
-
-                    break;
                 case Key.right_arrow:
-                    if (this.activeElement && ![Key.ctrl, Key.shift, Key.alt].includes(lastKey)) {
-                        const handled = this.activeElement.arrowHandler("right", target) === true;
-
-                        if (handled) {
-                            event.preventDefault();
-                        }
-                    }
-
-                    break;
+                case Key.down_arrow:
                 case Key.left_arrow:
                     if (this.activeElement && ![Key.ctrl, Key.shift, Key.alt].includes(lastKey)) {
-                        const handled = this.activeElement.arrowHandler("left", target) === true;
+                        const handled = this.activeElement.arrowHandler(dir[event.key], target) === true;
 
                         if (handled) {
                             event.preventDefault();
@@ -1586,7 +1610,6 @@ export const Editor = {
                     }
 
                     break;
-
                 case "s":
                     if (lastKey === Key.ctrl) {
                         this.activeConcept.copy();
@@ -1711,6 +1734,7 @@ export const Editor = {
             const { target } = event;
 
             const element = this.resolveElement(target);
+            lastKey = -1;
 
             if (element && element.projection.focusable && element.focusable) {
                 if (this.activeElement && this.activeElement !== element) {

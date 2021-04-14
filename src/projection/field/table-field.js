@@ -131,7 +131,7 @@ const BaseTableField = {
                     id: this.id,
                 }
             });
-            fragment.appendChild(this.notification);
+            fragment.append(this.notification);
         }
 
         if (!isHTMLElement(this.statusElement)) {
@@ -143,7 +143,7 @@ const BaseTableField = {
                     id: this.id,
                 }
             });
-            this.notification.appendChild(this.statusElement);
+            this.notification.append(this.statusElement);
         }
 
         content.forEach(element => {
@@ -218,7 +218,7 @@ const BaseTableField = {
 
                 StyleHandler.call(this.projection, this.table, style);
 
-                fragment.appendChild(this.table);
+                fragment.append(this.table);
             } else if (element.type === "action") {
                 let schema = valOrDefault(element, actionDefaultSchema.add);
 
@@ -243,13 +243,13 @@ const BaseTableField = {
 
                 StyleHandler.call(this.projection, addElement, style);
 
-                fragment.appendChild(addElement);
+                fragment.append(addElement);
             } else {
                 let content = ContentHandler.call(this, element);
 
                 this.contentElements.set(element, content);
 
-                fragment.appendChild(content);
+                fragment.append(content);
             }
         });
 
@@ -282,16 +282,16 @@ const BaseTableField = {
 
                 StyleHandler.call(this.projection, cell, style);
 
-                tableRow.appendChild(cell);
+                tableRow.append(cell);
             });
 
             let actionCell = createTableCell({
                 class: ["field--table-header-cell", "field--table-header-cell--action"]
             }, "Action");
 
-            tableRow.appendChild(actionCell);
+            tableRow.append(actionCell);
 
-            this.header.appendChild(tableRow);
+            this.header.append(tableRow);
         }
 
         if (this.source.hasValue()) {
@@ -301,7 +301,7 @@ const BaseTableField = {
         }
 
         if (fragment.hasChildNodes()) {
-            this.element.appendChild(fragment);
+            this.element.append(fragment);
             this.bindEvents();
         }
 
@@ -396,7 +396,7 @@ const BaseTableField = {
         if (this.hasError) {
             this.element.classList.add("error");
             this.statusElement.classList.add("error");
-            this.statusElement.appendChild(createNotificationMessage(NotificationType.ERROR, this.errors));
+            this.statusElement.append(createNotificationMessage(NotificationType.ERROR, this.errors));
         } else {
             this.element.classList.remove("error");
             this.statusElement.classList.remove("error");
@@ -443,7 +443,7 @@ const BaseTableField = {
 
             StyleHandler.call(this.projection, cell, style);
 
-            tableRow.appendChild(cell);
+            tableRow.append(cell);
         });
 
         var actionCell = createTableCell({
@@ -490,9 +490,9 @@ const BaseTableField = {
 
         actionCell.append(btnRemove, btnUp, btnDown);
 
-        tableRow.appendChild(actionCell);
+        tableRow.append(actionCell);
 
-        this.body.appendChild(tableRow);
+        this.body.append(tableRow);
 
         this.refresh();
     },

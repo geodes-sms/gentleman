@@ -1,4 +1,4 @@
-import { isObject, isIterable, isNullOrWhitespace, valOrDefault, isFunction } from "zenkai";
+import { isObject, isIterable, isNullOrWhitespace, valOrDefault, isFunction, isNullOrUndefined } from "zenkai";
 
 
 const StyleMap = {
@@ -10,7 +10,6 @@ const StyleMap = {
 const GentlemanStyleMap = {
     "text": styleTextHandler,
     "box": styleBoxHandler,
-    "size": styleSizeHandler,
 };
 
 
@@ -197,7 +196,7 @@ function resolveBold(schema) {
 }
 
 function resolveSize(schema) {
-    const { value, unit } = schema;
+    const { value = 0, unit } = schema;
 
     return `${value}${unit}`;
 }
@@ -352,21 +351,4 @@ function resolveBorderRadius(element, schema) {
             }
         }
     }
-}
-
-/**
- * Applies style constraints to an element
- * @param {HTMLElement} element 
- * @param {*} schema 
- */
-function styleSizeHandler(element, schema) {
-    for (const rule in schema) {
-        const value = schema[rule];
-        switch (rule) {
-            default:
-                break;
-        }
-    }
-
-    return element;
 }

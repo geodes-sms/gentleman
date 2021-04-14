@@ -83,7 +83,7 @@ const BaseLinkStatic = {
         this.content.forEach(element => {
             let content = ContentHandler.call(this, element, this.projection.concept, { focusable: false });
 
-            fragment.appendChild(content);
+            fragment.append(content);
         });
 
         if (!isNullOrUndefined(help)) {
@@ -93,7 +93,7 @@ const BaseLinkStatic = {
         StyleHandler.call(this.projection, this.element, style);
 
         if (fragment.hasChildNodes()) {
-            this.element.appendChild(fragment);
+            this.element.append(fragment);
         }
 
         this.refresh();

@@ -51,7 +51,7 @@ const BaseAudioStatic = {
         StyleHandler.call(this.projection, this.element, style);
 
         if (fragment.hasChildNodes()) {
-            this.element.appendChild(fragment);
+            this.element.append(fragment);
             this.bindEvents();
         }
 

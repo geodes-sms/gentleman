@@ -115,16 +115,16 @@ export const Explorer = {
                 class: ["explorer-toolbar"],
             }, [btnClose]);
 
-            this.header.appendChild(toolbar);
+            this.header.append(toolbar);
             const { refname, name } = this.activeConcept;
 
             if (this.concept) {
-                this.header.appendChild(createDiv({
+                this.header.append(createDiv({
                     class: ["explorer-header-concept"]
                 }, `${refname} (${name})`));
             }
 
-            fragment.appendChild(this.header);
+            fragment.append(this.header);
         }
 
         if (!isHTMLElement(this.body)) {
@@ -132,7 +132,7 @@ export const Explorer = {
                 class: ["explorer-body"],
                 tabindex: -1,
             });
-            fragment.appendChild(this.body);
+            fragment.append(this.body);
         }
 
         if (!isHTMLElement(this.footer)) {
@@ -141,21 +141,21 @@ export const Explorer = {
                 tabindex: -1
             });
 
-            fragment.appendChild(this.footer);
+            fragment.append(this.footer);
         }
 
         if (!isHTMLElement(this.selectorElement)) {
             this.selectorElement = createButton({
                 class: ["btn", "explorer-header-concept", "hidden"],
             });
-            this.header.appendChild(this.selectorElement);
+            this.header.append(this.selectorElement);
         }
 
         if (!isHTMLElement(this.selectorList)) {
             this.selectorList = createUnorderedList({
                 class: ["bare-list", "explorer-selector-list", "hidden"],
             });
-            fragment.appendChild(this.selectorList);
+            fragment.append(this.selectorList);
         }
 
         if (!isHTMLElement(this.input)) {
@@ -163,23 +163,23 @@ export const Explorer = {
                 class: ["explorer-input", "hidden"],
                 placeholder: "Rechercher..."
             });
-            fragment.appendChild(this.input);
+            fragment.append(this.input);
         }
 
         if (!isHTMLElement(this.results)) {
             this.results = createUnorderedList({
                 class: ["bare-list", "explorer-results"],
             });
-            this.body.appendChild(this.results);
+            this.body.append(this.results);
         }
 
         if (fragment.hasChildNodes()) {
-            this.container.appendChild(fragment);
+            this.container.append(fragment);
             this.bindEvents();
         }
 
         if (isHTMLElement(container)) {
-            container.appendChild(this.container);
+            container.append(this.container);
         }
 
         this.clear();
@@ -190,26 +190,26 @@ export const Explorer = {
     update(data) {
         const fragment = createDocFragment();
 
-        fragment.appendChild(createListItem({
+        fragment.append(createListItem({
             class: ["explorer-result-title"]
         }, "Attribute"));
         data.filter(val => val.type === "attribute").forEach(attr => {
             var title = "Target concept";
             var content = `${attr.target}${attr.accept ? `:${attr.accept}` : ""}`;
-            fragment.appendChild(createResultItem(attr, title, content));
+            fragment.append(createResultItem(attr, title, content));
         });
 
-        fragment.appendChild(createListItem({
+        fragment.append(createListItem({
             class: ["explorer-result-title"]
         }, "Component"));
         data.filter(val => val.type === "component").forEach(comp => {
             var title = "Attributes";
             var content = comp.attributes.join(", ");
-            fragment.appendChild(createResultItem(comp, title, content));
+            fragment.append(createResultItem(comp, title, content));
         });
 
         removeChildren(this.results);
-        this.results.appendChild(fragment);
+        this.results.append(fragment);
 
         return this;
     },
@@ -227,7 +227,7 @@ export const Explorer = {
                         concept: concept.id
                     }
                 }, projection.render());
-                this.selectorList.appendChild(item);
+                this.selectorList.append(item);
             });
             show(this.selectorList);
             hide(this.results);

@@ -134,7 +134,7 @@ const BaseListField = {
 
         value.forEach((val) => {
             var item = this.createItem(val);
-            this.list.appendChild(item);
+            this.list.append(item);
         });
 
         this.refresh();
@@ -261,6 +261,10 @@ const BaseListField = {
             }
         });
 
+        StyleHandler.call(this.projection, container, style);
+
+        this.items.set(object.id, container);
+
         const { content: removeLayout, help, style: removeStyle } = valOrDefault(action.remove, actionDefaultSchema.remove);
 
         let btnRemove = createButton({
@@ -286,18 +290,18 @@ const BaseListField = {
 
         StyleHandler.call(this.projection, btnRemove, removeStyle);
 
-        container.appendChild(btnRemove);
+        container.append(btnRemove);
+
+        if (!this.model.hasProjectionSchema(object, template.tag)) {
+            return container;
+        }
 
         let itemProjection = this.model.createProjection(object, template.tag);
         itemProjection.parent = this.projection;
 
-        container.appendChild(itemProjection.init().render());
+        container.append(itemProjection.init().render());
 
         itemProjection.element.parent = this;
-
-        this.items.set(object.id, container);
-
-        StyleHandler.call(this.projection, container, style);
 
         return container;
     },
@@ -307,7 +311,7 @@ const BaseListField = {
         if (value.index) {
             this.list.children[value.index - 1].after(item);
         } else {
-            this.list.appendChild(item);
+            this.list.append(item);
         }
 
         this.refresh();
@@ -435,7 +439,7 @@ const BaseListField = {
             this.element.classList.add("error");
             this.list.classList.add("error");
             this.statusElement.classList.add("error");
-            this.statusElement.appendChild(createNotificationMessage(NotificationType.ERROR, this.errors));
+            this.statusElement.append(createNotificationMessage(NotificationType.ERROR, this.errors));
         } else {
             this.element.classList.remove("error");
             this.list.classList.remove("error");
@@ -475,7 +479,7 @@ const BaseListField = {
                     id: this.id,
                 }
             });
-            fragment.appendChild(this.notification);
+            fragment.append(this.notification);
         }
 
         if (!isHTMLElement(this.statusElement)) {
@@ -487,7 +491,7 @@ const BaseListField = {
                     id: this.id,
                 }
             });
-            this.notification.appendChild(this.statusElement);
+            this.notification.append(this.statusElement);
         }
 
         if (!isHTMLElement(this.list)) {
@@ -511,7 +515,7 @@ const BaseListField = {
 
             StyleHandler.call(this.projection, this.list, style);
 
-            fragment.appendChild(this.list);
+            fragment.append(this.list);
 
         }
 
@@ -543,18 +547,18 @@ const BaseListField = {
 
             StyleHandler.call(this.projection, addElement, style);
 
-            fragment.appendChild(addElement);
+            fragment.append(addElement);
         }
 
         this.source.getValue().forEach((value) => {
             var item = this.createItem(value);
-            this.list.appendChild(item);
+            this.list.append(item);
         });
 
         StyleHandler.call(this.projection, this.element, style);
 
         if (fragment.hasChildNodes()) {
-            this.element.appendChild(fragment);
+            this.element.append(fragment);
             this.bindEvents();
         }
 
@@ -805,7 +809,7 @@ const BaseListField = {
 
             this.source.getValue().forEach((value) => {
                 let item = this.createItem(value);
-                this.list.appendChild(item);
+                this.list.append(item);
             });
         });
 

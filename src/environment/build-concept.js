@@ -29,9 +29,10 @@ const getName = (concept) => getValue(concept, ATTR_NAME).toLowerCase();
 const getDescription = (concept) => getValue(concept, ATTR_DESCRIPTION);
 
 
-export function buildConceptHandler(model, _options = {}) {
+export function buildConceptHandler(args = [], _options = {}) {
     const result = [];
     const buildErrors = [];
+    const { conceptModel } = this;
 
     this.logs.clear();
 
@@ -40,7 +41,7 @@ export function buildConceptHandler(model, _options = {}) {
         download: true
     }, _options);
 
-    const concepts = model.getConcepts(["prototype concept", "concrete concept", "derivative concept"]);
+    const concepts = conceptModel.getConcepts(["prototype concept", "concrete concept", "derivative concept"]);
 
     if (isEmpty(concepts)) {
         this.notify("<strong>Empty model</strong>: There was no concept found to be built.", NotificationType.WARNING);
@@ -49,7 +50,7 @@ export function buildConceptHandler(model, _options = {}) {
     }
 
     concepts.forEach(concept => {
-        const { success, errors, message } = buildConcept.call(model, concept);
+        const { success, errors, message } = buildConcept.call(conceptModel, concept);
 
         if (!success) {
             buildErrors.push(...errors);

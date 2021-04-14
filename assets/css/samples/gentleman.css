@@ -1538,8 +1538,6 @@
     opacity: 0.8;
     transition: .2s;
     cursor: default;
-
-    order: 2;
 }
     .textual-option--style:hover,
     .textual-option--style:focus {
@@ -1556,7 +1554,6 @@
     color: #fff;
     background-color: #111;
     transition: .2s;
-    order: 1;
 }
 
     .text-style__attribute .keyword,
@@ -1659,7 +1656,7 @@
 }
 
 .config-title {
-    margin-top: 4px; margin-bottom: 2px;
+    margin-top: 4px;
     margin-left: 0!important;
     padding-left: 6px; padding-bottom: 2px;
     color: #D10236; text-transform: capitalize;
@@ -1785,6 +1782,50 @@
         .render-config--collapse .render__nav-projection--collapse:after { content: "+"; transform: scale(1.2) translateY(-1px); }
 
     .render__nav-projection.current { color: #1f75fe; cursor: default; border-bottom: 2px solid currentColor; }
+
+
+.component-nav {
+    width: 100%; 
+}
+
+    .component-nav-item {
+        display: flex; justify-content: center;
+        margin: 0;
+        padding: 0 2px 4px;
+        line-height: 1; 
+        width: 50px;
+        font-size: 1.3rem; font-weight: 500;
+        color: #555;
+        font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
+        text-transform: capitalize;
+        transition: opacity, transform .2s;
+        z-index: 20;
+        cursor: pointer;
+        outline: none;
+    }
+    
+        .component-nav-item:hover,
+        .component-nav-item:focus {
+            opacity: 1;
+        }
+    
+        .component-nav-item:not(.current):hover {
+            border-bottom: 2px solid currentColor;
+        }
+    
+        .component-nav-item--collapse {
+            position: absolute; right: 0;
+            padding: 0;
+            color: #555;
+            border-bottom-left-radius: 2px; border-bottom-right-radius: 2px;
+            background-color: #d5d5d5;
+            width: 24px;
+        }
+            .component-nav-item--collapse:after { content: "–"; font-weight: bold; }
+    
+            .component-nav-config--collapse .component-nav-item--collapse:after { content: "+"; transform: scale(1.2) translateY(-1px); }
+    
+        .component-nav-item.current { color: #1f75fe; cursor: default; border-bottom: 2px solid currentColor; }
 
             
 .direction-size {

@@ -143,7 +143,7 @@ export const EditorBreadcrumb = {
                 class: ["notification", "breadcrumb-notification"]
             });
 
-            fragment.appendChild(this.notification);
+            fragment.append(this.notification);
         }
 
         const title = createSpan({

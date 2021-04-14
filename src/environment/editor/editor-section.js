@@ -87,7 +87,7 @@ export const EditorSection = {
         }
 
         this._conceptSelector = createModelSelector("concept", this.editor).init(() => {
-            if (!this.editor.hasConceptModel) {
+            if (!this.editor.isReady) {
                 return [];
             }
 
@@ -262,7 +262,7 @@ export const EditorSection = {
         this.btnCollapse.dataset.state = this.container.classList.contains("collapsed") ? "ON" : "OFF";
 
         if (fragment.hasChildNodes()) {
-            this.container.appendChild(fragment);
+            this.container.append(fragment);
 
             this.bindEvents();
         }

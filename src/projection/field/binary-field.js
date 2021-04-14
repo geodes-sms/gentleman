@@ -136,13 +136,13 @@ const BaseBinaryField = {
         if (!isHTMLElement(this.notification)) {
             this.notification = createFieldNotificationElement(this.id);
 
-            fragment.appendChild(this.notification);
+            fragment.append(this.notification);
         }
 
         if (!isHTMLElement(this.statusElement)) {
             this.statusElement = createFieldStatusElement(this.id);
 
-            this.notification.appendChild(this.statusElement);
+            this.notification.append(this.statusElement);
         }
 
 
@@ -160,7 +160,7 @@ const BaseBinaryField = {
 
             StyleHandler.call(this.projection, this.input, style);
 
-            fragment.appendChild(this.input);
+            fragment.append(this.input);
         }
 
         if (!isHTMLElement(this.label)) {
@@ -184,11 +184,11 @@ const BaseBinaryField = {
 
             StyleHandler.call(this.projection, this.label, style);
 
-            fragment.appendChild(this.label);
+            fragment.append(this.label);
         }
 
         if (fragment.hasChildNodes()) {
-            this.element.appendChild(fragment);
+            this.element.append(fragment);
             this.bindEvents();
         }
 
@@ -322,7 +322,7 @@ const BaseBinaryField = {
             this.element.classList.add("error");
             this.input.classList.add("error");
             this.statusElement.classList.add("error");
-            this.statusElement.appendChild(createNotificationMessage(NotificationType.ERROR, this.errors));
+            this.statusElement.append(createNotificationMessage(NotificationType.ERROR, this.errors));
         } else {
             this.element.classList.remove("error");
             this.input.classList.remove("error");

@@ -339,6 +339,16 @@
                     margin-left: 6px;
                 }
 
+                .editor-selector__action-bar-button:disabled,
+                .editor-selector__action-bar-button:disabled:hover,
+                .editor-selector__action-bar-button:disabled:active {
+                    color: #555;
+                    background-color: #d5d5d5;
+                    opacity: 0.8;
+                    box-shadow: none;
+                    cursor: default;
+                }
+
             .editor-selector__action-bar-button--clone {
                 margin-left: 6px;
                 color: #695399;

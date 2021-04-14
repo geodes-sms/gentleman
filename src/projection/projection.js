@@ -190,46 +190,45 @@ const Projection = {
                     return;
                 }
             });
-        } else {
-            switch (message) {
-                case "attribute.added":
-                    this.getAttributes(value.name).forEach(attr => {
-                        const { schema } = attr;
+        }
 
-                        const projection = this.model.createProjection(value.target, schema.tag).init();
-                        projection.parent = this;
-                        projection.optional = true;
+        switch (message) {
+            case "attribute.added":
+                this.getAttributes(value.name).forEach(attr => {
+                    const { schema } = attr;
 
-                        /** @type {HTMLElement} */
-                        const render = projection.render();
-                        StyleHandler.call(this, render, schema.style);
+                    const projection = this.model.createProjection(value.target, schema.tag).init();
+                    projection.parent = this;
+                    projection.optional = true;
 
-                        projection.element.parent = attr.parent;
-                        attr.element = render;
+                    /** @type {HTMLElement} */
+                    const render = projection.render();
+                    StyleHandler.call(this, render, schema.style);
 
-                        if (attr.placeholder) {
-                            attr.placeholder.after(render);
-                            hide(attr.placeholder);
-                        }
-                    });
-                    return;
-                case "attribute.removed":
-                    this.getAttributes(value.name).forEach(attr => {
+                    projection.element.parent = attr.parent;
+                    attr.element = render;
 
-                        if (attr.element) {
-                            removeChildren(attr.element).remove();
-                            attr.element = null;
-                        }
+                    if (attr.placeholder) {
+                        attr.placeholder.after(render);
+                        hide(attr.placeholder);
+                    }
+                });
+                return;
+            case "attribute.removed":
+                this.getAttributes(value.name).forEach(attr => {
 
-                        if (attr.placeholder) {
-                            show(attr.placeholder);
-                        }
-                    });
-                    return;
-                default:
-                    console.warn(`The message '${message}' is not handled by the element`);
-                    break;
-            }
+                    if (attr.element) {
+                        removeChildren(attr.element).remove();
+                        attr.element = null;
+                    }
+
+                    if (attr.placeholder) {
+                        show(attr.placeholder);
+                    }
+                });
+                return;
+            default:
+                break;
         }
     },
     delete() {

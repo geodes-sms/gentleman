@@ -1,4 +1,4 @@
-import { isEmpty, valOrDefault, isNullOrWhitespace, isFunction } from "zenkai";
+import { isEmpty, valOrDefault, isNullOrWhitespace, isFunction, isNullOrUndefined } from "zenkai";
 import { NotificationType, LogType } from "@utils/index.js";
 
 
@@ -45,9 +45,10 @@ const ProjectionHandler = {
     "field": buildField,
 };
 
-export function buildProjectionHandler(model, _options = {}) {
+export function buildProjectionHandler(args = [], _options = {}) {
     const result = [];
     const buildErrors = [];
+    const { conceptModel } = this;
 
     this.logs.clear();
 
@@ -57,7 +58,7 @@ export function buildProjectionHandler(model, _options = {}) {
         notify: "always"
     }, _options);
 
-    const concepts = model.getConcepts(["projection", "template", "style rule"]);
+    const concepts = conceptModel.getConcepts(["projection", "template", "style rule"]);
 
     if (isEmpty(concepts)) {
         this.notify("<strong>Empty model</strong>: There was no projection found to be built.", NotificationType.WARNING, 2000);
@@ -72,7 +73,7 @@ export function buildProjectionHandler(model, _options = {}) {
             throw new Error("The projection's is missing a build handler.");
         }
 
-        const { success, errors, message } = handler.call(model, concept);
+        const { success, errors, message } = handler.call(conceptModel, concept);
 
         if (!success) {
             buildErrors.push(...errors);
@@ -617,7 +618,7 @@ function buildTextStyle(style) {
     }
 
     if (hasAttr(style, "colour") && hasValue(style, "colour")) {
-        schema.color = buildColour.call(this, getValue(style, 'colour', true));
+        schema.color = buildColour.call(this, getValue(style, "colour", true));
     }
 
     if (hasAttr(style, "opacity") && hasValue(style, "opacity")) {
@@ -695,7 +696,7 @@ function buildBorder(style) {
 
             schema[dir] = {
                 width: buildSize.call(this, getAttr(value, "width")),
-                color: buildColour.call(this, getAttr(value, "colour")),
+                color: buildColour.call(this, getValue(value, "colour", true)),
                 type: getValue(value, "type")
             };
         }
@@ -707,9 +708,17 @@ function buildBorder(style) {
 function buildColour(colour) {
     let schema = {};
 
+    if (isNullOrUndefined(colour)) {
+        return schema;
+    }
+    
     if (colour.name === "name colour") {
         schema.type = "name";
         schema.value = getValue(colour, "value");
+    } else if (colour.name === "hex colour") {
+        schema.type = "hex";
+        let value = getValue(colour, "value") || "";
+        schema.value = value.startsWith("#") ? value : `#${value}`;
     } else if (colour.name === "rgb colour") {
         schema.type = "rgb";
         schema.value = {

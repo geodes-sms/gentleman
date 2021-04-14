@@ -58,7 +58,7 @@ export const BaseWrapLayout = {
 
             this.elements.push(render);
 
-            fragment.appendChild(render);
+            fragment.append(render);
         }
 
         if (this.focusable) {
@@ -70,7 +70,7 @@ export const BaseWrapLayout = {
         StyleHandler.call(this, this.container, style);
 
         if (fragment.hasChildNodes()) {
-            this.container.appendChild(fragment);
+            this.container.append(fragment);
             this.bindEvents();
         }
 

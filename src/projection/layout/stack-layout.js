@@ -120,7 +120,7 @@ export const BaseStackLayout = {
 
             this.elements.push(render);
 
-            fragment.appendChild(render);
+            fragment.append(render);
         }
 
         if (this.focusable) {
@@ -132,12 +132,12 @@ export const BaseStackLayout = {
         StyleHandler.call(this, this.container, style);
 
         if (fragment.hasChildNodes()) {
-            this.container.appendChild(fragment);
+            this.container.append(fragment);
             this.bindEvents();
         }
 
         this.container.style.display = "flex";
-        this.container.style.flexWrap = "no-wrap";
+        this.container.style.flexWrap = "nowrap";
 
         this.refresh();
 

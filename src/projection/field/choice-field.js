@@ -484,7 +484,7 @@ const BaseChoiceField = {
         this.choices.append(fragment);
 
         if (!this.expanded) {
-            if(this.hasValue()) {
+            if (this.hasValue()) {
                 let clone = this.selectListValue.cloneNode(true);
                 removeChildren(this.selection);
                 while (clone.childNodes.length > 0) {
@@ -607,6 +607,8 @@ const BaseChoiceField = {
         return true;
     },
     createChoiceOption(value) {
+        const { template = {}, style } = this.schema.choice.option;
+
         const isConcept = isObject(value);
 
         const container = createListItem({
@@ -621,7 +623,9 @@ const BaseChoiceField = {
             }
         });
 
-        const { template = {}, style } = this.schema.choice.option;
+        StyleHandler.call(this, container, style);
+
+        this.items.set(value.id, container);
 
         if (value.type === "meta-concept") {
             let choiceProjectionSchema = this.model.getProjectionSchema(value.concept, valOrDefault(template.tag))[0];
@@ -637,6 +641,10 @@ const BaseChoiceField = {
             container.dataset.value = value.name;
             container.append(render);
         } else if (isConcept) {
+            if (!this.model.hasProjectionSchema(value, template.tag)) {
+                return container;
+            }
+
             let choiceProjection = this.model.createProjection(value, template.tag).init({ focusable: false });
             choiceProjection.readonly = true;
             choiceProjection.focusable = false;
@@ -646,10 +654,6 @@ const BaseChoiceField = {
         } else {
             container.append(value.toString());
         }
-
-        StyleHandler.call(this, container, style);
-
-        this.items.set(value.id, container);
 
         return container;
     },

@@ -315,7 +315,9 @@ const _Concept = {
         }
 
         this.getChildren().forEach(child => {
-            child.delete(true);
+            if (child) {
+                child.delete(true);
+            }
         });
 
         try {

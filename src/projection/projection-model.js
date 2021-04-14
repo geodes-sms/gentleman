@@ -347,6 +347,43 @@ export const ProjectionModel = {
 
         return deepCopy(schema);
     },
+    
+    /**
+     * Verifies the projection matching a concept and optionnally a tag
+     * @param {*} concept 
+     * @param {string} tag 
+     * @returns {boolean}
+     */
+    hasProjectionSchema(concept, tag) {
+        if (isNullOrUndefined(concept)) {
+            throw new TypeError("Bad parameter: concept");
+        }
+
+        let projection = [];
+
+        const hasName = (name) => name && (name === concept.name || concept.schema && name === concept.schema.base); // TODO: change to look for base (include self)
+        // const hasPrototype = (prototype) => !!(prototype && concept.hasPrototype(prototype));
+        const hasPrototype = (prototype) => {
+            if (isNullOrUndefined(prototype) || concept.nature === "prototype") {
+                return false;
+            }
+
+            return concept.hasPrototype && concept.hasPrototype(prototype);
+        };
+        const isValid = (type) => !["template", "rule", "style"].includes(type);
+
+        if (isString(concept)) {
+            projection = this.schema.filter(p => isValid(p.type) && p.concept.name === concept);
+        } else {
+            projection = this.schema.filter(p => isValid(p.type) && (hasName(p.concept.name) || hasPrototype(p.concept.prototype)));
+        }
+
+        if (isIterable(tag) && !isEmpty(tag)) {
+            return projection.some(p => p.tags && p.tags.includes(tag));
+        }
+
+        return !isEmpty(projection);
+    },
 
     export() {
         const views = [];

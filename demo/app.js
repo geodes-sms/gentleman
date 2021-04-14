@@ -22,7 +22,7 @@ const EDITOR_HANDLER = {
                 values = editor.conceptModel.export();
             }
 
-            editor.hide()
+            editor.unload()
                 .loadConceptModel(model.concept || model, values)
                 .loadProjectionModel(pmodel)
                 .open();
