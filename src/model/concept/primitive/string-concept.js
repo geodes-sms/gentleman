@@ -2,6 +2,7 @@ import {
     isNullOrWhitespace, valOrDefault, isNullOrUndefined, isObject, isEmpty,
     hasOwn, isIterable, toBoolean
 } from "zenkai";
+import { deepCopy } from "@utils/index.js";
 import { Concept } from "./../concept.js";
 
 
@@ -207,6 +208,12 @@ const _StringConcept = {
                         return null;
                     }
 
+                    cmodel.forEach(c => {
+                        const baseSchema = getConceptBaseSchema(cmodel, c.prototype);
+
+                        c.attributes.push(...baseSchema.attributes);
+                    });
+
                     if (isNullOrUndefined(target.rel)) {
                         return cmodel.map(x => x[target.value]);
                     }
@@ -354,6 +361,68 @@ const _StringConcept = {
         return this.value;
     }
 };
+
+
+/**
+ * Gets the concept base schema
+ * @param {string} protoName 
+ * @this {ConceptModel}
+ */
+function getConceptBaseSchema(concepts, protoName) {
+    var prototype = protoName;
+
+    const attributes = [];
+
+    /**
+     * Gets a model concept by name
+     * @param {string} name 
+     */
+    const getConceptSchema = (name) => {
+        let concept = concepts.find(concept => concept.name === name);
+
+        if (isNullOrUndefined(concept)) {
+            return undefined;
+        }
+
+        return deepCopy(concept);
+    };
+
+    const appendAttributes = ($attributes) => {
+        if (!Array.isArray($attributes)) {
+            return;
+        }
+
+        $attributes.forEach($attr => {
+            const attribute = attributes.find((attr => attr.name === $attr.name));
+
+            if (isNullOrUndefined(attribute)) {
+                attributes.push($attr);
+
+                return;
+            }
+
+            if ($attr.required) {
+                attribute.required = $attr.required;
+            }
+
+            if ($attr.description) {
+                attribute.description = $attr.description;
+            }
+        });
+    };
+
+    while (!isNullOrUndefined(prototype)) {
+        const schema = valOrDefault(getConceptSchema(prototype), {});
+
+        appendAttributes(schema.attributes);
+
+        prototype = schema['prototype'];
+    }
+
+    return {
+        attributes: attributes,
+    };
+}
 
 function resolveValue(value) {
     if (value.type === "reference") {

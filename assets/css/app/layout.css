@@ -3,14 +3,10 @@
     /* width: 100%; */
 }
 
-
-.layout-container[data-layout="stack"] {
-    flex-wrap: wrap;
+[data-projection]:focus {
+    border-radius: 3px;
+    box-shadow: 0 0 0 2px #5897F5;
 }
-
-.layout-container-collapse {
-    display: none;
-}        
 
 .active > .btn-delete {
     opacity: 0.8;

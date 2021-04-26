@@ -70,7 +70,7 @@ function getPreviewEditor() {
 
         previewEditor = Gentleman.Task.createEditor().init({
             handlers: {
-                "editor.close": () => {
+                "editor.close@post": () => {
                     this.conceptModel.unregister(modelHanlder);
                     previewEditor.destroy();
                     previewEditor = null;

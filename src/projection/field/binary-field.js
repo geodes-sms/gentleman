@@ -1,5 +1,5 @@
 import {
-    createDocFragment, createSpan, createDiv, createI, createInput, createLabel,
+    createDocFragment, createDiv, createI, createInput, createLabel,
     removeChildren, findAncestor, isHTMLElement, valOrDefault,
 } from "zenkai";
 import { hide, isHidden, NotificationType } from "@utils/index.js";
@@ -118,10 +118,55 @@ const BaseBinaryField = {
         return this;
     },
 
+
+    refresh() {
+        const state = valOrDefault(StateHandler.call(this, this.schema, this.schema.state), this.schema);
+
+        if (this.hasChanges()) {
+            this.statusElement.classList.add("change");
+        } else {
+            this.statusElement.classList.remove("change");
+        }
+
+        if (this.schema.state) {
+            let state = this.schema.state[this.getValue().toString()];
+
+            if (state && state.content) {
+                const { style, content, value } = state;
+
+                let fragment = createDocFragment();
+                content.forEach(element => {
+                    fragment.append(ContentHandler.call(this, element));
+                });
+
+                removeChildren(this.label).append(fragment);
+
+                StyleHandler.call(this.projection, this.label, style);
+            }
+        }
+
+        if (this.input.checked) {
+            this.element.dataset.state = "on";
+        } else {
+            this.element.dataset.state = "off";
+        }
+
+        removeChildren(this.statusElement);
+        if (this.hasError) {
+            this.element.classList.add("error");
+            this.input.classList.add("error");
+            this.statusElement.classList.add("error");
+            this.statusElement.append(createNotificationMessage(NotificationType.ERROR, this.errors));
+        } else {
+            this.element.classList.remove("error");
+            this.input.classList.remove("error");
+            this.statusElement.classList.remove("error");
+        }
+    },
     render() {
         const fragment = createDocFragment();
 
-        const { label = {}, input = {}, after = {} } = this.schema;
+        const { checkbox } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createFieldElement(this.id);
@@ -145,10 +190,7 @@ const BaseBinaryField = {
             this.notification.append(this.statusElement);
         }
 
-
         if (!isHTMLElement(this.input)) {
-            const { style } = input;
-
             this.input = createFieldInput(this.id);
             this.input.checked = resolveValue(this.source);
             this.value = this.input.checked;
@@ -158,14 +200,17 @@ const BaseBinaryField = {
                 this.input.disabled = true;
             }
 
-            StyleHandler.call(this.projection, this.input, style);
+            if (checkbox) {
+                const { style } = checkbox;
+                StyleHandler.call(this.projection, this.input, style);
+            } else {
+                hide(this.input);
+            }
 
             fragment.append(this.input);
         }
 
         if (!isHTMLElement(this.label)) {
-            const { style, content = [], value } = label;
-
             this.label = createLabel({
                 class: ["field--checkbox__label"],
                 for: this.input.id,
@@ -178,11 +223,9 @@ const BaseBinaryField = {
             });
             this.label.htmlFor = this.input.id;
 
-            content.forEach(element => {
-                this.label.append(ContentHandler.call(this, element));
-            });
-
-            StyleHandler.call(this.projection, this.label, style);
+            if (checkbox && checkbox.label) {
+                this.label.textContent = checkbox.label;
+            }
 
             fragment.append(this.label);
         }
@@ -286,48 +329,6 @@ const BaseBinaryField = {
         this.input.disabled = true;
         this.input.tabIndex = -1;
         this.disabled = true;
-    },
-    refresh() {
-        const state = valOrDefault(StateHandler.call(this, this.schema, this.schema.state), this.schema);
-
-        if (this.hasChanges()) {
-            this.statusElement.classList.add("change");
-        } else {
-            this.statusElement.classList.remove("change");
-        }
-
-        if (this.schema.state) {
-            let state = this.schema.state[this.getValue().toString()];
-
-            const { style, content, value } = state;
-
-            let fragment = createDocFragment();
-            content.forEach(element => {
-                fragment.append(ContentHandler.call(this, element));
-            });
-
-            removeChildren(this.label).append(fragment);
-
-            StyleHandler.call(this.projection, this.label, style);
-        }
-
-        if (this.input.checked) {
-            this.element.dataset.state = "on";
-        } else {
-            this.element.dataset.state = "off";
-        }
-
-        removeChildren(this.statusElement);
-        if (this.hasError) {
-            this.element.classList.add("error");
-            this.input.classList.add("error");
-            this.statusElement.classList.add("error");
-            this.statusElement.append(createNotificationMessage(NotificationType.ERROR, this.errors));
-        } else {
-            this.element.classList.remove("error");
-            this.input.classList.remove("error");
-            this.statusElement.classList.remove("error");
-        }
     },
 
     /**

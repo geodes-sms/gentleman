@@ -395,6 +395,7 @@ const Projection = {
         let container = this.getContainer();
 
         if (!isHTMLElement(container)) {
+            this.params = [];
             container = this.render();
         }
 

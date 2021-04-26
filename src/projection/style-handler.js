@@ -104,7 +104,6 @@ function styleTextHandler(element, schema) {
             case "strikethrough":
                 element.style.textDecoration = "line-through";
                 break;
-            case "colour":
             case "color":
                 element.style.color = resolveColor(value);
                 break;
@@ -113,10 +112,6 @@ function styleTextHandler(element, schema) {
                 break;
             case "size":
                 element.style.fontSize = resolveSize(value);
-                break;
-            case "alignment":
-            case "align":
-                element.style.textAlign = value;
                 break;
             default:
                 break;
@@ -165,6 +160,11 @@ function CSSStyleHandler(element, schema) {
 }
 
 function resolveColor(schema) {
+    if (isNullOrUndefined(schema)) {
+        return "";
+    }
+
+
     const { type, value } = schema;
 
     switch (type) {
@@ -186,6 +186,10 @@ function resolveColor(schema) {
 }
 
 function resolveBold(schema) {
+    if (isNullOrUndefined(schema)) {
+        return "";
+    }
+
     const { type, value } = schema;
 
     if (Number.isInteger(schema)) {
@@ -196,6 +200,10 @@ function resolveBold(schema) {
 }
 
 function resolveSize(schema) {
+    if (isNullOrUndefined(schema)) {
+        return "";
+    }
+
     const { value = 0, unit } = schema;
 
     return `${value}${unit}`;
@@ -228,9 +236,6 @@ function styleBoxHandler(element, schema) {
             case "height":
                 element.style.height = resolveSize.call(this, value);
                 break;
-            case "overflow":
-                element.style.overflow = value;
-                break;
             case "opacity":
                 element.style.opacity = value / 100;
                 break;
@@ -248,12 +253,19 @@ function styleBoxHandler(element, schema) {
  * @param {*} schema 
  */
 function resolveSpace(element, schema, prop) {
+    if (isNullOrUndefined(schema)) {
+        return;
+    }
+
     if (Number.isInteger(schema)) {
         element.style[prop] = resolveSize.call(this, schema);
     } else {
         for (const rule in schema) {
             const value = schema[rule];
             switch (rule) {
+                case "all":
+                    element.style[`${[prop]}`] = resolveSize.call(this, value);
+                    break;
                 case "top":
                     element.style[`${[prop]}Top`] = resolveSize.call(this, value);
                     break;
@@ -277,8 +289,21 @@ function resolveSpace(element, schema, prop) {
  * @param {HTMLElement} element 
  * @param {*} schema 
  */
-function resolveBackground(element, schema) {
-    element.style.backgroundColor = resolveColor.call(this, schema);
+function resolveBackground(element, schema) {console.log(schema);
+    if (isNullOrUndefined(schema)) {
+        return;
+    }
+
+
+    const { color, image } = schema;
+
+    if (color) {
+        element.style.backgroundColor = resolveColor.call(this, color);
+    }
+
+    if (image) {
+        element.style.backgroundImage = `url(${image})`;
+    }
 }
 
 /**
@@ -295,25 +320,35 @@ function resolveBorder(element, schema) {
         for (const rule in schema) {
             const value = schema[rule];
             switch (rule) {
+                case "all":
+                    element.style.borderStyle = valOrDefault(value.type, "solid");
+                    element.style.borderWidth = resolveSize.call(this, value.width);
+                    element.style.borderColor = resolveColor.call(this, value.color);
+
+                    break;
                 case "top":
                     element.style.borderTopStyle = valOrDefault(value.type, "solid");
                     element.style.borderTopWidth = resolveSize.call(this, value.width);
                     element.style.borderTopColor = resolveColor.call(this, value.color);
+
                     break;
                 case "right":
                     element.style.borderRightStyle = valOrDefault(value.type, "solid");
                     element.style.borderRightWidth = resolveSize.call(this, value.width);
                     element.style.borderRightColor = resolveColor.call(this, value.color);
+
                     break;
                 case "bottom":
                     element.style.borderBottomStyle = valOrDefault(value.type, "solid");
                     element.style.borderBottomWidth = resolveSize.call(this, value.width);
                     element.style.borderBottomColor = resolveColor.call(this, value.color);
+
                     break;
                 case "left":
                     element.style.borderLeftStyle = valOrDefault(value.type, "solid");
                     element.style.borderLeftWidth = resolveSize.call(this, value.width);
                     element.style.borderLeftColor = resolveColor.call(this, value.color);
+
                     break;
             }
         }

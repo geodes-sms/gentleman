@@ -15,37 +15,37 @@
  
 
     {
-        "name": "multi colour",
+        "name": "multi color",
         "nature": "concrete",
         "attributes": [
             {
                 "name": "value",
                 "target": {
-                    "name": "colour"
+                    "name": "color"
                 }
             },
             {
                 "name": "top",
                 "target": {
-                    "name": "colour"
+                    "name": "color"
                 }
             },
             {
                 "name": "right",
                 "target": {
-                    "name": "colour"
+                    "name": "color"
                 }
             },
             {
                 "name": "bottom",
                 "target": {
-                    "name": "colour"
+                    "name": "color"
                 }
             },
             {
                 "name": "left",
                 "target": {
-                    "name": "colour"
+                    "name": "color"
                 }
             }
         ]
@@ -61,9 +61,9 @@
                 }
             },
             {
-                "name": "colour",
+                "name": "color",
                 "target": {
-                    "name": "colour"
+                    "name": "color"
                 }
             },
             {

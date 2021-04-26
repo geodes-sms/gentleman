@@ -1,7 +1,4 @@
-import {
-    createDocFragment, createSpan, removeChildren, isHTMLElement, isNullOrUndefined,
-    htmlToElement, findAncestor, valOrDefault,
-} from "zenkai";
+import { createSpan, removeChildren, isHTMLElement, isNullOrUndefined, findAncestor, valOrDefault, htmlToElement } from "zenkai";
 import { hide, show, getCaretIndex } from "@utils/index.js";
 import { StyleHandler } from "../style-handler.js";
 import { Static } from "./static.js";
@@ -18,12 +15,14 @@ function resolveValue(content) {
         return this.projection.getParam(name);
     }
 
+    if (type === "html") {
+        return htmlToElement(content.html);
+    }
+
     return content;
 }
 
 const BaseTextStatic = {
-    /** @type {string} */
-    contentType: null,
     /** @type {string} */
     contentValue: null,
     /** @type {boolean} */
@@ -34,9 +33,8 @@ const BaseTextStatic = {
     init(args = {}) {
         Object.assign(this.schema, args);
 
-        const { contentType = "raw", content, editable = false, focusable = valOrDefault(this.parent.schema.focusable, true) } = this.schema;
+        const { content, editable = false, focusable = valOrDefault(this.parent.schema.focusable, true) } = this.schema;
 
-        this.contentType = contentType;
         this.contentValue = resolveValue.call(this, content);
         this.editable = editable;
         this.focusable = focusable;
@@ -64,15 +62,7 @@ const BaseTextStatic = {
                 this.element.tabIndex = 0;
             }
 
-            if (this.contentType === "html") {
-                this.element.append(htmlToElement(this.contentValue));
-            } else if (this.contentType === "property" && this.source.hasProperty(this.contentValue)) {
-                this.element.textContent = this.source.getProperty(this.contentValue);
-            } else if (this.contentType === "attribute" && this.source.hasAttribute(this.contentValue)) {
-                this.element.textContent = this.source.getAttribute(this.contentValue).getValue().toString();
-            } else {
-                this.element.textContent = this.contentValue.trim();
-            }
+            this.element.append(this.contentValue);
 
             bind = true;
         }
@@ -164,10 +154,10 @@ const BaseTextStatic = {
     },
 
     update() {
-        if (this.contentType === "property") {
-            this.element.textContent = this.source.getProperty(this.contentValue);
-        } else if (this.contentType === "attribute") {
-            this.element.textContent = this.source.getAttribute(this.contentValue).getValue().toString();
+        const { content } = this.schema;
+
+        if (content.type === "property") {
+            this.element.textContent = this.source.getProperty(content.name);
         }
 
         return this;
@@ -180,24 +170,6 @@ const BaseTextStatic = {
         this.projection.registerHandler("value.changed", (value) => {
             this.update();
         });
-
-        if (this.contentType === "attribute") {
-            if (this.source.hasAttribute(this.contentValue)) {
-                this.source.getAttribute(this.contentValue).target.register(this);
-                this.update();
-            }
-            this.projection.registerHandler("attribute.added", (attr) => {
-                if (attr === this.contentValue) {
-                    attr.target.register(this);
-                }
-            });
-
-            this.projection.registerHandler("attribute.removed", (attr) => {
-                if (attr === this.contentValue) {
-                    this.element.textContent = "";
-                }
-            });
-        }
     },
 };
 

@@ -7,7 +7,7 @@ import { ContentHandler } from "../content-handler.js";
 import { Layout } from "./layout.js";
 
 
-export const BaseCellLayout = {
+export const BaseTableLayout = {
     /** @type {HTMLElement[]} */
     elements: null,
     /** @type {boolean} */
@@ -300,7 +300,7 @@ function rowTableHandler(layout) {
 }
 
 
-export const CellLayout = Object.assign({},
+export const TableLayout = Object.assign({},
     Layout,
-    BaseCellLayout
+    BaseTableLayout
 );

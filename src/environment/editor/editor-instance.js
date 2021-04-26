@@ -2,7 +2,7 @@ import {
     createDocFragment, createDiv, createH3, createButton, createHeader,
     removeChildren, isHTMLElement, valOrDefault,
 } from 'zenkai';
-import { show, hide, toggle, collapse, expand, NotificationType } from '@utils/index.js';
+import { show, hide, toggle, collapse, expand, NotificationType, makeResizable } from '@utils/index.js';
 
 
 const MAX_SIZE = 2;
@@ -25,8 +25,6 @@ export const EditorInstance = {
     btnCollapse: null,
     /** @type {HTMLButtonElement} */
     btnMaximize: null,
-    /** @type {HTMLButtonElement} */
-    btnResize: null,
     /** @type {HTMLButtonElement} */
     btnClose: null,
     /** @type {number} */
@@ -59,15 +57,20 @@ export const EditorInstance = {
 
         return this;
     },
-    resize() {
-        this.size = this.size % MAX_SIZE + 1;
-
-        this.refresh();
-
-        return this;
-    },
     maximize() {
         this.fullscreen = !this.fullscreen;
+
+        if (this.fullscreen) {
+            this.editor.instances.forEach(instance => {
+                if (instance !== this) {
+                    instance.hide();
+                }
+            });
+        } else {
+            this.editor.instances.forEach(instance => {
+                instance.show();
+            });
+        }
 
         this.refresh();
 
@@ -114,6 +117,7 @@ export const EditorInstance = {
         if (!isHTMLElement(this.container)) {
             this.container = createDiv({
                 class: ["editor-concept", `editor-concept--${this.ctype}`],
+                tabindex: -1,
                 dataset: {
                     nature: "concept-container",
                     type: this.ctype,
@@ -170,25 +174,13 @@ export const EditorInstance = {
             });
         }
 
-        if (!isHTMLElement(this.btnResize)) {
-            this.btnResize = createButton({
-                class: ["btn", "editor-concept-toolbar__btn-resize"],
-                title: `Resize ${name.toLowerCase()}`,
-                dataset: {
-                    action: `resize`,
-                    context: this.type,
-                    id: this.id
-                }
-            });
-        }
-
         let title = createH3({
             class: ["title", "editor-concept-title", "fit-content"],
         }, name);
 
         let toolbar = createDiv({
             class: ["editor-concept-toolbar"],
-        }, [this.btnCollapse, this.btnResize, this.btnMaximize, this.btnClose]);
+        }, [this.btnCollapse, this.btnMaximize, this.btnClose]);
 
         removeChildren(this.header).append(title, toolbar);
 
@@ -196,6 +188,8 @@ export const EditorInstance = {
             this.container.appendChild(fragment);
             this.bindEvents();
         }
+
+        makeResizable(this.container);
 
         this.refresh();
 
@@ -208,9 +202,6 @@ export const EditorInstance = {
         switch (name) {
             case "collapse":
                 this.collapse();
-                break;
-            case "resize":
-                this.resize();
                 break;
             case "maximize":
                 this.maximize();

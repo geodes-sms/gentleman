@@ -92,3 +92,33 @@
     from { opacity: 0; }
     to   { opacity: 1; }
 }
+
+
+
+.resizer {
+    position: absolute;
+    opacity: 0;
+    background-color: #d5d5d5;
+}
+    .resizer:hover { 
+        opacity: 0.8; 
+    }
+    .resizer:active,
+    .resizer:focus {
+        opacity: 1;
+        background-color: #5897F5;
+    }
+
+.resizer.horizontal {
+    top: 0; left: 100%;
+    width: 6px;
+    height: 100%;
+    cursor: col-resize;
+}
+
+.resizer.vertical {
+    top: 100%; left: 0;
+    width: 100%;
+    height: 6px;
+    cursor: row-resize;
+}

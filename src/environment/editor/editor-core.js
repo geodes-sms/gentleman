@@ -1,9 +1,9 @@
 import {
     createDocFragment, createSection, createDiv, createParagraph, createAnchor, createInput,
     removeChildren, isHTMLElement, findAncestor, isNullOrWhitespace, isNullOrUndefined,
-    isEmpty, hasOwn, isFunction, valOrDefault, copytoClipboard, createAside,
+    isEmpty, hasOwn, isFunction, valOrDefault, copytoClipboard, createAside, createUnorderedList, createListItem, createButton, createI,
 } from 'zenkai';
-import { hide, show, toggle, Key, getEventTarget, NotificationType } from '@utils/index.js';
+import { hide, show, toggle, Key, getEventTarget, NotificationType, getClosest } from '@utils/index.js';
 import { buildProjectionHandler } from "../build-projection.js";
 import { buildConceptHandler } from "../build-concept.js";
 import { ConceptModelManager } from '@model/index.js';
@@ -22,6 +22,7 @@ import { EditorDesign } from './editor-design.js';
 var inc = 0;
 
 const nextInstanceId = () => `instance${inc++}`;
+const nextValueId = () => `value${inc++}`;
 
 /**
  * Creates an editor's header
@@ -149,6 +150,10 @@ export const Editor = {
     designSection: null,
     /** @type {HTMLElement} */
     navigationSection: null,
+    /** @type {HTMLElement} */
+    valueWindow: null,
+    /** @type {HTMLElement} */
+    valueList: null,
     /** @type {EditorBreadcrumb} */
     breadcrumb: null,
     /** @type {EditorMenu} */
@@ -182,6 +187,8 @@ export const Editor = {
     /** @type {Map<string,EditorInstance>} */
     instances: null,
     /** @type {Map} */
+    values: null,
+    /** @type {Map<string,File>} */
     resources: null,
     /** @type {Map} */
     models: null,
@@ -195,6 +202,7 @@ export const Editor = {
         this.config = valOrDefault(config, {});
         this.handlers = new Map();
         this.instances = new Map();
+        this.values = new Map();
         this.resources = new Map();
         this.models = new Map();
 
@@ -324,8 +332,21 @@ export const Editor = {
 
         return true;
     },
+    moveInstance(item, index) {
+        this.instanceSection.children[index].before(item);
 
-    // Model management
+        return this;
+    },
+    swapInstance(item1, item2) {
+        let instances = Array.from(this.instanceSection.children);
+        const index1 = instances.indexOf(item1);
+        const index2 = instances.indexOf(item2);
+
+        this.moveInstance(item2, index1);
+        this.moveInstance(item1, index2);
+
+        return this;
+    },
 
     /**
      * Verifies that the editor has a concept model loaded
@@ -338,10 +359,15 @@ export const Editor = {
      */
     get hasProjectionModel() { return !isNullOrUndefined(this.projectionModel); },
     /**
-     * Verifies that the editor has a projection model loaded
-     * @returns {boolean} Value indicating whether the editor has a projection model loaded
+     * Verifies that the editor has an instance created
+     * @returns {boolean} Value indicating whether the editor has an instance created
      */
     get hasInstances() { return this.instances.size > 0; },
+    /**
+     * Verifies that the editor has a value copied
+     * @returns {boolean} Value indicating whether the editor has a value copied
+     */
+    get hasValues() { return this.values.size > 0; },
     /**
      * Verifies that the editor has both model loaded
      * @returns {boolean} Value indicating whether the editor has both model loaded
@@ -750,11 +776,100 @@ export const Editor = {
         return this.models.has(name);
     },
 
-    copy(value) {
+
+    /**
+     * Gets a value in the editor
+     * @param {string} id 
+     * @returns {EditorInstance}
+     */
+    getValue(id) {
+        if (!this.values.has(id)) {
+            return;
+        }
+
+        return this.values.get(id);
+    },
+    /**
+     * Adds a value to editor
+     * @param {EditorInstance} instance 
+     * @returns {HTMLElement}
+     */
+    addValue(value) {
+        let id = nextValueId();
+
+        let icoCopy = createI({
+            class: ["ico", "ico-copy"]
+        });
+
+        let icoDelete = createI({
+            class: ["ico", "ico-delete"]
+        }, "✖");
+
+        let btnCopy = createButton({
+            class: ["btn", "btn-copy", "fit-content"],
+            title: `Copy ${value.name}`
+        }, [icoCopy, value.name]);
+
+        let btnDelete = createButton({
+            class: ["btn", "btn-delete"]
+        }, icoDelete);
+
+        let item = createListItem({
+            class: ["model-value"],
+            dataset: {
+                id: id,
+            }
+        }, [btnCopy, btnDelete]);
+
+        btnCopy.addEventListener('click', (event) => {
+            this.copy(value);
+        });
+
+        btnDelete.addEventListener('click', (event) => {
+            this.removeValue(id);
+        });
+
+        if (this.values.size > 5) {
+            let { id } = this.valueList.lastChild.dataset;
+            this.removeValue(id);
+        }
+
+        this.valueList.prepend(item);
+
+        this.values.set(id, {
+            element: item,
+            value: value,
+        });
+
+        this.refresh();
+
+        return value;
+    },
+    removeValue(id) {
+        if (isNullOrUndefined(id) || !this.values.has(id)) {
+            return;
+        }
+
+        let { element } = this.values.get(id);
+
+        removeChildren(element).remove();
+
+        this.values.delete(id);
+
+        this.refresh();
+
+        return this;
+    },
+
+    copy(value, preserve = false) {
         this.copyValue = value;
 
+        if (preserve) {
+            this.addValue(value);
+        }
+
         this.notify(`${value.name} copied`, NotificationType.NORMAL);
-        console.log(value);
+
         return this;
     },
     paste(concept, _value) {
@@ -1119,6 +1234,19 @@ export const Editor = {
                 tabindex: 0,
             });
 
+
+            this.valueWindow = createDiv({
+                class: ["model-value-window"],
+            });
+
+            this.valueList = createUnorderedList({
+                class: ["bare-list", "model-value-list"],
+            });
+
+            this.valueWindow.append(this.valueList);
+
+            this.footer.append(this.valueWindow);
+
             if (!this.logs.isRendered) {
                 this.footer.append(this.logs.render());
             }
@@ -1174,6 +1302,8 @@ export const Editor = {
         } else {
             this.container.classList.remove("no-projection-model");
         }
+
+        this.hasValues ? show(this.valueWindow) : hide(this.valueWindow);
 
         this.header.refresh();
         this.breadcrumb.refresh();
@@ -1386,6 +1516,7 @@ export const Editor = {
                 const { id } = target.dataset;
 
                 this.conceptModel.removeValue(id);
+                this.header._valueSelector.update();
             },
             "delete:resource": (target) => {
                 const { id } = target.dataset;
@@ -1573,6 +1704,8 @@ export const Editor = {
                         if (handled) {
                             event.preventDefault();
                         }
+                    } else if (nature === "concept-container") {
+                        this.activeInstance.projection.focus();
                     } else if (target.tagName === "BUTTON") {
                         target.click();
                         event.preventDefault();
@@ -1607,12 +1740,21 @@ export const Editor = {
                         if (handled) {
                             event.preventDefault();
                         }
-                    }
+                    } else if (nature === "concept-container" && ![Key.ctrl, Key.shift, Key.alt].includes(lastKey)) {
+                        let closestInstance = getClosest(target, dir[event.key], this.instanceSection);
 
+                        if (!isHTMLElement(closestInstance)) {
+                            return false;
+                        }
+
+                        closestInstance.focus();
+                    }
                     break;
                 case "s":
                     if (lastKey === Key.ctrl) {
                         this.activeConcept.copy();
+                        this.header.valueCount++;
+                        this.refresh();
 
                         event.preventDefault();
                     }
@@ -1621,7 +1763,7 @@ export const Editor = {
                 case "c":
                     if (lastKey === Key.ctrl) {
                         if (!isInputCapable(target)) {
-                            this.copy(this.activeConcept.copy(false));
+                            this.copy(this.activeConcept.copy(false), true);
 
                             event.preventDefault();
                         }
@@ -1661,6 +1803,7 @@ export const Editor = {
 
         this.body.addEventListener('keyup', (event) => {
             var target = event.target;
+            const { nature } = target.dataset;
 
             switch (event.key) {
                 case Key.spacebar:
@@ -1682,45 +1825,29 @@ export const Editor = {
 
                     break;
                 case Key.up_arrow:
-                    if (this.activeElement && lastKey === Key.ctrl) {
-                        const handled = this.activeElement._arrowHandler("up", target) === true;
-
-                        if (handled) {
-                            event.preventDefault();
-                        }
-                    }
-
-                    break;
                 case Key.down_arrow:
-                    if (this.activeElement && lastKey === Key.ctrl) {
-                        const handled = this.activeElement._arrowHandler("down", target) === true;
-
-                        if (handled) {
-                            event.preventDefault();
-                        }
-                    }
-
-                    break;
                 case Key.right_arrow:
-                    if (this.activeElement && lastKey === Key.ctrl) {
-                        const handled = this.activeElement._arrowHandler("right", target) === true;
-
-                        if (handled) {
-                            event.preventDefault();
-                        }
-                    }
-
-                    break;
                 case Key.left_arrow:
                     if (this.activeElement && lastKey === Key.ctrl) {
-                        const handled = this.activeElement._arrowHandler("left", target) === true;
+                        const handled = this.activeElement._arrowHandler(dir[event.key], target) === true;
 
                         if (handled) {
                             event.preventDefault();
                         }
+                    } else if (nature === "concept-container" && lastKey === Key.ctrl) {
+                        let closestInstance = getClosest(target, dir[event.key], this.instanceSection);
+
+                        if (!isHTMLElement(closestInstance)) {
+                            return false;
+                        }
+
+                        this.swapInstance(target, closestInstance, true);
+                        target.focus();
+                        lastKey = Key.ctrl;
                     }
 
                     break;
+
                 default:
                     break;
             }

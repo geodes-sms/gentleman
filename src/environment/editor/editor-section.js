@@ -363,16 +363,7 @@ export const EditorSection = {
 
             this.updateSelector(selector);
         });
-
-        this.editor.registerHandler("value.added", (value) => {
-            this.valueCount++;
-            this.refresh();
-        });
-
-        this.editor.registerHandler("value.removed", (value) => {
-            this.refresh();
-        });
-
+        
         this.editor.registerHandler("resource.added", (value) => {
             this.fileCount++;
             this.refresh();

@@ -133,7 +133,7 @@
 }
 
 .field--checkbox__label {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     text-transform: capitalize;
 }
@@ -290,7 +290,6 @@
     }
     .field--choice__choice {
         list-style: none;
-        margin-right: 4px;
         border: 1px solid #555;
     }
 
@@ -328,4 +327,15 @@
         max-height: 300px;
         overflow: auto;
     }
+
+    .field--choice__choice {
+        position: relative;
+    }
     
+    .field--choice__choice:after {
+        content: "";
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 0;
+        background: transparent;
+        z-index: 50;
+    }

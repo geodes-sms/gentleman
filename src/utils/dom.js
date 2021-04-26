@@ -1,4 +1,4 @@
-import { hasOwn, findAncestor, isHTMLElement } from 'zenkai';
+import { hasOwn, findAncestor, isHTMLElement, getElement, createDiv, valOrDefault } from 'zenkai';
 
 
 /**
@@ -118,7 +118,7 @@ export function getClosest(source, dir, container, relative) {
     }
 
     console.error("unknown direction", dir);
-    
+
     return null;
 }
 
@@ -288,7 +288,6 @@ export function getElementBottom(source, container, relative = true) {
     return closest;
 }
 
-
 /**
  * Returns the closest element to the top of its parent container
  * @param {HTMLElement} container 
@@ -451,4 +450,145 @@ export function getBottomElement(container) {
     }
 
     return closest;
+}
+
+/** Creates a container
+ * @param {string} type
+ * @returns {HTMLElement}
+ */
+function resolveContainer(_container) {
+    /** @type {HTMLElement} */
+    let container = _container;
+
+    if (!isHTMLElement(_container)) {
+        container = getElement(_container);
+    }
+
+    return container;
+}
+
+/**
+ * Create the resizer elements
+ * @returns {HTMLElement}
+ */
+function createCornerResizer() {
+    let container = createDiv({
+        class: ["resizers"]
+    });
+
+    ["top-left", "top-right", "bottom-left", "bottom-right"].forEach(dir => {
+        container.append(createDiv({
+            class: ["resizer", `${dir}`],
+            dataset: {
+                dir: dir
+            }
+        }));
+    });
+
+    return container;
+}
+
+
+/**
+ * Create the resizer elements
+ * @returns {HTMLElement}
+ */
+function createResizer() {
+    let container = createDiv({
+        class: ["resizers"]
+    });
+
+    ["horizontal", "vertical"].forEach(dir => {
+        container.append(createDiv({
+            class: ["resizer", `${dir}`],
+            dataset: {
+                dir: dir
+            }
+        }));
+    });
+
+    return container;
+}
+
+/**
+ * Adds resizable handlers to a container
+ * @param {string|HTMLElement} _container 
+ * @param {*} _options 
+ * @returns {HTMLElement}
+ */
+export function makeResizable(_container, _options = {}) {
+    /** @type {HTMLElement} */
+    const container = resolveContainer(_container);
+
+    if (!isHTMLElement(container)) {
+        return null;
+    }
+
+    const options = Object.assign({
+        horizontal: true,
+        vertical: true,
+        minWidth: 60,
+        minHeight: 60
+    }, _options);
+
+    const resizers = createResizer();
+    container.prepend(resizers);
+    
+    if (options.horizontal && options.vertical) {
+        container.dataset.resizable = "both";
+    } else if (options.horizontal) {
+        container.dataset.resizable = "horizontal";
+    } else if (options.vertical) {
+        container.dataset.resizable = "vertical";
+    }
+
+    const { minWidth, minHeight } = getComputedStyle(container);
+
+    const MIN_WIDTH = valOrDefault(pixelToNumber(minWidth), options.minWidth);
+    const MIN_HEIGHT = valOrDefault(pixelToNumber(minHeight), options.minHeight);
+
+    let start = 0;
+    let activeResizer = null;
+
+    function resize(event) {
+        const { dir } = activeResizer.dataset;
+
+        const { width, height } = getComputedStyle(container);
+        let end = dir === "horizontal" ? event.pageX : event.pageY;
+
+        if (dir === "horizontal") {
+            const resize_width = pixelToNumber(width) + (end - start);
+
+            if (resize_width > MIN_WIDTH) {
+                container.style.width = `${resize_width}px`;
+            }
+        } else if (dir === "vertical") {
+            const resize_height = pixelToNumber(height) + (end - start);
+
+            if (resize_height > MIN_HEIGHT) {
+                container.style.height = `${resize_height}px`;
+            }
+        }
+
+        start = end;
+    }
+
+    for (let i = 0; i < resizers.childElementCount; i++) {
+        const currentResizer = resizers.children[i];
+
+        currentResizer.addEventListener('mousedown', function (event) {
+            event.preventDefault();
+            activeResizer = currentResizer;
+
+            const { dir } = activeResizer.dataset;
+            start = dir === "horizontal" ? event.pageX : event.pageY;
+
+            document.body.addEventListener('mousemove', resize);
+            document.body.addEventListener('mouseup', () => {
+                document.body.removeEventListener("mousemove", resize);
+            });
+        });
+    }
+
+    return container;
 }

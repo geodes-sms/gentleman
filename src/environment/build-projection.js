@@ -328,7 +328,8 @@ function buildElement(element) {
         if (hasAttr(element, "placeholder")) {
             const content = [];
 
-            getValue(element, "placeholder").filter(proto => proto.hasValue()).forEach(proto => {
+            let placeholder = getAttr(element, "placeholder");
+            getValue(placeholder, "content").filter(proto => proto.hasValue()).forEach(proto => {
                 const element = proto.getValue(true);
                 content.push(buildElement.call(this, element));
             });
@@ -351,7 +352,8 @@ function buildElement(element) {
         if (hasAttr(element, "placeholder")) {
             const content = [];
 
-            getValue(element, "placeholder").filter(proto => proto.hasValue()).forEach(proto => {
+            let placeholder = getAttr(element, "placeholder");
+            getValue(placeholder, "content").filter(proto => proto.hasValue()).forEach(proto => {
                 const element = proto.getValue(true);
                 content.push(buildElement.call(this, element));
             });
@@ -393,9 +395,7 @@ function buildStatic(element, type) {
     };
 
     if (type === "text") {
-        schema.content = getValue(element, "content");
-        schema.contentType = getValue(element, "content type");
-        schema.nonbreakable = getValue(element, "nonbreakable");
+        schema.content = buildTextContent.call(this, getValue(element, "content", true));
     } else if (type === "image") {
         schema.url = getValue(element, "url");
         schema.alt = getValue(element, "alternative text");
@@ -408,7 +408,8 @@ function buildStatic(element, type) {
         schema.urlType = getValue(element, "url type");
         schema.content = [];
 
-        getValue(element, "content").filter(proto => proto.hasValue()).forEach(proto => {
+        let linkContent = getAttr(element, "content");
+        getValue(linkContent, "content").filter(proto => proto.hasValue()).forEach(proto => {
             const element = proto.getValue(true);
             schema.content.push(buildElement.call(this, element));
         });
@@ -416,7 +417,8 @@ function buildStatic(element, type) {
         schema.tag = getValue(element, "tag");
         schema.content = [];
 
-        getValue(element, "content").filter(proto => proto.hasValue()).forEach(proto => {
+        let plinkContent = getAttr(element, "content");
+        getValue(plinkContent, "content").filter(proto => proto.hasValue()).forEach(proto => {
             const element = proto.getValue(true);
             schema.content.push(buildElement.call(this, element));
         });
@@ -424,6 +426,26 @@ function buildStatic(element, type) {
 
     if (hasAttr(element, "style")) {
         schema.style = buildStyle.call(this, getAttr(element, 'style'));
+    }
+
+    return schema;
+}
+
+function buildTextContent(textContent) {
+    const contentType = textContent.getProperty("contentType");
+
+    if (contentType === "raw") {
+        return getValue(textContent, "content");
+    }
+
+    let schema = {
+        type: contentType,
+    };
+
+    if (contentType === "html") {
+        schema.html = getValue(textContent, "content");
+    } else if (contentType === "property") {
+        schema.name = getValue(textContent, "content");
     }
 
     return schema;
@@ -446,16 +468,27 @@ function buildField(field) {
             schema.input = buildInput.call(this, getAttr(field, "input"));
         }
     } else if (elementType === "binary") {
-        schema.state = {
-            "true": {
-                "content": getValue(field, "true-state").filter(proto => proto.hasValue())
+        if (hasAttr(field, "checkbox")) {
+            schema.checkbox = buildCheckbox.call(this, getAttr(field, "checkbox"));
+        }
+
+        schema.state = {};
+
+        let trueState = getAttr(field, "true");
+        if (hasValue(trueState, "content")) {
+            schema.state.true = {
+                content: getValue(trueState, "content").filter(proto => proto.hasValue())
                     .map(proto => buildElement.call(this, proto.getValue(true)))
-            },
-            "false": {
-                "content": getValue(field, "false-state").filter(proto => proto.hasValue())
+            };
+        }
+
+        let falseState = getAttr(field, "false");
+        if (hasValue(falseState, "content")) {
+            schema.state.false = {
+                content: getValue(falseState, "content").filter(proto => proto.hasValue())
                     .map(proto => buildElement.call(this, proto.getValue(true)))
-            }
-        };
+            };
+        }
     } else if (elementType === "choice") {
         schema.choice = {};
 
@@ -553,6 +586,19 @@ function buildInput(element) {
     return schema;
 }
 
+function buildCheckbox(element) {
+    let schema = {
+        position: getValue(element, "position"),
+        label: getValue(element, "label")
+    };
+
+    if (hasAttr(element, "style")) {
+        schema.style = buildStyle.call(this, getAttr(element, 'style'));
+    }
+
+    return schema;
+}
+
 function buildFieldTemplate(element) {
     let schema = {
         "tag": getValue(element, "tag"),
@@ -617,8 +663,12 @@ function buildTextStyle(style) {
         schema.strikethrough = getValue(style, 'strikethrough');
     }
 
-    if (hasAttr(style, "colour") && hasValue(style, "colour")) {
-        schema.color = buildColour.call(this, getValue(style, "colour", true));
+    if (hasAttr(style, "nonbreakable")) {
+        schema.nonbreakable = getValue(style, "nonbreakable");
+    }
+
+    if (hasAttr(style, "color") && hasValue(style, "color")) {
+        schema.color = buildcolor.call(this, getValue(style, "color", true));
     }
 
     if (hasAttr(style, "opacity") && hasValue(style, "opacity")) {
@@ -631,10 +681,6 @@ function buildTextStyle(style) {
 
     if (hasAttr(style, "font") && hasValue(style, "font")) {
         schema.font = getValue(style, "font", true);
-    }
-
-    if (hasAttr(style, "alignment") && hasValue(style, "alignment")) {
-        schema.alignment = getValue(style, "alignment");
     }
 
     return schema;
@@ -651,8 +697,8 @@ function buildBoxStyle(style) {
         schema.outer = buildSpace.call(this, getAttr(style, "outer"));
     }
 
-    if (hasAttr(style, "background") && hasValue(style, "background")) {
-        schema.background = buildColour.call(this, getValue(style, "background", true));
+    if (hasAttr(style, "background")) {
+        schema.background = buildBackground.call(this, getAttr(style, "background"));
     }
 
     if (hasAttr(style, "width")) {
@@ -677,7 +723,7 @@ function buildBoxStyle(style) {
 function buildSpace(style) {
     let schema = {};
 
-    ["top", "right", "bottom", "left"].forEach(dir => {
+    ["all", "top", "right", "bottom", "left"].forEach(dir => {
         if (hasAttr(style, dir)) {
             schema[dir] = buildSize.call(this, getAttr(style, dir));
         }
@@ -686,17 +732,16 @@ function buildSpace(style) {
     return schema;
 }
 
-
 function buildBorder(style) {
     let schema = {};
 
-    ["top", "right", "bottom", "left"].forEach(dir => {
+    ["all", "top", "right", "bottom", "left"].forEach(dir => {
         if (hasAttr(style, dir)) {
             let value = getAttr(style, dir);
 
             schema[dir] = {
                 width: buildSize.call(this, getAttr(value, "width")),
-                color: buildColour.call(this, getValue(value, "colour", true)),
+                color: buildcolor.call(this, getValue(value, "color", true)),
                 type: getValue(value, "type")
             };
         }
@@ -705,26 +750,42 @@ function buildBorder(style) {
     return schema;
 }
 
-function buildColour(colour) {
+function buildBackground(style) {
     let schema = {};
 
-    if (isNullOrUndefined(colour)) {
+    if (hasAttr(style, "color")) {
+        let color = getAttr(style, "color");
+        schema.color = buildcolor.call(this, getValue(color, "value", true));
+    }
+
+    if (hasAttr(style, "image")) {
+        let image = getAttr(style, "image");
+        schema.image = getValue(image, "url");
+    }
+
+    return schema;
+}
+
+function buildcolor(color) {
+    let schema = {};
+
+    if (isNullOrUndefined(color)) {
         return schema;
     }
-    
-    if (colour.name === "name colour") {
+
+    if (color.name === "name-color") {
         schema.type = "name";
-        schema.value = getValue(colour, "value");
-    } else if (colour.name === "hex colour") {
+        schema.value = getValue(color, "value");
+    } else if (color.name === "hex-color") {
         schema.type = "hex";
-        let value = getValue(colour, "value") || "";
+        let value = getValue(color, "value") || "";
         schema.value = value.startsWith("#") ? value : `#${value}`;
-    } else if (colour.name === "rgb colour") {
+    } else if (color.name === "rgb-color") {
         schema.type = "rgb";
         schema.value = {
-            red: getValue(colour, "red"),
-            green: getValue(colour, "green"),
-            blue: getValue(colour, "blue"),
+            red: getValue(color, "red"),
+            green: getValue(color, "green"),
+            blue: getValue(color, "blue"),
         };
     }
 
@@ -732,6 +793,10 @@ function buildColour(colour) {
 }
 
 function buildSize(size) {
+    if (isNullOrUndefined(size) || !hasValue(size, "value")) {
+        return null;
+    }
+
     let schema = {
         value: getValue(size, "value"),
         unit: getValue(size, "unit")

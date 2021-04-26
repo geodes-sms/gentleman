@@ -1,9 +1,9 @@
 import {
     createDocFragment, createDiv, createSpan, createUnorderedList, createListItem,
-    createH4, createInput, createButton, removeChildren, isHTMLElement, toBoolean,
-    isNullOrUndefined, createEmphasis, createI, createHeader, formatCase,
+    createH4, createButton, createI, createHeader, createEmphasis, removeChildren,
+    isNullOrUndefined, isHTMLElement,
 } from 'zenkai';
-import { show, hide, Key, Events } from '@utils/index.js';
+import { show, hide } from '@utils/index.js';
 
 
 /**
@@ -97,19 +97,21 @@ export const EditorSelector = {
                 }, accept.name));
             }
 
-            let btnCollapse = createButton({
-                class: ["btn", "btn-collapse"],
+            /** @type {HTMLButtonElement} */
+            let btnInfo = createButton({
+                class: ["btn", "editor-selector__header-button", "editor-selector__header-button--info"],
+                title: "info",
                 dataset: {
                     action: "collapse",
                     rel: "parent",
                     target: "selector"
                 }
-            });
+            }, "i");
 
             let header = createHeader({
                 class: ["title", "editor-selector__header"],
                 title: `Expand/Collapse ${this.type}`
-            }, [title, btnCollapse]);
+            }, [title, btnInfo]);
 
             // Create preview
             let previewHandler = PreviewHandler[this.type];
@@ -136,8 +138,6 @@ export const EditorSelector = {
                 }
             }, [header, preview, actionBar]);
 
-            btnCollapse.dataset.state = item.classList.contains("collapsed") ? "ON" : "OFF";
-
             this.list.append(item);
         });
 
@@ -158,15 +158,6 @@ export const EditorSelector = {
     },
 
     bindEvents() {
-        this.container.addEventListener('change', (event) => {
-            const { target } = event;
-
-            const { action, type, id, concept } = target.dataset;
-
-            if (action === "global") {
-                let value = this.editor.projectionModel.changeProjection({ global: target.checked });
-            }
-        });
     }
 };
 
@@ -313,16 +304,6 @@ const ActionHandler = {
     "projection": function (projection) {
         const fragment = createDocFragment();
 
-        let chkGlobal = createInput({
-            type: "checkbox",
-            class: ["checkbox", "editor-selector__action-bar-checkbox", "editor-selector__action-bar-checkbox--global"],
-            checked: toBoolean(projection.global),
-            dataset: {
-                action: "global",
-                id: projection.id,
-            }
-        });
-
         let btnEdit = createButton({
             class: ["btn", "editor-selector__action-bar-button", "editor-selector__action-bar-button", "editor-selector__action-bar-button--clone"],
             dataset: {
@@ -331,7 +312,6 @@ const ActionHandler = {
             }
         }, "Edit");
 
-
         fragment.append(btnEdit);
 
         return fragment;
@@ -339,13 +319,18 @@ const ActionHandler = {
     "value": function (value) {
         const fragment = createDocFragment();
 
-        let btnClone = createButton({
+        let btnCopy = createButton({
             class: ["btn", "editor-selector__action-bar-button", "editor-selector__action-bar-button--clone"],
             dataset: {
                 action: "copy:value",
                 id: value.id,
             }
-        }, "Copy");
+        }, createI({
+            class: ["ico", "ico-copy", "btn-content"],
+            dataset: {
+                ignore: "all",
+            }
+        }));
 
         let btnDelete = createButton({
             class: ["btn", "editor-selector__action-bar-button", "editor-selector__action-bar-button--delete"],
@@ -353,10 +338,14 @@ const ActionHandler = {
                 action: "delete:value",
                 id: value.id,
             }
-        }, "Delete");
+        }, createI({
+            class: ["ico", "ico-delete", "btn-content"],
+            dataset: {
+                ignore: "all",
+            }
+        }, "✖"));
 
-
-        fragment.append(btnClone, btnDelete);
+        fragment.append(btnDelete, btnCopy);
 
         return fragment;
     },
@@ -373,7 +362,12 @@ const ActionHandler = {
                 action: "create-instance",
                 concept: concept.name
             }
-        }, "Create");
+        }, createI({
+            class: ["ico", "ico-plus", "btn-content"],
+            dataset: {
+                ignore: "all",
+            }
+        }, "+"));
 
         if (!hasProjection) {
             btnCreate.title = `The concept ${concept.name} has no projection`;
@@ -394,7 +388,12 @@ const ActionHandler = {
                 action: "load-resource",
                 id: name
             }
-        }, "Add");
+        }, createI({
+            class: ["ico", "ico-plus", "btn-content"],
+            dataset: {
+                ignore: "all",
+            }
+        }, "+"));
 
         let btnDelete = createButton({
             class: ["btn", "editor-selector__action-bar-button", "editor-selector__action-bar-button--delete"],
@@ -402,7 +401,12 @@ const ActionHandler = {
                 action: "delete:resource",
                 id: name,
             }
-        }, "Remove");
+        }, createI({
+            class: ["ico", "ico-delete", "btn-content"],
+            dataset: {
+                ignore: "all",
+            }
+        }, "✖"));
 
         if (this.editor.getResource(name)) {
             fragment.append(btnDelete);

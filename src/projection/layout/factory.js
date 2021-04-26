@@ -1,7 +1,7 @@
 import { isNullOrUndefined } from "zenkai";
 import { StackLayout } from "./stack-layout.js";
 import { WrapLayout } from "./wrap-layout.js";
-import { CellLayout } from "./cell-layout.js";
+import { TableLayout } from "./table-layout.js";
 import { FlexLayout } from "./flex-layout.js";
 
 
@@ -29,7 +29,7 @@ const Handler = {
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
     }),
-    'table': (model, schema, projection) => Object.create(CellLayout, {
+    'table': (model, schema, projection) => Object.create(TableLayout, {
         object: { value: "layout" },
         name: { value: "table-layout" },
         type: { value: "table" },

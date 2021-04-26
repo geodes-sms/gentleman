@@ -16,6 +16,10 @@ export function StateHandler(schema, states) {
 
         const { rule, result } = state;
 
+        if (isNullOrUndefined(rule)) {
+            return result;
+        }
+
         let valid = false;
 
         let handler = ruleHandler[rule.type];
@@ -71,6 +75,13 @@ function resolveTerm(term, defValue) {
 
         return this[name];
     }
+
+    if (term && term.type === "param") {
+        const { name } = term;
+
+        return this.projection.getParam(name);
+    }
+
     if (isObject(term)) {
         let propGetter = `get${pascalCase(term.prop)}`;
 
@@ -128,7 +139,6 @@ function equalHandler(terms) {
     if (terms.length < 2) {
         return null;
     }
-
     let leftTerm = resolveTerm.call(this, terms[0]);
     let rightTerm = resolveTerm.call(this, terms[1]);
 

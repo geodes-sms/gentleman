@@ -23,13 +23,14 @@
                     "target": {
                         "name": "render",
                         "accept": [
-                            { "name": "text field" },
-                            { "name": "binary field" },
-                            { "name": "choice field" },
-                            { "name": "list field" },
-                            { "name": "stack layout" },
-                            { "name": "wrap layout" },
-                            { "name": "flex layout" }
+                            { "name": "text-field" },
+                            { "name": "binary-field" },
+                            { "name": "choice-field" },
+                            { "name": "list-field" },
+                            { "name": "stack-layout" },
+                            { "name": "wrap-layout" },
+                            { "name": "flex-layout" },
+                            { "name": "table-layout" }
                         ]
                     },
                     "required": true
@@ -61,24 +62,34 @@
                     "required": true
                 },
                 {
+                    "name": "param",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "parameter"
+                        }
+                    },
+                    "required": false
+                },
+                {
                     "name": "content",
                     "target": {
                         "name": "set",
                         "accept": {
                             "name": "render",
                             "accept": [
-                                { "name": "stack layout" },
-                                { "name": "wrap layout" },
-                                { "name": "flex layout" },
-                                { "name": "text field" },
-                                { "name": "binary field" },
-                                { "name": "choice field" },
-                                { "name": "list field" },
-                                { "name": "static text" },
-                                { "name": "static image" },
-                                { "name": "static link" },
-                                { "name": "projection link" },
+                                { "name": "stack-layout" },
+                                { "name": "wrap-layout" },
+                                { "name": "flex-layout" },
+                                { "name": "text-field" },
+                                { "name": "binary-field" },
+                                { "name": "choice-field" },
+                                { "name": "list-field" },
+                                { "name": "text-static" },
+                                { "name": "image-static" },
+                                { "name": "link-static" },
                                 { "name": "attribute element" },
+                                { "name": "projection link" },
                                 { "name": "projection element" },
                                 { "name": "template element" }
                             ]
@@ -88,6 +99,87 @@
             ],
             "properties": [
                 { "name": "handler", "type": "string", "value": "template" }
+            ]
+        },
+        {
+            "name": "parameter",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "type",
+                    "target": {
+                        "name": "value"
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "name": "value",
+            "nature": "prototype",
+            "attributes": []
+        },
+        {
+            "name": "string-value",
+            "nature": "concrete",
+            "prototype": "value",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": { "name": "string" }
+                }
+            ]
+        },
+        {
+            "name": "number-value",
+            "nature": "concrete",
+            "prototype": "value",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": { "name": "number" }
+                }
+            ]
+        },
+        {
+            "name": "boolean-value",
+            "nature": "concrete",
+            "prototype": "value",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": { "name": "boolean" }
+                }
+            ]
+        },
+        {
+            "name": "argument",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "parameter"
+                        }
+                    },
+                    "required": true
+                },
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "value"
+                    },
+                    "required": true
+                }
             ]
         },
         {
@@ -235,7 +327,7 @@
             ]
         },
         {
-            "name": "text field",
+            "name": "text-field",
             "nature": "concrete",
             "prototype": "field",
             "attributes": [
@@ -289,36 +381,27 @@
             ]
         },
         {
-            "name": "binary field",
+            "name": "binary-field",
             "nature": "concrete",
             "prototype": "field",
             "attributes": [
                 {
-                    "name": "true-state",
+                    "name": "checkbox",
                     "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "element",
-                            "accept": [
-                                { "name": "static text" },
-                                { "name": "static image" },
-                                { "name": "template element" }
-                            ]
-                        }
+                        "name": "checkbox"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "true",
+                    "target": {
+                        "name": "static-content"
                     }
                 },
                 {
-                    "name": "false-state",
+                    "name": "false",
                     "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "element",
-                            "accept": [
-                                { "name": "static text" },
-                                { "name": "static image" },
-                                { "name": "template element" }
-                            ]
-                        }
+                        "name": "static-content"
                     }
                 }
             ],
@@ -328,7 +411,51 @@
             ]
         },
         {
-            "name": "choice field",
+            "name": "checkbox",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "position",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": ["before", "after"]
+                        },
+                        "default": "before"
+                    }
+                },
+                {
+                    "name": "label",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "static-content",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "element",
+                            "accept": [
+                                { "name": "text-static" },
+                                { "name": "image-static" },
+                                { "name": "template element" }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+
+
+        {
+            "name": "choice-field",
             "nature": "concrete",
             "prototype": "field",
             "attributes": [
@@ -385,7 +512,7 @@
             ]
         },
         {
-            "name": "list field",
+            "name": "list-field",
             "nature": "concrete",
             "prototype": "field",
             "attributes": [
@@ -447,8 +574,8 @@
                         "accept": {
                             "name": "element",
                             "accept": [
-                                { "name": "static text" },
-                                { "name": "static image" },
+                                { "name": "text-static" },
+                                { "name": "image-static" },
                                 { "name": "template element" }
                             ]
                         }
@@ -457,7 +584,7 @@
             ]
         },
         {
-            "name": "table field",
+            "name": "table-field",
             "nature": "concrete",
             "prototype": "field",
             "attributes": [
@@ -551,16 +678,16 @@
                         "accept": {
                             "name": "render",
                             "accept": [
-                                { "name": "stack layout" },
-                                { "name": "wrap layout" },
-                                { "name": "flex layout" },
-                                { "name": "text field" },
-                                { "name": "binary field" },
-                                { "name": "choice field" },
-                                { "name": "list field" },
-                                { "name": "static text" },
-                                { "name": "static image" },
-                                { "name": "static link" },
+                                { "name": "stack-layout" },
+                                { "name": "wrap-layout" },
+                                { "name": "flex-layout" },
+                                { "name": "text-field" },
+                                { "name": "binary-field" },
+                                { "name": "choice-field" },
+                                { "name": "list-field" },
+                                { "name": "text-static" },
+                                { "name": "image-static" },
+                                { "name": "link-static" },
                                 { "name": "projection link" },
                                 { "name": "attribute element" },
                                 { "name": "projection element" },
@@ -572,7 +699,7 @@
             ]
         },
         {
-            "name": "stack layout",
+            "name": "stack-layout",
             "nature": "concrete",
             "prototype": "layout",
             "attributes": [
@@ -593,7 +720,7 @@
             ]
         },
         {
-            "name": "flex layout",
+            "name": "flex-layout",
             "nature": "concrete",
             "prototype": "layout",
             "attributes": [
@@ -641,7 +768,7 @@
             ]
         },
         {
-            "name": "wrap layout",
+            "name": "wrap-layout",
             "nature": "concrete",
             "prototype": "layout",
             "attributes": [
@@ -659,7 +786,7 @@
             ]
         },
         {
-            "name": "cell layout",
+            "name": "table-layout",
             "nature": "concrete",
             "prototype": "layout",
             "attributes": [
@@ -679,6 +806,14 @@
                         "name": "set",
                         "accept": {
                             "name": "row"
+                        },
+                        "constraint": {
+                            "cardinality": {
+                                "type": "range",
+                                "range": {
+                                    "min": { "value": 1 }
+                                }
+                            }
                         }
                     }
                 }
@@ -693,7 +828,7 @@
         {
             "name": "row",
             "nature": "concrete",
-            "prototype": "$render",
+            "prototype": "render",
             "attributes": [
                 {
                     "name": "cells",
@@ -709,7 +844,7 @@
         {
             "name": "cell",
             "nature": "concrete",
-            "prototype": "$render",
+            "prototype": "render",
             "attributes": [
                 {
                     "name": "span",
@@ -720,7 +855,23 @@
                 {
                     "name": "content",
                     "target": {
-                        "name": "element"
+                        "name": "render",
+                        "accept": [
+                            { "name": "stack-layout" },
+                            { "name": "wrap-layout" },
+                            { "name": "flex-layout" },
+                            { "name": "text-field" },
+                            { "name": "binary-field" },
+                            { "name": "choice-field" },
+                            { "name": "list-field" },
+                            { "name": "text-static" },
+                            { "name": "image-static" },
+                            { "name": "link-static" },
+                            { "name": "projection link" },
+                            { "name": "attribute element" },
+                            { "name": "projection element" },
+                            { "name": "template element" }
+                        ]
                     }
                 }
             ]
@@ -755,26 +906,15 @@
             ]
         },
         {
-            "name": "static text",
+            "name": "text-static",
             "nature": "concrete",
             "prototype": "atomic element",
             "attributes": [
                 {
-                    "name": "content type",
-                    "alias": "contentType",
+                    "name": "content",
                     "target": {
-                        "name": "string",
-                        "constraint": {
-                            "values": ["raw", "html", "property", "attribute"]
-                        }
-                    },
-                    "value": "text"
-                },
-                {
-                    "name": "nonbreakable",
-                    "target": {
-                        "name": "boolean",
-                        "default": true
+                        "name": "text-content",
+                        "default": "raw-text-content"
                     }
                 }
             ],
@@ -784,7 +924,72 @@
             ]
         },
         {
-            "name": "static image",
+            "name": "text-content",
+            "nature": "prototype",
+            "attributes": [
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "raw-text-content",
+            "nature": "concrete",
+            "prototype": "text-content",
+            "attributes": [
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "raw" },
+                { "name": "elementType", "type": "string", "value": "text-content" }
+            ]
+        },
+        {
+            "name": "html-text-content",
+            "nature": "concrete",
+            "prototype": "text-content",
+            "attributes": [
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "html" },
+                { "name": "elementType", "type": "string", "value": "text-content" }
+            ]
+        },
+        {
+            "name": "property-text-content",
+            "nature": "concrete",
+            "prototype": "text-content",
+            "attributes": [
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "property" },
+                { "name": "elementType", "type": "string", "value": "text-content" }
+            ]
+        },
+
+
+        {
+            "name": "image-static",
             "nature": "concrete",
             "prototype": "atomic element",
             "attributes": [
@@ -821,7 +1026,7 @@
             ]
         },
         {
-            "name": "static HTML",
+            "name": "html-static",
             "nature": "concrete",
             "prototype": "atomic element",
             "attributes": [
@@ -838,7 +1043,7 @@
             ]
         },
         {
-            "name": "static link",
+            "name": "link-static",
             "nature": "concrete",
             "prototype": "static element",
             "attributes": [
@@ -862,15 +1067,7 @@
                 {
                     "name": "content",
                     "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "element",
-                            "accept": [
-                                { "name": "static text" },
-                                { "name": "static image" },
-                                { "name": "template element" }
-                            ]
-                        }
+                        "name": "static-content"
                     }
                 },
                 {
@@ -901,15 +1098,7 @@
                 {
                     "name": "content",
                     "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "element",
-                            "accept": [
-                                { "name": "static text" },
-                                { "name": "static image" },
-                                { "name": "template element" }
-                            ]
-                        }
+                        "name": "static-content"
                     }
                 }
             ],
@@ -969,15 +1158,7 @@
                 {
                     "name": "placeholder",
                     "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "element",
-                            "accept": [
-                                { "name": "static text" },
-                                { "name": "static image" },
-                                { "name": "template element" }
-                            ]
-                        }
+                        "name": "static-content"
                     }
                 },
                 {
@@ -1002,6 +1183,15 @@
                         "name": "reference",
                         "accept": {
                             "name": "template"
+                        }
+                    }
+                },
+                {
+                    "name": "args",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "string"
                         }
                     }
                 }
@@ -1031,15 +1221,7 @@
                 {
                     "name": "placeholder",
                     "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "element",
-                            "accept": [
-                                { "name": "static text" },
-                                { "name": "static image" },
-                                { "name": "template element" }
-                            ]
-                        }
+                        "name": "static-content"
                     }
                 }
             ],
@@ -1137,9 +1319,17 @@
                     "required": false
                 },
                 {
-                    "name": "colour",
+                    "name": "nonbreakable",
                     "target": {
-                        "name": "colour"
+                        "name": "boolean",
+                        "default": true
+                    },
+                    "required": false
+                },
+                {
+                    "name": "color",
+                    "target": {
+                        "name": "color"
                     },
                     "required": false
                 },
@@ -1173,13 +1363,6 @@
                         }
                     },
                     "required": false
-                },
-                {
-                    "name": "alignment",
-                    "target": {
-                        "name": "alignment"
-                    },
-                    "required": false
                 }
             ]
         },
@@ -1204,7 +1387,7 @@
                 {
                     "name": "background",
                     "target": {
-                        "name": "colour"
+                        "name": "background"
                     },
                     "required": false
                 },
@@ -1274,29 +1457,150 @@
             ]
         },
 
-
         {
-            "name": "colour",
-            "nature": "prototype",
-            "attributes": []
+            "name": "background",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "color",
+                    "target": {
+                        "name": "background-color"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "image",
+                    "target": {
+                        "name": "background-image"
+                    },
+                    "required": false
+                }
+            ]
         },
         {
-            "name": "name colour",
+            "name": "background-color",
             "nature": "concrete",
-            "prototype": "colour",
             "attributes": [
                 {
                     "name": "value",
                     "target": {
-                        "name": "colour-name"
+                        "name": "color"
                     }
                 }
             ]
         },
         {
-            "name": "hex colour",
+            "name": "background-image",
             "nature": "concrete",
-            "prototype": "colour",
+            "attributes": [
+                {
+                    "name": "url",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "position",
+                    "target": {
+                        "name": "background-position"
+                    }
+                },
+                {
+                    "name": "size",
+                    "target": {
+                        "name": "background-size"
+                    }
+                },
+                {
+                    "name": "repeat",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": ["horizontal", "vertical", "both"]
+                        }
+                    },
+                    "required": false
+                },
+                {
+                    "name": "attachment",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": ["scroll", "fixed", "local"]
+                        },
+                        "default": "scroll"
+                    },
+                    "required": false
+                }
+            ]
+        },
+        {
+            "name": "background-position",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "x",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": ["left", "center", "right"]
+                        }
+                    }
+                },
+                {
+                    "name": "y",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": ["top", "center", "bottom"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "background-size",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": ["auto", "cover", "contain"]
+                        },
+                        "default": "auto"
+                    }
+                }
+            ]
+        },
+
+
+        {
+            "name": "color",
+            "nature": "prototype",
+            "attributes": []
+        },
+        {
+            "name": "name-color",
+            "nature": "concrete",
+            "prototype": "color",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "color-name"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "name" }
+            ]
+        },
+        {
+            "name": "hex-color",
+            "nature": "concrete",
+            "prototype": "color",
             "attributes": [
                 {
                     "name": "value",
@@ -1312,12 +1616,15 @@
                         }
                     }
                 }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "hex" }
             ]
         },
         {
-            "name": "rgb colour",
+            "name": "rgb-color",
             "nature": "concrete",
-            "prototype": "colour",
+            "prototype": "color",
             "attributes": [
                 {
                     "name": "red",
@@ -1337,6 +1644,9 @@
                         "name": "rgb"
                     }
                 }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "rgb" }
             ]
         },
 
@@ -1346,28 +1656,39 @@
             "nature": "concrete",
             "attributes": [
                 {
+                    "name": "all",
+                    "target": {
+                        "name": "size"
+                    },
+                    "required": false
+                },
+                {
                     "name": "top",
                     "target": {
                         "name": "size"
-                    }
+                    },
+                    "required": false
                 },
                 {
                     "name": "right",
                     "target": {
                         "name": "size"
-                    }
+                    },
+                    "required": false
                 },
                 {
                     "name": "bottom",
                     "target": {
                         "name": "size"
-                    }
+                    },
+                    "required": false
                 },
                 {
                     "name": "left",
                     "target": {
                         "name": "size"
-                    }
+                    },
+                    "required": false
                 }
             ]
         },
@@ -1378,33 +1699,44 @@
             "nature": "concrete",
             "attributes": [
                 {
+                    "name": "all",
+                    "target": {
+                        "name": "border-value"
+                    },
+                    "required": false
+                },
+                {
                     "name": "top",
                     "target": {
-                        "name": "border value"
-                    }
+                        "name": "border-value"
+                    },
+                    "required": false
                 },
                 {
                     "name": "right",
                     "target": {
-                        "name": "border value"
-                    }
+                        "name": "border-value"
+                    },
+                    "required": false
                 },
                 {
                     "name": "bottom",
                     "target": {
-                        "name": "border value"
-                    }
+                        "name": "border-value"
+                    },
+                    "required": false
                 },
                 {
                     "name": "left",
                     "target": {
-                        "name": "border value"
-                    }
+                        "name": "border-value"
+                    },
+                    "required": false
                 }
             ]
         },
         {
-            "name": "border value",
+            "name": "border-value",
             "nature": "concrete",
             "attributes": [
                 {
@@ -1414,15 +1746,15 @@
                     }
                 },
                 {
-                    "name": "colour",
+                    "name": "color",
                     "target": {
-                        "name": "colour"
+                        "name": "color"
                     }
                 },
                 {
                     "name": "type",
                     "target": {
-                        "name": "border type",
+                        "name": "border-type",
                         "default": "solid"
                     }
                 }
@@ -1473,7 +1805,7 @@
             }
         },
         {
-            "name": "colour-name",
+            "name": "color-name",
             "nature": "derivative",
             "base": "string",
             "constraint": {
@@ -1518,7 +1850,7 @@
             }
         },
         {
-            "name": "border type",
+            "name": "border-type",
             "nature": "derivative",
             "base": "string",
             "constraint": {

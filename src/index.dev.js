@@ -46,10 +46,12 @@ const EDITOR_HANDLER = {
                 values = editor.conceptModel.export();
             }
             
-            editor.unload()
+            setTimeout(() => {
+                editor.unload()
                 .loadConceptModel(model.concept || model, values)
                 .loadProjectionModel(pmodel)
                 .open();
+            }, 10);
         });
     },
 };
@@ -93,7 +95,7 @@ function getPreviewEditor() {
 
         previewEditor = Manager.createEditor().init({
             handlers: {
-                "editor.close": () => {
+                "editor.close@post": () => {
                     this.conceptModel.unregister(modelHanlder);
                     previewEditor.destroy();
                     previewEditor = null;

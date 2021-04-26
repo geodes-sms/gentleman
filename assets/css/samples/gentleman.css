@@ -73,6 +73,14 @@
     .model-concept--textual .label { color: blue; margin-right: 0.5em; }
         .label:after { content: ":"; margin-right: 2px; }
 
+    .concept-section-title {
+        margin-top: 4px;
+        padding-left: 6px; padding-bottom: 2px;
+        color: #D10236; text-transform: capitalize;
+        font: 600 1.4rem 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
+        border-bottom: 2px solid #ff1c55;
+    }
+
     .primitive-constraint__title--small {
         margin-right: 0.5em;
     }
@@ -89,7 +97,6 @@
         border-radius: 2px;
         background-color: #f5f5f5;
         transition: .2s;
-        order: 1;
     }
     
         .primitive-constraint__attribute .keyword,
@@ -131,14 +138,16 @@
 
     .primitive-constraint > .structure__btn-delete { display: none; }
 
+    .primitive-constraint__options {
+        align-items: flex-start;
+    }
+
     .primitive-constraint-option {
-        width: 100%;
         margin-right: 6px; margin-bottom: 6px;
         padding: 2px 6px 6px; padding-right: 36px;
         color: #222;
         border-radius: 2px;
         background-color: #d5d5d5;
-        order: 1;      
     }
 
     .primitive-constraint-option > .structure__btn-delete {
@@ -203,7 +212,6 @@
 
 .model-concept--textual {
     font-family: Consolas, 'Courier New', Courier, monospace;
-    padding-left: 6px; padding-right: 6px;
 }
 
     .model-concept-header {
@@ -425,58 +433,35 @@
 
 .textual-list__list {
     display: flex; flex-direction: column;
-    max-width: 1080px;
 }
+    .textual-list__list--horizontal { flex-direction: row; }
+    .textual-list__list--vertical { flex-direction: column; }
 
-.textual-list__list--horizontal {
-    flex-direction: row;
-}
-.textual-list__list--vertical {
-    flex-direction: column;
-}
+    .textual-list.empty .textual-list__list {
+        display: none;
+    }
 
-.textual-list.empty .textual-list__list {
-    display: none;
-}
-
-    .textual-list .textual-list__btn-add {
-        align-self: flex-end;
-
-        position: relative;
+    .textual-list__btn-add {
         display: flex; justify-content: center; align-items: center;
-        margin-top: 2px; margin-right: 6px;
-        width: 60px; 
-        height: 60px;
-        padding-bottom: 6px;
-        font: 300 1.2rem 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin-top: 4px;
+        max-width: 120px;
+        padding: 3px 6px 4px;
+        font-size: 1.3rem; font-weight: 500;
         color: #fff;
-        border-radius: 50%;
-        box-shadow: 0 1px 2px -1px #555;
-        background-color: #5F4B8B;
-        opacity: 0.8;
-        transform: scale(0.9);
+        border-radius: 2px;
+        box-shadow: 0 1px 2px -1px #999;
+        background-color: #09b54d;
         transition: .2s;
     }
-        .textual-list .textual-list__btn-add:hover,
-        .textual-list .textual-list__btn-add:focus { opacity: 1; transform: scale(1); }
-        .textual-list .textual-list__btn-add:focus { box-shadow: 0 0 0 3px #fff, 0 0 0 6px #5F4B8B; }
+        .textual-list__btn-add:hover,
+        .textual-list__btn-add:focus { opacity: 1; transform: scale(1); background-color: #3E8C49; }
 
         .textual-list.empty .textual-list__btn-add {
-            align-self: flex-start;
-
-            margin: 0;
-            width: 100%; max-width: 150px;
-            padding: 6px 12px 8px;
-            height: auto;
-            font-size: 1.1em; font-weight: 500;
-            border-radius: 2px;
-            background-color: #09b54d;
-            transform: scale(0.9) translateX(-8px);
+            font-size: 1.5rem;
+            font-weight: 600;
         }
-            .textual-list.empty .textual-list__btn-add:hover { background-color: #75D982; }
-            .textual-list.empty .textual-list__btn-add:focus { box-shadow: 0 0 0 3px #fff, 0 0 0 6px #3E8C49; }
 
-    .textual-list > .line { font-size: 1.1em; }
+        .textual-list__btn-add .text { display: block; height: 100%; width: 100%; }
 
 
 /*
@@ -528,13 +513,52 @@
     }
 
 
+
+
+/*
+    Textual list: stripe
+-----------------------------------------------------------------------------*/
+
+.textual-list__list-item--stripe {
+    padding: 0;
+    background-color: #fefefe;
+}
+
+.textual-list__list-item--stripe:nth-child(odd) {
+    background-color: #eee;
+}
+   
+    .textual-list__list-item--stripe:not(:last-child) {
+        margin-bottom: 1px;
+    }
+    
+.textual-list__list-item--stripe > .btn-remove {
+    order: 2;
+    font-size: 1.3rem; font-weight: 300;
+    padding-left: 4px; padding-right: 4px;
+    color: #fff;
+    background-color: #555;
+    transition: .2s;
+}
+    .textual-list__list-item--stripe > .btn-remove:hover {
+        color: #555;
+        background-color: #d5d5d5;
+    }
+    .textual-list__list-item--stripe > .btn-remove:before {
+        content: "✖";
+    }
+
+
+
+
 /*
     Textual list: box
 -----------------------------------------------------------------------------*/
 
 .textual-list__list-item--box {
+    margin-top: 12px;
     max-width: 100%; min-width: 120px;
-    padding: 0 0 2px;
+    padding: 0;
     background-color: #f9f9f9;
 }
     .textual-list__list-item--box:before {
@@ -545,18 +569,17 @@
     }
 
     .textual-list__list-item--box:not(:last-child) {
-        margin-right: 6px; margin-bottom: 12px;
+        margin-right: 6px;
     }
     
-
 .textual-list__list-item--box > .btn-remove {
     position: absolute;
-    bottom: 100%; right: 0;
-    width: 15px; height: 15px;
+    top: -9px; right: -6px;
+    width: 18px; height: 18px;
     font-size: 0.85em; font-weight: 300;
-    color: #999;
+    color: #777;
     padding: 0;
-    border: 1px solid #c0c0c0;
+    border: 1px solid #c0c0c0; border-radius: 50%;
     background-color: #fff;
     opacity: 0.8;
     transition: .2s;
@@ -585,7 +608,6 @@
 }
 
 .textual-list__list-item--inline > .textual-list__btn-remove {
-    order: 2;
     display: inline-flex; align-items: center;
     position: relative;
     height: 100%;
@@ -643,16 +665,13 @@
 }
 
 .textual-list--value > .textual-list__btn-add {
-    min-width: 60px;
-    box-shadow: 0 1px 2px -1px #555;
-    background-color: #C40234;
+    width: 48px;
 }
 
-.textual-list--value > .textual-list__btn-add:focus { box-shadow: 0 0 0 2px #222, 0 0 0 4px #C40234; }
-
-.textual-list--element {
-    width: 100%;
+.textual-list--element .textual-list__list {
+    flex-direction: row; align-items: flex-start;
 }
+
 
 
 
@@ -973,12 +992,12 @@
         padding: 3px 12px 4px;
         color: #fff;
         font-size: 0.95em; font-weight: 500;
-        border-radius: 1px;
+        border: 0 none; border-radius: 1px;
         overflow: hidden;
     }
 
     .constraint-choice--textual__choice-option:not(:last-child) {
-        border-right: 2px solid #555;
+        margin-right: 2px;
     }
     
     .constraint-choice--textual__choice-option:hover,
@@ -1189,6 +1208,7 @@
 
 
 
+
 /*
     Target choice
 -----------------------------------------------------------------------------*/
@@ -1226,9 +1246,7 @@
         background-color: rgba(205, 205, 205, 0.85);
         opacity: 1!important;
         transform: scale(1.05);
-    }
-    
-
+    }    
 
 
 /*
@@ -1340,7 +1358,6 @@
     }
 
 
-
 /*
  Select choice
 -----------------------------------------------------------------------------*/
@@ -1390,6 +1407,52 @@
     }
 
 
+/*
+ Radio choice
+-----------------------------------------------------------------------------*/
+
+.radio-choice {
+    display: flex; 
+}
+
+    .radio-choice__list-option.selected {
+        color: #222;
+        text-transform: uppercase;
+        background-color: #ffd300;
+    }
+
+    .radio-choice__list-option.field--choice__choice--placeholder {
+        font-style: italic;
+        background-color: #f5f5f5;
+    }
+
+    .radio-choice:not(.empty) .field--choice__select-value {  
+        text-transform: uppercase;
+        color: #222;
+    }
+
+    .radio-choice__list-option {
+        font-size: 1.2rem;
+        flex: 1 1;
+        padding: 2px 4px;
+        margin-top: 2px;
+        border: 0 none;
+        border-radius: 1px;
+        color: #fff;
+        background-color: #555;
+        transition: transform .2s;
+    }      
+        .radio-choice__list-option:hover,
+        .radio-choice__list-option:not(.selected):focus {
+            background-color: #222;
+        }
+
+        .radio-choice__list-option .text {
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+
 
 
 
@@ -1408,14 +1471,6 @@
     overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
 }
 
-.field--list__add {
-    height: 42px;
-    width: 42px;
-    color: #fff;
-    border: 0 none; border-radius: 50%;
-    background-color: royalblue;
-}
-
 
 .yesno-field {
     display: flex;
@@ -1425,8 +1480,6 @@
 }
 
     .yesno-field .field-notification { display: none; }
-
-    .yesno-field input { display: none; }
 
     .yesno-field__value {
         padding: 1px 4px;
@@ -1503,15 +1556,13 @@
     align-items: flex-start;
 }
 
-.textual-list--element .textual-list__list {
-    padding-top: 6px;
-    flex-direction: row; align-items: flex-start;
+.textual-list--cell {
+    padding-left: 3px; padding-bottom: 6px;
 }
-
+  
 
 .textual-list--cell .textual-list__list {
     flex-direction: row; align-items: flex-start;
-    overflow: auto;
 }
 
 
@@ -1545,10 +1596,10 @@
         opacity: 1;
     }
     
-
 .text-style__attribute {
-    margin-right: 4px; margin-bottom: 6px;
-    padding: 2px 6px 4px;
+    margin-right: 6px; margin-bottom: 6px;
+    padding: 2px 6px;
+    padding-right: 24px;
     color: #222;
     border-radius: 3px;
     color: #fff;
@@ -1579,31 +1630,24 @@
         background-color: #a9a9a9;
     }
 
-    .render-config .text-style__attribute > .structure__btn-delete,
-    .field-config .text-style__attribute > .structure__btn-delete {
+    .text-style__attribute > .structure__btn-delete {
         display: block;
         position: absolute;
-        top: -2px; right: 0;
+        top: -2px; right: -2px;
         width: 18px; height: 18px; 
         font-size: 0.9em; font-weight: 300;
-        color: #999;
+        color: #fff;
+        background-color: #555;
         padding: 0;
-        border: 1px solid #c0c0c0;
-        background-color: #fefefe;
         border-radius: 50%;
         transition: .2s;
-        transform: translateY(-50%) translateX(3px);
     }
         .text-style__attribute > .structure__btn-delete:before {
             content: "✖";
         }
         .text-style__attribute > .structure__btn-delete:hover {
-            color: #555;
-            border-color: #a9a9a9;
+            background-color: #222;
         }
-            .text-style__attribute > .structure__btn-delete:hover:before {
-                transform: scale(1.2) translateY(1px);
-            }
 
 
     .text-style__attribute .yesno-field--included {
@@ -1623,6 +1667,13 @@
             font-weight: 600;
             background-color: #f0f0f0;
         }
+        
+.text-style__attribute .field--textbox__input.error {
+    color: #f5f5f5;
+}
+
+
+
 
 
 .textual-option--constraint {
@@ -1651,8 +1702,8 @@
     margin-top: 4px; margin-bottom: 2px;
     padding-left: 6px; padding-bottom: 2px;
     color: #555; text-transform: uppercase;
-    font-size: 1.5rem; font-weight: 300;
-    border-bottom: 4px double #c0c0c0;
+    font-size: 1.3rem; font-weight: 500;
+    background-color: #e5e4e2;
 }
 
 .config-title {
@@ -1669,7 +1720,6 @@
 .field-config,
 .layout-config,
 .render-config {
-    padding-top: 20px;
     min-width: 180px;
 }
 
@@ -1679,14 +1729,15 @@
 }
 
 
-    .field-config .structure__btn-delete,
-    .render-config .structure__btn-delete {
-        display: none;
+    .field-config > .structure__btn-delete,
+    .render-config > .structure__btn-delete {
+        position: absolute;
+        right: 0;
+        top: 2px;
     }
 
     .field-config__cell > .layout-container {
         border-radius: 2px;
-        overflow: hidden;
         background-color: #f2f1f0;
         box-shadow: 1px 2px -1px #c0c0c0;
     }
@@ -1733,15 +1784,14 @@
         padding-left: 6px; padding-right: 6px;
     }
 
-    .template-config .structure__btn-delete {
+    .template-config > .structure__btn-delete {
         display: block;
     }
 
 .render__nav-projection {
-    position: absolute; top: 0;
     display: flex; justify-content: center;
-    margin: 0;
-    padding: 0 2px 4px;
+    width: 100%;
+    padding: 1px 2px 3px;
     line-height: 1; 
     width: 50px;
     font-size: 1.3rem; font-weight: 500;
@@ -1759,17 +1809,16 @@
         opacity: 1;
     }
 
+    .render__nav-projection:not(:last-child) {
+        margin-right: 2px;
+    }
+
     .render__nav-projection:not(.current):hover {
         border-bottom: 2px solid currentColor;
     }
 
-    .render__nav-projection--style { left: 104px; }
-
-    .render__nav-projection--state { left: 52px; }
-
-    .render__nav-projection--config { left: 0; }
-
     .render__nav-projection--collapse {
+        position: absolute;
         right: 0;
         padding: 0;
         color: #555;
@@ -1786,6 +1835,7 @@
 
 .component-nav {
     width: 100%; 
+    padding-left: 3px; padding-right: 3px;
 }
 
     .component-nav-item {
@@ -1829,11 +1879,31 @@
 
             
 .direction-size {
-    margin-right: 4px;
+    margin-right: 6px;
+    background-color: rgba(205, 205, 205, 0.5);
 }
 
+.direction-size > .structure__btn-delete {
+    display: block;
+    width: 24px; height: 100%; margin-right: 4px;
+    font-size: 0.9em; font-weight: 300;
+    color: #fff;
+    background-color: rgba(55, 55, 55, 0.5);;
+    padding: 0;
+    transition: .2s;
+}
+    .direction-size > .structure__btn-delete:before {
+        content: "✖";
+    }
+    .direction-size > .structure__btn-delete:hover {
+        background-color: #222;
+    }
+
+    .direction-size .field--textbox__input {
+        border-radius: 0;
+    }
+
 .size-config .field--textbox__input {
-    border-radius: 2px;
     min-width: 36px;
     padding-left: 2px;
 }
@@ -1850,9 +1920,25 @@
         min-width: 24px;
     }
 
-.text-style__attribute .field--textbox__input.error {
-    color: #f5f5f5;
+.border-value-config > .structure__btn-delete {
+    align-self: flex-end;
+    margin: 0;
+    justify-self: flex-end;
 }
+
+.background-config {
+    margin-top: 2px;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding-bottom: 2px;
+}
+
+.background-config > .structure__btn-delete {
+    align-self: flex-end;
+    margin: 0;
+    color: #fff;
+    justify-self: flex-end;
+}
+
 
 .text-field--textual {
     width: 100%;

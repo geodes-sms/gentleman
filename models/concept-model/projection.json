@@ -37,7 +37,7 @@
                         "type": "text",
                         "content": "Attributes",
                         "style": {
-                            "css": ["title", "model-projection__line"]
+                            "css": ["concept-section-title"]
                         }
                     }
                 },
@@ -45,10 +45,7 @@
                     "type": "attribute",
                     "name": "attributes",
                     "tag": "attribute-set",
-                    "required": true,
-                    "style": {
-                        "css": ["model-projection__line"]
-                    }
+                    "required": true
                 }
             ]
         },
@@ -62,17 +59,14 @@
                         "type": "text",
                         "content": "Properties",
                         "style": {
-                            "css": ["title", "model-projection__line"]
+                            "css": ["concept-section-title"]
                         }
                     }
                 },
                 {
                     "type": "attribute",
                     "name": "properties",
-                    "tag": "property-set",
-                    "style": {
-                        "css": ["model-projection__line"]
-                    }
+                    "tag": "property-set"
                 }
             ]
         },
@@ -119,6 +113,75 @@
             ]
         },
 
+        {
+            "type": "style",
+            "name": "pad-top",
+            "style": {
+                "gss": {
+                    "box": {
+                        "inner": { 
+                            "top": { "value": 6, "unit": "px" } 
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "pad-right",
+            "style": {
+                "gss": {
+                    "box": {
+                        "inner": { 
+                            "right": { "value": 6, "unit": "px" } 
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "pad-bottom",
+            "style": {
+                "gss": {
+                    "box": {
+                        "inner": { 
+                            "bottom": { "value": 6, "unit": "px" } 
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "pad-left",
+            "style": {
+                "gss": {
+                    "box": {
+                        "inner": { 
+                            "left": { "value": 6, "unit": "px" } 
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "pad-all",
+            "style": {
+                "gss": {
+                    "box": {
+                        "inner": { 
+                            "top": { "value": 6, "unit": "px" },
+                            "right": { "value": 6, "unit": "px" },
+                            "bottom": { "value": 6, "unit": "px" },
+                            "left": { "value": 6, "unit": "px" } 
+                        }
+                    }
+                }
+            }
+        },
+
 
         {
             "concept": { "name": "prototype concept" },
@@ -163,7 +226,8 @@
                                 }
                             ],
                             "style": {
-                                "css": ["line", "model-concept__line"]
+                                "css": ["line"],
+                                "ref": ["pad-left"]
                             }
                         }
                     },
@@ -220,7 +284,8 @@
                                 }
                             ],
                             "style": {
-                                "css": ["line", "model-concept__line"]
+                                "css": ["line"],
+                                "ref": ["pad-left"]
                             }
                         }
                     },
@@ -260,7 +325,8 @@
                                 }
                             ],
                             "style": {
-                                "css": ["line", "model-concept__line"]
+                                "css": ["line"],
+                                "ref": ["pad-left"]
                             }
                         }
                     },
@@ -270,13 +336,16 @@
                             "type": "text",
                             "content": "Base",
                             "style": {
-                                "css": ["title"]
+                                "css": ["concept-section-title"]
                             }
                         }
                     },
                     {
                         "type": "attribute",
-                        "name": "base"
+                        "name": "base",
+                        "style": {
+                            "ref": ["pad-all"]
+                        }
                     },
                     {
                         "type": "template",
@@ -1066,14 +1135,14 @@
                             "type": "choice",
                             "input": false,
                             "choice": {
-                                "template": { "tag": "choice" },
-                                "style": {
-                                    "css": ["constraint-choice--textual__choice-list"]
-                                },
                                 "option": {
+                                    "template": { "tag": "choice" },
                                     "style": {
                                         "css": ["constraint-choice--textual__choice-option", "font-ui"]
                                     }
+                                },
+                                "style": {
+                                    "css": ["constraint-choice--textual__choice-list"]
                                 }
                             },
                             "style": {
@@ -1267,14 +1336,14 @@
                             "type": "choice",
                             "input": false,
                             "choice": {
-                                "template": { "tag": "choice" },
-                                "style": {
-                                    "css": ["constraint-choice--textual__choice-list"]
-                                },
                                 "option": {
+                                    "template": { "tag": "choice" },
                                     "style": {
                                         "css": ["constraint-choice--textual__choice-option", "font-ui"]
                                     }
+                                },
+                                "style": {
+                                    "css": ["constraint-choice--textual__choice-list"]
                                 }
                             },
                             "style": {
@@ -1567,7 +1636,10 @@
                                 "type": "static",
                                 "static": {
                                     "type": "text",
-                                    "content": "required"
+                                    "content": "required",
+                                    "style": {
+                                        "css": ["yesno-field__value"]
+                                    }
                                 }
                             }
                         ]
@@ -1578,15 +1650,13 @@
                                 "type": "static",
                                 "static": {
                                     "type": "text",
-                                    "content": "optional"
+                                    "content": "optional",
+                                    "style": {
+                                        "css": ["yesno-field__value"]
+                                    }
                                 }
                             }
                         ]
-                    }
-                },
-                "input": {
-                    "style": {
-                        "css": ["yesno-field__input"]
                     }
                 },
                 "label": {
@@ -1657,8 +1727,10 @@
                                 "type": "static",
                                 "static": {
                                     "type": "text",
-                                    "content": "refname",
-                                    "contentType": "property"
+                                    "content": {
+                                        "type": "property",
+                                        "name": "refname"
+                                    }
                                 }
                             }
                         ]
@@ -1669,8 +1741,10 @@
                                 "type": "static",
                                 "static": {
                                     "type": "text",
-                                    "content": "refname",
-                                    "contentType": "property"
+                                    "content": {
+                                        "type": "property",
+                                        "name": "refname"
+                                    }
                                 }
                             }
                         ]
@@ -1981,7 +2055,8 @@
                     }
                 },
                 "style": {
-                    "css": ["textual-list", "textual-list--attribute"]
+                    "css": ["textual-list", "textual-list--attribute"],
+                    "ref": ["pad-all"]
                 }
             }
         },
@@ -2037,7 +2112,8 @@
                     }
                 },
                 "style": {
-                    "css": ["textual-list", "textual-list--property"]
+                    "css": ["textual-list", "textual-list--property"],
+                    "ref": ["pad-all"]
                 }
             }
         },

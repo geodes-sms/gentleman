@@ -1,9 +1,10 @@
-import { valOrDefault, createDocFragment, createI, isHTMLElement, removeChildren, } from "zenkai";
+import { valOrDefault, createDocFragment, createI, isHTMLElement, removeChildren, htmlToElement, } from "zenkai";
 import { LayoutFactory } from "./layout/index.js";
 import { FieldFactory } from "./field/index.js";
 import { StaticFactory } from "./static/index.js";
 import { AttributeHandler } from './structure-handler.js';
 import { StyleHandler } from "./style-handler.js";
+import { StateHandler } from "./state-handler.js";
 
 
 /**
@@ -42,7 +43,7 @@ export function ContentHandler(schema, concept, args = {}) {
         return field.render();
     } else if (schema.type === "static") {
         let staticContent = StaticFactory.createStatic(this.model, schema.static, this.projection);
-        
+
         staticContent.source = contentConcept;
         staticContent.parent = this;
         staticContent.init(args);
@@ -53,7 +54,13 @@ export function ContentHandler(schema, concept, args = {}) {
     } else if (schema.type === "attribute") {
         return AttributeHandler.call(this, schema, contentConcept);
     } else if (schema.type === "template") {
-        let template = this.model.getTemplateSchema(schema.name);
+        let name = schema.name;
+
+        if (name.type === "param") {
+            name = this.projection.getParam(name.name);
+        }
+
+        let template = this.model.getTemplateSchema(name);
 
         if (template.param) {
             if (schema.param) {
@@ -71,7 +78,7 @@ export function ContentHandler(schema, concept, args = {}) {
 
         return fragment;
     } else if (schema.type === "projection") {
-        const { tag, style } = schema;
+        const { tag, style, required = false } = schema;
 
         const bindElement = {
             schema: schema,
@@ -98,7 +105,7 @@ export function ContentHandler(schema, concept, args = {}) {
                 let concept = contentConcept.getValue(true);
 
                 let projection = this.projection.model.createProjection(concept, tag).init();
-                projection.optional = true;
+                projection.optional = !required;
                 projection.placeholder = bindElement.placeholder;
                 projection.parent = this.projection;
 
@@ -124,6 +131,16 @@ export function ContentHandler(schema, concept, args = {}) {
         const { name } = schema;
 
         return this.projection.concept.getProperty(name);
+    } else if (schema.type === "html") {
+        const { html } = schema;
+
+        return htmlToElement(html);
+    } else if (schema.type === "state") {
+        let _schema = {};
+
+        let result = StateHandler.call(this, _schema, schema.state);
+
+        return ContentHandler.call(this, result.content, concept, args);
     }
 
     console.error(schema);

@@ -149,7 +149,7 @@ function buildConcept(concept) {
     }
 
     if (concept.isAttributeCreated(ATTR_BASE) && hasValue(concept, ATTR_BASE)) {
-        schema.base = buildTarget.call(this, getValue(concept, ATTR_BASE));
+        Object.assign(schema, buildTarget.call(this, getValue(concept, ATTR_BASE, true), "base"));
     }
 
     return {
@@ -202,7 +202,7 @@ function buildAttribute(attribute) {
  * Build a target concept
  * @param {*} attribute
  */
-function buildTarget(target) {
+function buildTarget(target, propname = "name") {
     let name = target.getProperty("cname");
 
     if (name === "concept") {
@@ -210,7 +210,7 @@ function buildTarget(target) {
     }
 
     const result = {
-        "name": name
+        [propname]: name
     };
 
     if (hasAttr(target, "accept")) {
@@ -250,7 +250,7 @@ function buildConstraint(constraint) {
 
     ["length", "value", "cardinality"].filter(prop => hasAttr(constraint, prop) && hasValue(constraint, prop))
         .forEach(prop => {
-            let numberConstraint = getValue(constraint, prop);
+            let numberConstraint = getValue(constraint, prop, true);
 
             let rules = {};
 
