@@ -36,9 +36,12 @@ const BaseAudioStatic = {
 
         if (!isHTMLElement(this.element)) {
             this.element = createAudio({
-                class: ["audio"],
+                class: ["static", "audio-static"],
                 src: content,
                 dataset: {
+                    nature: "static",
+                    static: "audio",
+                    id: this.id,
                     ignore: "all",
                 }
             });

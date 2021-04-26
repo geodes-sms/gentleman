@@ -161,6 +161,10 @@
         }
             .editor-concept.active .editor-concept-header { background-color: #fff; }
     
+        .editor-concept:focus {
+            border-radius: 3px;
+            box-shadow: 0 0 0 2px #5897F5;
+        }
         .editor-concept.focus {
             position: absolute;
             top: 18px; right: 0; bottom: 0; left: 0;

@@ -643,6 +643,7 @@ const BaseListField = {
         const component = getComponent(target);
 
         if (isNullOrUndefined(component)) {
+            this.focus();
             return false;
         }
 
@@ -776,6 +777,10 @@ const BaseListField = {
 
         if (!isHTMLElement(closestItem)) {
             return exit();
+        }
+
+        if (closestItem === this.notification) {
+            return this.arrowHandler(dir, closestItem);
         }
 
         if (closestItem === this.list && this.list.hasChildNodes()) {

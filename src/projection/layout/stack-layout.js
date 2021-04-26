@@ -100,7 +100,7 @@ export const BaseStackLayout = {
 
         if (!isHTMLElement(this.container)) {
             this.container = createDiv({
-                class: ["layout-container"],
+                class: ["layout-container", "stack-layout"],
                 title: help,
                 dataset: {
                     nature: "layout",

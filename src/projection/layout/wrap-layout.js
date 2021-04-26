@@ -79,7 +79,7 @@ export const BaseWrapLayout = {
         }
 
         this.container.style.display = "inline-flex";
-        this.container.style.alignItems = "center";
+        this.container.style.alignItems = "baseline";
 
         this.refresh();
 

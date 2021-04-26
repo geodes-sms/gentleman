@@ -23,12 +23,12 @@
 
         .field.active > .field-notification .field-status {
             opacity: 1;
-            transform: scale(1.1) translateY(-2px);
+            transform: translateY(-2px);
         }
 
         .field.active > .field-notification .field-message {
             opacity: 1;
-            transform: scale(1.1) translateY(-2px);
+            transform: translateY(-2px);
         }
 
         .field.active .notification-message {
@@ -274,6 +274,7 @@
         margin-bottom: 2px;
         overflow: hidden;
         outline: none;
+        border: 1px solid #d5d5d5;
         background-color: #fefefe;
         z-index: 5;
     }
@@ -286,11 +287,14 @@
         cursor: pointer;
     }
     .field--choice__choice {
-        list-style: none;
-    }
-    .field--choice__choice {
-        list-style: none;
+        /* list-style: none; */
         border: 1px solid #555;
+    }
+    .field--choice__choice:hover {
+        background-color: #eee;
+    }
+    .field--choice__choice.selected {
+        background-color: #ffd300;
     }
 
 

@@ -141,7 +141,7 @@ function buildConcept(concept) {
         "nature": nature,
         "attributes": attributes,
         "properties": properties,
-        "metadata": JSON.stringify(concept.export())
+        // "metadata": JSON.stringify(concept.export())
     };
 
     if (concept.isAttributeCreated(ATTR_PROTOTYPE) && hasValue(concept, ATTR_PROTOTYPE)) {

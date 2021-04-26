@@ -3,9 +3,18 @@
     /* width: 100%; */
 }
 
-[data-projection]:focus {
-    border-radius: 3px;
-    box-shadow: 0 0 0 2px #5897F5;
+[data-projection]:focus,
+.static.active,
+.field--list-item:focus,
+.field-action:focus {
+    border-radius: 2px;
+    /* Visible in the full-colour space */
+    box-shadow: 0 0 0 1px #fff, 0 0 1px 3px #5897F5;
+
+    /* Visible in Windows high-contrast themes */
+    outline-color: transparent;
+    outline-width: 2px;
+    outline-style: dotted;
 }
 
 .active > .btn-delete {

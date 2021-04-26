@@ -79,8 +79,8 @@ th { text-align: center; }
 
 /* width */
 ::-webkit-scrollbar {
-    width: calc(2px + 1%); max-width: 10px;
-    height: calc(2px + 1%); max-height: 10px;
+    width: calc(3px + 1%); max-width: 10px;
+    height: calc(3px + 1%); max-height: 10px;
 }
   
 /* Track */

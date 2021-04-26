@@ -81,6 +81,7 @@
                                 { "name": "stack-layout" },
                                 { "name": "wrap-layout" },
                                 { "name": "flex-layout" },
+                                { "name": "table-layout" },
                                 { "name": "text-field" },
                                 { "name": "binary-field" },
                                 { "name": "choice-field" },
@@ -486,29 +487,11 @@
                         "name": "input"
                     },
                     "required": false
-                },
-                {
-                    "name": "action",
-                    "target": {
-                        "name": "choice field action"
-                    }
                 }
             ],
             "properties": [
                 { "name": "contentType", "type": "string", "value": "field" },
                 { "name": "elementType", "type": "string", "value": "choice" }
-            ]
-        },
-        {
-            "name": "choice field action",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "reset",
-                    "target": {
-                        "name": "action"
-                    }
-                }
             ]
         },
         {
@@ -681,6 +664,7 @@
                                 { "name": "stack-layout" },
                                 { "name": "wrap-layout" },
                                 { "name": "flex-layout" },
+                                { "name": "table-layout" },
                                 { "name": "text-field" },
                                 { "name": "binary-field" },
                                 { "name": "choice-field" },
@@ -860,6 +844,7 @@
                             { "name": "stack-layout" },
                             { "name": "wrap-layout" },
                             { "name": "flex-layout" },
+                            { "name": "table-layout" },
                             { "name": "text-field" },
                             { "name": "binary-field" },
                             { "name": "choice-field" },
@@ -977,7 +962,37 @@
                 {
                     "name": "content",
                     "target": {
-                        "name": "string"
+                        "name": "string",
+                        "src": [
+                            "refname",
+                            "value",
+                            { 
+                                "type": "reference", 
+                                "target": {
+                                    "name": "properties",
+                                    "rel": "children",
+                                    "value": "name",
+                                    "source": {
+                                        "type": "reference",
+                                        "rel": "parent",
+                                        "name": "projection",
+                                        "value": {
+                                            "type": "reference",
+                                            "rel": "children",
+                                            "name": "concept",
+                                            "value": {
+                                                "type": "attribute",
+                                                "name": "name"
+                                            }
+                                        }
+                                    }
+                                },
+                                "source": {
+                                    "type": "resource",
+                                    "name": "metamodel"
+                                } 
+                            }
+                        ]
                     }
                 }
             ],
@@ -1183,15 +1198,6 @@
                         "name": "reference",
                         "accept": {
                             "name": "template"
-                        }
-                    }
-                },
-                {
-                    "name": "args",
-                    "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "string"
                         }
                     }
                 }
@@ -1888,6 +1894,19 @@
         },
         {
             "name": "attribute",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "length": {
+                    "type": "range",
+                    "range": {
+                        "min": 1
+                    }
+                }
+            }
+        },
+        {
+            "name": "property",
             "nature": "derivative",
             "base": "string",
             "constraint": {

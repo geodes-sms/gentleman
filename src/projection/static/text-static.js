@@ -8,7 +8,7 @@ function resolveValue(content) {
     const { type, name } = content;
 
     if (type === "property") {
-        return this.source.getProperty(name);
+        return valOrDefault(this.source.getProperty(name), "");
     }
 
     if (type === "param") {
@@ -48,11 +48,12 @@ const BaseTextStatic = {
 
         if (!isHTMLElement(this.element)) {
             this.element = createSpan({
-                class: ["text"],
+                class: ["text", "static", "text-static"],
                 editable: this.editable,
                 dataset: {
                     nature: "static",
                     view: "text",
+                    static: "text",
                     id: this.id,
                     ignore: "all",
                 }
@@ -157,7 +158,7 @@ const BaseTextStatic = {
         const { content } = this.schema;
 
         if (content.type === "property") {
-            this.element.textContent = this.source.getProperty(content.name);
+            this.element.textContent = valOrDefault(this.source.getProperty(content.name), "");
         }
 
         return this;

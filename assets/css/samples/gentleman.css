@@ -127,7 +127,6 @@
             }
 
 .primitive-constraint {
-    padding-top: 2px;
     width: 100%;
     color: #222;
 }
@@ -449,7 +448,7 @@
         font-size: 1.3rem; font-weight: 500;
         color: #fff;
         border-radius: 2px;
-        box-shadow: 0 1px 2px -1px #999;
+        
         background-color: #09b54d;
         transition: .2s;
     }
@@ -1819,6 +1818,7 @@
 
     .render__nav-projection--collapse {
         position: absolute;
+        margin: 0!important;
         right: 0;
         padding: 0;
         color: #555;

@@ -325,7 +325,7 @@ const BaseTextField = {
         if (!isHTMLElement(this.element)) {
             this.element = createDiv({
                 id: this.id,
-                class: ["field", "field--textbox"],
+                class: ["field", "text-field", "field--textbox"],
                 dataset: {
                     nature: "field",
                     view: "text",

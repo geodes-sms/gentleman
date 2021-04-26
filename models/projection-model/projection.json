@@ -468,6 +468,153 @@
                 }
             ]
         },
+        {
+            "type": "template",
+            "name": "element-tabs",
+            "param": [
+                { "name": "tab", "type": "string", "default": "config" }
+            ],
+            "content": [
+                {
+                    "type": "state",
+                    "state": [
+                        {
+                            "rule": {
+                                "type": "eq",
+                                "eq": [{ "type": "param", "name": "tab" }, "config"]
+                            },
+                            "result": {
+                                "content":  {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Config",
+                                        "style": {
+                                            "css": ["nav-projection", "render__nav-projection", "current"]
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "result": {
+                                "content": {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "plink",
+                                        "tag": "choice-selection",
+                                        "content": [
+                                            {
+                                                "type": "static", 
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": "Content"
+                                                }
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["nav-projection", "render__nav-projection", "render__nav-projection--config"]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "state",
+                    "state": [
+                        {
+                            "rule": {
+                                "type": "eq",
+                                "eq": [{ "type": "param", "name": "tab" }, "state"]
+                            },
+                            "result": {
+                                "content":  {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "State",
+                                        "style": {
+                                            "css": ["nav-projection", "render__nav-projection", "current"]
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "result": {
+                                "content": {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "plink",
+                                        "tag": "state",
+                                        "content": [
+                                            {
+                                                "type": "static", 
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": "State"
+                                                }
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["nav-projection", "render__nav-projection", "render__nav-projection--state"]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "state",
+                    "state": [
+                        {
+                            "rule": {
+                                "type": "eq",
+                                "eq": [{ "type": "param", "name": "tab" }, "style"]
+                            },
+                            "result": {
+                                "content":  {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Style",
+                                        "style": {
+                                            "css": ["nav-projection", "render__nav-projection", "current"]
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "result": {
+                                "content": {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "plink",
+                                        "tag": "style",
+                                        "content": [
+                                            {
+                                                "type": "static", 
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": "Style"
+                                                }
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["nav-projection", "render__nav-projection", "render__nav-projection--style"]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
     
         
         {
@@ -3137,7 +3284,7 @@
                         "type": "template",
                         "name": "nav-bar",
                         "param": [
-                            { "name": "tabs", "value": "static-tabs" },
+                            { "name": "tabs", "value": "element-tabs" },
                             { "name": "tab", "value": "config" }
                         ]
                     },
@@ -3198,7 +3345,7 @@
                         "type": "template",
                         "name": "nav-bar",
                         "param": [
-                            { "name": "tabs", "value": "static-tabs" },
+                            { "name": "tabs", "value": "element-tabs" },
                             { "name": "tab", "value": "state" }
                         ]
                     },
@@ -3245,7 +3392,7 @@
                         "type": "template",
                         "name": "nav-bar",
                         "param": [
-                            { "name": "tabs", "value": "static-tabs" },
+                            { "name": "tabs", "value": "element-tabs" },
                             { "name": "tab", "value": "config" }
                         ]
                     },
@@ -3301,7 +3448,7 @@
                         "type": "template",
                         "name": "nav-bar",
                         "param": [
-                            { "name": "tabs", "value": "static-tabs" },
+                            { "name": "tabs", "value": "element-tabs" },
                             { "name": "tab", "value": "state" }
                         ]
                     }
@@ -3368,6 +3515,33 @@
                         }
                     }
                 ]
+            }
+        },
+        {
+            "concept": { "prototype": "element" },
+            "type": "layout",
+            "tags": ["choice-selection", "style"],
+            "projection": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "template",
+                        "name": "nav-bar",
+                        "param": [
+                            { "name": "tabs", "value": "element-tabs" },
+                            { "name": "tab", "value": "style" }
+                        ]
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "style",
+                        "required": true
+                    }
+                ],
+                "style": {
+                    "css": ["render-config"]
+                }
             }
         },
 

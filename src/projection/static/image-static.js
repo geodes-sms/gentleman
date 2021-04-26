@@ -1,9 +1,8 @@
 import {
-    createDocFragment, createSpan, removeChildren, isHTMLElement, valOrDefault, hasOwn, isNullOrWhitespace, isNullOrUndefined, createImage,
+    removeChildren, isHTMLElement, valOrDefault, hasOwn, isNullOrWhitespace, isNullOrUndefined, createImage,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
 import { StyleHandler } from "../style-handler.js";
-import { ContentHandler } from "./../content-handler.js";
 import { Static } from "./static.js";
 
 
@@ -54,10 +53,13 @@ const BaseImageStatic = {
 
         if (!isHTMLElement(this.element)) {
             this.element = createImage({
-                class: ["image"],
+                class: ["static", "image-static"],
                 src: this.url,
                 alt: this.alt,
                 dataset: {
+                    nature: "static",
+                    static: "image",
+                    id: this.id,
                     ignore: "all",
                 }
             });

@@ -272,7 +272,7 @@ function greaterEqualHandler(terms) {
  */
 function noHandler(term) {
     let val = resolveTerm.call(this, term);
-    console.log(term, val);
+    
     if (isIterable(val)) {
         return isEmpty(val);
     }

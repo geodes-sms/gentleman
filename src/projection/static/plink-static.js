@@ -34,11 +34,13 @@ const BaseProjectionLinkStatic = {
 
         if (!isHTMLElement(this.element)) {
             this.element = createButton({
-                class: ["btn"],
+                class: ["btn", "static"],
                 dataset: {
                     nature: "static",
                     view: "plink",
-                    id: this.id
+                    static: "plink",
+                    id: this.id,
+                    ignore: "all",
                 }
             });
 

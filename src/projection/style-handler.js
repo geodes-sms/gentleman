@@ -289,11 +289,10 @@ function resolveSpace(element, schema, prop) {
  * @param {HTMLElement} element 
  * @param {*} schema 
  */
-function resolveBackground(element, schema) {console.log(schema);
+function resolveBackground(element, schema) {
     if (isNullOrUndefined(schema)) {
         return;
     }
-
 
     const { color, image } = schema;
 

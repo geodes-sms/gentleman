@@ -95,7 +95,9 @@ export function buildProjectionHandler(args = [], _options = {}) {
     }
 
     if (options.download) {
-        this.download(result, options.name);
+        this.download({
+            projection: result
+        }, options.name);
     }
 
     return result;
@@ -135,7 +137,7 @@ function buildProjection(concept) {
         "type": contentType,
         "tags": tags,
         "content": ProjectionHandler[contentType].call(this, content),
-        "metadata": JSON.stringify(concept.export()),
+        // "metadata": JSON.stringify(concept.export()),
     };
 
     if (hasAttr(concept, ATTR_NAME) && hasValue(concept, ATTR_NAME)) {
@@ -271,19 +273,21 @@ function buildLayout(layout) {
             const element = proto.getValue(true);
             disposition.push(buildElement.call(this, element));
         });
-    } else if (elementType === "cell") {
-        schema.type = "table";
+    } else if (elementType === "table") {
         schema.orientation = getValue(layout, 'orientation');
+
         getValue(layout, "rows").forEach(row => {
             const cells = [];
             getValue(row, "cells").forEach(cell => {
-                let span = getValue(cell, "span");
-                let content = getValue(cell, "content");
-                cells.push({
-                    "type": "cell",
-                    "span": span,
-                    "content": buildElement.call(this, content)
-                });
+                let span = valOrDefault(getValue(cell, "span"), 1);
+                if (hasValue(cell, "content")) {
+                    let content = getValue(cell, "content", true);
+                    cells.push({
+                        "type": "cell",
+                        "span": span,
+                        "content": buildElement.call(this, content)
+                    });
+                }
             });
             disposition.push(cells);
         });
@@ -377,7 +381,7 @@ function buildElement(element) {
         };
     }
 
-    if (contentType === "template") {
+    if (contentType === "template" && hasValue(element, ATTR_VALUE)) {
         let schema = {
             type: contentType,
             name: getReferenceName(element, ATTR_VALUE),
@@ -494,6 +498,10 @@ function buildField(field) {
 
         if (hasAttr(field, "placeholder")) {
             schema.placeholder = getValue(field, "placeholder");
+        }
+
+        if (hasAttr(field, "expanded")) {
+            schema.expanded = getValue(field, "expanded");
         }
 
         if (hasAttr(field, "input")) {
@@ -615,11 +623,11 @@ function buildFieldTemplate(element) {
 function buildStyle(style) {
     let schema = {};
 
-    if (hasAttr(style, "css")) {
-        schema.css = getAttr(style, "css", true);
+    if (hasAttr(style, "css") && hasValue(style, "css")) {
+        schema.css = getValue(style, "css", true);
     }
 
-    if (hasAttr(style, "ref")) {
+    if (hasAttr(style, "ref" && hasValue(style, "css"))) {
         schema.ref = getValue(style, "ref", true).map(ref => getName(this.getConcept(ref)));
     }
 

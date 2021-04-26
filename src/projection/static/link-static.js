@@ -71,10 +71,13 @@ const BaseLinkStatic = {
 
         if (!isHTMLElement(this.element)) {
             this.element = createAnchor({
-                class: ["link"],
+                class: ["static", "link"],
                 href: this.href,
                 target: "_blank",
                 dataset: {
+                    nature: "static",
+                    static: "link",
+                    id: this.id,
                     ignore: "all",
                 }
             });

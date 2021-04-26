@@ -93,6 +93,10 @@ const _Concept = {
      */
     getProperty(name, meta) {
         if (name === "refname") {
+            if (isNullOrUndefined(this.ref)) {
+                return undefined;
+            }
+            
             return this.ref.name;
         }
 
