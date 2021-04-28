@@ -313,6 +313,10 @@
     .textual-option--constraint:focus { opacity: 1; transform: scale(1); }
     .textual-option--constraint:focus { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #1f75fe; }
 
+.label-reference-container {
+    align-items: center;
+}
+
 /*
   Deletable
 -----------------------------------------------------------------------------*/
@@ -364,7 +368,7 @@
 }
 
 .primitive-config--collapse {
-    padding-top: 6px;
+    padding-top: 0;
     width: 100%;
     text-transform: uppercase;
 }
@@ -1398,7 +1402,6 @@
         .select-choice__list-option:hover,
         .select-choice__list-option:focus {
             background-color: rgba(205, 205, 205, 0.85);
-            transform: scale(1.05);
         }
     
     .select-choice__list-option.selected {

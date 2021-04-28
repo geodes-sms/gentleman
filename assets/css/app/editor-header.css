@@ -3,7 +3,6 @@
     display: flex; flex-direction: column;
     max-height: 50%;
     color: #333;
-    transition: .2s;
     background-color: #f5f5f5;
     z-index: 10;
 }
@@ -30,7 +29,6 @@
     flex-grow: 1;
     padding: 6px 1% 2px;
     background: #fff;
-    transition: .2s;
     overflow: auto;
 }
 
@@ -470,10 +468,10 @@
             box-shadow: none;
             opacity: 0.5;
         }
-        .editor-toolbar__button:hover {
+        .editor-toolbar__button:not(:disabled):hover {
             background-color: #fff; 
         }
-            .editor-toolbar__button:hover:after {
+            .editor-toolbar__button:not(:disabled):hover:after {
                 color: #222;
             }
         .editor-toolbar__button:not(:last-child) {
@@ -483,7 +481,7 @@
         .editor-toolbar__button--close:after {
             content: "✖";
         }
-        .editor-toolbar__button--close:hover:after {
+        .editor-toolbar__button--close:not(:disabled):hover:after {
             transform: rotate(-180deg) scale(1.2) translateY(-2px);
         }
 
@@ -500,7 +498,7 @@
             background-color: #555;
             border-radius: 180px;
         }
-        .editor-toolbar__button--save:hover:after {
+        .editor-toolbar__button--save:not(:disabled):hover:after {
             color: #222;
             transform: scale(1.1) rotate(90deg) translate(-1px, -1px);
         }
@@ -508,7 +506,7 @@
             .editor-toolbar__button--home:after {
                 content: "•••";
             }
-            .editor-toolbar__button--home:hover:after {
+            .editor-toolbar__button--home:not(:disabled):hover:after {
                 letter-spacing: -1px;
                 transform: rotate(-270deg) scale(1.3) translate(-1px, -1px);
             }
@@ -533,11 +531,11 @@
             height: 100%;
             transition: .4s;
         }
-        .editor-toolbar .btn-new:hover {
+        .editor-toolbar .btn-new:not(:disabled):hover {
             background-color: #638AFF;
             
         }
-            .editor-toolbar .btn-new:hover:after {
+            .editor-toolbar .btn-new:not(:disabled):hover:after {
                 transform: rotate(180deg) scale(1.1) translateY(-2px);
             }
 
@@ -558,7 +556,7 @@
             content: "#";
             font-size: 16px; font-weight: 600;
         }
-        .editor-toolbar .btn-style:hover {
+        .editor-toolbar .btn-style:not(:disabled):hover {
             background-color: #ed3972;
             transform: rotate(360deg) scale(1.1);
         }
@@ -610,14 +608,14 @@
         .editor-header__button--collapse[data-state="ON"]:after {
             transform: scale(2) rotate(90deg);
         }
-            .editor-header__button--collapse[data-state="ON"]:hover:after {
+            .editor-header__button--collapse[data-state="ON"]:not(:disabled):hover:after {
                 text-shadow: 2px 0 0 #777;
                 transform: scale(2,2.2) rotate(90deg);
             }
         .editor-header__button--collapse[data-state="OFF"]:after {
             transform: scale(2) rotate(-90deg);
         }
-            .editor-header__button--collapse[data-state="OFF"]:hover:after {
+            .editor-header__button--collapse[data-state="OFF"]:not(:disabled):hover:after {
                 text-shadow: 2px 0 0 #777;
                 transform: scale(2,2.2) rotate(-90deg);
             }

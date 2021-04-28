@@ -31,6 +31,8 @@ export const ConceptModel = {
                     "value": value
                 });
             });
+
+            this.values = values.filter(val => val.id.startsWith("value"));
         }
 
         return this;
@@ -381,6 +383,8 @@ export const ConceptModel = {
         this.getConcepts().forEach(concept => {
             values.push(concept.export());
         });
+
+        values.push(...this.getValues());
 
         return values;
     },

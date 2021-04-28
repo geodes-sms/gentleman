@@ -206,6 +206,8 @@ const FileIO = {
     /** @type {HTMLButtonElement} */
     btnUnload: null,
     /** @type {HTMLButtonElement} */
+    btnDownload: null,
+    /** @type {HTMLButtonElement} */
     btnReLoad: null,
 
     init(type, _title) {
@@ -232,6 +234,7 @@ const FileIO = {
         }
         this.btnReLoad.disabled = !this.hasFile;
         this.btnUnload.disabled = !this.hasFile;
+        this.btnDownload.disabled = !this.hasFile;
 
         return this;
     },
@@ -261,22 +264,32 @@ const FileIO = {
         /** @type {HTMLButtonElement} */
         this.btnUnload = createButton({
             class: ["btn", "file-section__actionbar-button", "file-section__actionbar-button--remove"],
+            title: `Unload the ${this.type}`,
             dataset: { action: `unload-${this.type}`, },
         }, `UN.load`);
 
         /** @type {HTMLButtonElement} */
         this.btnReLoad = createButton({
             class: ["btn", "file-section__actionbar-button", "file-section__actionbar-button--reload"],
+            title: `Reload the ${this.type}`,
             dataset: { action: `reload-${this.type}`, },
         }, `RE.load`);
 
-        actionBar.append(this.btnUnload, this.btnReLoad);
+        /** @type {HTMLButtonElement} */
+        this.btnDownload = createButton({
+            class: ["btn", "file-section__actionbar-button", "file-section__actionbar-button--download"],
+            title: `Download the ${this.type}`,
+            dataset: { action: `download-${this.type}`, },
+        }, `Download`);
+
+        actionBar.append(this.btnUnload, this.btnReLoad, this.btnDownload);
         fileSection.append(iconFile, actionBar);
 
 
         /** @type {HTMLButtonElement} */
         this.btnLoad = createButton({
             class: ["btn", "drop-area__button", "drop-area__button--open"],
+            title: `Load the ${this.type}`,
             dataset: {
                 action: `load-${this.type}`,
             },

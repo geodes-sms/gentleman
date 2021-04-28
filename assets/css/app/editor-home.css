@@ -96,13 +96,27 @@
             font-size: 1.2em;
             border-radius: 2px;
             background-color: #222444;
+            opacity: 0.9;
             transition: .2s;
         }
+        
+        .file-section__actionbar-button:hover {
+            background-color: #6970D1;
+        }
+
         .file-section__actionbar-button:disabled {
             color: #d5d5d5;
             background-color: #969696;
             opacity: 0.9;
             transform: scale(0.9);
+        }
+        .file-section__actionbar-button:not(:last-child) {
+            margin-left: 3px;
+        }
+
+        .file-section__actionbar-button--download {
+            margin-left: 6px;
+            text-transform: uppercase;
         }
 
         .editor-home-section__drop-area--model:hover {
@@ -205,7 +219,7 @@
             transform: scale(0.9);
         }
             .editor-home-section .btn:not(:disabled):hover { 
-                transform: scale(1.05); 
+                transform: scale(1); 
                 opacity: 1; 
             }
     

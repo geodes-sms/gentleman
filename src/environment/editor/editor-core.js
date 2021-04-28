@@ -1,7 +1,8 @@
 import {
     createDocFragment, createSection, createDiv, createParagraph, createAnchor, createInput,
-    removeChildren, isHTMLElement, findAncestor, isNullOrWhitespace, isNullOrUndefined,
-    isEmpty, hasOwn, isFunction, valOrDefault, copytoClipboard, createAside, createUnorderedList, createListItem, createButton, createI,
+    createAside, createUnorderedList, createListItem, createButton, createI, removeChildren,
+    isHTMLElement, findAncestor, isNullOrWhitespace, isNullOrUndefined, isEmpty, isFunction,
+    valOrDefault, copytoClipboard, getElements,
 } from 'zenkai';
 import { hide, show, toggle, Key, getEventTarget, NotificationType, getClosest } from '@utils/index.js';
 import { buildProjectionHandler } from "../build-projection.js";
@@ -248,6 +249,13 @@ export const Editor = {
         }
 
         return this.config[prop];
+    },
+    /**
+     * Gets the config name or default
+     * @returns {string}
+     */
+    getName() {
+        return valOrDefault(this.config.name, `editor${(new Date().getTime())}`);
     },
 
     /**
@@ -622,7 +630,6 @@ export const Editor = {
         const result = {
             "concept": this.conceptModel.schema,
             "values": this.conceptModel.export(),
-            "projection": this.projectionModel.schema,
             "editor": this.config
         };
 
@@ -1083,15 +1090,9 @@ export const Editor = {
                 if (Array.isArray(schema)) {
                     this.loadConceptModel(schema);
                 } else {
-                    const { concept, values = [], projection = [], editor } = schema;
+                    const { concept, values = [], editor } = schema;
 
                     this.loadConceptModel(concept, values);
-
-                    if (!isEmpty(projection)) {
-                        this.notify("A projection was found in the model.", NotificationType.NORMAL, 2000);
-
-                        setTimeout(() => { this.loadProjectionModel(projection); }, 30);
-                    }
 
                     if (editor) {
                         this.setConfig(editor);
@@ -1351,7 +1352,18 @@ export const Editor = {
             return this;
         }
 
+        let parents = getElements(".active-parent", this.body);
+        for (let i = 0; i < parents.length; i++) {
+            parents[i].classList.remove("active-parent");
+        }
+
         this.activeProjection = projection;
+
+        let parent = this.activeProjection.parent;
+        while (parent) {
+            parent.getContainer().classList.add("active-parent");
+            parent = parent.parent;
+        }
 
         this.refresh();
 
@@ -1573,9 +1585,18 @@ export const Editor = {
                 this.unloadConceptModel();
             },
             "reload-model": (target) => {
-                const { schema, values } = this.projectionModel;
+                const { schema, values } = this.conceptModel;
 
                 this.loadConceptModel(schema, values);
+            },
+            "download-model": (target) => {
+                const { schema, values } = this.conceptModel;
+
+                let name = this.getName().toLowerCase().replace(/\s+/g, " ").replace(" ", "_");
+
+                this.download({
+                    "concept": schema
+                }, `${name}_model`);
             },
             "load-projection": (target) => {
                 let event = new MouseEvent('click', {
@@ -1594,7 +1615,16 @@ export const Editor = {
                 const { schema, views } = this.projectionModel;
 
                 this.loadProjectionModel(schema, views);
-            }
+            },
+            "download-projection": (target) => {
+                const { schema, views } = this.projectionModel;
+
+                let name = this.getName().toLowerCase().replace(/\s+/g, " ").replace(" ", "_");
+
+                this.download({
+                    projection: schema
+                }, `${name}_projection`);
+            },
         };
 
         const dir = {

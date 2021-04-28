@@ -627,7 +627,7 @@ function buildStyle(style) {
         schema.css = getValue(style, "css", true);
     }
 
-    if (hasAttr(style, "ref" && hasValue(style, "css"))) {
+    if (hasAttr(style, "ref") && hasValue(style, "ref")) {
         schema.ref = getValue(style, "ref", true).map(ref => getName(this.getConcept(ref)));
     }
 

@@ -17,9 +17,12 @@
     outline-style: dotted;
 }
 
-.active > .btn-delete {
-    opacity: 0.8;
+.active {
     z-index: 10;
+}
+
+[data-projection].active-parent {
+    z-index: 5;
 }
 
 .structure__btn-delete {

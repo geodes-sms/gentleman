@@ -202,13 +202,15 @@ const PreviewHandler = {
                 class: ["bare-list", "editor-selector__preview-list"]
             });
 
-            value.forEach(val => {
-                let item = createListItem({
-                    class: ["editor-selector__preview-list-item"]
-                }, PreviewHandler.value(val));
+            if (Array.isArray(value)) {
+                value.forEach(val => {
+                    let item = createListItem({
+                        class: ["editor-selector__preview-list-item"]
+                    }, PreviewHandler.value(val));
 
-                list.append(item);
-            });
+                    list.append(item);
+                });
+            }
 
             return list;
         } else if (nature === "prototype") {

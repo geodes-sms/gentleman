@@ -172,10 +172,7 @@
                 "gss": {
                     "box": {
                         "inner": { 
-                            "top": { "value": 6, "unit": "px" },
-                            "right": { "value": 6, "unit": "px" },
-                            "bottom": { "value": 6, "unit": "px" },
-                            "left": { "value": 6, "unit": "px" } 
+                            "all": { "value": 6, "unit": "px" }
                         }
                     }
                 }
@@ -1998,7 +1995,10 @@
                             }
                         }
                     }
-                ]
+                ],
+                "style": {
+                    "css": ["label-reference-container"]
+                }
             }
         },
 

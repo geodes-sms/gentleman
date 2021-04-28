@@ -190,6 +190,7 @@ export const EditorSection = {
 
         this.btnClose = createButton({
             class: ["btn", "editor-toolbar__button", "editor-toolbar__button--close"],
+            title: "Close the editor",
             dataset: {
                 action: "close"
             }
@@ -197,6 +198,7 @@ export const EditorSection = {
 
         this.btnSave = createButton({
             class: ["btn", "editor-toolbar__button", "editor-toolbar__button--save"],
+            title: "Export your model",
             dataset: {
                 action: "export"
             }
@@ -204,6 +206,7 @@ export const EditorSection = {
 
         this.btnHome = createButton({
             class: ["btn", "editor-toolbar__button", "editor-toolbar__button--home"],
+            title: "Toggle the home menu",
             dataset: {
                 action: "home"
             }
@@ -287,6 +290,7 @@ export const EditorSection = {
             hide(this.btnCollapse);
         }
 
+        this.btnHome.disabled = !this.editor.isReady;
         this.btnSave.disabled = !this.editor.hasInstances;
 
         this.editor.getConfig("resources") ? show(this.tabResource) : hide(this.tabResource);
