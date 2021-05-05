@@ -112,6 +112,19 @@
                 }
             ]
         },
+        {
+            "type": "template",
+            "name": "arrow",
+            "content": [
+                {
+                    "type": "static",
+                    "static": {
+                        "type": "text",
+                        "content": ">"
+                    }
+                }
+            ]
+        },
 
         {
             "type": "style",
@@ -375,7 +388,7 @@
 
         {
             "concept": { "name": "attribute" },
-            "tags": ["attribute-list-item--textual"],
+            "tags": ["attribute-list-item--textual", "full"],
             "type": "layout",
             "content": {
                 "type": "stack",
@@ -399,6 +412,29 @@
                                     "type": "attribute",
                                     "name": "required",
                                     "tag": "field-binary-state"
+                                },
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "plink",
+                                        "tag": "base",
+                                        "content": [
+                                            {
+                                                "type": "static", 
+                                                "static": {
+                                                    "type": "text",
+                                                    "help": "Compact view (hide target details)",
+                                                    "content": {
+                                                        "type": "html",
+                                                        "html": "&mdash;"
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["attribute-list-item__plink", "attribute-list-item__plink--expanded"]
+                                        }
+                                    }
                                 }
                             ],
                             "style": {
@@ -417,6 +453,74 @@
                         "type": "attribute",
                         "name": "target",
                         "tag": "textual"
+                    }
+                ],
+                "style": {
+                    "css": ["attribute-list-item-container"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "attribute" },
+            "tags": ["attribute-list-item--textual", "base"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "name",
+                                    "tag": "textual"
+                                },
+                                {
+                                    "type": "template",
+                                    "name": "vertical-bar"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "required",
+                                    "tag": "field-binary-state"
+                                },
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "plink",
+                                        "tag": "full",
+                                        "help": "Expand view (show all details)",
+                                        "content": [
+                                            {
+                                                "type": "template",
+                                                "name": "arrow"
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["attribute-list-item__plink", "attribute-list-item__plink--compact"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "target",
+                                    "tag": "value"
+                                }
+                            ],
+                            "style": {
+                                "css": ["model-concept__line"],
+                                "gss": {
+                                    "box": {
+                                        "inner": { 
+                                            "bottom": { "value": 4, "unit": "px" } 
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 ],
                 "style": {
@@ -542,6 +646,37 @@
                 "style": {
                     "css": ["inline"]
                 }
+            }
+        },
+        {
+            "concept": { "name": "primitive" },
+            "tags": ["value"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "disposition": [
+                    {
+                        "type": "field",
+                        "field": {
+                            "type": "choice",
+                            "choice": {
+                                "option": {
+                                    "template": { "tag": "choice" },
+                                    "style": {
+                                        "css": ["target-choice--textual__list-option"]
+                                    }
+                                },
+                                "style": {
+                                    "css": ["target-choice--textual__list"]
+                                }
+                            },
+                            "input": false,
+                            "style": {
+                                "css": ["target-choice--textual"]
+                            }
+                        }
+                    }
+                ]
             }
         },
         

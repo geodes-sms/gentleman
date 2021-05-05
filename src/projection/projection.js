@@ -5,6 +5,7 @@ import {
 import { hide, show } from "@utils/index.js";
 import { LayoutFactory } from "./layout/index.js";
 import { FieldFactory } from "./field/index.js";
+import { StaticFactory } from "./static/index.js";
 import { StyleHandler } from "./style-handler.js";
 
 
@@ -306,6 +307,10 @@ const Projection = {
             this.element = FieldFactory.createField(this.model, valOrDefault(projection, content), this).init(this.args);
 
             this.model.registerField(this.element);
+        } else if (type === "static") {
+            this.element = StaticFactory.createStatic(this.model, valOrDefault(projection, content), this).init(this.args);
+
+            this.model.registerStatic(this.element);
         }
 
         this.element.focusable = true;
@@ -330,17 +335,19 @@ const Projection = {
             return container;
         }
 
+        container.classList.add("projection");
+
         Object.assign(container.dataset, {
             "projection": this.id,
+            "concept": this.concept.id,
             "object": this.concept.object,
-            "alt": this.schema.length
         });
 
         if (this.optional) {
             /** @type {HTMLElement} */
             let btnDelete = createButton({
                 class: ["btn", "structure__btn-delete"],
-                title: `Delete`,
+                title: `Delete ${this.concept.name}`,
                 dataset: {
                     "action": "delete"
                 }
@@ -354,16 +361,6 @@ const Projection = {
             container.classList.add("has-toolbar");
             container.prepend(btnDelete);
         }
-
-
-        // if (this.hasMultipleViews) {
-        //     let altBadge = createI({
-        //         class: ["badge", "badge--alt"],
-        //         title: "This projection has multiple views"
-        //     });
-
-        //     container.prepend(altBadge);
-        // }
 
 
         this.containers.set(this.index, container);

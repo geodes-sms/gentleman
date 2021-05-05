@@ -1032,6 +1032,23 @@
     width: 100%;
 }
 
+.attribute-list-item__plink {
+    font-weight: bold;
+    box-shadow: 0 1px 2px #555;
+    border-radius: 50%;
+    margin-right: 2px;
+    font-family: Consolas, 'Courier New', Courier, monospace;
+}
+
+.attribute-list-item__plink--expanded {
+    color: #555;
+    background-color: #f5f5f5;
+}
+.attribute-list-item__plink--compact {
+    background-color: #222;
+    color: #fff;
+}
+
 .attribute-list--card {
     display: flex;
     flex-direction: column;

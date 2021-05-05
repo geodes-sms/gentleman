@@ -368,6 +368,7 @@
         line-height: 1.15;
         min-width: 48px;
         border-radius: 180px;
+        cursor: pointer;
     }
         .selector-concept:not(:last-child) { margin-right: 6px; }
     

@@ -1,4 +1,4 @@
-import { isEmpty, isNullOrUndefined, isNullOrWhitespace, isObject, valOrDefault } from "zenkai";
+import { createSpan, isEmpty, isNullOrUndefined, isNullOrWhitespace, isObject, getElement, capitalizeFirstLetter, createEmphasis } from "zenkai";
 import { NotificationType, LogType } from "@utils/index.js";
 
 
@@ -28,6 +28,38 @@ const getName = (concept) => getValue(concept, ATTR_NAME).toLowerCase();
 
 const getDescription = (concept) => getValue(concept, ATTR_DESCRIPTION);
 
+function createProjectionLink(text, concept) {
+    const { id, name } = concept;
+
+    let link = createEmphasis({
+        class: ["link", "error-message__link"],
+        title: name,
+    }, text);
+
+    const targetSelector = `.projection[data-concept="${id}"]`;
+
+    link.addEventListener("mouseenter", (event) => {
+        let targetProjection = getElement(targetSelector, this.body);
+        if (targetProjection) {
+            this.highlight(targetProjection);
+        }
+    });
+
+    link.addEventListener("mouseleave", (event) => {
+        this.unhighlight();
+    });
+
+    link.addEventListener("click", (event) => {
+        let target = this.resolveElement( getElement(targetSelector, this.body));
+        
+        if (target) {
+            target.focus();
+        }
+    });
+
+    return link;
+}
+
 
 export function buildConceptHandler(args = [], _options = {}) {
     const result = [];
@@ -50,7 +82,7 @@ export function buildConceptHandler(args = [], _options = {}) {
     }
 
     concepts.forEach(concept => {
-        const { success, errors, message } = buildConcept.call(conceptModel, concept);
+        const { success, errors, message } = buildConcept.call(this, concept);
 
         if (!success) {
             buildErrors.push(...errors);
@@ -91,7 +123,12 @@ function buildConcept(concept) {
     const properties = [];
 
     if (isNullOrWhitespace(name)) {
-        buildErrors.push(`The ${nature} concept's <<name>> is missing a value.`);
+        let link = createProjectionLink.call(this, "name", getAttr(concept, ATTR_NAME));
+        let error = createSpan({
+            class: ["error-message"]
+        }, [`${capitalizeFirstLetter(nature)} concept: `, link, ` is missing a value`]);
+
+        buildErrors.push(error);
     }
 
     if (concept.isAttributeCreated(ATTR_ATTRIBUTES)) {
@@ -170,11 +207,21 @@ function buildAttribute(attribute) {
     const errors = [];
 
     if (isNullOrWhitespace(name)) {
-        errors.push("The attribute's <<name>> is missing a value.");
+        let link = createProjectionLink.call(this, "name", getAttr(attribute, ATTR_NAME));
+        let error = createSpan({
+            class: ["error-message"]
+        }, [`Attribute: `, link, ` is missing a value`]);
+
+        errors.push(error);
     }
 
-    if (!(hasAttr(attribute, "target") && hasValue(attribute, "target"))) {
-        errors.push(`Attribute ${isNullOrWhitespace(name) ? "N/A" : `'${name}'`}: <<target>> is missing a value.`);
+    if (!hasValue(attribute, "target")) {
+        let link = createProjectionLink.call(this, "target", getAttr(attribute, "target"));
+        let error = createSpan({
+            class: ["error-message"]
+        }, [`Attribute: `, link, ` is missing a value`]);
+
+        errors.push(error);
     }
 
     if (!isEmpty(errors)) {
@@ -342,7 +389,12 @@ function buildProperty(property) {
     const description = getDescription(property);
 
     if (isNullOrWhitespace(name)) {
-        errors.push("The property's 'name' is missing a value.");
+        let link = createProjectionLink.call(this, "name", getAttr(property, ATTR_NAME));
+        let error = createSpan({
+            class: ["error-message"]
+        }, [`Property: `, link, ` is missing a value`]);
+
+        errors.push(error);
     }
 
     if (!(hasAttr(property, "target") && hasValue(property, "target"))) {

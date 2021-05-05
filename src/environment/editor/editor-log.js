@@ -79,7 +79,7 @@ export const EditorLog = {
         messages.forEach(msg =>
             content.append(createListItem({
                 class: ["log-item-message"]
-            }, msg.toString()))
+            }, msg))
         );
 
         let item = createListItem({

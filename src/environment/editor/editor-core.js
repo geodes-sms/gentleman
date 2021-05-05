@@ -4,7 +4,7 @@ import {
     isHTMLElement, findAncestor, isNullOrWhitespace, isNullOrUndefined, isEmpty, isFunction,
     valOrDefault, copytoClipboard, getElements,
 } from 'zenkai';
-import { hide, show, toggle, Key, getEventTarget, NotificationType, getClosest } from '@utils/index.js';
+import { hide, show, toggle, Key, getEventTarget, NotificationType, getClosest, highlight, unhighlight } from '@utils/index.js';
 import { buildProjectionHandler } from "../build-projection.js";
 import { buildConceptHandler } from "../build-concept.js";
 import { ConceptModelManager } from '@model/index.js';
@@ -173,6 +173,8 @@ export const Editor = {
 
     /** @type {HTMLElement} */
     activeElement: null,
+    /** @type {Set<HTMLElement>} */
+    decoratedElements: null,
 
     /** @type {*} */
     config: null,
@@ -207,13 +209,17 @@ export const Editor = {
         this.resources = new Map();
         this.models = new Map();
 
+        this.decoratedElements = new Set();
+
         for (const key in handlers) {
             const handler = handlers[key];
             this.registerHandler(key, handler);
         }
 
         this.header = createEditorHeader.call(this).init();
-        this.menu = createEditorMenu.call(this).init(this.config);
+        if (this.config.actions) {
+            this.menu = createEditorMenu.call(this).init(this.config);
+        }
         this.home = createEditorHome.call(this).init();
         this.breadcrumb = createEditorBreadcrumb.call(this).init();
         this.style = createEditorStyle.call(this).init();
@@ -237,7 +243,14 @@ export const Editor = {
 
         this.config = schema;
 
-        this.menu.update(this.config);
+        if (this.config.actions) {
+            if (isNullOrUndefined(this.menu)) {
+                this.menu = createEditorMenu.call(this).init(this.config);
+                this.container.append(this.menu.render());
+            }
+
+            this.menu.update(this.config);
+        }
 
         this.refresh();
 
@@ -992,6 +1005,29 @@ export const Editor = {
 
         return this;
     },
+    highlight(element) {
+        if (!isHTMLElement(element)) {
+            return this;
+        }
+
+        highlight(element);
+        this.decoratedElements.add(element);
+
+        return this;
+    },
+    unhighlight(element) {
+        if (!isHTMLElement(element)) {
+            this.decoratedElements.forEach(element => unhighlight(element));
+            this.decoratedElements.clear();
+            
+            return this;
+        }
+
+        unhighlight(element);
+        this.decoratedElements.delete(element);
+
+        return this;
+    },
 
     // Utility actions
 
@@ -1259,7 +1295,7 @@ export const Editor = {
             this.navigationSection.append(this.breadcrumb.render());
         }
 
-        if (!this.menu.isRendered) {
+        if (this.menu && !this.menu.isRendered) {
             fragment.append(this.menu.render());
         }
 
@@ -1308,7 +1344,9 @@ export const Editor = {
 
         this.header.refresh();
         this.breadcrumb.refresh();
-        this.menu.refresh();
+        if (this.menu) {
+            this.menu.refresh();
+        }
         this.home.refresh();
         this.style.refresh();
         this.logs.refresh();

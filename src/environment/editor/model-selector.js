@@ -100,7 +100,7 @@ export const EditorSelector = {
             /** @type {HTMLButtonElement} */
             let btnInfo = createButton({
                 class: ["btn", "editor-selector__header-button", "editor-selector__header-button--info"],
-                title: "info",
+                title: `View ${data.name || data.type} info`,
                 dataset: {
                     action: "collapse",
                     rel: "parent",
@@ -360,6 +360,7 @@ const ActionHandler = {
         let btnCreate = createButton({
             class: ["btn", "editor-selector__action-bar-button", "editor-selector__action-bar-button--clone"],
             disabled: !hasProjection,
+            title: `Create an instance of "${concept.name}"`,
             dataset: {
                 action: "create-instance",
                 concept: concept.name

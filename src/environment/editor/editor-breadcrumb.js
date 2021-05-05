@@ -1,6 +1,6 @@
 import {
     createDocFragment, createDiv, createI, createSpan, createUnorderedList, createListItem,
-    removeChildren, isHTMLElement, valOrDefault, isNullOrUndefined, isEmpty
+    removeChildren, isHTMLElement, valOrDefault, isNullOrUndefined, isEmpty, getElement
 } from 'zenkai';
 import { show, hide, toggle, collapse, expand, NotificationType } from '@utils/index.js';
 
@@ -13,13 +13,15 @@ import { show, hide, toggle, collapse, expand, NotificationType } from '@utils/i
  * @param {Concept} concept 
  * @returns {HTMLElement}
  */
-const createSelectorItem = (type, concept) => {
-    const { name, object } = concept;
+function createSelectorItem(type, concept) {
+    const { name, object, id } = concept;
 
     /** @type {HTMLElement} */
     const item = createListItem({
         class: ["selector-concept", `selector-concept--${type}`],
+        title: concept.getName(),
         dataset: {
+            concept: id,
             object: object
         }
     });
@@ -39,8 +41,26 @@ const createSelectorItem = (type, concept) => {
         content.classList.add("fit-content");
     }
 
+    item.addEventListener("mouseenter", (event) => {
+        let targetProjection = getElement(`.projection[data-concept="${id}"]`, this.editor.body);
+        if (targetProjection) {
+            this.editor.highlight(targetProjection);
+        }
+    });
+
+    item.addEventListener("mouseleave", (event) => {
+        this.editor.unhighlight();
+    });
+
+    item.addEventListener("click", (event) => {
+        let targetProjection = getElement(`.projection[data-concept="${id}"]`, this.editor.body);
+        if (targetProjection) {
+            targetProjection.focus();
+        }
+    });
+
     return item;
-};
+}
 
 export const EditorBreadcrumb = {
     /** @type {HTMLElement} */
@@ -95,11 +115,11 @@ export const EditorBreadcrumb = {
         }
 
         const rootConcept = activeInstance.concept;
-        
+
         const fragment = createDocFragment();
-        
-        fragment.append(createSelectorItem("root", rootConcept));
-        
+
+        fragment.append(createSelectorItem.call(this, "root", rootConcept));
+
         if (!hasActiveConcept || rootConcept === activeConcept) {
             removeChildren(this.conceptList).append(fragment);
             return this;
@@ -120,10 +140,10 @@ export const EditorBreadcrumb = {
         }
 
         ancestors.forEach(concept => {
-            fragment.append(createSelectorItem("ancestor", concept));
+            fragment.append(createSelectorItem.call(this, "ancestor", concept));
         });
 
-        fragment.append(createSelectorItem("active", activeConcept));
+        fragment.append(createSelectorItem.call(this, "active", activeConcept));
 
         removeChildren(this.conceptList).append(fragment);
 

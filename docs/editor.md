@@ -2,19 +2,19 @@
 
 ## Getting started
 
-Gentleman is a modelling tool that combines concepts and projections to create a personnalized experience for all.  
+Gentleman is a modelling tool that combines concepts and projections to create a personnalized dynamic experience for all.
 Concepts and projections are the core elements of Gentleman where they maintain a mutual dependency.
 
 - A projection gives purpose to a concept by defining elements that you can see and interact with.
-- A concept gives meaning to a projection by defining a structure that can parse your entries and validate your interactions.
+- A concept gives meaning to a projection by defining a structure that can parse and validate your interactions.
 
-Thus, every modelling activity, begins by loading an aggregate of concepts and projections, stored as separate JSON files, which activates the editor.
+Thus, every modelling activity, begins by loading an aggregate of concepts and projections, stored as separate JSON-CP files, which activates the editor.
 
 ![Editor settings screenshot](https://geodes-sms.github.io/gentleman/assets/images/doc_editor_getting_started.png "Editor Setting")
 
 ### **Metamodelling**
 
-The *metamodelling* workflow is reserved for the creation of concepts and projections. This unique workflow comes with a crucial step: the **build step** where the artefacts (metamodel or projections) are generated.
+The *metamodelling* workflow is reserved for the creation of concepts and projections. This unique workflow has one key step: the **build step** where the artefacts (metamodel or projections) are generated as JSON-CP files.
 
 #### Task
 
@@ -45,7 +45,7 @@ The *modelling* workflow is reserved for the creation of concept instances using
 - **Create instances**
   1. Open the editor
   2. New or edit existing?
-     1. New model: Load both the JSON files for the concepts and the one for the projections
+     1. New model: Load both the JSON-CP files for the concepts and the one for the projections
      2. Edit existing: Load the saved model in the model area (on the left)
   3. Start modelling
 

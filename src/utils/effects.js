@@ -2,6 +2,7 @@ import { isHTMLElement } from 'zenkai';
 
 const HIDDEN = 'hidden';
 const COLLAPSED = 'collapsed';
+const HIGHLIGHTED = 'highlighted';
 const CHECKED = 'checked';
 const DISABLED = 'disabled';
 const SHAKE = 'shake';
@@ -13,9 +14,11 @@ const SELECTED = 'selected';
  * @returns {HTMLElement} element
  */
 export function show(element) {
-    if (isHTMLElement(element)) {
-        element.classList.remove(HIDDEN);
+    if (!isHTMLElement(element)) {
+        return element;
     }
+    
+    element.classList.remove(HIDDEN);
 
     return element;
 }
@@ -26,9 +29,11 @@ export function show(element) {
  * @returns {HTMLElement} element
  */
 export function hide(element) {
-    if (isHTMLElement(element)) {
-        element.classList.add(HIDDEN);
+    if (!isHTMLElement(element)) {
+        return element;
     }
+
+    element.classList.add(HIDDEN);
 
     return element;
 }
@@ -39,9 +44,11 @@ export function hide(element) {
  * @returns {HTMLElement} element
  */
 export function toggle(element) {
-    if (isHTMLElement(element)) {
-        element.classList.toggle(HIDDEN);
+    if (!isHTMLElement(element)) {
+        return element;
     }
+
+    element.classList.toggle(HIDDEN);
 
     return element;
 }
@@ -50,14 +57,16 @@ export function toggle(element) {
  * Shakes an element for a second
  * @param {Element} element element
  */
-export const shake = (element) => {
-    if (!element.classList.contains(SHAKE)) {
-        element.classList.add(SHAKE);
-        setTimeout(() => {
-            element.classList.remove(SHAKE);
-        }, 1000);
+export function shake(element) {
+    if (element.classList.contains(SHAKE)) {
+        return;
     }
-};
+
+    element.classList.add(SHAKE);
+    setTimeout(() => {
+        element.classList.remove(SHAKE);
+    }, 1000);
+}
 
 /**
  * Applies highlighting style to an element
@@ -65,9 +74,11 @@ export const shake = (element) => {
  * @returns {HTMLElement} element
  */
 export function highlight(element) {
-    if (isHTMLElement(element)) {
-        element.classList.add(SELECTED);
+    if (!isHTMLElement(element)) {
+        return element;
     }
+
+    element.classList.add(HIGHLIGHTED);
 
     return element;
 }
@@ -78,9 +89,11 @@ export function highlight(element) {
  * @returns {HTMLElement} element
  */
 export function unhighlight(element) {
-    if (isHTMLElement(element)) {
-        element.classList.remove(SELECTED);
+    if (!isHTMLElement(element)) {
+        return element;
     }
+
+    element.classList.remove(HIGHLIGHTED);
 
     return element;
 }

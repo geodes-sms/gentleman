@@ -114,10 +114,15 @@ export const EditorInstance = {
     render() {
         const fragment = createDocFragment();
 
+        const { name } = this.concept;
+
+        const _name = name.toLowerCase();
+
         if (!isHTMLElement(this.container)) {
             this.container = createDiv({
                 class: ["editor-concept", `editor-concept--${this.ctype}`],
                 tabindex: -1,
+                title: this.schema.type === "concept" ? `Instance of "${_name}"` : `Linked instance of "${_name}"`,
                 dataset: {
                     nature: "concept-container",
                     type: this.ctype,
@@ -125,8 +130,6 @@ export const EditorInstance = {
                 }
             });
         }
-
-        const { name } = this.concept;
 
         if (!isHTMLElement(this.header)) {
             this.header = createHeader({
@@ -141,13 +144,17 @@ export const EditorInstance = {
         if (!isHTMLElement(this.btnClose)) {
             this.btnClose = createButton({
                 class: ["btn", "editor-concept-toolbar__btn-delete"],
-                title: `Delete ${name.toLowerCase()}`,
+                title: `Delete the instance "${_name}"`,
                 dataset: {
                     action: `close`,
                     context: this.type,
                     id: this.id
                 }
             });
+
+            if (this.schema.type === "projection") {
+                this.btnClose.title = `Close the linked instance "${_name}"`;
+            }
         }
 
         if (!isHTMLElement(this.btnCollapse)) {
