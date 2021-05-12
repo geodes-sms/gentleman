@@ -1,4 +1,4 @@
-import { isEmpty, valOrDefault, isNullOrWhitespace, isFunction, isNullOrUndefined } from "zenkai";
+import { isEmpty, valOrDefault, isNullOrWhitespace, isFunction, isNullOrUndefined, createEmphasis, getElement } from "zenkai";
 import { NotificationType, LogType } from "@utils/index.js";
 
 
@@ -34,6 +34,39 @@ const getName = (concept) => getValue(concept, ATTR_NAME).toLowerCase();
 const getDescription = (concept) => getValue(concept, ATTR_DESCRIPTION);
 
 
+function createProjectionLink(text, concept) {
+    const { id, name } = concept;
+
+    let link = createEmphasis({
+        class: ["link", "error-message__link"],
+        title: name,
+    }, text);
+
+    const targetSelector = `.projection[data-concept="${id}"]`;
+
+    link.addEventListener("mouseenter", (event) => {
+        let targetProjection = getElement(targetSelector, this.body);
+        if (targetProjection) {
+            this.highlight(targetProjection);
+        }
+    });
+
+    link.addEventListener("mouseleave", (event) => {
+        this.unhighlight();
+    });
+
+    link.addEventListener("click", (event) => {
+        let target = this.resolveElement(getElement(targetSelector, this.body));
+
+        if (target) {
+            target.focus();
+        }
+    });
+
+    return link;
+}
+
+
 const ProjectionBuildHandler = {
     "projection": buildProjection,
     "template": buildTemplate,
@@ -47,7 +80,7 @@ const ProjectionHandler = {
 
 export function buildProjectionHandler(args = [], _options = {}) {
     const result = [];
-    const buildErrors = [];
+
     const { conceptModel } = this;
 
     this.logs.clear();
@@ -61,10 +94,12 @@ export function buildProjectionHandler(args = [], _options = {}) {
     const concepts = conceptModel.getConcepts(["projection", "template", "style rule"]);
 
     if (isEmpty(concepts)) {
-        this.notify("<strong>Empty model</strong>: There was no projection found to be built.", NotificationType.WARNING, 2000);
+        this.notify("<strong>Empty model</strong>: Please create at least one projection.", NotificationType.WARNING, 2000);
 
         return false;
     }
+
+    this.__errors = [];
 
     concepts.forEach(concept => {
         const handler = ProjectionBuildHandler[valOrDefault(concept.getProperty(PROP_HANDLER), "")];
@@ -73,19 +108,17 @@ export function buildProjectionHandler(args = [], _options = {}) {
             throw new Error("The projection's is missing a build handler.");
         }
 
-        const { success, errors, message } = handler.call(conceptModel, concept);
+        const { message } = handler.call(this, concept);
 
-        if (!success) {
-            buildErrors.push(...errors);
-        } else {
-            result.push(message);
-        }
+        result.push(message);
     });
 
 
-    if (!isEmpty(buildErrors)) {
+    if (!isEmpty(this.__errors)) {
         this.notify("<strong>Validation failed</strong>: The model could not be built.<br> <em>See Log for more details</em>.", NotificationType.ERROR);
-        this.logs.add(buildErrors, "Validation error", LogType.ERROR);
+        this.logs.add(this.__errors, "Validation error", LogType.ERROR);
+
+        delete this.__errors;
 
         return false;
     }
@@ -100,31 +133,23 @@ export function buildProjectionHandler(args = [], _options = {}) {
         }, options.name);
     }
 
+    delete this.__errors;
+
     return result;
 }
 
 
 function buildProjection(concept) {
-    const buildErrors = [];
-
     const tags = hasAttr(concept, ATTR_TAGS) ? getValue(concept, ATTR_TAGS, true) : [];
 
     const target = buildConcept.call(this, getAttr(concept, ATTR_CONCEPT));
 
     if (isEmpty(Object.keys(target))) {
-        buildErrors.push("The projection is missing a <<concept>>.");
+        this.__errors.push("The projection is missing a <<concept>>.");
     }
 
     if (!hasValue(concept, ATTR_CONTENT)) {
-        buildErrors.push("The projection is missing a <<content>>.");
-    }
-
-    if (!isEmpty(buildErrors)) {
-        return {
-            success: false,
-            message: "Validation failed: The projection could not be built.",
-            errors: buildErrors,
-        };
+        this.__errors.push("The projection is missing a <<content>>.");
     }
 
     const content = getValue(concept, ATTR_CONTENT, true);
@@ -151,24 +176,14 @@ function buildProjection(concept) {
 }
 
 function buildTemplate(concept) {
-    const buildErrors = [];
-
     const name = getName(concept);
 
     if (isNullOrWhitespace(name)) {
-        buildErrors.push("The template is missing a name.");
+        this.__errors.push("The template is missing a name.");
     }
 
     if (!hasValue(concept, ATTR_CONTENT)) {
-        buildErrors.push("The template is missing a content.");
-    }
-
-    if (!isEmpty(buildErrors)) {
-        return {
-            success: false,
-            message: "Validation failed: The template could not be built.",
-            errors: buildErrors,
-        };
+        this.__errors.push("The template is missing a content.");
     }
 
     const content = [];
@@ -193,24 +208,14 @@ function buildTemplate(concept) {
 }
 
 function buildStyleRule(concept) {
-    const buildErrors = [];
-
     const name = getName(concept);
 
     if (isNullOrWhitespace(name)) {
-        buildErrors.push("The style rule is missing a name.");
+        this.__errors.push("The style rule is missing a name.");
     }
 
     if (!hasValue(concept, ATTR_STYLE)) {
-        buildErrors.push("The style rule is missing a rule.");
-    }
-
-    if (!isEmpty(buildErrors)) {
-        return {
-            success: false,
-            message: "Validation failed: The style rule could not be built.",
-            errors: buildErrors,
-        };
+        this.__errors.push("The style rule is missing a rule.");
     }
 
     const style = buildGentlemanStyle.call(this, getAttr(concept, ATTR_STYLE));
@@ -628,7 +633,7 @@ function buildStyle(style) {
     }
 
     if (hasAttr(style, "ref") && hasValue(style, "ref")) {
-        schema.ref = getValue(style, "ref", true).map(ref => getName(this.getConcept(ref)));
+        schema.ref = getValue(style, "ref", true).map(ref => getName(this.conceptModel.getConcept(ref)));
     }
 
     if (hasAttr(style, "gss")) {

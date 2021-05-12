@@ -1,6 +1,6 @@
 import {
     createDocFragment, createDiv, createH3, createButton, createHeader,
-    removeChildren, isHTMLElement, valOrDefault,
+    removeChildren, isHTMLElement, valOrDefault, isNullOrWhitespace,
 } from 'zenkai';
 import { show, hide, toggle, collapse, expand, NotificationType, makeResizable } from '@utils/index.js';
 
@@ -181,15 +181,20 @@ export const EditorInstance = {
             });
         }
 
-        let title = createH3({
+        this.title = createH3({
             class: ["title", "editor-concept-title", "fit-content"],
+            editable: true,
+            dataset: {
+                nature: "editable",
+                id: this.id,
+            }
         }, name);
 
         let toolbar = createDiv({
             class: ["editor-concept-toolbar"],
         }, [this.btnCollapse, this.btnMaximize, this.btnClose]);
 
-        removeChildren(this.header).append(title, toolbar);
+        removeChildren(this.header).append(this.title, toolbar);
 
         if (fragment.hasChildNodes()) {
             this.container.appendChild(fragment);
@@ -249,6 +254,12 @@ export const EditorInstance = {
     bindEvents() {
         this.container.addEventListener('focusin', (event) => {
             this.editor.updateActiveInstance(this);
+        });
+
+        this.header.addEventListener("focusout", (event) => {
+            if(isNullOrWhitespace(this.title.textContent)) {
+                this.title.textContent = this.concept.name;
+            }
         });
     }
 };

@@ -1,0 +1,71 @@
+.field-action {
+    border: 0 none;
+    padding: 0;
+}
+
+    .field-action .static {
+        display: inline-block;
+    }
+
+.mindmap .field {
+    padding: 0;
+}
+
+.mindmap-marker-list-item {
+    padding: 0;
+    background-color: #c0c0c0;
+    margin-right: 6px; margin-bottom: 6px;
+}
+
+.mindmap-marker-list-item .mindmap-textbox {
+    border: 0 none;
+}
+
+.mindmap-marker-list-item > .btn-remove {
+    width: 18px;
+}
+
+.mindmap-marker-list-item .mindmap-textbox-input {
+    border: 0 none;
+    background-color: #fff;
+}
+
+.mindmap-topic-list--maintopics {
+    display: flex;
+    flex-direction: column;
+}
+
+    .mindmap-topic-list--maintopics > .mindmap-topic-list-item {
+        border-bottom: 3px solid #d5d5d5;
+    }
+
+.mindmap-topic--subtopic {
+    padding-top: 3px; padding-bottom: 3px;
+    background-color: #f5f5f5;
+}
+
+    .mindmap-topic--subtopic .mindmap-topic-list-item {
+        padding: 3px 6px;
+        box-shadow: inset 0 1px 2px #999;
+    }
+
+.mindmap-topic-list--subtopics {
+    display: flex;
+    flex-direction: row;
+}
+
+    .mindmap-topic-list--subtopics > .mindmap-topic-list-item {
+        padding: 0;
+        margin-right: 6px; margin-bottom: 6px;
+        border-radius: 2px;
+        background-color: #d5d5d5;
+    }
+
+.mindmap-topic-list--subsubtopics {
+    display: flex;
+    flex-direction: row;
+}
+
+.mindmap-topic-list .btn-remove {
+    width: 18px;
+}

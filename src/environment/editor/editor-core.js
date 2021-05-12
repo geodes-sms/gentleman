@@ -2,7 +2,7 @@ import {
     createDocFragment, createSection, createDiv, createParagraph, createAnchor, createInput,
     createAside, createUnorderedList, createListItem, createButton, createI, removeChildren,
     isHTMLElement, findAncestor, isNullOrWhitespace, isNullOrUndefined, isEmpty, isFunction,
-    valOrDefault, copytoClipboard, getElements,
+    valOrDefault, copytoClipboard, getElements, shortDateTime,
 } from 'zenkai';
 import { hide, show, toggle, Key, getEventTarget, NotificationType, getClosest, highlight, unhighlight } from '@utils/index.js';
 import { buildProjectionHandler } from "../build-projection.js";
@@ -12,6 +12,7 @@ import { createProjectionModel } from '@projection/index.js';
 import { ProjectionWindow } from '../projection-window.js';
 import { EditorHome } from './editor-home.js';
 import { EditorBreadcrumb } from './editor-breadcrumb.js';
+import { EditorFilter } from './editor-filter.js';
 import { EditorMenu } from './editor-menu.js';
 import { EditorStyle } from './editor-style.js';
 import { EditorLog } from './editor-log.js';
@@ -72,6 +73,19 @@ function createEditorBreadcrumb() {
         object: { value: "environment" },
         name: { value: "editor-breadcrumb" },
         type: { value: "breadcrumb" },
+        editor: { value: this }
+    });
+}
+
+/**
+ * Creates an editor breadcrumb
+ * @returns {EditorFilter}
+ */
+function createEditorFilter() {
+    return Object.create(EditorFilter, {
+        object: { value: "environment" },
+        name: { value: "editor-filter" },
+        type: { value: "filter" },
         editor: { value: this }
     });
 }
@@ -157,6 +171,8 @@ export const Editor = {
     valueList: null,
     /** @type {EditorBreadcrumb} */
     breadcrumb: null,
+    /** @type {EditorFilter} */
+    filter: null,
     /** @type {EditorMenu} */
     menu: null,
     /** @type {EditorHome} */
@@ -222,6 +238,7 @@ export const Editor = {
         }
         this.home = createEditorHome.call(this).init();
         this.breadcrumb = createEditorBreadcrumb.call(this).init();
+        this.filter = createEditorFilter.call(this).init();
         this.style = createEditorStyle.call(this).init();
         this.logs = createEditorLog.call(this).init();
 
@@ -643,7 +660,11 @@ export const Editor = {
         const result = {
             "concept": this.conceptModel.schema,
             "values": this.conceptModel.export(),
-            "editor": this.config
+            "editor": this.config,
+            "meta": {
+                "date": shortDateTime(),
+                "device": navigator.userAgent
+            }
         };
 
         var bb = new Blob([JSON.stringify(result)], { type: MIME_TYPE });
@@ -1019,7 +1040,7 @@ export const Editor = {
         if (!isHTMLElement(element)) {
             this.decoratedElements.forEach(element => unhighlight(element));
             this.decoratedElements.clear();
-            
+
             return this;
         }
 
@@ -1097,7 +1118,11 @@ export const Editor = {
         }
 
         this.unloadProjectionModel();
-        this.clear();
+        this.activeElement = null;
+        this.activeInstance = null;
+        this.activeConcept = null;
+        this.activeProjection = null;
+
 
         this.projectionModel = createProjectionModel(schema, this).init(views);
 
@@ -1295,6 +1320,10 @@ export const Editor = {
             this.navigationSection.append(this.breadcrumb.render());
         }
 
+        if (!this.filter.isRendered) {
+            this.navigationSection.append(this.filter.render());
+        }
+
         if (this.menu && !this.menu.isRendered) {
             fragment.append(this.menu.render());
         }
@@ -1344,6 +1373,7 @@ export const Editor = {
 
         this.header.refresh();
         this.breadcrumb.refresh();
+        this.filter.refresh();
         if (this.menu) {
             this.menu.refresh();
         }
@@ -1774,6 +1804,8 @@ export const Editor = {
                         }
                     } else if (nature === "concept-container") {
                         this.activeInstance.projection.focus();
+                    } else if (nature === "editable") {
+                        target.blur();
                     } else if (target.tagName === "BUTTON") {
                         target.click();
                         event.preventDefault();
@@ -1854,6 +1886,14 @@ export const Editor = {
                             type: "projection",
                             close: "DELETE-PROJECTION"
                         });
+
+                        event.preventDefault();
+                    }
+
+                    break;
+                case "f":
+                    if (lastKey === Key.ctrl) {
+                        this.filter.show();
 
                         event.preventDefault();
                     }

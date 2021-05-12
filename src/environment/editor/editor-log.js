@@ -1,6 +1,6 @@
 import {
     createDocFragment, createSpan, createDiv, createUnorderedList, createButton,
-    createListItem, removeChildren, valOrDefault, isHTMLElement, shortDateTime,
+    createListItem, removeChildren, valOrDefault, isHTMLElement, shortDateTime, isIterable,
 } from 'zenkai';
 import { hide, show, toggle, LogType } from '@utils/index.js';
 
@@ -72,6 +72,10 @@ export const EditorLog = {
      * @param {LogType} level 
      */
     add(messages, title, level = LogType.NORMAL) {
+        if (!Array.isArray(messages)) {
+            return;
+        }
+
         let content = createUnorderedList({
             class: ["bare-list", "log-item-messages"]
         });

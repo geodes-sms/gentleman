@@ -89,7 +89,7 @@ function resolveInput(schema) {
 
     if (this.readonly || this.resizable) {
         return createSpan({
-            class: ["field--textbox__input"],
+            class: ["field--textbox__input", "field--textbox__input-pseudo"],
             editable: !this.readonly,
             title: placeholderValue,
             dataset: {

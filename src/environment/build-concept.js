@@ -50,8 +50,8 @@ function createProjectionLink(text, concept) {
     });
 
     link.addEventListener("click", (event) => {
-        let target = this.resolveElement( getElement(targetSelector, this.body));
-        
+        let target = this.resolveElement(getElement(targetSelector, this.body));
+
         if (target) {
             target.focus();
         }
@@ -63,7 +63,7 @@ function createProjectionLink(text, concept) {
 
 export function buildConceptHandler(args = [], _options = {}) {
     const result = [];
-    const buildErrors = [];
+
     const { conceptModel } = this;
 
     this.logs.clear();
@@ -76,31 +76,32 @@ export function buildConceptHandler(args = [], _options = {}) {
     const concepts = conceptModel.getConcepts(["prototype concept", "concrete concept", "derivative concept"]);
 
     if (isEmpty(concepts)) {
-        this.notify("<strong>Empty model</strong>: There was no concept found to be built.", NotificationType.WARNING);
+        this.notify("<strong>Empty model</strong>: Please create at least one concept.", NotificationType.WARNING);
 
         return false;
     }
 
-    concepts.forEach(concept => {
-        const { success, errors, message } = buildConcept.call(this, concept);
+    this.__errors = [];
 
-        if (!success) {
-            buildErrors.push(...errors);
+    concepts.forEach(concept => {
+        const { message } = buildConcept.call(this, concept);
+
+        if (result.find(c => c.name === message.name)) {
+            this.__errors.push(`The model has two concepts with the same name: ${message.name}`);
         } else {
-            if (result.find(c => c.name === message.name)) {
-                buildErrors.push(`The model has two concepts with the same name: ${message.name}`);
-            } else {
-                result.push(message);
-            }
+            result.push(message);
         }
     });
 
-    if (!isEmpty(buildErrors)) {
+    if (!isEmpty(this.__errors)) {
         this.notify("<strong>Validation failed</strong>: The model could not be built.<br> <em>See Log for more details</em>.", NotificationType.ERROR);
-        this.logs.add(buildErrors, "Validation error", LogType.ERROR);
+        this.logs.add(this.__errors, "Validation error", LogType.ERROR);
+
+        delete this.__errors;
 
         return false;
     }
+
 
     this.notify("The concept model was <strong>successfully</strong> built", NotificationType.SUCCESS, 2000);
 
@@ -110,12 +111,12 @@ export function buildConceptHandler(args = [], _options = {}) {
         }, options.name);
     }
 
+    delete this.__errors;
+
     return result;
 }
 
 function buildConcept(concept) {
-    const buildErrors = [];
-
     const name = getName(concept);
     const description = getDescription(concept);
     const nature = concept.getProperty(PROP_NATURE);
@@ -128,47 +129,31 @@ function buildConcept(concept) {
             class: ["error-message"]
         }, [`${capitalizeFirstLetter(nature)} concept: `, link, ` is missing a value`]);
 
-        buildErrors.push(error);
+        this.__errors.push(error);
     }
 
     if (concept.isAttributeCreated(ATTR_ATTRIBUTES)) {
         getValue(concept, ATTR_ATTRIBUTES).forEach(attribute => {
-            const { success, errors, message } = buildAttribute.call(this, attribute);
+            const { message } = buildAttribute.call(this, attribute);
 
-            if (!success) {
-                buildErrors.push(...errors);
+            if (attributes.find(attr => attr.name === message.name)) {
+                this.__errors.push(`The concept has two attributes with the same name: ${message.name}`);
             } else {
-                if (attributes.find(attr => attr.name === message.name)) {
-                    buildErrors.push(`The concept has two attributes with the same name: ${message.name}`);
-                } else {
-                    attributes.push(message);
-                }
+                attributes.push(message);
             }
         });
     }
 
     if (concept.isAttributeCreated(ATTR_PROPERTIES)) {
         getValue(concept, ATTR_PROPERTIES).forEach(property => {
-            const { success, errors, message } = buildProperty.call(this, property);
+            const { message } = buildProperty.call(this, property);
 
-            if (!success) {
-                buildErrors.push(...errors);
+            if (properties.find(prop => prop.name === message.name)) {
+                this.__errors.push(`The concept has two properties with the same name: ${message.name}`);
             } else {
-                if (properties.find(prop => prop.name === message.name)) {
-                    buildErrors.push(`The concept has two properties with the same name: ${message.name}`);
-                } else {
-                    properties.push(message);
-                }
+                properties.push(message);
             }
         });
-    }
-
-    if (!isEmpty(buildErrors)) {
-        return {
-            success: false,
-            message: "Validation failed: The concept could not be built.",
-            errors: buildErrors,
-        };
     }
 
     let schema = {
@@ -190,7 +175,6 @@ function buildConcept(concept) {
     }
 
     return {
-        success: true,
         message: schema,
     };
 }
@@ -204,15 +188,13 @@ function buildAttribute(attribute) {
     const description = getDescription(attribute);
     const required = hasAttr(attribute, ATTR_REQUIRED) && hasValue(attribute, ATTR_REQUIRED) ? getValue(attribute, ATTR_REQUIRED) : true;
 
-    const errors = [];
-
     if (isNullOrWhitespace(name)) {
         let link = createProjectionLink.call(this, "name", getAttr(attribute, ATTR_NAME));
         let error = createSpan({
             class: ["error-message"]
         }, [`Attribute: `, link, ` is missing a value`]);
 
-        errors.push(error);
+        this.__errors.push(error);
     }
 
     if (!hasValue(attribute, "target")) {
@@ -221,15 +203,7 @@ function buildAttribute(attribute) {
             class: ["error-message"]
         }, [`Attribute: `, link, ` is missing a value`]);
 
-        errors.push(error);
-    }
-
-    if (!isEmpty(errors)) {
-        return {
-            success: false,
-            message: "Validation failed: The attribute could not be built.",
-            errors: errors,
-        };
+        this.__errors.push(error);
     }
 
     const schema = {
@@ -240,7 +214,6 @@ function buildAttribute(attribute) {
     };
 
     return {
-        success: true,
         message: schema,
     };
 }
@@ -253,7 +226,17 @@ function buildTarget(target, propname = "name") {
     let name = target.getProperty("cname");
 
     if (name === "concept") {
-        name = getName(getReference(target, 'concept'));
+        if (!hasValue(target, "concept")) {
+            let link = createProjectionLink.call(this, "concept", getAttr(target, "concept"));
+            let error = createSpan({
+                class: ["error-message"]
+            }, [`${capitalizeFirstLetter(target.getName())}: `, link, ` is missing a value`]);
+
+            this.__errors.push(error);
+        } else {
+            let ref = getReference(target, "concept");
+            name = getName(ref);
+        }
     }
 
     const result = {
@@ -383,8 +366,6 @@ function buildConstraint(constraint) {
  * @param {*} property 
  */
 function buildProperty(property) {
-    const errors = [];
-
     const name = getName(property);
     const description = getDescription(property);
 
@@ -394,19 +375,11 @@ function buildProperty(property) {
             class: ["error-message"]
         }, [`Property: `, link, ` is missing a value`]);
 
-        errors.push(error);
+        this.__errors.push(error);
     }
 
     if (!(hasAttr(property, "target") && hasValue(property, "target"))) {
-        errors.push(`Property ${isNullOrWhitespace(name) ? "N/A" : `'${name}'`}: <<target>> is missing a value.`);
-    }
-
-    if (!isEmpty(errors)) {
-        return {
-            success: false,
-            message: "Validation failed: The property could not be built.",
-            errors: errors,
-        };
+        this.__errors.push(`Property ${isNullOrWhitespace(name) ? "N/A" : `'${name}'`}: <<target>> is missing a value.`);
     }
 
     const target = getValue(property, "target", true);
@@ -414,15 +387,7 @@ function buildProperty(property) {
     const type = target.getProperty(PROP_TYPE);
 
     if (isNullOrUndefined(type)) {
-        errors.push(`The property '${name}' target's type is missing a value.`);
-    }
-
-    if (!isEmpty(errors)) {
-        return {
-            success: false,
-            message: "Validation failed: The property could not be built.",
-            errors: errors,
-        };
+        this.__errors.push(`The property '${name}' target's type is missing a value.`);
     }
 
     var schema = {
@@ -433,7 +398,6 @@ function buildProperty(property) {
     };
 
     return {
-        success: true,
         message: schema,
     };
 }

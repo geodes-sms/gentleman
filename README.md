@@ -5,10 +5,6 @@
 Gentleman is a lightweight web-based projectional editor generator.  
 Gentleman aims to **to close the gap between models and domain experts**.
 
-| Concept defintion        | Projection definition           |
-|:-------------:|:-------------:|
-| ![Concept definition screenshot](https://geodes-sms.github.io/gentleman/assets/images/concept-definition.png "Concept definition")  | ![Projection definition screenshot](https://geodes-sms.github.io/gentleman/assets/images/projection-definition.png "projection definition") |
-
 ## Features
 
 - Platform agnostic: Gentleman target the web (no installation required)
@@ -29,6 +25,23 @@ The *metamodelling* workflow is reserved for the creation of concepts and projec
 The *modelling* workflow is reserved for the creation of concept instances using a projection ensemble.
 
 **Required scripts:** `gentleman.core.js`
+
+## Demonstration
+
+- Mindmap (app): [Create a mindmap](https://geodes-sms.github.io/gentleman/demo/mindmap.html)
+- Sandbox (app): [Play with Gentleman](https://geodes-sms.github.io/gentleman/demo/index.html)
+- At MODELS 2020 (video): [Live demonstration (MODELS 2020)](https://youtu.be/wJ4hVZjmrv4)
+
+## Tutorial
+
+| Getting started        | Creating a metamodel           | Creating projections  |
+|:------------- |:-------------:|:-----:|
+| [![Getting started thumbnail](https://img.youtube.com/vi/kwcWam0_yNM/default.jpg)](https://youtu.be/kwcWam0_yNM)    | [![Creating a metamodel thumbnail](https://img.youtube.com/vi/GDl-tgEL3Yk/default.jpg)](https://youtu.be/GDl-tgEL3Yk) | [![Creating projections thumbnail](https://img.youtube.com/vi/2DcN7chsE6k/default.jpg)](https://youtu.be/2DcN7chsE6k) |
+
+# Documentation
+
+You can read the documentation for Gentleman [here](https://geodes-sms.github.io/gentleman/docs).  
+If you would like to help improve this documentation, the source for many of the docs can be found in the `docs` folder within this repository.
 
 ## Integration
 
@@ -64,35 +77,6 @@ const options = {
 let editor = Gentleman.createEditor();
 editor.init(options)
 ```
-
-## Demonstration
-
-Take a look at the [demonstration (MODELS 2020) and see the tool in action](https://youtu.be/wJ4hVZjmrv4).
-
-⭐⭐⭐ **[Play with Gentleman](https://geodes-sms.github.io/gentleman/demo/index.html)** ⭐⭐⭐
-
-# Documentation
-
-<!-- You can read the documentation for Gentleman [here](https://geodes-sms.github.io/gentleman/docs). If you would like to help improve this documentation, the source for many of the docs can be found in the doc folder within this repository.  -->
-
-- [**Editor**](docs/editor.md)
-  - [Getting started](docs/editor.md#getting-started)
-  - [User interface](docs/editor.md#user-interface)
-  - [Interaction](docs/editor.md#interaction)
-  - [Configuration](docs/editor.md#configuration)
-- [**Concept**](docs/concept.md)
-  - [Primitive](docs/concept.md#primitive)
-  - [Concrete](docs/concept.md#concrete)
-  - [Prototype](docs/concept.md#prototype)
-  - [Derivative](docs/concept.md#derivative)
-  - [Attribute](docs/concept.md#attribute)
-  - [Property](docs/concept.md#property)
-- [**Projection**](docs/projection.md)
-  - [Layout](docs/projection.md#layout)
-  - [Field](docs/projection.md#field)
-  - [Static](docs/projection.md#static)
-  - [Style](docs/projection.md#style)
-  - [Template](docs/projection.md#template)
 
 # Installation
 

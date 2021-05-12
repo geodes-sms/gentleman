@@ -41,7 +41,7 @@
 }
 
 .editor-footer {
-    min-height: 18px;
+    max-height: 50%;
     background-color: #555;
 }
 
