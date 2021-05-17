@@ -475,7 +475,7 @@ const BaseTextField = {
      */
     _spaceHandler(target) {
         const candidates = valOrDefault(this.getCandidates(), []);
-        
+
         if (!Array.isArray(candidates)) {
             console.error("Bad values");
         }
@@ -532,15 +532,18 @@ const BaseTextField = {
      */
     enterHandler(target) {
         const item = getItem.call(this, target);
-
+        
         if (item) {
             this.selectChoice(item);
         } else if (this.multiline) {
             // TODO
         } else if (target === this.input) {
             this.setValue(this.getValue(), true);
-            return true;
+        } else {
+            this.focus();
         }
+
+        return true;
     },
     /**
      * Handles the `backspace` command

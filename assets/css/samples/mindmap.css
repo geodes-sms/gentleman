@@ -202,12 +202,13 @@
         .mindmap-maintopic-set__list-item > .btn-remove {
             position: absolute;
             top: 0; right: 0;
-            color: #fff;
             font-size: 1.2em;
-            width: 30px; height: 18px;
+            width: 30px; height: 24px; padding-bottom: 2px;
             color: #B33D32;
             z-index: 10;
         }
+
+        .mindmap-maintopic-set__list-item > .btn-remove:hover { color: #fff; background-color: #FF857A; }
 
         .mindmap-topic-set--maintopic__btn-add:hover,
         .mindmap-topic-set--maintopic__btn-add:focus {
@@ -238,7 +239,7 @@
 
         .mindmap-subtopic-set__list-item {
             padding: 6px; padding-right: 18px;
-            margin-right: 6px; margin-bottom: 6px;
+            margin-right: 8px; margin-bottom: 6px;
             border-radius: 2px;
             border: 2px dashed #FF857A;
         }
@@ -246,13 +247,16 @@
 
             .mindmap-subtopic-set__list-item > .btn-remove {
                 position: absolute;
-                top: 0; right: 0;
-                color: #fff;
+                top: -4px; right: -6px;
                 font-size: 1em;
                 width: 18px; height: 18px;
+                border-radius: 50%;
                 color: #B33D32;
-                z-index: 2;
+                border: 1px solid #FF857A;
+                background-color: #fff;
+                z-index: 5;
             }
+                .mindmap-subtopic-set__list-item > .btn-remove:hover { color: #fff; background-color: #FF857A; }
 
     .mindmap-subtopic-set.empty > .mindmap-subtopic-set__list {
         display: none;
@@ -336,6 +340,8 @@
         color: #fff;
         background-color: #B33D32;
     }
+    
+    .mindmap-subsubtopic-set__list-item .btn-remove:hover { background-color: #ff857a; }
 
     .mindmap-subsubtopic-set__list-item .mindmap-textbox-input {
         border-radius: 0;

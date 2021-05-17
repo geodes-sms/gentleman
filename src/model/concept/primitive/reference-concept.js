@@ -32,7 +32,6 @@ const _ReferenceConcept = {
         this.alias = this.schema.alias;
         this.description = this.schema.description;
 
-
         this.initObserver();
         this.initAttribute();
         this.initValue(args.value);
@@ -84,7 +83,7 @@ const _ReferenceConcept = {
 
         return this.reference;
     },
-    setValue(_value) {
+    setValue(_value, retry = true) {
         let value = isObject(_value) ? _value.id : _value;
 
         var result = this.validate(value);
@@ -110,13 +109,8 @@ const _ReferenceConcept = {
         this.value = value;
         this.reference = this.model.getConcept(value);
 
-        if (isNullOrUndefined(this.reference)) { // retry on failure
-            setTimeout(() => {
-                this.reference = this.model.getConcept(value);
-                this.reference.register(this);
-                this.notify("value.changed", this.reference);
-                this.model.notify("value.changed", this);
-            }, 20);
+        if (isNullOrUndefined(this.reference) && retry) { // retry on failure
+            setTimeout(() => this.setValue(_value, false), 20);
         } else {
             this.reference.register(this);
             this.notify("value.changed", this.reference);

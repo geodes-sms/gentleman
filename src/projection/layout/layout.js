@@ -121,6 +121,8 @@ export const Layout = {
         }
 
         element.focus(parent);
+
+        return true;
     },
     /**
      * Handles the `enter` command
@@ -129,11 +131,13 @@ export const Layout = {
     enterHandler(target) {
         let projectionElement = this.environment.resolveElement(this.elements[0]);
 
-        if (projectionElement) {
-            projectionElement.focus();
+        if (isNullOrUndefined(projectionElement)) {
+            return false;
         }
 
-        return false;
+        projectionElement.focus();
+
+        return true;
     },
     delete() {
         var result = this.source.delete();
