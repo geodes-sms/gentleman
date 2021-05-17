@@ -32,6 +32,11 @@ export const EditorFilter = {
         return this;
     },
 
+    focus() {
+        this.searchInput.focus();
+
+        return this;
+    },
     show() {
         show(this.container);
         this.visible = true;
@@ -60,8 +65,15 @@ export const EditorFilter = {
     close() {
         this.container.classList.remove("open");
         this.hide();
+        this.clear();
         this.isOpen = false;
 
+        return this;
+    },
+    clear() {
+        this.searchInput.value = "";
+        this.editor.instances.forEach(instance => instance.show());
+        
         return this;
     },
     update() {
@@ -124,11 +136,18 @@ export const EditorFilter = {
         });
 
         const title = createSpan({
-            class: ["filter-title"],
+            class: ["editor-filter__title"],
             dataset: {
                 "ignore": "all",
             }
         }, "Filter");
+
+        const icoSearch = createI({
+            class: ["icon", "editor-filter__icon"],
+            dataset: {
+                "ignore": "all",
+            }
+        });
 
         if (!isHTMLElement(this.btnClose)) {
             this.btnClose = createButton({
@@ -150,11 +169,13 @@ export const EditorFilter = {
         header.append(title, this.btnClose);
 
         this.searchInput = createInput({
-            class: ["filter-input"],
+            class: ["editor-filter-input"],
+            title: "Filter the instances",
+            placeholder: "filter instance",
             type: "search"
         });
 
-        fragment.append(header, this.searchInput);
+        fragment.append(icoSearch, this.searchInput, this.btnClose);
 
         if (fragment.hasChildNodes()) {
             this.container.append(fragment);

@@ -61,7 +61,7 @@
 
 .model-navigation-section {
     position: relative;
-    display: flex; 
+    display: flex;  flex-direction: column;
 }
 
 /*

@@ -1,6 +1,6 @@
 import {
-    createButton, createI, removeChildren, isNode, isHTMLElement,
-    hasOwn, isNullOrUndefined, valOrDefault, isEmpty, toBoolean,
+    createButton, removeChildren, isNode, isHTMLElement, hasOwn, isNullOrUndefined,
+    valOrDefault, isEmpty, toBoolean,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
 import { LayoutFactory } from "./layout/index.js";
@@ -329,12 +329,6 @@ const Projection = {
             throw new Error("Projection element container could not be created");
         }
 
-        if (this.element.containerless) {
-            this.containers.set(this.index, container);
-
-            return container;
-        }
-
         container.classList.add("projection");
 
         Object.assign(container.dataset, {
@@ -360,6 +354,10 @@ const Projection = {
             container.dataset.deletable = true;
             container.classList.add("has-toolbar");
             container.prepend(btnDelete);
+        }
+
+        if (this._style) {
+            StyleHandler.call(this, container, this._style);
         }
 
 

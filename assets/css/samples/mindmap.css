@@ -7,65 +7,347 @@
         display: inline-block;
     }
 
+.mindmap-textbox-input {
+    border: 0 none;
+    background-color: #fff;
+    border-radius: 2px;
+    padding-left: 2px; padding-right: 2px;
+}
+
+
 .mindmap .field {
     padding: 0;
 }
 
+.mindmap-marker-list {
+    padding: 12px;
+}
+
 .mindmap-marker-list-item {
     padding: 0;
-    background-color: #c0c0c0;
-    margin-right: 6px; margin-bottom: 6px;
+    box-shadow: 1px 2px 1px -1px #c0c0c0;
+    margin-right: 4px; margin-bottom: 6px;
 }
 
-.mindmap-marker-list-item .mindmap-textbox {
-    border: 0 none;
+/* Markers
+-----------------------------------------------------------------------------*/
+
+.mindmap-marker-set {
+    display: inline-flex; align-items: flex-start;
+    padding: 0;
 }
 
-.mindmap-marker-list-item > .btn-remove {
-    width: 18px;
+    .mindmap-marker-set.empty > .mindmap-marker-list {
+        display: none;
+    }
+
+    .mindmap-marker-set.empty > .field--list__add {
+        width: 100%;
+        padding: 6px 12px;
+        color: #fff;
+        background-color: #0685f4;
+    }
+
+    .mindmap-marker-set > .field--list__add {
+        align-self: stretch;
+        padding: 6px 12px;
+        color: #fff;
+        background-color: #0685f4;
+    }
+
+    .mindmap-marker-set > .mindmap-marker-set__btn-add  .text {
+        transition: transform .2s;
+    }
+
+        .mindmap-marker-set.empty > .mindmap-marker-set__btn-add  .text {
+            padding: 6px;
+        }
+            .mindmap-marker-set > .mindmap-marker-set__btn-add:hover .text {
+                transform: scale(1.1);
+            }
+
+            .mindmap-marker-list-item > .btn-remove {
+                width: 18px;
+                background-color: #b33d32;
+                color: #fff;
+                border-radius: 2px 0 0 2px;
+            }
+
+    .mindmap-textbox--symbol__input {
+        background-color: #f5f5f5;
+        border-radius: 0 2px 2px 0;
+        padding-bottom: 2px;
+    }
+
+
+.mindmap-name-marker {
+    align-self: flex-start;
+    align-items: center!important;
+    margin-bottom: 6px;
+    width: auto;
 }
 
-.mindmap-marker-list-item .mindmap-textbox-input {
-    border: 0 none;
-    background-color: #fff;
+.mindmap-name-marker .mindmap-textbox,
+.mindmap-name-marker .mindmap-textbox-input {
+    height: 100%;
+    border-radius: 0;
 }
 
-.mindmap-topic-list--maintopics {
+
+.mindmap-name-marker .mindmap-textbox-input {
+    background-color: #333;
+    color: #fff;
+    padding-top: 1px; padding-left: 4px; padding-right: 4px;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+}
+
+    .mindmap-name-marker .mindmap-textbox.empty .field--textbox__input-pseudo:before {
+        padding-left: 4px; padding-right: 4px;
+        color: #f5f5f5;
+    }
+
+    .mindmap-name-marker .mindmap-textbox-input.empty {
+        color: #f5f5f5;
+    }
+
+    .marker-reference {
+        background-color: #FFEA7A;
+        border-top-right-radius: 2px;
+        border-bottom-right-radius: 2px;
+    }
+    
+        .marker-reference .field--choice__select-wrapper {
+            border: 0 none;
+            padding-left: 2px;
+        }
+
+        .marker-reference__choice-option {
+            display: flex; align-items: center;
+            background-color: #fff;
+            padding: 4px 6px;
+            border: 0 none;
+        }
+
+        .marker-reference__choice-option:nth-child(odd) {
+            background-color: #eee;
+        }
+
+        .marker-reference__choice-option:first-child {
+            background-color: #d5d5d5;
+        }
+
+        .marker-reference__choice-option:hover {
+            background-color: #FFEF94;
+        }
+
+        .mindmap-marker-reference {
+            display: flex; align-items: center!important;
+        }
+        
+        .mindmap-marker-reference__image {
+            height: 18px;
+            width: auto;
+        }
+        .mindmap-marker-reference .text {
+            margin-left: 3px;
+        }
+        .mindmap-marker-reference .text:empty:after {
+            content: "--null";
+            color: #777;
+            font-weight: 400;
+            font-style: italic;
+        }
+        
+
+
+.mindmap-topic-identification {
+    align-self: center;
+    margin-bottom: 6px;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+.mindmap-topic-identification .mindmap-textbox-input {
+    color: #333;
+}
+
+
+/* Maintopics
+-----------------------------------------------------------------------------*/
+
+.mindmap-maintopic-set {
+    display: flex; flex-direction: column;
+}
+
+    .mindmap-maintopic-set__list {
+        display: flex;
+        flex-direction: column;  
+        background-color: #fff;
+    }
+
+        .mindmap-maintopic-set__list-item {
+            box-shadow: 0 2px 1px #FF857A, 0 0 2px #B33D32;
+            border-radius: 2px;  
+        }
+
+        .mindmap-maintopic-set__list-item:focus {
+            box-shadow: 0 1px 2px 2px #B33D32;
+        }
+
+        .mindmap-maintopic-set__list-item:not(:last-child) {
+            margin-bottom: 12px;
+        }
+        
+        .mindmap-maintopic-set__list-item > .btn-remove {
+            position: absolute;
+            top: 0; right: 0;
+            color: #fff;
+            font-size: 1.2em;
+            width: 30px; height: 18px;
+            color: #B33D32;
+            z-index: 10;
+        }
+
+        .mindmap-topic-set--maintopic__btn-add:hover,
+        .mindmap-topic-set--maintopic__btn-add:focus {
+            background-color: #ff857a;
+        }
+
+        .mindmap-topic-set--maintopic__btn-add .text {
+            transition: transform .2s;
+        }
+
+        .mindmap-topic-set--maintopic__btn-add:hover .text,
+        .mindmap-topic-set--maintopic__btn-add:focus .text {
+            transform: scale(1.2);
+            color: #fff;
+        }
+
+/* Subtopics
+-----------------------------------------------------------------------------*/
+
+.mindmap-subtopic-set {
     display: flex;
-    flex-direction: column;
 }
 
-    .mindmap-topic-list--maintopics > .mindmap-topic-list-item {
-        border-bottom: 3px solid #d5d5d5;
+    .mindmap-subtopic-set__list {
+        display: flex;
+        flex-direction: row;
     }
 
-.mindmap-topic--subtopic {
-    padding-top: 3px; padding-bottom: 3px;
-    background-color: #f5f5f5;
+        .mindmap-subtopic-set__list-item {
+            padding: 6px; padding-right: 18px;
+            margin-right: 6px; margin-bottom: 6px;
+            border-radius: 2px;
+            border: 2px dashed #FF857A;
+        }
+            .mindmap-subtopic-set__list-item:focus { border-style: solid; }
+
+            .mindmap-subtopic-set__list-item > .btn-remove {
+                position: absolute;
+                top: 0; right: 0;
+                color: #fff;
+                font-size: 1em;
+                width: 18px; height: 18px;
+                color: #B33D32;
+                z-index: 2;
+            }
+
+    .mindmap-subtopic-set.empty > .mindmap-subtopic-set__list {
+        display: none;
+    }
+
+    .mindmap-subtopic-set:not(.empty) .mindmap-topic-set--subtopic__btn-add {
+        align-self: flex-end;
+        width: 60px; height: 60px; 
+        border-radius: 50%;
+        z-index: 10;
+    }
+
+    .mindmap-subtopic-set:not(.empty) .mindmap-topic-set--subtopic__btn-add .text {
+        font-size: 0.8em;
+    }
+
+/* SubSubtopics
+-----------------------------------------------------------------------------*/
+
+.mindmap-subsubtopic-set.empty .mindmap-subsubtopic-set__list {
+    display: none;
 }
 
-    .mindmap-topic--subtopic .mindmap-topic-list-item {
-        padding: 3px 6px;
-        box-shadow: inset 0 1px 2px #999;
-    }
-
-.mindmap-topic-list--subtopics {
-    display: flex;
-    flex-direction: row;
+.mindmap-subsubtopic-set:not(.empty):not(.active):not(.active-parent) .mindmap-subsubtopic-set__btn-add {
+    display: none;
 }
 
-    .mindmap-topic-list--subtopics > .mindmap-topic-list-item {
-        padding: 0;
-        margin-right: 6px; margin-bottom: 6px;
-        border-radius: 2px;
-        background-color: #d5d5d5;
+.mindmap-subsubtopic-set {
+    display: flex; flex-direction: column;
+}
+
+    .mindmap-subsubtopic-set__list {
+        flex-direction: column;
+        /* border-left: 2px dotted #FF857A; */
+        padding: 4px 12px;
+        box-shadow: inset 0 1px 2px #FF857A;
+        border-radius: 2px 2px 0 0;
     }
+
+    .mindmap-subsubtopic-set__list-item {
+        padding: 0;color: #FFEA7A;
+        padding-left: 18px;
+    }
+
+    .mindmap-subsubtopic-set__list-item:not(:last-child) {
+        /* border-bottom: 2px solid #32B36B; */
+        margin-bottom: 2px;
+    }
+
+    .mindmap-subsubtopic-set__btn-add {
+        display: flex; align-items: center; justify-content: center;
+        width: 100%;
+        font-size: 1.3rem;
+        padding: 3px 6px 4px;
+        color: #fff;
+        background-color: #FF857A;
+    }
+
+    .mindmap-subsubtopic-set.empty .mindmap-subsubtopic-set__btn-add {
+        border-radius: 180px;
+    }
+
+    .mindmap-subsubtopic-set__btn-add .text {
+        opacity: 0.8;
+        transition: .2s;
+    }
+
+    .mindmap-subsubtopic-set__btn-add:hover .text {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+
+
+    .mindmap-subsubtopic-set__list-item .btn-remove {
+        position: absolute;
+        top: 0; left: 0px;
+        width: 18px;
+        height: 24px;
+        border-top-left-radius: 2px;
+        border-bottom-left-radius: 2px;
+        color: #fff;
+        background-color: #B33D32;
+    }
+
+    .mindmap-subsubtopic-set__list-item .mindmap-textbox-input {
+        border-radius: 0;
+        height: 24px;
+    }
+
+    .mindmap-subsubtopic-set__list-item .marker-reference {
+        height: 24px;
+    }
+
 
 .mindmap-topic-list--subsubtopics {
     display: flex;
     flex-direction: row;
-}
-
-.mindmap-topic-list .btn-remove {
-    width: 18px;
 }

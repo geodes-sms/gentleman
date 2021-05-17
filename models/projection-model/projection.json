@@ -922,17 +922,7 @@
                                 }
                             ]
                         }
-                    },
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "Style",
-                            "style": {
-                                "css": ["section-title", "font-ui"]
-                            }
-                        }
-                    },           
+                    },        
                     {
                         "type": "attribute",
                         "name": "style"
@@ -4452,43 +4442,6 @@
                         "static": {
                             "type": "text",
                             "content": "Picker"
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "name-color" },
-            "tags": ["choice-selection"],
-            "type": "layout",
-            "content": {
-                "type": "stack",
-                "orientation": "vertical",
-                "style": {
-                    "css": ["text-element"]
-                },
-                "disposition": [
-                    {
-                        "type": "attribute",
-                        "name": "value",
-                        "tag": "label-string"
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "name-color" },
-            "tags": ["choice"],
-            "type": "layout",
-            "content": {
-                "type": "wrap",
-                "focusable": false,
-                "disposition": [
-                    {
-                        "type": "static", 
-                        "static": {
-                            "type": "text",
-                            "content": "name"
                         }
                     }
                 ]

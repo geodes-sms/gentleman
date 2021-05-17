@@ -5,8 +5,8 @@ import {
     valOrDefault, copytoClipboard, getElements, shortDateTime,
 } from 'zenkai';
 import { hide, show, toggle, Key, getEventTarget, NotificationType, getClosest, highlight, unhighlight } from '@utils/index.js';
-import { buildProjectionHandler } from "../build-projection.js";
-import { buildConceptHandler } from "../build-concept.js";
+import { buildProjectionHandler } from "@generator/build-projection.js";
+import { buildConceptHandler } from "@generator/build-concept.js";
 import { ConceptModelManager } from '@model/index.js';
 import { createProjectionModel } from '@projection/index.js';
 import { ProjectionWindow } from '../projection-window.js';
@@ -543,7 +543,7 @@ export const Editor = {
             return null;
         }
 
-        if (!["static"].includes(nature)) {
+        if (!["static", "static-component"].includes(nature)) {
             console.warn("Static error: Unknown nature attribute on field");
             return null;
         }
@@ -598,6 +598,7 @@ export const Editor = {
                 projectionElement = this.getLayout(element);
                 break;
             case "static":
+            case "static-component":
                 projectionElement = this.getStatic(element);
                 break;
         }
@@ -1820,6 +1821,8 @@ export const Editor = {
 
                         if (handled) {
                             event.preventDefault();
+                        } else {
+                            this.filter.close();
                         }
                     }
 
@@ -1893,7 +1896,7 @@ export const Editor = {
                     break;
                 case "f":
                     if (lastKey === Key.ctrl) {
-                        this.filter.show();
+                        this.filter.show().focus();
 
                         event.preventDefault();
                     }

@@ -5,37 +5,42 @@ import { Static } from "./static.js";
 
 
 function resolveValue(content) {
-    const { type, name } = content;
+    const { type } = content;
 
     if (type === "property") {
-        return valOrDefault(this.source.getProperty(name), "");
+        this.hasProperty = true;
+        return valOrDefault(this.source.getProperty(content.name), "");
     }
 
     if (type === "param") {
-        return this.projection.getParam(name);
+        return this.projection.getParam(content.name);
     }
 
     if (type === "html") {
         return htmlToElement(content.html);
     }
 
+    if (type === "raw") {
+        return htmlToElement(content.raw);
+    }
+
     return content;
 }
 
 const BaseTextStatic = {
-    /** @type {string} */
-    contentValue: null,
     /** @type {boolean} */
     editable: null,
     /** @type {boolean} */
     focusable: null,
+    /** @type {boolean} */
+    hasProperty: false,
 
     init(args = {}) {
         Object.assign(this.schema, args);
 
         const { content, editable = false, focusable = valOrDefault(this.parent.schema.focusable, true) } = this.schema;
 
-        this.contentValue = resolveValue.call(this, content);
+        this._content = content;
         this.editable = editable;
         this.focusable = focusable;
 
@@ -44,7 +49,7 @@ const BaseTextStatic = {
 
     render() {
         let bind = false;
-        const { help, style } = this.schema;
+        const { content, help, style } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createSpan({
@@ -63,7 +68,26 @@ const BaseTextStatic = {
                 this.element.tabIndex = 0;
             }
 
-            this.element.append(this.contentValue);
+            if (Array.isArray(content)) {
+                content.forEach(c => {
+                    let cElement = createSpan({
+                        class: ["text", "static", "text-static"],
+                        dataset: {
+                            nature: "static-component",
+                            view: "text",
+                            static: "text",
+                            id: this.id,
+                            ignore: "all",
+                        }
+                    }, resolveValue.call(this, c));
+
+                    StyleHandler.call(this, cElement, c.style);
+
+                    this.element.append(cElement);
+                });
+            } else {
+                this.element.append(resolveValue.call(this, content));
+            }
 
             bind = true;
         }
@@ -157,8 +181,24 @@ const BaseTextStatic = {
     update() {
         const { content } = this.schema;
 
-        if (content.type === "property") {
-            this.element.textContent = valOrDefault(this.source.getProperty(content.name), "");
+        removeChildren(this.element);
+
+        if (Array.isArray(content)) {
+            content.forEach(c => {
+                this.element.append(
+                    createSpan({
+                        class: ["text", "static", "text-static"],
+                        dataset: {
+                            nature: "static-component",
+                            view: "text",
+                            static: "text",
+                            id: this.id,
+                            ignore: "all",
+                        }
+                    }, resolveValue.call(this, c)));
+            });
+        } else {
+            this.element.append(resolveValue.call(this, content));
         }
 
         return this;
@@ -168,9 +208,17 @@ const BaseTextStatic = {
     },
 
     bindEvents() {
-        this.projection.registerHandler("value.changed", (value) => {
-            this.update();
-        });
+        if (this.hasProperty) {
+            this.projection.registerHandler("value.changed", (value) => {
+                this.update();
+            });
+            this.projection.registerHandler("value.added", (value) => {
+                this.update();
+            });
+            this.projection.registerHandler("value.removed", (value) => {
+                this.update();
+            });
+        }
     },
 };
 

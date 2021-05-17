@@ -113,6 +113,9 @@ function styleTextHandler(element, schema) {
             case "size":
                 element.style.fontSize = resolveSize(value);
                 break;
+            case "transform":
+                element.style.textTransform = value;
+                break;
             default:
                 break;
         }

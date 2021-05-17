@@ -519,10 +519,12 @@ const BaseTextField = {
 
             element.focus(parent);
 
-            return true;
+            return false;
         }
 
         this.input.focus();
+
+        return true;
     },
     /**
      * Handles the `enter` command

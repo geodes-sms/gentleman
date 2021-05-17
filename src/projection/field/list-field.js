@@ -521,7 +521,7 @@ const BaseListField = {
 
         let addSchema = valOrDefault(action.add, actionDefaultSchema.add);
         if (addSchema) {
-            const { content, help, style } = addSchema;
+            const { position = "after", content, help, style } = addSchema;
 
             let addElement = createButton({
                 class: ["field-action", "field--list__add"],
@@ -547,7 +547,11 @@ const BaseListField = {
 
             StyleHandler.call(this.projection, addElement, style);
 
-            fragment.append(addElement);
+            if (position === "before") {
+                this.list.before(addElement);
+            } else {
+                fragment.append(addElement);
+            }
         }
 
         this.source.getValue().forEach((value) => {

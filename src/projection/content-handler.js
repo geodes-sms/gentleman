@@ -1,8 +1,7 @@
-import { valOrDefault, createDocFragment, createI, isHTMLElement, removeChildren, htmlToElement, } from "zenkai";
+import { valOrDefault, createDocFragment, createI, isHTMLElement, htmlToElement, } from "zenkai";
 import { LayoutFactory } from "./layout/index.js";
 import { FieldFactory } from "./field/index.js";
 import { StaticFactory } from "./static/index.js";
-import { AttributeHandler } from './structure-handler.js';
 import { StyleHandler } from "./style-handler.js";
 import { StateHandler } from "./state-handler.js";
 
@@ -17,6 +16,79 @@ export function resolveValue(object) {
     }
 
     return object;
+}
+
+
+/**
+ * Resolve and render attribute projection
+ * @param {string} name 
+ */
+function AttributeHandler(schema, concept) {
+    const { name, merge = false, required = concept.isAttributeRequired(name), tag, placeholder = {}, style } = schema;
+
+    if (!concept.hasAttribute(name)) {
+        console.error(`Attribute '${name}' does not exist in the concept '${concept.name}'`);
+        return createI({
+            class: ["missing-attribute"],
+            hidden: true,
+        }, name);
+    }
+
+    if (required) {
+        concept.createAttribute(name);
+    }
+
+    const attr = {
+        name: name,
+        get created() { return concept.isAttributeCreated(name); },
+        schema: schema,
+        placeholder: createI({
+            class: ["projection-element"],
+            hidden: true,
+        }, name),
+        parent: this,
+        projection: this.projection,
+        element: null,
+    };
+
+    this.projection.attributes.push(attr);
+
+    if (!attr.created) {
+        const { content } = placeholder;
+        if (content) {
+            attr.placeholder = ContentHandler.call(this, content, concept);
+        } else {
+            attr.placeholder = createI({
+                class: ["projection-element", "projection-element--placeholder"],
+                tabindex: 0,
+                dataset: {
+                    object: "attribute",
+                    id: name
+                },
+            }, `Add ${name}`);
+        }
+
+        attr.placeholder.addEventListener('click', (event) => {
+            concept.createAttribute(name);
+            let element = this.projection.resolveElement(attr.element);
+            element.focus();
+        });
+
+        return attr.placeholder;
+    } else {
+        const { target, description, schema } = concept.getAttributeByName(name);
+
+        let projection = this.projection.model.createProjection(target, tag).init();
+
+        projection.parent = this.projection;
+        projection._style = style;
+
+        attr.element = projection.render();
+
+        projection.element.parent = this;
+    }
+
+    return attr.element;
 }
 
 
@@ -51,6 +123,8 @@ export function ContentHandler(schema, concept, args = {}) {
         this.model.registerStatic(staticContent);
 
         return staticContent.render();
+    }else if (schema.type === "dynamic") {
+        return ContentHandler.call(this, schema.dynamic, concept, args);
     } else if (schema.type === "attribute") {
         return AttributeHandler.call(this, schema, contentConcept);
     } else if (schema.type === "template") {
@@ -116,7 +190,7 @@ export function ContentHandler(schema, concept, args = {}) {
                 }
 
                 if (isHTMLElement(bindElement.element)) {
-                    StyleHandler.call(this, bindElement.element, style);
+                    StyleHandler.call(this.projection, bindElement.element, style);
                 }
 
                 projection.element.parent = this.projection.element;

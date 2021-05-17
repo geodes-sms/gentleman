@@ -74,6 +74,7 @@
         .label:after { content: ":"; margin-right: 2px; }
 
     .concept-section-title {
+        display: flex; justify-content: space-between;
         margin-top: 4px;
         padding-left: 6px; padding-bottom: 2px;
         color: #D10236; text-transform: capitalize;
@@ -446,23 +447,17 @@
 
     .textual-list__btn-add {
         display: flex; justify-content: center; align-items: center;
-        margin-top: 4px;
-        max-width: 120px;
+        margin-top: 3px; margin-left: 6px;
+        width: 60px;
         padding: 3px 6px 4px;
         font-size: 1.3rem; font-weight: 500;
         color: #fff;
         border-radius: 2px;
-        
-        background-color: #09b54d;
+        background-color: #00B319;
         transition: .2s;
     }
         .textual-list__btn-add:hover,
         .textual-list__btn-add:focus { opacity: 1; transform: scale(1); background-color: #3E8C49; }
-
-        .textual-list.empty .textual-list__btn-add {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
 
         .textual-list__btn-add .text { display: block; height: 100%; width: 100%; }
 
@@ -1031,6 +1026,40 @@
 .attribute-list-item-container {
     width: 100%;
 }
+
+.attribute-list__plink {
+    font-weight: bold;
+    color: #fff;
+}
+    .attribute-list__plink--expanded {
+        background-color: #ff1c55;
+        font-family: Consolas, 'Courier New', Courier, monospace;
+        transform: translateY(2px);
+    }
+    .attribute-list__plink--collapsed {
+        cursor: pointer;
+        font-size: 1.2rem; font-weight: 500;
+        padding: 6px 4px;
+        background-color: #ff1c55;
+    }
+        .attribute-list__plink--collapsed:hover {
+            background-color: #d10236;
+        }
+
+            .attribute-list__plink--collapsed:hover .attribute-list__plink-content {
+                transform: scale(1.05);
+            }
+
+        .attribute-list__plink-content {
+            padding-left: 2px; padding-right: 2px;
+            border-bottom: 2px solid #fff;
+            transition: transform .2s;
+        }
+
+            .attribute-list__plink-content-length {
+                display: inline-block;
+                font-weight: bold;
+            }
 
 .attribute-list-item__plink {
     font-weight: bold;

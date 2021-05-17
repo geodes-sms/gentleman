@@ -16,6 +16,9 @@
       "@model/*": [
         "./src/model/*"
       ],
+      "@generator/*": [
+        "./src/generator/*"
+      ],
       "@concept/*": [
         "./src/model/concept/*"
       ],

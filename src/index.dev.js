@@ -3,6 +3,7 @@
 // Import CSS
 import './stylesheets.js';
 import '@css/samples/gentleman.css';
+// import '@css/samples/mindmap.css';
 
 import { Manager } from './manager.js';
 import { getElement, getElements, isNullOrUndefined } from 'zenkai';
@@ -15,10 +16,15 @@ const PMODEL__EDITOR = require('@models/projection-model/editor-config.json');
 const PMODEL__CONCEPT = require('@models/projection-model/concept.json');
 const PMODEL__PROJECTION = require('@models/projection-model/projection.json');
 
+// const XMODEL__EDITOR = require('@models/mindmap-model/mindmap_config.json');
+// const XMODEL__CONCEPT = require('@models/mindmap-model/mindmap_metamodel.json');
+// const XMODEL__PROJECTION = require('@models/mindmap-model/mindmap_projection.json');
+
 const Models = new Map();
 
 Models.set("concept-model", Object.assign({}, CMODEL__EDITOR, CMODEL__CONCEPT, CMODEL__PROJECTION));
 Models.set("projection-model", Object.assign({}, PMODEL__EDITOR, PMODEL__CONCEPT, PMODEL__PROJECTION));
+// Models.set("mindmap-model", Object.assign({}, XMODEL__EDITOR, XMODEL__CONCEPT, XMODEL__PROJECTION));
 
 Manager.init();
 

@@ -11,9 +11,16 @@
     <link rel="stylesheet" href="./../assets/css/samples/mindmap.css">
     <style>
         body {
-            display: flex; flex-direction: column;
+            display: flex;
+            flex-direction: column;
         }
-        h1, h2, h3, h4, h5, h6 {
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
             font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
         }
 
@@ -28,7 +35,8 @@
 
         .page-title {
             margin: 0;
-            padding-top: 6px; padding-bottom: 6px;
+            padding-top: 6px;
+            padding-bottom: 6px;
             font-size: 1.5rem;
             font-weight: 500;
         }
@@ -63,6 +71,7 @@
 
         .side-view {
             background-color: #e5e4e2;
+            width: 300px;
         }
     </style>
 </head>
@@ -70,7 +79,7 @@
 <body>
     <header class="page-header">
         <div class="content-wrapper">
-            <h1 class="page-title">Mindmap</h1>
+            <h1 class="page-title">Mindmap application</h1>
         </div>
     </header>
     <main class="page-body">
@@ -80,21 +89,23 @@
             </div>
         </section>
         <aside class="side-view">
-            <ul class="bare-list">
-                <li>Load other views</li>
-            </ul>
         </aside>
     </main>
     <footer class="page-footer">
         <div class="content-wrapper">
-            <p>Gentleman demo</p>
+            <p>Gentleman <strong class="font-code" title="Last updated: 2021-05-04">v.0.2.7</strong></p>
         </div>
     </footer>
 
     <script src="./../dist/gentleman.core.js"></script>
     <script>
         const container = document.querySelector(".app");
-        Gentleman.Task.getEditor(".app-editor", container).init();
+        Gentleman.Task.getEditor(".app-editor", container).init({
+            config: {
+                name: "Mindmap",
+                concepts: [{ name: "mindmap" }]
+            }
+        });
     </script>
 </body>
 

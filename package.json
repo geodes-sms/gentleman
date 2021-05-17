@@ -40,6 +40,7 @@
     "@models": "models",
     "@environment": "src/environment/",
     "@model": "src/model",
+    "@generator": "src/generator",
     "@concept": "src/model/concept",
     "@structure": "src/model/structure",
     "@projection": "src/projection",
