@@ -1,6 +1,6 @@
 [
     {
-        "name": "box style",
+        "name": "box-style",
         "nature": "concrete",
         "attributes": [
             {

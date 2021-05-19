@@ -1,4 +1,4 @@
-import { isEmpty, valOrDefault, isNullOrWhitespace, isFunction, createEmphasis, getElement, isNullOrUndefined, createSpan, capitalizeFirstLetter } from "zenkai";
+import { isEmpty, valOrDefault, isNullOrWhitespace, isFunction, createEmphasis, getElement, isNullOrUndefined, createSpan } from "zenkai";
 import { NotificationType, LogType } from "@utils/index.js";
 import { buildStyle, buildGentlemanStyle } from "./build-style.js";
 
@@ -11,6 +11,7 @@ const ATTR_NAME = "name";
 const ATTR_STYLE = "style";
 const ATTR_REQUIRED = "required";
 const ATTR_PROTOTYPE = "prototype";
+const ATTR_TAG = "tag";
 const ATTR_TAGS = "tags";
 const ATTR_VALUE = "value";
 
@@ -18,6 +19,8 @@ const ATTR_VALUE = "value";
 const getAttr = (concept, name) => concept.getAttributeByName(name).target;
 
 const getReference = (concept, attr) => getAttr(concept, attr).getReference();
+
+const getReferenceValue = (concept, attr, deep = false) => getReference(concept, attr).getValue();
 
 const getReferenceName = (concept, attr) => getName(getReference(concept, attr));
 
@@ -460,15 +463,15 @@ function AttributeDynamicHandler(element) {
     const PROP_TAG = "tag";
     const PROP_PLACEHOLDER = "placeholder";
 
-    if (hasAttr(element, PROP_TAG)) {
-        schema[PROP_TAG] = getValue(element, PROP_TAG);
+    if (hasAttr(element, PROP_TAG) && hasValue(element, PROP_TAG)) {
+        schema[PROP_TAG] = getReferenceValue(element, PROP_TAG);
     }
 
     if (hasAttr(element, ATTR_REQUIRED)) {
         schema.required = getValue(element, ATTR_REQUIRED);
     }
 
-    if (hasAttr(element, PROP_PLACEHOLDER)) {
+    if (hasAttr(element, PROP_PLACEHOLDER) && hasValue(element, PROP_PLACEHOLDER)) {
         const content = [];
 
         let placeholder = getAttr(element, PROP_PLACEHOLDER);
@@ -487,15 +490,15 @@ function ProjectionDynamicHandler(element) {
         type: "projection",
         src: "value"
     };
-    
+
     const PROP_TAG = "tag";
     const PROP_PLACEHOLDER = "placeholder";
 
-    if (hasAttr(element, PROP_TAG)) {
-        schema.tag = getValue(element, PROP_TAG);
+    if (hasAttr(element, PROP_TAG) && hasValue(element, PROP_TAG)) {
+        schema.tag = getReferenceValue(element, PROP_TAG);
     }
 
-    if (hasAttr(element, PROP_PLACEHOLDER)) {
+    if (hasAttr(element, PROP_PLACEHOLDER) && hasValue(element, PROP_PLACEHOLDER)) {
         const content = [];
 
         let placeholder = getAttr(element, PROP_PLACEHOLDER);
@@ -864,11 +867,13 @@ function buildCheckbox(element) {
 }
 
 function buildFieldTemplate(element) {
-    let schema = {
-        "tag": getValue(element, "tag")
-    };
+    const schema = {};
 
-    if (hasValue(element, ATTR_NAME)) {
+    if (hasAttr(element, ATTR_TAG) && hasValue(element, ATTR_TAG)) {
+        schema[ATTR_TAG] = getReferenceValue(element, ATTR_TAG);
+    }
+
+    if (hasAttr(element, ATTR_NAME) && hasValue(element, ATTR_NAME)) {
         schema[ATTR_NAME] = getValue(element, ATTR_NAME);
     }
 

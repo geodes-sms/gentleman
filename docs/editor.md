@@ -126,6 +126,16 @@ Gentleman supports both mouse and keyboard navigation.
 With the mouse it's simply a matter of clicking on the element you want to focus on.
 With the keyboard you can use the arrows to access close-by elements or the `Tab` key to iterate over the elements. When the focus element has children elements, press `Enter` to focus on its children and `Esc` to exit the container.
 
+### Search and Filter
+
+In Gentleman you can use the browser searching functionality as well as the editor's filtering tool.
+
+1. Focus on any part of the editor
+2. Press `Ctrl + F`
+3. Type in the search box the name of the instance
+
+> Note: As you type, the instances' name that do not match the query will be hidden until you close the filter or change the query.
+
 ### Copy/Paste
 
 In Gentleman copy/paste works just as with any editor.

@@ -1,76 +1,6 @@
 {
     "projection": [
         {
-            "id": "6r94bgca-8j0e-23f2-966v-t064enaf725b",
-            "type": "style",
-            "name": "pad-top",
-            "style": {
-                "gss": {
-                    "box": {
-                        "inner": { 
-                            "top": { "value": 6, "unit": "px" } 
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "id": "dca94b6c-f34e-43f2-976b-de1538f70pl1",
-            "type": "style",
-            "name": "pad-right",
-            "style": {
-                "gss": {
-                    "box": {
-                        "inner": { 
-                            "right": { "value": 6, "unit": "px" } 
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "id": "dcac6c95-8f9e-0f62-976b-de1ll4af7038",
-            "type": "style",
-            "name": "pad-bottom",
-            "style": {
-                "gss": {
-                    "box": {
-                        "inner": { 
-                            "bottom": { "value": 6, "unit": "px" } 
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "id": "p0a94bi3-8f9r-43f2-976f-5bgade1f7030",
-            "type": "style",
-            "name": "pad-left",
-            "style": {
-                "gss": {
-                    "box": {
-                        "inner": { 
-                            "left": { "value": 6, "unit": "px" } 
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "id": "dcsd8b6c-8f9e-40q2-976b-dk3id8wf7038",
-            "type": "style",
-            "name": "pad-all",
-            "style": {
-                "gss": {
-                    "box": {
-                        "inner": { 
-                            "all": { "value": 6, "unit": "px" }
-                        }
-                    }
-                }
-            }
-        },
-        {
             "id": "q4a94bi3-8ppr-43f2-970o-5bgade1f7030",
             "type": "style",
             "name": "box-left",
@@ -145,15 +75,13 @@
                         "type": "attribute",
                         "name": "markers",
                         "tag": "markers",
-                        "required": true,
-                        "placeholder": []
+                        "required": true
                     },
                     {
                         "type": "attribute",
                         "name": "topic",
                         "tag": "",
-                        "required": true,
-                        "placeholder": []
+                        "required": true
                     }
                 ],
                 "style": {
@@ -244,6 +172,9 @@
                                         "bold": true
                                     },
                                     "box": {
+                                        "outer": {
+                                            "bottom": { "value": 6, "unit": "px" }
+                                        },
                                         "inner": {
                                             "top": { "value": 3, "unit": "px" },
                                             "right": { "value": 12, "unit": "px" },
@@ -252,6 +183,12 @@
                                         },
                                         "background": {
                                             "color": { "value": "#FF6F61", "type": "hex" }
+                                        },
+                                        "corner": {
+                                            "radius": {
+                                                "bottom-left": { "value": 3, "unit": "px" },
+                                                "bottom-right": { "value": 3, "unit": "px" }
+                                            }
                                         }
                                     }
                                 }
@@ -300,14 +237,12 @@
                                     "type": "attribute",
                                     "name": "name",
                                     "tag": "topic",
-                                    "required": true,
-                                    "placeholder": []
+                                    "required": true
                                 },
                                 {
                                     "type": "attribute",
                                     "name": "marker",
-                                    "required": true,
-                                    "placeholder": []
+                                    "required": true
                                 }
                             ],
                             "style": {
@@ -324,8 +259,7 @@
                         "type": "attribute",
                         "name": "subtopics",
                         "tag": "subtopics",
-                        "required": true,
-                        "placeholder": []
+                        "required": true
                     }
                 ],
                 "style": {
@@ -351,14 +285,12 @@
                                     "type": "attribute",
                                     "name": "name",
                                     "tag": "topic",
-                                    "required": true,
-                                    "placeholder": []
+                                    "required": true
                                 },
                                 {
                                     "type": "attribute",
                                     "name": "marker",
-                                    "required": true,
-                                    "placeholder": []
+                                    "required": true
                                 }
                             ],
                             "style": {
@@ -375,8 +307,7 @@
                         "type": "attribute",
                         "name": "subsubtopics",
                         "tag": "subsubtopics",
-                        "required": true,
-                        "placeholder": []
+                        "required": true
                     }
                 ],
                 "style": {
@@ -398,17 +329,30 @@
                     "item": {
                         "template": { "tag": "list", "name": "" },
                         "style": {
-                            "css": ["mindmap-marker-list-item"]
+                            "css": ["mindmap-marker-set__list-item"],
+                            "gss": {
+                                "box": {
+                                    "outer": {
+                                        "right": { "value": 4, "unit": "px" },
+                                        "bottom": { "value": 6, "unit": "px" }
+                                    },
+                                    "inner": {
+                                        "all": { "value": 0, "unit": "px" }
+                                    }
+                                }
+                            }
                         }  
                     },
                     "style": {
-                        "css": ["mindmap-marker-list"],
-                        "box": {
-                            "inner": {
-                                "top": { "value": 6, "unit": "px" },
-                                "bottom": { "value": 6, "unit": "px" },
-                                "right": { "value": 12, "unit": "px" },
-                                "left":  { "value": 12, "unit": "px" }
+                        "css": ["mindmap-marker-set__list"],
+                        "gss": {
+                            "box": {
+                                "inner": {
+                                    "top": { "value": 6, "unit": "px" },
+                                    "bottom": { "value": 6, "unit": "px" },
+                                    "right": { "value": 12, "unit": "px" },
+                                    "left":  { "value": 12, "unit": "px" }
+                                }
                             }
                         }
                     }  
@@ -439,7 +383,23 @@
                             }
                         ],
                         "style": {
-                            "css": ["mindmap-marker-set__btn-add"]
+                            "css": ["mindmap-marker-set__btn-add"],
+                            "gss": {
+                                "text": {
+                                    "color": { "type": "hex", "value": "#fff" }
+                                },
+                                "box": {
+                                    "inner": {
+                                        "top": { "value": 6, "unit": "px" },
+                                        "bottom": { "value": 6, "unit": "px" },
+                                        "right": { "value": 12, "unit": "px" },
+                                        "left":  { "value": 12, "unit": "px" }
+                                    },
+                                    "background": {
+                                        "color": { "type": "hex", "value": "#0685f4" }
+                                    }
+                                }
+                            }
                         }
                     },
                     "remove": {
@@ -453,7 +413,17 @@
                             }
                         ],
                         "style": {
-                            "css": ["mindmap-marker-set__btn-remove"]
+                            "css": ["mindmap-marker-set__btn-remove"],
+                            "gss": {
+                                "text": {
+                                    "color": { "type": "hex", "value": "#fff" }
+                                },
+                                "box": {
+                                    "background": {
+                                        "color": { "type": "hex", "value": "#b33d32" }
+                                    }
+                                }
+                            }
                         }
                     }
                 },
@@ -637,7 +607,17 @@
                         }
                     },
                     "style": {
-                        "css": ["mindmap-subsubtopic-set__list"]
+                        "css": ["mindmap-subsubtopic-set__list"],
+                        "gss": {
+                            "box": {
+                                "inner": {
+                                    "top": { "value": 4, "unit": "px" },
+                                    "right": { "value": 12, "unit": "px" },
+                                    "bottom": { "value": 4, "unit": "px" },
+                                    "left": { "value": 12, "unit": "px" }
+                                }
+                            }
+                        }
                     }
                 },
                 "action": {
@@ -653,7 +633,24 @@
                             }
                         ],
                         "style": {
-                            "css": ["mindmap-subsubtopic-set__btn-add"]
+                            "css": ["mindmap-subsubtopic-set__btn-add"],
+                            "gss": {
+                                "text": {
+                                    "color": { "type": "hex", "value": "#fff" },
+                                    "size": { "value": 1.3, "unit": "rem" }
+                                },
+                                "box": {
+                                    "inner": {
+                                        "top": { "value": 3, "unit": "px" },
+                                        "right": { "value": 6, "unit": "px" },
+                                        "bottom": { "value": 4, "unit": "px" },
+                                        "left": { "value": 6, "unit": "px" }
+                                    },
+                                    "background": {
+                                        "color": { "type": "hex", "value": "#ff857a" }
+                                    }
+                                }
+                            }
                         }
                     },
                     "remove": {
@@ -667,7 +664,17 @@
                             }
                         ],
                         "style": {
-                            "css": ["mindmap-topic-set__btn-remove", "mindmap-topic-set--subsubtopic__btn-remove"]
+                            "css": ["mindmap-topic-set__btn-remove", "mindmap-topic-set--subsubtopic__btn-remove"],
+                            "gss": {
+                                "text": {
+                                    "color": { "type": "hex", "value": "#fff" }
+                                },
+                                "box": {
+                                    "background": {
+                                        "color": { "type": "hex", "value": "#b33d32" }
+                                    }
+                                }
+                            }
                         }
                     }
                 },

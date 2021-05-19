@@ -45,6 +45,27 @@
     background-color: #555;
 }
 
+.editor-footer-viewers {
+    display: flex;
+    justify-content: flex-end;
+}
+.editor-footer-viewer {
+    padding: 2px 6px;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    color: #fff;
+    cursor: default;
+}
+
+.editor-footer-viewer:hover {
+    background-color: #777;
+}
+
+.editor-footer-viewer.selected {
+    background-color: #222;
+    font-weight: bold;
+}
+
 .editor-style {
     position: absolute;
     top: 36px; right: 0; bottom: 0; left: 0;
@@ -127,12 +148,27 @@
     flex-grow: 2;
     
     position: relative;
-    display: flex; flex-wrap: wrap; align-content: flex-start; align-items: flex-start;
-    padding: 18px calc(1% + 6px);
-    
+    display: flex;     
     overflow-y: auto; overflow-x: visible;
     scrollbar-color: #c0c0c0; scrollbar-width: thin;
 }
+
+.model-concept-section[data-view="grid"] {
+    flex-wrap: wrap; align-content: flex-start; align-items: flex-start;
+    padding: 18px calc(1% + 6px);
+}
+
+.model-concept-section[data-view="row"] {
+    flex-direction: column;
+    padding: 0;
+}
+
+    .model-concept-section[data-view="row"] .editor-concept,
+    .model-concept-section[data-view="row"] .editor-concept-header,
+    .model-concept-section[data-view="row"] .editor-concept--projection {
+        margin: 0;
+        border-radius: 0;
+    }
 
     .editor-concept {
         position: relative;

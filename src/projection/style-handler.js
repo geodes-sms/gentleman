@@ -230,6 +230,9 @@ function styleBoxHandler(element, schema) {
             case "border":
                 resolveBorder.call(this, element, value);
                 break;
+            case "corner":
+                resolveCorner.call(this, element, value);
+                break;
             case "background":
                 resolveBackground.call(this, element, value);
                 break;
@@ -259,29 +262,24 @@ function resolveSpace(element, schema, prop) {
     if (isNullOrUndefined(schema)) {
         return;
     }
-
-    if (Number.isInteger(schema)) {
-        element.style[prop] = resolveSize.call(this, schema);
-    } else {
-        for (const rule in schema) {
-            const value = schema[rule];
-            switch (rule) {
-                case "all":
-                    element.style[`${[prop]}`] = resolveSize.call(this, value);
-                    break;
-                case "top":
-                    element.style[`${[prop]}Top`] = resolveSize.call(this, value);
-                    break;
-                case "right":
-                    element.style[`${[prop]}Right`] = resolveSize.call(this, value);
-                    break;
-                case "bottom":
-                    element.style[`${[prop]}Bottom`] = resolveSize.call(this, value);
-                    break;
-                case "left":
-                    element.style[`${[prop]}Left`] = resolveSize.call(this, value);
-                    break;
-            }
+    for (const rule in schema) {
+        const value = schema[rule];
+        switch (rule) {
+            case "all":
+                element.style[`${[prop]}`] = resolveSize.call(this, value);
+                break;
+            case "top":
+                element.style[`${[prop]}Top`] = resolveSize.call(this, value);
+                break;
+            case "right":
+                element.style[`${[prop]}Right`] = resolveSize.call(this, value);
+                break;
+            case "bottom":
+                element.style[`${[prop]}Bottom`] = resolveSize.call(this, value);
+                break;
+            case "left":
+                element.style[`${[prop]}Left`] = resolveSize.call(this, value);
+                break;
         }
     }
 }
@@ -314,49 +312,60 @@ function resolveBackground(element, schema) {
  * @param {*} schema 
  */
 function resolveBorder(element, schema) {
-    if (schema.size) {
-        element.style.borderStyle = "solid";
-        element.style.borderWidth = resolveSize.call(this, schema.size);
-        element.style.borderColor = resolveColor.call(this, schema.color);
-    } else {
-        for (const rule in schema) {
-            const value = schema[rule];
-            switch (rule) {
-                case "all":
-                    element.style.borderStyle = valOrDefault(value.type, "solid");
-                    element.style.borderWidth = resolveSize.call(this, value.width);
-                    element.style.borderColor = resolveColor.call(this, value.color);
-
-                    break;
-                case "top":
-                    element.style.borderTopStyle = valOrDefault(value.type, "solid");
-                    element.style.borderTopWidth = resolveSize.call(this, value.width);
-                    element.style.borderTopColor = resolveColor.call(this, value.color);
-
-                    break;
-                case "right":
-                    element.style.borderRightStyle = valOrDefault(value.type, "solid");
-                    element.style.borderRightWidth = resolveSize.call(this, value.width);
-                    element.style.borderRightColor = resolveColor.call(this, value.color);
-
-                    break;
-                case "bottom":
-                    element.style.borderBottomStyle = valOrDefault(value.type, "solid");
-                    element.style.borderBottomWidth = resolveSize.call(this, value.width);
-                    element.style.borderBottomColor = resolveColor.call(this, value.color);
-
-                    break;
-                case "left":
-                    element.style.borderLeftStyle = valOrDefault(value.type, "solid");
-                    element.style.borderLeftWidth = resolveSize.call(this, value.width);
-                    element.style.borderLeftColor = resolveColor.call(this, value.color);
-
-                    break;
-            }
-        }
+    if (isNullOrUndefined(schema)) {
+        return;
     }
 
-    if (schema.radius) {
+    for (const rule in schema) {
+        const value = schema[rule];
+        switch (rule) {
+            case "all":
+                element.style.borderStyle = valOrDefault(value.type, "solid");
+                element.style.borderWidth = resolveSize.call(this, value.width);
+                element.style.borderColor = resolveColor.call(this, value.color);
+
+                break;
+            case "top":
+                element.style.borderTopStyle = valOrDefault(value.type, "solid");
+                element.style.borderTopWidth = resolveSize.call(this, value.width);
+                element.style.borderTopColor = resolveColor.call(this, value.color);
+
+                break;
+            case "right":
+                element.style.borderRightStyle = valOrDefault(value.type, "solid");
+                element.style.borderRightWidth = resolveSize.call(this, value.width);
+                element.style.borderRightColor = resolveColor.call(this, value.color);
+
+                break;
+            case "bottom":
+                element.style.borderBottomStyle = valOrDefault(value.type, "solid");
+                element.style.borderBottomWidth = resolveSize.call(this, value.width);
+                element.style.borderBottomColor = resolveColor.call(this, value.color);
+
+                break;
+            case "left":
+                element.style.borderLeftStyle = valOrDefault(value.type, "solid");
+                element.style.borderLeftWidth = resolveSize.call(this, value.width);
+                element.style.borderLeftColor = resolveColor.call(this, value.color);
+
+                break;
+        }
+    }
+}
+
+/**
+ * Resolves the background rules
+ * @param {HTMLElement} element 
+ * @param {*} schema 
+ */
+function resolveCorner(element, schema) {
+    if (isNullOrUndefined(schema)) {
+        return;
+    }
+
+    const { radius } = schema;
+
+    if (radius) {
         resolveBorderRadius.call(this, element, schema.radius);
     }
 }
@@ -367,25 +376,29 @@ function resolveBorder(element, schema) {
  * @param {*} schema 
  */
 function resolveBorderRadius(element, schema) {
-    if (Number.isInteger(schema)) {
-        element.style.borderRadius = resolveSize.call(this, schema);
-    } else {
-        for (const rule in schema) {
-            const value = schema[rule];
-            switch (rule) {
-                case "top":
-                    element.style.borderTopLeftRadius = resolveSize.call(this, value);
-                    break;
-                case "right":
-                    element.style.borderTopRightRadius = resolveSize.call(this, value);
-                    break;
-                case "bottom":
-                    element.style.borderBottomRightRadius = resolveSize.call(this, value);
-                    break;
-                case "left":
-                    element.style.borderBottomLeftRadius = resolveSize.call(this, value);
-                    break;
-            }
+    if (isNullOrUndefined(schema)) {
+        return;
+    }
+    
+    for (const rule in schema) {
+        const value = schema[rule];
+
+        switch (rule) {
+            case "all":
+                element.style.borderRadius = resolveSize.call(this, value);
+                break;
+            case "top-left":
+                element.style.borderTopLeftRadius = resolveSize.call(this, value);
+                break;
+            case "top-right":
+                element.style.borderTopRightRadius = resolveSize.call(this, value);
+                break;
+            case "bottom-right":
+                element.style.borderBottomRightRadius = resolveSize.call(this, value);
+                break;
+            case "bottom-left":
+                element.style.borderBottomLeftRadius = resolveSize.call(this, value);
+                break;
         }
     }
 }

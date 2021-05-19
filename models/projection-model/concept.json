@@ -90,7 +90,7 @@
                                 { "name": "image-static" },
                                 { "name": "link-static" },
                                 { "name": "attribute element" },
-                                { "name": "projection link" },
+                                { "name": "plink-static" },
                                 { "name": "projection element" },
                                 { "name": "template element" }
                             ]
@@ -270,33 +270,6 @@
                 },
                 {
                     "name": "hidden",
-                    "target": {
-                        "name": "boolean",
-                        "default": false
-                    }
-                }
-            ]
-        },
-        {
-            "name": "$render",
-            "nature": "prototype",
-            "attributes": [
-                {
-                    "name": "style",
-                    "target": {
-                        "name": "style"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "help",
-                    "target": {
-                        "name": "string"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "focusable",
                     "target": {
                         "name": "boolean",
                         "default": false
@@ -511,7 +484,7 @@
                 {
                     "name": "action",
                     "target": {
-                        "name": "list field action"
+                        "name": "list-field-action"
                     }
                 },
                 {
@@ -527,7 +500,7 @@
             ]
         },
         {
-            "name": "list field action",
+            "name": "list-field-action",
             "nature": "concrete",
             "attributes": [
                 {
@@ -547,7 +520,7 @@
         {
             "name": "action",
             "nature": "concrete",
-            "prototype": "$render",
+            "prototype": "render",
             "attributes": [        
                 {
                     "name": "content",
@@ -622,7 +595,10 @@
                 {
                     "name": "tag",
                     "target": {
-                        "name": "tag"
+                        "name": "reference",
+                        "accept": {
+                            "name": "tag"
+                        }
                     }
                 },
                 {
@@ -671,7 +647,7 @@
                                 { "name": "text-static" },
                                 { "name": "image-static" },
                                 { "name": "link-static" },
-                                { "name": "projection link" },
+                                { "name": "plink-static" },
                                 { "name": "attribute element" },
                                 { "name": "projection element" },
                                 { "name": "template element" }
@@ -844,7 +820,7 @@
                             { "name": "text-static" },
                             { "name": "image-static" },
                             { "name": "link-static" },
-                            { "name": "projection link" },
+                            { "name": "plink-static" },
                             { "name": "attribute element" },
                             { "name": "projection element" },
                             { "name": "template element" }
@@ -1091,7 +1067,7 @@
         },
 
         {
-            "name": "projection link",
+            "name": "plink-static",
             "nature": "concrete",
             "prototype": "element",
             "attributes": [
@@ -1158,7 +1134,10 @@
                 {
                     "name": "tag",
                     "target": {
-                        "name": "tag"
+                        "name": "reference",
+                        "accept": {
+                            "name": "tag"
+                        }
                     },
                     "required": true
                 },
@@ -1215,7 +1194,10 @@
                 {
                     "name": "tag",
                     "target": {
-                        "name": "tag"
+                        "name": "reference",
+                        "accept": {
+                            "name": "tag"
+                        }
                     }
                 },
                 {
@@ -1272,19 +1254,19 @@
                 {
                     "name": "text",
                     "target": {
-                        "name": "text style"
+                        "name": "text-style"
                     }
                 },
                 {
                     "name": "box",
                     "target": {
-                        "name": "box style"
+                        "name": "box-style"
                     }
                 }
             ]
         },
         {
-            "name": "text style",
+            "name": "text-style",
             "nature": "concrete",
             "attributes": [
                 {
@@ -1335,6 +1317,13 @@
                     "required": false
                 },
                 {
+                    "name": "transform",
+                    "target": {
+                        "name": "text-transform"
+                    },
+                    "required": false
+                },
+                {
                     "name": "opacity",
                     "target": {
                         "name": "percentage"
@@ -1368,7 +1357,7 @@
             ]
         },
         {
-            "name": "box style",
+            "name": "box-style",
             "nature": "concrete",
             "attributes": [
                 {
@@ -1451,7 +1440,7 @@
                 {
                     "name": "unit",
                     "target": {
-                        "name": "size unit",
+                        "name": "size-unit",
                         "default": "px"
                     }
                 }
@@ -1790,7 +1779,7 @@
             }
         },
         {
-            "name": "size unit",
+            "name": "size-unit",
             "nature": "derivative",
             "base": "string",
             "constraint": {
@@ -1822,6 +1811,14 @@
             }
         },
         {
+            "name": "text-transform",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "values": ["capitalize", "lowercase", "uppercase"]
+            }
+        },
+        {
             "name": "tag",
             "nature": "derivative",
             "base": "string",
@@ -1841,9 +1838,7 @@
             "constraint": {
                 "length": {
                     "type": "range",
-                    "range": {
-                        "min": 1
-                    }
+                    "range": { "min": 1 }
                 }
             }
         },
@@ -1854,9 +1849,7 @@
             "constraint": {
                 "length": {
                     "type": "range",
-                    "range": {
-                        "min": 1
-                    }
+                    "range": { "min": 1 }
                 }
             }
         }

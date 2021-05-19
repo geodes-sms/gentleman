@@ -1,11 +1,4 @@
-.field-action {
-    border: 0 none;
-    padding: 0;
-}
-
-    .field-action .static {
-        display: inline-block;
-    }
+.field-action { border: 0 none; padding: 0; }
 
 .mindmap-textbox-input {
     border: 0 none;
@@ -14,64 +7,29 @@
     padding-left: 2px; padding-right: 2px;
 }
 
+.mindmap .field { padding: 0; }
 
-.mindmap .field {
-    padding: 0;
-}
-
-.mindmap-marker-list {
-    padding: 12px;
-}
-
-.mindmap-marker-list-item {
-    padding: 0;
-    box-shadow: 1px 2px 1px -1px #c0c0c0;
-    margin-right: 4px; margin-bottom: 6px;
-}
 
 /* Markers
 -----------------------------------------------------------------------------*/
 
-.mindmap-marker-set {
-    display: inline-flex; align-items: flex-start;
-    padding: 0;
-}
+.mindmap-marker-set { display: inline-flex; align-items: flex-start; padding: 0; }
 
-    .mindmap-marker-set.empty > .mindmap-marker-list {
-        display: none;
-    }
+    .mindmap-marker-set.empty > .mindmap-marker-set__list { display: none; }
+    
+    .mindmap-marker-set__list-item { box-shadow: 1px 2px 1px -1px #c0c0c0; }
 
-    .mindmap-marker-set.empty > .field--list__add {
-        width: 100%;
-        padding: 6px 12px;
-        color: #fff;
-        background-color: #0685f4;
-    }
+    .mindmap-marker-set.empty > .mindmap-marker-set__btn-add { width: 100%; }
 
-    .mindmap-marker-set > .field--list__add {
-        align-self: stretch;
-        padding: 6px 12px;
-        color: #fff;
-        background-color: #0685f4;
-    }
+    .mindmap-marker-set > .mindmap-marker-set__btn-add { align-self: stretch; }
 
-    .mindmap-marker-set > .mindmap-marker-set__btn-add  .text {
-        transition: transform .2s;
-    }
+    .mindmap-marker-set > .mindmap-marker-set__btn-add .text { transition: transform .2s; }
 
-        .mindmap-marker-set.empty > .mindmap-marker-set__btn-add  .text {
-            padding: 6px;
-        }
-            .mindmap-marker-set > .mindmap-marker-set__btn-add:hover .text {
-                transform: scale(1.1);
-            }
+        .mindmap-marker-set.empty > .mindmap-marker-set__btn-add .text { padding: 6px; }
 
-            .mindmap-marker-list-item > .btn-remove {
-                width: 18px;
-                background-color: #b33d32;
-                color: #fff;
-                border-radius: 2px 0 0 2px;
-            }
+            .mindmap-marker-set > .mindmap-marker-set__btn-add:hover .text { transform: scale(1.1); }
+
+            .mindmap-marker-set__list-item > .btn-remove { width: 18px; border-radius: 2px 0 0 2px; }
 
     .mindmap-textbox--symbol__input {
         background-color: #f5f5f5;
@@ -107,9 +65,7 @@
         color: #f5f5f5;
     }
 
-    .mindmap-name-marker .mindmap-textbox-input.empty {
-        color: #f5f5f5;
-    }
+    .mindmap-name-marker .mindmap-textbox-input.empty { color: #f5f5f5; }
 
     .marker-reference {
         background-color: #FFEA7A;
@@ -117,10 +73,7 @@
         border-bottom-right-radius: 2px;
     }
     
-        .marker-reference .field--choice__select-wrapper {
-            border: 0 none;
-            padding-left: 2px;
-        }
+        .marker-reference .field--choice__select-wrapper { border: 0 none; padding-left: 2px; }
 
         .marker-reference__choice-option {
             display: flex; align-items: center;
@@ -128,57 +81,34 @@
             padding: 4px 6px;
             border: 0 none;
         }
+            .marker-reference__choice-option:nth-child(odd) { background-color: #eee; }
+            .marker-reference__choice-option:first-child { background-color: #d5d5d5; }
+            .marker-reference__choice-option:hover { background-color: #FFEF94; }
 
-        .marker-reference__choice-option:nth-child(odd) {
-            background-color: #eee;
-        }
+        .mindmap-marker-reference { display: flex; align-items: center!important; }
+            
+            .mindmap-marker-reference__image { height: 18px; width: auto; }
 
-        .marker-reference__choice-option:first-child {
-            background-color: #d5d5d5;
-        }
-
-        .marker-reference__choice-option:hover {
-            background-color: #FFEF94;
-        }
-
-        .mindmap-marker-reference {
-            display: flex; align-items: center!important;
-        }
+            .mindmap-marker-reference .text { margin-left: 3px; }
+            
+            .mindmap-marker-reference .text:empty:after {
+                content: "--null";
+                color: #777;
+                font-weight: 400;
+                font-style: italic;
+            }
         
-        .mindmap-marker-reference__image {
-            height: 18px;
-            width: auto;
-        }
-        .mindmap-marker-reference .text {
-            margin-left: 3px;
-        }
-        .mindmap-marker-reference .text:empty:after {
-            content: "--null";
-            color: #777;
-            font-weight: 400;
-            font-style: italic;
-        }
-        
-
-
 .mindmap-topic-identification {
     align-self: center;
-    margin-bottom: 6px;
-    border-bottom-left-radius: 3px;
-    border-bottom-right-radius: 3px;
 }
 
-.mindmap-topic-identification .mindmap-textbox-input {
-    color: #333;
-}
+.mindmap-topic-identification .mindmap-textbox-input { color: #333; }
 
 
 /* Maintopics
 -----------------------------------------------------------------------------*/
 
-.mindmap-maintopic-set {
-    display: flex; flex-direction: column;
-}
+.mindmap-maintopic-set { display: flex; flex-direction: column; }
 
     .mindmap-maintopic-set__list {
         display: flex;
@@ -190,14 +120,9 @@
             box-shadow: 0 2px 1px #FF857A, 0 0 2px #B33D32;
             border-radius: 2px;  
         }
+            .mindmap-maintopic-set__list-item:focus { box-shadow: 0 1px 2px 2px #B33D32; }
 
-        .mindmap-maintopic-set__list-item:focus {
-            box-shadow: 0 1px 2px 2px #B33D32;
-        }
-
-        .mindmap-maintopic-set__list-item:not(:last-child) {
-            margin-bottom: 12px;
-        }
+            .mindmap-maintopic-set__list-item:not(:last-child) { margin-bottom: 12px; }
         
         .mindmap-maintopic-set__list-item > .btn-remove {
             position: absolute;
@@ -215,9 +140,7 @@
             background-color: #ff857a;
         }
 
-        .mindmap-topic-set--maintopic__btn-add .text {
-            transition: transform .2s;
-        }
+        .mindmap-topic-set--maintopic__btn-add .text { transition: transform .2s;}
 
         .mindmap-topic-set--maintopic__btn-add:hover .text,
         .mindmap-topic-set--maintopic__btn-add:focus .text {
@@ -228,14 +151,9 @@
 /* Subtopics
 -----------------------------------------------------------------------------*/
 
-.mindmap-subtopic-set {
-    display: flex;
-}
+.mindmap-subtopic-set { display: flex; }
 
-    .mindmap-subtopic-set__list {
-        display: flex;
-        flex-direction: row;
-    }
+    .mindmap-subtopic-set__list { display: flex; flex-direction: row; }
 
         .mindmap-subtopic-set__list-item {
             padding: 6px; padding-right: 18px;
@@ -258,9 +176,7 @@
             }
                 .mindmap-subtopic-set__list-item > .btn-remove:hover { color: #fff; background-color: #FF857A; }
 
-    .mindmap-subtopic-set.empty > .mindmap-subtopic-set__list {
-        display: none;
-    }
+    .mindmap-subtopic-set.empty > .mindmap-subtopic-set__list { display: none; }
 
     .mindmap-subtopic-set:not(.empty) .mindmap-topic-set--subtopic__btn-add {
         align-self: flex-end;
@@ -269,66 +185,30 @@
         z-index: 10;
     }
 
-    .mindmap-subtopic-set:not(.empty) .mindmap-topic-set--subtopic__btn-add .text {
-        font-size: 0.8em;
-    }
+    .mindmap-subtopic-set:not(.empty) .mindmap-topic-set--subtopic__btn-add .text { font-size: 0.8em; }
 
 /* SubSubtopics
 -----------------------------------------------------------------------------*/
 
-.mindmap-subsubtopic-set.empty .mindmap-subsubtopic-set__list {
-    display: none;
-}
+.mindmap-subsubtopic-set.empty .mindmap-subsubtopic-set__list { display: none; }
 
-.mindmap-subsubtopic-set:not(.empty):not(.active):not(.active-parent) .mindmap-subsubtopic-set__btn-add {
-    display: none;
-}
+.mindmap-subsubtopic-set:not(.empty):not(.active):not(.active-parent) .mindmap-subsubtopic-set__btn-add { display: none; }
 
-.mindmap-subsubtopic-set {
-    display: flex; flex-direction: column;
-}
+.mindmap-subsubtopic-set { display: flex; flex-direction: column; }
 
-    .mindmap-subsubtopic-set__list {
-        flex-direction: column;
-        /* border-left: 2px dotted #FF857A; */
-        padding: 4px 12px;
-        box-shadow: inset 0 1px 2px #FF857A;
-        border-radius: 2px 2px 0 0;
-    }
+    .mindmap-subsubtopic-set__list { flex-direction: column; box-shadow: inset 0 1px 2px #FF857A; border-radius: 2px 2px 0 0; }
 
-    .mindmap-subsubtopic-set__list-item {
-        padding: 0;color: #FFEA7A;
-        padding-left: 18px;
-    }
+    .mindmap-subsubtopic-set__list-item { padding: 0; padding-left: 18px; }
 
-    .mindmap-subsubtopic-set__list-item:not(:last-child) {
-        /* border-bottom: 2px solid #32B36B; */
-        margin-bottom: 2px;
-    }
+    .mindmap-subsubtopic-set__list-item:not(:last-child) { margin-bottom: 2px; }
 
-    .mindmap-subsubtopic-set__btn-add {
-        display: flex; align-items: center; justify-content: center;
-        width: 100%;
-        font-size: 1.3rem;
-        padding: 3px 6px 4px;
-        color: #fff;
-        background-color: #FF857A;
-    }
+    .mindmap-subsubtopic-set__btn-add { display: flex; align-items: center; justify-content: center; width: 100%; }
 
-    .mindmap-subsubtopic-set.empty .mindmap-subsubtopic-set__btn-add {
-        border-radius: 180px;
-    }
+    .mindmap-subsubtopic-set.empty .mindmap-subsubtopic-set__btn-add { border-radius: 180px; }
 
-    .mindmap-subsubtopic-set__btn-add .text {
-        opacity: 0.8;
-        transition: .2s;
-    }
+    .mindmap-subsubtopic-set__btn-add .text { opacity: 0.8; transition: .2s; }
 
-    .mindmap-subsubtopic-set__btn-add:hover .text {
-        transform: scale(1.1);
-        opacity: 1;
-    }
-
+    .mindmap-subsubtopic-set__btn-add:hover .text { transform: scale(1.1); opacity: 1; }
 
     .mindmap-subsubtopic-set__list-item .btn-remove {
         position: absolute;
@@ -337,23 +217,12 @@
         height: 24px;
         border-top-left-radius: 2px;
         border-bottom-left-radius: 2px;
-        color: #fff;
-        background-color: #B33D32;
     }
     
     .mindmap-subsubtopic-set__list-item .btn-remove:hover { background-color: #ff857a; }
 
-    .mindmap-subsubtopic-set__list-item .mindmap-textbox-input {
-        border-radius: 0;
-        height: 24px;
-    }
+    .mindmap-subsubtopic-set__list-item .mindmap-textbox-input { border-radius: 0; height: 24px; }
 
-    .mindmap-subsubtopic-set__list-item .marker-reference {
-        height: 24px;
-    }
+    .mindmap-subsubtopic-set__list-item .marker-reference { height: 24px; }
 
-
-.mindmap-topic-list--subsubtopics {
-    display: flex;
-    flex-direction: row;
-}
+.mindmap-topic-list--subsubtopics { display: flex; flex-direction: row; }

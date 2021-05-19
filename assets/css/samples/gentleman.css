@@ -36,13 +36,9 @@
     border-bottom-left-radius: 4px; border-bottom-right-radius: 4px;
 }
 
-.model-concept--textual {
-    padding-top: 6px;
-}
+.model-concept--textual { padding-top: 6px; }
 
-    .model-concept--textual .field--textbox__input {
-        border: 0 none;
-    }
+    .model-concept--textual .field--textbox__input { border: 0 none; }
 
     .model-concept--textual .line {
         display: flex; flex-direction: row;
@@ -51,9 +47,7 @@
         font-size: 1.4rem;
     }
 
-    .model-concept--textual .inline {
-        display: inline-flex;
-    }
+    .model-concept--textual .inline { display: inline-flex; }
 
     .model-concept--textual .title,
     .model-concept--textual .title--small,
@@ -407,22 +401,13 @@
             opacity: 1;
         }
 
-    .toggle-field[data-state="on"] {
-        color: #fff;
-        background-color: #1f75fe;
-    }
+    .toggle-field[data-state="on"] { color: #fff; background-color: #1f75fe; }
 
-    .toggle-field__label {
-        padding: 2px 6px 3px;
-    }
+    .toggle-field__label { padding: 2px 6px 3px; }
 
-    .toggle-field .field--binary__input {
-        display: none;
-    }
+    .toggle-field .field--binary__input { display: none; }
 
-    .toggle-field + .toggle-field {
-        margin-left: 4px;
-    }
+    .toggle-field + .toggle-field { margin-left: 4px; }
 
         
 /*
@@ -565,7 +550,6 @@
         top: 0; bottom: 0; left: 0; right: 0;
         border: 1px solid #c0c0c0; border-radius: 2px; 
     }
-
     .textual-list__list-item--box:not(:last-child) {
         margin-right: 6px;
     }
@@ -581,11 +565,12 @@
     background-color: #fff;
     opacity: 0.8;
     transition: .2s;
-    z-index: 20;
+    z-index: 50;
 }
     .textual-list__list-item--box > .btn-remove:hover {
-        color: #222;
-        background-color: #c0c0c0;
+        color: #fff;
+        background-color: #ff1c55;
+        border-color: #ff1c55;
         opacity: 1;
     }
     .textual-list__list-item--box > .btn-remove:before {
@@ -621,14 +606,9 @@
         border-radius: 50%;
         transition: .4s;
     }
-    .textual-list__list-item--inline > .textual-list__btn-remove:hover {
-        background-color: rgb(225, 65, 65);
-    }
+    .textual-list__list-item--inline > .textual-list__btn-remove:hover { background-color: rgb(225, 65, 65); }
 
-    .textual-list__list--inline {
-        display: inline-flex;
-        width: auto;
-    }
+    .textual-list__list--inline { display: inline-flex; width: auto; }
 
     .textual-list__list--inline + .textual-list__btn-add {
         align-self: flex-start;
@@ -647,50 +627,30 @@
     Custom Textual list
 -----------------------------------------------------------------------------*/
 
-.textual-list--tag {
-    flex-direction: row;
-    align-items: flex-start;
-}
+.textual-list--tag { flex-direction: row; align-items: flex-start; }
 
-.textual-list--css {
-    flex-direction: row;
-    align-items: flex-start;
-}
+.textual-list--css { flex-direction: row; align-items: flex-start; }
 
-.textual-list--value {
-    flex-direction: row;
-    align-items: flex-start;
-}
+.textual-list--value { flex-direction: row; align-items: flex-start; }
 
-.textual-list--value > .textual-list__btn-add {
-    width: 48px;
-}
+.textual-list--value > .textual-list__btn-add { width: 48px; }
 
-.textual-list--element .textual-list__list {
-    flex-direction: row; align-items: flex-start;
-}
+.textual-list--element .textual-list__list { flex-direction: row; align-items: flex-start; }
 
 
 
 
-.model-concept--textual .textual-list--attribute {
-    align-items: flex-start;
-} 
+.model-concept--textual .textual-list--attribute { align-items: flex-start; } 
     
 
-.constraint-range {
-    display: flex;
-    margin-bottom: 2px;
-}
+.constraint-range { display: flex; margin-bottom: 2px; }
     .constraint-range:before {
         content: "-";
         font-weight: bold;
         margin-right: 0.5em;
     }
 
-    .constraint-range-value {
-        display: flex;
-    }
+    .constraint-range-value { display: flex; }
 
 
 /* 
@@ -1503,16 +1463,76 @@
 
 
 
+/*
+ Attribute config: value+tag
+-------------------------------------------------------------------*/
 
-
-
-.textfield--text {
-    width: 100%;
+.attribute-config__value-x-tag {
+    align-self: flex-start;
+    align-items: center!important;
 }
 
-    .textfield--text__input {
-        border: 1px solid #d5d5d5;
+.attribute-config__value-x-tag .field--textbox,
+.attribute-config__value-x-tag .field--textbox__input {
+    height: 100%;
+    border-radius: 0;
+}
+
+.attribute-config__value-x-tag .field--textbox__input {
+    background-color: #f5f5f5;
+    box-shadow: 0 0 1px #555;
+    padding-top: 1px; padding-left: 4px; padding-right: 4px;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+}
+
+    .attribute-config__value-x-tag .field--textbox__input.empty { color: #f5f5f5; }
+
+    .attribute-config__value-x-tag .tag-reference {
+        border-top-right-radius: 2px;
+        border-bottom-right-radius: 2px;
     }
+    
+        .tag-reference .field--choice__select-wrapper { border: 0 none; padding-left: 2px; }
+
+        .tag-reference__choice {
+            font-size: 1rem;
+        }
+
+        .tag-reference__choice-option {
+            color: #555;
+            background-color: #fff;
+            padding: 4px 6px;
+            font-size: 1.3em;
+            border: 0 none;
+        }
+            .tag-reference__choice-option:nth-child(odd) { background-color: #eee; }
+            .tag-reference__choice-option:first-child { background-color: #d5d5d5; }
+            .tag-reference__choice-option:hover { background-color: #FFEF94; }
+
+        .tag-reference { display: flex; align-items: center!important; }
+            
+            .tag-reference .text:empty:after {
+                content: "null";
+                color: #777;
+                font-weight: 400;
+                font-style: italic;
+            }
+
+
+/*
+  Tag reference
+-----------------------------------------------------------------------------*/
+.tag-reference {
+    background-color: #6E61FF;
+    color: #fff;
+    cursor: default;
+}
+
+
+.textfield--text { width: 100%; }
+
+    .textfield--text__input { border: 1px solid #d5d5d5; }
 
 .static-image .textfield--concept__label {
     width: 120px;
@@ -1584,34 +1604,18 @@
     flex-direction: column;
 }
 
-.row-list-item {
-    border-bottom: 2px solid #999;
-    margin-bottom: 4px;
-}
+.row-list-item { margin-bottom: 4px; border-bottom: 2px solid #999; }
 
-.cell-list {
-    display: flex;
-    flex-direction: row;
-}
+.cell-list { display: flex; flex-direction: row; }
 
-.cell-list-item {
-    border: 1px solid #555;
-    margin-right: 4px;
-    margin-bottom: 4px;
-}
+.cell-list-item { margin-right: 4px; margin-bottom: 4px; border: 1px solid #555; }
 
-.static-text {
-    align-items: flex-start;
-}
+.static-text { align-items: flex-start; }
 
-.textual-list--cell {
-    padding-left: 3px; padding-bottom: 6px;
-}
+.textual-list--cell { padding-left: 3px; padding-bottom: 6px; }
   
 
-.textual-list--cell .textual-list__list {
-    flex-direction: row; align-items: flex-start;
-}
+.textual-list--cell .textual-list__list { flex-direction: row; align-items: flex-start; }
 
 
 .text-style-container {
@@ -1622,9 +1626,7 @@
     padding-left: 6px;
 }
 
-.text-style-container .layout-container {
-    width: auto;
-}
+.text-style-container .layout-container { width: auto; }
 
 
 .textual-option--style {
@@ -1716,9 +1718,7 @@
             background-color: #f0f0f0;
         }
         
-.text-style__attribute .field--textbox__input.error {
-    color: #f5f5f5;
-}
+.text-style__attribute .field--textbox__input.error { color: #f5f5f5; }
 
 
 
@@ -1801,10 +1801,6 @@
         font-weight: 400;
         text-transform: uppercase;
         background-color: #e5e4e2;
-    }
-
-    .field-config__content {
-        padding: 2px 6px;
     }
 
     .field-config-option {
@@ -1989,13 +1985,9 @@
 }
 
 
-.text-field--textual {
-    width: 100%;
-}
+.text-field--textual { width: 100%; }
 
-.text-field--textual .name-field--textual__input {
-    width: 100%;
-}
+.text-field--textual .name-field--textual__input { width: 100%; }
 
 .field-config .action-container {
     width: calc(50% - 12px);
@@ -2003,6 +1995,4 @@
     box-shadow: 1px 2px -1px #c0c0c0;
 }
 
-.field-config .action-container + .action-container {
-    margin-left: 6px;
-}
+.field-config .action-container + .action-container { margin-left: 6px; }

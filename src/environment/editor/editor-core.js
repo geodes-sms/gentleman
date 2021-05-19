@@ -182,6 +182,9 @@ export const Editor = {
     /** @type {EditorLog} */
     logs: null,
 
+    view: "grid",
+    /** @type {HTMLElement} */
+    viewItem: null,
     /** @type {HTMLInputElement} */
     input: null,
     copyValue: null,
@@ -1297,6 +1300,22 @@ export const Editor = {
                 tabindex: 0,
             });
 
+            let viewers = createUnorderedList({
+                class: ["bare-list", "editor-footer-viewers"],
+            }, ["grid", "row"].map(type =>
+                createListItem({
+                    class: ["editor-footer-viewer"],
+                    dataset: {
+                        type: "viewer",
+                        action: "change-view",
+                        value: type
+                    }
+                }, type)));
+
+            this.viewItem = viewers.children[0];
+            this.viewItem.classList.add("selected");
+
+            this.footer.append(viewers);
 
             this.valueWindow = createDiv({
                 class: ["model-value-window"],
@@ -1370,6 +1389,7 @@ export const Editor = {
             this.container.classList.remove("no-projection-model");
         }
 
+        this.instanceSection.dataset.view = this.view;
         this.hasValues ? show(this.valueWindow) : hide(this.valueWindow);
 
         this.header.refresh();
@@ -1603,6 +1623,16 @@ export const Editor = {
                 const { id } = target.dataset;
 
                 this.removeResource(id);
+            },
+            "change-view": (target) => {
+                const { value } = target.dataset;
+                if (value !== this.view) {
+                    this.view = value;
+                    this.viewItem.classList.remove("selected");
+                    this.viewItem = target;
+                    this.viewItem.classList.add("selected");
+                    this.refresh();
+                }
             },
 
             "style": (target) => { this.style.toggle(); },

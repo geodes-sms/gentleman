@@ -614,9 +614,7 @@
                     ]
                 }
             ]
-        },
-    
-        
+        },    
         {
             "type": "template",
             "name": "nav-bar",
@@ -665,10 +663,22 @@
                     }
                 }
             ]
+        },        
+
+
+        {
+            "type": "style",
+            "name": "pad-all",
+            "style": {
+                "gss": {
+                    "box": {
+                        "inner": { 
+                            "all": { "value": 6, "unit": "px" }
+                        }
+                    }
+                }
+            }
         },
-        
-
-
         {
             "type": "style",
             "name": "pad-top",
@@ -720,15 +730,54 @@
                     }
                 }
             }
-        },
+        },  
         {
             "type": "style",
-            "name": "pad-all",
+            "name": "box-top",
             "style": {
                 "gss": {
                     "box": {
-                        "inner": { 
-                            "all": { "value": 6, "unit": "px" }
+                        "outer": { 
+                            "top": { "value": 6, "unit": "px" } 
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "box-right",
+            "style": {
+                "gss": {
+                    "box": {
+                        "outer": { 
+                            "right": { "value": 6, "unit": "px" } 
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "box-bottom",
+            "style": {
+                "gss": {
+                    "box": {
+                        "outer": { 
+                            "bottom": { "value": 6, "unit": "px" } 
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "box-left",
+            "style": {
+                "gss": {
+                    "box": {
+                        "outer": { 
+                            "left": { "value": 6, "unit": "px" } 
                         }
                     }
                 }
@@ -1626,7 +1675,7 @@
                                                         "type": "attribute",
                                                         "name": "true",
                                                         "style": {
-                                                            "css": ["field-config__content"]
+                                                            "ref": ["pad-left", "pad-top"]
                                                         }
                                                     }
                                                 ]
@@ -1658,7 +1707,7 @@
                                                         "type": "attribute",
                                                         "name": "false",
                                                         "style": {
-                                                            "css": ["field-config__content"]
+                                                            "ref": ["pad-left", "pad-top"]
                                                         }
                                                     }
                                                 ]
@@ -1736,6 +1785,7 @@
                 ]
             }
         },
+        
         {
             "concept": { "name": "choice-field" },
             "type": "layout",
@@ -1976,7 +2026,7 @@
             }
         },
         {
-            "concept": { "name": "list field action" },
+            "concept": { "name": "list-field-action" },
             "type": "layout",
             "tags": ["choice-selection"],
             "projection": {
@@ -2045,7 +2095,7 @@
                         "name": "content",
                         "tag": "element-set",
                         "style": {
-                            "css": ["field-config__content"]
+                            "ref": ["pad-left", "pad-top"]
                         }
                     }
                 ]
@@ -2492,14 +2542,15 @@
                                 }
                             ],
                             "style": {
-                                "css": ["nav", "component-nav"]
+                                "css": ["nav", "component-nav"],
+                                "ref": ["box-bottom"]
                             }
                         }
                     },
                     {
                         "type": "attribute",
                         "name": "tag",
-                        "tag": "label-string"
+                        "tag": "tag-reference"
                     }
                 ],
                 "style": {
@@ -2996,7 +3047,7 @@
             }
         },
         {
-            "concept": { "name": "projection link" },
+            "concept": { "name": "plink-static" },
             "tags": ["choice-selection", "field-config", "config"],
             "type": "layout",
             "content": {
@@ -3037,7 +3088,7 @@
             }
         },
         {
-            "concept": { "name": "projection link" },
+            "concept": { "name": "plink-static" },
             "type": "layout",
             "tags": ["choice-selection", "field-state", "state"],
             "projection": {
@@ -3064,7 +3115,7 @@
             }
         },
         {
-            "concept": { "name": "projection link" },
+            "concept": { "name": "plink-static" },
             "tags": ["choice"],
             "type": "layout",
             "content": {
@@ -3281,8 +3332,7 @@
                     {
                         "type": "layout",
                         "layout": {
-                            "type": "stack",
-                            "orientation": "horizontal",
+                            "type": "wrap",
                             "disposition": [
                                 {
                                     "type": "attribute",
@@ -3292,11 +3342,12 @@
                                 {
                                     "type": "attribute",
                                     "name": "tag",
-                                    "tag": "bracket-string"
+                                    "tag": "tag-reference"
                                 }
                             ],
                             "style": {
-                                "css": ["field-config__content"]
+                                "css": ["attribute-config__value-x-tag"],
+                                "ref": ["pad-left", "pad-top"]
                             }
                         }
                     },
@@ -3314,7 +3365,7 @@
                         "type": "attribute",
                         "name": "placeholder",
                         "style": {
-                            "css": ["field-config__content"]
+                            "ref": ["pad-left", "pad-top"]
                         }
                     }
                 ],
@@ -3395,11 +3446,11 @@
                                 {
                                     "type": "attribute",
                                     "name": "tag",
-                                    "tag": "textual--labelled"
+                                    "tag": "tag-reference"
                                 }
                             ],
                             "style": {
-                                "css": ["field-config__content"]
+                                "ref": ["pad-left", "pad-top"]
                             }
                         }
                     },
@@ -3417,7 +3468,7 @@
                         "type": "attribute",
                         "name": "placeholder",
                         "style": {
-                            "css": ["field-config__content"]
+                            "ref": ["pad-left", "pad-top"]
                         }
                     }
                 ],
@@ -3602,7 +3653,7 @@
             }
         },
         {
-            "concept": { "name": "text style" },
+            "concept": { "name": "text-style" },
             "tags": [],
             "type": "layout",
             "content":  {
@@ -3773,7 +3824,7 @@
             }
         },
         {
-            "concept": { "name": "box style" },
+            "concept": { "name": "box-style" },
             "tags": [],
             "type": "layout",
             "content":  {
@@ -4596,36 +4647,6 @@
             }
         },
         {
-            "concept": { "name": "reference" },
-            "type": "field",
-            "tags": ["template-reference"],
-            "content": {
-                "type": "choice",
-                "choice": {
-                    "option": {
-                        "template": { "tag": "choice" },
-                        "style": {
-                            "css": ["select-choice__list-option"]
-                        }
-                    },
-                    "style": {
-                        "css": ["select-choice__list"]
-                    }
-                },
-                "placeholder": "Select a template",
-                "expanded": false,
-                "input": {
-                    "placeholder": "filter",
-                    "style": {
-                        "css": ["select-choice__input"]
-                    }
-                },
-                "style": {
-                    "css": ["select-choice"]
-                }
-            }
-        },
-        {
             "concept": { "name": "boolean" },
             "type": "layout",
             "tags": ["true-value"],
@@ -5133,6 +5154,23 @@
             }
         },
         {
+            "concept": { "name": "tag" },
+            "tags": ["reference"],
+            "type": "layout",
+            "content": {  
+                "type": "wrap",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": { "type": "property", "name": "value" }
+                        }
+                    }
+                ]
+            }
+        },
+        {
             "concept": { "name": "number" },
             "tags": ["textual--labelled"],
             "type": "layout",
@@ -5438,6 +5476,66 @@
                 "style": {
                     "css": ["string-field", "string-field--bracket"]
                 }  
+            }
+        },
+        {
+            "concept": { "name": "reference" },
+            "type": "field",
+            "tags": ["template-reference"],
+            "content": {
+                "type": "choice",
+                "choice": {
+                    "option": {
+                        "template": { "tag": "choice" },
+                        "style": {
+                            "css": ["select-choice__list-option"]
+                        }
+                    },
+                    "style": {
+                        "css": ["select-choice__list"]
+                    }
+                },
+                "placeholder": "Select a template",
+                "expanded": false,
+                "input": {
+                    "placeholder": "filter",
+                    "style": {
+                        "css": ["select-choice__input"]
+                    }
+                },
+                "style": {
+                    "css": ["select-choice"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "reference" },
+            "type": "field",
+            "tags": ["tag-reference"],
+            "content": {
+                "type": "choice",
+                "choice": {
+                    "option": {
+                        "template": { "tag": "reference" },
+                        "style": {
+                            "css": ["tag-reference__choice-option"]
+                        }
+                    },
+                    "style": {
+                        "css": ["tag-reference__choice"]
+                    }
+                },
+                "placeholder": "Use tag",
+                "expanded": false,
+                "input": {
+                    "placeholder": "Find tag",
+                    "style": {
+                        "css": ["tag-reference__input"]
+                    }
+                },
+                "style": {
+                    "css": ["tag-reference"]
+                }
             }
         },
 
