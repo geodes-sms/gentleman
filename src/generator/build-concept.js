@@ -61,7 +61,7 @@ function createProjectionLink(text, concept) {
 }
 
 
-export function buildConceptHandler(args = [], _options = {}) {
+export function buildConceptHandler(_options = {}) {
     const result = [];
 
     const { conceptModel } = this;

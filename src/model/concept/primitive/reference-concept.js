@@ -47,6 +47,11 @@ const _ReferenceConcept = {
 
         return this;
     },
+    restore(state) {
+        const { value } = state;
+
+        this.setValue(value);
+    },
     hasValue() {
         return !isNullOrWhitespace(this.value);
     },
@@ -65,11 +70,11 @@ const _ReferenceConcept = {
         if (this.reference) {
             this.reference.unregister(this);
         }
+        
         this.reference = null;
         this.value = null;
 
         this.notify("value.changed", this.value);
-        this.model.notify("value.changed", this);
 
         return {
             success: true,
@@ -99,7 +104,10 @@ const _ReferenceConcept = {
         }
 
         if (isNullOrUndefined(value) || this.value === value) {
-            return;
+            return {
+                success: true,
+                message: "The value has been ignored."
+            };
         }
 
         if (this.reference) {
@@ -114,7 +122,6 @@ const _ReferenceConcept = {
         } else {
             this.reference.register(this);
             this.notify("value.changed", this.reference);
-            this.model.notify("value.changed", this);
         }
 
         return {
@@ -195,7 +202,6 @@ const _ReferenceConcept = {
                 this.reference = null;
 
                 this.notify("value.changed", this.reference);
-                this.model.notify("value.changed", this);
                 break;
 
             default:
@@ -229,6 +235,13 @@ const _ReferenceConcept = {
 
         return copy;
     },
+    clone() {
+        return {
+            id: this.id,
+            name: this.name,
+            value: this.getValue()
+        };
+    },  
     export() {
         return {
             id: this.id,
@@ -244,6 +257,15 @@ const _ReferenceConcept = {
         });
 
         return output;
+    },
+    toXML() {
+        let name = this.getName();
+
+        let start = `<${name} id="${this.id}">`;
+        let body = this.getValue();
+        let end = `</${name}>`;
+
+        return start + body + end;
     }
 };
 

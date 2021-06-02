@@ -227,6 +227,7 @@
                                             "static": {
                                                 "type": "text",
                                                 "content": "Use a prototype",
+                                                "focusable": true,
                                                 "style": {
                                                     "css": ["btn", "textual-option", "textual-option--prototype"]
                                                 }
@@ -287,6 +288,7 @@
                                             "static": {
                                                 "type": "text",
                                                 "content": "Add a prototype",
+                                                "focusable": true,
                                                 "style": {
                                                     "css": ["btn", "textual-option", "textual-option--prototype"]
                                                 }
@@ -2275,10 +2277,46 @@
                             "type": "wrap",
                             "disposition": [
                                 {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Attributes"
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            {
+                                                "type": "static",
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": "Attributes"
+                                                }
+                                            },
+                                            {
+                                                "type": "field",
+                                                "field": {
+                                                    "type": "list",
+                                                    "list": false,
+                                                    "action": {
+                                                        "add": {
+                                                            "content": [
+                                                                {
+                                                                    "type": "static",
+                                                                    "static": {
+                                                                        "type": "text",
+                                                                        "content": "New"
+                                                                    }
+                                                                }
+                                                            ],
+                                                            "help": "Add an attribute",
+                                                            "style": {
+                                                                "css": ["textual-list__btn-add", "textual-list__btn-add--before"]
+                                                            }
+                                                        },
+                                                        "remove": false
+                                                    },
+                                                    "style": {
+                                                        "css": ["textual-list", "textual-list--attribute"]
+                                                    }
+                                                }
+                                            }
+                                        ]
                                     }
                                 },
                                 {
@@ -2327,23 +2365,7 @@
                                 }
                             },
                             "action": {
-                                "add": {
-                                    "position": "before",
-                                    "help": "Add an attribute",
-                                    "content": [
-                                        {
-                                            "type": "static",
-                                            "static": {
-                                                "type": "text",
-                                                "content": "New",
-                                                "focusable": false
-                                            }
-                                        }
-                                    ],
-                                    "style": {
-                                        "css": ["textual-list__btn-add", "textual-list__btn-add--before"]
-                                    }
-                                },
+                                "add": false,
                                 "remove": {
                                     "help": "Remove attribute",
                                     "content": [
@@ -2432,10 +2454,48 @@
                             "type": "wrap",
                             "disposition": [
                                 {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Properties"
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            {
+                                                "type": "static",
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": "Properties"
+                                                }
+                                            },
+                                            {
+                                                "type": "field",
+                                                "field": {
+                                                    "type": "list",
+                                                    "list": false,
+                                                    "action": {
+                                                        "add": {
+                                                            "help": "Add a property",
+                                                            "position": "before",
+                                                            "content": [
+                                                                {
+                                                                    "type": "static",
+                                                                    "static": {
+                                                                        "type": "text",
+                                                                        "content": "New",
+                                                                        "focusable": false
+                                                                    }
+                                                                }
+                                                            ],
+                                                            "style": {
+                                                                "css": ["textual-list__btn-add"]
+                                                            }
+                                                        },
+                                                        "remove": false
+                                                    },
+                                                    "style": {
+                                                        "css": ["textual-list", "textual-list--property"]
+                                                    }
+                                                }
+                                            }
+                                        ]
                                     }
                                 },
                                 {
@@ -2484,23 +2544,7 @@
                                 }
                             },
                             "action": {
-                                "add": {
-                                    "help": "Add a property",
-                                    "position": "before",
-                                    "content": [
-                                        {
-                                            "type": "static",
-                                            "static": {
-                                                "type": "text",
-                                                "content": "New",
-                                                "focusable": false
-                                            }
-                                        }
-                                    ],
-                                    "style": {
-                                        "css": ["textual-list__btn-add"]
-                                    }
-                                },
+                                "add": false,
                                 "remove": {
                                     "help": "Remove property",
                                     "content": [

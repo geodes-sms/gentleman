@@ -87,6 +87,7 @@ const BaseListField = {
 
         this.items = new Map();
         this.elements = new Map();
+        this.children = [];
         this.focusable = focusable;
 
         if (!hasOwn(this.schema, "list")) {
@@ -130,19 +131,23 @@ const BaseListField = {
             };
         }
 
-        removeChildren(this.list);
+        if (this.list) {
+            removeChildren(this.list);
 
-        value.forEach((val) => {
-            var item = this.createItem(val);
-            this.list.append(item);
-        });
+            value.forEach((val) => {
+                var item = this.createItem(val);
+                this.list.append(item);
+            });
+        }
 
         this.refresh();
     },
 
     clear() {
         this.items.clear();
-        removeChildren(this.list);
+        if (this.list) {
+            removeChildren(this.list);
+        }
     },
 
     focus(element) {
@@ -151,7 +156,7 @@ const BaseListField = {
             this.selection.focus();
         } else if (isHTMLElement(this.selection)) {
             this.selection.focus();
-        } else if (this.hasValue()) {
+        } else if (this.hasValue() && this.list) {
             this.list.firstElementChild.focus();
         } else {
             let target = getTopElement(this.element);
@@ -171,6 +176,27 @@ const BaseListField = {
 
 
         return this;
+    },
+    navigate(dir, from, to) {
+        let target = null;
+
+        if (dir === "up") {
+            target = getBottomElement(this.element, (item) => item !== this.notification && item.hasChildNodes());
+        } else if (dir === "down") {
+            target = getTopElement(this.element, (item) => item !== this.notification && item.hasChildNodes());
+        } else if (dir === "left") {
+            target = getRightElement(this.element, (item) => item !== this.notification && item.hasChildNodes());
+        } else if (dir === "right") {
+            target = getLeftElement(this.element, (item) => item !== this.notification && item.hasChildNodes());
+        }
+
+        if (isNullOrUndefined(target)) {
+            return false;
+        }
+
+        target.focus();
+
+        return;
     },
 
     /**
@@ -306,6 +332,10 @@ const BaseListField = {
         return container;
     },
     addItem(value) {
+        if (!isHTMLElement(this.list)) {
+            return;
+        }
+
         const item = this.createItem(value);
 
         if (value.index) {
@@ -367,6 +397,7 @@ const BaseListField = {
     },
     delete(target) {
         if (target === this.element) {
+            this.environment.save(this.source.getParent());
             this.source.remove();
 
             return;
@@ -374,6 +405,12 @@ const BaseListField = {
 
         const { index } = target.dataset;
 
+
+
+        let clone = this.list.cloneNode();
+        clone.append(target.cloneNode(true));
+
+        this.environment.save(this.source, clone);
         var result = this.source.removeElementAt(+index);
 
         if (result.success) {
@@ -393,10 +430,14 @@ const BaseListField = {
     refresh() {
         if (this.hasValue()) {
             this.element.classList.remove("empty");
-            this.list.classList.remove("empty");
+            if (this.list) {
+                this.list.classList.remove("empty");
+            }
         } else {
             this.element.classList.add("empty");
-            this.list.classList.add("empty");
+            if (this.list) {
+                this.list.classList.add("empty");
+            }
         }
 
         if (this.hasChanges()) {
@@ -437,12 +478,10 @@ const BaseListField = {
         removeChildren(this.statusElement);
         if (this.hasError) {
             this.element.classList.add("error");
-            this.list.classList.add("error");
             this.statusElement.classList.add("error");
             this.statusElement.append(createNotificationMessage(NotificationType.ERROR, this.errors));
         } else {
             this.element.classList.remove("error");
-            this.list.classList.remove("error");
             this.statusElement.classList.remove("error");
         }
     },
@@ -494,7 +533,7 @@ const BaseListField = {
             this.notification.append(this.statusElement);
         }
 
-        if (!isHTMLElement(this.list)) {
+        if (list && !isHTMLElement(this.list)) {
             const { style } = list;
 
             this.list = createUnorderedList({
@@ -516,7 +555,6 @@ const BaseListField = {
             StyleHandler.call(this.projection, this.list, style);
 
             fragment.append(this.list);
-
         }
 
         let addSchema = valOrDefault(action.add, actionDefaultSchema.add);
@@ -547,17 +585,19 @@ const BaseListField = {
 
             StyleHandler.call(this.projection, addElement, style);
 
-            if (position === "before") {
+            if (position === "before" && this.list) {
                 this.list.before(addElement);
             } else {
                 fragment.append(addElement);
             }
         }
 
-        this.source.getValue().forEach((value) => {
-            var item = this.createItem(value);
-            this.list.append(item);
-        });
+        if (this.list) {
+            this.source.getValue().forEach((value) => {
+                var item = this.createItem(value);
+                this.list.append(item);
+            });
+        }
 
         StyleHandler.call(this.projection, this.element, style);
 
@@ -592,7 +632,7 @@ const BaseListField = {
         return true;
     },
     /**
-     * Handles the `space` command
+     * Handles the `delete` command
      * @param {HTMLElement} target 
      */
     deleteHandler(target) {
@@ -787,7 +827,11 @@ const BaseListField = {
             return this.arrowHandler(dir, closestItem);
         }
 
-        if (closestItem === this.list && this.list.hasChildNodes()) {
+        if (closestItem === this.list) {
+            if (!this.list.hasChildNodes()) {
+                return exit();
+            }
+            
             if (dir === "up") {
                 closestItem = getBottomElement(this.list);
             } else if (dir === "down") {
@@ -816,10 +860,12 @@ const BaseListField = {
         this.projection.registerHandler("value.changed", (value) => {
             this.clear();
 
-            this.source.getValue().forEach((value) => {
-                let item = this.createItem(value);
-                this.list.append(item);
-            });
+            if (this.list) {
+                this.source.getValue().forEach((value) => {
+                    let item = this.createItem(value);
+                    this.list.append(item);
+                });
+            }
         });
 
         this.projection.registerHandler("value.swapped", (values) => {

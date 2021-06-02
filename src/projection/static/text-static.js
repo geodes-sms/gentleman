@@ -1,4 +1,7 @@
-import { createSpan, removeChildren, isHTMLElement, isNullOrUndefined, findAncestor, valOrDefault, htmlToElement } from "zenkai";
+import {
+    createSpan, removeChildren, isHTMLElement, isNullOrUndefined, findAncestor,
+    valOrDefault, htmlToElement
+} from "zenkai";
 import { hide, show, getCaretIndex } from "@utils/index.js";
 import { StyleHandler } from "../style-handler.js";
 import { Static } from "./static.js";
@@ -38,8 +41,9 @@ const BaseTextStatic = {
     init(args = {}) {
         Object.assign(this.schema, args);
 
-        const { content, editable = false, focusable = valOrDefault(this.parent.schema.focusable, true) } = this.schema;
+        const { content, editable = false, focusable = false } = this.schema;
 
+        this.children = [];
         this._content = content;
         this.editable = editable;
         this.focusable = focusable;

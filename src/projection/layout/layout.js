@@ -1,6 +1,6 @@
-import { findAncestor, isNullOrUndefined } from "zenkai";
+import { findAncestor, getElement, isNullOrUndefined, valOrDefault } from "zenkai";
 import { StyleHandler } from './../style-handler.js';
-import { show, hide, toggle, pixelToNumber } from '@utils/index.js';
+import { show, hide, toggle, pixelToNumber, getVisibleElement } from '@utils/index.js';
 
 export const Layout = {
     /** @type {boolean} */
@@ -17,6 +17,8 @@ export const Layout = {
     container: null,
     /** @type {HTMLElement[]} */
     elements: null,
+    /** @type {*[]} */
+    children: null,
     /** @type {boolean} */
     editing: false,
 
@@ -129,13 +131,14 @@ export const Layout = {
      * @param {HTMLElement} target element
      */
     enterHandler(target) {
-        let projectionElement = this.environment.resolveElement(this.elements[0]);
+        let focusableElement = getElement('[tabindex]:not([tabindex="-1"])', this.container);
+        let child = this.environment.resolveElement(focusableElement);
 
-        if (isNullOrUndefined(projectionElement)) {
+        if (isNullOrUndefined(child)) {
             return false;
         }
 
-        projectionElement.focus();
+        child.focus();
 
         return true;
     },
@@ -151,15 +154,16 @@ export const Layout = {
      * @param {HTMLElement} target 
      */
     deleteHandler(target) {
-        if (this.projection.element === this) {
+        if (this.projection.element == this) {
+            let clone = this.container.cloneNode(true);
+
+            this.environment.save(this.source.getParent(), clone);
             this.source.delete();
             this.projection.parent.focus();
             return;
         }
 
         console.warn(`DELETE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
-
-        this.focusOut();
     },
     /**
      * Handles the `backspace` command

@@ -170,11 +170,6 @@ It can be used to define elements of the Ribbon and register actions that will b
   - **name** `[string]`: name of the resource used as reference
   - **type** `[string=json-cp]`: type of resource
   - **required** `[boolean]`: indicates whether the resource is required
-- **actions** `[array:action]`: list of actions available in the floating menu
-  - **name** `[string]`: name of the action used as reference by the registered handlers
-  - **content** `[string]`: content displayed in the menu
-  - **help** `[string]`: content displayed in tooltip
-  - **options** `[object]`: list of options
 
 ### Example
 
@@ -212,23 +207,4 @@ It can be used to define elements of the Ribbon and register actions that will b
     }
 }
 
-```
-
-## Register actions
-
-Every action declared in the configuration will need a handler.
-
-``` js
-  const handler = {
-      "preview-projection": function (target) {
-        if (!this.hasResource("metamodel")) {
-            ...
-            return false;
-        }
-
-        this.triggerEvent({ "name": "build-projection", options: { download: false } }, (pmodel) => {
-            ...
-        });
-    }
-  }
 ```

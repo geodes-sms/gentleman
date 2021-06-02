@@ -199,7 +199,7 @@
                                                 "type": "static", 
                                                 "static": {
                                                     "type": "text",
-                                                    "content": "Content"
+                                                    "content": "Config"
                                                 }
                                             }
                                         ],

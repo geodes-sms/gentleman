@@ -1,23 +1,14 @@
 {
-    "editor": {
-        "name": "Gentleman concept",
-        "concepts": [
-            {
-                "name": "concrete concept"
-            },
-            {
-                "name": "prototype concept"
-            },
-            {
-                "name": "derivative concept"
-            }
-        ],
-        "actions": [
-            {
-                "name": "build-concept",
-                "content": "Build",
-                "help": "Build the concepts"
-            }
-        ]
-    }
+    "name": "Gentleman concept",
+    "concepts": [
+        {
+            "name": "concrete concept"
+        },
+        {
+            "name": "prototype concept"
+        },
+        {
+            "name": "derivative concept"
+        }
+    ]
 }

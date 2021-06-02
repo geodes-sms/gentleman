@@ -67,9 +67,19 @@ const BasePrototypeConcept = {
     getTarget() {
         return this.target;
     },
+    restore(state) {console.log(state);
+        const { value } = state;
+
+        if(isNullOrUndefined(value)) {
+            return;
+        }
+        
+        let concept = this.createConcept(value.name, value);
+        this.setValue(concept);
+    },
     setValue(_value) {
         let value = _value.name || _value;
-        
+
         let result = this.validate(value);
 
         if (result !== ResponseCode.SUCCESS) {
@@ -97,7 +107,6 @@ const BasePrototypeConcept = {
         this.value = value;
 
         this.notify("value.changed", this.value);
-        this.model.notify("value.changed", this);
 
         return {
             success: true,
@@ -115,7 +124,6 @@ const BasePrototypeConcept = {
         this.value = null;
 
         this.notify("value.changed", this.value);
-        this.model.notify("value.changed", this);
 
         return {
             success: true,
@@ -244,6 +252,19 @@ const BasePrototypeConcept = {
 
         return copy;
     },
+    clone() {
+        let value = null;
+
+        if (this.hasValue()) {
+            value = this.target.clone();
+        }
+
+        return {
+            id: this.id,
+            name: this.name,
+            value: value,
+        };
+    },
     export() {
         let value = null;
 
@@ -261,6 +282,19 @@ const BasePrototypeConcept = {
             value: value,
         };
     },
+    toXML() {
+        if (!this.hasValue()) {
+            return "";
+        }
+
+        let name = this.getName();
+
+        let start = `<${name} id="${this.id}">`;
+        let body = this.target.attributes.map(attr => attr.toXML()).join("");
+        let end = `</${name}>`;
+
+        return start + body + end;
+    }
 };
 
 function resolveAccept(accept) {

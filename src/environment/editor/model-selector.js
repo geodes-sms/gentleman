@@ -321,6 +321,19 @@ const ActionHandler = {
     "value": function (value) {
         const fragment = createDocFragment();
 
+        let btnClone = createButton({
+            class: ["btn", "editor-selector__action-bar-button", "editor-selector__action-bar-button--clone"],
+            dataset: {
+                action: "create-instance:value",
+                id: value.id,
+            }
+        }, createI({
+            class: ["ico", "ico-plus", "btn-content"],
+            dataset: {
+                ignore: "all",
+            }
+        }, "+"));
+
         let btnCopy = createButton({
             class: ["btn", "editor-selector__action-bar-button", "editor-selector__action-bar-button--clone"],
             dataset: {
@@ -347,7 +360,7 @@ const ActionHandler = {
             }
         }, "✖"));
 
-        fragment.append(btnDelete, btnCopy);
+        fragment.append(btnDelete, btnCopy, btnClone);
 
         return fragment;
     },

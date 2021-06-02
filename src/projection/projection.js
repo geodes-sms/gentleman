@@ -118,6 +118,18 @@ const Projection = {
         }
     },
     /**
+     * Gets the projection parent if exist
+     * @param {string} [name]
+     * @returns {Concept}
+     */
+    getParent() {
+        if (this.isRoot()) {
+            return null;
+        }
+
+        return this.parent;
+    },
+    /**
      * Get the defined attributes
      * @param {string} name 
      * @returns {*[]}
@@ -348,7 +360,9 @@ const Projection = {
             });
 
             btnDelete.addEventListener('click', (event) => {
+                this.environment.save(this.concept.getParent(), this.getContainer().cloneNode(true));
                 this.concept.delete();
+                this.getParent().focus();
             });
 
             container.dataset.deletable = true;

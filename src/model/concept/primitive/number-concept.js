@@ -1,4 +1,4 @@
-import { isNullOrWhitespace, isObject, isEmpty, isNullOrUndefined, valOrDefault } from "zenkai";
+import { isNullOrWhitespace, isObject, isNullOrUndefined, valOrDefault } from "zenkai";
 import { Concept } from "./../concept.js";
 
 
@@ -11,7 +11,7 @@ const ResponseCode = {
     FIX_ERROR: 404,
 };
 
-function responseHandler(code) {
+function responseHandler(code, ctx) {
     let cvalue = this.constraint.value;
 
     switch (code) {
@@ -23,22 +23,22 @@ function responseHandler(code) {
         case ResponseCode.INVALID_VALUE:
             return {
                 success: false,
-                message: "The value is not included in the list of valid values."
+                message: `Valid values: ${ctx}`
             };
         case ResponseCode.MAX_ERROR:
             return {
                 success: false,
-                message: `The value is greater than the maximum allowed: ${cvalue.max.value}.`
+                message: `Maximum allowed: ${ctx.value}.`
             };
         case ResponseCode.MIN_ERROR:
             return {
                 success: false,
-                message: `The value is less than the minimum allowed: ${cvalue.min.value}.`
+                message: `Minimum allowed: ${ctx.value}.`
             };
         case ResponseCode.FIX_ERROR:
             return {
                 success: false,
-                message: `The value is different from the value allowed: ${cvalue.value}.`
+                message: `Value allowed: ${ctx.value}.`
             };
     }
 }
@@ -118,7 +118,6 @@ const _NumberConcept = {
         }
 
         this.notify("value.changed", value);
-        this.model.notify("value.changed", this);
 
         return {
             success: true,
@@ -129,12 +128,16 @@ const _NumberConcept = {
         this.value = null;
 
         this.notify("value.changed", this.value);
-        this.model.notify("value.changed", this);
 
         return {
             success: true,
             message: "The value has been successfully updated."
         };
+    },
+    restore(state) {
+        const { value } = state;
+
+        this.setValue(value);
     },
 
     getCandidates() {
@@ -158,51 +161,65 @@ const _NumberConcept = {
             return ResponseCode.INVALID_NUMBER;
         }
 
+        if (!this.hasConstraint()) {
+            return {
+                code: ResponseCode.SUCCESS
+            };
+        }
 
-        let cvalue = this.constraint.value;
+        if (this.hasConstraint("value")) {
+            let valueConstraint = this.getConstraint("value");
 
-        if (cvalue) {
-            const { min, max } = cvalue;
+            const { type } = valueConstraint;
+            
+            if (type === "range") {
+                const { min, max } = valueConstraint[type];
 
-            if (cvalue.value && value !== cvalue.value) {
-                return ResponseCode.FIX_ERROR;
-            }
-
-            if (min) {
-                if (min.included && value < min.value) {
-                    return ResponseCode.MIN_ERROR;
+                if (min && value.length < min.value) {
+                    return {
+                        code: ResponseCode.MIN_ERROR,
+                        ctx: min
+                    };
                 }
-                if (!min.included && value <= min.value) {
-                    return ResponseCode.MIN_ERROR;
-                }
-            }
 
-            if (max) {
-                if (max.included && value > max.value) {
-                    return ResponseCode.MAX_ERROR;
+                if (max && value.length > max.value) {
+                    return {
+                        code: ResponseCode.MAX_ERROR,
+                        ctx: max
+                    };
                 }
-                if (!max.included && value >= max.value) {
-                    return ResponseCode.MAX_ERROR;
+            } else if (type === "fixed") {
+                const { value: fixedValue } = valueConstraint[type];
+
+                if (value.length !== fixedValue) {
+                    return {
+                        code: ResponseCode.FIX_ERROR,
+                        ctx: valueConstraint[type]
+                    };
                 }
             }
         }
 
-        if (isNullOrWhitespace(value) || isEmpty(this.values)) {
-            return ResponseCode.SUCCESS;
-        }
+        if (this.hasConstraint("values")) {
+            let values = this.getConstraint("values").map(value => resolveValue.call(this, value)).flat();
 
-        var found = false;
-        for (let i = 0; !found && i < this.values.length; i++) {
-            const val = this.values[i];
-            if (isObject(val)) {
-                found = val.value == value;
-            } else {
-                found = val == value;
+            let found = false;
+            for (let i = 0; !found && i < values.length; i++) {
+                const val = values[i];
+
+                if (isObject(val)) {
+                    found = val.value === value;
+                } else {
+                    found = val === value;
+                }
             }
-        }
 
-        if (!found) {
-            return ResponseCode.INVALID_VALUE;
+            if (!found) {
+                return {
+                    code: ResponseCode.INVALID_VALUE,
+                    ctx: values
+                };
+            }
         }
 
         return ResponseCode.SUCCESS;
@@ -226,6 +243,13 @@ const _NumberConcept = {
 
         return copy;
     },
+    clone() {
+        return {
+            id: this.id,
+            name: this.name,
+            value: this.getValue()
+        };
+    },  
     export() {
         return {
             id: this.id,
@@ -237,7 +261,32 @@ const _NumberConcept = {
     toString() {
         return this.value;
     },
+    toXML() {
+        let name = this.getName();
+
+        let start = `<${name} id="${this.id}">`;
+        let body = this.getValue();
+        let end = `</${name}>`;
+
+        return start + body + end;
+    }
 };
+
+function resolveValue(value) {
+    if (value.type === "reference") {
+        let concepts = [];
+
+        if (this.model.isPrototype("model concept")) {
+            concepts = this.model.getConceptsByPrototype("model concept");
+        }
+
+        let values = concepts.map(c => c.getChildren(this.name)).flat().map(c => c.value);
+
+        return values;
+    } 
+
+    return value;
+}
 
 
 export const NumberConcept = Object.assign(

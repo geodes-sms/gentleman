@@ -76,7 +76,7 @@ const ProjectionHandler = {
     "field": buildField,
 };
 
-export function buildProjectionHandler(args = [], _options = {}) {
+export function buildProjectionHandler(_options = {}) {
     const result = [];
 
     const { conceptModel } = this;

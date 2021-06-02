@@ -122,6 +122,7 @@ const BaseChoiceField = {
         this.focusable = focusable;
         this.expanded = expanded;
         this.placeholder = placeholder;
+        this.children = [];
 
         // TODO: Add group support
 
@@ -198,6 +199,19 @@ const BaseChoiceField = {
             this.value = value;
         }
 
+        if (this.selection && !this.expanded) {
+            let clone = this.selection.cloneNode(true);
+
+            removeChildren(this.selectListValue);
+            while (this.selection.childNodes.length > 0) {
+                this.selectListValue.append(this.selection.childNodes[0]);
+            }
+
+            while (clone.childNodes.length > 0) {
+                this.selection.append(clone.childNodes[0]);
+            }
+        }
+
         this.refresh();
     },
 
@@ -209,6 +223,10 @@ const BaseChoiceField = {
         } else {
             this.element.classList.add("empty");
             this.element.dataset.value = "";
+
+            if (!this.expanded && this.placeholder) {
+                removeChildren(this.selectListValue).append(this.placeholder);
+            }
         }
 
         if (this.hasChanges()) {
@@ -220,24 +238,6 @@ const BaseChoiceField = {
         if (this.input) {
             this.element.dataset.input = this.input.value;
         }
-
-        if (!this.expanded) {
-            const { children } = this.choices;
-
-            if (this.selection) {
-                let clone = this.selection.cloneNode(true);
-                removeChildren(this.selectListValue);
-                while (this.selection.childNodes.length > 0) {
-                    this.selectListValue.append(this.selection.childNodes[0]);
-                }
-                while (clone.childNodes.length > 0) {
-                    this.selection.append(clone.childNodes[0]);
-                }
-            } else if (this.placeholder) {
-                removeChildren(this.selectListValue).append(this.placeholder);
-            }
-        }
-
 
         this.element.classList.remove("querying");
 
@@ -467,6 +467,27 @@ const BaseChoiceField = {
 
         return this;
     },
+    navigate(dir, from, to) {
+        let target = null;
+
+        if (dir === "up") {
+            target = getBottomElement(this.element);
+        } else if (dir === "down") {
+            target = getTopElement(this.element);
+        } else if (dir === "left") {
+            target = getRightElement(this.element);
+        } else if (dir === "right") {
+            target = getLeftElement(this.element);
+        }
+
+        if (isNullOrUndefined(target)) {
+            return false;
+        }
+
+        target.focus();
+
+        return;
+    },
     focusIn() {
         this.focused = true;
         this.element.classList.add("active");
@@ -475,7 +496,7 @@ const BaseChoiceField = {
         const fragment = createDocFragment();
 
         this.source.getCandidates()
-            .filter(val => !this.values.some(value => value.id === val.id))
+            .filter(val => !this.values.some(value => isSame(value, val)))
             .forEach(value => {
                 fragment.append(this.createChoiceOption(value));
                 this.values.push(value);
@@ -785,6 +806,7 @@ const BaseChoiceField = {
             if (type === "placeholder") {
                 this.source.removeValue();
             } else {
+                this.environment.save(this.source);
                 this.setValue(getItemValue.call(this, item), true);
             }
 
@@ -813,6 +835,14 @@ const BaseChoiceField = {
 
         if (isHTMLElement(item) && this.selection !== item) {
             let type = getItemType(item);
+
+            if (this.hasValue()) {
+                let parent = this.projection.getContainer();
+                let clone = parent.cloneNode(true);
+                // clone.append(target.cloneNode(true));
+
+                this.environment.save(this.source, clone);
+            }
 
             if (type === "placeholder") {
                 this.source.removeValue();

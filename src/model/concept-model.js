@@ -109,6 +109,7 @@ export const ConceptModel = {
         }
 
         this.concepts.push(concept);
+        concept.register(this.environment);
 
         return this;
     },
@@ -392,6 +393,13 @@ export const ConceptModel = {
         return JSON.stringify({
             [this.root.name]: this.root.toString()
         });
+    },
+    toXML() {
+        let start = `<model:gentleman>`;
+        let body = this.getRootConcepts().map(concept => concept.toXML()).join("");
+        let end = `</model:gentleman>`;
+        
+        return start + body + end;
     },
 };
 

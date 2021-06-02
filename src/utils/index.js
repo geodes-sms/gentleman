@@ -5,3 +5,4 @@ export * from './dom.js';
 export * from './object-helpers.js';
 export * from './pubsub.js';
 export * from './uuid.js';
+export * from './browser.js';

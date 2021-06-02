@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Gentleman</title>
-    <meta name="desciption"
-        content="A web-based projectional editor. Enjoy a new way to express and interact with your DSL.">
+    <title>Gentleman | Mindmap</title>
+    <meta name="desciption" content="A mindmap gentleman editor.">
     <link rel="stylesheet" href="./../dist/style.min.css">
     <link rel="stylesheet" href="./../assets/css/samples/mindmap.css">
     <style>
@@ -18,9 +17,7 @@
         h1,
         h2,
         h3,
-        h4,
-        h5,
-        h6 {
+        h4 {
             font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
         }
 
@@ -88,8 +85,7 @@
                 <div class="app-editor" data-gentleman="editor"></div>
             </div>
         </section>
-        <aside class="side-view">
-        </aside>
+        <!-- <aside class="side-view"></aside> -->
     </main>
     <footer class="page-footer">
         <div class="content-wrapper">
@@ -99,8 +95,8 @@
 
     <script src="./../dist/gentleman.core.js"></script>
     <script>
-        const container = document.querySelector(".app");
-        Gentleman.Task.getEditor(".app-editor", container).init({
+        let editor = Gentleman.activateEditor(".app-editor")[0]
+        editor.init({
             config: {
                 name: "Mindmap",
                 concepts: [{ name: "mindmap" }]

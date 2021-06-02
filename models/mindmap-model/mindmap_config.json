@@ -1,10 +1,8 @@
 {
-    "editor": {
-        "name": "Mindmap",
-        "concepts": [
-            {
-                "name": "mindmap"
-            }
-        ]
-    }
+    "name": "Mindmap",
+    "concepts": [
+        {
+            "name": "mindmap"
+        }
+    ]
 }

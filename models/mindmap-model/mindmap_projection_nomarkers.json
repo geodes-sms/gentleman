@@ -73,12 +73,6 @@
                     },
                     {
                         "type": "attribute",
-                        "name": "markers",
-                        "tag": "markers",
-                        "required": true
-                    },
-                    {
-                        "type": "attribute",
                         "name": "topic",
                         "tag": "",
                         "required": true
@@ -86,27 +80,6 @@
                 ],
                 "style": {
                     "css": ["mindmap"]
-                }
-            }
-        },
-        {
-            "id": "60efd021-2465-4315-b22b-ee8d9c699c56",
-            "concept": { "name": "marker" },
-            "type": "layout",
-            "tags": ["list"],
-            "content": {
-                "type": "wrap",
-                "disposition": [
-                    {
-                        "type": "attribute",
-                        "name": "symbol",
-                        "tag": "marker",
-                        "required": true,
-                        "placeholder": []
-                    }
-                ],
-                "style": {
-                    "css": ["mindmap-marker"]
                 }
             }
         },
@@ -147,10 +120,20 @@
                             "justifyContent": "center",
                             "disposition": [
                                 {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Central topic"
+                                    }
+                                },
+                                {
                                     "type": "attribute",
                                     "name": "name",
-                                    "tag": "central-topic",
-                                    "required": true
+                                    "tag": "name",
+                                    "required": true,
+                                    "style": {
+                                        "ref": ["box-left"]
+                                    }
                                 }
                             ],
                             "style": {
@@ -281,12 +264,6 @@
                                     "type": "attribute",
                                     "name": "marker",
                                     "required": true
-                                },
-                                {
-                                    "type": "attribute",
-                                    "name": "subsubtopics",
-                                    "tag": "add-action",
-                                    "required": true
                                 }
                             ],
                             "style": {
@@ -312,122 +289,7 @@
             }
         },
 
-        {
-            "id": "4786dbc6-dba6-46f4-b93b-48ee715bc7a2",
-            "concept": { "name": "set" },
-            "type": "field",
-            "tags": ["markers"],
-            "content": {
-                "type": "list",
-                "readonly": false,
-                "disabled": false,
-                "list": {
-                    "item": {
-                        "template": { "tag": "list", "name": "" },
-                        "style": {
-                            "css": ["mindmap-marker-set__list-item"],
-                            "gss": {
-                                "box": {
-                                    "outer": {
-                                        "right": { "value": 4, "unit": "px" },
-                                        "bottom": { "value": 6, "unit": "px" }
-                                    },
-                                    "inner": {
-                                        "all": { "value": 0, "unit": "px" }
-                                    }
-                                }
-                            }
-                        }  
-                    },
-                    "style": {
-                        "css": ["mindmap-marker-set__list"],
-                        "gss": {
-                            "box": {
-                                "inner": {
-                                    "top": { "value": 6, "unit": "px" },
-                                    "bottom": { "value": 6, "unit": "px" },
-                                    "right": { "value": 12, "unit": "px" },
-                                    "left":  { "value": 12, "unit": "px" }
-                                }
-                            }
-                        }
-                    }  
-                },
-                "action": {
-                    "add": {
-                        "content": [
-                            {
-                                "type": "static",
-                                "static": {
-                                    "type": "text",
-                                    "content": "Add a marker",
-                                    "style": {
-                                        "gss": {
-                                            "text": {
-                                                "bold": true,
-                                                "color": { "value": "#fff", "type": "hex" }
-                                            },
-                                            "box": {
-                                                "inner": {
-                                                    "right": { "value": 6, "unit": "px" },
-                                                    "left": { "value": 6, "unit": "px" }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        ],
-                        "style": {
-                            "css": ["mindmap-marker-set__btn-add"],
-                            "gss": {
-                                "text": {
-                                    "color": { "type": "hex", "value": "#fff" }
-                                },
-                                "box": {
-                                    "inner": {
-                                        "top": { "value": 6, "unit": "px" },
-                                        "bottom": { "value": 6, "unit": "px" },
-                                        "right": { "value": 12, "unit": "px" },
-                                        "left":  { "value": 12, "unit": "px" }
-                                    },
-                                    "background": {
-                                        "color": { "type": "hex", "value": "#0685f4" }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "remove": {
-                        "content": [
-                            {
-                                "type": "static",
-                                "static": {
-                                    "type": "text",
-                                    "content": "✖"
-                                }
-                            }
-                        ],
-                        "style": {
-                            "css": ["mindmap-marker-set__btn-remove"],
-                            "gss": {
-                                "text": {
-                                    "color": { "type": "hex", "value": "#fff" }
-                                },
-                                "box": {
-                                    "background": {
-                                        "color": { "type": "hex", "value": "#b33d32" }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "style": {
-                    "css": ["mindmap-marker-set"]
-                }
-            }
-        },
+
         {
             "id": "a6e162da-6f32-4e28-b864-44aecfe282e1",
             "concept": { "name": "set" },
@@ -617,7 +479,38 @@
                     }
                 },
                 "action": {
-                    "add": false,
+                    "add": {
+                        "help": "Add a subsubtopic",
+                        "content": [
+                            {
+                                "type": "static",
+                                "static": {
+                                    "type": "text",
+                                    "content": "New subtopic"
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["mindmap-subsubtopic-set__btn-add"],
+                            "gss": {
+                                "text": {
+                                    "color": { "type": "hex", "value": "#fff" },
+                                    "size": { "value": 1.3, "unit": "rem" }
+                                },
+                                "box": {
+                                    "inner": {
+                                        "top": { "value": 3, "unit": "px" },
+                                        "right": { "value": 6, "unit": "px" },
+                                        "bottom": { "value": 4, "unit": "px" },
+                                        "left": { "value": 6, "unit": "px" }
+                                    },
+                                    "background": {
+                                        "color": { "type": "hex", "value": "#ff857a" }
+                                    }
+                                }
+                            }
+                        }
+                    },
                     "remove": {
                         "content": [
                             {
@@ -637,53 +530,6 @@
                                 "box": {
                                     "background": {
                                         "color": { "type": "hex", "value": "#b33d32" }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "style": {
-                    "css": ["mindmap-subsubtopic-set"]
-                }
-            }
-        },
-        {
-            "id": "8f827a81-b3a4-48ff-b3fb-f3a79b886e15",
-            "concept": { "name": "set" },
-            "type": "field",
-            "tags": ["add-action"],
-            "content": {
-                "type": "list",
-                "readonly": false,
-                "disabled": false,
-                "list": false,
-                "action": {
-                    "add": {
-                        "help": "Add a subsubtopic",
-                        "content": [
-                            {
-                                "type": "static",
-                                "static": {
-                                    "type": "text",
-                                    "content": "+"
-                                }
-                            }
-                        ],
-                        "style": {
-                            "css": ["mindmap-subsubtopic-set__btn-add"],
-                            "ref": ["box-left"],
-                            "gss": {
-                                "text": {
-                                    "color": { "type": "hex", "value": "#fff" },
-                                    "size": { "value": 2, "unit": "rem" },
-                                    "bold": 300
-                                },
-                                "box": {
-                                    "width": { "value": 24, "unit": "px" },
-                                    "height": { "value": 24, "unit": "px" },
-                                    "background": {
-                                        "color": { "type": "hex", "value": "#ff857a" }
                                     }
                                 }
                             }
@@ -794,29 +640,6 @@
                 "input": {
                     "type": "text",
                     "placeholder": "topic",
-                    "style": {
-                        "css": ["mindmap-textbox-input"]
-                    }
-                },
-                "style": {
-                    "css": ["mindmap-textbox"]
-                }
-            }
-        },
-        {
-            "id": "ael21728-503b-404b-9ql4-3a407te77703",
-            "concept": { "name": "string" },
-            "type": "field",
-            "tags": ["central-topic"],
-            "content": {
-                "type": "text",
-                "readonly": false,
-                "disabled": false,
-                "multiline": false,
-                "resizable": true,
-                "input": {
-                    "type": "text",
-                    "placeholder": "Central topic",
                     "style": {
                         "css": ["mindmap-textbox-input"]
                     }

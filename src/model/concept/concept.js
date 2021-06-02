@@ -96,7 +96,7 @@ const _Concept = {
             if (isNullOrUndefined(this.ref)) {
                 return undefined;
             }
-            
+
             return this.ref.name;
         }
 
@@ -365,6 +365,24 @@ const _Concept = {
 
         return copy;
     },
+    clone() {
+        const output = {
+            id: this.id,
+            name: this.name
+        };
+
+        var attributes = [];
+        this.getAttributes().forEach(attr => {
+            attributes.push({
+                "name": attr.name,
+                "value": attr.clone()
+            });
+        });
+
+        output.attributes = attributes;
+
+        return output;
+    },
     export() {
         const output = {
             id: this.id,
@@ -393,6 +411,15 @@ const _Concept = {
 
         return output;
     },
+    toXML() {
+        let name = this.getName().replace(" ", "-");
+
+        let start = `<${name} id="${this.id}">`;
+        let body = this.attributes.map(attr => attr.toXML()).join("");
+        let end = `</${name}>`;
+        
+        return start + body + end;
+    }
 };
 
 function StringProperty(value) {
@@ -409,7 +436,6 @@ function StringProperty(value) {
             break;
     }
 }
-
 
 function resolveTerm(term, defValue) {
     const { type } = term;

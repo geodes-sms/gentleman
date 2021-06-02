@@ -1,1 +1,185 @@
-{"concept":[{"id":"b092e6e2-37be-4258-96c2-6cf1870a70ea","name":"mindmap","description":"","nature":"concrete","attributes":[{"name":"title","target":{"name":"string"},"required":true,"description":""},{"name":"markers","target":{"name":"set","accept":{"name":"marker"},"ordered":true,"constraint":{"cardinality":{"type":"range","range":{"min":{"value":0}}}}},"required":true,"description":""},{"name":"topic","target":{"name":"centraltopic"},"required":true,"description":""}],"properties":[]},{"id":"b395cc7b-ebf0-40e6-966a-cd9623f314e1","name":"marker","description":"","nature":"concrete","attributes":[{"name":"symbol","target":{"name":"string"},"required":true,"description":""}],"properties":[]},{"id":"737d3991-0a43-4b40-bae6-108c96374e07","name":"topic","description":"","nature":"prototype","attributes":[{"name":"name","target":{"name":"string"},"required":true,"description":""},{"name":"marker","target":{"name":"reference","accept":{"name":"marker"}},"required":false,"description":""}],"properties":[]},{"id":"23d06867-0522-44f6-bdd3-cc4f06f1cf3a","name":"centraltopic","description":"","nature":"concrete","attributes":[{"name":"maintopics","target":{"name":"set","accept":{"name":"maintopic"},"ordered":true},"required":true,"description":""}],"properties":[],"prototype":"topic"},{"id":"39538103-a2a0-4268-9240-c7425cacb104","name":"maintopic","description":"","nature":"concrete","attributes":[{"name":"subtopics","target":{"name":"set","accept":{"name":"subtopic"},"ordered":true},"required":true,"description":""}],"properties":[],"prototype":"topic"},{"id":"4dfedb06-9556-461b-9851-35b1f3ca4ed3","name":"subtopic","description":"","nature":"concrete","attributes":[{"name":"subsubtopics","target":{"name":"set","accept":{"name":"subtopic"},"ordered":true},"required":false,"description":""}],"properties":[],"prototype":"topic"}]}
+{
+    "concept": [
+        {
+            "id": "b092e6e2-37be-4258-96c2-6cf1870a70ea",
+            "name": "mindmap",
+            "description": "",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "title",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "length": {
+                                "type": "range",
+                                "range": {
+                                    "min": {
+                                        "value": 2
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true,
+                    "description": ""
+                },
+                {
+                    "name": "markers",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "marker"
+                        },
+                        "ordered": true,
+                        "constraint": {
+                            "cardinality": {
+                                "type": "range",
+                                "range": {
+                                    "min": {
+                                        "value": 0
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true,
+                    "description": ""
+                },
+                {
+                    "name": "topic",
+                    "target": {
+                        "name": "centraltopic"
+                    },
+                    "required": true,
+                    "description": ""
+                }
+            ],
+            "properties": []
+        },
+        {
+            "id": "b395cc7b-ebf0-40e6-966a-cd9623f314e1",
+            "name": "marker",
+            "description": "",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "symbol",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "length": {
+                                "type": "range",
+                                "range": {
+                                    "min": {
+                                        "value": 1
+                                    },
+                                    "max": {
+                                        "value": 12
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true,
+                    "description": ""
+                }
+            ],
+            "properties": []
+        },
+        {
+            "id": "737d3991-0a43-4b40-bae6-108c96374e07",
+            "name": "topic",
+            "description": "",
+            "nature": "prototype",
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true,
+                    "description": ""
+                },
+                {
+                    "name": "marker",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "marker"
+                        }
+                    },
+                    "required": false,
+                    "description": ""
+                }
+            ],
+            "properties": []
+        },
+        {
+            "id": "23d06867-0522-44f6-bdd3-cc4f06f1cf3a",
+            "name": "centraltopic",
+            "description": "",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "maintopics",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "maintopic"
+                        },
+                        "ordered": true
+                    },
+                    "required": true,
+                    "description": ""
+                }
+            ],
+            "properties": [],
+            "prototype": "topic"
+        },
+        {
+            "id": "39538103-a2a0-4268-9240-c7425cacb104",
+            "name": "maintopic",
+            "description": "",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "subtopics",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "subtopic"
+                        },
+                        "ordered": true
+                    },
+                    "required": true,
+                    "description": ""
+                }
+            ],
+            "properties": [],
+            "prototype": "topic"
+        },
+        {
+            "id": "4dfedb06-9556-461b-9851-35b1f3ca4ed3",
+            "name": "subtopic",
+            "description": "",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "subsubtopics",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "subtopic"
+                        },
+                        "ordered": true
+                    },
+                    "required": false,
+                    "description": ""
+                }
+            ],
+            "properties": [],
+            "prototype": "topic"
+        }
+    ]
+}

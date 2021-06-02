@@ -15,6 +15,7 @@ export const ObserverHandler = {
     },
     unregister(listener) {
         var index = this.listeners.indexOf(listener);
+        
         if (index !== -1) {
             this.listeners.splice(index, 1);
             

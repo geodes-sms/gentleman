@@ -16,6 +16,8 @@ const BaseField = {
     attached: null,
     /** @type {string[]} */
     errors: null,
+    /** @type {*[]} */
+    children: null,
 
     /** @type {boolean} */
     readonly: false,
@@ -54,6 +56,7 @@ const BaseField = {
                     id: this.id,
                 }
             });
+
             this.notification.append(this.messageElement);
         }
 

@@ -1,6 +1,6 @@
 import {
     createDocFragment, createDiv, createH3, createButton, createHeader,
-    removeChildren, isHTMLElement, valOrDefault, isNullOrWhitespace,
+    removeChildren, isHTMLElement, valOrDefault, isNullOrWhitespace, isNullOrUndefined, createParagraph,
 } from 'zenkai';
 import { show, hide, toggle, collapse, expand, NotificationType, makeResizable } from '@utils/index.js';
 
@@ -97,6 +97,10 @@ export const EditorInstance = {
     refresh() {
         this.container.dataset.size = `${this.size}`;
 
+        if (isNullOrUndefined(this.projection)) {
+            this.body.textContent = `No projection found`;
+        }
+
         if (this.fullscreen) {
             this.container.classList.add('focus');
         } else {
@@ -121,7 +125,7 @@ export const EditorInstance = {
         if (!isHTMLElement(this.container)) {
             this.container = createDiv({
                 class: ["editor-concept", `editor-concept--${this.ctype}`],
-                tabindex: -1,
+                tabindex: 0,
                 title: this.schema.type === "concept" ? `Instance of "${_name}"` : `Linked instance of "${_name}"`,
                 dataset: {
                     nature: "concept-container",
@@ -138,8 +142,6 @@ export const EditorInstance = {
 
             fragment.append(this.header);
         }
-
-        fragment.append(this.projection.render());
 
         if (!isHTMLElement(this.btnClose)) {
             this.btnClose = createButton({
@@ -196,6 +198,18 @@ export const EditorInstance = {
 
         removeChildren(this.header).append(this.title, toolbar);
 
+        if (this.body) {
+            this.body.remove();
+        }
+
+        if (this.projection) {
+            this.body = this.projection.render();
+        } else {
+            this.body = createParagraph();
+        }
+
+        fragment.append(this.body);
+
         if (fragment.hasChildNodes()) {
             this.container.appendChild(fragment);
             this.bindEvents();
@@ -236,7 +250,7 @@ export const EditorInstance = {
                 }
                 break;
             case "DELETE-PROJECTION":
-                if (!this.projection.delete()) {
+                if (this.projection && !this.projection.delete()) {
                     this.notify("The projection could not be deleted", NotificationType.ERROR);
                     return this;
                 }
@@ -257,7 +271,7 @@ export const EditorInstance = {
         });
 
         this.header.addEventListener("focusout", (event) => {
-            if(isNullOrWhitespace(this.title.textContent)) {
+            if (isNullOrWhitespace(this.title.textContent)) {
                 this.title.textContent = this.concept.name;
             }
         });

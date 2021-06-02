@@ -1,5 +1,5 @@
-import { createDocFragment, createSpan, createI, removeChildren, isHTMLElement, } from "zenkai";
-import { hide, show, shake, NotificationType } from "@utils/index.js";
+import { createDocFragment, createSpan, createI, } from "zenkai";
+import { NotificationType } from "@utils/index.js";
 
 
 /**

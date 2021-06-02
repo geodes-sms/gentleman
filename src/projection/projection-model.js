@@ -57,7 +57,7 @@ const PREDEFINED_PROJECTIONS = [
  */
 export function createProjectionModel(schema, environment) {
     const model = Object.create(ProjectionModel, {
-        schema: { value: [...schema, ...PREDEFINED_PROJECTIONS] },
+        schema: { value: [...schema, ...PREDEFINED_PROJECTIONS], writable: true },
         environment: { value: environment },
     });
 
@@ -83,11 +83,17 @@ export const ProjectionModel = {
 
         return this;
     },
+    setSchema(schema) {
+        this.schema = [...schema, ...PREDEFINED_PROJECTIONS];
+
+        return this;
+    },
     done() {
         // TODO check if has model changes
 
-        this.projections.forEach(projection => {
-        });
+        while (!isEmpty(this.projections)) {
+            this.projections[0].delete();
+        }
 
         this.projections = [];
         this.fields.clear();
@@ -347,7 +353,7 @@ export const ProjectionModel = {
 
         return deepCopy(schema);
     },
-    
+
     /**
      * Verifies the projection matching a concept and optionnally a tag
      * @param {*} concept 

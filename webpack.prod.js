@@ -11,7 +11,7 @@ module.exports = merge(common, {
             import: './src/index.js',
             library: { name: 'Gentleman', type: "umd" },
         },
-        models: './scripts/models.js',
+        app: './app/index.js',
     },
     output: {
         filename: 'gentleman.[name].js',

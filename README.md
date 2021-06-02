@@ -29,7 +29,7 @@ The *modelling* workflow is reserved for the creation of concept instances using
 ## Demonstration
 
 - Mindmap (app): [Create a mindmap](https://geodes-sms.github.io/gentleman/demo/mindmap.html)
-- Sandbox (app): [Play with Gentleman](https://geodes-sms.github.io/gentleman/demo/index.html)
+- Sandbox (app): [Play with Gentleman](https://geodes-sms.github.io/gentleman/demo/app.html)
 - At MODELS 2020 (video): [Live demonstration (MODELS 2020)](https://youtu.be/wJ4hVZjmrv4)
 
 ## Tutorial
@@ -59,7 +59,6 @@ Gentleman can be added to any web application in 2 steps:
         <div data-gentleman="editor"></div>
         ...
         <script src="gentleman.core.js"></script>
-        <script src="gentleman.models.js"></script>  <!-- required for << metamodelling workflow >> -->
     </body>
 </html>
 ```

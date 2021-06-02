@@ -2,11 +2,11 @@
 
 // Import CSS
 import './stylesheets.js';
-import '@css/samples/gentleman.css';
-// import '@css/samples/mindmap.css';
+// import '@css/samples/gentleman.css';
+import '@css/samples/mindmap.css';
 
 import { Manager } from './manager.js';
-import { getElement, getElements, isNullOrUndefined } from 'zenkai';
+import { cloneTemplate, getElement, getTemplate, getUrlParams } from 'zenkai';
 
 const CMODEL__EDITOR = require('@models/concept-model/editor-config.json');
 const CMODEL__CONCEPT = require('@models/concept-model/concept.json');
@@ -26,6 +26,8 @@ Models.set("concept-model", Object.assign({}, CMODEL__EDITOR, CMODEL__CONCEPT, C
 Models.set("projection-model", Object.assign({}, PMODEL__EDITOR, PMODEL__CONCEPT, PMODEL__PROJECTION));
 Models.set("mindmap-model", Object.assign({}, XMODEL__EDITOR, XMODEL__CONCEPT, XMODEL__PROJECTION));
 
+const channel = new BroadcastChannel('app-data');
+
 Manager.init();
 
 const EDITOR_HANDLER = {
@@ -33,7 +35,7 @@ const EDITOR_HANDLER = {
         const RESOURCE_NAME = "metamodel";
 
         if (!this.hasResource(RESOURCE_NAME)) {
-            this.notify("<strong>Metamodel not found</strong>: The <em>metamodel</em> might have not been loaded yet.<br> Add it in the resource tab and try again.", "error", 4000);
+            this.notify("<strong>Metamodel not found</strong>: Add it in the resource tab and try again.", "error", 3000);
 
             return false;
         }
@@ -43,31 +45,60 @@ const EDITOR_HANDLER = {
                 return;
             }
 
-            let model = this.getModel(RESOURCE_NAME);
+            let cmodel = this.getModel(RESOURCE_NAME);
 
-            const editor = getPreviewEditor.call(this);
-
-            let values = [];
-            if (editor.conceptModel) {
-                values = editor.conceptModel.export();
-            }
-            
-            setTimeout(() => {
-                editor.unload()
-                .loadConceptModel(model.concept || model, values)
-                .loadProjectionModel(pmodel)
-                .open();
-            }, 10);
+            channel.postMessage({
+                concept: cmodel,
+                projection: pmodel
+            });
         });
     },
+    "value.changed": function () {
+        this.triggerEvent({ name: "preview-projection" });
+    },
+    "value.added": function () {
+        this.triggerEvent({ name: "preview-projection" });
+    },
+    "value.removed": function () {
+        this.triggerEvent({ name: "preview-projection" });
+    }
 };
 
-function initApp(container) {
-    let menu = getElement(".app-menu", container);
-    let editor = Manager.getEditor(".app-editor", container);
+
+const application = getElement(".app");
+const GENTLEMAN_ID = getUrlParams("gentleman-id");
+let editor = Manager.getEditor(".app-editor", application);
+
+if (GENTLEMAN_ID) {
+    editor.init();
+
+    channel.addEventListener('message', (event) => {
+        const { concept: cModel, projection: pModel } = event.data;
+
+        let values = [];
+        if (editor.conceptModel) {
+            values = editor.conceptModel.export();
+        }
+
+        editor.unload()
+            .loadConceptModel(cModel.concept || cModel, values)
+            .loadProjectionModel(pModel)
+            .open();
+    });
+} else {
+    application.prepend(createMenu());
+
     editor.init({
         handlers: EDITOR_HANDLER
     });
+}
+
+
+function createMenu(selector) {
+    let template = getTemplate("#tpl-app-menu");
+    let clone = cloneTemplate(template);
+
+    let menu = getElement(".app-menu", clone);
 
     menu.addEventListener("click", (event) => {
         const { target } = event;
@@ -85,41 +116,6 @@ function initApp(container) {
                 .open();
         }
     });
+
+    return menu;
 }
-
-let previewEditor = null;
-function getPreviewEditor() {
-    if (isNullOrUndefined(previewEditor)) {
-        let modelHanlder = {
-            update: (message) => {
-                if (message === "value.changed") {
-                    this.triggerEvent({ name: "preview-projection" });
-                }
-            }
-        };
-        this.conceptModel.register(modelHanlder);
-
-        previewEditor = Manager.createEditor().init({
-            handlers: {
-                "editor.close@post": () => {
-                    this.conceptModel.unregister(modelHanlder);
-                    previewEditor.destroy();
-                    previewEditor = null;
-                }
-            }
-        });
-
-        let app = getElement(".app-body");
-        app.append(previewEditor.container);
-    }
-    return previewEditor;
-}
-
-(function init() {
-    const applications = getElements(".app");
-
-    for (let i = 0; i < applications.length; i++) {
-        const appContainer = applications[i];
-        initApp(appContainer);
-    }
-})();

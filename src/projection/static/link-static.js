@@ -45,6 +45,7 @@ const BaseLinkStatic = {
         this.url = resolveURL(url);
         this.content = content;
         this.urlType = urlType;
+        this.children = [];
 
         const hrefHandler = URLHandler[this.urlType];
         if (!isFunction(hrefHandler)) {

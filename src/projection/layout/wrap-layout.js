@@ -1,4 +1,4 @@
-import { createDocFragment, createDiv, isHTMLElement, valOrDefault, isNullOrUndefined } from "zenkai";
+import { createDocFragment, createDiv, isHTMLElement, getElement, isNullOrUndefined, isFunction } from "zenkai";
 import { getVisibleElement, getClosest } from "@utils/index.js";
 import { StyleHandler } from './../style-handler.js';
 import { ContentHandler } from './../content-handler.js';
@@ -16,6 +16,7 @@ export const BaseWrapLayout = {
         this.editable = editable;
 
         this.elements = [];
+        this.children = [];
         this.args = args;
 
         Object.assign(this, args);
@@ -114,11 +115,16 @@ export const BaseWrapLayout = {
         if (this.focusable) {
             this.container.focus();
         } else {
-            let firstElement = valOrDefault(getVisibleElement(this.container), this.elements[0]);
-            let projectionElement = this.environment.resolveElement(firstElement);
+            let focusableElement = getElement('[tabindex]:not([tabindex="-1"])', this.container);
 
-            if (projectionElement) {
-                projectionElement.focus(firstElement);
+            if (isNullOrUndefined(focusableElement)) {
+                return false;
+            }
+
+            let child = this.environment.resolveElement(focusableElement);
+
+            if (child) {
+                child.focus(focusableElement);
             }
         }
     },
@@ -149,7 +155,11 @@ export const BaseWrapLayout = {
 
         let element = this.environment.resolveElement(closestElement);
         if (element) {
-            element.focus();
+            if (!element.focusable) {
+                return this.arrowHandler(dir, closestElement);
+            }
+            
+            isFunction(element.navigate) ? element.navigate(dir) : element.focus();
         }
 
         return true;

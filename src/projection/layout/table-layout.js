@@ -28,6 +28,7 @@ export const BaseTableLayout = {
         this.collapsible = collapsible;
         this.editable = editable;
         this.elements = [];
+        this.children = [];
 
         Object.assign(this, args);
 

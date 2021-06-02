@@ -1,38 +1,21 @@
 {
-    "editor": {
-        "name": "Gentleman projection",
-        "concepts": [
-            {
-                "name": "projection"
-            },
-            {
-                "name": "template"
-            },
-            {
-                "name": "style rule"
-            }
-        ],
-        "resources": [
-            {
-                "name": "metamodel",
-                "type": "json-cp",
-                "required": true
-            }
-        ],
-        "actions": [
-            {
-                "name": "preview-projection",
-                "content": "Preview",
-                "help": "Preview the projections"
-            },
-            {
-                "name": "build-projection",
-                "content": "Build",
-                "help": "Build the projections",
-                "options": {
-                    "download": true
-                }
-            }
-        ]
-    }
+    "name": "Gentleman projection",
+    "concepts": [
+        {
+            "name": "projection"
+        },
+        {
+            "name": "template"
+        },
+        {
+            "name": "style rule"
+        }
+    ],
+    "resources": [
+        {
+            "name": "metamodel",
+            "type": "json-cp",
+            "required": true
+        }
+    ]
 }

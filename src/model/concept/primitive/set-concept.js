@@ -77,7 +77,15 @@ const _SetConcept = {
         }
 
         this.notify("value.changed", value);
-        this.model.notify("value.changed", this);
+    },
+    restore(state) {
+        const { value } = state;
+
+        value.forEach((element, index) => {
+            if(!this.value.includes(element.id)) {
+                this.createElement(element);
+            }
+        });
     },
     /**
      * @returns {*[]}
@@ -117,7 +125,6 @@ const _SetConcept = {
         element.index = this.value.length - 1;
 
         this.notify("value.added", element);
-        this.model.notify("value.changed", this);
 
         return true;
     },
@@ -133,6 +140,8 @@ const _SetConcept = {
         }
 
         this.value.splice(index, 0, element.id);
+
+        this.notify("value.added", element);
 
         return this;
     },
@@ -158,7 +167,6 @@ const _SetConcept = {
         element2.index = +index2;
 
         this.notify("value.swapped", [element1, element2]);
-        this.model.notify("value.changed", this);
 
         return this;
     },
@@ -208,7 +216,6 @@ const _SetConcept = {
         }
 
         this.notify("value.removed", concept);
-        this.model.notify("value.changed", this);
 
         return {
             message: `The element '${concept.name}' was successfully removed.`,
@@ -223,7 +230,6 @@ const _SetConcept = {
         this.value = [];
 
         this.notify("value.changed", this.value);
-        this.model.notify("value.changed", this);
 
         return this;
     },
@@ -344,6 +350,13 @@ const _SetConcept = {
 
         return copy;
     },
+    clone() {
+        return {
+            id: this.id,
+            name: this.name,
+            value: this.getValue().map(c => c.clone())
+        };
+    },
     export() {
         return {
             id: this.id,
@@ -353,13 +366,16 @@ const _SetConcept = {
         };
     },
     toString() {
-        var output = [];
+        return this.getValue().map(val => val.toString());
+    },
+    toXML() {
+        let name = this.getName();
 
-        this.value.forEach(val => {
-            output.push(val.toString());
-        });
+        let start = `<${name} id="${this.id}">`;
+        let body = this.getValue().map(val => val.toXML()).join("");
+        let end = `</${name}>`;
 
-        return output;
+        return start + body + end;
     }
 };
 

@@ -22,6 +22,7 @@ const BaseProjectionLinkStatic = {
 
         const { focusable = true } = this.schema;
 
+        this.children = [];
         this.focusable = focusable;
 
         return this;

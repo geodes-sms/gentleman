@@ -71,9 +71,9 @@ export const EditorSection = {
     /** @type {HTMLElement} */
     menu: null,
     /** @type {HTMLElement} */
+    header: null,
+    /** @type {HTMLElement} */
     body: null,
-    /** @type {HTMLButtonElement} */
-    btnClose: null,
     /** @type {HTMLButtonElement} */
     btnHome: null,
     /** @type {HTMLButtonElement} */
@@ -154,6 +154,18 @@ export const EditorSection = {
             }, "Editor");
         }
 
+        if (!isHTMLElement(this.title)) {
+            this.title = createSpan({
+                class: ["editor-header-title"],
+            }, "Editor");
+        }
+
+        if (!isHTMLElement(this.menu)) {
+            this.menu = createDiv({
+                class: ["editor-header-left"]
+            }, [this.title]);
+        }
+
         this.tabs = createUnorderedList({
             class: ["bare-list", "tabs", "editor-header-tabs"],
         });
@@ -188,14 +200,6 @@ export const EditorSection = {
         this.activeTab.classList.add("selected");
         this.activeTabValue = this.activeTab.dataset.value;
 
-        this.btnClose = createButton({
-            class: ["btn", "editor-toolbar__button", "editor-toolbar__button--close"],
-            title: "Close the editor",
-            dataset: {
-                action: "close"
-            }
-        });
-
         this.btnSave = createButton({
             class: ["btn", "editor-toolbar__button", "editor-toolbar__button--save"],
             title: "Export your model",
@@ -214,14 +218,14 @@ export const EditorSection = {
 
         let toolbar = createDiv({
             class: ["editor-toolbar"],
-        }, [this.btnSave, this.btnHome, this.btnClose]);
+        }, [this.btnSave, this.btnHome]);
 
-        if (!isHTMLElement(this.menu)) {
-            this.menu = createDiv({
+        if (!isHTMLElement(this.header)) {
+            this.header = createDiv({
                 class: ["editor-header-menu"]
-            }, [this.title, this.tabs, toolbar]);
+            }, [this.menu, this.tabs, toolbar]);
 
-            fragment.append(this.menu);
+            fragment.append(this.header);
         }
 
         if (!isHTMLElement(this.body)) {
@@ -276,8 +280,10 @@ export const EditorSection = {
     },
     refresh() {
         let name = this.editor.getConfig("name");
+        let settings = this.editor.getConfig("settings");
+
         if (name) {
-            this.title.textContent = `Editor – ${this.editor.config["name"]}`;
+            this.title.textContent = name;
         }
 
         if (this.editor.hasConceptModel) {
@@ -290,7 +296,7 @@ export const EditorSection = {
             hide(this.btnCollapse);
         }
 
-        this.btnHome.disabled = !this.editor.isReady;
+        this.btnHome.disabled = !this.editor.isReady || !settings;
         this.btnSave.disabled = !this.editor.hasInstances;
 
         this.editor.getConfig("resources") ? show(this.tabResource) : hide(this.tabResource);

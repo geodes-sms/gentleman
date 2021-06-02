@@ -121,7 +121,6 @@ export const AttributeHandler = {
         this.attributes_created.add(attribute.name);
 
         this.notify("attribute.added", attribute);
-        this.model.notify("value.changed", this);
 
         return this;
     },
@@ -201,7 +200,6 @@ export const AttributeHandler = {
         this.attributes_created.delete(name);
 
         this.notify("attribute.removed", removedAttribute);
-        this.model.notify("value.changed", this);
 
         return {
             message: `The attribute '${name}' was successfully removed.`,

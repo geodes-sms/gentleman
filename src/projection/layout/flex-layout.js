@@ -1,5 +1,5 @@
-import { createDocFragment, createDiv, isHTMLElement, valOrDefault, hasOwn, isNullOrUndefined } from "zenkai";
-import { getClosest, getVisibleElement } from "@utils/index.js";
+import { createDocFragment, createDiv, isHTMLElement, getElement, hasOwn, isNullOrUndefined, isFunction } from "zenkai";
+import { getClosest } from "@utils/index.js";
 import { StyleHandler } from './../style-handler.js';
 import { ContentHandler } from './../content-handler.js';
 import { Layout } from "./layout.js";
@@ -32,6 +32,7 @@ export const BaseFlexLayout = {
         this.focusable = focusable;
         this.editable = editable;
         this.elements = [];
+        this.children = [];
         this.args = args;
 
         Object.assign(this, args);
@@ -98,7 +99,7 @@ export const BaseFlexLayout = {
                 title: help,
                 dataset: {
                     nature: "layout",
-                    layout: "stack",
+                    layout: "flex",
                     id: this.id,
                 }
             });
@@ -158,16 +159,16 @@ export const BaseFlexLayout = {
         if (this.focusable) {
             this.container.focus();
         } else {
-            let firstElement = valOrDefault(getVisibleElement(this.container), this.elements[0]);
-
-            if (firstElement === this.btnCollapse) {
-                firstElement = this.elements[0];
+            let focusableElement = getElement('[tabindex]:not([tabindex="-1"])', this.container);
+            
+            if (isNullOrUndefined(focusableElement)) {
+                return false;
             }
 
-            let projectionElement = this.environment.resolveElement(firstElement);
+            let child = this.environment.resolveElement(focusableElement);
 
-            if (projectionElement) {
-                projectionElement.focus(firstElement);
+            if (child) {
+                child.focus(focusableElement);
             }
         }
     },
@@ -204,12 +205,16 @@ export const BaseFlexLayout = {
         let closestElement = getClosest(target, dir, this.container);
 
         if (!isHTMLElement(closestElement)) {
-            return false;
+            if (isNullOrUndefined(this.parent) || this.parent.object !== "layout") {
+                return false;
+            }
+
+            return this.parent.arrowHandler(dir, this.container);
         }
 
         let element = this.environment.resolveElement(closestElement);
         if (element) {
-            element.focus();
+            isFunction(element.navigate) ? element.navigate(dir) : element.focus();
         }
 
         return true;

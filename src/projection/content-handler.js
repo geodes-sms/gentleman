@@ -29,12 +29,11 @@ function AttributeHandler(schema, concept) {
     if (!concept.hasAttribute(name)) {
         console.error(`Attribute '${name}' does not exist in the concept '${concept.name}'`);
         return createI({
-            class: ["missing-attribute"],
             hidden: true,
         }, name);
     }
 
-    if (required) {
+    if (required && !concept.isAttributeCreated(name)) {
         concept.createAttribute(name);
     }
 
@@ -56,7 +55,7 @@ function AttributeHandler(schema, concept) {
     if (!attr.created) {
         const { content } = placeholder;
         if (content) {
-            attr.placeholder = ContentHandler.call(this, content, concept);
+            attr.placeholder = ContentHandler.call(this, content, concept, { focusable: true });
         } else {
             attr.placeholder = createI({
                 class: ["projection-element", "projection-element--placeholder"],
@@ -123,7 +122,7 @@ export function ContentHandler(schema, concept, args = {}) {
         this.model.registerStatic(staticContent);
 
         return staticContent.render();
-    }else if (schema.type === "dynamic") {
+    } else if (schema.type === "dynamic") {
         return ContentHandler.call(this, schema.dynamic, concept, args);
     } else if (schema.type === "attribute") {
         return AttributeHandler.call(this, schema, contentConcept);

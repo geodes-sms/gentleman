@@ -148,6 +148,7 @@ const BaseTextField = {
         this.multiline = multiline;
         this.focusable = focusable;
         this.resizable = resizable;
+        this.children = [];
 
         if (!hasOwn(this.schema, "choice")) {
             this.schema.choice = {};
@@ -263,7 +264,13 @@ const BaseTextField = {
         }
     },
     getCandidates() {
-        return this.source.getCandidates();
+        let result = this.source.getCandidates();
+
+        if (!Array.isArray(result)) {
+            return [];
+        }
+
+        return result;
     },
     enable() {
         this.input.disabled = false;
@@ -474,13 +481,9 @@ const BaseTextField = {
      * @param {HTMLElement} target 
      */
     _spaceHandler(target) {
-        const candidates = valOrDefault(this.getCandidates(), []);
+        const candidates = new Set(this.getCandidates());
 
-        if (!Array.isArray(candidates)) {
-            console.error("Bad values");
-        }
-
-        if (isEmpty(candidates)) {
+        if (candidates.size === 0) {
             this.notify("Enter any text.", NotificationType.INFO);
         } else {
             createChoiceElement.call(this);
@@ -532,7 +535,7 @@ const BaseTextField = {
      */
     enterHandler(target) {
         const item = getItem.call(this, target);
-        
+
         if (item) {
             this.selectChoice(item);
         } else if (this.multiline) {
@@ -630,7 +633,6 @@ const BaseTextField = {
         } else {
             element = getClosest(target, dir, this.element, false);
         }
-
 
         if (!isHTMLElement(element)) {
             return exit();

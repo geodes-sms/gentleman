@@ -81,12 +81,16 @@ const _BooleanConcept = {
 
         this.value = toBoolean(value);
         this.notify("value.changed", value);
-        this.model.notify("value.changed", this);
 
         return {
             success: true,
             message: "The value has been successfully updated."
         };
+    },
+    restore(state) {
+        const { value } = state;
+
+        this.setValue(value);
     },
     update(message, value) {
         return true;
@@ -135,6 +139,13 @@ const _BooleanConcept = {
 
         return copy;
     },
+    clone() {
+        return {
+            id: this.id,
+            name: this.name,
+            value: this.getValue()
+        };
+    },  
     export() {
         return {
             id: this.id,
@@ -146,6 +157,15 @@ const _BooleanConcept = {
     toString() {
         return this.value;
     },
+    toXML() {
+        let name = this.getName();
+
+        let start = `<${name} id="${this.id}">`;
+        let body = this.getValue();
+        let end = `</${name}>`;
+
+        return start + body + end;
+    }
 };
 
 

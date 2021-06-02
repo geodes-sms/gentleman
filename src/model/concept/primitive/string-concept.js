@@ -83,6 +83,11 @@ const _StringConcept = {
 
         return this;
     },
+    restore(state) {
+        const { value } = state;
+
+        this.setValue(value);
+    },
 
     hasValue() {
         return !isNullOrWhitespace(this.value);
@@ -94,7 +99,6 @@ const _StringConcept = {
         this.value = null;
 
         this.notify("value.changed", this.value);
-        this.model.notify("value.changed", this);
 
         return {
             success: true,
@@ -108,7 +112,6 @@ const _StringConcept = {
             this.value = value;
 
             this.notify("value.changed", value);
-            this.model.notify("value.changed", this);
         }
 
         if (code !== ResponseCode.SUCCESS) {
@@ -293,12 +296,36 @@ const _StringConcept = {
             const { type } = valueConstraint;
 
             if (type === "pattern") {
-                const { value: patternValue } = valueConstraint["pattern"];
+                const { value: patternValue, insensitive = true, global = true } = valueConstraint["pattern"];
 
-                if (!(new RegExp(patternValue, "gi")).test(value)) {
+                let flags = "";
+                if (insensitive) {
+                    flags += "g";
+                }
+                if (global) {
+                    flags += "i";
+                }
+
+                if (!(new RegExp(patternValue, flags)).test(value)) {
                     return {
                         code: ResponseCode.PATTERN_ERROR,
                         ctx: valueConstraint["pattern"]
+                    };
+                }
+            } else if (type === "match".startsWith) {
+                const { start, end } = valueConstraint[type];
+
+                if (start && !value.startsWith < start.value) {
+                    return {
+                        code: ResponseCode.PATTERN_ERROR,
+                        ctx: valueConstraint["match"]
+                    };
+                }
+
+                if (end && value.length > end.value) {
+                    return {
+                        code: ResponseCode.PATTERN_ERROR,
+                        ctx: valueConstraint["match"]
                     };
                 }
             }
@@ -349,6 +376,14 @@ const _StringConcept = {
 
         return copy;
     },
+
+    clone() {
+        return {
+            id: this.id,
+            name: this.name,
+            value: this.getValue()
+        };
+    },
     export() {
         return {
             id: this.id,
@@ -359,6 +394,15 @@ const _StringConcept = {
     },
     toString() {
         return this.value;
+    },
+    toXML() {
+        let name = this.getName();
+
+        let start = `<${name} id="${this.id}">`;
+        let body = this.getValue();
+        let end = `</${name}>`;
+
+        return start + body + end;
     }
 };
 

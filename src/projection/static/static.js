@@ -10,6 +10,8 @@ const BaseStatic = {
 
     /** @type {HTMLElement} */
     element: null,
+    /** @type {*[]} */
+    children: null,
     /** @type {HTMLElement} */
     statusElement: null,
 

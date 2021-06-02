@@ -26,6 +26,7 @@ function resolveValue(object) {
 const BaseAudioStatic = {
     init() {
 
+        this.children = [];
         return this;
     },
 

@@ -74,7 +74,7 @@
             top: calc(100% + 4px); left: calc(100% + 2px);
             display: block;
             padding: 5px;
-            font-size: 0.9em; font-weight: 600;
+            font-size: 1.2rem; font-weight: 600;
             color: #fff;
             border-radius: 2px;
             box-shadow: 1px 1px 3px -1px rgba(50, 50, 50, 0.95);

@@ -33,6 +33,7 @@
         "no-useless-escape": "warn"
     },
     "globals": {
-        "Gentleman": false
+        "Gentleman": false,
+        "zenkai": false
     }
 }

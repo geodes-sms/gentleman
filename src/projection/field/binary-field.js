@@ -114,6 +114,7 @@ const BaseBinaryField = {
         const { focusable = true } = this.schema;
 
         this.focusable = focusable;
+        this.children = [];
 
         return this;
     },

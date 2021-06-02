@@ -1,4 +1,4 @@
-import { hasOwn, findAncestor, isHTMLElement, getElement, createDiv, valOrDefault } from 'zenkai';
+import { hasOwn, findAncestor, isHTMLElement, getElement, createDiv, valOrDefault, isFunction } from 'zenkai';
 
 
 /**
@@ -293,7 +293,7 @@ export function getElementBottom(source, container, relative = true) {
  * @param {HTMLElement} container 
  * @returns {HTMLElement|null} The closest element to the top.
  */
-export function getTopElement(container) {
+export function getTopElement(container, pred) {
     const items = container.children;
 
     const { top: top1, left: left1 } = container.getBoundingClientRect();
@@ -302,6 +302,7 @@ export function getTopElement(container) {
         return null;
     }
 
+    const usePred = isFunction(pred);
     let closest = null;
 
     let vdist = 99999;
@@ -309,6 +310,10 @@ export function getTopElement(container) {
 
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
+
+        if (usePred && !pred(item)) {
+            continue;
+        }
 
         if (isHidden(item) || item.classList.contains("badge")) {
             continue;
@@ -334,7 +339,7 @@ export function getTopElement(container) {
  * @param {HTMLElement} container 
  * @returns {HTMLElement|null} The closest element to the left side.
  */
-export function getLeftElement(container) {
+export function getLeftElement(container, pred) {
     const items = container.children;
 
     const { top: top1, left: left1 } = container.getBoundingClientRect();
@@ -343,6 +348,7 @@ export function getLeftElement(container) {
         return null;
     }
 
+    const usePred = isFunction(pred);
     let closest = null;
 
     let vdist = 99999;
@@ -350,6 +356,10 @@ export function getLeftElement(container) {
 
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
+
+        if (usePred && !pred(item)) {
+            continue;
+        }
 
         if (isHidden(item) || item.classList.contains("badge")) {
             continue;
@@ -375,7 +385,7 @@ export function getLeftElement(container) {
  * @param {HTMLElement} container 
  * @returns {HTMLElement|null} The closest element to the right side.
  */
-export function getRightElement(container) {
+export function getRightElement(container, pred) {
     const items = container.children;
 
     const { top: top1, right: right1 } = container.getBoundingClientRect();
@@ -384,6 +394,7 @@ export function getRightElement(container) {
         return null;
     }
 
+    const usePred = isFunction(pred);
     let closest = null;
 
     let vdist = 99999;
@@ -391,6 +402,10 @@ export function getRightElement(container) {
 
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
+
+        if (usePred && !pred(item)) {
+            continue;
+        }
 
         if (isHidden(item) || item.classList.contains("badge")) {
             continue;
@@ -416,7 +431,7 @@ export function getRightElement(container) {
  * @param {HTMLElement} container 
  * @returns {HTMLElement|null} The closest element to the bottom.
  */
-export function getBottomElement(container) {
+export function getBottomElement(container, pred) {
     const items = container.children;
 
     const { bottom: bottom1, left: left1 } = container.getBoundingClientRect();
@@ -425,6 +440,7 @@ export function getBottomElement(container) {
         return null;
     }
 
+    const usePred = isFunction(pred);
     let closest = null;
 
     let vdist = 99999;
@@ -432,6 +448,10 @@ export function getBottomElement(container) {
 
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
+
+        if (usePred && !pred(item)) {
+            continue;
+        }
 
         if (isHidden(item) || item.classList.contains("badge")) {
             continue;
@@ -533,7 +553,7 @@ export function makeResizable(_container, _options = {}) {
 
     const resizers = createResizer();
     container.prepend(resizers);
-    
+
     if (options.horizontal && options.vertical) {
         container.dataset.resizable = "both";
     } else if (options.horizontal) {

@@ -25,6 +25,17 @@ const _BaseConcept = {
 
         return true;
     },
+    restore(state) {
+        const { attributes } = state;
+
+        attributes.forEach(attr => {
+            const { name, id, value } = attr;
+
+            if (!this.isAttributeCreated(name)) {
+                this.createAttribute(name, value);
+            }
+        });
+    },
     hasValue() {
         return true;
     },

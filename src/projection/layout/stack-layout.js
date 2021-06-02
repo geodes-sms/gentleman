@@ -1,4 +1,4 @@
-import { createDocFragment, createDiv, isHTMLElement, valOrDefault, hasOwn, isNullOrUndefined, createInput, createLabel, } from "zenkai";
+import { createDocFragment, createDiv, isHTMLElement, getElement, isNullOrUndefined, isFunction, } from "zenkai";
 import { getClosest, getVisibleElement } from "@utils/index.js";
 import { StyleHandler } from './../style-handler.js';
 import { ContentHandler } from './../content-handler.js';
@@ -42,6 +42,7 @@ export const BaseStackLayout = {
         this.focusable = focusable;
         this.editable = editable;
         this.elements = [];
+        this.children = [];
         this.args = args;
 
         Object.assign(this, args);
@@ -54,35 +55,6 @@ export const BaseStackLayout = {
     setOrientation(value) {
         this.orientation = value;
         this.refresh();
-    },
-    collapse(force = false) {
-        if (this.collapsed && !force) {
-            return;
-        }
-
-        this.collapseContainer = createDiv({
-            class: "layout-container-collapse"
-        }, this.elements);
-        this.btnCollapse.after(this.collapseContainer);
-        this.collapsed = true;
-
-        this.refresh();
-
-        return this;
-    },
-    expand(force = false) {
-        if (!this.collapsed && !force) {
-            return;
-        }
-
-        let fragment = createDocFragment(Array.from(this.collapseContainer.children));
-        this.btnCollapse.after(fragment);
-        this.collapseContainer.remove();
-        this.collapsed = false;
-
-        this.refresh();
-
-        return this;
     },
 
     /**
@@ -187,16 +159,16 @@ export const BaseStackLayout = {
         if (this.focusable) {
             this.container.focus();
         } else {
-            let firstElement = valOrDefault(getVisibleElement(this.container), this.elements[0]);
-
-            if (firstElement === this.btnCollapse) {
-                firstElement = this.elements[0];
+            let focusableElement = getElement('[tabindex]:not([tabindex="-1"])', this.container);
+            
+            if (isNullOrUndefined(focusableElement)) {
+                return false;
             }
 
-            let projectionElement = this.environment.resolveElement(firstElement);
+            let child = this.environment.resolveElement(focusableElement);
 
-            if (projectionElement) {
-                projectionElement.focus(firstElement);
+            if (child) {
+                child.focus(focusableElement);
             }
         }
     },
@@ -233,12 +205,16 @@ export const BaseStackLayout = {
         let closestElement = getClosest(target, dir, this.container);
 
         if (!isHTMLElement(closestElement)) {
-            return false;
+            if (isNullOrUndefined(this.parent) || this.parent.object !== "layout") {
+                return false;
+            }
+
+            return this.parent.arrowHandler(dir, this.container);
         }
 
         let element = this.environment.resolveElement(closestElement);
-        if (element) {
-            element.focus();
+        if (element) {            
+            isFunction(element.navigate) ? element.navigate(dir) : element.focus();
         }
 
         return true;
@@ -259,17 +235,6 @@ export const BaseStackLayout = {
                 value.parent = this;
             }
         });
-
-        if (this.btnCollapse) {
-            this.btnCollapse.addEventListener('click', (event) => {
-                if (this.collapsed) {
-                    this.expand();
-                }
-                else {
-                    this.collapse();
-                }
-            });
-        }
     }
 };
 

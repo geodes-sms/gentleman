@@ -1312,7 +1312,7 @@
                 {
                     "name": "color",
                     "target": {
-                        "name": "color"
+                        "name": "hex-color"
                     },
                     "required": false
                 },
@@ -1474,7 +1474,7 @@
                 {
                     "name": "value",
                     "target": {
-                        "name": "color"
+                        "name": "hex-color"
                     }
                 }
             ]
@@ -1579,15 +1579,7 @@
                 {
                     "name": "value",
                     "target": {
-                        "name": "string",
-                        "constraint": {
-                            "value": {
-                                "type": "regex",
-                                "regex": {
-                                    "pattern": "^#\\w+$"
-                                }
-                            }
-                        }
+                        "name": "string"
                     }
                 }
             ],
@@ -1722,7 +1714,7 @@
                 {
                     "name": "color",
                     "target": {
-                        "name": "color"
+                        "name": "hex-color"
                     }
                 },
                 {
@@ -1824,9 +1816,11 @@
             "base": "string",
             "constraint": {
                 "value": {
-                    "type": "regex",
-                    "regex": {
-                        "pattern": "^\\w+(-\\w+)*$"
+                    "type": "pattern",
+                    "pattern": {
+                        "insensitive": true,
+                        "global": true,
+                        "value": "^\\w+(-\\w+)*$"
                     }
                 }
             }

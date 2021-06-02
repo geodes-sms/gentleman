@@ -32,6 +32,13 @@ export const BaseAttribute = {
         
         return this.target.copy(false);
     },
+    clone() {
+        if (!this.target.hasValue()) {
+            return null;
+        }
+        
+        return this.target.clone();
+    },
     export() {
         if (!this.target.hasValue()) {
             return null;
@@ -48,6 +55,13 @@ export const BaseAttribute = {
         return {
             [`attribute.${this.name}`]: this.target.toString()
         };
+    },
+    toXML() {
+        if (!this.target.hasValue()) {
+            return "";
+        }
+        
+        return this.target.toXML();
     }
 };
 
