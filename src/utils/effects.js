@@ -17,7 +17,7 @@ export function show(element) {
     if (!isHTMLElement(element)) {
         return element;
     }
-    
+
     element.classList.remove(HIDDEN);
 
     return element;
@@ -94,6 +94,37 @@ export function unhighlight(element) {
     }
 
     element.classList.remove(HIGHLIGHTED);
+
+    return element;
+}
+
+
+/**
+ * Applies `select` style to an element
+ * @param {HTMLElement} element element
+ * @returns {HTMLElement} element
+ */
+export function select(element) {
+    if (!isHTMLElement(element)) {
+        return element;
+    }
+
+    element.classList.add(SELECTED);
+
+    return element;
+}
+
+/**
+ * Removes `select` style of an element
+ * @param {HTMLElement} element element
+ * @returns {HTMLElement} element
+ */
+export function unselect(element) {
+    if (!isHTMLElement(element)) {
+        return element;
+    }
+
+    element.classList.remove(SELECTED);
 
     return element;
 }

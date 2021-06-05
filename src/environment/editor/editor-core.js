@@ -4,8 +4,10 @@ import {
     getElement, isHTMLElement, findAncestor, isNullOrWhitespace, isNullOrUndefined, isEmpty,
     isFunction, valOrDefault, copytoClipboard, getElements, shortDateTime, last, formatDate,
 } from 'zenkai';
-import { hide, show, toggle, Key, getEventTarget, NotificationType, getClosest, highlight, unhighlight } from '@utils/index.js';
-
+import {
+    hide, show, toggle, Key, getEventTarget, NotificationType, getClosest, highlight,
+    unhighlight, select, unselect
+} from '@utils/index.js';
 import { ConceptModelManager } from '@model/index.js';
 import { createProjectionModel } from '@projection/index.js';
 import { ProjectionWindow } from '../projection-window.js';
@@ -169,8 +171,15 @@ export const Editor = {
     view: "grid",
     /** @type {HTMLElement} */
     viewItem: null,
+    /** @type {HTMLElement} */
+    viewList: null,
+    /** @type {HTMLElement} */
+    activeViewItem: null,
+    /** @type {Map} */
+    views: null,
     /** @type {HTMLInputElement} */
     input: null,
+    /** @type {*} */
     copyValue: null,
     /** @type {*[]} */
     states: null,
@@ -211,6 +220,7 @@ export const Editor = {
         this.resources = new Map();
         this.models = new Map();
         this.states = [];
+        this.views = new Map();
 
         this.decoratedElements = new Set();
 
@@ -330,9 +340,14 @@ export const Editor = {
         this.instances.set(instance.id, instance);
         this.updateActiveInstance(instance);
 
+        if (this.view === "tab") {
+            this.addView(instance);
+            this.updateActiveView();
+        }
+
         this.refresh();
 
-        return instance;
+        return this;
     },
     /**
      * Removes an instance from the editor
@@ -348,6 +363,11 @@ export const Editor = {
 
         if (instance === this.activeInstance) {
             this.activeInstance = null;
+        }
+
+        if (instance.view) {
+            removeChildren(instance.view).remove();
+            this.updateActiveView();
         }
 
         this.instances.delete(id);
@@ -683,7 +703,7 @@ export const Editor = {
         let stateID = nextValueId();
         let value = JSON.stringify(concept.clone());
         let time = formatDate(new Date(), "hh:dd");
-        let size = concept.getDescendant().length;
+        // let size = concept.getDescendant().length;
 
         let icoTime = createI({
             class: ["ico", "ico-restore"]
@@ -696,7 +716,7 @@ export const Editor = {
         let btnRestore = createButton({
             class: ["btn", "btn-restore", "fit-content"],
             title: `Restore ${name}`
-        }, [icoTime, `${time}|${size}`]);
+        }, [icoTime, `${time}|${name}`]);
 
         let btnDelete = createButton({
             class: ["btn", "btn-delete"]
@@ -1451,6 +1471,11 @@ export const Editor = {
                 class: ["model-concept-section"],
             });
 
+            this.viewSection = createAside({
+                class: ["model-view-section"],
+            });
+
+            this.instanceSection.append(this.viewSection);
             mainSection.append(this.navigationSection, this.instanceSection);
 
             this.designSection = createAside({
@@ -1480,22 +1505,29 @@ export const Editor = {
 
             this.footer.append(this.timeline);
 
-            let viewers = createUnorderedList({
+            this.viewList = createUnorderedList({
                 class: ["bare-list", "editor-footer-viewers"],
-            }, ["grid", "row"].map(type =>
-                createListItem({
+            });
+
+            ["tab", "grid", "row"].forEach(name => {
+                let view = createListItem({
                     class: ["editor-footer-viewer"],
                     dataset: {
                         type: "viewer",
                         action: "change-view",
-                        value: type
+                        value: name
                     }
-                }, type)));
+                }, name);
 
-            this.viewItem = viewers.children[0];
+                this.views.set(name, view);
+                this.viewList.append(view);
+            });
+
+            this.viewItem = this.views.get(this.view);
             this.viewItem.classList.add("selected");
+            this.instanceSection.dataset.view = this.view;
 
-            this.footer.append(viewers);
+            this.footer.append(this.viewList);
 
             this.valueWindow = createDiv({
                 class: ["model-value-window"],
@@ -1565,7 +1597,12 @@ export const Editor = {
             this.container.classList.remove("no-projection-model");
         }
 
-        this.instanceSection.dataset.view = this.view;
+        if (["grid", "row"].includes(this.view)) {
+            hide(this.viewSection);
+        } else if (["tab"].includes(this.view)) {
+            show(this.viewSection);
+        }
+
         this.hasValues ? show(this.valueWindow) : hide(this.valueWindow);
 
         this.header.refresh();
@@ -1656,6 +1693,7 @@ export const Editor = {
                 return this;
             }
 
+            let temp = this.activeInstance;
             this.activeInstance.container.classList.remove("active");
         }
 
@@ -1665,6 +1703,119 @@ export const Editor = {
         this.refresh();
 
         return this;
+    },
+    updateActiveView() {
+        if (this.view === "tab") {
+            this.instances.forEach(instance => {
+                if (instance === this.activeInstance) {
+                    instance.view.classList.add("active");
+                    instance.show();
+                } else {
+                    instance.view.classList.remove("active");
+                    instance.hide();
+                }
+            });
+        }
+
+        this.refresh();
+    },
+    addView(instance) {
+        if (isNullOrUndefined(instance)) {
+            return false;
+        }
+
+        let content = instance.title.textContent;
+
+        let icoDelete = createI({
+            class: ["ico", "ico-delete"]
+        }, "✖");
+
+        let btnDelete = createButton({
+            class: ["btn", "btn-close"]
+        }, icoDelete);
+
+        let container = createDiv({
+            class: [`editor-view-${this.view}list-item__content`]
+        }, content);
+
+        let item = createListItem({
+            class: [`editor-view-${this.view}list-item`],
+            title: instance.title.textContent
+        }, [container, btnDelete]);
+
+        instance.view = item;
+
+        /**
+         * Resolves the target
+         * @param {HTMLElement} element 
+         * @returns {HTMLElement}
+         */
+        function resolveTarget(element) {
+            const isValid = (el) => el === item || el === btnDelete;
+            if (isValid(element)) {
+                return element;
+            }
+
+            return findAncestor(element, (el) => isValid(el), 5);
+        }
+
+        item.addEventListener("click", (event) => {
+            let target = resolveTarget(event.target);
+
+            if (target === btnDelete) {
+                let next = item.previousSibling || item.nextSibling;
+                instance.delete();
+                if (this.activeInstance === null && next) {
+                    next.click();
+                }
+            } else {
+                this.updateActiveInstance(instance);
+                this.updateActiveView();
+            }
+        });
+
+        this.tabView.append(item);
+    },
+    changeView(value) {
+        if (value === this.view) {
+            return this;
+        }
+
+        this.view = value;
+        unselect(this.viewItem);
+        this.viewItem = this.views.get(this.view);
+        select(this.viewItem);
+
+        removeChildren(this.viewSection);
+
+        if (value === "tab") {
+            this.tabView = createUnorderedList({
+                class: ["bare-list", "editor-view-tablist"]
+            });
+
+            removeChildren(this.tabView);
+
+            this.instances.forEach(instance => {
+                this.addView(instance);
+            });
+
+            this.viewSection.append(this.tabView);
+        } else if (value === "grid") {
+            this.instances.forEach(instance => {
+                instance.show();
+            });
+        } else if (value === "row") {
+            this.instances.forEach(instance => {
+                instance.show();
+            });
+        } else if (value === "col") {
+            this.instances.forEach(instance => {
+                instance.show();
+            });
+        }
+
+        this.instanceSection.dataset.view = this.view;
+        this.updateActiveView();
     },
 
 
@@ -1814,13 +1965,7 @@ export const Editor = {
             },
             "change-view": (target) => {
                 const { value } = target.dataset;
-                if (value !== this.view) {
-                    this.view = value;
-                    this.viewItem.classList.remove("selected");
-                    this.viewItem = target;
-                    this.viewItem.classList.add("selected");
-                    this.refresh();
-                }
+                this.changeView(value);
             },
 
             "style": (target) => { this.style.toggle(); },

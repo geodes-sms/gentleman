@@ -32,6 +32,7 @@ const _BooleanConcept = {
         this.alias = this.schema.alias;
         this.default = valOrDefault(this.schema.default, true);
         this.description = this.schema.description;
+        this.constraint = this.schema.constraint;
 
         this.initObserver();
         this.initAttribute();

@@ -1,0 +1,11 @@
+{
+    "name": "Traffic Light",
+    "concepts": [
+        {
+            "name": "light"
+        },
+        {
+            "name": "mode"
+        }
+    ]
+}

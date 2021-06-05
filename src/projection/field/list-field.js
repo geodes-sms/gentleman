@@ -350,7 +350,8 @@ const BaseListField = {
         let item = this.getItem(value.id);
 
         if (!isHTMLElement(item)) {
-            throw new Error("List error: Item not found");
+            console.error("Item not found");
+            return;
         }
 
         const index = +this.getItemIndex(item);
@@ -404,8 +405,6 @@ const BaseListField = {
         }
 
         const { index } = target.dataset;
-
-
 
         let clone = this.list.cloneNode();
         clone.append(target.cloneNode(true));

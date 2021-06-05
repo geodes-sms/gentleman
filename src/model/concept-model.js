@@ -85,7 +85,7 @@ export const ConceptModel = {
         return this.concepts.filter(concept => concept.isRoot());
     },
     getConceptsByPrototype(prototype) {
-        return this.concepts.filter((concept) => concept.schema.prototype === prototype);
+        return this.concepts.filter((concept) => concept.hasPrototype(prototype));
     },
     /**
      * Returns a concept with matching id from the list of concepts held by the model

@@ -28,8 +28,9 @@ The *modelling* workflow is reserved for the creation of concept instances using
 
 ## Demonstration
 
+- Gentleman IDE (app): [Create a metamodel and projections](https://geodes-sms.github.io/gentleman/demo/app.html)
 - Mindmap (app): [Create a mindmap](https://geodes-sms.github.io/gentleman/demo/mindmap.html)
-- Sandbox (app): [Play with Gentleman](https://geodes-sms.github.io/gentleman/demo/app.html)
+- TrafficLight (app): [Configure a traffic light](https://geodes-sms.github.io/gentleman/demo/trafficlight.html)
 - At MODELS 2020 (video): [Live demonstration (MODELS 2020)](https://youtu.be/wJ4hVZjmrv4)
 
 ## Tutorial

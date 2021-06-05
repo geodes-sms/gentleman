@@ -74,23 +74,27 @@ const BaseTextStatic = {
 
             if (Array.isArray(content)) {
                 content.forEach(c => {
+                    let value = resolveValue.call(this, c);
                     let cElement = createSpan({
                         class: ["text", "static", "text-static"],
                         dataset: {
                             nature: "static-component",
                             view: "text",
                             static: "text",
+                            content: value,
                             id: this.id,
                             ignore: "all",
                         }
-                    }, resolveValue.call(this, c));
+                    }, value);
 
                     StyleHandler.call(this, cElement, c.style);
 
                     this.element.append(cElement);
                 });
             } else {
-                this.element.append(resolveValue.call(this, content));
+                let value = resolveValue.call(this, content);
+                this.element.append(value);
+                this.element.content=value;
             }
 
             bind = true;

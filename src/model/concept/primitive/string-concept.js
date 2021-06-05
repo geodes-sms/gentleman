@@ -117,7 +117,7 @@ const _StringConcept = {
         if (code !== ResponseCode.SUCCESS) {
             return {
                 success: false,
-                message: "Validation failed: The value could not be updated.",
+                message: "Validation failed.",
                 errors: [
                     responseHandler.call(this, code, ctx).message
                 ]

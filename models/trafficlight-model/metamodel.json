@@ -1,0 +1,185 @@
+{
+    "concept": [
+        {
+            "id": "b1ab20b1-595a-4a46-9804-17bb1930cdf1",
+            "name": "state",
+            "nature": "prototype",
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "name"
+                    },
+                    "required": true,
+                    "description": ""
+                },
+                {
+                    "name": "behaviour",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "behaviour"
+                        },
+                        "ordered": true,
+                        "constraint": {
+                            "cardinality": {
+                                "type": "range",
+                                "range": {
+                                    "min": { "value": 1 }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            ],
+            "properties": []
+        },
+        {
+            "id": "ca5daf16-93ac-4c95-a0c0-80d3599131ea",
+            "prototype": "state",
+            "name": "light",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "color",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": ["red", "yellow", "green", "white"]
+                        }
+                    },
+                    "required": true,
+                    "description": ""
+                },
+                {
+                    "name": "shape",
+                    "target": {
+                        "name": "string",
+                        "default": "circle",
+                        "constraint": {
+                            "values": ["circle", "rectangle", "square", "diamond", "bus", "person"]
+                        }
+                    },
+                    "required": false,
+                    "description": ""
+                }
+            ],
+            "properties": []
+        },
+        {
+            "id": "d7844232-e13a-4c02-a56b-07827b85293d",
+            "prototype": "state",
+            "name": "mode",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "lights",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "light"
+                        },
+                        "ordered": true
+                    },
+                    "required": true,
+                    "description": ""
+                },
+                {
+                    "name": "start",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "light",
+                            "scope": "mode",
+                            "rel": "parent"
+                        }
+                    },
+                    "required": true
+                }
+            ],
+            "properties": []
+        },
+        
+        {
+            "id": "b41351ab-0adb-4706-8e10-55ea34686ef6",
+            "name": "behaviour",
+            "nature": "prototype",
+            "attributes": [
+                {
+                    "name": "target",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "state"
+                        }
+                    },
+                    "required": true
+                }
+            ],
+            "properties": []
+        },
+        {
+            "id": "77f7eeaa-6310-4130-8875-943eddae6f60",
+            "prototype": "behaviour",
+            "name": "temporal",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "number"
+                    },
+                    "required": true,
+                    "description": ""
+                },
+                {
+                    "name": "unit",
+                    "target": {
+                        "name": "string",
+                        "default": "s",
+                        "constraint": {
+                            "values": ["s", "ms", "min"]
+                        }
+                    },
+                    "required": true,
+                    "description": ""
+                }
+            ],
+            "properties": []
+        },
+        {
+            "id": "4bdb5bf1-93cd-476d-bb67-4e41a564097e",
+            "prototype": "behaviour",
+            "name": "manual",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "button",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true,
+                    "description": ""
+                }
+            ],
+            "properties": []
+        },
+
+        {
+            "id": "5bbb4d1f-9c3r-432d-f5e7-41697e4a50e4",
+            "name": "name",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "length": {
+                    "type": "range",
+                    "range": {
+                        "min": { "value": 1 },
+                        "max": { "value": 50 }
+                    }
+                }
+            }
+        }
+    ]
+}

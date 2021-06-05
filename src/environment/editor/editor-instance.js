@@ -47,34 +47,35 @@ export const EditorInstance = {
         return this;
     },
     collapse() {
-        this.collapsed = !this.collapsed;
-
-        if (this.collapsed) {
-            this.fullscreen = false;
-        }
+        collapse(this.container);
+        this.collapsed = true;
 
         this.refresh();
 
         return this;
     },
-    maximize() {
-        this.fullscreen = !this.fullscreen;
-
-        if (this.fullscreen) {
-            this.editor.instances.forEach(instance => {
-                if (instance !== this) {
-                    instance.hide();
-                }
-            });
-        } else {
-            this.editor.instances.forEach(instance => {
-                instance.show();
-            });
-        }
+    expand() {
+        expand(this.container);
+        this.collapsed = false;
 
         this.refresh();
 
         return this;
+    },
+    changeSize(size) {
+        this.size = size;
+
+        if (size === "fullscreen") {
+            this.editor.instanceSection.classList.add("fullscreen");
+            this.fullscreen = true;
+            this.container.style.removeProperty("width");
+            this.container.style.removeProperty("height");
+        } else {
+            this.editor.instanceSection.classList.remove("fullscreen");
+            this.fullscreen = false;
+        }
+
+        this.refresh();
     },
     show() {
         show(this.container);
@@ -102,15 +103,9 @@ export const EditorInstance = {
         }
 
         if (this.fullscreen) {
-            this.container.classList.add('focus');
+            this.btnCollapse.disabled = true;
         } else {
-            this.container.classList.remove('focus');
-        }
-
-        if (this.collapsed) {
-            collapse(this.container);
-        } else {
-            expand(this.container);
+            this.btnCollapse.disabled = false;
         }
 
         return this;
@@ -227,10 +222,10 @@ export const EditorInstance = {
     actionHandler(name) {
         switch (name) {
             case "collapse":
-                this.collapse();
+                this.collapsed ? this.expand() : this.collapse();
                 break;
             case "maximize":
-                this.maximize();
+                this.fullscreen ? this.changeSize("normal") : this.changeSize("fullscreen");
                 break;
             case "close":
                 this.delete();

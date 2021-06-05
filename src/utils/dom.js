@@ -1,4 +1,7 @@
-import { hasOwn, findAncestor, isHTMLElement, getElement, createDiv, valOrDefault, isFunction } from 'zenkai';
+import { 
+    hasOwn, findAncestor, isHTMLElement, getElement, createDiv, valOrDefault, 
+    isFunction, isString, isNullOrWhitespace 
+} from 'zenkai';
 
 
 /**
@@ -473,18 +476,17 @@ export function getBottomElement(container, pred) {
 }
 
 /** Creates a container
- * @param {string} type
+ * @param {string|HTMLElement} container
  * @returns {HTMLElement}
  */
-function resolveContainer(_container) {
-    /** @type {HTMLElement} */
-    let container = _container;
-
-    if (!isHTMLElement(_container)) {
-        container = getElement(_container);
+export function resolveContainer(container) {
+    if (isHTMLElement(container)) {
+        return container;
+    } else if (isString(container) && !isNullOrWhitespace(container)) {
+        return getElement(container);
     }
 
-    return container;
+    return null;
 }
 
 /**

@@ -1,16 +1,22 @@
-import { createDiv, getElements, isNullOrWhitespace, valOrDefault, isHTMLElement, getElement, isString } from "zenkai";
+import { createDiv, getElements, valOrDefault, isHTMLElement, hasOwn } from "zenkai";
 import { Editor } from './environment/index.js';
+import { resolveContainer } from './utils/index.js';
 
 const ENV_EDITOR = "editor";
 const ENV_EXPLORER = "explorer";
 
+const isValid = (element) => isHTMLElement(element) && hasOwn(element.dataset, 'gentleman');
+
+const isEditor = (element) => isValid(element); // TODO - add this: && element.dataset.gentleman === "editor"
+
 /**
- * Initiliazes the manager
- * @param {string|HTMLElement} _container
- * @returns {Manager}
+ * Activates the `editor` found in the container (optional)
+ * @param {string|HTMLElement} [_container]
+ * @returns {Editor[]} Editors found in the container
  */
-export function activateEditor(container) {
-    const containers = getContainers();
+export function activateEditor(_container) {
+    const container = resolveContainer(_container);
+    const containers = isEditor(container) ? [container] : getElements("[data-gentleman]", container);
 
     const editors = [];
 
@@ -23,7 +29,7 @@ export function activateEditor(container) {
                 break;
 
             default:
-                console.warn(`Gentleman does not support env ${env}`);
+                console.warn(`Gentleman does not support this environment ${env}`);
                 break;
         }
     });
@@ -32,9 +38,9 @@ export function activateEditor(container) {
 }
 
 /**
- * Creates a new `Editor`
+ * Creates an `Editor` using an optional container
  * @param {HTMLElement} [_container]
- * @returns {Editor}
+ * @returns {Editor} Editor created
  */
 export function createEditor(_container) {
     let container = resolveContainer(_container);
@@ -58,30 +64,3 @@ export function createEditor(_container) {
     return editor;
 }
 
-/**
- * Resolves the container
- * @param {string} selector 
- * @param {HTMLElement} [_container] 
- * @returns {HTMLElement[]}
- */
-function getContainers(selector, _container) {
-    if (!isNullOrWhitespace(selector)) {
-        return getElements(selector, _container);
-    }
-
-    return getElements("[data-gentleman]", _container);
-}
-
-/** Creates a container
- * @param {string|HTMLElement} container
- * @returns {HTMLElement}
- */
-function resolveContainer(container) {
-    if (isHTMLElement(container)) {
-        return container;
-    } else if (isString(container) && !isNullOrWhitespace(container)) {
-        return getElement(container);
-    }
-
-    return null;
-}

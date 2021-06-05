@@ -12,8 +12,6 @@ const ResponseCode = {
 };
 
 function responseHandler(code, ctx) {
-    let cvalue = this.constraint.value;
-
     switch (code) {
         case ResponseCode.INVALID_NUMBER:
             return {
@@ -55,8 +53,7 @@ const _NumberConcept = {
         this.default = valOrDefault(this.schema.default, null);
         this.alias = this.schema.alias;
         this.description = this.schema.description;
-        this.constraint = {};
-        this.constraint.value = this.schema.value;
+        this.constraint = this.schema.constraint;
 
         this.initObserver();
         this.initAttribute();
@@ -96,28 +93,23 @@ const _NumberConcept = {
         return +this.value;
     },
     setValue(value) {
-        var result = this.validate(value);
+        const { code, ctx } = this.validate(value);
 
-        if (result !== ResponseCode.SUCCESS) {
+        if (this.value !== value) {
+            this.value = isNullOrWhitespace(value) ? null : +value;
+
+            this.notify("value.changed", value);
+        }
+
+        if (code !== ResponseCode.SUCCESS) {
             return {
                 success: false,
-                message: "Validation failed: The value could not be updated.",
+                message: "Validation failed.",
                 errors: [
-                    responseHandler.call(this, result).message
+                    responseHandler.call(this, code, ctx).message
                 ]
             };
         }
-
-        if (isNumber(value)) {
-            this.value = value;
-        }
-        else if (isNullOrWhitespace(value)) {
-            this.value = null;
-        } else {
-            this.value = +value;
-        }
-
-        this.notify("value.changed", value);
 
         return {
             success: true,
@@ -158,8 +150,13 @@ const _NumberConcept = {
     },
     validate(value) {
         if (isNaN(value)) {
-            return ResponseCode.INVALID_NUMBER;
+            return {
+                code: ResponseCode.INVALID_NUMBER
+            };
         }
+
+
+        this.notify("value.validated", this.value);
 
         if (!this.hasConstraint()) {
             return {
@@ -168,10 +165,11 @@ const _NumberConcept = {
         }
 
         if (this.hasConstraint("value")) {
+            console.log(this);
             let valueConstraint = this.getConstraint("value");
 
             const { type } = valueConstraint;
-            
+
             if (type === "range") {
                 const { min, max } = valueConstraint[type];
 
@@ -249,7 +247,7 @@ const _NumberConcept = {
             name: this.name,
             value: this.getValue()
         };
-    },  
+    },
     export() {
         return {
             id: this.id,
@@ -283,7 +281,7 @@ function resolveValue(value) {
         let values = concepts.map(c => c.getChildren(this.name)).flat().map(c => c.value);
 
         return values;
-    } 
+    }
 
     return value;
 }

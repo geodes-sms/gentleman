@@ -31,6 +31,7 @@ const _ReferenceConcept = {
         this.values = valOrDefault(this.schema.values, []);
         this.alias = this.schema.alias;
         this.description = this.schema.description;
+        this.constraint = this.schema.constraint;
 
         this.initObserver();
         this.initAttribute();
@@ -70,7 +71,7 @@ const _ReferenceConcept = {
         if (this.reference) {
             this.reference.unregister(this);
         }
-        
+
         this.reference = null;
         this.value = null;
 
@@ -241,7 +242,7 @@ const _ReferenceConcept = {
             name: this.name,
             value: this.getValue()
         };
-    },  
+    },
     export() {
         return {
             id: this.id,
@@ -277,6 +278,12 @@ function resolveAccept(accept) {
         let parent = this.getParent(scope);
 
         return parent.getChildren(name);
+    }
+
+    if (rel === "children") {
+        let children = this.getChildren(name);
+
+        return children;
     }
 
     if (this.model.isPrototype(name)) {
