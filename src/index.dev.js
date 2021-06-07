@@ -2,11 +2,9 @@
 
 // Import CSS
 import './stylesheets.js';
-// import '@css/samples/gentleman.css';
-// import '@css/samples/mindmap.css';
-import '@css/samples/trafficlight.css';
+import '@css/samples/gentleman.css';
 
-import { createDiv, getElements, isNullOrWhitespace, valOrDefault, isHTMLElement, getElement, isString, hasOwn, isNullOrUndefined } from "zenkai";
+import { createDiv, getElements, valOrDefault, isHTMLElement, hasOwn } from "zenkai";
 import { Editor } from './environment/index.js';
 import { resolveContainer } from './utils/index.js';
 
@@ -18,10 +16,6 @@ const CMODEL__PROJECTION = require('@models/concept-model/projection.json');
 const PMODEL__EDITOR = require('@models/projection-model/editor-config.json');
 const PMODEL__CONCEPT = require('@models/projection-model/concept.json');
 const PMODEL__PROJECTION = require('@models/projection-model/projection.json');
-
-const XMODEL__EDITOR = require('@models/trafficlight-model/config.json');
-const XMODEL__CONCEPT = require('@models/trafficlight-model/metamodel.json');
-const XMODEL__PROJECTION = require('@models/trafficlight-model/projection.json');
 
 
 const ENV_EDITOR = "editor";
@@ -89,7 +83,7 @@ function createEditor(_container) {
 let editor = activateEditor(".app-editor")[0];
 
 editor.init({
-    conceptModel: XMODEL__CONCEPT,
-    projectionModel: XMODEL__PROJECTION,
-    config: XMODEL__EDITOR,
+    conceptModel: PMODEL__CONCEPT,
+    projectionModel: PMODEL__PROJECTION,
+    config: PMODEL__EDITOR,
 });

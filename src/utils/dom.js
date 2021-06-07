@@ -32,6 +32,14 @@ export function isHidden(element) {
     return element.hidden || window.getComputedStyle(element).display === "none";
 }
 
+
+/**
+ * Verifies whether an element can receive textual input
+ * @param {HTMLElement} element 
+ * @returns {boolean}
+ */
+export const isInputCapable = (element) => isHTMLElement(element, ["input", "textarea"]) || element.contentEditable === "true";
+
 /**
  * Converts a pixel value to a number
  * @param {string} px 

@@ -2,8 +2,9 @@ const EDITOR = require('@models/mindmap-model/mindmap_config.json');
 const CONCEPT = require('@models/mindmap-model/mindmap_metamodel.json');
 const PROJECTION = require('@models/mindmap-model/mindmap_projection.json');
 
-export const MindmapModel = {
-    concept: CONCEPT,
-    editor: EDITOR,
-    projection: PROJECTION
-};
+let editor = Gentleman.activateEditor(".app-editor")[0];
+editor.init({
+    config: EDITOR,
+    conceptModel: CONCEPT,
+    projectionModel: PROJECTION
+});

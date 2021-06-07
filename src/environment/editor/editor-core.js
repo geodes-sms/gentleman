@@ -6,7 +6,7 @@ import {
 } from 'zenkai';
 import {
     hide, show, toggle, Key, getEventTarget, NotificationType, getClosest, highlight,
-    unhighlight, select, unselect
+    unhighlight, isInputCapable,
 } from '@utils/index.js';
 import { ConceptModelManager } from '@model/index.js';
 import { createProjectionModel } from '@projection/index.js';
@@ -22,7 +22,6 @@ import { EditorStatus } from './editor-status.js';
 
 
 var inc = 0;
-
 
 const nextValueId = () => `value${inc++}`;
 
@@ -116,12 +115,6 @@ function createEditorLog() {
     });
 }
 
-/**
- * 
- * @param {HTMLElement} element 
- * @returns 
- */
-const isInputCapable = (element) => isHTMLElement(element, ["input", "textarea"]) || element.contentEditable === "true";
 
 
 export const Editor = {
@@ -169,7 +162,6 @@ export const Editor = {
     /** @type {EditorStatus} */
     status: null,
 
-    view: "grid",
     /** @type {HTMLInputElement} */
     input: null,
     /** @type {*} */
@@ -773,6 +765,10 @@ export const Editor = {
             setTimeout(() => { notify.remove(); }, 500);
         }, time);
     },
+
+
+    // Resource management
+
     /**
      * Adds a resource to the editor
      * @param {File} file 
@@ -823,6 +819,9 @@ export const Editor = {
 
         return true;
     },
+
+
+    // Model management
 
     /**
      * Gets a model from the register
@@ -1005,6 +1004,10 @@ export const Editor = {
 
         return this;
     },
+    /**
+     * Toggles the editor
+     * @returns {Editor}
+     */
     toggle() {
         this.triggerEvent({ name: "editor.toggle@pre" }, () => {
             toggle(this.container);
@@ -1083,6 +1086,11 @@ export const Editor = {
 
         return this;
     },
+    /**
+     * Highligh an element in the editor
+     * @param {HTMLElement} element 
+     * @returns {Editor}
+     */
     highlight(element) {
         if (!isHTMLElement(element)) {
             return this;
@@ -1093,6 +1101,11 @@ export const Editor = {
 
         return this;
     },
+    /**
+     * Unhighligh an element in the editor
+     * @param {HTMLElement} element 
+     * @returns {Editor}
+     */
     unhighlight(element) {
         if (!isHTMLElement(element)) {
             this.decoratedElements.forEach(element => unhighlight(element));
@@ -1474,25 +1487,23 @@ export const Editor = {
         this.logs.refresh();
         this.status.refresh();
 
-        this.instanceSection.dataset.view = this.view;
-        
-        if (["grid", "row"].includes(this.view)) {
+        this.instanceSection.dataset.view = this.status.view;
+
+        if (["grid", "row"].includes(this.status.view)) {
             hide(this.viewSection);
-        } else if (["tab"].includes(this.view)) {
+        } else if (["tab"].includes(this.status.view)) {
             show(this.viewSection);
         }
 
         if (isEmpty(this.states)) {
             hide(this.timeline);
-        } else if (isNullOrUndefined(this.activeConcept)) {
-            hide(this.timeline);
         } else {
             show(this.timeline);
             this.states.forEach(state => {
                 if (this.activeConcept.id === state.concept.id) {
-                    show(state.element);
+                    state.element.classList.add("active");
                 } else {
-                    hide(state.element);
+                    state.element.classList.remove("active");
                 }
             });
         }
@@ -1508,6 +1519,7 @@ export const Editor = {
             return this;
         }
 
+        this.triggerEvent({ name: "editor.element@active:updated" });
         this.activeElement = element;
 
         return this;
@@ -1523,6 +1535,8 @@ export const Editor = {
 
         this.activeConcept = concept;
 
+
+        this.triggerEvent({ name: "editor.concept@active:updated" });
         this.refresh();
 
         return this;
@@ -1549,6 +1563,7 @@ export const Editor = {
             parent = parent.parent;
         }
 
+        this.triggerEvent({ name: "editor.projection@active:updated" });
         this.refresh();
 
         return this;
@@ -1570,121 +1585,10 @@ export const Editor = {
         this.activeInstance = instance;
         this.activeInstance.container.classList.add("active");
 
+        this.triggerEvent({ name: "editor.instance@active:updated" });
         this.refresh();
 
         return this;
-    },
-    updateActiveView() {
-        if (this.view === "tab") {
-            this.instances.forEach(instance => {
-                if (instance === this.activeInstance) {
-                    instance.view.classList.add("active");
-                    instance.show();
-                } else {
-                    instance.view.classList.remove("active");
-                    instance.hide();
-                }
-            });
-        }
-
-        this.refresh();
-    },
-    addView(instance) {
-        if (isNullOrUndefined(instance)) {
-            return false;
-        }
-
-        let content = instance.title.textContent;
-
-        let icoDelete = createI({
-            class: ["ico", "ico-delete"]
-        }, "✖");
-
-        let btnDelete = createButton({
-            class: ["btn", "btn-close"]
-        }, icoDelete);
-
-        let container = createDiv({
-            class: [`editor-view-${this.view}list-item__content`]
-        }, content);
-
-        let item = createListItem({
-            class: [`editor-view-${this.view}list-item`],
-            title: instance.title.textContent
-        }, [container, btnDelete]);
-
-        instance.view = item;
-
-        /**
-         * Resolves the target
-         * @param {HTMLElement} element 
-         * @returns {HTMLElement}
-         */
-        function resolveTarget(element) {
-            const isValid = (el) => el === item || el === btnDelete;
-            if (isValid(element)) {
-                return element;
-            }
-
-            return findAncestor(element, (el) => isValid(el), 5);
-        }
-
-        item.addEventListener("click", (event) => {
-            let target = resolveTarget(event.target);
-
-            if (target === btnDelete) {
-                let next = item.previousSibling || item.nextSibling;
-                instance.delete();
-                if (this.activeInstance === null && next) {
-                    next.click();
-                }
-            } else {
-                this.updateActiveInstance(instance);
-                this.updateActiveView();
-            }
-        });
-
-        this.tabView.append(item);
-    },
-    changeView(value) {
-        if (value === this.view) {
-            return this;
-        }
-
-        this.view = value;
-        unselect(this.status.viewItem);
-        this.status.viewItem = this.status.views.get(this.view);
-        select(this.status.viewItem);
-
-        removeChildren(this.viewSection);
-
-        if (value === "tab") {
-            this.tabView = createUnorderedList({
-                class: ["bare-list", "editor-view-tablist"]
-            });
-
-            removeChildren(this.tabView);
-
-            this.instances.forEach(instance => {
-                this.addView(instance);
-            });
-
-            this.viewSection.append(this.tabView);
-        } else if (value === "grid") {
-            this.instances.forEach(instance => {
-                instance.show();
-            });
-        } else if (value === "row") {
-            this.instances.forEach(instance => {
-                instance.show();
-            });
-        } else if (value === "col") {
-            this.instances.forEach(instance => {
-                instance.show();
-            });
-        }
-
-        this.updateActiveView();
     },
 
 
@@ -1834,7 +1738,7 @@ export const Editor = {
             },
             "change-view": (target) => {
                 const { value } = target.dataset;
-                this.changeView(value);
+                this.status.changeView(value);
             },
 
             "style": (target) => { this.style.toggle(); },
@@ -2185,9 +2089,9 @@ export const Editor = {
 
                     break;
                 case Key.alt:
-                    if (this.activeElement && lastKey === Key.ctrl) {
-                        this.design(this.activeElement);
-                    }
+                    // if (this.activeElement && lastKey === Key.ctrl) {
+                    //     this.design(this.activeElement);
+                    // }
 
                     break;
                 case Key.up_arrow:

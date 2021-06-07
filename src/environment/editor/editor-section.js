@@ -280,7 +280,7 @@ export const EditorSection = {
     },
     refresh() {
         let name = this.editor.getConfig("name");
-        let settings = this.editor.getConfig("settings");
+        let settings = valOrDefault(this.editor.getConfig("settings"), true);
 
         if (name) {
             this.title.textContent = name;
@@ -296,8 +296,12 @@ export const EditorSection = {
             hide(this.btnCollapse);
         }
 
-        this.btnHome.disabled = !this.editor.isReady || !settings;
+        this.btnHome.disabled = !this.editor.isReady;
         this.btnSave.disabled = !this.editor.hasInstances;
+
+        if (settings === false) {
+            hide(this.btnHome);
+        }
 
         this.editor.getConfig("resources") ? show(this.tabResource) : hide(this.tabResource);
 
@@ -373,7 +377,7 @@ export const EditorSection = {
 
             this.updateSelector(selector);
         });
-        
+
         this.editor.registerHandler("resource.added", (value) => {
             this.fileCount++;
             this.refresh();

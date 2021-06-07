@@ -7,18 +7,12 @@ const path = require('path');
 module.exports = merge(common, {
     mode: 'production',
     entry: {
-        mindmap: {
-            import: './demo/mindmap/index.js',
-            library: { name: 'GentlemanX', type: "umd" },
-        },
-        trafficlight:  {
-            import: './demo/trafficlight/index.js',
-            library: { name: 'GentlemanX', type: "umd" },
-        }
+        mindmap: './demo/mindmap/index.js',
+        trafficlight: './demo/traffic-light/index.js'
     },
     output: {
         filename: '[name].js',
-        path: path.resolve(__dirname, 'dist/models')
+        path: path.resolve(__dirname, 'demo/dist')
     },
     plugins: [
         new webpack.DefinePlugin({

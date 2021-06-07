@@ -48,7 +48,7 @@
                                     "type": "static",
                                     "static": {
                                         "type": "image",
-                                        "url": "https://cdn3.vectorstock.com/i/1000x1000/86/82/traffic-light-icon-vector-21088682.jpg",
+                                        "url": "https://geodes-sms.github.io/gentleman/demo/traffic-light/assets/traffic-light-icon.jpg",
                                         "style": {
                                             "css": ["label-icon"]
                                         }
@@ -632,7 +632,7 @@
                                 "type": "static",
                                 "static": {
                                     "type": "image",
-                                    "url": "https://cdn3.vectorstock.com/i/1000x1000/86/82/traffic-light-icon-vector-21088682.jpg",
+                                    "url": "https://geodes-sms.github.io/gentleman/demo/traffic-light/assets/traffic-light-icon.jpg",
                                     "style": {
                                         "css": ["label-icon"]
                                     }

@@ -1,8 +1,9 @@
 import {
-    createDocFragment, createDiv, createParagraph, createAnchor, createInput,
-    isHTMLElement, createUnorderedList, createListItem, createI, removeChildren, createEmphasis, getElement, createSpan,
+    createDocFragment, createDiv, createUnorderedList, createListItem, createI,
+    createEmphasis, createButton, createSpan, removeChildren, getElement, isHTMLElement,
+    findAncestor, isNullOrUndefined
 } from 'zenkai';
-import { hide, show, toggle, LogType } from '@utils/index.js';
+import { hide, show, toggle, LogType, select, unselect } from '@utils/index.js';
 
 
 /**
@@ -70,6 +71,120 @@ export const EditorStatus = {
 
         return this;
     },
+
+
+    updateActiveView() {
+        if (this.view === "tab") {
+            this.editor.instances.forEach(instance => {
+                if (instance === this.editor.activeInstance) {
+                    instance.view.classList.add("active");
+                    instance.show();
+                } else {
+                    instance.view.classList.remove("active");
+                    instance.hide();
+                }
+            });
+        }
+
+        this.editor.refresh();
+    },
+    addView(instance) {
+        if (isNullOrUndefined(instance)) {
+            return false;
+        }
+
+        let content = instance.title.textContent;
+
+        let icoDelete = createI({
+            class: ["ico", "ico-delete"]
+        }, "✖");
+
+        let btnDelete = createButton({
+            class: ["btn", "btn-close"]
+        }, icoDelete);
+
+        let container = createDiv({
+            class: [`editor-view-${this.view}list-item__content`]
+        }, content);
+
+        let item = createListItem({
+            class: [`editor-view-${this.view}list-item`],
+            title: instance.title.textContent
+        }, [container, btnDelete]);
+
+        instance.view = item;
+
+        /**
+         * Resolves the target
+         * @param {HTMLElement} element 
+         * @returns {HTMLElement}
+         */
+        function resolveTarget(element) {
+            const isValid = (el) => el === item || el === btnDelete;
+            if (isValid(element)) {
+                return element;
+            }
+
+            return findAncestor(element, (el) => isValid(el), 5);
+        }
+
+        item.addEventListener("click", (event) => {
+            let target = resolveTarget(event.target);
+
+            if (target === btnDelete) {
+                let next = item.previousSibling || item.nextSibling;
+                instance.delete();
+                if (this.activeInstance === null && next) {
+                    next.click();
+                }
+            } else {
+                this.editor.updateActiveInstance(instance);
+            }
+        });
+
+        this.tabView.append(item);
+    },
+    changeView(value) {
+        if (value === this.view) {
+            return this;
+        }
+
+        this.view = value;
+        unselect(this.viewItem);
+        this.viewItem = this.views.get(this.view);
+        select(this.viewItem);
+
+        removeChildren(this.editor.viewSection);
+
+        if (value === "tab") {
+            this.tabView = createUnorderedList({
+                class: ["bare-list", "editor-view-tablist"]
+            });
+
+            removeChildren(this.tabView);
+
+            this.editor.instances.forEach(instance => {
+                this.addView(instance);
+            });
+
+            this.editor.viewSection.append(this.tabView);
+        } else if (value === "grid") {
+            this.editor.instances.forEach(instance => {
+                instance.show();
+            });
+        } else if (value === "row") {
+            this.editor.instances.forEach(instance => {
+                instance.show();
+            });
+        } else if (value === "col") {
+            this.editor.instances.forEach(instance => {
+                instance.show();
+            });
+        }
+
+        this.updateActiveView();
+    },
+
 
     /**
      * Diplays a notification message
@@ -196,6 +311,7 @@ export const EditorStatus = {
 
         return this.container;
     },
+
     bindEvents() {
         function createProjectionLink(text, conceptId) {
             let link = createEmphasis({
@@ -226,7 +342,6 @@ export const EditorStatus = {
             return link;
         }
 
-
         this.modelstatus.addEventListener('click', (event) => {
             if (!this.editor.conceptModel.hasError) {
                 return;
@@ -246,6 +361,10 @@ export const EditorStatus = {
             });
             this.editor.logs.clear();
             this.editor.logs.add(errors, "Validation error", LogType.ERROR);
+        });
+
+        this.editor.registerHandler("editor.instance@active:updated", () => {
+            this.updateActiveView();
         });
     }
 };

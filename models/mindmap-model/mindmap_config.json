@@ -3,6 +3,15 @@
     "concepts": [
         {
             "name": "mindmap"
+        },
+        {
+            "name": "centraltopic"
+        },
+        {
+            "name": "maintopic"
+        },
+        {
+            "name": "subtopic"
         }
     ]
 }
