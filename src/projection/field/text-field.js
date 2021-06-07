@@ -1,6 +1,6 @@
 import {
-    createDocFragment, createSpan, createDiv, createI, createUnorderedList,
-    createTextArea, createInput, createListItem, findAncestor, removeChildren,
+    createDocFragment, createSpan, createDiv, createTextArea, createInput,
+    createUnorderedList, createListItem, findAncestor, removeChildren,
     isHTMLElement, isNullOrWhitespace, isEmpty, valOrDefault, hasOwn,
 } from "zenkai";
 import {
@@ -10,13 +10,12 @@ import {
 import { StyleHandler } from "./../style-handler.js";
 import { StateHandler } from "./../state-handler.js";
 import { resolveValue } from "./../content-handler.js";
-import { createNotificationMessage } from "./notification.js";
 import { Field } from "./field.js";
 
 
 const isInputOrTextarea = (element) => isHTMLElement(element, ["input", "textarea"]);
 
-
+const CSS_ERROR = "error";
 
 /**
  * Creates a choice element
@@ -238,18 +237,17 @@ const BaseTextField = {
             };
         }
 
-        this.errors = [];
         if (!response.success) {
             this.environment.notify(response.message, "error");
-            this.errors.push(...response.errors);
         }
-
+        
         // this.attached.filter(element => !element.active).forEach(element => element.hide());
-
+        
         this.setInputValue(value);
-
+        
         this.value = value;
-
+        
+        this.environment.refresh();
         this.refresh();
     },
     /**
@@ -299,25 +297,14 @@ const BaseTextField = {
         }
         this.element.dataset.value = this.value;
 
-        if (this.hasChanges()) {
-            this.statusElement.classList.add("change");
-        } else {
-            this.statusElement.classList.remove("change");
-        }
 
-        removeChildren(this.statusElement);
-
-        const CSS_ERROR = "error";
 
         if (this.hasError) {
             this.element.classList.add(CSS_ERROR);
             this.input.classList.add(CSS_ERROR);
-            this.statusElement.classList.add(CSS_ERROR);
-            this.statusElement.append(createNotificationMessage(NotificationType.ERROR, this.errors));
         } else {
             this.element.classList.remove(CSS_ERROR);
             this.input.classList.remove(CSS_ERROR);
-            this.statusElement.classList.remove(CSS_ERROR);
         }
 
         if (this.choice) {
@@ -352,32 +339,6 @@ const BaseTextField = {
             }
 
             StyleHandler.call(this.projection, this.element, this.schema.style);
-        }
-
-        if (!isHTMLElement(this.notification)) {
-            this.notification = createDiv({
-                class: ["field-notification"],
-                dataset: {
-                    nature: "field-component",
-                    view: "text",
-                    id: this.id,
-                }
-            });
-
-            fragment.append(this.notification);
-        }
-
-        if (!isHTMLElement(this.statusElement)) {
-            this.statusElement = createI({
-                class: ["field-status"],
-                dataset: {
-                    nature: "field-component",
-                    view: "text",
-                    id: this.id,
-                }
-            });
-
-            this.notification.append(this.statusElement);
         }
 
         if (!isHTMLElement(this.input)) {
@@ -653,37 +614,6 @@ const BaseTextField = {
         element.focus();
 
         return true;
-    },
-    /**
-     * Handles the `control` command
-     * @param {HTMLElement} target 
-     */
-    controlHandler(target) {
-        if (this.toolbar) {
-            this.toolbar.remove();
-        }
-
-        // this.toolbar = createDiv({
-        //     class: ["field-toolbar"],
-        //     dataset: {
-        //         nature: "field-component",
-        //         view: "text",
-        //         id: this.id,
-        //     }
-        // });
-
-        // this.body = createDiv({
-        //     class: ["field-body"],
-        //     dataset: {
-        //         nature: "field-component",
-        //         view: "text",
-        //         id: this.id,
-        //     }
-        // });
-        // this.body.append(...this.element.childNodes);
-
-        // this.element.append(this.toolbar, this.body);
-        // this.element.classList.add("control");
     },
 
     bindEvents() {

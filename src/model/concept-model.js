@@ -16,6 +16,8 @@ export const ConceptModel = {
     /** @type {*[]} */
     listeners: null,
 
+    get hasError() { return this.concepts.some(concept => concept.hasError); },
+
     init(values) {
         this.concepts = [];
         this.values = [];
@@ -398,7 +400,7 @@ export const ConceptModel = {
         let start = `<model:gentleman>`;
         let body = this.getRootConcepts().map(concept => concept.toXML()).join("");
         let end = `</model:gentleman>`;
-        
+
         return start + body + end;
     },
 };

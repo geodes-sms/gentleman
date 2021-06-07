@@ -1,7 +1,6 @@
 import {
-    createDocFragment, createSpan, createDiv, createI, createUnorderedList,
-    createListItem, createButton, findAncestor, removeChildren, isHTMLElement,
-    isNullOrUndefined, valOrDefault, hasOwn,
+    createDocFragment, createDiv, createUnorderedList, createListItem, createButton, 
+    findAncestor, removeChildren, isHTMLElement, isNullOrUndefined, valOrDefault, hasOwn,
 } from "zenkai";
 import {
     hide, show, shake, NotificationType, getClosest, isHidden,
@@ -11,7 +10,6 @@ import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler } from "./../content-handler.js";
 import { StateHandler } from "./../state-handler.js";
 import { Field } from "./field.js";
-import { createNotificationMessage } from "./notification.js";
 
 
 const actionDefaultSchema = {
@@ -140,6 +138,7 @@ const BaseListField = {
             });
         }
 
+        this.environment.refresh();
         this.refresh();
     },
 
@@ -344,6 +343,7 @@ const BaseListField = {
             this.list.append(item);
         }
 
+        this.environment.refresh();
         this.refresh();
     },
     removeItem(value) {
@@ -371,6 +371,7 @@ const BaseListField = {
             item.dataset.index = +index - 1;
         }
 
+        this.environment.refresh();
         this.refresh();
     },
     moveItem(item, index, update = false) {
@@ -439,12 +440,6 @@ const BaseListField = {
             }
         }
 
-        if (this.hasChanges()) {
-            this.statusElement.classList.add("change");
-        } else {
-            this.statusElement.classList.remove("change");
-        }
-
         this.elements.forEach((element, schema) => {
             if (!Array.isArray(schema.state)) {
                 return;
@@ -474,14 +469,10 @@ const BaseListField = {
             removeChildren(element).append(fragment);
         });
 
-        removeChildren(this.statusElement);
         if (this.hasError) {
             this.element.classList.add("error");
-            this.statusElement.classList.add("error");
-            this.statusElement.append(createNotificationMessage(NotificationType.ERROR, this.errors));
         } else {
             this.element.classList.remove("error");
-            this.statusElement.classList.remove("error");
         }
     },
     render() {
@@ -506,30 +497,6 @@ const BaseListField = {
             }
 
             StyleHandler.call(this.projection, this.element, this.schema.style);
-        }
-
-        if (!isHTMLElement(this.notification)) {
-            this.notification = createDiv({
-                class: ["field-notification"],
-                dataset: {
-                    nature: "field-component",
-                    view: "list",
-                    id: this.id,
-                }
-            });
-            fragment.append(this.notification);
-        }
-
-        if (!isHTMLElement(this.statusElement)) {
-            this.statusElement = createI({
-                class: ["field-status"],
-                dataset: {
-                    nature: "field-component",
-                    view: "list",
-                    id: this.id,
-                }
-            });
-            this.notification.append(this.statusElement);
         }
 
         if (list && !isHTMLElement(this.list)) {

@@ -46,7 +46,7 @@
                     "target": {
                         "name": "string",
                         "constraint": {
-                            "values": ["red", "yellow", "green", "white"]
+                            "values": ["red", "yellow", "green", "white", "black"]
                         }
                     },
                     "required": true,

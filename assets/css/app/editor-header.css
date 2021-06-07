@@ -27,7 +27,7 @@
 .editor-header-main {
     display: flex;
     flex-grow: 1;
-    padding: 6px 1% 2px;
+    padding: 6px 1% 4px;
     background: #fff;
     overflow: auto;
 }
@@ -348,21 +348,21 @@
 .editor-breadcrumb {
     position: relative;
     display: flex;
-    height: 24px;
-    padding-top: 2px; padding-bottom: 2px;
+    padding-top: 4px; padding-bottom: 3px;
     width: 100%;
-    background-color: #f5f5f5;
+    background-color: #fff;
     box-shadow: 0 1px 2px -1px rgba(105, 105, 105, 0.8);
+    z-index: 30;
 }
 
-.editor-breadcrumb:after {
-    content: "";
-    position: absolute;
-    top: 0; right: 0; left: 0;
-    height: 50%;
-    border-bottom: 4px dotted #999;
-    z-index: 1;
-}
+    .editor-breadcrumb:after {
+        content: "";
+        position: absolute;
+        top: 0; right: 0; left: 0;
+        height: 50%;
+        border-bottom: 4px dotted #c0c0c0;
+        z-index: 1;
+    }
 
 .selector-concepts {
     position: relative;
@@ -374,56 +374,81 @@
     .selector-concept {
         position: relative;
         display: flex; align-items: center; justify-content: center;
+        padding: 0 6px 2px;
         color: #fff;
-        padding: 4px 8px;
-        line-height: 1.15;
+        font-size: 1.2em; font-weight: 500;
         min-width: 48px;
         border-radius: 180px;
         cursor: pointer;
     }
         .selector-concept:not(:last-child) { margin-right: 6px; }
     
-    .selector-concept--root {
-        font-size: 1.2em;
-        background-color: #222;
-        border-radius: 2px;
-    }
+    .selector-concept--root { background-color: #1b1b1b; }
 
-    .selector-concept--parent {
-        font-size: 1.2em; font-weight: 500;
-        background-color: #555;
-    }
+    .selector-concept--parent { background-color: #555; }
 
-    .selector-concept--ancestor {
-        font-size: 1.2em; font-weight: 500;
-        padding: 4px 12px 5px;
-        color: #555;
-        background-color: #d5d5d5;
-    }
+    .selector-concept--ancestor { color: #222; background-color: #e5e4e2; }
     
     .selector-concept--active {
         flex-grow: 2;
-        font-size: 1.3em;
-        padding: 0;
-        color: #fff;
+        color: #222;
         border-radius: 2px;
-        background-color: royalblue;
+        background-color: #fff;
+    }
+
+    .selector-concept.error {
+        border: 1px solid #E0115F;
+    }
+
+    .selector-concept--active.valid {
+        border: 1px solid royalblue;
     }
 
         .selector-concept--active .selector-concept-content {
-            padding: 2px 12px 6px;
             font-weight: 600;
         }
+
+        .selector-concept--active .selector-concept-status {
+            width: 12px;
+            height: 12px;
+            margin-left: 3px;
+            z-index: 50;
+        }
+        .selector-concept--active .selector-concept-status.valid {
+            border-radius: 50%;
+            background-color: green;
+        }
+        .selector-concept--active .selector-concept-status.error {
+            border-radius: 2px;
+            background-color: red;
+        }
+        .selector-concept:hover .selector-concept-status.error .selector-concept-status__errors,
+        .selector-concept--active .selector-concept-status.error .selector-concept-status__errors {
+            opacity: 1;   
+            transform: scale(1);
+            transition: .2s;
+            transition-delay: 0;
+        }
+
+        .selector-concept-status__errors {
+            position: absolute;
+            display: flex; flex-direction: column;
+            top: calc(100% + 2px); left: 0;
+            padding: 3px 6px 4px;
+            font-size: 1.2rem; font-style: normal;
+            border-radius: 1px;
+            color: #fff;
+            background-color: rgba(231, 51, 19, 0.9);
+            transform: scale(0);
+            opacity: 0;
+            transition: .2s;
+            transition-delay: .2s;
+            z-index: 60;
+        }
     
-    .selector-concept-nature {
-        font-style: normal;
-        padding: 4px 8px 5px;
-        font-weight: 400; font-size: 0.9em;
-        text-transform: uppercase;
-        border-top-left-radius: 2px;
-        border-bottom-left-radius: 2px;
-        background-color: #638AFF;
-    }
+        .has-helper:hover > .helper {
+          
+        }
 
 /*
   Timeline

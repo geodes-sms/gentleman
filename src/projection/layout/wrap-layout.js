@@ -68,7 +68,7 @@ export const BaseWrapLayout = {
             this.container.dataset.ignore = "all";
         }
 
-        StyleHandler.call(this, this.container, style);
+        StyleHandler.call(this.projection, this.container, style);
 
         if (fragment.hasChildNodes()) {
             this.container.append(fragment);

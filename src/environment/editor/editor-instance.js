@@ -5,7 +5,120 @@ import {
 import { show, hide, toggle, collapse, expand, NotificationType, makeResizable } from '@utils/index.js';
 
 
-const MAX_SIZE = 2;
+var inc = 0;
+const nextInstanceId = () => `instance${inc++}`;
+
+export const EditorInstanceManager = {
+    /**
+     * Creates a concept instance
+     * @param {string} name 
+     */
+    createInstance(concept, _projection, _options) {
+        if (isNullOrUndefined(concept)) {
+            this.notify(`The concept is not valid`, NotificationType.ERROR);
+            return false;
+        }
+
+        let projection = _projection;
+        if (isNullOrUndefined(projection) && this.hasProjectionModel) {
+            projection = this.projectionModel.createProjection(concept).init();
+        }
+
+        let instance = Object.create(EditorInstance, {
+            id: { value: nextInstanceId() },
+            object: { value: "environment" },
+            name: { value: "editor-instance" },
+            type: { value: "instance" },
+            concept: { value: concept },
+            projection: { value: projection, writable: true },
+            editor: { value: this }
+        });
+
+        const options = Object.assign({
+            type: "concept",
+            minimize: true,
+            resize: true,
+            maximize: true,
+            close: "DELETE-CONCEPT"
+        }, _options);
+
+        instance.init(options);
+
+        return this.addInstance(instance);
+    },
+    /**
+     * Gets an instance in the editor
+     * @param {string} id 
+     * @returns {EditorInstance}
+     */
+    getInstance(id) {
+        return this.instances.get(id);
+    },
+    /**
+     * Adds instance to editor
+     * @param {EditorInstance} instance 
+     * @returns {HTMLElement}
+     */
+    addInstance(instance) {
+        if (!instance.isRendered) {
+            this.instanceSection.append(instance.render());
+        }
+
+        this.instances.set(instance.id, instance);
+        this.updateActiveInstance(instance);
+
+        if (this.view === "tab") {
+            this.addView(instance);
+            this.updateActiveView();
+        }
+
+        this.refresh();
+
+        return this;
+    },
+    /**
+     * Removes an instance from the editor
+     * @param {string} id 
+     * @returns {boolean}
+     */
+    removeInstance(id) {
+        let instance = this.getInstance(id);
+
+        if (isNullOrUndefined(instance)) {
+            return false;
+        }
+
+        if (instance === this.activeInstance) {
+            this.activeInstance = null;
+        }
+
+        if (instance.view) {
+            removeChildren(instance.view).remove();
+            this.updateActiveView();
+        }
+
+        this.instances.delete(id);
+
+        this.refresh();
+
+        return true;
+    },
+    moveInstance(item, index) {
+        this.instanceSection.children[index].before(item);
+
+        return this;
+    },
+    swapInstance(item1, item2) {
+        let instances = Array.from(this.instanceSection.children);
+        const index1 = instances.indexOf(item1);
+        const index2 = instances.indexOf(item2);
+
+        this.moveInstance(item2, index1);
+        this.moveInstance(item1, index2);
+
+        return this;
+    }
+};
 
 export const EditorInstance = {
     /** @type {HTMLElement} */

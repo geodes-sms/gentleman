@@ -30,7 +30,6 @@ export const BaseStructure = {
 
 
 Object.defineProperty(BaseStructure, 'model', { get() { return this.concept.model; } });
-Object.defineProperty(BaseStructure, 'alias', { get() { return this.schema.alias; } });
 Object.defineProperty(BaseStructure, 'name', { get() { return this.schema.name; } });
 Object.defineProperty(BaseStructure, 'description', { get() { return this.schema.description; } });
 Object.defineProperty(BaseStructure, 'required', { get() { return valOrDefault(this.schema.required, true); } });

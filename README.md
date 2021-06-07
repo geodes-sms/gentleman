@@ -1,55 +1,47 @@
-# **Gentleman**
+# **Gentleman** 🎯
 
 [![Build Status](https://travis-ci.org/geodes-sms/gentleman.svg?branch=master)](https://travis-ci.org/geodes-sms/gentleman)
 
-Gentleman is a lightweight web-based projectional editor generator.  
-Gentleman aims to **to close the gap between models and domain experts**.
+Gentleman is a **lightweight web-based projectional editor** that allows you to create and manipulate models. A model is defined with concepts and manipulated through projections for a personalized experience.
 
 ## Features
 
-- Platform agnostic: Gentleman target the web (no installation required)
-- Support textual and tabular notations and multimedia content
-- Projections are defined with specialized UI elements for layouts and fields
-- Integration with Ecore: Define an Ecore model and use it with Gentleman projections
+✔️ Easy integration with any web application  
+✔️ Compatible with Ecore model  
+✔️ Support textual and tabular notations and multimedia content  
+✔️ Support multiple projections for a concept  
+✔️ Easy to switch the projections used against a model  
+✔️ Projections are defined with specialized UI elements
 
-## Workflow
+**Gentleman IDE**: [Create concepts and projections](https://geodes-sms.github.io/gentleman/demo/app.html)
 
-### **Metamodelling**
+## Examples
 
-The *metamodelling* workflow is reserved for the creation of concepts and projections.
+| Mindmap               | Traffic Light (TL)             |
+|:---------------------:|:------------------------------:|
+| ![*Oops!* missing image 😅][3]         | ![*Oops!* missing image 😅][4] |
+| [Try it out][1] | [Try it out][2] |
 
-**Required scripts:** `gentleman.core.js` **+** `gentleman.models.js`
+[1]: https://geodes-sms.github.io/gentleman/demo/mindmap/index.html
+[2]: https://geodes-sms.github.io/gentleman/demo/trafficlight/index.html
+[3]: https://geodes-sms.github.io/gentleman/assets/images/mindmap.gif "Mindmap demo"
+[4]: https://geodes-sms.github.io/gentleman/assets/images/traffic_light.gif "Traffic light demo"
 
-### **Modelling**
+# Documentation 📖
 
-The *modelling* workflow is reserved for the creation of concept instances using a projection ensemble.
-
-**Required scripts:** `gentleman.core.js`
-
-## Demonstration
-
-- Gentleman IDE (app): [Create a metamodel and projections](https://geodes-sms.github.io/gentleman/demo/app.html)
-- Mindmap (app): [Create a mindmap](https://geodes-sms.github.io/gentleman/demo/mindmap.html)
-- TrafficLight (app): [Configure a traffic light](https://geodes-sms.github.io/gentleman/demo/trafficlight.html)
-- At MODELS 2020 (video): [Live demonstration (MODELS 2020)](https://youtu.be/wJ4hVZjmrv4)
-
-## Tutorial
-
-| Getting started        | Creating a metamodel           | Creating projections  |
-|:------------- |:-------------:|:-----:|
-| [![Getting started thumbnail](https://img.youtube.com/vi/kwcWam0_yNM/default.jpg)](https://youtu.be/kwcWam0_yNM)    | [![Creating a metamodel thumbnail](https://img.youtube.com/vi/GDl-tgEL3Yk/default.jpg)](https://youtu.be/GDl-tgEL3Yk) | [![Creating projections thumbnail](https://img.youtube.com/vi/2DcN7chsE6k/default.jpg)](https://youtu.be/2DcN7chsE6k) |
-
-# Documentation
-
-You can read the documentation for Gentleman [here](https://geodes-sms.github.io/gentleman/docs).  
-If you would like to help improve this documentation, the source for many of the docs can be found in the `docs` folder within this repository.
+The documentation can be found [here](https://geodes-sms.github.io/gentleman/docs) 👈.  
 
 ## Integration
 
 Gentleman can be added to any web application in 2 steps:
 
-1. Add the required scripts to your page
+1. Add the [required scripts](#scripts) to your page
 2. [Decorate an HTML Tag](#decorate-an-html-tag) **OR** [Dynamically create an instance](#dynamically-create-an-instance)
+
+### Scripts
+
+- `gentleman.core.js` (*required*): Gentleman library.
+- `gentleman.app.js` (*optional*): Provides an IDE to create concepts and projections.
 
 ### Decorate an HTML Tag
 
@@ -60,6 +52,10 @@ Gentleman can be added to any web application in 2 steps:
         <div data-gentleman="editor"></div>
         ...
         <script src="gentleman.core.js"></script>
+        <script>
+            let editor = Gentleman.activateEditor()[0]
+            editor.init({...});
+        </script>
     </body>
 </html>
 ```
@@ -67,18 +63,18 @@ Gentleman can be added to any web application in 2 steps:
 ### Dynamically create an instance
 
 ```javascript
-const options = {
-    concept: null,
-    projection: null, 
-    config: null, 
-    handlers: null
-};
-
+// your application
+const App = {};
+...
+// create and initialize an editor
 let editor = Gentleman.createEditor();
-editor.init(options)
+editor.init({...});
+...
+// append the editor to the page
+App.container.append(editor.container);
 ```
 
-# Installation
+# Installation 💻
 
 ## Building the Code
 
@@ -112,19 +108,22 @@ To deploy the code or test in a production environment, follow these steps.
 $ npm run build
 ```
   
-# Publication
+# Publication 📃
 
-[1] L-E Lafontant, E. Syriani. *Gentleman: a light-weight web-based projectional editor generator* [PDF](https://dl.acm.org/doi/pdf/10.1145/3417990.3421998)
+1. L-E Lafontant, E. Syriani. *Gentleman: a light-weight web-based projectional editor generator*  
+   [Paper](https://dl.acm.org/doi/pdf/10.1145/3417990.3421998)  
+   [Demonstration](https://youtu.be/wJ4hVZjmrv4)
 
-# Distribution
+# Distribution 📂
 
 This distribution contains the following files and folders:
 
-- src: the source code
+- src: the library source code
+- app: the application source code
 - dist: the distributed library
 - docs: the app documentation
-- assets: contains static files
+- assets: contains static files for library and app
 
-# License
+# License ©️
 
 The source code is licensed under a [GNU GENERAL PUBLIC LICENSE 3](https://www.gnu.org/copyleft/gpl.html) ![GNU GPL v3](https://img.shields.io/badge/license-GPLv3-blue.svg)

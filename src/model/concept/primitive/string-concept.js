@@ -48,20 +48,6 @@ function responseHandler(code, ctx) {
 const _StringConcept = {
     nature: 'primitive',
 
-    init(args = {}) {
-        this.parent = args.parent;
-        this.ref = args.ref;
-        this.default = valOrDefault(this.schema.default, "");
-        this.description = this.schema.description;
-        this.constraint = this.schema.constraint;
-        this.src = valOrDefault(this.schema.src, []);
-
-        this.initObserver();
-        this.initAttribute();
-        this.initValue(args.value);
-
-        return this;
-    },
     initValue(args) {
         if (isNullOrUndefined(args)) {
             this.value = this.default;
@@ -118,9 +104,6 @@ const _StringConcept = {
             return {
                 success: false,
                 message: "Validation failed.",
-                errors: [
-                    responseHandler.call(this, code, ctx).message
-                ]
             };
         }
 
@@ -245,6 +228,8 @@ const _StringConcept = {
     },
 
     validate(value) {
+        this.errors = [];
+
         if (isNullOrWhitespace(value)) {
             return {
                 code: ResponseCode.SUCCESS
@@ -266,25 +251,37 @@ const _StringConcept = {
                 const { min, max } = lengthConstraint[type];
 
                 if (min && value.length < min.value) {
+                    let code = ResponseCode.MINLENGTH_ERROR;
+
+                    this.errors.push(responseHandler.call(this, code, min).message);
+
                     return {
-                        code: ResponseCode.MINLENGTH_ERROR,
+                        code: code,
                         ctx: min
                     };
                 }
 
                 if (max && value.length > max.value) {
+                    let code = ResponseCode.MAXLENGTH_ERROR;
+
+                    this.errors.push(responseHandler.call(this, code, max).message);
+
                     return {
-                        code: ResponseCode.MAXLENGTH_ERROR,
+                        code: code,
                         ctx: max
                     };
                 }
             } else if (type === "fixed") {
-                const { value: fixedValue } = lengthConstraint["fixed"];
+                const { value: fixedValue } = lengthConstraint[type];
 
                 if (value.length !== fixedValue) {
+                    let code = ResponseCode.FIXLENGTH_ERROR;
+
+                    this.errors.push(responseHandler.call(this, code, lengthConstraint[type]).message);
+
                     return {
-                        code: ResponseCode.FIXLENGTH_ERROR,
-                        ctx: lengthConstraint["fixed"]
+                        code: code,
+                        ctx: lengthConstraint[type]
                     };
                 }
             }
@@ -307,8 +304,12 @@ const _StringConcept = {
                 }
 
                 if (!(new RegExp(patternValue, flags)).test(value)) {
+                    let code = ResponseCode.PATTERN_ERROR;
+
+                    this.errors.push(responseHandler.call(this, code, valueConstraint["pattern"]).message);
+
                     return {
-                        code: ResponseCode.PATTERN_ERROR,
+                        code: code,
                         ctx: valueConstraint["pattern"]
                     };
                 }
@@ -316,15 +317,23 @@ const _StringConcept = {
                 const { start, end } = valueConstraint[type];
 
                 if (start && !value.startsWith < start.value) {
+                    let code = ResponseCode.PATTERN_ERROR;
+
+                    this.errors.push(responseHandler.call(this, code, valueConstraint["match"]).message);
+
                     return {
-                        code: ResponseCode.PATTERN_ERROR,
+                        code: code,
                         ctx: valueConstraint["match"]
                     };
                 }
 
                 if (end && value.length > end.value) {
+                    let code = ResponseCode.PATTERN_ERROR;
+
+                    this.errors.push(responseHandler.call(this, code, valueConstraint["match"]).message);
+
                     return {
-                        code: ResponseCode.PATTERN_ERROR,
+                        code: code,
                         ctx: valueConstraint["match"]
                     };
                 }
@@ -346,8 +355,12 @@ const _StringConcept = {
             }
 
             if (!found) {
+                let code = ResponseCode.INVALID_VALUE;
+
+                this.errors.push(responseHandler.call(this, code, values).message);
+
                 return {
-                    code: ResponseCode.INVALID_VALUE,
+                    code: code,
                     ctx: values
                 };
             }

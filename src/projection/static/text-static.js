@@ -87,7 +87,7 @@ const BaseTextStatic = {
                         }
                     }, value);
 
-                    StyleHandler.call(this, cElement, c.style);
+                    StyleHandler.call(this.projection, cElement, c.style);
 
                     this.element.append(cElement);
                 });
@@ -104,7 +104,7 @@ const BaseTextStatic = {
             this.element.title = help;
         }
 
-        StyleHandler.call(this, this.element, style);
+        StyleHandler.call(this.projection, this.element, style);
 
         if (bind) {
             this.bindEvents();

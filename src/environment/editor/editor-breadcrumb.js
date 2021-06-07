@@ -26,9 +26,6 @@ function createSelectorItem(type, concept) {
         }
     });
 
-    var nature = createI({
-        class: ["selector-concept-nature", "fit-content"]
-    }, name);
 
     /** @type {HTMLElement} */
     var content = createSpan({
@@ -40,6 +37,31 @@ function createSelectorItem(type, concept) {
     if (type === "ancestor") {
         content.classList.add("fit-content");
     }
+
+    const status = createI({
+        class: ["selector-concept-status"]
+    });
+
+    if (concept.hasError) {
+        status.classList.add("error");
+        let errorList = createUnorderedList({
+            class: ["bare-list", "selector-concept-status__errors"]
+        });
+        concept.errors.forEach(error => {
+            let element = createListItem({ class: ["selector-concept-status__error"] }, error);
+            element.style.minWidth = `${Math.min(error.length * 0.5, 30)}em`;
+
+            errorList.append(element);
+        });
+        status.append(errorList);
+
+        item.classList.add("error");
+    } else {
+        status.classList.add("valid");
+        item.classList.add("valid");
+    }
+
+    item.append(status);
 
     item.addEventListener("mouseenter", (event) => {
         let targetProjection = getElement(`.projection[data-concept="${id}"]`, this.editor.body);
@@ -118,7 +140,12 @@ export const EditorBreadcrumb = {
 
         const fragment = createDocFragment();
 
-        fragment.append(createSelectorItem.call(this, "root", rootConcept));
+        let item = createSelectorItem.call(this, "root", rootConcept);
+        fragment.append(item);
+
+        if (rootConcept === activeConcept) {
+            item.classList.add(`selector-concept--active`);
+        }
 
         if (!hasActiveConcept || rootConcept === activeConcept) {
             removeChildren(this.conceptList).append(fragment);
@@ -143,7 +170,8 @@ export const EditorBreadcrumb = {
             fragment.append(createSelectorItem.call(this, "ancestor", concept));
         });
 
-        fragment.append(createSelectorItem.call(this, "active", activeConcept));
+        item = createSelectorItem.call(this, "active", activeConcept);
+        fragment.append(item);
 
         removeChildren(this.conceptList).append(fragment);
 

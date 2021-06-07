@@ -6,7 +6,6 @@ const PROP_NATURE = "nature";
 const PROP_TYPE = "type";
 
 const ATTR_ATTRIBUTES = "attributes";
-const ATTR_ALIAS = "alias";
 const ATTR_BASE = "base";
 const ATTR_DESCRIPTION = "description";
 const ATTR_NAME = "name";

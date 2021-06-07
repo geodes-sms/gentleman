@@ -14,8 +14,6 @@ const BaseField = {
 
     /** @type {HTMLElement[]} */
     attached: null,
-    /** @type {string[]} */
-    errors: null,
     /** @type {*[]} */
     children: null,
 
@@ -30,7 +28,7 @@ const BaseField = {
     /** @type {boolean} */
     focused: false,
 
-    get hasError() { return !isEmpty(this.errors); },
+    get hasError() { return this.source.hasError; },
     get hasAttached() { return !isEmpty(this.attached); },
 
     attach(element, type) {
@@ -57,7 +55,7 @@ const BaseField = {
                 }
             });
 
-            this.notification.append(this.messageElement);
+            this.element.prepend(this.messageElement);
         }
 
         return this.messageElement;

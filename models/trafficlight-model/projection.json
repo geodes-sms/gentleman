@@ -119,17 +119,14 @@
             "type": "layout",
             "tags": ["choice"],
             "content": {
-                "type": "wrap",
+                "type": "flex",
+                "alignItems": "center",
                 "disposition": [
                     {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "L",
-                            "style": {
-                                "css": ["tl-icon", "tl-icon--light"]
-                            }
-                        }
+                        "type": "attribute",
+                        "name": "color",
+                        "tag": "readonly-color",
+                        "required": true
                     },
                     {
                         "type": "attribute",
@@ -163,14 +160,19 @@
                                     "type": "static",
                                     "static": {
                                         "type": "text",
-                                        "content": "Mode",
+                                        "content": "M",
                                         "style": {
-                                            "gss":{
-                                                "text": {
-                                                    "bold": 500,
-                                                    "transform": "uppercase"
-                                                }
-                                            }
+                                            "css": ["tl-icon", "tl-icon--mode"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Mode:",
+                                        "style": {
+                                            "ref": ["label"]
                                         }
                                     }
                                 },
@@ -185,6 +187,7 @@
                                 }
                             ],
                             "style": {
+                                "css": ["tl-mode-header"],
                                 "gss":{
                                     "text": {
                                         "size": { "value": 1.2, "unit": "em" }
@@ -714,23 +717,18 @@
             "tags": ["readonly-color"],
             "content": {
                 "type": "wrap",
-                "disposition": [
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": {
+                "disposition": [],
+                "style": {
+                    "css": ["tl-icon", "tl-icon--light"],
+                    "html": [
+                        {
+                            "name": "color",
+                            "value": {
                                 "type": "property",
-                                "name": "value",
-                                "style": {
-                                    "css": ["tl-color-reference__value"]
-                                }
+                                "name": "value"
                             }
                         }
-                    }
-                ],
-                "style": {
-                    "css": ["tl-color-reference"]
+                    ]
                 }
             }
         },
@@ -977,7 +975,7 @@
                         "type": "static",
                         "static": {
                             "type": "text",
-                            "content": "Start with:",
+                            "content": "Initial Light:",
                             "style": {
                                 "ref": ["label"]
                             }
@@ -998,13 +996,14 @@
                                     "css": ["state-reference__choice"]
                                 }
                             },
-                            "placeholder": "select light",
+                            "placeholder": "no selection",
                             "expanded": false,
                             "input": {
                                 "placeholder": "Filter the states"
                             },
                             "style": {
                                 "css": ["state-reference"],
+                                "ref": ["box-left"],
                                 "gss": {
                                     "text": {
                                         "color": { "value": "#333", "type": "hex" }                            

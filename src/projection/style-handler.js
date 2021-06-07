@@ -1,10 +1,28 @@
-import { isObject, isIterable, isNullOrWhitespace, valOrDefault, isFunction, isNullOrUndefined } from "zenkai";
+import {
+    isObject, isIterable, isNullOrWhitespace, valOrDefault, isFunction, isNullOrUndefined, capitalizeFirstLetter
+} from "zenkai";
 
+function resolveValue(content) {
+    const { type } = content;
+
+    let source = this.concept || this.source;
+
+    if (type === "property") {
+        return valOrDefault(source.getProperty(content.name), "");
+    }
+
+    if (type === "param") {
+        return this.projection.getParam(content.name);
+    }
+
+    return content;
+}
 
 const StyleMap = {
     "css": CSSStyleHandler,
     "ref": ReferenceStyleHandler,
     "gss": GentlemanStyleHandler,
+    "html": HTMLStyleHandler,
 };
 
 const GentlemanStyleMap = {
@@ -158,6 +176,30 @@ function CSSStyleHandler(element, schema) {
     }
 
     addClass(element, schema);
+
+    return element;
+}
+
+/**
+ * Applies HTML style to an element
+ * @param {HTMLElement} element 
+ * @param {*[]} schema 
+ */
+function HTMLStyleHandler(element, schema) {
+    if (!isIterable(schema)) {
+        return element;
+    }
+
+    schema.forEach(prop => {
+        let name = `style${capitalizeFirstLetter(prop.name)}`;
+        element.dataset[name] = resolveValue.call(this, prop.value);
+
+        if (prop.value.type === "property") {
+            this.registerHandler("value.changed", (value) => {
+                element.dataset[name] = resolveValue.call(this, prop.value);
+            });
+        }
+    });
 
     return element;
 }
@@ -379,7 +421,7 @@ function resolveBorderRadius(element, schema) {
     if (isNullOrUndefined(schema)) {
         return;
     }
-    
+
     for (const rule in schema) {
         const value = schema[rule];
 

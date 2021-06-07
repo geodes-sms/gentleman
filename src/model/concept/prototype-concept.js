@@ -1,7 +1,4 @@
-import {
-    isString, isNullOrUndefined, isObject, isNullOrWhitespace, isEmpty,
-    valOrDefault, toBoolean, hasOwn
-} from "zenkai";
+import { isNullOrUndefined, isObject, isNullOrWhitespace, isEmpty, valOrDefault, toBoolean, hasOwn } from "zenkai";
 import { Concept } from "./concept.js";
 
 
@@ -67,13 +64,14 @@ const BasePrototypeConcept = {
     getTarget() {
         return this.target;
     },
-    restore(state) {console.log(state);
+    restore(state) {
+        console.log(state);
         const { value } = state;
 
-        if(isNullOrUndefined(value)) {
+        if (isNullOrUndefined(value)) {
             return;
         }
-        
+
         let concept = this.createConcept(value.name, value);
         this.setValue(concept);
     },
@@ -85,10 +83,7 @@ const BasePrototypeConcept = {
         if (result !== ResponseCode.SUCCESS) {
             return {
                 success: false,
-                message: "Validation failed: The value could not be updated.",
-                errors: [
-                    responseHandler(result).message
-                ]
+                message: "Validation failed: The value could not be updated."
             };
         }
 
@@ -229,7 +224,11 @@ const BasePrototypeConcept = {
         }
 
         if (!found) {
-            return ResponseCode.INVALID_VALUE;
+            let code = ResponseCode.INVALID_VALUE;
+
+            this.errors.push(responseHandler.call(this, code).message);
+
+            return code;
         }
 
         return ResponseCode.SUCCESS;

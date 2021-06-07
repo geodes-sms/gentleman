@@ -45,26 +45,59 @@
     background-color: #555;
 }
 
-.editor-footer-viewers {
+
+.editor-statusbar {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    color: #fff;
+    background-color: #232425;
 }
-.editor-footer-viewer {
+
+.editor-statusbar-model {
+    padding: 2px 6px; padding-left: 1%;
+    display: flex; flex-direction: row; align-items: center;
+    cursor: default;
+}
+
+    .editor-statusbar-model-badge {
+        width: 12px;
+        height: 12px;
+        margin-right: 3px;
+    }
+        .editor-statusbar-model-badge.valid {
+            border-radius: 50%;
+            background-color: green;
+        }
+        .editor-statusbar-model-badge.error {
+            border-radius: 2px;
+            background-color: red;
+        }
+
+    .editor-statusbar-model-info {
+        font-size: 1.2em; font-weight: 500;
+    }
+
+
+.editor-statusbar-viewers {
+    display: flex; justify-content: flex-end;
+}
+
+.editor-statusbar-viewer {
     padding: 2px 6px;
     font-size: 1.2em;
     text-transform: uppercase;
     color: #fff;
     cursor: default;
 }
+    .editor-statusbar-viewer:hover {
+        background-color: #777;
+    }
 
-.editor-footer-viewer:hover {
-    background-color: #777;
-}
+    .editor-statusbar-viewer.selected {
+        background-color: #007FFF;
+        font-weight: bold;
+    }
 
-.editor-footer-viewer.selected {
-    background-color: #222;
-    font-weight: bold;
-}
 
 .editor-style {
     position: absolute;
@@ -211,36 +244,21 @@
         width: 100%;
     }
 
+    .model-concept-section[data-view="tab"] .editor-concept.active {
+        height: 100%;
+    }
+
     .model-concept-section[data-view="tab"] .editor-concept-header {
         display: none;
     }
 
     .model-view-section {
         position: relative;
-        background-color: #d5d5d5;
+        background: #e5e2e2;
     }
 
     .model-concept-section[data-view="tab"] .model-view-section {
         width: 100%;
-    }
-
-    .instance-screenshot {
-        height: auto!important;
-        width: auto!important;
-        max-width: 100%;
-        max-height: 240px;
-        box-shadow: 0 0 4px -1px #555;
-    }
-
-    .editor-view-navlist {
-        display: flex; flex-direction: column;
-        height: 100%;
-        padding: 2px 4px;
-        overflow: auto;
-    }
-
-    .editor-view-navlist-item {
-        border-bottom: 2px solid #c0c0c0;
     }
 
     .editor-view-tablist {
@@ -253,46 +271,42 @@
     .editor-view-tablist-item {
         position: relative;
         display: inline-flex; align-items: center; justify-content: space-between;
-        padding: 3px 6px 2px;
-        font-size: 1.3em;
-        min-width: 60px;
+        padding: 4px 4px 3px 8px;
+        font-size: 1.2em;
         color: #555;
         background-color: #f0f0f0;
-        border-bottom: 2px solid #f5f5f5;
         opacity: 0.9;
     }
-    
-    .editor-view-tablist-item:not(:last-child):not(.active):after {
-        content: "";
-        position: absolute;
-        top: 3px; bottom: 3px; right: 0;
-        width: 1px;
-        background-color: #999;
-        box-shadow: 0 0 1px #c0c0c0;
-    }
-    
-    .editor-view-tablist-item:hover {
-        background-color: #fff;
-    }
+        
+        .editor-view-tablist-item:not(:last-child):not(.active):after {
+            content: "";
+            position: absolute;
+            top: 3px; bottom: 3px; right: 0;
+            width: 1px;
+            background-color: #999;
+            box-shadow: 0 0 1px #c0c0c0;
+        }
 
-    .editor-view-tablist-item.active {
-        color: #333;
-        background-color: #f5f5f5;
-        border-radius: 2px 2px 0 0;
-        opacity: 1;
-        font-weight: bold;
-        box-shadow: 1px 0 2px -1px #777, -1px 0 2px -1px #777;
-        z-index: 10;
-    }
+        .editor-view-tablist-item .btn-close {
+            padding: 2px;
+            margin-left: 4px;
+        }
+        
+        .editor-view-tablist-item:hover {
+            background-color: #fff;
+        }
 
-    .editor-view-navlist-item__content {
-        background-color: #fefefe;
-    }
-    .editor-view-navlist-item__content [data-nature="layout"],
-    .editor-view-navlist-item__content [data-nature="field"] {
-        font-size: 0.8rem;
-    }
+        .editor-view-tablist-item.active {
+            color: #222;
+            background-color: #fff;
+            border-radius: 2px 2px 0 0;
+            opacity: 1;
+            font-weight: bold;
+            box-shadow: 1px 0 2px -1px #777, -1px 0 2px -1px #777;
+            z-index: 50;
+        }
 
+        
     .editor-concept {
         position: relative;
         display: flex; flex-direction: column;
@@ -303,7 +317,7 @@
         opacity: 0.9;
     }
         .editor-concept > .layout-container { 
-            flex-grow: 2; 
+            flex-grow: 2;
         }
 
         .editor-concept:hover {

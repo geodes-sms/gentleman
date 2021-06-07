@@ -35,25 +35,6 @@ const actionDefaultSchema = {
     }
 };
 
-
-/**
- * Creates a notification message
- * @param {string} type 
- * @param {string} message 
- * @returns {HTMLElement}
- */
-function createNotificationMessage(type, message) {
-    var element = createSpan({ class: ["notification-message", `notification-message--${type}`] }, message);
-
-    if (Array.isArray(message)) {
-        element.style.minWidth = `${Math.min(message[0].length * 0.5, 30)}em`;
-    } else {
-        element.style.minWidth = `${Math.min(message.length * 0.5, 30)}em`;
-    }
-
-    return element;
-}
-
 function resolveFieldComponent(element) {
     const FIELD_COMPONENT = "field-component";
 
@@ -120,30 +101,6 @@ const BaseTableField = {
             }
 
             StyleHandler.call(this.projection, this.element, this.schema.style);
-        }
-
-        if (!isHTMLElement(this.notification)) {
-            this.notification = createDiv({
-                class: ["field-notification"],
-                dataset: {
-                    nature: "field-component",
-                    view: "table",
-                    id: this.id,
-                }
-            });
-            fragment.append(this.notification);
-        }
-
-        if (!isHTMLElement(this.statusElement)) {
-            this.statusElement = createI({
-                class: ["field-status"],
-                dataset: {
-                    nature: "field-component",
-                    view: "table",
-                    id: this.id,
-                }
-            });
-            this.notification.append(this.statusElement);
         }
 
         content.forEach(element => {
@@ -363,12 +320,6 @@ const BaseTableField = {
             this.table.classList.add("empty");
         }
 
-        if (this.hasChanges()) {
-            this.statusElement.classList.add("change");
-        } else {
-            this.statusElement.classList.remove("change");
-        }
-
         this.contentElements.forEach((element, schema) => {
             if (!Array.isArray(schema.state)) {
                 return;
@@ -392,14 +343,10 @@ const BaseTableField = {
             removeChildren(element).append(content);
         });
 
-        removeChildren(this.statusElement);
         if (this.hasError) {
             this.element.classList.add("error");
-            this.statusElement.classList.add("error");
-            this.statusElement.append(createNotificationMessage(NotificationType.ERROR, this.errors));
         } else {
             this.element.classList.remove("error");
-            this.statusElement.classList.remove("error");
         }
     },
     createElement() {

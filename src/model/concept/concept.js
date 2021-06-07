@@ -1,4 +1,4 @@
-import { isString, valOrDefault, hasOwn, isNullOrUndefined, isObject, isNullOrWhitespace, toBoolean } from "zenkai";
+import { isString, valOrDefault, hasOwn, isNullOrUndefined, isObject, isNullOrWhitespace, toBoolean, isEmpty } from "zenkai";
 import { AttributeHandler, ObserverHandler } from "@structure/index.js";
 
 
@@ -15,8 +15,6 @@ const _Concept = {
     name: null,
     /** @type {string} */
     description: null,
-    /** @type {string} */
-    alias: null,
     /** @type {*} */
     ref: null,
     /** @type {string[]} */
@@ -29,6 +27,8 @@ const _Concept = {
     parent: null,
     /** @type {int[]} */
     references: null,
+    /** @type {*[]} */
+    errors: null,
     /** Concept value */
     value: null,
     /** Possible values for the concept */
@@ -37,8 +37,7 @@ const _Concept = {
     action: null,
     /** Concept shadow list */
     shadows: null,
-    /** Concept value history list */
-    history: null,
+
     kind: "concept",
 
     init(args = {}) {
@@ -47,8 +46,10 @@ const _Concept = {
         this.ref = args.ref;
         this.default = valOrDefault(this.schema.default, null);
         this.values = valOrDefault(args.values, valOrDefault(this.schema.values, []));
-        this.alias = valOrDefault(args.alias, this.schema.alias);
         this.description = valOrDefault(args.description, this.schema.description);
+        this.src = valOrDefault(this.schema.src, []);
+        this.constraint = this.schema.constraint;
+        this.errors = [];
 
 
         this.initObserver();
@@ -417,7 +418,7 @@ const _Concept = {
         let start = `<${name} id="${this.id}">`;
         let body = this.attributes.map(attr => attr.toXML()).join("");
         let end = `</${name}>`;
-        
+
         return start + body + end;
     }
 };
@@ -481,3 +482,4 @@ export const Concept = Object.assign(
 
 Object.defineProperty(Concept, 'attributeSchema', { get() { return this.schema.attributes; } });
 Object.defineProperty(Concept, '_prototype', { get() { return this.schema.prototype; } });
+Object.defineProperty(Concept, 'hasError', { get() { return this.errors && !isEmpty(this.errors); } });

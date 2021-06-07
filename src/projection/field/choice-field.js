@@ -168,10 +168,8 @@ const BaseChoiceField = {
         if (update) {
             response = this.source.setValue(value);
 
-            this.errors = [];
             if (!response.success) {
                 this.environment.notify(response.message, NotificationType.ERROR);
-                this.errors.push(...response.errors);
             }
 
             return true;
@@ -186,8 +184,6 @@ const BaseChoiceField = {
         } else {
             this.setChoice(value);
         }
-
-        this.errors = [];
 
         if (isNullOrUndefined(value)) {
             this.value = null;
@@ -229,33 +225,22 @@ const BaseChoiceField = {
             }
         }
 
-        if (this.hasChanges()) {
-            this.statusElement.classList.add("change");
-        } else {
-            this.statusElement.classList.remove("change");
-        }
-
         if (this.input) {
             this.element.dataset.input = this.input.value;
         }
 
         this.element.classList.remove("querying");
 
-        removeChildren(this.statusElement);
-
         if (this.hasError) {
             this.element.classList.add("error");
             if (this.input) {
                 this.input.classList.add("error");
             }
-            this.statusElement.classList.add("error");
-            this.statusElement.append(createNotificationMessage(NotificationType.ERROR, this.errors));
         } else {
             this.element.classList.remove("error");
             if (this.input) {
                 this.input.classList.remove("error");
             }
-            this.statusElement.classList.remove("error");
         }
 
         return this;
@@ -277,45 +262,6 @@ const BaseChoiceField = {
                     id: this.id,
                 }
             });
-        }
-
-        if (!isHTMLElement(this.notification)) {
-            this.notification = createDiv({
-                class: ["field-notification"],
-                dataset: {
-                    nature: "field-component",
-                    view: "choice",
-                    id: this.id,
-                }
-            });
-
-            fragment.append(this.notification);
-        }
-
-        if (!isHTMLElement(this.statusElement)) {
-            this.statusElement = createI({
-                class: ["field-status", "hidden"],
-                dataset: {
-                    nature: "field-component",
-                    view: "choice",
-                    id: this.id,
-                }
-            });
-
-            this.notification.append(this.statusElement);
-        }
-
-        if (!isHTMLElement(this.messageElement)) {
-            this.messageElement = createI({
-                class: ["field-message", "hidden"],
-                dataset: {
-                    nature: "field-component",
-                    view: "choice",
-                    id: this.id,
-                }
-            });
-
-            this.notification.append(this.messageElement);
         }
 
         if (!isHTMLElement(this.input) && input) {
@@ -445,6 +391,7 @@ const BaseChoiceField = {
             this.setValue(this.source.getValue());
         }
 
+        this.environment.refresh();
         this.refresh();
 
         return this.element;
@@ -730,8 +677,7 @@ const BaseChoiceField = {
         let candidates = this.source.getCandidates();
 
         if (isEmpty(candidates)) {
-            this.messageElement.append(createNotificationMessage(NotificationType.INFO, "No candidates found."));
-            show(this.messageElement);
+            this.notify("No candidates found.", NotificationType.INFO);
 
             return;
         }

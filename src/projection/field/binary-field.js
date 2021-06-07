@@ -7,7 +7,6 @@ import { StyleHandler } from "../style-handler.js";
 import { ContentHandler } from "./../content-handler.js";
 import { StateHandler } from "./../state-handler.js";
 import { Field } from "./field.js";
-import { createNotificationMessage } from "./notification.js";
 
 
 /**
@@ -21,40 +20,6 @@ function createFieldElement(id) {
         tabindex: -1,
         dataset: {
             nature: "field",
-            view: "binary",
-            id: id,
-        }
-    });
-
-    return element;
-}
-
-/**
- * Creates the field notification element
- * @returns {HTMLElement}
- */
-function createFieldNotificationElement(id) {
-    var element = createDiv({
-        class: ["field-notification", "hidden"],
-        dataset: {
-            nature: "field-component",
-            view: "binary",
-            id: id,
-        }
-    });
-
-    return element;
-}
-
-/**
- * Creates the field status element
- * @returns {HTMLElement}
- */
-function createFieldStatusElement(id) {
-    var element = createI({
-        class: ["field-status", "hidden"],
-        dataset: {
-            nature: "field-component",
             view: "binary",
             id: id,
         }
@@ -123,12 +88,6 @@ const BaseBinaryField = {
     refresh() {
         const state = valOrDefault(StateHandler.call(this, this.schema, this.schema.state), this.schema);
 
-        if (this.hasChanges()) {
-            this.statusElement.classList.add("change");
-        } else {
-            this.statusElement.classList.remove("change");
-        }
-
         if (this.schema.state) {
             let state = this.schema.state[this.getValue().toString()];
 
@@ -152,16 +111,12 @@ const BaseBinaryField = {
             this.element.dataset.state = "off";
         }
 
-        removeChildren(this.statusElement);
         if (this.hasError) {
             this.element.classList.add("error");
             this.input.classList.add("error");
-            this.statusElement.classList.add("error");
-            this.statusElement.append(createNotificationMessage(NotificationType.ERROR, this.errors));
         } else {
             this.element.classList.remove("error");
             this.input.classList.remove("error");
-            this.statusElement.classList.remove("error");
         }
     },
     render() {
@@ -177,18 +132,6 @@ const BaseBinaryField = {
             }
 
             StyleHandler.call(this.projection, this.element, this.schema.style);
-        }
-
-        if (!isHTMLElement(this.notification)) {
-            this.notification = createFieldNotificationElement(this.id);
-
-            fragment.append(this.notification);
-        }
-
-        if (!isHTMLElement(this.statusElement)) {
-            this.statusElement = createFieldStatusElement(this.id);
-
-            this.notification.append(this.statusElement);
         }
 
         if (!isHTMLElement(this.input)) {
@@ -307,15 +250,14 @@ const BaseBinaryField = {
             };
         }
 
-        this.errors = [];
         if (!response.success) {
             this.environment.notify(response.message, "error");
-            this.errors.push(...response.errors);
         }
 
         this.input.checked = value;
         this.value = value;
 
+        this.environment.refresh();
         this.refresh();
     },
     getCandidates() {

@@ -12,6 +12,7 @@
     "build": "npm-run-all build:*",
     "build:css": "node scripts/build.js",
     "build:js": "cross-env NODE_ENV=production webpack --config webpack.prod.js",
+    "build:json": "cross-env NODE_ENV=production webpack --config webpack.extra.js",
     "start": "cross-env NODE_ENV=development webpack serve --config webpack.dev.js",
     "start:chrome": "cross-env NODE_ENV=development webpack serve  --open 'chrome' --config webpack.dev.js",
     "test": "cross-env NODE_ENV=test nyc mocha --config .mocharc.yml",

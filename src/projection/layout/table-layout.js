@@ -117,7 +117,7 @@ export const BaseTableLayout = {
 
                 cell.style.display = "table-cell";
 
-                StyleHandler.call(this, cell, cellContent.style);
+                StyleHandler.call(this.projection, cell, cellContent.style);
 
                 row.append(cell);
             }
@@ -126,7 +126,7 @@ export const BaseTableLayout = {
             fragment.append(row);
         }
 
-        StyleHandler.call(this, this.container, style);
+        StyleHandler.call(this.projection, this.container, style);
 
         if (fragment.hasChildNodes()) {
             this.container.append(fragment);

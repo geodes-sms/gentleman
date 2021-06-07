@@ -29,10 +29,10 @@ const _BooleanConcept = {
     init(args = {}) {
         this.parent = args.parent;
         this.ref = args.ref;
-        this.alias = this.schema.alias;
         this.default = valOrDefault(this.schema.default, true);
         this.description = this.schema.description;
         this.constraint = this.schema.constraint;
+        this.errors = [];
 
         this.initObserver();
         this.initAttribute();
@@ -73,10 +73,7 @@ const _BooleanConcept = {
         if (result !== ResponseCode.SUCCESS) {
             return {
                 success: false,
-                message: "Validation failed: The value could not be updated.",
-                errors: [
-                    responseHandler(result).message
-                ]
+                message: "Validation failed: The value could not be updated."
             };
         }
 
@@ -104,6 +101,8 @@ const _BooleanConcept = {
     },
 
     validate(value) {
+        this.errors = [];
+        
         // string to bool
         if (isString(value) && ["true", "false"].includes(value.toLowerCase())) {
             return ResponseCode.SUCCESS;

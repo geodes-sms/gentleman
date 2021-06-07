@@ -29,9 +29,9 @@ const _ReferenceConcept = {
         this.accept = this.schema.accept;
         this.path = this.schema.path;
         this.values = valOrDefault(this.schema.values, []);
-        this.alias = this.schema.alias;
         this.description = this.schema.description;
         this.constraint = this.schema.constraint;
+        this.errors = [];
 
         this.initObserver();
         this.initAttribute();
@@ -97,10 +97,7 @@ const _ReferenceConcept = {
         if (result !== ResponseCode.SUCCESS) {
             return {
                 success: false,
-                message: "Validation failed: The value could not be updated.",
-                errors: [
-                    responseHandler(result).message
-                ]
+                message: "Validation failed: The value could not be updated."
             };
         }
 
@@ -211,9 +208,7 @@ const _ReferenceConcept = {
         return true;
     },
     validate(value) {
-        if (isNullOrWhitespace(value) || isEmpty(this.values)) {
-            return ResponseCode.SUCCESS;
-        }
+        this.errors = [];
 
         return ResponseCode.SUCCESS;
     },

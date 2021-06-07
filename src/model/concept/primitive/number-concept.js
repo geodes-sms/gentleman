@@ -46,21 +46,6 @@ const isNumber = (value) => typeof value === 'number' && !isNaN(value);
 const _NumberConcept = {
     nature: 'primitive',
 
-    init(args = {}) {
-        this.parent = args.parent;
-        this.ref = args.ref;
-        this.values = valOrDefault(this.schema.values, []);
-        this.default = valOrDefault(this.schema.default, null);
-        this.alias = this.schema.alias;
-        this.description = this.schema.description;
-        this.constraint = this.schema.constraint;
-
-        this.initObserver();
-        this.initAttribute();
-        this.initValue(args.value);
-
-        return this;
-    },
     initValue(args) {
         if (isNullOrUndefined(args)) {
             this.value = this.default;
@@ -104,10 +89,7 @@ const _NumberConcept = {
         if (code !== ResponseCode.SUCCESS) {
             return {
                 success: false,
-                message: "Validation failed.",
-                errors: [
-                    responseHandler.call(this, code, ctx).message
-                ]
+                message: "Validation failed."
             };
         }
 
@@ -149,14 +131,17 @@ const _NumberConcept = {
         return true;
     },
     validate(value) {
+        this.errors = [];
+
         if (isNaN(value)) {
+            let code = ResponseCode.INVALID_NUMBER;
+
+            this.errors.push(responseHandler.call(this, code).message);
+
             return {
-                code: ResponseCode.INVALID_NUMBER
+                code: code
             };
         }
-
-
-        this.notify("value.validated", this.value);
 
         if (!this.hasConstraint()) {
             return {
@@ -165,7 +150,6 @@ const _NumberConcept = {
         }
 
         if (this.hasConstraint("value")) {
-            console.log(this);
             let valueConstraint = this.getConstraint("value");
 
             const { type } = valueConstraint;
@@ -174,15 +158,23 @@ const _NumberConcept = {
                 const { min, max } = valueConstraint[type];
 
                 if (min && value.length < min.value) {
+                    let code = ResponseCode.MIN_ERROR;
+
+                    this.errors.push(responseHandler.call(this, code, min).message);
+
                     return {
-                        code: ResponseCode.MIN_ERROR,
+                        code: code,
                         ctx: min
                     };
                 }
 
                 if (max && value.length > max.value) {
+                    let code = ResponseCode.MAX_ERROR;
+
+                    this.errors.push(responseHandler.call(this, code, max).message);
+
                     return {
-                        code: ResponseCode.MAX_ERROR,
+                        code: code,
                         ctx: max
                     };
                 }
@@ -190,8 +182,12 @@ const _NumberConcept = {
                 const { value: fixedValue } = valueConstraint[type];
 
                 if (value.length !== fixedValue) {
+                    let code = ResponseCode.FIX_ERROR;
+
+                    this.errors.push(responseHandler.call(this, code, valueConstraint[type]).message);
+
                     return {
-                        code: ResponseCode.FIX_ERROR,
+                        code: code,
                         ctx: valueConstraint[type]
                     };
                 }
@@ -213,8 +209,12 @@ const _NumberConcept = {
             }
 
             if (!found) {
+                let code = ResponseCode.INVALID_VALUE;
+
+                this.errors.push(responseHandler.call(this, code, values).message);
+
                 return {
-                    code: ResponseCode.INVALID_VALUE,
+                    code: code,
                     ctx: values
                 };
             }

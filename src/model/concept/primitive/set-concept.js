@@ -2,6 +2,44 @@ import { isNullOrUndefined, isEmpty, valOrDefault, toBoolean } from "zenkai";
 import { Concept } from "./../concept.js";
 
 
+const ResponseCode = {
+    SUCCESS: 200,
+    INVALID_VALUE: 401,
+    MIN_CARDINALITY_ERROR: 402,
+    MAX_CARDINALITY_ERROR: 403,
+    FIX_CARDINALITY_ERROR: 404,
+};
+
+function responseHandler(code, ctx) {
+    switch (code) {
+        case ResponseCode.INVALID_VALUE:
+            return {
+                success: false,
+                message: `Valid values: ${ctx}`
+            };
+        case ResponseCode.MAX_CARDINALITY_ERROR:
+            return {
+                success: false,
+                message: `Maximum cardinality: ${this.value.length}/${ctx.value}.`
+            };
+        case ResponseCode.MIN_CARDINALITY_ERROR:
+            return {
+                success: false,
+                message: `Minimum cardinality: ${this.value.length}/${ctx.value}.`
+            };
+        case ResponseCode.FIX_CARDINALITY_ERROR:
+            return {
+                success: false,
+                message: `Fixed cardinality: ${ctx.value}.`
+            };
+        case ResponseCode.PATTERN_ERROR:
+            return {
+                success: false,
+                message: `The value is not valid.`
+            };
+    }
+}
+
 const _SetConcept = {
     nature: 'primitive',
 
@@ -24,9 +62,11 @@ const _SetConcept = {
     initValue(args) {
         this.removeAllElement();
 
+        let min = getMin.call(this);
+
         if (isNullOrUndefined(args)) {
 
-            let remaining = valOrDefault(getMin.call(this), 0);
+            let remaining = min;
 
             for (let i = 0; i < remaining; i++) {
                 this.createElement();
@@ -45,7 +85,7 @@ const _SetConcept = {
             this.createElement(value[i]);
         }
 
-        let remaining = valOrDefault(getMin.call(this), 0) - value.length;
+        let remaining = min - value.length;
         for (let i = 0; i < remaining; i++) {
             this.createElement();
         }
@@ -124,6 +164,7 @@ const _SetConcept = {
 
         element.index = this.value.length - 1;
 
+        this.validate();
         this.notify("value.added", element);
 
         return true;
@@ -141,6 +182,7 @@ const _SetConcept = {
 
         this.value.splice(index, 0, element.id);
 
+        this.validate();
         this.notify("value.added", element);
 
         return this;
@@ -180,22 +222,6 @@ const _SetConcept = {
         return this.removeElementAt(index);
     },
     removeElementAt(index) {
-        let min = valOrDefault(getMin.call(this), 0);
-
-        if (this.value.length <= min) {
-            return {
-                message: `The set needs at least ${min} element.`,
-                success: false,
-            };
-        }
-
-        if (!Number.isInteger(index) || index < 0) {
-            return {
-                message: `The element was not removed. The given 'index' is not valid.`,
-                success: false,
-            };
-        }
-
         let concept = this.getElementAt(index);
 
         if (isNullOrUndefined(concept)) {
@@ -215,6 +241,7 @@ const _SetConcept = {
             concept.index = i;
         }
 
+        this.validate();
         this.notify("value.removed", concept);
 
         return {
@@ -332,6 +359,66 @@ const _SetConcept = {
         return concepts.filter(concept => concept.name === name);
     },
 
+    
+    validate() {
+        this.errors = [];
+
+        if (!this.hasConstraint()) {
+            return {
+                code: ResponseCode.SUCCESS
+            };
+        }
+
+        if (this.hasConstraint("cardinality")) {
+            let lengthConstraint = this.getConstraint("cardinality");
+
+            const { type } = lengthConstraint;
+
+            if (type === "range") {
+                const { min, max } = lengthConstraint[type];
+
+                if (min && this.value.length < min.value) {
+                    let code = ResponseCode.MIN_CARDINALITY_ERROR;
+
+                    this.errors.push(responseHandler.call(this, code, min).message);
+
+                    return {
+                        code: code,
+                        ctx: min
+                    };
+                }
+
+                if (max && this.value.length > max.value) {
+                    let code = ResponseCode.MAX_CARDINALITY_ERROR;
+
+                    this.errors.push(responseHandler.call(this, code, max).message);
+
+                    return {
+                        code: code,
+                        ctx: max
+                    };
+                }
+            } else if (type === "fixed") {
+                const { value: fixedValue } = lengthConstraint[type];
+
+                if (this.value.length !== fixedValue) {
+                    let code = ResponseCode.FIX_CARDINALITY_ERROR;
+
+                    this.errors.push(responseHandler.call(this, code, lengthConstraint[type]).message);
+
+                    return {
+                        code: code,
+                        ctx: lengthConstraint[type]
+                    };
+                }
+            }
+        }
+
+        return {
+            code: ResponseCode.SUCCESS
+        };
+    },
+
 
     copy(save = true) {
         if (!this.hasValue()) {
@@ -380,15 +467,9 @@ const _SetConcept = {
 };
 
 
-function resolveAccept(accept) {
-    var candidates = this.model.getConceptSchema(accept);
-
-    return candidates;
-}
-
 function getMin() {
     if (!this.hasConstraint("cardinality")) {
-        return null;
+        return 0;
     }
 
     const cardinality = this.getConstraint("cardinality");
@@ -405,29 +486,15 @@ function getMin() {
         return value;
     }
 
-    return null;
+    return 0;
 }
 
-function getMax() {
-    if (!this.hasConstraint("cardinality")) {
-        return null;
-    }
 
-    const cardinality = this.getConstraint("cardinality");
 
-    const { type } = cardinality;
+function resolveAccept(accept) {
+    var candidates = this.model.getConceptSchema(accept);
 
-    if (type === "range") {
-        const { max } = cardinality[type];
-
-        return max.value;
-    } else if (type === "fixed") {
-        const { value } = cardinality[type];
-
-        return value;
-    }
-
-    return null;
+    return candidates;
 }
 
 

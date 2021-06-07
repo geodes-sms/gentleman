@@ -27,7 +27,7 @@ export const Layout = {
     },
     setStyle(style) {
         this.schema.style = style;
-        StyleHandler.call(this, this.container, style);
+        StyleHandler.call(this.projection, this.container, style);
 
         this.refresh();
 

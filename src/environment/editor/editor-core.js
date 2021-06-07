@@ -10,20 +10,20 @@ import {
 } from '@utils/index.js';
 import { ConceptModelManager } from '@model/index.js';
 import { createProjectionModel } from '@projection/index.js';
-import { ProjectionWindow } from '../projection-window.js';
 import { EditorHome } from './editor-home.js';
 import { EditorBreadcrumb } from './editor-breadcrumb.js';
 import { EditorFilter } from './editor-filter.js';
 import { EditorStyle } from './editor-style.js';
 import { EditorLog } from './editor-log.js';
 import { EditorSection } from './editor-section.js';
-import { EditorInstance } from './editor-instance.js';
+import { EditorInstance, EditorInstanceManager } from './editor-instance.js';
 import { EditorDesign } from './editor-design.js';
+import { EditorStatus } from './editor-status.js';
 
 
 var inc = 0;
 
-const nextInstanceId = () => `instance${inc++}`;
+
 const nextValueId = () => `value${inc++}`;
 
 /**
@@ -37,20 +37,6 @@ function createEditorHeader() {
         editor: { value: this }
     });
 }
-
-/**
- * Creates a projection window
- * @returns {ProjectionWindow}
- */
-function createProjectionWindow() {
-    return Object.create(ProjectionWindow, {
-        object: { value: "environment" },
-        name: { value: "projection-window" },
-        type: { value: "window" },
-        editor: { value: this }
-    });
-}
-
 
 /**
  * Creates an editor breadcrumb
@@ -100,6 +86,19 @@ function createEditorStyle() {
         object: { value: "environment" },
         name: { value: "editor-style" },
         type: { value: "style" },
+        editor: { value: this }
+    });
+}
+
+/**
+ * Creates an editor status manager
+ * @returns {EditorStatus}
+ */
+function createEditorStatus() {
+    return Object.create(EditorStatus, {
+        object: { value: "environment" },
+        name: { value: "editor-status" },
+        type: { value: "status" },
         editor: { value: this }
     });
 }
@@ -167,16 +166,10 @@ export const Editor = {
     style: null,
     /** @type {EditorLog} */
     logs: null,
+    /** @type {EditorStatus} */
+    status: null,
 
     view: "grid",
-    /** @type {HTMLElement} */
-    viewItem: null,
-    /** @type {HTMLElement} */
-    viewList: null,
-    /** @type {HTMLElement} */
-    activeViewItem: null,
-    /** @type {Map} */
-    views: null,
     /** @type {HTMLInputElement} */
     input: null,
     /** @type {*} */
@@ -216,11 +209,13 @@ export const Editor = {
         this.config = config;
         this.handlers = new Map();
         this.instances = new Map();
+        Object.assign(this, EditorInstanceManager);
         this.values = new Map();
         this.resources = new Map();
         this.models = new Map();
+
         this.states = [];
-        this.views = new Map();
+
 
         this.decoratedElements = new Set();
 
@@ -235,6 +230,7 @@ export const Editor = {
         this.filter = createEditorFilter.call(this).init();
         this.style = createEditorStyle.call(this).init();
         this.logs = createEditorLog.call(this).init();
+        this.status = createEditorStatus.call(this).init();
 
         this.render();
 
@@ -282,115 +278,6 @@ export const Editor = {
         return valOrDefault(this.config.name, `editor${(new Date().getTime())}`);
     },
 
-    /**
-     * Creates a concept instance
-     * @param {string} name 
-     */
-    createInstance(concept, _projection, _options) {
-        if (isNullOrUndefined(concept)) {
-            this.notify(`The concept is not valid`, NotificationType.ERROR);
-            return false;
-        }
-
-        let projection = _projection;
-        if (isNullOrUndefined(projection) && this.hasProjectionModel) {
-            projection = this.projectionModel.createProjection(concept).init();
-        }
-
-        let instance = Object.create(EditorInstance, {
-            id: { value: nextInstanceId() },
-            object: { value: "environment" },
-            name: { value: "editor-instance" },
-            type: { value: "instance" },
-            concept: { value: concept },
-            projection: { value: projection, writable: true },
-            editor: { value: this }
-        });
-
-        const options = Object.assign({
-            type: "concept",
-            minimize: true,
-            resize: true,
-            maximize: true,
-            close: "DELETE-CONCEPT"
-        }, _options);
-
-        instance.init(options);
-
-        return this.addInstance(instance);
-    },
-    /**
-     * Gets an instance in the editor
-     * @param {string} id 
-     * @returns {EditorInstance}
-     */
-    getInstance(id) {
-        return this.instances.get(id);
-    },
-    /**
-     * Adds instance to editor
-     * @param {EditorInstance} instance 
-     * @returns {HTMLElement}
-     */
-    addInstance(instance) {
-        if (!instance.isRendered) {
-            this.instanceSection.append(instance.render());
-        }
-
-        this.instances.set(instance.id, instance);
-        this.updateActiveInstance(instance);
-
-        if (this.view === "tab") {
-            this.addView(instance);
-            this.updateActiveView();
-        }
-
-        this.refresh();
-
-        return this;
-    },
-    /**
-     * Removes an instance from the editor
-     * @param {string} id 
-     * @returns {boolean}
-     */
-    removeInstance(id) {
-        let instance = this.getInstance(id);
-
-        if (isNullOrUndefined(instance)) {
-            return false;
-        }
-
-        if (instance === this.activeInstance) {
-            this.activeInstance = null;
-        }
-
-        if (instance.view) {
-            removeChildren(instance.view).remove();
-            this.updateActiveView();
-        }
-
-        this.instances.delete(id);
-
-        this.refresh();
-
-        return true;
-    },
-    moveInstance(item, index) {
-        this.instanceSection.children[index].before(item);
-
-        return this;
-    },
-    swapInstance(item1, item2) {
-        let instances = Array.from(this.instanceSection.children);
-        const index1 = instances.indexOf(item1);
-        const index2 = instances.indexOf(item2);
-
-        this.moveInstance(item2, index1);
-        this.moveInstance(item1, index2);
-
-        return this;
-    },
 
     /**
      * Verifies that the editor has a concept model loaded
@@ -1405,7 +1292,7 @@ export const Editor = {
 
         /** @type {EditorDesign} */
         let design = Object.create(EditorDesign, {
-            id: { value: nextInstanceId() },
+            id: { value: this.id },
             object: { value: "environment" },
             name: { value: "editor-instance" },
             type: { value: "instance" },
@@ -1475,7 +1362,7 @@ export const Editor = {
                 class: ["model-view-section"],
             });
 
-            this.instanceSection.append(this.viewSection);
+            this.navigationSection.append(this.viewSection);
             mainSection.append(this.navigationSection, this.instanceSection);
 
             this.designSection = createAside({
@@ -1505,30 +1392,6 @@ export const Editor = {
 
             this.footer.append(this.timeline);
 
-            this.viewList = createUnorderedList({
-                class: ["bare-list", "editor-footer-viewers"],
-            });
-
-            ["tab", "grid", "row"].forEach(name => {
-                let view = createListItem({
-                    class: ["editor-footer-viewer"],
-                    dataset: {
-                        type: "viewer",
-                        action: "change-view",
-                        value: name
-                    }
-                }, name);
-
-                this.views.set(name, view);
-                this.viewList.append(view);
-            });
-
-            this.viewItem = this.views.get(this.view);
-            this.viewItem.classList.add("selected");
-            this.instanceSection.dataset.view = this.view;
-
-            this.footer.append(this.viewList);
-
             this.valueWindow = createDiv({
                 class: ["model-value-window"],
             });
@@ -1554,6 +1417,10 @@ export const Editor = {
 
         if (!this.filter.isRendered) {
             this.navigationSection.append(this.filter.render());
+        }
+
+        if (!this.status.isRendered) {
+            fragment.append(this.status.render());
         }
 
         if (!isHTMLElement(this.input)) {
@@ -1597,12 +1464,6 @@ export const Editor = {
             this.container.classList.remove("no-projection-model");
         }
 
-        if (["grid", "row"].includes(this.view)) {
-            hide(this.viewSection);
-        } else if (["tab"].includes(this.view)) {
-            show(this.viewSection);
-        }
-
         this.hasValues ? show(this.valueWindow) : hide(this.valueWindow);
 
         this.header.refresh();
@@ -1611,6 +1472,15 @@ export const Editor = {
         this.home.refresh();
         this.style.refresh();
         this.logs.refresh();
+        this.status.refresh();
+
+        this.instanceSection.dataset.view = this.view;
+        
+        if (["grid", "row"].includes(this.view)) {
+            hide(this.viewSection);
+        } else if (["tab"].includes(this.view)) {
+            show(this.viewSection);
+        }
 
         if (isEmpty(this.states)) {
             hide(this.timeline);
@@ -1782,9 +1652,9 @@ export const Editor = {
         }
 
         this.view = value;
-        unselect(this.viewItem);
-        this.viewItem = this.views.get(this.view);
-        select(this.viewItem);
+        unselect(this.status.viewItem);
+        this.status.viewItem = this.status.views.get(this.view);
+        select(this.status.viewItem);
 
         removeChildren(this.viewSection);
 
@@ -1814,7 +1684,6 @@ export const Editor = {
             });
         }
 
-        this.instanceSection.dataset.view = this.view;
         this.updateActiveView();
     },
 
