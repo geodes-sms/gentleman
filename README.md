@@ -25,7 +25,7 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 [1]: https://geodes-sms.github.io/gentleman/demo/mindmap/index.html
 [2]: https://geodes-sms.github.io/gentleman/demo/trafficlight/index.html
 [3]: https://github.com/geodes-sms/gentleman/blob/8bbbdd371a627c5464780cd517670689e79f009b/assets/images/mindmap.gif "Mindmap demo"
-[4]: https://geodes-sms.github.io/gentleman/assets/images/traffic_light.gif "Traffic light demo"
+[4]: https://github.com/geodes-sms/gentleman/blob/7c8cd4aa2a8d7a7ab59b339649cfbb9e9785ef88/assets/images/traffic_light.gif "Traffic light demo"
 
 # Documentation 📖
 
