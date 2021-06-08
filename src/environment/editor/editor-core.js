@@ -594,11 +594,12 @@ export const Editor = {
 
         let btnRestore = createButton({
             class: ["btn", "btn-restore", "fit-content"],
-            title: `Restore ${name}`
+            title: `Restore ${name} state`
         }, [icoTime, `${time}|${name}`]);
 
         let btnDelete = createButton({
-            class: ["btn", "btn-delete"]
+            class: ["btn", "btn-delete"],
+            title: `Delete ${name} state`
         }, icoDelete);
 
         let preview = createDiv({
@@ -1393,7 +1394,7 @@ export const Editor = {
                 tabindex: 0,
             });
 
-            this.timeline = createI({
+            this.timeline = createDiv({
                 class: ["editor-timeline"],
             });
 

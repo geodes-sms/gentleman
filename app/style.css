@@ -8,6 +8,7 @@
 }
 
 .page-body {
+    display: flex; flex-direction: column;
     height: calc(100% - 24px);
 }
 
@@ -113,14 +114,6 @@
     height: 100%;
 }
 
-.app-body {
-    flex-grow: 2;
-    display: flex; flex-direction: row;
-}
-
-.app-body .gentleman-editor:not(:last-child) {
-    margin-right: 6px;
-}
 
 .page-footer {
     color: #fff;
