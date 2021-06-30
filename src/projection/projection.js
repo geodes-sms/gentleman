@@ -1,6 +1,6 @@
 import {
     createButton, removeChildren, isNode, isHTMLElement, hasOwn, isNullOrUndefined,
-    valOrDefault, isEmpty, toBoolean,
+    valOrDefault, isEmpty, toBoolean, findAncestor,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
 import { LayoutFactory } from "./layout/index.js";
@@ -325,7 +325,9 @@ const Projection = {
             this.model.registerStatic(this.element);
         }
 
-        this.element.focusable = true;
+        if (this.isRoot()) {
+            this.element.focusable = true;
+        }
 
         if (!this.focusable) {
             this.element.focusable = false;
@@ -336,6 +338,10 @@ const Projection = {
         }
 
         container = this.element.render();
+
+        if (!this.element.focusable) {
+            container.tabIndex = -1;
+        }
 
         if (!isNode(container)) {
             throw new Error("Projection element container could not be created");
@@ -352,17 +358,26 @@ const Projection = {
         if (this.optional) {
             /** @type {HTMLElement} */
             let btnDelete = createButton({
-                class: ["btn", "structure__btn-delete"],
+                class: ["btn", "structure__btn-delete", "projection__btn-delete"],
                 title: `Delete ${this.concept.name}`,
+                tabindex: -1,
                 dataset: {
-                    "action": "delete"
+                    "action": "delete",
+                    "projection": this.id
                 }
             });
 
             btnDelete.addEventListener('click', (event) => {
-                this.environment.save(this.concept.getParent(), this.getContainer().cloneNode(true));
+                let container = this.getContainer();
+                let parent = findAncestor(container, (el) => el.tabIndex === 0);
+                this.environment.save(this.concept.getParent(), container.cloneNode(true));
                 this.concept.delete();
-                this.getParent().focus();
+
+                let element = this.environment.resolveElement(parent);
+
+                if (!isNullOrUndefined(element)) {
+                    element.focus();
+                }
             });
 
             container.dataset.deletable = true;

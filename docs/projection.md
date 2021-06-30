@@ -19,20 +19,9 @@ They can be customized, individually or globally, directly with *style* rules or
 
 A layout element is used to organize elements presented in the GUI.
 
-### WrapLayout
-
-The *WrapLayout* is the simplest of all the layouts. It groups its child elements in a container that is fit to its children
-
-### StackLayout
-
-The *StackLayout* adds control over one dimension. It arranges its child elements on either a vertical or a horizontal axis.
-
-- Properties
-  - **Orientation** `[string={horizontal|vertical}]` (*required*): indicates which direction the *StackLayout* should stack its children.
-
 ### FlexLayout
 
-The *FlexLayout* adds flexibility to the *StackLayout*. It offers the ability to wrap its children.
+The *FlexLayout* arranges its child elements along a row (horizontal) or a column (vertical), with the ability to wrap its children (multiple rows or columns).
 
 - Properties
   - **Orientation** `[string={row|column}]` (*required*): indicates which direction the *FlexLayout* should arrange its children.
@@ -42,7 +31,7 @@ The *FlexLayout* adds flexibility to the *StackLayout*. It offers the ability to
 
 ### TableLayout
 
-The *TableLayout* adds control over two dimensions. It arranges its child elements on cells grouped in rows.
+The *TableLayout* arranges its child elements by cells grouped in rows.
 
 ## Field
 
@@ -60,7 +49,7 @@ The *TextField* can capture key input.
 
 #### Properties
 
-- **resizable** `[boolean]`: indicates whether the control should fit its content
+- **fit-content** `[boolean]`: indicates whether the control should fit its content
 - **multiline** `[boolean]` (*required*): indicates whether the content can span across multiple lines
 - **input**: The field control receiving the input
   - **type**`[string={text|number|email|tel|url}]: type of expected input
@@ -79,6 +68,9 @@ The *BinaryField* can alternate between two states: *true-state* and *false-stat
 
 - **True-state** `[set:element]`: content displayed when the state is *true*
 - **False-state** `[set:element]`: content displayed when the state is *false*
+- **checkbox**: The field control receiving the trigger
+  - **position**`[string={text|number|email|tel|url}]
+  - **label**`[string]:
 
 ### ChoiceField
 
@@ -114,13 +106,6 @@ The *ListField* can manage a collection of element.
   - **remove**`[element]: Content displayed for the *remove* action button
 - **item template**: Template used for the list items
 
-### TableField
-
-The *TableField* can manage tabular data.
-
-- Compatibility
-  - Set concept
-
 ## Static
 
 A static element is used to present static content.
@@ -141,8 +126,7 @@ The *Stactic image* is used to display images.
 #### Properties
 
 - **url** `[string]`: Defines the image's url
-- **width** `[number]` (*optional*): Defines the image width
-- **height** `[number]` (*optional*): Defines the image height
+- **alt** `[string]`: Defines the image's alternative text
 
 ### Link
 

@@ -2,7 +2,7 @@ import {
     createDocFragment, createSection, createDiv, createParagraph, createAnchor, createInput,
     createAside, createUnorderedList, createListItem, createButton, createI, removeChildren,
     getElement, isHTMLElement, findAncestor, isNullOrWhitespace, isNullOrUndefined, isEmpty,
-    isFunction, valOrDefault, copytoClipboard, getElements, shortDateTime, last, formatDate,
+    isFunction, valOrDefault, copytoClipboard, getElements, shortDateTime, last, formatDate, createSpan,
 } from 'zenkai';
 import {
     hide, show, toggle, Key, getEventTarget, NotificationType, getClosest, highlight,
@@ -17,6 +17,7 @@ import { EditorStyle } from './editor-style.js';
 import { EditorLog } from './editor-log.js';
 import { EditorSection } from './editor-section.js';
 import { EditorInstance, EditorInstanceManager } from './editor-instance.js';
+import { EditorWindow, EditorWindowManager } from './editor-window.js';
 import { EditorDesign } from './editor-design.js';
 import { EditorStatus } from './editor-status.js';
 
@@ -138,8 +139,6 @@ export const Editor = {
     /** @type {HTMLElement} */
     body: null,
     /** @type {HTMLElement} */
-    footer: null,
-    /** @type {HTMLElement} */
     instanceSection: null,
     /** @type {HTMLElement} */
     designSection: null,
@@ -161,6 +160,8 @@ export const Editor = {
     logs: null,
     /** @type {EditorStatus} */
     status: null,
+    /** @type {EditorGroup} */
+    group: null,
 
     /** @type {HTMLInputElement} */
     input: null,
@@ -188,6 +189,8 @@ export const Editor = {
     handlers: null,
     /** @type {Map<string,EditorInstance>} */
     instances: null,
+    /** @type {Map<string,EditorWindow>} */
+    windows: null,
     /** @type {Map} */
     values: null,
     /** @type {Map<string,File>} */
@@ -201,10 +204,11 @@ export const Editor = {
         this.config = config;
         this.handlers = new Map();
         this.instances = new Map();
-        Object.assign(this, EditorInstanceManager);
+        this.windows = new Map();
         this.values = new Map();
         this.resources = new Map();
         this.models = new Map();
+        Object.assign(this, EditorInstanceManager, EditorWindowManager);
 
         this.states = [];
 
@@ -219,7 +223,7 @@ export const Editor = {
         this.header = createEditorHeader.call(this).init();
         this.home = createEditorHome.call(this).init();
         this.breadcrumb = createEditorBreadcrumb.call(this).init();
-        this.filter = createEditorFilter.call(this).init();
+        // this.filter = createEditorFilter.call(this).init();
         this.style = createEditorStyle.call(this).init();
         this.logs = createEditorLog.call(this).init();
         this.status = createEditorStatus.call(this).init();
@@ -287,6 +291,11 @@ export const Editor = {
      */
     get hasInstances() { return this.instances.size > 0; },
     /**
+     * Verifies that the editor has a window created
+     * @returns {boolean} Value indicating whether the editor has a window created
+     */
+    get hasWindows() { return this.windows.size > 0; },
+    /**
      * Verifies that the editor has a value copied
      * @returns {boolean} Value indicating whether the editor has a value copied
      */
@@ -337,11 +346,13 @@ export const Editor = {
      * Adds concepts schema to model
      * @param {Concept[]|Concept} concepts 
      */
-    addConcept(concepts) {
-        if (Array.isArray(concepts)) {
-            this.conceptModel.schema.push(...concepts);
+    addConcept($schema) {
+        let schema = $schema.concept || $schema;
+
+        if (Array.isArray(schema)) {
+            this.conceptModel.schema.push(...schema);
         } else {
-            this.conceptModel.schema.push(concepts);
+            this.conceptModel.schema.push(schema);
         }
 
         this.refresh();
@@ -373,11 +384,13 @@ export const Editor = {
      * Adds projections schema to model
      * @param {Projection[]|Projection} projections 
      */
-    addProjection(projections) {
-        if (Array.isArray(projections)) {
-            this.projectionModel.schema.push(...projections);
+    addProjection($schema) {
+        let schema = $schema.projection || $schema;
+
+        if (Array.isArray(schema)) {
+            this.projectionModel.schema.push(...schema);
         } else {
-            this.projectionModel.schema.push(projections);
+            this.projectionModel.schema.push(schema);
         }
 
         this.refresh();
@@ -584,18 +597,10 @@ export const Editor = {
         let time = formatDate(new Date(), "hh:dd");
         // let size = concept.getDescendant().length;
 
-        let icoTime = createI({
-            class: ["ico", "ico-restore"]
-        });
-
         let icoDelete = createI({
             class: ["ico", "ico-delete"]
         }, "✖");
 
-        let btnRestore = createButton({
-            class: ["btn", "btn-restore", "fit-content"],
-            title: `Restore ${name} state`
-        }, [icoTime, `${time}|${name}`]);
 
         let btnDelete = createButton({
             class: ["btn", "btn-delete"],
@@ -607,21 +612,48 @@ export const Editor = {
             title: `Preview ${name}`
         }, _element);
 
+        let content = createSpan({
+            class: ["model-state-content", "fit-content"]
+        }, `${concept.getName()}`);
+
         let item = createListItem({
             class: ["model-state"],
+            title: `Restore ${name} state`,
             dataset: {
                 id: stateID,
                 concept: id
             }
-        }, [btnRestore, btnDelete, preview]);
+        }, [btnDelete, content, preview]);
 
-        btnRestore.addEventListener('click', (event) => {
-            this.restore(value);
-            this.removeState(stateID);
-        });
+        /**
+         * Resolves the target
+         * @param {HTMLElement} element 
+         * @returns {HTMLElement}
+         */
+        function resolveTarget(element) {
+            const isValid = (el) => el === item || el === btnDelete;
+            if (isValid(element)) {
+                return element;
+            }
 
-        btnDelete.addEventListener('click', (event) => {
-            this.removeState(stateID);
+            return findAncestor(element, (el) => isValid(el), 5);
+        }
+
+        item.addEventListener('click', (event) => {
+            let target = resolveTarget(event.target);
+
+            this.unhighlight();
+            if (target === btnDelete) {
+                this.removeState(stateID);
+            } else {
+                let concept = this.restore(value);
+                this.removeState(stateID);
+
+                let targetProjection = getElement(`.projection[data-concept="${concept.id}"]`, this.body);
+                if (targetProjection) {
+                    targetProjection.focus();
+                }
+            }
         });
 
         let selector = `.projection[data-concept="${id}"]`;
@@ -637,15 +669,8 @@ export const Editor = {
             this.unhighlight();
         });
 
-        item.addEventListener("click", (event) => {
-            let targetProjection = getElement(selector, this.body);
-            if (targetProjection) {
-                targetProjection.focus();
-            }
-        });
-
-        if (this.states.length > 10) {
-            let { id } = this.valueList.lastChild.dataset;
+        if (this.states.length > 8) {
+            let { id } = this.stateList.lastChild.dataset;
 
             this.removeValue(id);
         }
@@ -715,7 +740,7 @@ export const Editor = {
      * Saves the current model state
      */
     save(concept, element) {
-        this.createState(valOrDefault(concept, this.activeConcept), element);
+        this.createState(concept, element);
 
         // this.notify(`${element.name} saved`, NotificationType.NORMAL, 1500);
 
@@ -727,15 +752,18 @@ export const Editor = {
         concept.restore(state);
 
         this.refresh();
+
+        return concept;
     },
     undo() {
         if (isEmpty(this.states)) {
-            this.notify("No previous state found");
+            this.notify("There are no previous state", NotificationType.NORMAL, 2000);
             return;
         }
 
         let state = last(this.states);
         this.restore(state.value);
+        this.removeState(state.id);
     },
     /**
      * Diplays a notification message
@@ -957,7 +985,12 @@ export const Editor = {
     },
 
     copy(value, preserve = false) {
+        if (isNullOrUndefined(value)) {
+            return this;
+        }
+
         this.copyValue = value;
+        copytoClipboard(JSON.stringify(value));
 
         if (preserve) {
             this.addValue(value);
@@ -970,7 +1003,15 @@ export const Editor = {
     paste(concept, _value) {
         let value = valOrDefault(_value, this.copyValue);
 
-        concept.initValue(value);
+        if (isNullOrUndefined(concept)) {
+            let concept = this.createConcept(value.name).init();
+            concept.setValue(value);
+            this.createInstance(concept);
+        } else if (value.nature === "prototype") {
+            concept.setValue(value.value);
+        } else {
+            concept.setValue(value);
+        }
 
         return this;
     },
@@ -1119,6 +1160,14 @@ export const Editor = {
         this.decoratedElements.delete(element);
 
         return this;
+    },
+    createWindow() {
+        let window = createDiv({
+            class: ["editor-window"],
+            tabindex: 0,
+        });
+
+        this.body.append(window);
     },
 
     // Utility actions
@@ -1353,23 +1402,9 @@ export const Editor = {
             fragment.append(this.header.render());
         }
 
-        if (!isHTMLElement(this.body)) {
-            this.body = createDiv({
-                class: ["editor-body"],
-                tabindex: 0,
-            });
-
-            let mainSection = createDiv({
-                class: ["editor-body-main"],
-                tabindex: 0,
-            });
-
+        if (!isHTMLElement(this.navigationSection)) {
             this.navigationSection = createSection({
                 class: ["model-navigation-section"],
-            });
-
-            this.instanceSection = createSection({
-                class: ["model-concept-section"],
             });
 
             this.viewSection = createAside({
@@ -1377,23 +1412,32 @@ export const Editor = {
             });
 
             this.navigationSection.append(this.viewSection);
-            mainSection.append(this.navigationSection, this.instanceSection);
 
-            this.designSection = createAside({
-                class: ["editor-body-aside", "model-design-section"],
+            fragment.append(this.navigationSection);
+        }
+
+        if (!isHTMLElement(this.body)) {
+            this.body = createDiv({
+                class: ["editor-body"],
+                tabindex: 0,
+            });
+            let mainSection = createDiv({
+                class: ["editor-body-main"],
+                tabindex: 0,
             });
 
-            this.body.append(mainSection, this.designSection);
+            this.instanceSection = createSection({
+                class: ["model-concept-section"],
+            });
+
+            mainSection.append(this.instanceSection);
+
+            this.body.append(mainSection);
 
             fragment.append(this.body);
         }
 
-        if (!isHTMLElement(this.footer)) {
-            this.footer = createDiv({
-                class: ["editor-footer"],
-                tabindex: 0,
-            });
-
+        if (!isHTMLElement(this.timeline)) {
             this.timeline = createDiv({
                 class: ["editor-timeline"],
             });
@@ -1404,9 +1448,24 @@ export const Editor = {
 
             this.timeline.append(this.stateList);
 
-            this.footer.append(this.timeline);
+            fragment.append(this.timeline);
+        }
 
-            this.valueWindow = createDiv({
+        if (!this.logs.isRendered) {
+            fragment.append(this.logs.render());
+        }
+
+
+        if (!this.breadcrumb.isRendered) {
+            this.navigationSection.append(this.breadcrumb.render());
+        }
+
+        // if (!this.filter.isRendered) {
+        //     this.navigationSection.append(this.filter.render());
+        // }
+
+        if (!isHTMLElement(this.valueSection)) {
+            this.valueSection = createDiv({
                 class: ["model-value-window"],
             });
 
@@ -1414,23 +1473,9 @@ export const Editor = {
                 class: ["bare-list", "model-value-list"],
             });
 
-            this.valueWindow.append(this.valueList);
+            this.valueSection.append(this.valueList);
 
-            this.footer.append(this.valueWindow);
-
-            if (!this.logs.isRendered) {
-                this.footer.append(this.logs.render());
-            }
-
-            fragment.append(this.footer);
-        }
-
-        if (!this.breadcrumb.isRendered) {
-            this.navigationSection.append(this.breadcrumb.render());
-        }
-
-        if (!this.filter.isRendered) {
-            this.navigationSection.append(this.filter.render());
+            this.navigationSection.append(this.valueSection);
         }
 
         if (!this.status.isRendered) {
@@ -1482,7 +1527,7 @@ export const Editor = {
 
         this.header.refresh();
         this.breadcrumb.refresh();
-        this.filter.refresh();
+        // this.filter.refresh();
         this.home.refresh();
         this.style.refresh();
         this.logs.refresh();
@@ -1501,7 +1546,9 @@ export const Editor = {
         } else {
             show(this.timeline);
             this.states.forEach(state => {
-                if (this.activeConcept.id === state.concept.id) {
+                if (!this.conceptModel.hasConcept(state.concept.id)) {
+                    this.removeState(state.id);
+                } else if (this.hasActiveConcept && this.activeConcept === state.concept) {
                     state.element.classList.add("active");
                 } else {
                     state.element.classList.remove("active");
@@ -1530,7 +1577,7 @@ export const Editor = {
      * @param {Concept} concept 
      */
     updateActiveConcept(concept) {
-        if (this.activeConcept && this.activeConcept === concept) {
+        if (this.hasActiveConcept && this.activeConcept === concept) {
             return this;
         }
 
@@ -1741,6 +1788,9 @@ export const Editor = {
                 const { value } = target.dataset;
                 this.status.changeView(value);
             },
+            "add-group": (target) => {
+                this.status.addGroup();
+            },
 
             "style": (target) => { this.style.toggle(); },
             "home": (target) => { this.home.toggle(); },
@@ -1772,19 +1822,7 @@ export const Editor = {
 
 
 
-            "load-resource": (target) => {
-                const { id } = target.dataset;
-
-                let event = new MouseEvent('click', {
-                    view: window,
-                    bubbles: true,
-                    cancelable: true,
-                });
-                fileType = "resource";
-                fileName = id;
-
-                this.input.dispatchEvent(event);
-            },
+          
 
             "load-model": (target) => {
                 let event = new MouseEvent('click', {
@@ -1887,6 +1925,33 @@ export const Editor = {
             this.input.value = "";
         });
 
+        this.body.addEventListener('copy', (event) => {
+            if (!isInputCapable(event.target)) {
+                let value = this.activeConcept.copy(false);
+                this.copy(value, true);
+
+                event.preventDefault();
+            }
+        });
+
+        this.body.addEventListener('paste', (event) => {
+            if (isNullOrUndefined(event.clipboardData)) {
+                event.preventDefault();
+                return;
+            }
+
+            if (isInputCapable(event.target)) {
+                return;
+            }
+
+            let paste = event.clipboardData.getData('text');
+            paste = JSON.parse(paste);
+
+            this.paste(this.activeConcept, paste);
+
+            event.preventDefault();
+        });
+
         this.body.addEventListener('keydown', (event) => {
             const { target } = event;
 
@@ -1917,10 +1982,12 @@ export const Editor = {
                     break;
                 case Key.delete:
                     if (this.activeElement && lastKey !== Key.ctrl) {
-                        const handled = this.activeElement.deleteHandler(target);
+                        if (!isInputCapable(target)) {
+                            const handled = this.activeElement.deleteHandler(target);
 
-                        if (handled) {
-                            event.preventDefault();
+                            if (handled) {
+                                event.preventDefault();
+                            }
                         }
                     }
 
@@ -1969,9 +2036,8 @@ export const Editor = {
                         if (handled) {
                             event.preventDefault();
                         } else {
-                            this.filter.close();
+                            // this.filter.close();
                             let ancestor = findAncestor(target, (el) => el.tabIndex === 0);
-                            console.log(ancestor);
                             ancestor.focus();
                         }
                     }
@@ -2015,21 +2081,17 @@ export const Editor = {
                     break;
                 case "c":
                     if (lastKey === Key.ctrl) {
-                        if (!isInputCapable(target)) {
-                            this.copy(this.activeConcept.copy(false), true);
+                        let event = new ClipboardEvent("copy");
 
-                            event.preventDefault();
-                        }
+                        this.body.dispatchEvent(event);
                     }
 
                     break;
                 case "v":
                     if (lastKey === Key.ctrl) {
-                        if (!isInputCapable(target)) {
-                            this.paste(this.activeConcept);
+                        let event = new ClipboardEvent("paste");
 
-                            event.preventDefault();
-                        }
+                        this.body.dispatchEvent(event);
                     }
 
                     break;
@@ -2045,11 +2107,11 @@ export const Editor = {
 
                     break;
                 case "f":
-                    if (lastKey === Key.ctrl) {
-                        this.filter.show().focus();
+                    // if (lastKey === Key.ctrl) {
+                    //     this.filter.show().focus();
 
-                        event.preventDefault();
-                    }
+                    //     event.preventDefault();
+                    // }
 
                     break;
                 case "z":
@@ -2074,6 +2136,7 @@ export const Editor = {
 
         this.body.addEventListener('keyup', (event) => {
             var target = event.target;
+
             const { nature } = target.dataset;
 
             switch (event.key) {
@@ -2134,24 +2197,14 @@ export const Editor = {
             const element = this.resolveElement(target);
             lastKey = -1;
 
-            if (element && element.projection.focusable && element.focusable) {
+            if (element) {
                 if (this.activeElement && this.activeElement !== element) {
                     this.activeElement.focusOut();
                     this.activeElement = null;
                 }
 
-                if (isNullOrUndefined(element) || element === this.activeElement) {
-                    if (this.activeElement) {
-                        this.activeElement._focusIn(target);
-                    }
-
-                    return;
-                }
-
                 this.updateActiveElement(element);
                 this.activeElement.focusIn(target);
-            } else if (element) {
-                // TODO
             } else {
                 if (this.activeElement) {
                     this.activeElement.focusOut(target);
@@ -2165,14 +2218,23 @@ export const Editor = {
 
                 this.updateActiveProjection(projection);
                 this.updateActiveConcept(projection.concept);
+            } else {
+                this.activeConcept = null;
+                this.activeProjection = null;
             }
+
+            this.refresh();
         });
 
         this.registerHandler("export", () => this.export());
-        this.registerHandler("copy", () => this.export(true));
-        this.registerHandler("load-resource", () => {
+        this.registerHandler("value.changed", () => this.refresh());
+        this.registerHandler("value.added", () => this.refresh());
+        this.registerHandler("value.removed", () => this.refresh());
+        this.registerHandler("open-style", () => console.log("hello"));
+        this.registerHandler("load-resource", (args) => {
             let event = new MouseEvent('click', { view: window, bubbles: true, cancelable: true, });
             fileType = "resource";
+            fileName = args[0];
 
             this.input.dispatchEvent(event);
         });

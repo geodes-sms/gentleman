@@ -67,7 +67,9 @@ const _BooleanConcept = {
     getValue() {
         return this.value;
     },
-    setValue(value) {
+    setValue(arg) {
+        let value = isObject(arg) ? arg.value : arg;
+
         var result = this.validate(value);
 
         if (result !== ResponseCode.SUCCESS) {
@@ -102,7 +104,7 @@ const _BooleanConcept = {
 
     validate(value) {
         this.errors = [];
-        
+
         // string to bool
         if (isString(value) && ["true", "false"].includes(value.toLowerCase())) {
             return ResponseCode.SUCCESS;
@@ -145,7 +147,7 @@ const _BooleanConcept = {
             name: this.name,
             value: this.getValue()
         };
-    },  
+    },
     export() {
         return {
             id: this.id,

@@ -1,6 +1,32 @@
 {
     "concept": [
         {
+            "name": "collection",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "concept",
+                    "target": {
+                        "name": "concept"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "projections",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "projection"
+                        }
+                    },
+                    "required": true
+                }
+            ],
+            "properties": [
+                { "name": "handler", "type": "string", "value": "collection" }
+            ]
+        },
+        {
             "name": "projection",
             "nature": "concrete",
             "attributes": [
@@ -27,10 +53,7 @@
                             { "name": "binary-field" },
                             { "name": "choice-field" },
                             { "name": "list-field" },
-                            { "name": "stack-layout" },
-                            { "name": "wrap-layout" },
-                            { "name": "flex-layout" },
-                            { "name": "table-layout" }
+                            { "name": "container" }
                         ]
                     },
                     "required": true
@@ -78,10 +101,7 @@
                         "accept": {
                             "name": "render",
                             "accept": [
-                                { "name": "stack-layout" },
-                                { "name": "wrap-layout" },
-                                { "name": "flex-layout" },
-                                { "name": "table-layout" },
+                                { "name": "container" },
                                 { "name": "text-field" },
                                 { "name": "binary-field" },
                                 { "name": "choice-field" },
@@ -90,9 +110,7 @@
                                 { "name": "image-static" },
                                 { "name": "link-static" },
                                 { "name": "attribute element" },
-                                { "name": "plink-static" },
-                                { "name": "projection element" },
-                                { "name": "template element" }
+                                { "name": "plink-static" }
                             ]
                         }
                     }
@@ -183,30 +201,7 @@
                 }
             ]
         },
-        {
-            "name": "style rule",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "name",
-                    "target": {
-                        "name": "name"
-                    },
-                    "required": true
-                },
-                {
-                    "name": "style",
-                    "target": {
-                        "name": "gentleman style"
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "handler", "type": "string", "value": "style" }
-            ]
-        },
-       
-
+     
 
         {
             "name": "concept",
@@ -387,6 +382,7 @@
         {
             "name": "checkbox",
             "nature": "concrete",
+            "prototype": "render",
             "attributes": [
                 {
                     "name": "position",
@@ -400,6 +396,19 @@
                 },
                 {
                     "name": "label",
+                    "target": {
+                        "name": "label"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "label",
+            "nature": "concrete",
+            "prototype": "render",
+            "attributes": [
+                {
+                    "name": "content",
                     "target": {
                         "name": "string"
                     }
@@ -418,8 +427,7 @@
                             "name": "element",
                             "accept": [
                                 { "name": "text-static" },
-                                { "name": "image-static" },
-                                { "name": "template element" }
+                                { "name": "image-static" }
                             ]
                         }
                     }
@@ -521,19 +529,21 @@
             "name": "action",
             "nature": "concrete",
             "prototype": "render",
-            "attributes": [        
+            "attributes": [
+                {
+                    "name": "position",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": ["before", "after"]
+                        },
+                        "default": "before"
+                    }
+                },
                 {
                     "name": "content",
                     "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "element",
-                            "accept": [
-                                { "name": "text-static" },
-                                { "name": "image-static" },
-                                { "name": "template element" }
-                            ]
-                        }
+                        "name": "string"
                     }
                 }
             ]
@@ -625,8 +635,8 @@
         },
 
         {
-            "name": "layout",
-            "nature": "prototype",
+            "name": "container",
+            "nature": "concrete",
             "prototype": "element",
             "attributes": [
                 {
@@ -636,10 +646,7 @@
                         "accept": {
                             "name": "render",
                             "accept": [
-                                { "name": "stack-layout" },
-                                { "name": "wrap-layout" },
-                                { "name": "flex-layout" },
-                                { "name": "table-layout" },
+                                { "name": "container" },
                                 { "name": "text-field" },
                                 { "name": "binary-field" },
                                 { "name": "choice-field" },
@@ -648,38 +655,45 @@
                                 { "name": "image-static" },
                                 { "name": "link-static" },
                                 { "name": "plink-static" },
-                                { "name": "attribute element" },
-                                { "name": "projection element" },
-                                { "name": "template element" }
+                                { "name": "attribute element" }
                             ]
                         }
                     }
-                }
-            ]
-        },
-        {
-            "name": "stack-layout",
-            "nature": "concrete",
-            "prototype": "layout",
-            "attributes": [
+                },
                 {
-                    "name": "orientation",
+                    "name": "resizable",
                     "target": {
-                        "name": "string",
-                        "default": "vertical",
-                        "constraint": {
-                            "values": ["horizontal", "vertical"]
-                        }
+                        "name": "boolean",
+                        "default": false
+                    }
+                },
+                {
+                    "name": "wrappable",
+                    "target": {
+                        "name": "boolean",
+                        "default": true
+                    }
+                },
+                {
+                    "name": "layout",
+                    "target": {
+                        "name": "simple-layout"
                     }
                 }
             ],
             "properties": [
-                { "name": "contentType", "type": "string", "value": "layout" },
-                { "name": "elementType", "type": "string", "value": "stack" }
+                { "name": "contentType", "type": "string", "value": "container" }
             ]
         },
+
         {
-            "name": "flex-layout",
+            "name": "layout",
+            "nature": "prototype",
+            "prototype": "element",
+            "attributes": []
+        },
+        {
+            "name": "simple-layout",
             "nature": "concrete",
             "prototype": "layout",
             "attributes": [
@@ -726,17 +740,7 @@
                 { "name": "elementType", "type": "string", "value": "flex" }
             ]
         },
-        {
-            "name": "wrap-layout",
-            "nature": "concrete",
-            "prototype": "layout",
-            "attributes": [
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "layout" },
-                { "name": "elementType", "type": "string", "value": "wrap" }
-            ]
-        },
+        
         {
             "name": "table-layout",
             "nature": "concrete",
@@ -809,10 +813,7 @@
                     "target": {
                         "name": "render",
                         "accept": [
-                            { "name": "stack-layout" },
-                            { "name": "wrap-layout" },
-                            { "name": "flex-layout" },
-                            { "name": "table-layout" },
+                            { "name": "container" },
                             { "name": "text-field" },
                             { "name": "binary-field" },
                             { "name": "choice-field" },
@@ -821,9 +822,7 @@
                             { "name": "image-static" },
                             { "name": "link-static" },
                             { "name": "plink-static" },
-                            { "name": "attribute element" },
-                            { "name": "projection element" },
-                            { "name": "template element" }
+                            { "name": "attribute element" }
                         ]
                     }
                 }
@@ -866,8 +865,7 @@
                 {
                     "name": "content",
                     "target": {
-                        "name": "text-content",
-                        "default": "raw-text-content"
+                        "name": "string"
                     }
                 }
             ],
@@ -977,18 +975,6 @@
             "prototype": "atomic element",
             "attributes": [
                 {
-                    "name": "height",
-                    "target": {
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "width",
-                    "target": {
-                        "name": "number"
-                    }
-                },
-                {
                     "name": "url",
                     "alias": "src",
                     "target": {
@@ -996,8 +982,7 @@
                     }
                 },
                 {
-                    "name": "alternative text",
-                    "alias": "alt",
+                    "name": "alt",
                     "target": {
                         "name": "string"
                     }
@@ -1050,13 +1035,7 @@
                 {
                     "name": "content",
                     "target": {
-                        "name": "static-content"
-                    }
-                },
-                {
-                    "name": "download",
-                    "target": {
-                        "name": "boolean"
+                        "name": "string"
                     }
                 }
             ],
@@ -1081,7 +1060,7 @@
                 {
                     "name": "content",
                     "target": {
-                        "name": "static-content"
+                        "name": "string"
                     }
                 }
             ],
@@ -1213,549 +1192,6 @@
             ]
         },
 
-
-        {
-            "name": "style",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "css",
-                    "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "string"
-                        }
-                    }
-                },
-                {
-                    "name": "ref",
-                    "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "reference",
-                            "accept": {
-                                "name": "style rule"
-                            }
-                        }
-                    }
-                },
-                {
-                    "name": "gss",
-                    "target": {
-                        "name": "gentleman style"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "gentleman style",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "text",
-                    "target": {
-                        "name": "text-style"
-                    }
-                },
-                {
-                    "name": "box",
-                    "target": {
-                        "name": "box-style"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "text-style",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "bold",
-                    "target": {
-                        "name": "boolean",
-                        "default": true
-                    },
-                    "required": false
-                },
-                {
-                    "name": "italic",
-                    "target": {
-                        "name": "boolean",
-                        "default": true
-                    },
-                    "required": false
-                },
-                {
-                    "name": "underline",
-                    "target": {
-                        "name": "boolean",
-                        "default": true
-                    },
-                    "required": false
-                },
-                {
-                    "name": "strikethrough",
-                    "target": {
-                        "name": "boolean",
-                        "default": true
-                    },
-                    "required": false
-                },
-                {
-                    "name": "nonbreakable",
-                    "target": {
-                        "name": "boolean",
-                        "default": true
-                    },
-                    "required": false
-                },
-                {
-                    "name": "color",
-                    "target": {
-                        "name": "hex-color"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "transform",
-                    "target": {
-                        "name": "text-transform"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "opacity",
-                    "target": {
-                        "name": "percentage"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "size",
-                    "target": {
-                        "name": "size"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "font",
-                    "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "string",
-                            "src": [
-                                "Arial", "Arial Black", "Verdana", "Consolas", "Tahoma",
-                                "Trebuchet MS", "Impact", "Times New Roman", "Didot",
-                                "Georgia", "American Typewriter", "Andalé Mono",
-                                "Courier", "Lucida Console", "Monaco", "Bradley Hand",
-                                "Brush Script MT", "Luminari", "Comic Sans MS"
-                            ]
-                        }
-                    },
-                    "required": false
-                }
-            ]
-        },
-        {
-            "name": "box-style",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "inner",
-                    "target": {
-                        "name": "spacing"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "outer",
-                    "target": {
-                        "name": "spacing"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "background",
-                    "target": {
-                        "name": "background"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "width",
-                    "target": {
-                        "name": "size"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "height",
-                    "target": {
-                        "name": "size"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "border",
-                    "target": {
-                        "name": "border"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "opacity",
-                    "target": {
-                        "name": "percentage"
-                    },
-                    "required": false
-                }
-            ]
-        },
-        {
-            "name": "bold",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "value",
-                    "target": {
-                        "name": "number",
-                        "constraint": {
-                            "values": [100, 200, 300, 400, 500, 600, 700, 800, 900]
-                        }
-                    }
-                }
-            ]
-        },
-
-        {
-            "name": "size",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "value",
-                    "target": {
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "unit",
-                    "target": {
-                        "name": "size-unit",
-                        "default": "px"
-                    }
-                }
-            ]
-        },
-
-        {
-            "name": "background",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "color",
-                    "target": {
-                        "name": "background-color"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "image",
-                    "target": {
-                        "name": "background-image"
-                    },
-                    "required": false
-                }
-            ]
-        },
-        {
-            "name": "background-color",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "value",
-                    "target": {
-                        "name": "hex-color"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "background-image",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "url",
-                    "target": {
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "position",
-                    "target": {
-                        "name": "background-position"
-                    }
-                },
-                {
-                    "name": "size",
-                    "target": {
-                        "name": "background-size"
-                    }
-                },
-                {
-                    "name": "repeat",
-                    "target": {
-                        "name": "string",
-                        "constraint": {
-                            "values": ["horizontal", "vertical", "both"]
-                        }
-                    },
-                    "required": false
-                },
-                {
-                    "name": "attachment",
-                    "target": {
-                        "name": "string",
-                        "constraint": {
-                            "values": ["scroll", "fixed", "local"]
-                        },
-                        "default": "scroll"
-                    },
-                    "required": false
-                }
-            ]
-        },
-        {
-            "name": "background-position",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "x",
-                    "target": {
-                        "name": "string",
-                        "constraint": {
-                            "values": ["left", "center", "right"]
-                        }
-                    }
-                },
-                {
-                    "name": "y",
-                    "target": {
-                        "name": "string",
-                        "constraint": {
-                            "values": ["top", "center", "bottom"]
-                        }
-                    }
-                }
-            ]
-        },
-        {
-            "name": "background-size",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "value",
-                    "target": {
-                        "name": "string",
-                        "constraint": {
-                            "values": ["auto", "cover", "contain"]
-                        },
-                        "default": "auto"
-                    }
-                }
-            ]
-        },
-
-
-        {
-            "name": "color",
-            "nature": "prototype",
-            "attributes": []
-        },
-        {
-            "name": "hex-color",
-            "nature": "concrete",
-            "prototype": "color",
-            "attributes": [
-                {
-                    "name": "value",
-                    "target": {
-                        "name": "string"
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "hex" }
-            ]
-        },
-        {
-            "name": "rgb-color",
-            "nature": "concrete",
-            "prototype": "color",
-            "attributes": [
-                {
-                    "name": "red",
-                    "target": {
-                        "name": "rgb"
-                    }
-                },
-                {
-                    "name": "green",
-                    "target": {
-                        "name": "rgb"
-                    }
-                },
-                {
-                    "name": "blue",
-                    "target": {
-                        "name": "rgb"
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "rgb" }
-            ]
-        },
-
-        
-        {
-            "name": "spacing",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "all",
-                    "target": {
-                        "name": "size"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "top",
-                    "target": {
-                        "name": "size"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "right",
-                    "target": {
-                        "name": "size"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "bottom",
-                    "target": {
-                        "name": "size"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "left",
-                    "target": {
-                        "name": "size"
-                    },
-                    "required": false
-                }
-            ]
-        },
-
-
-        {
-            "name": "border",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "all",
-                    "target": {
-                        "name": "border-value"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "top",
-                    "target": {
-                        "name": "border-value"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "right",
-                    "target": {
-                        "name": "border-value"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "bottom",
-                    "target": {
-                        "name": "border-value"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "left",
-                    "target": {
-                        "name": "border-value"
-                    },
-                    "required": false
-                }
-            ]
-        },
-        {
-            "name": "border-value",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "width",
-                    "target": {
-                        "name": "size"
-                    }
-                },
-                {
-                    "name": "color",
-                    "target": {
-                        "name": "hex-color"
-                    }
-                },
-                {
-                    "name": "type",
-                    "target": {
-                        "name": "border-type",
-                        "default": "solid"
-                    }
-                }
-            ]
-        },
-
-
-        {
-            "name": "rgb",
-            "nature": "derivative",
-            "base": "number",
-            "constraint": {
-                "value": {
-                    "type": "range",
-                    "range": {
-                        "min": { "value": 0 },
-                        "max": { "value": 255 }
-                    }
-                }
-            }
-        },
-        {
-            "name": "percentage",
-            "nature": "derivative",
-            "base": "number",
-            "constraint": {
-                "value": {
-                    "type": "range",
-                    "range": {
-                        "min": { "value": 0 },
-                        "max": { "value": 100 }
-                    }
-                }
-            }
-        },
         {
             "name": "name",
             "nature": "derivative",
@@ -1768,46 +1204,6 @@
                         "max": { "value": 50 }
                     }
                 }
-            }
-        },
-        {
-            "name": "size-unit",
-            "nature": "derivative",
-            "base": "string",
-            "constraint": {
-                "values": ["px", "em", "rem", "%", "vw", "vh"]
-            }
-        },
-        {
-            "name": "border-type",
-            "nature": "derivative",
-            "base": "string",
-            "constraint": {
-                "values": ["solid", "dotted", "dashed", "double", "inset", "outset"]
-            }
-        },
-        {
-            "name": "direction",
-            "nature": "derivative",
-            "base": "string",
-            "constraint": {
-                "values": ["top", "right", "bottom", "left"]
-            }
-        },
-        {
-            "name": "alignment",
-            "nature": "derivative",
-            "base": "string",
-            "constraint": {
-                "values": ["left", "right", "center", "justify"]
-            }
-        },
-        {
-            "name": "text-transform",
-            "nature": "derivative",
-            "base": "string",
-            "constraint": {
-                "values": ["capitalize", "lowercase", "uppercase"]
             }
         },
         {

@@ -46,7 +46,7 @@
                     "target": {
                         "name": "string",
                         "constraint": {
-                            "values": ["red", "yellow", "green", "white", "black"]
+                            "values": ["RED", "YELLOW", "GREEN", "WHITE", "BLACK"]
                         }
                     },
                     "required": true,
@@ -58,7 +58,7 @@
                         "name": "string",
                         "default": "circle",
                         "constraint": {
-                            "values": ["circle", "rectangle", "square", "diamond", "bus", "person"]
+                            "values": ["CIRCLE", "RECTANGLE", "SQUARE", "DIAMOND", "BUS", "PERSON"]
                         }
                     },
                     "required": false,
@@ -139,7 +139,7 @@
                         "name": "string",
                         "default": "s",
                         "constraint": {
-                            "values": ["s", "ms", "min"]
+                            "values": ["ms", "s", "min"]
                         }
                     },
                     "required": true,
@@ -155,7 +155,7 @@
             "nature": "concrete",
             "attributes": [
                 {
-                    "name": "button",
+                    "name": "event",
                     "target": {
                         "name": "string"
                     },
@@ -176,7 +176,7 @@
                     "type": "range",
                     "range": {
                         "min": { "value": 1 },
-                        "max": { "value": 50 }
+                        "max": { "value": 30 }
                     }
                 }
             }

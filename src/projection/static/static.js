@@ -80,6 +80,15 @@ const BaseStatic = {
     _focusIn(target) {
         return false;
     },
+    navigate(dir, from, to) {
+        if (!this.focusable) {
+            return this.parent.arrowHandler(dir, this.element);
+        }
+
+        this.element.focus();
+
+        return true;
+    },
     clear() {
         return true;
     },

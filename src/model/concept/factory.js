@@ -45,7 +45,6 @@ export const ConceptFactory = {
         if (isNullOrUndefined(concept)) {
             throw new Error(`Bad request: The '${name}' concept could not be created`);
         }
-        concept._createConcept = this.createConcept;
         
         concept.init(args);
 

@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/geodes-sms/gentleman.svg?branch=master)](https://travis-ci.org/geodes-sms/gentleman)
 
-Gentleman is a **lightweight web-based projectional editor** that allows you to create and manipulate models. A model is defined with concepts and manipulated through projections for a personalized experience.
+Gentleman is a **lightweight web-based projectional editor** that allows you to create and manipulate concept-based models through projections.
 
 ## Features
 
@@ -29,7 +29,7 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 
 # Documentation 📖
 
-The documentation can be found [here](https://geodes-sms.github.io/gentleman/docs) 👈.  
+<!-- The documentation can be found [here](https://geodes-sms.github.io/gentleman/docs) 👈.   -->
 
 ## Integration
 
@@ -89,13 +89,20 @@ $ npm install
 
 ### Development
 
-When working on the code, execute the following command
+When working on the code, you will need a folder named `.internal` at the root of the project.  
+This folder is used as the source of content for the *webpack-dev-server* (see [webpack.dev.js](/webpack.dev.js)) that provides live reloading. It can be used to store dev-specific files and assets.
+
+1. Create a folder named `.internal` in the root
+2. Add an `index.html` file in the `.internal` folder
+3. Add the script `<script src="app.bundle.js"></script>` at the end of the `index.html` page
+
+Once you have the `.internal` folder in place, execute the following command
 
 ```
 $ npm run start
 ```
 
-This will start a development server (*webpack-dev-server*) that provides live reloading.
+This will start a development server (*webpack-dev-server*) and should open the application in the browser.
 
 ### Production
 

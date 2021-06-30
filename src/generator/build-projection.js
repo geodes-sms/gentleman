@@ -1,4 +1,4 @@
-import { isEmpty, valOrDefault, isNullOrWhitespace, isFunction, createEmphasis, getElement, isNullOrUndefined, createSpan } from "zenkai";
+import { isEmpty, valOrDefault, isNullOrWhitespace, isFunction, createEmphasis, getElement, isNullOrUndefined, createSpan, isString } from "zenkai";
 import { NotificationType, LogType } from "@utils/index.js";
 import { buildStyle, buildGentlemanStyle } from "./build-style.js";
 
@@ -73,6 +73,7 @@ const ProjectionBuildHandler = {
 
 const ProjectionHandler = {
     "layout": buildLayout,
+    "container": buildContainer,
     "field": buildField,
 };
 
@@ -136,7 +137,13 @@ export function buildProjectionHandler(_options = {}) {
 function buildProjection(concept) {
     const tags = hasAttr(concept, ATTR_TAGS) ? getValue(concept, ATTR_TAGS, true) : [];
 
-    const target = buildConcept.call(this, getAttr(concept, ATTR_CONCEPT));
+    let targetConcept = getAttr(concept, ATTR_CONCEPT);
+    if (concept.hasParent()) {
+        let parent = concept.getParent("collection");
+        targetConcept = getAttr(parent, ATTR_CONCEPT);
+    }
+
+    const target = buildConcept.call(this, targetConcept);
 
     if (isEmpty(Object.keys(target))) {
         let link = createProjectionLink.call(this, "concept", getAttr(concept, ATTR_CONCEPT));
@@ -182,7 +189,7 @@ function buildProjection(concept) {
         "id": concept.id,
         "concept": target,
         "tags": tags,
-        "type": contentType,
+        "type": contentType === "container" ? "layout" : contentType,
         "content": ProjectionHandler[contentType].call(this, content),
         // "metadata": JSON.stringify(concept.export()),
     };
@@ -290,6 +297,7 @@ const ElementHanlders = {
     "layout": buildLayout,
     "dynamic": buildDynamic,
     "field": buildField,
+    "container": buildContainer,
 };
 
 function buildElement(element) {
@@ -301,10 +309,44 @@ function buildElement(element) {
         return null;
     }
 
+    let type = contentType === "container" ? "layout" : contentType;
+
     return {
-        type: contentType,
-        [contentType]: handler.call(this, element)
+        type: type,
+        [type]: handler.call(this, element)
     };
+}
+
+
+function buildContainer(container) {
+    const schema = {};
+    var disposition = [];
+
+    getValue(container, "elements").filter(proto => proto.hasValue()).forEach(proto => {
+        const element = proto.getValue(true);
+        disposition.push(buildElement.call(this, element));
+    });
+
+    const PROP_ORIENTATION = "orientation";
+    const PROP_WRAPPABLE = "wrappable";
+    const PROP_ALIGNITEMS = "align-items";
+    const PROP_JUSTIFYCONTENT = "justify-content";
+
+    let layout = getAttr(container, "layout");
+
+    schema.type = "flex";
+    schema[PROP_ORIENTATION] = getValue(layout, PROP_ORIENTATION);
+    schema[PROP_WRAPPABLE] = getValue(container, PROP_WRAPPABLE);
+    schema.alignItems = getValue(layout, PROP_ALIGNITEMS);
+    schema.justifyContent = getValue(layout, PROP_JUSTIFYCONTENT);
+
+    schema.disposition = disposition;
+
+    if (hasAttr(container, "style")) {
+        schema.style = buildStyle.call(this, getAttr(container, 'style'));
+    }
+
+    return schema;
 }
 
 /**
@@ -580,7 +622,8 @@ function TextStaticHandler(element) {
         return schema;
     };
 
-    schema[ATTR_CONTENT] = buildContent(getValue(element, ATTR_CONTENT, true));
+    // schema[ATTR_CONTENT] = buildContent(getValue(element, ATTR_CONTENT, true));
+    schema[ATTR_CONTENT] = getValue(element, ATTR_CONTENT, true);
 
     return schema;
 }
@@ -589,14 +632,10 @@ function ImageStaticHandler(element) {
     const schema = {};
 
     const PROP_URL = "url";
-    const PROP_ALT = "alternative text";
-    const PROP_WIDTH = "width";
-    const PROP_HEIGHT = "height";
+    const PROP_ALT = "alt";
 
     schema[PROP_URL] = getValue(element, PROP_URL);
-    schema.alt = getValue(element, PROP_ALT);
-    schema[PROP_WIDTH] = getValue(element, PROP_WIDTH);
-    schema[PROP_HEIGHT] = getValue(element, PROP_HEIGHT);
+    schema[PROP_ALT] = getValue(element, PROP_ALT);
 
     return schema;
 }
@@ -784,27 +823,38 @@ function ListFieldHandler(field) {
 
         if (hasAttr(action, PROP_ACTION_ADD)) {
             let add = getAttr(action, PROP_ACTION_ADD);
-            schema.action[PROP_ACTION_ADD] = {};
-            const content = [];
+            schema.action[PROP_ACTION_ADD] = {
+                position: getValue(add, "position"),
+            };
+            const content = [
+                {
+                    "type": "static",
+                    "static": {
+                        "type": "text",
+                        "content": getValue(add, ATTR_CONTENT)
+                    }
+                }
+            ];
 
-            getValue(add, ATTR_CONTENT).filter(proto => proto.hasValue()).forEach(proto => {
-                const element = proto.getValue(true);
-                content.push(buildElement.call(this, element));
-            });
+            // getValue(add, ATTR_CONTENT).filter(proto => proto.hasValue()).forEach(proto => {
+            //     const element = proto.getValue(true);
+            //     content.push(buildElement.call(this, element));
+            // });
+
             schema.action.add.content = content;
         }
 
-        if (hasAttr(action, PROP_ACTION_REMOVE)) {
-            let remove = getAttr(action, PROP_ACTION_REMOVE);
-            schema.action[PROP_ACTION_REMOVE] = {};
-            const content = [];
+        // if (hasAttr(action, PROP_ACTION_REMOVE)) {
+        //     let remove = getAttr(action, PROP_ACTION_REMOVE);
+        //     schema.action[PROP_ACTION_REMOVE] = {};
+        //     const content = [];
 
-            getValue(remove, ATTR_CONTENT).filter(proto => proto.hasValue()).forEach(proto => {
-                const element = proto.getValue(true);
-                content.push(buildElement.call(this, element));
-            });
-            schema.action.remove.content = content;
-        }
+        //     getValue(remove, ATTR_CONTENT).filter(proto => proto.hasValue()).forEach(proto => {
+        //         const element = proto.getValue(true);
+        //         content.push(buildElement.call(this, element));
+        //     });
+        //     schema.action.remove.content = content;
+        // }
     }
     return schema;
 }
@@ -856,7 +906,7 @@ function buildInput(element) {
 function buildCheckbox(element) {
     let schema = {
         position: getValue(element, "position"),
-        label: getValue(element, "label")
+        label: buildLabel.call(this, getAttr(element, "label"))
     };
 
     if (hasAttr(element, ATTR_STYLE)) {
@@ -865,6 +915,21 @@ function buildCheckbox(element) {
 
     return schema;
 }
+
+
+function buildLabel(element) {
+    let schema = {
+        content: getValue(element, "content")
+    };
+
+    if (hasAttr(element, ATTR_STYLE)) {
+        schema[ATTR_STYLE] = buildStyle.call(this, getAttr(element, ATTR_STYLE));
+    }
+
+    return schema;
+}
+
+
 
 function buildFieldTemplate(element) {
     const schema = {};

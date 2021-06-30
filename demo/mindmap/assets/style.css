@@ -1,38 +1,22 @@
 body { display: flex; flex-direction: column; }
 
-h1, h2, h3, h4 {
-    font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
-}
+h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif; }
 
-.content-wrapper {
-    padding-left: 2%;
-    padding-right: 2%;
-}
+.content-wrapper { padding-left: 1%; padding-right: 1%; }
 
-.page-header {
-    background-color: #F5DF4D;
-}
+.page-header { height: 30px; background-color: #F5DF4D; }
 
 .page-title {
     margin: 0;
-    padding-top: 6px;
-    padding-bottom: 6px;
-    font-size: 1.5rem;
-    font-weight: 500;
+    padding-top: 6px; padding-bottom: 6px;
+    font-size: 1.5rem; font-weight: 500;
 }
 
 .page-body {
     flex-grow: 2;
     display: flex;
-    background-color: #0F4C81;
+    height: calc(100% - 30px);    
 }
-
-.page-footer {
-    font-size: 0.8rem;
-    color: #fff;
-    background-color: #031E36;
-}
-
 
 .app {
     flex-grow: 2;
@@ -40,15 +24,6 @@ h1, h2, h3, h4 {
     flex-direction: column;
     height: 100%;
 }
-
-.app-body {
-    flex-grow: 2;
-    padding-right: 0;
-    display: flex;
-    flex-direction: row;
-    height: calc(100% - 30px);
-}
-
 
 .field-action { 
     border: 0 none; 
@@ -61,6 +36,10 @@ h1, h2, h3, h4 {
     background-color: #fff;
     border-radius: 2px;
     padding-left: 2px; padding-right: 2px;
+}
+
+.editor-concept > .layout-container {
+    background-color: #fefefe;
 }
 
 .mindmap .field { padding: 0; }
@@ -79,13 +58,18 @@ h1, h2, h3, h4 {
 
     .mindmap-marker-set > .mindmap-marker-set__btn-add { align-self: stretch; }
 
-    .mindmap-marker-set > .mindmap-marker-set__btn-add .text { transition: transform .2s; }
+    .mindmap-marker-set > .mindmap-marker-set__btn-add:hover,
+    .mindmap-marker-set > .mindmap-marker-set__btn-add:focus { 
+        background-color: #0F4C81!important; 
+    }
+
+    .mindmap-marker-set > .mindmap-marker-set__btn-add .text { display: block; transition: transform .2s; }
 
         .mindmap-marker-set.empty > .mindmap-marker-set__btn-add .text { padding: 6px; }
 
             .mindmap-marker-set > .mindmap-marker-set__btn-add:hover .text { transform: scale(1.1); }
 
-            .mindmap-marker-set__list-item > .btn-remove { width: 18px; border-radius: 2px 0 0 2px; }
+            .mindmap-marker-set__list-item > .projection__btn-delete { width: 18px; border-radius: 2px 0 0 2px; }
 
     .mindmap-textbox--symbol__input {
         background-color: #f5f5f5;
@@ -134,6 +118,7 @@ h1, h2, h3, h4 {
         .marker-reference__choice-option {
             display: flex; align-items: center;
             background-color: #fff;
+            font-size: 1.2rem;
             padding: 4px 6px;
             border: 0 none;
         }
@@ -174,13 +159,14 @@ h1, h2, h3, h4 {
 
         .mindmap-maintopic-set__list-item {
             box-shadow: 0 2px 1px #FF857A, 0 0 2px #B33D32;
+            padding: 4px 6px;
             border-radius: 2px;  
         }
             .mindmap-maintopic-set__list-item:focus { box-shadow: 0 1px 2px 2px #B33D32; }
 
             .mindmap-maintopic-set__list-item:not(:last-child) { margin-bottom: 12px; }
         
-        .mindmap-maintopic-set__list-item > .btn-remove {
+        .mindmap-maintopic-set__list-item > .projection__btn-delete {
             position: absolute;
             top: 0; right: 0;
             font-size: 1.2em;
@@ -189,7 +175,7 @@ h1, h2, h3, h4 {
             z-index: 10;
         }
 
-        .mindmap-maintopic-set__list-item > .btn-remove:hover { color: #fff; background-color: #FF857A; }
+        .mindmap-maintopic-set__list-item > .projection__btn-delete:hover { color: #fff; background-color: #FF857A; }
 
         .mindmap-topic-set--maintopic__btn-add:hover,
         .mindmap-topic-set--maintopic__btn-add:focus {
@@ -219,7 +205,7 @@ h1, h2, h3, h4 {
         }
             .mindmap-subtopic-set__list-item:focus { border-style: solid; }
 
-            .mindmap-subtopic-set__list-item > .btn-remove {
+            .mindmap-subtopic-set__list-item > .projection__btn-delete {
                 position: absolute;
                 top: -6px; right: -6px;
                 font-size: 1em;
@@ -230,7 +216,7 @@ h1, h2, h3, h4 {
                 background-color: #fff;
                 z-index: 5;
             }
-                .mindmap-subtopic-set__list-item > .btn-remove:hover { color: #fff; background-color: #FF857A; }
+                .mindmap-subtopic-set__list-item > .projection__btn-delete:hover { color: #fff; background-color: #FF857A; }
 
     .mindmap-subtopic-set.empty > .mindmap-subtopic-set__list { display: none; }
 
@@ -266,16 +252,19 @@ h1, h2, h3, h4 {
 
     .mindmap-subsubtopic-set__btn-add:hover .text { transform: scale(1.1); opacity: 1; }
 
-    .mindmap-subsubtopic-set__list-item .btn-remove {
+    .mindmap-subsubtopic-set__list-item > .projection__btn-delete {
         position: absolute;
         top: 0; left: 0px;
+        display: flex; align-items: center; justify-content: center;
         width: 18px;
         height: 24px;
         border-top-left-radius: 2px;
         border-bottom-left-radius: 2px;
+        color: #fff;
+        background-color: #B33D32;
     }
     
-    .mindmap-subsubtopic-set__list-item .btn-remove:hover { background-color: #ff857a; }
+    .mindmap-subsubtopic-set__list-item > .projection__btn-delete:hover { background-color: #ff857a; }
 
     .mindmap-subsubtopic-set__list-item .mindmap-textbox-input { border-radius: 0; height: 24px; }
 

@@ -29,7 +29,7 @@ export const ObserverHandler = {
     },
     notify(message, value) {
         this.listeners.forEach(listener => {
-            listener.update(message, value);
+            listener.update(message, value, this);
         });
     },
 };

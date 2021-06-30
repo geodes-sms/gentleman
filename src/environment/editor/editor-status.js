@@ -31,15 +31,26 @@ export const EditorStatus = {
     modelstatus: null,
     /** @type {HTMLElement} */
     notification: null,
+    /** @type {Map} */
+    views: null,
+    /** @type {string} */
     view: "grid",
     /** @type {HTMLElement} */
-    viewItem: null,
+    viewContainer: null,
     /** @type {HTMLElement} */
     viewList: null,
     /** @type {HTMLElement} */
+    viewItem: null,
+    /** @type {HTMLElement} */
     activeViewItem: null,
-    /** @type {Map} */
-    views: null,
+    /** @type {HTMLElement} */
+    groupList: null,
+    /** @type {HTMLElement} */
+    groupItem: null,
+    /** @type {HTMLElement} */
+    activeGroupItem: null,
+
+
     /** @type {boolean} */
     visible: true,
     /** @type {HTMLElement} */
@@ -76,14 +87,14 @@ export const EditorStatus = {
     updateActiveView() {
         if (this.view === "tab") {
             this.editor.instances.forEach(instance => {
-                if (instance === this.editor.activeInstance) {
-                    instance.view.classList.add("active");
-                    instance.show();
-                } else {
+                if (instance !== this.editor.activeInstance) {
                     instance.view.classList.remove("active");
                     instance.hide();
                 }
             });
+
+            this.editor.activeInstance.view.classList.add("active");
+            this.editor.activeInstance.show();
         }
 
         this.editor.refresh();
@@ -104,7 +115,7 @@ export const EditorStatus = {
         }, icoDelete);
 
         let container = createDiv({
-            class: [`editor-view-${this.view}list-item__content`]
+            class: [`editor-view-${this.view}list-item__content`, "fit-content"]
         }, content);
 
         let item = createListItem({
@@ -134,7 +145,7 @@ export const EditorStatus = {
             if (target === btnDelete) {
                 let next = item.previousSibling || item.nextSibling;
                 instance.delete();
-                if (this.activeInstance === null && next) {
+                if (this.editor.activeInstance === null && next) {
                     next.click();
                 }
             } else {
@@ -164,6 +175,7 @@ export const EditorStatus = {
             removeChildren(this.tabView);
 
             this.editor.instances.forEach(instance => {
+                instance.expand();
                 this.addView(instance);
             });
 
@@ -183,6 +195,11 @@ export const EditorStatus = {
         }
 
         this.updateActiveView();
+    },
+    addGroup() {
+        let item = createListItem({
+            class:["editor-footer-group"]
+        });
     },
 
 
@@ -223,6 +240,7 @@ export const EditorStatus = {
         if (conceptModel.hasError) {
             this.modelstatusBadge.classList.add("error");
             this.modelstatusBadge.classList.remove("valid");
+            this.container.classList.add("error");
             let errorCount = conceptModel.concepts.filter(c => c.hasError).length;
             this.modelstatusInfo.textContent = `${errorCount} ${pluralize("error", "s", errorCount)}`;
 
@@ -237,7 +255,9 @@ export const EditorStatus = {
         } else {
             this.modelstatusBadge.classList.add("valid");
             this.modelstatusBadge.classList.remove("error");
+            this.container.classList.remove("error");
             removeChildren(this.modelstatusInfo);
+            this.editor.logs.clear();
         }
 
     },
@@ -276,12 +296,52 @@ export const EditorStatus = {
             fragment.appendChild(this.modelstatus);
         }
 
+        if (!isHTMLElement(this.viewContainer)) {
+            this.viewContainer = createDiv({
+                class: ["editor-statusbar-viewer-container"]
+            });
+
+            fragment.appendChild(this.viewContainer);
+        }
+
+        // if (!isHTMLElement(this.groupList)) {
+        //     this.groupList = createUnorderedList({
+        //         class: ["bare-list", "editor-statusbar-groups"]
+        //     });
+
+        //     fragment.appendChild(this.groupList);
+        // }
+
+        if (!isHTMLElement(this.btnGroup)) {
+            let ico = createI({
+                class: ["ico", "ico-plus", "btn-content"],
+                title: `Add a group`,
+                dataset: {
+                    ignore: "all",
+                }
+            }, "+");
+            this.btnGroup = createButton({
+                class: ["editor-statusbar-viewer__button-add"],
+                dataset: {
+                    action: "add-group"
+                }
+            }, ico);
+
+            // this.viewContainer.appendChild(this.btnGroup);
+        }
+
+        if (!isHTMLElement(this.groupContainer)) {
+            this.groupContainer = createDiv({
+                class: ["editor-footer-group"],
+            });
+        }
+
         if (!isHTMLElement(this.viewList)) {
-            this.viewList = createDiv({
+            this.viewList = createUnorderedList({
                 class: ["bare-list", "editor-statusbar-viewers"]
             });
 
-            fragment.appendChild(this.viewList);
+            this.viewContainer.appendChild(this.viewList);
         }
 
         ["tab", "grid", "row"].forEach(name => {

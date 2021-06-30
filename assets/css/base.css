@@ -79,29 +79,27 @@ th { text-align: center; }
 
 /* width */
 ::-webkit-scrollbar {
-    width: calc(3px + 1%); max-width: 10px;
-    height: calc(3px + 1%); max-height: 10px;
+    width: calc(6px + 1%); max-width: 10px;
+    height: calc(6px + 1%); max-height: 10px;
 }
   
 /* Track */
 ::-webkit-scrollbar-track {
-    background: #f5f5f5;
+    background: #dcdcdc;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #c0c0c0;
+    background: #bfbfbf;
 }
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-    background: #a9a9a9;
-}
-
-/* Handle on active */
-::-webkit-scrollbar-thumb:active {
-    background: #808080;
-}
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #808080;
+    }
+    /* Handle on active */
+    ::-webkit-scrollbar-thumb:active {
+        background: #555;
+    }
 
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,

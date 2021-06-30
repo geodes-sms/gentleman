@@ -1,5 +1,5 @@
 import {
-    createDocFragment, createSpan, createDiv, createI, createInput, createUnorderedList,
+    createDocFragment, createDiv, createI, createInput, createUnorderedList,
     createListItem, findAncestor, isHTMLElement, removeChildren, isNullOrUndefined,
     isNullOrWhitespace, isObject, valOrDefault, hasOwn, isEmpty
 } from "zenkai";
@@ -9,7 +9,6 @@ import {
 } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler, resolveValue } from "./../content-handler.js";
-import { createNotificationMessage } from "./notification.js";
 import { Field } from "./field.js";
 
 
@@ -141,9 +140,7 @@ const BaseChoiceField = {
      * Verifies that the field has a changes
      * @returns {boolean}
      */
-    hasChanges() {
-        return this.value != this.source.getValue();
-    },
+    hasChanges() { return this.value != this.source.getValue(); },
     reset() {
         // TODO: Get initial value
         this.source.removeValue();
@@ -152,16 +149,12 @@ const BaseChoiceField = {
      * Verifies that the field has a value
      * @returns {boolean}
      */
-    hasValue() {
-        return !isNullOrUndefined(this.value);
-    },
+    hasValue() { return !isNullOrUndefined(this.value); },
     /**
      * Gets the input value
      * @returns {boolean}
      */
-    getValue() {
-        return this.selection;
-    },
+    getValue() { return this.selection; },
     setValue(value, update = false) {
         var response = null;
 
@@ -177,9 +170,13 @@ const BaseChoiceField = {
 
         if (isNullOrUndefined(value)) {
             if (this.selection) {
-                this.selection.remove();
                 this.selection.classList.remove("selected");
             }
+
+            if (!this.expanded) {
+                removeChildren(this.selectListValue);
+            }
+
             this.selection = null;
         } else {
             this.setChoice(value);
@@ -187,24 +184,40 @@ const BaseChoiceField = {
 
         if (isNullOrUndefined(value)) {
             this.value = null;
-        } else if (value.object === "concept") {
+        } else if (value.type === "concept") {
             this.value = value.id;
-        } else if (value.object === "meta-concept") {
+        } else if (value.type === "meta-concept") {
             this.value = value.name;
         } else {
             this.value = value;
         }
 
-        if (this.selection && !this.expanded) {
-            let clone = this.selection.cloneNode(true);
+        const { template = {} } = this.schema.choice.option;
 
+        if (this.selection && !this.expanded && value) {
             removeChildren(this.selectListValue);
-            while (this.selection.childNodes.length > 0) {
-                this.selectListValue.append(this.selection.childNodes[0]);
-            }
 
-            while (clone.childNodes.length > 0) {
-                this.selection.append(clone.childNodes[0]);
+            if (value.type === "meta-concept") {
+                let choiceProjectionSchema = this.model.getProjectionSchema(value.concept, valOrDefault(template.tag))[0];
+
+                let type = choiceProjectionSchema.type;
+                let schema = {
+                    "type": type,
+                    [type]: choiceProjectionSchema.content || choiceProjectionSchema.projection,
+                };
+
+                let render = ContentHandler.call(this, schema, value.concept, { focusable: false, meta: value.name });
+
+                this.selectListValue.append(render);
+            } else if (value.type === "concept") {
+                let choiceProjection = this.model.createProjection(value, template.tag).init({ focusable: false });
+                choiceProjection.readonly = true;
+                choiceProjection.focusable = false;
+                choiceProjection.parent = this.projection;
+
+                this.selectListValue.append(choiceProjection.render());
+            } else {
+                this.selectListValue.append(value.toString());
             }
         }
 
@@ -316,7 +329,7 @@ const BaseChoiceField = {
             });
             this.selectListValue = createDiv({
                 class: ["field--choice__select-value"],
-                tabindex: 0,
+                tabindex: -1,
                 dataset: {
                     nature: "field-component",
                     view: "choice",
@@ -391,14 +404,17 @@ const BaseChoiceField = {
             this.setValue(this.source.getValue());
         }
 
-        this.environment.refresh();
         this.refresh();
 
         return this.element;
     },
     focus(target) {
         if (!this.expanded) {
-            this.selectListValue.focus();
+            if (this.input && !isHidden(this.input)) {
+                this.input.focus();
+            } else {
+                this.selectListValue.focus();
+            }
         } else if (this.choices.hasChildNodes()) {
             let firstChild = getVisibleElement(this.choices);
             if (firstChild) {
@@ -452,14 +468,8 @@ const BaseChoiceField = {
         this.choices.append(fragment);
 
         if (!this.expanded) {
-            if (this.hasValue()) {
-                let clone = this.selectListValue.cloneNode(true);
-                removeChildren(this.selection);
-                while (clone.childNodes.length > 0) {
-                    this.selection.append(clone.childNodes[0]);
-                }
-            }
             show(this.selectList);
+            this.selectList.dataset.state = "open";
         }
 
         return this;
@@ -496,6 +506,7 @@ const BaseChoiceField = {
 
         if (!this.expanded) {
             hide(this.selectList);
+            this.selectList.dataset.state = "close";
         }
 
         this.focused = false;
@@ -728,6 +739,13 @@ const BaseChoiceField = {
             exit = false;
         }
 
+        if (!this.expanded && this.selectList.dataset.state === "open") {
+            hide(this.selectList);
+            this.selectList.dataset.state = "close";
+
+            return true;
+        }
+
         if (exit) {
             let parent = findAncestor(target, (el) => el.tabIndex === 0);
             let element = this.environment.resolveElement(parent);
@@ -752,12 +770,13 @@ const BaseChoiceField = {
             if (type === "placeholder") {
                 this.source.removeValue();
             } else {
-                this.environment.save(this.source);
                 this.setValue(getItemValue.call(this, item), true);
             }
 
             if (!this.expanded) {
                 hide(this.selectList);
+                this.selectList.dataset.state = "close";
+                this.focus();
             }
         }
     },
@@ -782,14 +801,6 @@ const BaseChoiceField = {
         if (isHTMLElement(item) && this.selection !== item) {
             let type = getItemType(item);
 
-            if (this.hasValue()) {
-                let parent = this.projection.getContainer();
-                let clone = parent.cloneNode(true);
-                // clone.append(target.cloneNode(true));
-
-                this.environment.save(this.source, clone);
-            }
-
             if (type === "placeholder") {
                 this.source.removeValue();
             } else {
@@ -798,9 +809,11 @@ const BaseChoiceField = {
 
             if (!this.expanded) {
                 hide(this.selectList);
+                this.selectList.dataset.state = "close";
             }
         } else if (target === this.selectListValue) {
             show(this.selectList);
+            this.selectList.dataset.state = "open";
         }
     },
     /**

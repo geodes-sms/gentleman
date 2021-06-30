@@ -77,7 +77,9 @@ const _NumberConcept = {
 
         return +this.value;
     },
-    setValue(value) {
+    setValue(arg) {
+        let value = isObject(arg) ? arg.value : arg;
+
         const { code, ctx } = this.validate(value);
 
         if (this.value !== value) {

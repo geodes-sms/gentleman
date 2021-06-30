@@ -240,14 +240,13 @@ const BaseTextField = {
         if (!response.success) {
             this.environment.notify(response.message, "error");
         }
-        
+
         // this.attached.filter(element => !element.active).forEach(element => element.hide());
-        
+
         this.setInputValue(value);
-        
+
         this.value = value;
-        
-        this.environment.refresh();
+
         this.refresh();
     },
     /**
@@ -295,9 +294,8 @@ const BaseTextField = {
         } else {
             this.element.classList.add("empty");
         }
+
         this.element.dataset.value = this.value;
-
-
 
         if (this.hasError) {
             this.element.classList.add(CSS_ERROR);
@@ -481,7 +479,9 @@ const BaseTextField = {
             let parent = findAncestor(target, (el) => el.tabIndex === 0);
             let element = this.environment.resolveElement(parent);
 
-            element.focus(parent);
+            if (element) {
+                element.focus(parent);
+            }
 
             return false;
         }
@@ -595,20 +595,18 @@ const BaseTextField = {
             element = getClosest(target, dir, this.element, false);
         }
 
-        if (!isHTMLElement(element)) {
+        if (!isHTMLElement(element) || element.dataset.id !== this.id) {
             return exit();
         }
 
-        if (element === this.choice && this.choice.hasChildNodes()) {
-            if (dir === "up") {
-                element = getBottomElement(this.choice);
-            } else if (dir === "down") {
-                element = getTopElement(this.choice);
-            } else if (dir === "left") {
-                element = getRightElement(this.choice);
-            } else if (dir === "right") {
-                element = getLeftElement(this.choice);
-            }
+        if (dir === "up") {
+            element = getBottomElement(this.choice);
+        } else if (dir === "down") {
+            element = getTopElement(this.choice);
+        } else if (dir === "left") {
+            element = getRightElement(this.choice);
+        } else if (dir === "right") {
+            element = getLeftElement(this.choice);
         }
 
         element.focus();
@@ -618,6 +616,10 @@ const BaseTextField = {
 
     bindEvents() {
         this.element.addEventListener('input', (event) => {
+            if (this.hasError) {
+                this.source.setValue(this.getValue(), true);
+            }
+
             this.refresh();
         });
 

@@ -6,11 +6,14 @@ import { duplicateTab } from "@utils";
 import { buildProjectionHandler } from "@generator/build-projection.js";
 import { buildConceptHandler } from "@generator/build-concept.js";
 
-const CMODEL__EDITOR = require('@models/concept-model/editor-config.json');
+const CMODEL__EDITOR = require('@models/concept-model/config.json');
 const CMODEL__CONCEPT = require('@models/concept-model/concept.json');
 const CMODEL__PROJECTION = require('@models/concept-model/projection.json');
 
-const PMODEL__EDITOR = require('@models/projection-model/editor-config.json');
+const SMODEL__CONCEPT = require('@models/style-model/concept.json');
+const SMODEL__PROJECTION = require('@models/style-model/projection.json');
+
+const PMODEL__EDITOR = require('@models/projection-model/config.json');
 const PMODEL__CONCEPT = require('@models/projection-model/concept.json');
 const PMODEL__PROJECTION = require('@models/projection-model/projection.json');
 const PMODEL__HANDLER = {
@@ -34,7 +37,51 @@ const PMODEL__HANDLER = {
         }
 
         actionHandler["preview-projection"](this);
-    }
+    },
+    "open-style": function (args) {
+        let concept = args[0];
+        let projection = this.createProjection(concept, "style");
+
+        let window = this.findWindow("side-instance");
+        if (isNullOrUndefined(window)) {
+            window = this.createWindow("side-instance");
+            window.container.classList.add("model-projection-sideview");
+        }
+
+        if (window.instances.size > 0) {
+            let instance = Array.from(window.instances)[0];
+            instance.delete();
+        }
+
+        let instance = this.createInstance(concept, projection, {
+            type: "projection",
+            close: "DELETE-PROJECTION"
+        });
+
+        window.addInstance(instance);
+    },
+    "open-state": function (args) {
+        let concept = args[0];
+        let projection = this.createProjection(concept, "state");
+
+        let window = this.findWindow("side-instance");
+        if (isNullOrUndefined(window)) {
+            window = this.createWindow("side-instance");
+            window.container.classList.add("model-projection-sideview");
+        }
+
+        if (window.instances.size > 0) {
+            let instance = Array.from(window.instances)[0];
+            instance.delete();
+        }
+
+        let instance = this.createInstance(concept, projection, {
+            type: "projection",
+            close: "DELETE-PROJECTION"
+        });
+
+        window.addInstance(instance);
+    },
 };
 
 var inc = 0;
@@ -259,6 +306,9 @@ export const App = {
                     handlers: PMODEL__HANDLER,
                 });
 
+                editor.addConcept(SMODEL__CONCEPT);
+                editor.addProjection(SMODEL__PROJECTION);
+
                 let btnBuild = createMenuButton.call(this, "build-projection", "Build", editor);
                 let btnPreview = createMenuButton.call(this, "preview-projection", "Preview", editor);
 
@@ -323,7 +373,8 @@ const actionHandler = {
         const RESOURCE_NAME = "metamodel";
 
         if (!editor.hasResource(RESOURCE_NAME)) {
-            editor.notify("<strong>Metamodel not found</strong>: Add it in the resource tab and try again.", "error", 3000);
+            editor.notify("<strong>Metamodel not found</strong>.", "error", 3000);
+            editor.triggerEvent({ name: "load-resource", args: [RESOURCE_NAME] });
 
             return false;
         }
@@ -357,7 +408,7 @@ const actionHandler = {
             concept: cmodel,
             projection: pmodel
         });
-    }
+    },
 };
 
 function createMenuButton(action, content, editor) {

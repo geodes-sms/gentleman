@@ -1,10 +1,19 @@
 .layout-container {
     position: relative;
-    /* width: 100%; */
 }
+
+.active {
+    z-index: 10;
+}
+
+[data-projection].active-parent {
+    z-index: 5;
+}
+
 
 [data-projection]:focus,
 .static.active,
+.field.active,
 .field--list-item:focus,
 .field-action:focus {
     border-radius: 2px;
@@ -21,24 +30,16 @@
     border-radius: 2px;
     box-shadow: 0 0 0 1px #fff, 0 0 1px 3px #5897F5;
     opacity: 1;
-    transform: scale(1.01);
     transition: .2s;
     transition-property: transform, opacity;
 }
 
-.active {
-    z-index: 10;
-}
-
-[data-projection].active-parent {
-    z-index: 5;
-}
-
-.structure__btn-delete {
+.projection__btn-delete {
+    display: flex; align-items: center; justify-content: center;
     font-weight: 600;
     z-index: 5;
 }
-    .structure__btn-delete:before {
+    .projection__btn-delete:before {
         content: "✖";
         display: block;
         transition: .2s;

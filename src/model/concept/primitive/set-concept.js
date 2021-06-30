@@ -105,8 +105,45 @@ const _SetConcept = {
 
         return concepts;
     },
-    setValue(value) {
+    removeValue(concept) {
+        if (!this.hasValue()) {
+            return {
+                success: true,
+                message: "The value has been successfully updated."
+            };
+        }
+
+        this.removeElement(concept);
+
+        return {
+            success: true,
+            message: "The value has been successfully updated."
+        };
+    },
+    isValidElement(value) {
+        const { name, accept } = this.accept;
+
+        if (this.model.isPrototype(name)) {
+            if (isNullOrUndefined(accept)) {
+                return this.model.hasPrototype(value.name, name);
+            } else if (Array.isArray(accept)) {
+                return accept.some(c => c.name === value.name);
+            }
+
+            return accept.name === value.name;
+        }
+
+        return this.accept.name === value.name;
+    },
+    setValue(arg) {
+        let value = arg.value || arg;
+
         if (!Array.isArray(value)) {
+            if (this.isValidElement(value)) {
+                this.createElement(value);
+                this.notify("value.changed", value);
+            }
+
             return;
         }
 
@@ -122,7 +159,7 @@ const _SetConcept = {
         const { value } = state;
 
         value.forEach((element, index) => {
-            if(!this.value.includes(element.id)) {
+            if (!this.value.includes(element.id)) {
                 this.createElement(element);
             }
         });
@@ -359,7 +396,7 @@ const _SetConcept = {
         return concepts.filter(concept => concept.name === name);
     },
 
-    
+
     validate() {
         this.errors = [];
 

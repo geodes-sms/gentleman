@@ -49,6 +49,19 @@ const _BaseConcept = {
                 };
             })
         };
+    },
+    setValue(value) {
+        const { attributes = [] } = value;
+
+        attributes.forEach(attr => {
+            const { name, id, value } = attr;
+
+            if (this.hasAttribute(name)) {
+                this.createAttribute(name, value);
+            }
+        });
+
+        return true;
     }
 };
 

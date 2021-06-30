@@ -1,6 +1,6 @@
-import { 
-    hasOwn, findAncestor, isHTMLElement, getElement, createDiv, valOrDefault, 
-    isFunction, isString, isNullOrWhitespace 
+import {
+    hasOwn, findAncestor, isHTMLElement, getElement, createDiv, valOrDefault,
+    isFunction, isString, isNullOrWhitespace
 } from 'zenkai';
 
 

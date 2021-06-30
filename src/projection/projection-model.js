@@ -262,6 +262,8 @@ export const ProjectionModel = {
      * @returns {boolean}
      */
     hasConceptProjection(concept, tag) {
+        const isValid = (type) => !["template", "rule", "style"].includes(type);
+
         const hasConcept = (projection) => projection.concept.name === concept.name;
 
         const hasTag = (p) => Array.isArray(p.tags) && p.tags.includes(tag);
@@ -270,7 +272,7 @@ export const ProjectionModel = {
             return this.schema.findIndex(p => hasConcept(p)) !== -1;
         }
 
-        return this.schema.findIndex(p => hasConcept(p) && hasTag(p)) !== -1;
+        return this.schema.findIndex(p => isValid(p.type) && hasConcept(p) && hasTag(p)) !== -1;
     },
 
     getSchema() {

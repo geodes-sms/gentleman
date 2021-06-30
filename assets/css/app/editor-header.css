@@ -348,8 +348,8 @@
 .editor-breadcrumb {
     position: relative;
     display: flex;
-    padding-top: 4px; padding-bottom: 3px;
-    min-height: 18px;
+    padding-top: 4px; padding-bottom: 4px;
+    height: 24px;
     width: 100%;
     background-color: #fff;
     box-shadow: 0 1px 2px -1px rgba(105, 105, 105, 0.8);
@@ -446,10 +446,7 @@
             transition-delay: .2s;
             z-index: 60;
         }
-    
-        .has-helper:hover > .helper {
-          
-        }
+
 
 /*
   Timeline
@@ -457,85 +454,105 @@
 
 .editor-timeline {
     display: flex;
-    font-size: 1.2em;
+    font-size: 1.1em;
     color: #fff;
     font-weight: 500;
     text-transform: uppercase;
     font-style: normal;
-    background-color: #c0c0c0;
     cursor: pointer;
-    /* box-shadow: 0 2px 3px -1px rgba(105, 105, 105, 0.85); */
+    box-shadow: inset 1px 0 2px -1px #555;
+    max-width: 300px;
     z-index: 10;
 }
 
 .model-state-list {
     display: flex; flex-direction: row;
+    padding: 6px 12px;
 }
 
-.model-state {
-    position: relative;
-    display: flex; flex-direction: row;
-    margin-right: 3px;
-    font-size: 1.2em;
-    background-color: #555;
-    color: #d5d5d5;
-    opacity: 0.8;
-}
-    .model-value:not(:last-child) {
-        margin-right: 2px;
+    .model-state {
+        position: relative;
+        display: flex; align-items: center;
+        font-size: 1em; font-weight: 500;
+        width: 42px; height: 42px;
+        border-radius: 6px;
+        background-color: #555;
+        color: #d5d5d5;
+        opacity: 0.6;
+        order: 2;
+        overflow: hidden;
     }
-
-    .model-state.active {
-        color: #fff;
-        background-color: #222;
-        opacity: 1;
-    }
-
-    .model-state .btn-delete,
-    .model-state .btn-restore {
-        color: inherit;
-    }
-
-    .model-state .btn-restore {
-        display: flex; flex-direction: row; align-items: center;
-        padding: 2px 6px 3px;
-        font-weight: 500;
-    }
-
-
-    .model-state-preview {
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        z-index: 20;
-        color: #333;
-        background-color: #fefefe;
-        box-shadow: 2px -1px 6px 3px #c0c0c0;
-        opacity: 0;
-        transform: scale(0);
-        transition: .2s;
-        transition-property: opacity, transform;
-    }
-
-        .model-state-preview .field--choice__select-wrapper + .field--choice__select-list {
-            display: none;
+        .model-state:not(:last-child) {
+            margin-right: 6px;
+        }
+        .model-state:after {
+            content: "";
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            border-radius: 6px;
+            background: repeating-linear-gradient(45deg, #999, #999 10px, #777 10px,#777 20px);
+            opacity: 0.5;
+            z-index: -1;
+        }
+        
+        .model-state:hover,
+        .model-state:focus {
+            background-color: #1b1b1b;
+            overflow: visible;
+            opacity: 0.9;
         }
 
-    .model-state:hover,
-    .model-state:focus {
-        background-color: #1b1b1b;
-    }
-
-        .model-state:hover .btn-restore,
-        .model-state:focus .btn-restore {
+        .model-state.active {
             color: #fff;
+            background-color: #222;
+            opacity: 1;
+            order: 1;
         }
 
-        .model-state:hover .model-state-preview,
-        .model-state:focus .model-state-preview {
-            opacity: 1;
-            transform: scale(1);
+        .model-state .btn-delete,
+        .model-state .btn-restore {
+            color: inherit;
         }
+
+        .model-state .btn-delete {
+            position: absolute;
+            top: 0; right: 0;
+            font-size: 1.2em;
+            padding-bottom: 2px;
+            border-top-right-radius: 4px;
+            z-index: 20;
+        }
+
+            .model-state .btn-delete:hover {
+                background-color: #E0115F;
+            }
+
+        .model-state-content {
+            padding: 6px;
+        }
+
+        .model-state-preview {
+            position: absolute;
+            bottom: 100%; left: 100%;
+            z-index: 80;
+            color: #333;
+            background-color: #fefefe;
+            box-shadow: 2px -1px 6px 3px #c0c0c0;
+            opacity: 0;
+            transform: scale(0);
+            transition: .2s;
+            transition-property: opacity, transform;
+        }
+
+            .model-state-preview .field--choice__select-wrapper + .field--choice__select-list {
+                display: none;
+            }
+
+            .model-state:hover .model-state-preview,
+            .model-state:focus .model-state-preview {
+                opacity: 1;
+                transform: scale(1);
+            }
 
  
 

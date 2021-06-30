@@ -1,59 +1,37 @@
 import {
-    createDocFragment, createDiv, createH3, createButton, createHeader,
-    removeChildren, isHTMLElement, valOrDefault, isNullOrWhitespace, isNullOrUndefined, createParagraph, no,
+    createDocFragment, createDiv, createH3, createButton, createParagraph, removeChildren,
+    isHTMLElement, valOrDefault, isNullOrWhitespace, isNullOrUndefined,
 } from 'zenkai';
-import { show, hide, toggle, collapse, expand, NotificationType, makeResizable } from '@utils/index.js';
+import { show, hide, toggle, NotificationType, } from '@utils/index.js';
 
 
 var inc = 0;
 const nextInstanceId = () => `instance${inc++}`;
 
-export const EditorInstanceManager = {
+export const EditorGroupManager = {
     /**
      * Creates a concept instance
      * @param {string} name 
      */
-    createInstance(concept, _projection, _options) {
-        if (isNullOrUndefined(concept)) {
-            this.notify(`The concept is not valid`, NotificationType.ERROR);
-            return false;
-        }
-
-        let projection = _projection;
-        if (isNullOrUndefined(projection) && this.hasProjectionModel) {
-            projection = this.projectionModel.createProjection(concept).init();
-        }
-
-        let instance = Object.create(EditorInstance, {
+    createGroup(instances) {
+        let group = Object.create(EditorGroup, {
             id: { value: nextInstanceId() },
             object: { value: "environment" },
-            name: { value: "editor-instance" },
-            type: { value: "instance" },
-            concept: { value: concept },
-            projection: { value: projection, writable: true },
+            name: { value: "editor-group" },
+            type: { value: "group" },
             editor: { value: this }
         });
 
-        const options = Object.assign({
-            type: "concept",
-            minimize: true,
-            resize: true,
-            maximize: true,
-            close: "DELETE-CONCEPT"
-        }, _options);
+        group.init(instances);
 
-        instance.init(options);
-
-        this.addInstance(instance);
-
-        return instance;
+        return this.addGroup(group);
     },
     /**
      * Gets an instance in the editor
      * @param {string} id 
      * @returns {EditorInstance}
      */
-    getInstance(id) {
+    getGroup(id) {
         return this.instances.get(id);
     },
     /**
@@ -61,7 +39,7 @@ export const EditorInstanceManager = {
      * @param {EditorInstance} instance 
      * @returns {HTMLElement}
      */
-    addInstance(instance) {
+    addGroup(instance) {
         if (!instance.isRendered) {
             this.instanceSection.append(instance.render());
         }
@@ -82,8 +60,8 @@ export const EditorInstanceManager = {
      * @param {string} id 
      * @returns {boolean}
      */
-    removeInstance(id) {
-        let instance = this.getInstance(id);
+    removeGroup(id) {
+        let instance = this.getGroup(id);
 
         if (isNullOrUndefined(instance)) {
             return false;
@@ -103,54 +81,39 @@ export const EditorInstanceManager = {
 
         return true;
     },
-    moveInstance(item, index) {
+    moveGroup(item, index) {
         this.instanceSection.children[index].before(item);
 
         return this;
     },
-    swapInstance(item1, item2) {
+    swapGroup(item1, item2) {
         let instances = Array.from(this.instanceSection.children);
         const index1 = instances.indexOf(item1);
         const index2 = instances.indexOf(item2);
 
-        this.moveInstance(item2, index1);
-        this.moveInstance(item1, index2);
+        this.moveGroup(item2, index1);
+        this.moveGroup(item1, index2);
 
         return this;
     }
 };
 
-export const EditorInstance = {
-    window: null,
+export const EditorGroup = {
     /** @type {HTMLElement} */
     container: null,
     /** @type {HTMLElement} */
     title: null,
     /** @type {boolean} */
     visible: true,
+    /** @type {boolean} */
+    isOpen: true,
 
-    /** @type {HTMLElement} */
-    menu: null,
-    /** @type {HTMLElement} */
-    header: null,
     /** @type {HTMLElement} */
     body: null,
     /** @type {HTMLButtonElement} */
-    btnCollapse: null,
-    /** @type {HTMLButtonElement} */
-    btnMaximize: null,
-    /** @type {HTMLButtonElement} */
     btnClose: null,
-    /** @type {number} */
-    size: 1,
-    /** @type {boolean} */
-    fullscreen: false,
-    /** @type {boolean} */
-    collapsed: false,
     /** @type {*} */
     schema: null,
-    /** @type {string} */
-    ctype: null,
 
     get isRendered() { return isHTMLElement(this.container); },
 
@@ -159,37 +122,6 @@ export const EditorInstance = {
         this.schema = args;
 
         return this;
-    },
-    collapse() {
-        collapse(this.container);
-        this.collapsed = true;
-        this.fullscreen = false;
-        this.size = "normal";
-
-        this.refresh();
-
-        return this;
-    },
-    expand() {
-        expand(this.container);
-        this.collapsed = false;
-
-        this.refresh();
-
-        return this;
-    },
-    changeSize(size) {
-        this.size = size;
-
-        if (size === "fullscreen") {
-            this.fullscreen = true;
-            this.container.style.removeProperty("width");
-            this.container.style.removeProperty("height");
-        } else {
-            this.fullscreen = false;
-        }
-
-        this.refresh();
     },
     show() {
         show(this.container);
@@ -203,6 +135,20 @@ export const EditorInstance = {
 
         return this;
     },
+    open() {
+        this.container.classList.add("open");
+        this.show();
+        this.isOpen = true;
+
+        return this;
+    },
+    close() {
+        this.container.classList.remove("open");
+        this.isOpen = false;
+
+        return this;
+    },
+
     toggle() {
         toggle(this.container);
         this.visible = !this.visible;
@@ -216,11 +162,10 @@ export const EditorInstance = {
             this.body.textContent = `No projection found`;
         }
 
-        let instances = Array.from(this.editor.instances);
-        if (instances.some(instance => instance.fullscreen)) {
-            this.editor.instanceSection.classList.add("fullscreen");
+        if (this.fullscreen) {
+            this.btnCollapse.disabled = true;
         } else {
-            this.editor.instanceSection.classList.remove("fullscreen");
+            this.btnCollapse.disabled = false;
         }
 
         return this;
@@ -245,14 +190,6 @@ export const EditorInstance = {
             });
         }
 
-        if (!isHTMLElement(this.header)) {
-            this.header = createHeader({
-                class: ["editor-concept-header"],
-            });
-
-            fragment.append(this.header);
-        }
-
         if (!isHTMLElement(this.btnClose)) {
             this.btnClose = createButton({
                 class: ["btn", "editor-concept-toolbar__btn-delete"],
@@ -269,33 +206,9 @@ export const EditorInstance = {
             }
         }
 
-        if (!isHTMLElement(this.btnCollapse)) {
-            this.btnCollapse = createButton({
-                class: ["btn", "editor-concept-toolbar__btn-collapse"],
-                title: `Collapse ${name.toLowerCase()}`,
-                dataset: {
-                    action: `collapse`,
-                    context: this.type,
-                    id: this.id
-                }
-            });
-        }
-
-        if (!isHTMLElement(this.btnMaximize)) {
-            this.btnMaximize = createButton({
-                class: ["btn", "editor-concept-toolbar__btn-maximize"],
-                title: `Maximize ${name.toLowerCase()}`,
-                dataset: {
-                    action: `maximize`,
-                    context: this.type,
-                    id: this.id
-                }
-            });
-        }
-
         this.title = createH3({
             class: ["title", "editor-concept-title", "fit-content"],
-            // editable: true,
+            editable: true,
             dataset: {
                 nature: "editable",
                 id: this.id,
@@ -325,8 +238,6 @@ export const EditorInstance = {
             this.bindEvents();
         }
 
-        makeResizable(this.container);
-
         this.refresh();
 
         return this.container;
@@ -336,12 +247,6 @@ export const EditorInstance = {
 
     actionHandler(name) {
         switch (name) {
-            case "collapse":
-                this.collapsed ? this.expand() : this.collapse();
-                break;
-            case "maximize":
-                this.fullscreen ? this.changeSize("normal") : this.changeSize("fullscreen");
-                break;
             case "close":
                 this.delete();
                 break;
@@ -352,31 +257,9 @@ export const EditorInstance = {
     },
 
     delete() {
-        switch (this.schema.close) {
-            case "DELETE-CONCEPT":
-                if (!this.concept.delete(true)) {
-                    this.editor.notify("The concept could not be deleted", NotificationType.ERROR);
-                    return this;
-                }
-                break;
-            case "DELETE-PROJECTION":
-                if (this.projection && !this.projection.delete()) {
-                    this.notify("The projection could not be deleted", NotificationType.ERROR);
-                    return this;
-                }
-                break;
-
-            default:
-                break;
-        }
-
         removeChildren(this.container).remove();
 
         this.editor.removeInstance(this.id);
-
-        if (this.window) {
-            this.window.removeInstance(this);
-        }
     },
 
     bindEvents() {

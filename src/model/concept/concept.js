@@ -313,7 +313,6 @@ const _Concept = {
                 result = this.getParent().removeAttribute(this.ref.name);
             }
 
-
             if (!result.success) {
                 return result;
             }

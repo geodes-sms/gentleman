@@ -1,4 +1,4 @@
-import { removeChildren, isEmpty, isFunction, isHTMLElement, createI } from 'zenkai';
+import { removeChildren, isEmpty, isFunction, isHTMLElement, createI, findAncestor, isNullOrUndefined } from 'zenkai';
 import { shake, show, hide, toggle } from '@utils/index.js';
 import { createNotificationMessage } from "./notification.js";
 
@@ -184,7 +184,36 @@ const BaseField = {
      * @param {HTMLElement} target 
      */
     deleteHandler(target) {
-        console.warn(`DELETE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        if (this.projection.element !== this) {
+            shake(target);
+
+            return false;
+        }
+
+        if (!this.projection.optional) {
+            shake(this.element);
+
+            return false;
+        }
+
+        let parent = findAncestor(target, (el) => el.tabIndex === 0);
+        let clone = this.container.cloneNode(true);
+
+        if (this.source.hasParent()) {
+            this.environment.save(this.source.getParent(), clone);
+        }
+
+        this.source.delete();
+
+        let element = this.environment.resolveElement(parent);
+
+        if (isNullOrUndefined(element)) {
+            return false;
+        }
+
+        element.focus();
+
+        return false;
     },
     /**
      * Handles the `backspace` command

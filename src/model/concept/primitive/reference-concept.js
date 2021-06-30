@@ -205,10 +205,20 @@ const _ReferenceConcept = {
             default:
                 break;
         }
+        
         return true;
     },
     validate(value) {
         this.errors = [];
+
+        if (isNullOrUndefined(value)) {
+            return ResponseCode.SUCCESS;
+        }
+
+        if (!this.model.hasConcept(value)) {
+            this.errors.push("This element is not valid");
+            return ResponseCode.INVALID_VALUE;
+        }
 
         return ResponseCode.SUCCESS;
     },

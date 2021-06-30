@@ -308,20 +308,6 @@
                         "name": "attributes",
                         "tag": "attribute-set",
                         "required": true
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "properties",
-                        "tag": "property-set",
-                        "style": {
-                            "gss": {
-                                "box": {
-                                    "outer": { 
-                                        "top": { "value": 6, "unit": "px" } 
-                                    }
-                                }
-                            }
-                        }
                     }
                 ],
                 "style": {
@@ -360,20 +346,6 @@
                         "type": "attribute",
                         "tag": "base",
                         "name": "base"
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "properties",
-                        "tag": "property-set",
-                        "style": {
-                            "gss": {
-                                "box": {
-                                    "outer": { 
-                                        "top": { "value": 6, "unit": "px" } 
-                                    }
-                                }
-                            }
-                        }
                     }
                 ],
                 "style": {
@@ -440,7 +412,7 @@
                                                     "help": "Compact view (hide target details)",
                                                     "content": {
                                                         "type": "html",
-                                                        "html": "&mdash;"
+                                                        "html": "&ndash;"
                                                     }
                                                 }
                                             }
@@ -845,7 +817,7 @@
                                                 "type": "text",
                                                 "content": "Length",
                                                 "style": {
-                                                    "css": ["textual-option", "textual-option--style"]
+                                                    "css": ["textual-option", "textual-option--constraint"]
                                                 }
                                             }
                                         }
@@ -864,7 +836,7 @@
                                                 "type": "text",
                                                 "content": "Value",
                                                 "style": {
-                                                    "css": ["textual-option", "textual-option--style"]
+                                                    "css": ["textual-option", "textual-option--constraint"]
                                                 }
                                             }
                                         }
@@ -884,7 +856,7 @@
                                                 "type": "text",
                                                 "content": "Fixed values",
                                                 "style": {
-                                                    "css": ["textual-option", "textual-option--style"]
+                                                    "css": ["textual-option", "textual-option--constraint"]
                                                 }
                                             }
                                         }
@@ -2332,7 +2304,7 @@
                                                     "type": "text",
                                                     "content": {
                                                         "type": "html",
-                                                        "html": "&mdash;"
+                                                        "html": "&ndash;"
                                                     }
                                                 }
                                             }
@@ -2511,7 +2483,7 @@
                                                     "type": "text",
                                                     "content": {
                                                         "type": "html",
-                                                        "html": "&mdash;"
+                                                        "html": "&ndash;"
                                                     }
                                                 }
                                             }
@@ -2737,24 +2709,6 @@
                 "style": {
                     "css": ["textfield--labeled"]
                 }
-            }
-        },
-        {
-            "concept": { "name": "string" },
-            "tags": ["bracket-string"],
-            "type": "field",
-            "content": {
-                "type": "text",
-                "resizable": true,
-                "input": {
-                    "placeholder": { "type": "property", "name": "refname" },
-                    "style": {
-                        "css": ["string-field--bracket__input"]
-                    }
-                },
-                "style": {
-                    "css": ["string-field", "string-field--bracket"]
-                }  
             }
         },
         {

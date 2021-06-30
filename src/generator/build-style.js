@@ -1,4 +1,4 @@
-import { isEmpty, isNullOrUndefined,  } from "zenkai";
+import { isEmpty, isNullOrUndefined, } from "zenkai";
 
 const ATTR_NAME = "name";
 
@@ -31,6 +31,14 @@ export function buildStyle(style) {
         schema.gss = buildGentlemanStyle.call(this, getAttr(style, "gss"));
     }
 
+    if (hasAttr(style, "text")) {
+        schema.text = buildTextStyle.call(this, getAttr(style, "text"));
+    }
+
+    if (hasAttr(style, "box")) {
+        schema.box = buildBoxStyle.call(this, getAttr(style, "box"));
+    }
+
     return schema;
 }
 
@@ -52,32 +60,35 @@ export function buildGentlemanStyle(style) {
 function buildTextStyle(style) {
     let schema = {};
 
-    if (hasAttr(style, "bold")) {
-        schema.bold = getValue(style, 'bold');
+    if (hasAttr(style, "bold") && getValue(style, 'bold')) {
+        schema.bold = true;
     }
 
-    if (hasAttr(style, "italic")) {
-        schema.italic = getValue(style, 'italic');
+    if (hasAttr(style, "italic") && getValue(style, 'italic')) {
+        schema.italic = true;
     }
 
-    if (hasAttr(style, "underline")) {
-        schema.underline = getValue(style, 'underline');
+    if (hasAttr(style, "underline") && getValue(style, 'underline')) {
+        schema.underline = true;
     }
 
-    if (hasAttr(style, "strikethrough")) {
-        schema.strikethrough = getValue(style, 'strikethrough');
+    if (hasAttr(style, "strikethrough") && getValue(style, 'strikethrough')) {
+        schema.strikethrough = true;
     }
 
-    if (hasAttr(style, "nonbreakable")) {
-        schema.nonbreakable = getValue(style, "nonbreakable");
+    if (hasAttr(style, "nonbreakable") && getValue(style, "nonbreakable")) {
+        schema.nonbreakable = true;
     }
 
-    if (hasAttr(style, "transform")) {
+    if (hasAttr(style, "transform") && hasValue(style, "transform")) {
         schema.transform = getValue(style, "transform");
     }
 
     if (hasAttr(style, "color") && hasValue(style, "color")) {
-        schema.color = buildcolor.call(this, getValue(style, "color", true));
+        let value = buildcolor.call(this, getAttr(style, "color"));
+        if (value) {
+            schema.color = value;
+        }
     }
 
     if (hasAttr(style, "opacity") && hasValue(style, "opacity")) {
@@ -85,12 +96,15 @@ function buildTextStyle(style) {
     }
 
     if (hasAttr(style, "size")) {
-        schema.size = buildSize.call(this, getAttr(style, 'size'));
+        let value = buildSize.call(this, getAttr(style, 'size'));
+        if (value) {
+            schema.size = value;
+        }
     }
 
-    if (hasAttr(style, "font") && hasValue(style, "font")) {
-        schema.font = getValue(style, "font", true);
-    }
+    // if (hasAttr(style, "font") && hasValue(style, "font")) {
+    //     schema.font = getValue(style, "font", true);
+    // }
 
     return schema;
 }
@@ -99,11 +113,18 @@ function buildBoxStyle(style) {
     let schema = {};
 
     if (hasAttr(style, "inner")) {
-        schema.inner = buildSpace.call(this, getAttr(style, "inner"));
+        let value = buildSpace.call(this, getAttr(style, "inner"));
+        if (value) {
+            schema.inner = value;
+        }
+
     }
 
     if (hasAttr(style, "outer")) {
-        schema.outer = buildSpace.call(this, getAttr(style, "outer"));
+        let value = buildSpace.call(this, getAttr(style, "outer"));
+        if (value) {
+            schema.outer = value;
+        }
     }
 
     if (hasAttr(style, "background")) {
@@ -111,11 +132,17 @@ function buildBoxStyle(style) {
     }
 
     if (hasAttr(style, "width")) {
-        schema.width = buildSize.call(this, getAttr(style, "width"));
+        let value = buildSize.call(this, getAttr(style, "width"));
+        if (value) {
+            schema.width = value;
+        }
     }
 
     if (hasAttr(style, "height")) {
-        schema.height = buildSize.call(this, getAttr(style, "height"));
+        let value = buildSize.call(this, getAttr(style, "height"));
+        if (value) {
+            schema.height = value;
+        }
     }
 
     if (hasAttr(style, "border")) {
@@ -132,11 +159,21 @@ function buildBoxStyle(style) {
 function buildSpace(style) {
     let schema = {};
 
+    let hasValue = false;
+
     ["all", "top", "right", "bottom", "left"].forEach(dir => {
         if (hasAttr(style, dir)) {
-            schema[dir] = buildSize.call(this, getAttr(style, dir));
+            let value = buildSize.call(this, getAttr(style, dir));
+            if (!isNullOrUndefined(value)) {
+                schema[dir] = value;
+                hasValue = true;
+            }
         }
     });
+
+    if (!hasValue) {
+        return null;
+    }
 
     return schema;
 }
@@ -164,7 +201,8 @@ function buildBackground(style) {
 
     if (hasAttr(style, "color")) {
         let color = getAttr(style, "color");
-        schema.color = buildcolor.call(this, getValue(color, "value", true));
+        // schema.color = buildcolor.call(this, getValue(color, "value", true));
+        schema.color = buildcolor.call(this, color);
     }
 
     if (hasAttr(style, "image")) {
@@ -183,6 +221,10 @@ function buildcolor(color) {
     }
 
     if (color.name === "hex-color") {
+        if (!hasValue(color, "value")) {
+            return null;
+        }
+
         schema.type = "hex";
         let value = getValue(color, "value") || "";
         schema.value = value.startsWith("#") ? value : `#${value}`;

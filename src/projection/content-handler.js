@@ -1,4 +1,4 @@
-import { valOrDefault, createDocFragment, createI, isHTMLElement, htmlToElement, } from "zenkai";
+import { valOrDefault, createDocFragment, createI, isHTMLElement, htmlToElement, createButton, } from "zenkai";
 import { LayoutFactory } from "./layout/index.js";
 import { FieldFactory } from "./field/index.js";
 import { StaticFactory } from "./static/index.js";
@@ -178,7 +178,7 @@ export function ContentHandler(schema, concept, args = {}) {
                 let concept = contentConcept.getValue(true);
 
                 let projection = this.projection.model.createProjection(concept, tag).init();
-                projection.optional = !required;
+                // projection.optional = !required;
                 projection.placeholder = bindElement.placeholder;
                 projection.parent = this.projection;
 
@@ -214,6 +214,32 @@ export function ContentHandler(schema, concept, args = {}) {
         let result = StateHandler.call(this, _schema, schema.state);
 
         return ContentHandler.call(this, result.content, concept, args);
+    } else if (schema.type === "trigger") {
+        let btnTrigger = createButton({
+            class: ["btn", "static"],
+            dataset: {
+                nature: "static"
+            }
+        });
+
+        schema.content.forEach(element => {
+            let content = ContentHandler.call(this, element, this.projection.concept, { focusable: false });
+            btnTrigger.append(content);
+        });
+        
+        btnTrigger.addEventListener("click", (event) => {
+            let concept = contentConcept;
+
+            if (schema.bind) {
+                concept = contentConcept.getValue(true);
+            }
+
+            this.environment.triggerEvent({ name: schema.name, args: [concept] });
+        });
+
+        StyleHandler.call(this.projection, btnTrigger, schema.style);
+
+        return btnTrigger;
     }
 
     console.error(schema);

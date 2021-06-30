@@ -7,8 +7,6 @@
     z-index: 1;
 }
 
-    .field.has-toolbar { padding-top: 24px; }
-
     .field.active { z-index: 30; opacity: 1; }
 
     .field.focus { z-index: 50; opacity: 1; }

@@ -1,6 +1,6 @@
-import { findAncestor, getElement, isNullOrUndefined, valOrDefault } from "zenkai";
+import { findAncestor, getElement, isNullOrUndefined, isHTMLElement, isFunction } from "zenkai";
 import { StyleHandler } from './../style-handler.js';
-import { show, hide, toggle, pixelToNumber, getVisibleElement } from '@utils/index.js';
+import { show, hide, toggle, pixelToNumber, getClosest, shake } from '@utils/index.js';
 
 export const Layout = {
     /** @type {boolean} */
@@ -92,9 +92,15 @@ export const Layout = {
      * @param {HTMLElement} target 
      */
     spaceHandler(target) {
-        console.warn(`SPACE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        if (target !== this.container) {
+            return false;
+        }
 
-        return false;
+        if (isNullOrUndefined(this.parent)) {
+            return false;
+        }
+
+        return this.parent.spaceHandler(this.container);
     },
 
     /**
@@ -154,16 +160,34 @@ export const Layout = {
      * @param {HTMLElement} target 
      */
     deleteHandler(target) {
-        if (this.projection.element == this) {
-            let clone = this.container.cloneNode(true);
-
-            this.environment.save(this.source.getParent(), clone);
-            this.source.delete();
-            this.projection.parent.focus();
-            return;
+        if (this.projection.element !== this) {
+            return false;
         }
 
-        console.warn(`DELETE_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        if (!this.projection.optional) {
+            shake(this.container);
+
+            return false;
+        }
+
+        let parent = findAncestor(target, (el) => el.tabIndex === 0);
+        let clone = this.container.cloneNode(true);
+
+        if (this.source.hasParent()) {
+            this.environment.save(this.source.getParent(), clone);
+        }
+
+        this.source.delete();
+
+        let element = this.environment.resolveElement(parent);
+
+        if (isNullOrUndefined(element)) {
+            return false;
+        }
+
+        element.focus();
+
+        return false;
     },
     /**
      * Handles the `backspace` command
@@ -176,13 +200,34 @@ export const Layout = {
     },
     /**
      * Handles the `arrow` command
-     * @param {string} dir 
-     * @param {HTMLElement} target 
+     * @param {string} dir direction 
+     * @param {HTMLElement} target element
      */
     arrowHandler(dir, target) {
-        console.warn(`ARROW_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        if (target === this.container) {
+            if (isNullOrUndefined(this.parent)) {
+                return false;
+            }
 
-        return false;
+            return this.parent.arrowHandler(dir, this.container);
+        }
+
+        let closestElement = getClosest(target, dir, this.container);
+
+        if (!isHTMLElement(closestElement)) {
+            if (isNullOrUndefined(this.parent) || this.parent.object !== "layout") {
+                return false;
+            }
+
+            return this.parent.arrowHandler(dir, this.container);
+        }
+
+        let element = this.environment.resolveElement(closestElement);
+        if (element) {
+            isFunction(element.navigate) ? element.navigate(dir) : element.focus();
+        }
+
+        return true;
     },
     /**
      * Handles the `shift` command

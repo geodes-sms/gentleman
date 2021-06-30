@@ -3,23 +3,30 @@
 // Import CSS
 import './stylesheets.js';
 import '@css/samples/gentleman.css';
+// import './../demo/traffic-light/assets/style.css';
 
-import { createDiv, getElements, valOrDefault, isHTMLElement, hasOwn } from "zenkai";
+import { createDiv, getElements, valOrDefault, isHTMLElement, hasOwn, getElement } from "zenkai";
 import { Editor } from './environment/index.js';
 import { resolveContainer } from './utils/index.js';
+import { buildProjectionHandler } from '@generator/build-projection.js';
 
+const Model = {
+    MP: "projection",
+    MC: "concept",
+    MS: "style",
+    TL: "trafficlight",
+    MM: "mindmap",
+};
+const modelName = Model.MP;
 
-const CMODEL__EDITOR = require('@models/concept-model/editor-config.json');
-const CMODEL__CONCEPT = require('@models/concept-model/concept.json');
-const CMODEL__PROJECTION = require('@models/concept-model/projection.json');
+const MODEL__EDITOR = require(`@models/${modelName}-model/config.json`);
+const MODEL__CONCEPT = require(`@models/${modelName}-model/concept.json`);
+const MODEL__PROJECTION = require(`@models/${modelName}-model/projection.json`);
 
-const PMODEL__EDITOR = require('@models/projection-model/editor-config.json');
-const PMODEL__CONCEPT = require('@models/projection-model/concept.json');
-const PMODEL__PROJECTION = require('@models/projection-model/projection.json');
-
+const STYLE_CONCEPT = require(`@models/${Model.MS}-model/concept.json`);
+const STYLE_PROJECTION = require(`@models/${Model.MS}-model/projection.json`);
 
 const ENV_EDITOR = "editor";
-const ENV_EXPLORER = "explorer";
 
 const isValid = (element) => isHTMLElement(element) && hasOwn(element.dataset, 'gentleman');
 
@@ -82,8 +89,25 @@ function createEditor(_container) {
 
 let editor = activateEditor(".app-editor")[0];
 
+const MODEL__HANDLER = {
+  
+};
+
 editor.init({
-    conceptModel: PMODEL__CONCEPT,
-    projectionModel: PMODEL__PROJECTION,
-    config: PMODEL__EDITOR,
+    conceptModel: MODEL__CONCEPT,
+    projectionModel: MODEL__PROJECTION,
+    config: MODEL__EDITOR,
+    handlers: MODEL__HANDLER
+});
+
+editor.addConcept(STYLE_CONCEPT);
+editor.addProjection(STYLE_PROJECTION);
+
+let editorWindow = editor.createWindow();
+editorWindow.container.classList.add("model-projection-sideview");
+
+let btnBuild = getElement("#btnBuild");
+
+btnBuild.addEventListener("click", (event) => {
+    buildProjectionHandler.call(editor);
 });

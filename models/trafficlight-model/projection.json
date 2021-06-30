@@ -273,7 +273,7 @@
             "type": "layout",
             "content": {
                 "type": "stack",
-                "orientation": "horizontal",
+                "orientation": "vertical",
                 "disposition": [
                     {
                         "type": "field",
@@ -307,7 +307,7 @@
                     }
                 ],
                 "style": {
-                    "css": ["inline"]
+                    "css": ["tl-behaviour"]
                 }
             }
         },
@@ -409,24 +409,15 @@
                         "type": "static",
                         "static": {
                             "type": "text",
-                            "content": [
-                                {
-                                    "type": "raw",
-                                    "raw": "On "
-                                },
-                                {
-                                    "type": "raw",
-                                    "raw": "signal",
-                                    "style": {
-                                        "ref": ["box-left"],
-                                        "gss": {
-                                            "text": {
-                                                "italic": true
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "content": "On"
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "event",
+                        "tag": "simple-string",
+                        "style": {
+                            "ref": ["box-left"]
                         }
                     },
                     {
@@ -559,7 +550,7 @@
                             "list": false,
                             "action": {
                                 "add": {
-                                    "help": "Add a subsubtopic",
+                                    "help": "Add a behaviour",
                                     "content": [
                                         {
                                             "type": "static",
@@ -571,10 +562,8 @@
                                     ],
                                     "style": {
                                         "css": ["tl-behaviour-set-header__list-button"],
-                                        "ref": ["box-left"],
                                         "gss": {
                                             "text": {
-                                                "size": { "value": 2, "unit": "rem" },
                                                 "bold": 500
                                             }
                                         }
@@ -766,6 +755,7 @@
                                 }
                             },
                             "style": {
+                                "ref": ["box-left"],
                                 "css": ["tl-color-textbox"]
                             }
                         }
@@ -833,6 +823,7 @@
                                 }
                             },
                             "style": {
+                                "ref": ["box-left"],
                                 "css": ["tl-textbox"]
                             }
                         }
@@ -899,7 +890,10 @@
                 "type": "text",
                 "resizable": true,
                 "input": {
-                    "placeholder": "null",
+                    "placeholder": {
+                        "type": "property",
+                        "name": "refname"
+                    },
                     "style": {
                         "css": ["tl-textbox__input"]
                     }
@@ -948,10 +942,10 @@
                         "css": ["state-reference__choice"]
                     }
                 },
-                "placeholder": "state target",
+                "placeholder": "select target",
                 "expanded": false,
                 "input": {
-                    "placeholder": "Filter the states"
+                    "placeholder": "Search..."
                 },
                 "style": {
                     "css": ["state-reference"],
@@ -999,7 +993,7 @@
                             "placeholder": "no selection",
                             "expanded": false,
                             "input": {
-                                "placeholder": "Filter the states"
+                                "placeholder": "Search..."
                             },
                             "style": {
                                 "css": ["state-reference"],

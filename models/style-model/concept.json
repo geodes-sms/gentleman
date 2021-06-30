@@ -1,0 +1,592 @@
+{
+    "concept": [
+        {
+            "name": "style",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "css",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "string"
+                        }
+                    }
+                },
+                {
+                    "name": "text",
+                    "target": {
+                        "name": "text-style"
+                    }
+                },
+                {
+                    "name": "box",
+                    "target": {
+                        "name": "box-style"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "text-style",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "bold",
+                    "target": {
+                        "name": "boolean",
+                        "default": false
+                    }
+                },
+                {
+                    "name": "italic",
+                    "target": {
+                        "name": "boolean",
+                        "default": false
+                    }
+                },
+                {
+                    "name": "underline",
+                    "target": {
+                        "name": "boolean",
+                        "default": false
+                    }
+                },
+                {
+                    "name": "strikethrough",
+                    "target": {
+                        "name": "boolean",
+                        "default": false
+                    }
+                },
+                {
+                    "name": "nonbreakable",
+                    "target": {
+                        "name": "boolean",
+                        "default": false
+                    }
+                },
+                {
+                    "name": "color",
+                    "target": {
+                        "name": "hex-color"
+                    }
+                },
+                {
+                    "name": "transform",
+                    "target": {
+                        "name": "text-transform"
+                    }
+                },
+                {
+                    "name": "opacity",
+                    "target": {
+                        "name": "percentage"
+                    }
+                },
+                {
+                    "name": "size",
+                    "target": {
+                        "name": "size"
+                    }
+                },
+                {
+                    "name": "font",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": [
+                                "Arial", "Arial Black", "Verdana", "Consolas", "Tahoma",
+                                "Trebuchet MS", "Impact", "Times New Roman", "Didot",
+                                "Georgia", "American Typewriter", "Andalé Mono",
+                                "Courier", "Lucida Console", "Monaco", "Bradley Hand",
+                                "Brush Script MT", "Luminari", "Comic Sans MS"
+                            ]
+                        }
+                    },
+                    "required": false
+                }
+            ]
+        },
+        {
+            "name": "box-style",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "inner",
+                    "target": {
+                        "name": "spacing"
+                    }
+                },
+                {
+                    "name": "outer",
+                    "target": {
+                        "name": "spacing"
+                    }
+                },
+                {
+                    "name": "background",
+                    "target": {
+                        "name": "background"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "width",
+                    "target": {
+                        "name": "size"
+                    }
+                },
+                {
+                    "name": "height",
+                    "target": {
+                        "name": "size"
+                    }
+                },
+                {
+                    "name": "border",
+                    "target": {
+                        "name": "border"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "opacity",
+                    "target": {
+                        "name": "percentage"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "bold",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "number",
+                        "constraint": {
+                            "values": [100, 200, 300, 400, 500, 600, 700, 800, 900]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "font",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "family",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": ["serif", "sans-serif", "monospace", "cursive", "fantasy"]
+                        }
+                    }
+                },
+                {
+                    "name": "primary",
+                    "target": {
+                        "name": "string",
+                        "src": [
+                            "Arial", "Arial Black", "Verdana", "Consolas", "Tahoma",
+                            "Trebuchet MS", "Impact", "Times New Roman", "Didot",
+                            "Georgia", "American Typewriter", "Andalé Mono",
+                            "Courier", "Lucida Console", "Monaco", "Bradley Hand",
+                            "Brush Script MT", "Luminari", "Comic Sans MS"
+                        ]
+                    }
+                },
+                {
+                    "name": "secondary",
+                    "target": {
+                        "name": "string",
+                        "src": [
+                            "Arial", "Arial Black", "Verdana", "Consolas", "Tahoma",
+                            "Trebuchet MS", "Impact", "Times New Roman", "Didot",
+                            "Georgia", "American Typewriter", "Andalé Mono",
+                            "Courier", "Lucida Console", "Monaco", "Bradley Hand",
+                            "Brush Script MT", "Luminari", "Comic Sans MS"
+                        ]
+                    }
+                },
+                {
+                    "name": "fallback",
+                    "target": {
+                        "name": "strubg",
+                        "constraint": {
+                            "values": [
+                                "Arial", "Verdana", "Helvetica", "Tahoma", "Trebuchet MS",
+                                "Impact", "Times New Roman", "Didot", "Georgia", "American Typewriter",
+                                "Andalé Mono", "Courier", "Lucida Console", "Monaco", "Bradley Hand",
+                                "Brush Script MT", "Luminari", "Comic Sans MS"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+
+        {
+            "name": "size",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "unit",
+                    "target": {
+                        "name": "size-unit",
+                        "default": "px"
+                    }
+                }
+            ]
+        },
+
+        {
+            "name": "background",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "color",
+                    "target": {
+                        "name": "background-color"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "image",
+                    "target": {
+                        "name": "background-image"
+                    },
+                    "required": false
+                }
+            ]
+        },
+        {
+            "name": "background-color",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "hex-color"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "background-image",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "url",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "position",
+                    "target": {
+                        "name": "background-position"
+                    }
+                },
+                {
+                    "name": "size",
+                    "target": {
+                        "name": "background-size"
+                    }
+                },
+                {
+                    "name": "repeat",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": ["horizontal", "vertical", "both"]
+                        }
+                    },
+                    "required": false
+                },
+                {
+                    "name": "attachment",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": ["scroll", "fixed", "local"]
+                        },
+                        "default": "scroll"
+                    },
+                    "required": false
+                }
+            ]
+        },
+        {
+            "name": "background-position",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "x",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": ["left", "center", "right"]
+                        }
+                    }
+                },
+                {
+                    "name": "y",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": ["top", "center", "bottom"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "background-size",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": ["auto", "cover", "contain"]
+                        },
+                        "default": "auto"
+                    }
+                }
+            ]
+        },
+
+
+        {
+            "name": "color",
+            "nature": "prototype",
+            "attributes": []
+        },
+        {
+            "name": "hex-color",
+            "nature": "concrete",
+            "prototype": "color",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "hex" }
+            ]
+        },
+        {
+            "name": "rgb-color",
+            "nature": "concrete",
+            "prototype": "color",
+            "attributes": [
+                {
+                    "name": "red",
+                    "target": {
+                        "name": "rgb"
+                    }
+                },
+                {
+                    "name": "green",
+                    "target": {
+                        "name": "rgb"
+                    }
+                },
+                {
+                    "name": "blue",
+                    "target": {
+                        "name": "rgb"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "rgb" }
+            ]
+        },
+
+        
+        {
+            "name": "spacing",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "all",
+                    "target": {
+                        "name": "size"
+                    }
+                },
+                {
+                    "name": "top",
+                    "target": {
+                        "name": "size"
+                    }
+                },
+                {
+                    "name": "right",
+                    "target": {
+                        "name": "size"
+                    }
+                },
+                {
+                    "name": "bottom",
+                    "target": {
+                        "name": "size"
+                    }
+                },
+                {
+                    "name": "left",
+                    "target": {
+                        "name": "size"
+                    }
+                }
+            ]
+        },
+
+
+        {
+            "name": "border",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "all",
+                    "target": {
+                        "name": "border-value"
+                    }
+                },
+                {
+                    "name": "top",
+                    "target": {
+                        "name": "border-value"
+                    }
+                },
+                {
+                    "name": "right",
+                    "target": {
+                        "name": "border-value"
+                    }
+                },
+                {
+                    "name": "bottom",
+                    "target": {
+                        "name": "border-value"
+                    }
+                },
+                {
+                    "name": "left",
+                    "target": {
+                        "name": "border-value"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "border-value",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "width",
+                    "target": {
+                        "name": "size"
+                    }
+                },
+                {
+                    "name": "color",
+                    "target": {
+                        "name": "hex-color"
+                    }
+                },
+                {
+                    "name": "type",
+                    "target": {
+                        "name": "border-type",
+                        "default": "solid"
+                    }
+                }
+            ]
+        },
+
+
+        {
+            "name": "rgb",
+            "nature": "derivative",
+            "base": "number",
+            "constraint": {
+                "value": {
+                    "type": "range",
+                    "range": {
+                        "min": { "value": 0 },
+                        "max": { "value": 255 }
+                    }
+                }
+            }
+        },
+        {
+            "name": "percentage",
+            "nature": "derivative",
+            "base": "number",
+            "constraint": {
+                "value": {
+                    "type": "range",
+                    "range": {
+                        "min": { "value": 0 },
+                        "max": { "value": 100 }
+                    }
+                }
+            }
+        },
+        {
+            "name": "size-unit",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "values": ["px", "em", "rem", "%", "vw", "vh"]
+            }
+        },
+        {
+            "name": "border-type",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "values": ["solid", "dotted", "dashed", "double", "inset", "outset"]
+            }
+        },
+        {
+            "name": "direction",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "values": ["top", "right", "bottom", "left"]
+            }
+        },
+        {
+            "name": "alignment",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "values": ["left", "right", "center", "justify"]
+            }
+        },
+        {
+            "name": "text-transform",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "values": ["capitalize", "lowercase", "uppercase"]
+            }
+        }
+    ]
+}

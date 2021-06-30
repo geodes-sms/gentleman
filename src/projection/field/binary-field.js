@@ -1,6 +1,6 @@
 import {
-    createDocFragment, createDiv, createI, createInput, createLabel,
-    removeChildren, findAncestor, isHTMLElement, valOrDefault,
+    createDocFragment, createDiv, htmlToElement, createInput, createLabel,
+    removeChildren, findAncestor, isHTMLElement, valOrDefault, createSpan,
 } from "zenkai";
 import { hide, isHidden, NotificationType } from "@utils/index.js";
 import { StyleHandler } from "../style-handler.js";
@@ -50,18 +50,27 @@ function createFieldInput(id) {
 }
 
 
-/**
- * Resolves the value of the input
- * @param {*} object 
- */
-function resolveValue(object) {
-    if (object.object === "concept") {
-        if (object.hasValue()) {
-            return object.getValue();
-        }
+function resolveValue(content) {
+    const { type } = content;
+
+    if (type === "property") {
+        this.hasProperty = true;
+        return valOrDefault(this.source.getProperty(content.name), "");
     }
 
-    return false;
+    if (type === "param") {
+        return this.projection.getParam(content.name);
+    }
+
+    if (type === "html") {
+        return htmlToElement(content.html);
+    }
+
+    if (type === "raw") {
+        return htmlToElement(content.raw);
+    }
+
+    return content;
 }
 
 
@@ -136,7 +145,7 @@ const BaseBinaryField = {
 
         if (!isHTMLElement(this.input)) {
             this.input = createFieldInput(this.id);
-            this.input.checked = resolveValue(this.source);
+            this.input.checked = this.source.getValue();
             this.value = this.input.checked;
 
             if (this.readonly) {
@@ -168,7 +177,28 @@ const BaseBinaryField = {
             this.label.htmlFor = this.input.id;
 
             if (checkbox && checkbox.label) {
-                this.label.textContent = checkbox.label;
+                const { content } = checkbox.label;
+
+                if (Array.isArray(content)) {
+                    content.forEach(c => {
+                        let value = resolveValue.call(this, c);
+                        let element = createSpan({
+                            class: ["field--checkbox__label-content"],
+                            dataset: {
+                                ignore: "all",
+                            }
+                        }, value);
+
+                        StyleHandler.call(this.projection, element, c.style);
+
+                        this.label.append(element);
+                    });
+                } else {
+                    let value = resolveValue.call(this, content);
+                    this.label.append(value);
+                }
+
+                StyleHandler.call(this.projection, this.label, checkbox.label.style);
             }
 
             fragment.append(this.label);
@@ -257,7 +287,6 @@ const BaseBinaryField = {
         this.input.checked = value;
         this.value = value;
 
-        this.environment.refresh();
         this.refresh();
     },
     getCandidates() {

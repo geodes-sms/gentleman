@@ -31,7 +31,7 @@ const BasePrototypeConcept = {
             return this;
         }
 
-        const { id = "", value, name } = args;
+        const { id = "", value } = args;
 
         if (id.length > 10) {
             this.id = id;
@@ -40,11 +40,9 @@ const BasePrototypeConcept = {
         let concept = null;
         if (value) {
             concept = this.createConcept(value.name, value);
-        } else if (name) {
-            concept = this.createConcept(name, args);
-        }
-
-        if (concept) {
+            this.setValue(concept);
+        } else if (args.name && args.attributes) {
+            concept = this.createConcept(args.name, args);
             this.setValue(concept);
         }
 
@@ -65,7 +63,6 @@ const BasePrototypeConcept = {
         return this.target;
     },
     restore(state) {
-        console.log(state);
         const { value } = state;
 
         if (isNullOrUndefined(value)) {
@@ -91,10 +88,17 @@ const BasePrototypeConcept = {
         let isConcept = _value && _value.object === "concept" && hasOwn(_value, "id");
 
         if (!isConcept) {
-            concept = this.createConcept(value);
+            if (_value.attributes) {
+                concept = this.createConcept(value, _value);
+            } else {
+                concept = this.createConcept(value);
+            }
         }
 
         if (this.target) {
+            let value = this.target.copy(false);
+            // TODO: Filter attributes with prototype
+            concept.setValue(value);
             this.target.delete(true);
         }
 
@@ -197,9 +201,6 @@ const BasePrototypeConcept = {
 
         const concept = this.model.createConcept(name, options);
 
-        // const schema = this.model.getCompleteModelConcept({ name: name });
-        // const concept = this._createConcept(this.model, schema, options);
-
         concept.prototype = this;
 
         return concept;
@@ -295,6 +296,7 @@ const BasePrototypeConcept = {
         return start + body + end;
     }
 };
+
 
 function resolveAccept(accept) {
     const candidates = this.model.getConcreteConcepts(this.name);

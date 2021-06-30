@@ -25,12 +25,12 @@ function responseHandler(code, ctx) {
         case ResponseCode.MAXLENGTH_ERROR:
             return {
                 success: false,
-                message: `Maximum length: ${this.value.length}/${ctx.value}.`
+                message: `Maximum length: ${ctx.value}.`
             };
         case ResponseCode.MINLENGTH_ERROR:
             return {
                 success: false,
-                message: `Minimum length: ${this.value.length}/${ctx.value}.`
+                message: `Minimum length: ${ctx.value}.`
             };
         case ResponseCode.FIXLENGTH_ERROR:
             return {
@@ -91,7 +91,9 @@ const _StringConcept = {
             message: "The value has been successfully updated."
         };
     },
-    setValue(value) {
+    setValue(arg) {
+        let value = isObject(arg) ? arg.value : arg;
+        
         var { code, ctx } = this.validate(value);
 
         if (this.value !== value) {
@@ -175,11 +177,7 @@ const _StringConcept = {
         let values = valOrDefault(this.getConstraint("values"), []);
 
         if (isEmpty(values)) {
-            let uniqueValues = new Set(
-                this.model.getConcepts(this.name)
-                    .filter(c => c.hasValue() && c.value !== this.value)
-                    .map(c => c.getValue()));
-            return [...uniqueValues, ...this.src.map(val => {
+            return [...this.src.map(val => {
                 if (val.type === "reference") {
                     const { source, target } = val;
 

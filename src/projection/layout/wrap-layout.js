@@ -129,41 +129,6 @@ export const BaseWrapLayout = {
         }
     },
 
-    /**
-     * Handles the `arrow` command
-     * @param {string} dir direction 
-     * @param {HTMLElement} target target element
-     */
-    arrowHandler(dir, target) {
-        if (target === this.container) {
-            if (isNullOrUndefined(this.parent) || this.parent.object !== "layout") {
-                return false;
-            }
-
-            return this.parent.arrowHandler(dir, this.container);
-        }
-
-        let closestElement = getClosest(target, dir, this.container);
-
-        if (!isHTMLElement(closestElement)) {
-            if (isNullOrUndefined(this.parent) || this.parent.object !== "layout") {
-                return false;
-            }
-
-            return this.parent.arrowHandler(dir, this.container);
-        }
-
-        let element = this.environment.resolveElement(closestElement);
-        if (element) {
-            if (!element.focusable) {
-                return this.arrowHandler(dir, closestElement);
-            }
-            
-            isFunction(element.navigate) ? element.navigate(dir) : element.focus();
-        }
-
-        return true;
-    },
 
     bindEvents() {
         this.projection.registerHandler("view.changed", (value, from) => {

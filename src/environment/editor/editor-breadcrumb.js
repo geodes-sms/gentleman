@@ -131,7 +131,7 @@ export const EditorBreadcrumb = {
     refresh() {
         const { activeInstance, activeConcept, hasActiveInstance, hasActiveConcept } = this.editor;
 
-        if (!hasActiveInstance) {
+        if (!hasActiveInstance || !hasActiveConcept) {
             removeChildren(this.conceptList);
             return this;
         }
@@ -147,7 +147,7 @@ export const EditorBreadcrumb = {
             item.classList.add(`selector-concept--active`);
         }
 
-        if (!hasActiveConcept || rootConcept === activeConcept) {
+        if (rootConcept === activeConcept) {
             removeChildren(this.conceptList).append(fragment);
             return this;
         }

@@ -22,6 +22,8 @@ const StyleMap = {
     "css": CSSStyleHandler,
     "ref": ReferenceStyleHandler,
     "gss": GentlemanStyleHandler,
+    "text": styleTextHandler,
+    "box": styleBoxHandler,
     "html": HTMLStyleHandler,
 };
 
@@ -108,6 +110,10 @@ export function GentlemanStyleHandler(element, style) {
 function styleTextHandler(element, schema) {
     for (const rule in schema) {
         const value = schema[rule];
+
+        if (value === false) {
+            continue;
+        }
 
         switch (rule) {
             case "bold":
@@ -262,6 +268,11 @@ function resolveSize(schema) {
 function styleBoxHandler(element, schema) {
     for (const rule in schema) {
         const value = schema[rule];
+
+        if (value === false) {
+            continue;
+        }
+        
         switch (rule) {
             case "inner":
                 resolveSpace.call(this, element, value, "padding");

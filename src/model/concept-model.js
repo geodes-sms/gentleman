@@ -135,6 +135,20 @@ export const ConceptModel = {
 
         return removedConcept;
     },
+    hasConcept(arg) {
+        if (!(isObject(arg) || isString(arg))) {
+            throw new TypeError("Bad request: The 'id' argument must be a non-empty string");
+        }
+
+        if (isEmpty(this.concepts)) {
+            return false;
+        }
+
+        let id = arg.id || arg;
+        let name = arg.name;
+
+        return this.concepts.some(concept => concept.id === id);
+    },
 
     /**
      * Get the list of values
@@ -284,6 +298,23 @@ export const ConceptModel = {
         }
 
         return concept.nature === "prototype";
+    },
+    hasPrototype(name, $prototype) {
+        if (!this.isConcept(name)) {
+            return false;
+        }
+
+        let schema = this.getConceptSchema(name);
+
+        while (!isNullOrUndefined(schema)) {
+            if (schema.prototype === $prototype) {
+                return true;
+            }
+
+            schema = this.model.getConceptSchema(schema.prototype);
+        }
+
+        return false;
     },
 
     getSchema(nature) {
