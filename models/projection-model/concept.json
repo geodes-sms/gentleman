@@ -1,7 +1,7 @@
 {
     "concept": [
         {
-            "name": "collection",
+            "name": "projection-set",
             "nature": "concrete",
             "attributes": [
                 {
@@ -109,8 +109,9 @@
                                 { "name": "text-static" },
                                 { "name": "image-static" },
                                 { "name": "link-static" },
-                                { "name": "attribute element" },
-                                { "name": "plink-static" }
+                                { "name": "plink-static" },
+                                { "name": "button-static" },
+                                { "name": "attribute element" }
                             ]
                         }
                     }
@@ -212,20 +213,11 @@
                     "target": {
                         "name": "name",
                         "src": [
-                            "string", 
-                            "number", 
-                            "boolean", 
-                            "set", 
-                            "reference",
+                            "string", "number", "boolean", "set", "reference",
                             { 
                                 "type": "reference", 
-                                "target": {
-                                    "value": "name"
-                                },
-                                "source": {
-                                    "type": "resource",
-                                    "name": "metamodel"
-                                } 
+                                "target": { "value": "name" },
+                                "source": { "type": "resource", "name": "metamodel" } 
                             }
                         ]
                     }
@@ -655,6 +647,7 @@
                                 { "name": "image-static" },
                                 { "name": "link-static" },
                                 { "name": "plink-static" },
+                                { "name": "button-static" },
                                 { "name": "attribute element" }
                             ]
                         }
@@ -822,6 +815,7 @@
                             { "name": "image-static" },
                             { "name": "link-static" },
                             { "name": "plink-static" },
+                            { "name": "button-static" },
                             { "name": "attribute element" }
                         ]
                     }
@@ -867,6 +861,12 @@
                     "target": {
                         "name": "string"
                     }
+                },
+                {
+                    "name": "asHTML",
+                    "target": {
+                        "name": "boolean"
+                    }
                 }
             ],
             "properties": [
@@ -874,101 +874,6 @@
                 { "name": "elementType", "type": "string", "value": "text" }
             ]
         },
-        {
-            "name": "text-content",
-            "nature": "prototype",
-            "attributes": [
-                {
-                    "name": "content",
-                    "target": {
-                        "name": "string"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "raw-text-content",
-            "nature": "concrete",
-            "prototype": "text-content",
-            "attributes": [
-                {
-                    "name": "content",
-                    "target": {
-                        "name": "string"
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "raw" },
-                { "name": "elementType", "type": "string", "value": "text-content" }
-            ]
-        },
-        {
-            "name": "html-text-content",
-            "nature": "concrete",
-            "prototype": "text-content",
-            "attributes": [
-                {
-                    "name": "content",
-                    "target": {
-                        "name": "string"
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "html" },
-                { "name": "elementType", "type": "string", "value": "text-content" }
-            ]
-        },
-        {
-            "name": "property-text-content",
-            "nature": "concrete",
-            "prototype": "text-content",
-            "attributes": [
-                {
-                    "name": "content",
-                    "target": {
-                        "name": "string",
-                        "src": [
-                            "refname",
-                            "value",
-                            { 
-                                "type": "reference", 
-                                "target": {
-                                    "name": "properties",
-                                    "rel": "children",
-                                    "value": "name",
-                                    "source": {
-                                        "type": "reference",
-                                        "rel": "parent",
-                                        "name": "projection",
-                                        "value": {
-                                            "type": "reference",
-                                            "rel": "children",
-                                            "name": "concept",
-                                            "value": {
-                                                "type": "attribute",
-                                                "name": "name"
-                                            }
-                                        }
-                                    }
-                                },
-                                "source": {
-                                    "type": "resource",
-                                    "name": "metamodel"
-                                } 
-                            }
-                        ]
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "property" },
-                { "name": "elementType", "type": "string", "value": "text-content" }
-            ]
-        },
-
-
         {
             "name": "image-static",
             "nature": "concrete",
@@ -993,23 +898,7 @@
                 { "name": "elementType", "type": "string", "value": "image" }
             ]
         },
-        {
-            "name": "html-static",
-            "nature": "concrete",
-            "prototype": "atomic element",
-            "attributes": [
-                {
-                    "name": "selector",
-                    "target": {
-                        "name": "string"
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "static" },
-                { "name": "elementType", "type": "string", "value": "html" }
-            ]
-        },
+      
         {
             "name": "link-static",
             "nature": "concrete",
@@ -1069,7 +958,40 @@
                 { "name": "elementType", "type": "string", "value": "plink" }
             ]
         },
-      
+        {
+            "name": "button-static",
+            "nature": "concrete",
+            "prototype": "element",
+            "attributes": [
+                {
+                    "name": "trigger",
+                    "target": {
+                        "name": "name",
+                        "default": false
+                    }
+                },
+                {
+                    "name": "disabled",
+                    "target": {
+                        "name": "boolean",
+                        "default": false
+                    }
+                },
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "atomic element"
+                        }
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "static" },
+                { "name": "elementType", "type": "string", "value": "button" }
+            ]
+        },
        
         {
             "name": "attribute element",
@@ -1191,6 +1113,86 @@
                 { "name": "elementType", "type": "string", "value": "projection" }
             ]
         },
+
+
+        {
+            "name": "external element",
+            "nature": "prototype",
+            "prototype": "element",
+            "attributes": [
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "html-external",
+            "nature": "concrete",
+            "prototype": "external element",
+            "attributes": [
+                {
+                    "name": "selector",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "external" },
+                { "name": "elementType", "type": "string", "value": "html" }
+            ]
+        },
+
+        {
+            "name": "property-content",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "string",
+                        "src": [
+                            "refname",
+                            "value",
+                            { 
+                                "type": "reference", 
+                                "target": {
+                                    "name": "properties",
+                                    "rel": "children",
+                                    "value": "name",
+                                    "source": {
+                                        "type": "reference",
+                                        "rel": "parent",
+                                        "name": "projection",
+                                        "value": {
+                                            "type": "reference",
+                                            "rel": "children",
+                                            "name": "concept",
+                                            "value": {
+                                                "type": "attribute",
+                                                "name": "name"
+                                            }
+                                        }
+                                    }
+                                },
+                                "source": {
+                                    "type": "resource",
+                                    "name": "metamodel"
+                                } 
+                            }
+                        ]
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "property" },
+                { "name": "elementType", "type": "string", "value": "content" }
+            ]
+        },
+
 
         {
             "name": "name",

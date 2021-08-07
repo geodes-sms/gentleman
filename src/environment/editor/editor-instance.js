@@ -13,15 +13,17 @@ export const EditorInstanceManager = {
      * Creates a concept instance
      * @param {string} name 
      */
-    createInstance(concept, _projection, _options) {
-        if (isNullOrUndefined(concept)) {
+    createInstance($concept, _projection, _options) {
+        if (isNullOrUndefined($concept)) {
             this.notify(`The concept is not valid`, NotificationType.ERROR);
             return false;
         }
 
+        let concept = $concept.type === "concept" ? $concept : this.createConcept($concept);
+
         let projection = _projection;
         if (isNullOrUndefined(projection) && this.hasProjectionModel) {
-            projection = this.projectionModel.createProjection(concept).init();
+            projection = this.createProjection(concept).init();
         }
 
         let instance = Object.create(EditorInstance, {

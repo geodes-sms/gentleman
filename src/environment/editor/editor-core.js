@@ -1003,6 +1003,10 @@ export const Editor = {
     paste(concept, _value) {
         let value = valOrDefault(_value, this.copyValue);
 
+        if (isNullOrUndefined(value)) {
+            return;
+        }
+
         if (isNullOrUndefined(concept)) {
             let concept = this.createConcept(value.name).init();
             concept.setValue(value);
@@ -1182,16 +1186,17 @@ export const Editor = {
 
         return this;
     },
-    loadConceptModel($schema, values) {
-        let schema = $schema.concept || $schema;
+    loadConceptModel(schema, _values) {
+        let concepts = schema.concept || schema;
+        let values = valOrDefault(_values, schema.values);
 
-        if (!Array.isArray(schema)) {
+        if (!Array.isArray(concepts)) {
             this.notify("Invalid concept model", NotificationType.ERROR);
 
             return false;
         }
 
-        if (isEmpty(schema)) {
+        if (isEmpty(concepts)) {
             this.notify("The concept model is empty", NotificationType.ERROR);
 
             return false;
@@ -1200,7 +1205,7 @@ export const Editor = {
         this.unloadConceptModel();
         this.clear();
 
-        this.conceptModel = ConceptModelManager.createModel(schema, this).init(values);
+        this.conceptModel = ConceptModelManager.createModel(concepts, this).init(values);
 
         if (isNullOrUndefined(this.conceptModel)) {
             // TODO: add validation and notify of errors
@@ -1228,17 +1233,18 @@ export const Editor = {
 
         return this;
     },
-    loadProjectionModel($schema, views) {
-        let schema = $schema.projection || $schema;
+    loadProjectionModel(schema, _views) {
+        let projections = schema.projection || schema;
+        let views = valOrDefault(_views, schema.views);
 
-        if (!Array.isArray(schema)) {
+        if (!Array.isArray(projections)) {
             this.notify("Invalid projection model", NotificationType.ERROR);
 
             return false;
         }
 
-        if (isEmpty(schema)) {
-            this.notify("The projection model is empty", NotificationType.ERROR);
+        if (isEmpty(projections)) {
+            this.notify("The projection model is empty", NotificationType.WARNING);
 
             return false;
         }
@@ -1250,10 +1256,10 @@ export const Editor = {
         this.activeProjection = null;
 
         if (isNullOrUndefined(this.projectionModel)) {
-            this.projectionModel = createProjectionModel(schema, this).init(views);
+            this.projectionModel = createProjectionModel(projections, this).init(views);
         }
 
-        this.projectionModel.setSchema(schema);
+        this.projectionModel.setSchema(projections);
 
         if (isNullOrUndefined(this.projectionModel)) {
             // TODO: add validation and notify of errors
@@ -1822,7 +1828,7 @@ export const Editor = {
 
 
 
-          
+
 
             "load-model": (target) => {
                 let event = new MouseEvent('click', {
@@ -1936,6 +1942,8 @@ export const Editor = {
 
         this.body.addEventListener('paste', (event) => {
             if (isNullOrUndefined(event.clipboardData)) {
+                this.paste(this.activeConcept);
+
                 event.preventDefault();
                 return;
             }

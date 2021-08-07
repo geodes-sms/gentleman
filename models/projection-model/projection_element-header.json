@@ -705,7 +705,7 @@
             }
         },
         {
-            "concept": { "name": "collection" },
+            "concept": { "name": "projection-set" },
             "type": "layout",
             "tags": [],
             "content": {

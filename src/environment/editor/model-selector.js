@@ -81,8 +81,7 @@ export const EditorSelector = {
 
             // Create header
             let title = createH4({
-                class: ["title", "editor-selector__title"],
-                title: data.description,
+                class: ["title", "editor-selector__title"]
             }, `${data.name || data.type}`);
 
             if (concept) {

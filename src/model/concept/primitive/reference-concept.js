@@ -29,7 +29,6 @@ const _ReferenceConcept = {
         this.accept = this.schema.accept;
         this.path = this.schema.path;
         this.values = valOrDefault(this.schema.values, []);
-        this.description = this.schema.description;
         this.constraint = this.schema.constraint;
         this.errors = [];
 

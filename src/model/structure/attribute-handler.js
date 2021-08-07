@@ -164,7 +164,6 @@ export const AttributeHandler = {
             attributes.push({
                 type: "attribute",
                 name: attribute["name"],
-                description: attribute["description"],
                 target: attribute["target"],
                 accept: attribute["accept"],
                 required: this.isAttributeRequired(name),

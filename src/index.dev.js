@@ -3,12 +3,12 @@
 // Import CSS
 import './stylesheets.js';
 import '@css/samples/gentleman.css';
-// import './../demo/traffic-light/assets/style.css';
+import './../demo/relis/assets/style.css';
 
-import { createDiv, getElements, valOrDefault, isHTMLElement, hasOwn, getElement } from "zenkai";
+import { createDiv, getElements, valOrDefault, isNullOrUndefined, isHTMLElement, hasOwn, getElement, isFunction } from "zenkai";
 import { Editor } from './environment/index.js';
 import { resolveContainer } from './utils/index.js';
-import { buildProjectionHandler } from '@generator/build-projection.js';
+import { buildProjectionHandler, buildConceptHandler } from '@generator/index.js';
 
 const Model = {
     MP: "projection",
@@ -16,15 +16,23 @@ const Model = {
     MS: "style",
     TL: "trafficlight",
     MM: "mindmap",
+    RL: "relis",
+    DD: "druide",
 };
-const modelName = Model.MP;
+
+const modelName = Model.RL;
 
 const MODEL__EDITOR = require(`@models/${modelName}-model/config.json`);
 const MODEL__CONCEPT = require(`@models/${modelName}-model/concept.json`);
 const MODEL__PROJECTION = require(`@models/${modelName}-model/projection.json`);
 
+const MODEL__TEST = require(`./../.internal/projection-model-test.json`);
+
 const STYLE_CONCEPT = require(`@models/${Model.MS}-model/concept.json`);
 const STYLE_PROJECTION = require(`@models/${Model.MS}-model/projection.json`);
+
+const DRUIDE_CONCEPT = require(`@models/${Model.DD}-model/concept.json`);
+const DRUIDE_PROJECTION = require(`@models/${Model.DD}-model/projection.json`);
 
 const ENV_EDITOR = "editor";
 
@@ -90,7 +98,50 @@ function createEditor(_container) {
 let editor = activateEditor(".app-editor")[0];
 
 const MODEL__HANDLER = {
-  
+    "open-style": function (args) {
+        let concept = args[0];
+        let projection = this.createProjection(concept, "style");
+
+        let window = this.findWindow("side-instance");
+        if (isNullOrUndefined(window)) {
+            window = this.createWindow("side-instance");
+            window.container.classList.add("model-projection-sideview");
+        }
+
+        if (window.instances.size > 0) {
+            let instance = Array.from(window.instances)[0];
+            instance.delete();
+        }
+
+        let instance = this.createInstance(concept, projection, {
+            type: "projection",
+            close: "DELETE-PROJECTION"
+        });
+
+        window.addInstance(instance);
+    },
+    "open-state": function (args) {
+        let concept = args[0];
+        let projection = this.createProjection(concept, "state");
+
+        let window = this.findWindow("side-instance");
+        if (isNullOrUndefined(window)) {
+            window = this.createWindow("side-instance");
+            window.container.classList.add("model-projection-sideview");
+        }
+
+        if (window.instances.size > 0) {
+            let instance = Array.from(window.instances)[0];
+            instance.delete();
+        }
+
+        let instance = this.createInstance(concept, projection, {
+            type: "projection",
+            close: "DELETE-PROJECTION"
+        });
+
+        window.addInstance(instance);
+    },
 };
 
 editor.init({
@@ -100,14 +151,26 @@ editor.init({
     handlers: MODEL__HANDLER
 });
 
-editor.addConcept(STYLE_CONCEPT);
-editor.addProjection(STYLE_PROJECTION);
+if (modelName === Model.MP) {
+    editor.addConcept(STYLE_CONCEPT);
+    editor.addProjection(STYLE_PROJECTION);
+}
 
-let editorWindow = editor.createWindow();
-editorWindow.container.classList.add("model-projection-sideview");
+if (modelName === Model.RL) {
+    editor.createInstance("project");
+}
+
+const Build = {
+    "concept": buildConceptHandler,
+    "projection": buildProjectionHandler,
+};
 
 let btnBuild = getElement("#btnBuild");
 
+let handler = Build[modelName];
+
+btnBuild.disabled = !isFunction(handler);
+
 btnBuild.addEventListener("click", (event) => {
-    buildProjectionHandler.call(editor);
+    handler.call(editor);
 });

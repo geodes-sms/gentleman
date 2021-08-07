@@ -2,7 +2,7 @@
     "name": "Gentleman projection",
     "concepts": [
         {
-            "name": "collection"
+            "name": "projection-set"
         },
         {
             "name": "projection"

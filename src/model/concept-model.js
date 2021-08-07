@@ -463,10 +463,6 @@ function getConceptBaseSchema(protoName) {
             if ($attr.required) {
                 attribute.required = $attr.required;
             }
-
-            if ($attr.description) {
-                attribute.description = $attr.description;
-            }
         });
     };
 

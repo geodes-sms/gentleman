@@ -135,8 +135,7 @@ const _StringConcept = {
             return this.value.length;
         }
 
-        let propSchema = valOrDefault(this.schema.properties, []);
-        let property = propSchema.find(prop => prop.name === name);
+        let property = this.properties.find(prop => prop.name === name);
 
         if (isNullOrUndefined(property)) {
             return undefined;
@@ -168,9 +167,7 @@ const _StringConcept = {
             return true;
         }
 
-        let propSchema = valOrDefault(this.schema.properties, []);
-
-        return propSchema.findIndex(prop => prop.name === name) !== -1;
+        return this.properties.findIndex(prop => prop.name === name) !== -1;
     },
 
     getCandidates() {
@@ -458,10 +455,6 @@ function getConceptBaseSchema(concepts, protoName) {
 
             if ($attr.required) {
                 attribute.required = $attr.required;
-            }
-
-            if ($attr.description) {
-                attribute.description = $attr.description;
             }
         });
     };

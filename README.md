@@ -29,7 +29,7 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 
 # Documentation 📖
 
-<!-- The documentation can be found [here](https://geodes-sms.github.io/gentleman/docs) 👈.   -->
+The documentation can be found [here](https://geodes-sms.github.io/gentleman/public/docs) 👈.  
 
 ## Integration
 
@@ -133,4 +133,4 @@ This distribution contains the following files and folders:
 
 # License ©️
 
-The source code is licensed under a [GNU GENERAL PUBLIC LICENSE 3](https://www.gnu.org/copyleft/gpl.html) ![GNU GPL v3](https://img.shields.io/badge/license-GPLv3-blue.svg)
+The source code is licensed under a [MIT LICENSE](https://opensource.org/licenses/MIT) ![MIT](https://img.shields.io/badge/license-MIT-blue.svg)

@@ -306,6 +306,10 @@ const Projection = {
     render() {
         const schema = this.getSchema();
 
+        if (isNullOrUndefined(schema)) {
+            return null;
+        }
+
         const { type, projection, content } = schema;
 
         /** @type {HTMLElement} */
@@ -320,6 +324,10 @@ const Projection = {
 
             this.model.registerField(this.element);
         } else if (type === "static") {
+            this.element = StaticFactory.createStatic(this.model, valOrDefault(projection, content), this).init(this.args);
+
+            this.model.registerStatic(this.element);
+        } else if (type === "dynamic") {
             this.element = StaticFactory.createStatic(this.model, valOrDefault(projection, content), this).init(this.args);
 
             this.model.registerStatic(this.element);

@@ -1,0 +1,34 @@
+[
+    {
+        "name": "druide-concept",
+        "nature": "concrete",
+        "attributes": [
+            {
+                "name": "title",
+                "target": {
+                    "name": "string"
+                },
+                "required": true
+            },
+            {
+                "name": "rule",
+                "target": {
+                    "name": "druide-rule"
+                }
+            }
+        ]
+    },
+    {
+        "name": "druide-rule",
+        "nature": "concrete",
+        "attributes": [
+            {
+                "name": "name",
+                "target": {
+                    "name": "string"
+                },
+                "required": true
+            }
+        ]
+    }
+]

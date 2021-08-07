@@ -7,112 +7,147 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>About</title>
-    <link rel="stylesheet" href="assets/css/normalize.css">
-    <link rel="stylesheet" href="assets/css/base.css">
-    <link rel="stylesheet" href="assets/css/site.css">
-    <link rel="stylesheet" href="assets/css/docs.css">
+    <link rel="stylesheet" href="./../assets/css/normalize.css">
+    <link rel="stylesheet" href="./../assets/css/base.css">
+    <link rel="stylesheet" href="./../assets/css/site/site.css">
+    <link rel="stylesheet" href="./../assets/css/site/docs.css">
+
+    <style>
+        .story-section {
+            max-width: 900px;
+        }
+
+        .story-section p,
+        .story-section li {
+            line-height: 1.5;
+        }
+
+        .page-body {
+            padding-bottom: 30px;
+        }
+        
+        .page-body-content {
+            padding-top: 24px;
+        }
+    </style>
 </head>
 
 <body>
-    <header>
-        <div class="content-wrapper"></div>
-        <div class="content-wrapper content-wrapper--header">
-            <a class="logo noselect" href="index.html">
-                Gentleman
-            </a>
-            <nav class="header-nav">
-                <ul class="bare-list nav">
-                    <li class="nav-item selected">
-                        <a class="nav-item__link" href="about.html">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-item__link" href="docs/index.html">Documentation</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-item__link" href="faq.html">FAQ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-item__link" href="https://github.com/geodes-sms/gentleman">Code</a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="action-call-wrapper">
-                <a class="action-call" href="demo/index.html">Try the demo</a>
-            </div>
-        </div>
+    <header class="page-header">
+        <a class="link header__link has-helper" href="./index.html">
+            <span class="link-logo">Gentleman</span>
+            <i class="helper">Go to the homepage</i>
+        </a>
+        <ul class="bare-list page-menu" data-component="menu">
+            <li class="page-menu-item selected has-helper">
+                <span class="page-menu-item__text">About</span>
+                <i class="helper">You are there 👇</i>
+            </li>
+            <li class="page-menu-item has-helper">
+                <a class="page-menu-item__link" href="./docs/index.html">Docs</a>
+                <i class="helper">Guide and Tutorial</i>
+            </li>
+            <li class="page-menu-item has-helper">
+                <a class="page-menu-item__link" href="./faq.html">FAQ</a>
+                <i class="helper">Questions and Answers</i>
+            </li>
+        </ul>
     </header>
-    <main>
-        <article class="clear">
-            <header class="article-header">
-                <div class="content-wrapper">
-                    <h1 class="page-title">About</h1>
-                    <p class="gentleman-quote">Take a look at our story and ourselves.</p>
-                </div>
-            </header>
 
-            <div class="body content-wrapper">
-                <section>
+    <main class="page-body">
+        <header class="page-body-header">
+            <div class="content-wrapper">
+                <h1 class="page-title">About</h1>
+                <p class="gentleman-quote">Take a look at our story and ourselves.</p>
+            </div>
+        </header>
 
-                    <h2 class="section-title">The story: From an idea to a project</h2>
-                </section>
+        <div class="page-body-content content-wrapper">
+            <section class="story-section">
+                <h2 class="section-title">The story: From an idea to a project</h2>
+                <!-- <h2 class="section-title">Gentleman in a gist</h2> -->
+                <p>
+                    Various types of text editors exist to write software. The most popular is a plain text editor that highlights keywords and
+                    proposes code completion depending on the context of the cursor. Programmers start with a blank page
+                    and type in the code. This requires them to know in advance the structure of the code, as it is common
+                    to all programs written in a programming language, like Java. However, when it comes to domain-specific
+                    languages (DSL), users are typically not programmers. DSLs are small heavily constrained languages
+                    that are tailored to a specific expertise. Starting from a blank page does not help them and not
+                    seeing the overall structure is the source of lots of errors.
+                </p>
+                <p>
+                    Projectional editors (PE) are an attractive solution because they prepopulate the structure of the code. PEs present text
+                    and other visualizations, such as tables and equations, with placeholders. Users are only allowed
+                    to write text in these placeholders, which reduces significantly the chances of making an error.
+                    The editable parts of the code support advanced editing features, including syntax highlighting,
+                    automatic text completion, and context-dependent suggestions.
+                </p>
 
-                <section>
-                    <h2 class="section-title">Gentleman in a gist</h2>
-                    <p>
-                        Various types of text editors exist to write software. The most popular is a plain text editor that highlights keywords and
-                        proposes code completion depending on the context of the cursor. Programmers start with a blank page
-                        and type in the code. This requires them to know in advance the structure of the code, as it is common
-                        to all programs written in a programming language, like Java. However, when it comes to domain-specific
-                        languages (DSL), users are typically not programmers. DSLs are small heavily constrained languages
-                        that are tailored to a specific expertise. Starting from a blank page does not help them and not
-                        seeing the overall structure is the source of lots of errors.
-                    </p>
-                    <p>
-                        Projectional editors (PE) are an attractive solution because they prepopulate the structure of the code. PEs present text
-                        and other visualizations, such as tables and equations, with placeholders. Users are only allowed
-                        to write text in these placeholders, which reduces significantly the chances of making an error.
-                        The editable parts of the code support advanced editing features, including syntax highlighting,
-                        automatic text completion, and context-dependent suggestions.
-                    </p>
+                <p>
+                    In the activity of software development and modeling, you should benefit from as much freedom as possible to express yourself, and
+                    this characteristic also extends to the tools they use.
+                    In recent years, projectional editors have proven to be a valid approach to obtain such capabilities by enabling language extension and composition
+                    and various notations. However, current solutions are heavyweight, platform-specific, and suffer from poor usability.
+                    To better support this paradigm and minimize the risk of arbitrary and accidental constraints in expressivity, we introduce Gentleman, a 
+                    lightweight web-based projectional editor generator.
+                    Gentleman allows the user to define a model and projections for its concepts, and use the generated editor to create the model instances. 
+                </p>
 
-                    <p>
-                        The goal of this project is to implement the framework to automatically generate web-based PEs. The only input required is
-                        the grammar of a DSL. In this project, the projectional editor generator should produce the editors
-                        of two DSLs that will be integrated in the online software to conduct systematic literature reviews
-                        we have been developing in our lab:
-                        <em>
-                            <a class="link link-out" href="http://www-ens.iro.umontreal.ca/~syriani/research_fr.html">ReLiS</a>
-                        </em>. One editor is for a limited SQL to restrain queries to the database of a ReLiS project. It targets
-                        users with programming experience. The other editor is for a DSL to configure projects in ReLiS.
-                        It targets all users of ReLiS who are researchers in any domain.
-                    </p>
-                </section>
+                <p>
+                    The goal of this project is to bridge the gap between model and domain expert.
+                </p>
+            </section>
 
-                <section>
-                    <h2 class="section-title">The team</h2>
-                    <div class="card-container">
-                        <div class="card">
-                            <img class="card-img" src="assets/images/eugene_syriani.jpg" alt="Photo d'Eugène SYRIANI">
-                            <p class="card-name">Dr. Eugène SYRIANI, Ph.D.</p>
-                            <p class="card-role">Supervisor</p>
-                            <p class="card-description">Eugène is an Associate Professor in Computer Science at the University of Montreal. He is one
-                                of the leaders of the GEODES Software Engineering Research Group.</p>
-                        </div>
-                        <div class="card">
-                            <img class="card-img" src="assets/images/louis-edouard_lafontant.jpg" alt="Photo de Louis-Edouard LAFONTANT">
-                            <p class="card-name">Louis-Edouard LAFONTANT, B.Sc.</p>
-                            <p class="card-role">Developer</p>
-                            <p class="card-description">Louis-Edouard is a Computer Science major with a speciality in software engineering.</p>
-                        </div>
+            <section class="team-section">
+                <h2 class="section-title">The team</h2>
+                <div class="card-container">
+                    <div class="card">
+                        <img class="card-img" src="./../assets/images/photo_lelafontant.jpeg" alt="Photo de Louis-Edouard LAFONTANT">
+                        <p class="card-name">Louis-Edouard LAFONTANT, B.Sc.</p>
+                        <p class="card-role">Creator & Developer</p>
+                        <p class="card-description">Louis-Edouard is a Computer Science graduate specialized in software engineering. He is an active
+                            member of the GEODES Software Engineering Research Group.
+                        </p>
                     </div>
 
-                    <h3 class="title">Contributors</h3>
-                    <p>Become a contributor.</p>
-                </section>
-            </div>
-        </article>
+                    <div class="card">
+                        <img class="card-img" src="./../assets/images/eugene_syriani.jpg" alt="Photo d'Eugène SYRIANI">
+                        <p class="card-name">Eugène SYRIANI, Ph.D.</p>
+                        <p class="card-role">Supervisor</p>
+                        <p class="card-description">Eugène is an Associate Professor in Computer Science at the University of Montreal. He is one
+                            of the leaders of the GEODES Software Engineering Research Group.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- <h3 class="title">Contributors</h3>
+                <div class="card-container card-container--small">
+                    <div class="card">
+                        <img class="card-img card-img--small" src="./../assets/images/photo_aurelien.jpeg" alt="Photo de Aurélien DUCOIN">
+                        <p class="card-name">Aurélien DUCOIN, B.Sc.</p>
+                        <p class="card-role">Developer</p>
+                        <p class="card-description">
+                            Aurélien added Graphical support to Gentleman.
+                        </p>
+                    </div>
+                </div>
+                <p><a href="mailto:louis.edouard.lafontant@umontreal.ca">Become a contributor</a>.</p> -->
+            </section>
+        </div>
     </main>
-    <footer>
+    
+    <footer class="page-footer">
+        <div class="content-wrapper">
+            <p>Gentleman</p>
+            <p class="footer-license">
+                Copyright &copy; 2020 &ndash; 2021 Louis-Edouard LAFONTANT &bull;
+                Code licensed under the <a class="link footer-license__link" href="https://opensource.org/licenses/MIT"
+                    target="_blank" rel="noopener">MIT License</a>.
+                Content licensed under <a class="link footer-license__link"
+                    href="https://creativecommons.org/share-your-work/public-domain/cc0/" target="_blank"
+                    rel="noopener">CC0</a>.
+            </p>
+        </div>
     </footer>
 </body>
 

@@ -14,6 +14,10 @@ const ATTR_PROTOTYPE = "prototype";
 const ATTR_TAG = "tag";
 const ATTR_TAGS = "tags";
 const ATTR_VALUE = "value";
+const PROP_FOCUSABLE = "focusable";
+const PROP_HIDDEN = "hidden";
+const PROP_READONLY = "readonly";
+const PROP_DISABLED = "disabled";
 
 
 const getAttr = (concept, name) => concept.getAttributeByName(name).target;
@@ -337,6 +341,8 @@ function buildContainer(container) {
     schema.type = "flex";
     schema[PROP_ORIENTATION] = getValue(layout, PROP_ORIENTATION);
     schema[PROP_WRAPPABLE] = getValue(container, PROP_WRAPPABLE);
+    schema[PROP_FOCUSABLE] = getValue(container, PROP_FOCUSABLE);
+    schema[PROP_HIDDEN] = getValue(container, PROP_HIDDEN);
     schema.alignItems = getValue(layout, PROP_ALIGNITEMS);
     schema.justifyContent = getValue(layout, PROP_JUSTIFYCONTENT);
 
@@ -354,8 +360,6 @@ function buildContainer(container) {
  ----------------------------------------------------------------------------*/
 
 const LayoutHanlders = {
-    "wrap": WrapLayoutHandler,
-    "stack": StackLayoutHandler,
     "flex": FlexLayoutHandler,
     "table": TableLayoutHandler,
 };
@@ -378,38 +382,6 @@ function buildLayout(layout) {
     if (hasAttr(layout, "style")) {
         schema.style = buildStyle.call(this, getAttr(layout, 'style'));
     }
-
-    return schema;
-}
-
-function WrapLayoutHandler(layout) {
-    const schema = {};
-    var disposition = [];
-
-    getValue(layout, "elements").filter(proto => proto.hasValue()).forEach(proto => {
-        const element = proto.getValue(true);
-        disposition.push(buildElement.call(this, element));
-    });
-
-    schema.disposition = disposition;
-
-    return schema;
-}
-
-function StackLayoutHandler(layout) {
-    const schema = {};
-
-    const PROP_ORIENTATION = "orientation";
-
-    schema[PROP_ORIENTATION] = getValue(layout, PROP_ORIENTATION);
-    var disposition = [];
-
-    getValue(layout, "elements").filter(proto => proto.hasValue()).forEach(proto => {
-        const element = proto.getValue(true);
-        disposition.push(buildElement.call(this, element));
-    });
-
-    schema.disposition = disposition;
 
     return schema;
 }
@@ -574,9 +546,9 @@ function TemplateDynamicHandler(element) {
 const StaticHanlders = {
     "text": TextStaticHandler,
     "image": ImageStaticHandler,
-    "html": HtmlStaticHandler,
     "link": LinkStaticHandler,
     "plink": PLinkStaticHandler,
+    "button": ButtonStaticHandler,
 };
 
 function buildStatic(element) {
@@ -592,6 +564,9 @@ function buildStatic(element) {
         return null;
     }
 
+    schema[PROP_FOCUSABLE] = getValue(element, PROP_FOCUSABLE);
+    schema[PROP_HIDDEN] = getValue(element, PROP_HIDDEN);
+
     Object.assign(schema, handler.call(this, element));
 
     if (hasAttr(element, ATTR_STYLE)) {
@@ -603,6 +578,8 @@ function buildStatic(element) {
 
 function TextStaticHandler(element) {
     const schema = {};
+
+    const PROP_ASHTML = "asHTML";
 
     const buildContent = (textContent) => {
         const type = textContent.getProperty("contentType");
@@ -623,6 +600,7 @@ function TextStaticHandler(element) {
     };
 
     // schema[ATTR_CONTENT] = buildContent(getValue(element, ATTR_CONTENT, true));
+    schema[PROP_ASHTML] =  getValue(element, PROP_ASHTML);
     schema[ATTR_CONTENT] = getValue(element, ATTR_CONTENT, true);
 
     return schema;
@@ -636,15 +614,6 @@ function ImageStaticHandler(element) {
 
     schema[PROP_URL] = getValue(element, PROP_URL);
     schema[PROP_ALT] = getValue(element, PROP_ALT);
-
-    return schema;
-}
-
-function HtmlStaticHandler(element) {
-    const schema = {};
-
-    const PROP_SELECTOR = "selector";
-    schema[PROP_SELECTOR] = getValue(element, PROP_SELECTOR);
 
     return schema;
 }
@@ -685,6 +654,22 @@ function PLinkStaticHandler(element) {
     return schema;
 }
 
+function ButtonStaticHandler(element) {
+    const schema = {};
+
+    const PROP_TRIGGER = "trigger";
+    const PROP_DISABLED = "disabled";
+    
+    schema[PROP_TRIGGER] = getValue(element, PROP_TRIGGER);
+    schema[PROP_DISABLED] = getValue(element, PROP_DISABLED);
+    schema[ATTR_CONTENT] = getValue(element, ATTR_CONTENT).filter(proto => proto.hasValue()).map(proto => {
+        const element = proto.getValue(true);
+        return buildElement.call(this, element);
+    });
+
+    return schema;
+}
+
 /**
  * FIELD GENERATOR
  ----------------------------------------------------------------------------*/
@@ -701,10 +686,15 @@ function buildField(field) {
     const elementType = field.getProperty("elementType");
 
     var schema = {
-        type: elementType,
-        readonly: getValue(field, "readonly"),
-        disabled: getValue(field, "disabled"),
+        type: elementType
     };
+
+    
+  
+    schema[PROP_FOCUSABLE] = getValue(field, PROP_FOCUSABLE);
+    schema[PROP_READONLY] = getValue(field, PROP_READONLY);
+    schema[PROP_DISABLED] = getValue(field, PROP_DISABLED);
+    schema[PROP_HIDDEN] = getValue(field, PROP_HIDDEN);
 
     const handler = FieldHanlders[elementType];
 

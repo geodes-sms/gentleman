@@ -1,6 +1,6 @@
 {
   "name": "gentleman",
-  "version": "0.2.7",
+  "version": "0.3.0",
   "description": "Gentleman is a web-based projectionnal editor generator. It allows you to express and interact with your DSL.",
   "private": true,
   "directories": {
@@ -29,7 +29,7 @@
     "js"
   ],
   "author": "Louis-Edouard LAFONTANT",
-  "license": "GPL-3.0-or-later",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/geodes-sms/gentleman/issues"
   },

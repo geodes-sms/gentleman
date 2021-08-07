@@ -79,12 +79,6 @@
                     }
                 },
                 {
-                    "name": "opacity",
-                    "target": {
-                        "name": "percentage"
-                    }
-                },
-                {
                     "name": "size",
                     "target": {
                         "name": "size"
@@ -93,16 +87,26 @@
                 {
                     "name": "font",
                     "target": {
-                        "name": "string",
-                        "constraint": {
-                            "values": [
-                                "Arial", "Arial Black", "Verdana", "Consolas", "Tahoma",
-                                "Trebuchet MS", "Impact", "Times New Roman", "Didot",
-                                "Georgia", "American Typewriter", "Andalé Mono",
-                                "Courier", "Lucida Console", "Monaco", "Bradley Hand",
-                                "Brush Script MT", "Luminari", "Comic Sans MS"
-                            ]
-                        }
+                        "name": "font"
+                    }
+                },
+                {
+                    "name": "line-height",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "letter-spacing",
+                    "target": {
+                        "name": "size"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "word-spacing",
+                    "target": {
+                        "name": "size"
                     },
                     "required": false
                 }
@@ -151,9 +155,23 @@
                     "required": false
                 },
                 {
+                    "name": "corner",
+                    "target": {
+                        "name": "border-radius"
+                    },
+                    "required": false
+                },
+                {
                     "name": "opacity",
                     "target": {
-                        "name": "percentage"
+                        "name": "percentage",
+                        "default": 100
+                    }
+                },
+                {
+                    "name": "shadow",
+                    "target": {
+                        "name": "box-shadow"
                     }
                 }
             ]
@@ -178,50 +196,40 @@
             "nature": "concrete",
             "attributes": [
                 {
-                    "name": "family",
+                    "name": "name",
                     "target": {
                         "name": "string",
-                        "constraint": {
-                            "values": ["serif", "sans-serif", "monospace", "cursive", "fantasy"]
-                        }
-                    }
-                },
-                {
-                    "name": "primary",
-                    "target": {
-                        "name": "string",
-                        "src": [
-                            "Arial", "Arial Black", "Verdana", "Consolas", "Tahoma",
-                            "Trebuchet MS", "Impact", "Times New Roman", "Didot",
-                            "Georgia", "American Typewriter", "Andalé Mono",
-                            "Courier", "Lucida Console", "Monaco", "Bradley Hand",
-                            "Brush Script MT", "Luminari", "Comic Sans MS"
-                        ]
-                    }
-                },
-                {
-                    "name": "secondary",
-                    "target": {
-                        "name": "string",
-                        "src": [
-                            "Arial", "Arial Black", "Verdana", "Consolas", "Tahoma",
-                            "Trebuchet MS", "Impact", "Times New Roman", "Didot",
-                            "Georgia", "American Typewriter", "Andalé Mono",
-                            "Courier", "Lucida Console", "Monaco", "Bradley Hand",
-                            "Brush Script MT", "Luminari", "Comic Sans MS"
-                        ]
-                    }
-                },
-                {
-                    "name": "fallback",
-                    "target": {
-                        "name": "strubg",
                         "constraint": {
                             "values": [
-                                "Arial", "Verdana", "Helvetica", "Tahoma", "Trebuchet MS",
-                                "Impact", "Times New Roman", "Didot", "Georgia", "American Typewriter",
-                                "Andalé Mono", "Courier", "Lucida Console", "Monaco", "Bradley Hand",
-                                "Brush Script MT", "Luminari", "Comic Sans MS"
+                                "Arial, sans-serif",
+                                "Baskerville, 'Baskerville Old Face', serif",
+                                "'Bradley Hand', cursive",
+                                "'Brush Script MT', 'Brush Script Std', cursive",
+                                "Calibri, sans-serif",
+                                "Cambria, serif",
+                                "'Century Gothic', CenturyGothic, AppleGothic, sans-serif",
+                                "'Comic Sans MS', 'Comic Sans', cursive",
+                                "Consolas, monospace",
+                                "'Courier New', Courier, monospace", 
+                                "Monaco, monospace",
+                                "Didot, 'Didot LT STD', serif",
+                                "Garamond, serif",
+                                "'Hoefler Text', serif",
+                                "'Gill Sans', 'Gill Sans MT', sans-serif",
+                                "Georgia, serif",
+                                "'Helvetica Neue', Helvetica, sans-serif",
+                                "Impact, Haettenschweiler, fantasy",
+                                "'Lucida Grande', sans-serif",
+                                "'Lucida Sans', 'Lucida Sans Regular', sans-serif",
+                                "Luminari, fantasy",
+                                "Rockwell, serif",
+                                "'Segoe UI', 'Droid Sans', Ubuntu, sans-serif",
+                                "Tahoma, sans-serif",
+                                "'Times New Roman', Times, serif",
+                                "'Trebuchet MS', sans-serif",
+                                "Geneva, sans-serif",
+                                "Verdana, sans-serif",
+                                "sans-serif", "serif", "monospace", "cursive", "fantasy"
                             ]
                         }
                     }
@@ -366,12 +374,62 @@
                 }
             ]
         },
+        {
+            "name": "box-shadow",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "offsetX",
+                    "target": {
+                        "name": "size"
+                    }
+                },
+                {
+                    "name": "offsetY",
+                    "target": {
+                        "name": "size"
+                    }
+                },
+                {
+                    "name": "blur",
+                    "target": {
+                        "name": "size"
+                    }
+                },
+                {
+                    "name": "spread",
+                    "target": {
+                        "name": "size"
+                    }
+                },
+                {
+                    "name": "inset",
+                    "target": {
+                        "name": "boolean",
+                        "default": false
+                    }
+                },
+                {
+                    "name": "color",
+                    "target": {
+                        "name": "hex-color"
+                    }
+                }
+            ]
+        },
 
 
         {
             "name": "color",
             "nature": "prototype",
-            "attributes": []
+            "attributes": [
+                {
+                    "name": "opacity",
+                    "target": {
+                        "name": "percentage"
+                    }
+                }
+            ]
         },
         {
             "name": "hex-color",
@@ -518,6 +576,43 @@
                 }
             ]
         },
+        {
+            "name": "border-radius",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "all",
+                    "target": {
+                        "name": "size"
+                    }
+                },
+                {
+                    "name": "top-left",
+                    "target": {
+                        "name": "size"
+                    }
+                },
+                {
+                    "name": "top-right",
+                    "target": {
+                        "name": "size"
+                    }
+                },
+                {
+                    "name": "bottom-right",
+                    "target": {
+                        "name": "size"
+                    }
+                },
+                {
+                    "name": "bottom-left",
+                    "target": {
+                        "name": "size"
+                    }
+                }
+            ]
+        },
+
 
 
         {

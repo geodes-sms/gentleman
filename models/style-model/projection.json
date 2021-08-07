@@ -55,8 +55,8 @@
             "tags": [],
             "type": "layout",
             "content":  {
-                "type": "stack",
-                "orientation": "vertical",
+                "type": "flex",
+                "orientation": "column",
                 "disposition": [
                     {
                         "type": "layout",
@@ -87,15 +87,35 @@
                                     "style": {
                                         "css": ["text-style-rule"]
                                     }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "strikethrough",
+                                    "tag": "toggle-field--strikethrough",
+                                    "style": {
+                                        "css": ["text-style-rule"]
+                                    }
                                 }
                             ]
                         }
                     },
                     {
-                        "type": "attribute",
-                        "name": "color",
-                        "style": {
-                            "css": ["text-style-rule"]
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "row",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "color",
+                                    "style": {
+                                        "css": ["text-style-rule"]
+                                    }
+                                }
+                            ],
+                            "style": {
+                                "css": ["text-style-rule"]
+                            }
                         }
                     },
                     {
@@ -108,7 +128,7 @@
                                     "type": "static",
                                     "static":  {
                                         "type": "text",
-                                        "content": "Size",
+                                        "content": "Font",
                                         "style": {
                                             "css": ["label"]
                                         }
@@ -116,7 +136,37 @@
                                 },
                                 {
                                     "type": "attribute",
+                                    "name": "font"
+                                },
+                                {
+                                    "type": "attribute",
                                     "name": "size"
+                                }
+                            ],
+                            "style": {
+                                "css": ["text-style-rule"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "row",
+                            "disposition": [
+                                {
+                                    "type": "static",
+                                    "static":  {
+                                        "type": "text",
+                                        "content": "Line spacing",
+                                        "style": {
+                                            "css": ["label"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "line-height"
                                 }
                             ],
                             "style": {
@@ -204,6 +254,38 @@
                             "style": {
                                 "css": ["box-style-rule"]
                             }
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "background",
+                        "required": true,
+                        "style": {
+                            "css": ["box-style-rule"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "border",
+                        "required": true,
+                        "style": {
+                            "css": ["box-style-rule"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "corner",
+                        "required": true,
+                        "style": {
+                            "css": ["box-style-rule"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "shadow",
+                        "required": true,
+                        "style": {
+                            "css": ["box-style-rule"]
                         }
                     }
                 ],
@@ -410,6 +492,29 @@
                                     "type": "static",
                                     "static":  {
                                         "type": "text",
+                                        "content": "All",
+                                        "style": {
+                                            "css": ["title"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "all"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "column",
+                            "disposition": [
+                                {
+                                    "type": "static",
+                                    "static":  {
+                                        "type": "text",
                                         "content": "Top",
                                         "style": {
                                             "css": ["title"]
@@ -559,16 +664,6 @@
                 "orientation": "vertical",
                 "disposition": [
                     {
-                        "type": "static",
-                        "static":  {
-                            "type": "text",
-                            "content": "Color",
-                            "style": {
-                                "css": ["title--small"]
-                            }
-                        }
-                    },
-                    {
                         "type": "attribute",
                         "name": "value"
                     }
@@ -587,6 +682,298 @@
                         "type": "attribute",
                         "name": "url",
                         "tag": "simple-string--url"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "border-radius" },
+            "tags": ["margin"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static":  {
+                            "type": "text",
+                            "content": "Corner (border-radius)",
+                            "style": {
+                                "css": ["title"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "row",
+                            "disposition": [
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "column",
+                                        "disposition": [
+                                            {
+                                                "type": "static",
+                                                "static":  {
+                                                    "type": "text",
+                                                    "content": "Top-left",
+                                                    "style": {
+                                                        "css": ["label", "label--small"]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "top-left"
+                                            }
+                                        ],
+                                        "style": {
+                                            "ref": ["box-right"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "column",
+                                        "disposition": [
+                                            {
+                                                "type": "static",
+                                                "static":  {
+                                                    "type": "text",
+                                                    "content": "Top-right",
+                                                    "style": {
+                                                        "css": ["label", "label--small"]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "top-right"
+                                            }
+                                        ],
+                                        "style": {
+                                            "ref": ["box-right"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "column",
+                                        "disposition": [
+                                            {
+                                                "type": "static",
+                                                "static":  {
+                                                    "type": "text",
+                                                    "content": "Btm-right",
+                                                    "style": {
+                                                        "css": ["label", "label--small"]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "bottom-right"
+                                            }
+                                        ],
+                                        "style": {
+                                            "ref": ["box-right"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "column",
+                                        "disposition": [
+                                            {
+                                                "type": "static",
+                                                "static":  {
+                                                    "type": "text",
+                                                    "content": "Btm-left",
+                                                    "style": {
+                                                        "css": ["label", "label--small"]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "bottom-left"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "box-shadow" },
+            "tags": ["margin"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static":  {
+                            "type": "text",
+                            "content": "Box Shadow",
+                            "style": {
+                                "css": ["title"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "inset",
+                        "tag": "switch-field"
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "row",
+                            "disposition": [
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "column",
+                                        "disposition": [
+                                            {
+                                                "type": "static",
+                                                "static":  {
+                                                    "type": "text",
+                                                    "help": "Horizontal offset",
+                                                    "content": "offset-X",
+                                                    "style": {
+                                                        "css": ["label", "label--small"]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "offsetX"
+                                            }
+                                        ],
+                                        "style": {
+                                            "ref": ["box-right"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "column",
+                                        "disposition": [
+                                            {
+                                                "type": "static",
+                                                "static":  {
+                                                    "type": "text",
+                                                    "help": "Vertical offset",
+                                                    "content": "offset-Y",
+                                                    "style": {
+                                                        "css": ["label", "label--small"]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "offsetY"
+                                            }
+                                        ],
+                                        "style": {
+                                            "ref": ["box-right"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "column",
+                                        "disposition": [
+                                            {
+                                                "type": "static",
+                                                "static":  {
+                                                    "type": "text",
+                                                    "help": "Blur radius",
+                                                    "content": "Blur",
+                                                    "style": {
+                                                        "css": ["label", "label--small"]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "blur"
+                                            }
+                                        ],
+                                        "style": {
+                                            "ref": ["box-right"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "column",
+                                        "disposition": [
+                                            {
+                                                "type": "static",
+                                                "static":  {
+                                                    "type": "text",
+                                                    "content": "Spread",
+                                                    "style": {
+                                                        "css": ["label", "label--small"]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "spread"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "color"
+                    }
+                ]
+            }
+        },
+
+
+        {
+            "concept": { "name": "font" },
+            "tags": [],
+            "type": "layout",
+            "content": {
+                "type": "flex",
+                "orientation": "row",
+                "disposition": [
+                    {
+                        "type": "attribute",
+                        "name": "name",
+                        "tag": "choice"
                     }
                 ]
             }
@@ -802,81 +1189,7 @@
 
 
 
-        {
-            "concept": { "name": "set" },
-            "tags": ["font-set"],
-            "type": "layout",
-            "content": {
-                "type": "stack",
-                "orientation": "vertical",
-                "disposition": [
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": "Fonts",
-                            "style": {
-                                "css": ["title--small", "css-list__title--small"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "field",
-                        "field": {
-                            "type": "list",
-                            "list": {
-                                "item": {
-                                    "template": { "tag": "simple-string" },
-                                    "style": {
-                                        "css": ["textual-list__list-item--inline"]
-                                    }
-                                },
-                                "style": {
-                                    "css": ["textual-list__list", "textual-list__list--inline", "textual-list__list--horizontal"]
-                                }
-                            },
-                            "action": {
-                                "add": {
-                                    "content": [
-                                        {
-                                            "type": "static",
-                                            "static": {
-                                                "type": "text",
-                                                "content": "New font",
-                                                "focusable": false
-                                            }
-                                        }
-                                    ],
-                                    "help": "Add a font",
-                                    "style": {
-                                        "css": ["textual-list__btn-add"]
-                                    }
-                                },
-                                "remove": {
-                                    "content": [
-                                        { 
-                                            "type": "static",
-                                            "static": {
-                                                "type": "text",
-                                                "content": "",
-                                                "focusable": false
-                                            }
-                                        }
-                                    ],
-                                    "help": "Remove font", 
-                                    "style": {
-                                        "css": ["textual-list__btn-remove"]
-                                    }
-                                }
-                            },
-                            "style": {
-                                "css": ["textual-list", "textual-list--font"]
-                            }
-                        }
-                    }
-                ]
-            }
-        },
+
         {
             "concept": { "name": "set" },
             "tags": ["css-set"],
@@ -1137,7 +1450,6 @@
                 }
             }
         },
-
         {
             "concept": { "name": "boolean" },
             "tags": ["toggle-field--italic"],
@@ -1177,7 +1489,6 @@
                 }
             }
         },
-
         {
             "concept": { "name": "boolean" },
             "tags": ["toggle-field--underline"],
@@ -1199,6 +1510,45 @@
                             { 
                                 "type": "raw", 
                                 "raw": "Underline",
+                                "style": {
+                                    "css": ["mp-toggle-field__label-help"]
+                                }
+                            }
+                        ],       
+                        "style": {
+                            "css": ["mp-toggle-field__label"]
+                        }
+                    },
+                    "style": {
+                        "css": ["mp-toggle-field__checkbox"]
+                    }
+                },
+                "style": {
+                    "css": ["mp-toggle-field"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "boolean" },
+            "tags": ["toggle-field--strikethrough"],
+            "type": "field",
+            "content": {
+                "type": "binary",
+                "checkbox": {
+                    "label": {
+                        "content": [
+                            { 
+                                "type": "raw", 
+                                "raw": "S",
+                                "style": {
+                                    "gss": {
+                                        "text": { "strikethrough": true }
+                                    }
+                                }
+                            },
+                            { 
+                                "type": "raw", 
+                                "raw": "Strikethrough",
                                 "style": {
                                     "css": ["mp-toggle-field__label-help"]
                                 }
@@ -1430,6 +1780,38 @@
                 ],
                 "style": {
                     "css": ["name-field", "name-field--textual"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["choice"],
+            "type": "field",
+            "content": {
+                "type": "choice",
+                "choice": {
+                    "option": {
+                        "template": {
+                            "tag": "reference"
+                        },
+                        "style": {
+                            "css": ["tag-reference__choice-option"]
+                        }
+                    },
+                    "style": {
+                        "css": ["tag-reference__choice"]
+                    }
+                },
+                "placeholder": "inherit",
+                "expanded": false,
+                "input": {
+                    "placeholder": "Search...",
+                    "style": {
+                        "css": ["tag-reference__input"]
+                    }
+                },
+                "style": {
+                    "css": ["tag-reference"]
                 }
             }
         }

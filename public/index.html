@@ -1,42 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Home</title>
-    <link rel="stylesheet" href="assets/css/normalize.css">
-    <link rel="stylesheet" href="assets/css/base.css">
-    <link rel="stylesheet" href="assets/css/site.css">
-    <link rel="stylesheet" href="assets/css/docs.css">
+    <link rel="stylesheet" href="./../assets/css/normalize.css">
+    <link rel="stylesheet" href="./../assets/css/base.css">
+    <link rel="stylesheet" href="./../assets/css/site/site.css">
+    <link rel="stylesheet" href="./../assets/css/site/docs.css">
 </head>
-<body>
-    <header>
-        <div class="content-wrapper"></div>
-        <div class="content-wrapper content-wrapper--header">
-            <a class="logo noselect" href="/">
-                Gentleman
-            </a>
-            <nav class="header-nav">
-                <ul class="bare-list nav">
-                    <li class="nav-item">
-                        <a class="nav-item__link" href="about.html">About</a>
+
+<body class="site">
+    <header class="site-header">
+        <h1 class="site-title font-gentleman">
+            Gentleman
+        </h1>
+
+        <p class="site-description">
+            Gentleman is a <strong><em>lightweight</em> web modelling tool</strong> that allows you to <br>
+            create and manipulate concept-based models with projections.
+        </p>
+
+        <ul class="bare-list site-menu" data-component="menu">
+            <li class="site-menu-item has-helper">
+                <a class="site-menu-item__link" href="./about.html">About</a>
+                <i class="helper">Story and Contributors</i>
+            </li>
+            <li class="site-menu-item has-helper">
+                <a class="site-menu-item__link" href="./docs/index.html">Docs</a>
+                <i class="helper">Guide and Tutorial</i>
+            </li>
+            <li class="site-menu-item has-helper">
+                <a class="site-menu-item__link" href="./faq.html">FAQ</a>
+                <i class="helper">Questions and Answers</i>
+            </li>
+        </ul>
+
+        <a class="site-action-link btn-link" href="https://geodes-sms.github.io/gentleman/app/index.html">
+            Play with Gentleman
+            <i class="helper">Gentleman in action</i>
+        </a>
+    </header>
+
+    <main class="site-body site-body-section--features">
+        <section class="site-body-section">
+            <header class="site-body-section-header">
+                <h3 class="site-body-section-title">Features</h3>
+            </header>
+            <div class="site-body-section-content">
+                <ul class="bare-list feature-list">
+                    <li class="feature-item">Easy integration with any web application </li>
+                    <li class="feature-item">Compatible with Ecore model </li>
+                    <li class="feature-item">Support textual and tabular notations and multimedia content</li>
+                    <li class="feature-item">Support multiple projections for a concept</li>
+                    <li class="feature-item">Easy to switch the projections used against a model</li>
+                    <li class="feature-item">Projections are defined with specialized UI elements</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="site-body-section site-body-section--examples">
+            <header class="site-body-section-header">
+                <h3 class="site-body-section-title">Examples</h3>
+            </header>
+            <div class="site-body-section-content">
+                <ul class="bare-list example-list">
+                    <li class="example-item">
+                        <h4 class="example-item-title font-ui">Mindmap</h4>
+                        <a class="bare-link example-item-link" href="https://geodes-sms.github.io/gentleman/demo/mindmap/index.html">
+                            <img class="example-item-link-img" src="https://geodes-sms.github.io/gentleman/assets/images/mindmap.gif"
+                                alt="Mindmap demo">
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-item__link" href="docs/index.html">Documentation</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-item__link" href="faq.html">FAQ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-item__link" href="https://github.com/geodes-sms/gentleman">Code</a>
+                    <li class="example-item">
+                        <h4 class="example-item-title font-ui">Traffic Light</h4>
+                        <a class="bare-link example-item-link" href="https://geodes-sms.github.io/gentleman/demo/traffic-light/index.html">
+                            <img class="example-item-link-img" src="https://geodes-sms.github.io/gentleman/assets/images/traffic_light.gif"
+                                alt="Traffic light demo">
+                        </a>
                     </li>
                 </ul>
-            </nav>
-            <div class="action-call-wrapper">
-                <a class="action-call" href="demo/index.html">Try the demo</a>
             </div>
+        </section>
+    </main>
+
+    <footer class="page-footer">
+        <div class="content-wrapper">
+            <p>Gentleman</p>
+            <p class="footer-license">
+                Copyright &copy; 2020 &ndash; 2021 Louis-Edouard LAFONTANT &bull;
+                Code licensed under the <a class="link footer-license__link" href="https://opensource.org/licenses/MIT"
+                    target="_blank" rel="noopener">MIT License</a>.
+                Content licensed under <a class="link footer-license__link"
+                    href="https://creativecommons.org/share-your-work/public-domain/cc0/" target="_blank"
+                    rel="noopener">CC0</a>.
+            </p>
         </div>
-    </header>
+    </footer>
 </body>
+
 </html>

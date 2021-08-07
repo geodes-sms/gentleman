@@ -13,8 +13,6 @@ const _Concept = {
     id: null,
     /** @type {string} */
     name: null,
-    /** @type {string} */
-    description: null,
     /** @type {*} */
     ref: null,
     /** @type {string[]} */
@@ -44,9 +42,12 @@ const _Concept = {
         this.accept = args.accept;
         this.parent = args.parent;
         this.ref = args.ref;
+        this.properties = valOrDefault(this.schema.properties, []);
+        if (Array.isArray(args.properties)) {
+            this.properties.push(...args.properties);
+        }
         this.default = valOrDefault(this.schema.default, null);
         this.values = valOrDefault(args.values, valOrDefault(this.schema.values, []));
-        this.description = valOrDefault(args.description, this.schema.description);
         this.src = valOrDefault(this.schema.src, []);
         this.constraint = this.schema.constraint;
         this.errors = [];
@@ -113,7 +114,7 @@ const _Concept = {
             return undefined;
         }
 
-        let property = this.schema.properties.find(prop => prop.name === name);
+        let property = this.properties.find(prop => prop.name === name);
 
         const { type, value } = property;
 

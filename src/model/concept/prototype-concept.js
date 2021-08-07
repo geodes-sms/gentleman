@@ -326,8 +326,7 @@ const metaConcept = {
             return this.name;
         }
 
-        let propSchema = valOrDefault(this.schema.properties, []);
-        let property = propSchema.find(prop => prop.name === name);
+        let property = this.properties.find(prop => prop.name === name);
 
         if (isNullOrUndefined(property)) {
             return undefined;

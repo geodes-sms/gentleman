@@ -47,6 +47,10 @@
     background-color: #555;
 }
 
+.editor-window-header {
+    display: none;
+}
+
 
 /*
   Status bar section

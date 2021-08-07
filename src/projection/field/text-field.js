@@ -9,7 +9,7 @@ import {
 } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { StateHandler } from "./../state-handler.js";
-import { resolveValue } from "./../content-handler.js";
+import { ContentHandler, resolveValue } from "./../content-handler.js";
 import { Field } from "./field.js";
 
 
@@ -85,6 +85,7 @@ function resolveInput(schema) {
     const { placeholder = "", type } = schema;
 
     let placeholderValue = resolveValue.call(this, placeholder);
+    console.log(placeholder, placeholderValue);
 
     if (this.readonly || this.resizable) {
         return createSpan({
@@ -312,7 +313,7 @@ const BaseTextField = {
     render() {
         const fragment = createDocFragment();
 
-        const { input = {}, style } = this.schema;
+        const { container, input = {}, style } = this.schema;
 
         if (!isHTMLElement(this.element)) {
             this.element = createDiv({
@@ -339,31 +340,67 @@ const BaseTextField = {
             StyleHandler.call(this.projection, this.element, this.schema.style);
         }
 
-        if (!isHTMLElement(this.input)) {
-            const { placeholder = "", type, style } = input;
+        if (container) {
+            const { content = [], style } = container;
 
-            this.input = resolveInput.call(this, input);
+            content.forEach(c => {
+                if (c.type === "input") {
+                    const { style } = c.input;
 
-            if (this.disabled) {
-                this.input.disabled = true;
+                    this.input = resolveInput.call(this, c.input);
+
+                    if (this.disabled) {
+                        this.input.disabled = true;
+                    }
+
+                    if (this.focusable) {
+                        this.input.tabIndex = 0;
+                    } else {
+                        this.input.dataset.ignore = "all";
+                    }
+
+                    StyleHandler.call(this.projection, this.input, style);
+
+                    if (this.multiline) {
+                        this.input.classList.add("field--textbox__input--multiline");
+                    }
+
+                    fragment.append(this.input);
+                } else {
+                    let element = ContentHandler.call(this, c, null, { focusable: false });
+
+                    fragment.append(element);
+                }
+            });
+
+            StyleHandler.call(this.projection, this.element, style);
+        } else {
+            if (!isHTMLElement(this.input)) {
+                const { style } = input;
+
+                this.input = resolveInput.call(this, input);
+
+                if (this.disabled) {
+                    this.input.disabled = true;
+                }
+
+                if (this.focusable) {
+                    this.input.tabIndex = 0;
+                } else {
+                    this.input.dataset.ignore = "all";
+                }
+
+                StyleHandler.call(this, this.input, style);
+
+                if (this.multiline) {
+                    this.input.classList.add("field--textbox__input--multiline");
+                }
+
+                fragment.append(this.input);
             }
 
-            if (this.focusable) {
-                this.input.tabIndex = 0;
-            } else {
-                this.input.dataset.ignore = "all";
-            }
-
-            StyleHandler.call(this, this.input, style);
-
-            if (this.multiline) {
-                this.input.classList.add("field--textbox__input--multiline");
-            }
-
-            fragment.append(this.input);
+            StyleHandler.call(this.projection, this.element, style);
         }
-
-        StyleHandler.call(this.projection, this.element, style);
 
         if (fragment.hasChildNodes()) {
             this.element.append(fragment);

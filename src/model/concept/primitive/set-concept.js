@@ -47,7 +47,6 @@ const _SetConcept = {
         this.parent = args.parent;
         this.ref = args.ref;
         this.accept = this.schema.accept;
-        this.description = this.schema.description;
         this.ordered = valOrDefault(this.schema.ordered, true);
         this.constraint = this.schema.constraint;
 
@@ -334,8 +333,7 @@ const _SetConcept = {
             return this.value.length;
         }
 
-        let propSchema = valOrDefault(this.schema.properties, []);
-        let property = propSchema.find(prop => prop.name === name);
+        let property = this.properties.find(prop => prop.name === name);
 
         if (isNullOrUndefined(property)) {
             return undefined;
@@ -367,9 +365,7 @@ const _SetConcept = {
             return true;
         }
 
-        let propSchema = valOrDefault(this.schema.properties, []);
-
-        return propSchema.findIndex(prop => prop.name === name) !== -1;
+        return this.properties.findIndex(prop => prop.name === name) !== -1;
     },
 
     getCandidates() {

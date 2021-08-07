@@ -10,6 +10,27 @@ const Orientation = {
     COLUMN: "column"
 };
 
+const Alignment = {
+    "start": "flex-start",
+    "end": "flex-end",
+    "flex-start": "flex-start",
+    "flex-end": "flex-end",
+    "center": "center",
+    "stretch": "stretch",
+    "baseline": "baseline"
+};
+
+const Justify = {
+    "start": "flex-start",
+    "end": "flex-end",
+    "flex-start": "flex-start",
+    "flex-end": "flex-end",
+    "center": "center",
+    "space-between": "space-between",
+    "space-around": "space-around",
+    "space-evenly": "space-evenly"
+};
+
 export const BaseFlexLayout = {
     /** @type {string} */
     orientation: null,
@@ -124,7 +145,7 @@ export const BaseFlexLayout = {
             this.container.dataset.ignore = "all";
         }
 
-        StyleHandler.call(this, this.container, style);
+        StyleHandler.call(this.projection, this.container, style);
 
         if (fragment.hasChildNodes()) {
             this.container.append(fragment);
@@ -143,8 +164,8 @@ export const BaseFlexLayout = {
     },
     refresh() {
         this.container.style.flexDirection = this.orientation;
-        this.container.style.justifyContent = this.justifyContent;
-        this.container.style.alignItems = this.alignItems;
+        this.container.style.justifyContent = Justify[this.justifyContent];
+        this.container.style.alignItems = Alignment[this.alignItems];
 
         if (this.wrappable) {
             this.container.style.flexWrap = "wrap";
@@ -160,7 +181,7 @@ export const BaseFlexLayout = {
             this.container.focus();
         } else {
             let focusableElement = getElement('[tabindex]:not([tabindex="-1"])', this.container);
-            
+
             if (isNullOrUndefined(focusableElement)) {
                 return false;
             }

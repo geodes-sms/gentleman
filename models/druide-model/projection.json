@@ -1,0 +1,61 @@
+{
+    "projection": [
+        {
+            "concept": { "name": "druide-concept" },
+            "type": "layout",
+            "tags": [],
+            "content": {
+                "type": "flex",
+                "orientation": "colum",
+                "disposition": [
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "row",
+                            "disposition": [
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Druide"
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "title"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "rule"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "druide-rule" },
+            "type": "layout",
+            "tags": [],
+            "content": {
+                "type": "flex",
+                "orientation": "row",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Rule"
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "name"
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -7,7 +7,6 @@ const PROP_TYPE = "type";
 
 const ATTR_ATTRIBUTES = "attributes";
 const ATTR_BASE = "base";
-const ATTR_DESCRIPTION = "description";
 const ATTR_NAME = "name";
 const ATTR_REQUIRED = "required";
 const ATTR_PROPERTIES = "properties";
@@ -25,7 +24,6 @@ const hasAttr = (concept, name) => concept.isAttributeCreated(name);
 
 const getName = (concept) => getValue(concept, ATTR_NAME).toLowerCase();
 
-const getDescription = (concept) => getValue(concept, ATTR_DESCRIPTION);
 
 function createProjectionLink(text, concept) {
     const { id, name } = concept;
@@ -117,7 +115,6 @@ export function buildConceptHandler(_options = {}) {
 
 function buildConcept(concept) {
     const name = getName(concept);
-    const description = getDescription(concept);
     const nature = concept.getProperty(PROP_NATURE);
     const attributes = [];
     const properties = [];
@@ -158,7 +155,6 @@ function buildConcept(concept) {
     let schema = {
         "id": concept.id,
         "name": name,
-        "description": description,
         "nature": nature,
         "attributes": attributes,
         "properties": properties,
@@ -184,7 +180,7 @@ function buildConcept(concept) {
  */
 function buildAttribute(attribute) {
     const name = getName(attribute);
-    const description = getDescription(attribute);
+
     const required = hasAttr(attribute, ATTR_REQUIRED) && hasValue(attribute, ATTR_REQUIRED) ? getValue(attribute, ATTR_REQUIRED) : true;
 
     if (isNullOrWhitespace(name)) {
@@ -208,8 +204,7 @@ function buildAttribute(attribute) {
     const schema = {
         "name": name,
         "target": buildTarget.call(this, getValue(attribute, "target", true)),
-        "required": required,
-        "description": description,
+        "required": required
     };
 
     return {
@@ -366,7 +361,6 @@ function buildConstraint(constraint) {
  */
 function buildProperty(property) {
     const name = getName(property);
-    const description = getDescription(property);
 
     if (isNullOrWhitespace(name)) {
         let link = createProjectionLink.call(this, "name", getAttr(property, ATTR_NAME));
@@ -392,8 +386,7 @@ function buildProperty(property) {
     var schema = {
         "name": getName(property),
         "type": type,
-        "value": getValue(target, "value"),
-        "description": description,
+        "value": getValue(target, "value")
     };
 
     return {

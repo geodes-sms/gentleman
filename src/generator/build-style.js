@@ -117,7 +117,6 @@ function buildBoxStyle(style) {
         if (value) {
             schema.inner = value;
         }
-
     }
 
     if (hasAttr(style, "outer")) {
@@ -147,6 +146,17 @@ function buildBoxStyle(style) {
 
     if (hasAttr(style, "border")) {
         schema.border = buildBorder.call(this, getAttr(style, "border"));
+    }
+
+    if (hasAttr(style, "corner")) {
+        schema.corner = buildCorner.call(this, getAttr(style, "corner"));
+    }
+
+    if (hasAttr(style, "shadow")) {
+        let value = buildShadow.call(this, getAttr(style, "shadow"));
+        if (value) {
+            schema.shadow = value;
+        }
     }
 
     if (hasAttr(style, "opacity") && hasValue(style, "opacity")) {
@@ -185,13 +195,42 @@ function buildBorder(style) {
         if (hasAttr(style, dir)) {
             let value = getAttr(style, dir);
 
-            schema[dir] = {
-                width: buildSize.call(this, getAttr(value, "width")),
-                color: buildcolor.call(this, getValue(value, "color", true)),
-                type: getValue(value, "type")
-            };
+            let width = buildSize.call(this, getAttr(value, "width"));
+
+            if (width) {
+                let color = getAttr(value, "color");
+
+                schema[dir] = {
+                    width: width,
+                    // color: buildcolor.call(this, getValue(value, "color", true)),
+                    color: buildcolor.call(this, color),
+                    type: getValue(value, "type")
+                };
+            }
         }
     });
+
+    return schema;
+}
+
+function buildCorner(style) {
+    let schema = {};
+
+    let hasValue = false;
+
+    ["all", "top-left", "top-right", "bottom-right", "bottom-left"].forEach(dir => {
+        if (hasAttr(style, dir)) {
+            let value = buildSize.call(this, getAttr(style, dir));
+            if (!isNullOrUndefined(value)) {
+                schema[dir] = value;
+                hasValue = true;
+            }
+        }
+    });
+
+    if (!hasValue) {
+        return null;
+    }
 
     return schema;
 }
@@ -249,6 +288,69 @@ function buildSize(size) {
         value: getValue(size, "value"),
         unit: getValue(size, "unit")
     };
+
+    return schema;
+}
+
+function buildShadow(shadow) {
+    if (isNullOrUndefined(shadow)) {
+        return null;
+    }
+
+    const PROP_OFFSET_X = "offsetX";
+    const PROP_OFFSET_Y = "offsetY";
+    const PROP_BLUR = "blur";
+    const PROP_SPREAD = "spread";
+    const PROP_INSET = "inset";
+
+    let remain = 3;
+    let schema = {};
+
+    if (hasAttr(shadow, PROP_OFFSET_X)) {
+        let value = buildSize.call(this, getAttr(shadow, PROP_OFFSET_X));
+        if (!isNullOrUndefined(value)) {
+            schema[PROP_OFFSET_X] = value;
+            remain--;
+        }
+    }
+
+    if (hasAttr(shadow, PROP_OFFSET_Y)) {
+        let value = buildSize.call(this, getAttr(shadow, PROP_OFFSET_Y));
+        if (!isNullOrUndefined(value)) {
+            schema[PROP_OFFSET_Y] = value;
+            remain--;
+        }
+    }
+
+    if (hasAttr(shadow, PROP_BLUR)) {
+        let value = buildSize.call(this, getAttr(shadow, PROP_BLUR));
+        if (!isNullOrUndefined(value)) {
+            schema[PROP_BLUR] = value;
+            remain--;
+        }
+    }
+
+    if (hasAttr(shadow, PROP_SPREAD)) {
+        let value = buildSize.call(this, getAttr(shadow, PROP_SPREAD));
+        if (!isNullOrUndefined(value)) {
+            schema[PROP_SPREAD] = value;
+            remain--;
+        }
+    }
+
+    if (remain > 0) {
+        return null;
+    }
+
+    if (hasAttr(shadow, PROP_INSET) && getValue(shadow, PROP_INSET)) {
+        schema[PROP_INSET] = true;
+    }
+
+    if (hasAttr(shadow, "color")) {
+        let color = getAttr(shadow, "color");
+        // schema.color = buildcolor.call(this, getValue(color, "value", true));
+        schema.color = buildcolor.call(this, color);
+    }
 
     return schema;
 }

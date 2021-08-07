@@ -1198,14 +1198,12 @@
 
 .model-projection-sideview {
     position: relative;
-    width: 50%; max-width: 300px;
+    width: 50%; max-width: 320px;
     background-color: #c0c0c0;
     overflow: auto;
 }
 
     .model-projection-sideview .editor-concept {
-        position: absolute;
-        top: 0; right: 0; left: 0; bottom: 0;
         border-radius: 0;
         background-color: #fff;
     }
@@ -2178,9 +2176,9 @@
         padding-left: 6px; padding-right: 6px;
     }
 
-    .template-config > .structure__btn-delete {
-        display: block;
-    }
+        .template-config > .structure__btn-delete {
+            display: block;
+        }
 
 .field-config,
 .static-config,
@@ -2313,21 +2311,21 @@
     background-color: rgba(205, 205, 205, 0.5);
 }
 
-.direction-size > .structure__btn-delete {
-    display: block;
-    width: 24px; height: 100%; margin-right: 4px;
-    font-size: 0.9em; font-weight: 300;
-    color: #fff;
-    background-color: rgba(55, 55, 55, 0.5);;
-    padding: 0;
-    transition: .2s;
-}
-    .direction-size > .structure__btn-delete:before {
-        content: "✖";
+    .direction-size > .structure__btn-delete {
+        display: block;
+        width: 24px; height: 100%; margin-right: 4px;
+        font-size: 0.9em; font-weight: 300;
+        color: #fff;
+        background-color: rgba(55, 55, 55, 0.5);;
+        padding: 0;
+        transition: .2s;
     }
-    .direction-size > .structure__btn-delete:hover {
-        background-color: #222;
-    }
+        .direction-size > .structure__btn-delete:before {
+            content: "✖";
+        }
+        .direction-size > .structure__btn-delete:hover {
+            background-color: #222;
+        }
 
     .direction-size .field--textbox__input {
         border-radius: 0;
@@ -2337,23 +2335,23 @@
     border-bottom: 2px solid #696969;
 }
 
-.size-config .field--textbox__input {
-    min-width: 24px;
-    padding-left: 2px;
-}
-
-    .size-config .field--textbox:first-child .field--textbox__input {
-        border-bottom-right-radius: 0; border-top-right-radius: 0;
-    }
-
-    .size-config .field--textbox:last-child .field--textbox__input {
-        border-bottom-left-radius: 0; border-top-left-radius: 0;
-        font-weight: bold;
-        text-transform: lowercase;
-        background-color: #e5e4e2;
-        justify-content: center;
+    .size-config .field--textbox__input {
         min-width: 24px;
+        padding-left: 2px;
     }
+
+        .size-config .field--textbox:first-child .field--textbox__input {
+            border-bottom-right-radius: 0; border-top-right-radius: 0;
+        }
+
+        .size-config .field--textbox:last-child .field--textbox__input {
+            border-bottom-left-radius: 0; border-top-left-radius: 0;
+            font-weight: bold;
+            text-transform: lowercase;
+            background-color: #e5e4e2;
+            justify-content: center;
+            min-width: 24px;
+        }
 
 .border-value-config > .structure__btn-delete {
     align-self: flex-end;
@@ -2374,15 +2372,8 @@
     justify-self: flex-end;
 }
 
-
 .text-field--textual { width: 100%; }
 
 .text-field--textual .name-field--textual__input { width: 100%; }
-
-.field-config .action-container {
-    width: calc(50% - 12px);
-    background-color: #f2f1f0;
-    box-shadow: 1px 2px -1px #c0c0c0;
-}
 
 .field-config .action-container + .action-container { margin-left: 6px; }

@@ -1,4 +1,4 @@
-import { valOrDefault, createDocFragment, createI, isHTMLElement, htmlToElement, createButton, } from "zenkai";
+import { valOrDefault, createDocFragment, createI, isHTMLElement, htmlToElement, createButton, isNullOrUndefined, } from "zenkai";
 import { LayoutFactory } from "./layout/index.js";
 import { FieldFactory } from "./field/index.js";
 import { StaticFactory } from "./static/index.js";
@@ -24,14 +24,17 @@ export function resolveValue(object) {
  * @param {string} name 
  */
 function AttributeHandler(schema, concept) {
-    const { name, merge = false, required = concept.isAttributeRequired(name), tag, placeholder = {}, style } = schema;
+    const { name, tag, placeholder = {}, style } = schema;
 
     if (!concept.hasAttribute(name)) {
         console.error(`Attribute '${name}' does not exist in the concept '${concept.name}'`);
+
         return createI({
             hidden: true,
         }, name);
     }
+
+    const required = valOrDefault(schema.required, concept.isAttributeRequired(name));
 
     if (required && !concept.isAttributeCreated(name)) {
         concept.createAttribute(name);
@@ -75,7 +78,7 @@ function AttributeHandler(schema, concept) {
 
         return attr.placeholder;
     } else {
-        const { target, description, schema } = concept.getAttributeByName(name);
+        const { target, schema } = concept.getAttributeByName(name);
 
         let projection = this.projection.model.createProjection(target, tag).init();
 
@@ -83,6 +86,10 @@ function AttributeHandler(schema, concept) {
         projection._style = style;
 
         attr.element = projection.render();
+
+        if (isNullOrUndefined(attr.element)) {
+            return createI({ hidden: true }, name);
+        }
 
         projection.element.parent = this;
     }
@@ -214,32 +221,6 @@ export function ContentHandler(schema, concept, args = {}) {
         let result = StateHandler.call(this, _schema, schema.state);
 
         return ContentHandler.call(this, result.content, concept, args);
-    } else if (schema.type === "trigger") {
-        let btnTrigger = createButton({
-            class: ["btn", "static"],
-            dataset: {
-                nature: "static"
-            }
-        });
-
-        schema.content.forEach(element => {
-            let content = ContentHandler.call(this, element, this.projection.concept, { focusable: false });
-            btnTrigger.append(content);
-        });
-        
-        btnTrigger.addEventListener("click", (event) => {
-            let concept = contentConcept;
-
-            if (schema.bind) {
-                concept = contentConcept.getValue(true);
-            }
-
-            this.environment.triggerEvent({ name: schema.name, args: [concept] });
-        });
-
-        StyleHandler.call(this.projection, btnTrigger, schema.style);
-
-        return btnTrigger;
     }
 
     console.error(schema);

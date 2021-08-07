@@ -117,7 +117,7 @@ The *Stactic text* is used to display textual content.
 #### Properties
 
 - **content** `[string]` (*required*): Text content.
-- **contentType** `[string={raw|html|property}]`: Defines how the content should be processed
+- **asHTML** `[boolean=false]`: Defines how the content should be processed
 
 ### Image
 
@@ -138,9 +138,14 @@ The *Stactic link* is used to display links.
 - **url** `[string]` (*required*): Defines the link's url
 - **urlType** `[string={link|email|phone}]`: Defines how the link should be processed
 
-### HTML
+### Button
 
-The *Stactic HTML* is used to insert HTML Templates declared on the page.
+The *Stactic button* is used to display buttons.
+
+#### Properties
+
+- **content** `[set:element]` (*required*): Defines button's display
+- **trigger** `[string]` (*required*): Defines the trigger that will be fired when the button is clicked
 
 ## Style
 

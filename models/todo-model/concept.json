@@ -1,0 +1,147 @@
+{
+    "concept": [
+        {
+            "id": "11g5bwb5-451d-344f-80d0-1e2138a59ec9",
+            "name": "todo",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    },
+                    "unique": true,
+                    "required": true
+                },
+                {
+                    "name": "tags",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "tag"
+                        }
+                    },
+                    "required": true
+                },
+                {
+                    "name": "tasks",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "task"
+                        },
+                        "constraint": {
+                            "cardinality": {
+                                "type": "range",
+                                "range": {
+                                    "min": { "value": 1 }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "id": "01f6fc23-pdab-4e74-b9cd-51afb30ecfc5",
+            "name": "tag",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "priority",
+                    "target": {
+                        "name": "priority"
+                    },
+                    "required": true
+                }
+            ]
+        },
+
+        {
+            "id": "adefde42-abd9-o57f-8e84-ae1f056d26f7",
+            "name": "task",
+            "description": null,
+            "nature": "prototype",
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true,
+                    "unique": true
+                },
+                {
+                    "name": "completed",
+                    "target": {
+                        "name": "boolean",
+                        "default": true
+                    },
+                    "required": true
+                },
+                {
+                    "name": "priority",
+                    "target": {
+                        "name": "priority"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "due_date",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "id": "g52dedae-ca1d-24f5-8e84-d2a1f0e566f7",
+            "name": "single-task",
+            "nature": "concrete",
+            "prototype": "task",
+            "attributes": []
+        },
+        {
+            "id": "ddeqd2e4-4da1-7of4-82e9-a1hf06d2e6f7",
+            "name": "recurring-task",
+            "nature": "concrete",
+            "prototype": "task",
+            "attributes": [
+                {
+                    "name": "start",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "end",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                }
+            ]
+        },
+        
+
+        {
+            "id": "p39a63c6-613e-4e2f-b39f-26707210ab66",
+            "name": "priority",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "values": ["P1", "P2", "P3", "P4"]
+            }
+        }
+    ]
+}

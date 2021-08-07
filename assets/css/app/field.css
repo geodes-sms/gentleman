@@ -37,6 +37,7 @@
         border-radius: 50%;
         background-color: #555;
         transition: .2s;
+        z-index: 20;
     }
 
         .field-message .notification-message {

@@ -636,6 +636,7 @@
 
             .editor-toolbar__button--home:after {
                 content: "•••";
+                /* transform: rotate(90deg); if you want it as vertical */
             }
             .editor-toolbar__button--home:not(:disabled):hover:after {
                 letter-spacing: -1px;

@@ -8,7 +8,9 @@ module.exports = merge(common, {
     mode: 'production',
     entry: {
         mindmap: './demo/mindmap/index.js',
-        trafficlight: './demo/traffic-light/index.js'
+        trafficlight: './demo/traffic-light/index.js',
+        relis: './demo/relis/index.js',
+        todo: './demo/todo/index.js',
     },
     output: {
         filename: '[name].js',

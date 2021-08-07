@@ -37,6 +37,8 @@ const BaseTextStatic = {
     focusable: null,
     /** @type {boolean} */
     hasProperty: false,
+    /** @type {boolean} */
+    asHTML: false,
 
     init(args = {}) {
         Object.assign(this.schema, args);
@@ -94,7 +96,7 @@ const BaseTextStatic = {
             } else {
                 let value = resolveValue.call(this, content);
                 this.element.append(value);
-                this.element.content=value;
+                this.element.content = value;
             }
 
             bind = true;

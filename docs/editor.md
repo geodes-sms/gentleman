@@ -188,21 +188,6 @@ It can be used to define elements of the Ribbon and register actions that will b
                 "type": "json-cp",
                 "required": true 
             }
-        ],
-        "actions": [
-            {
-                "name": "preview-projection",
-                "content": "Preview",
-                "help": "Preview the projections"
-            },
-            {
-                "name": "build-projection",
-                "content": "Build",
-                "help": "Build the projections",
-                "options": {
-                    "download": true
-                }
-            }
         ]
     }
 }

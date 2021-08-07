@@ -30,7 +30,6 @@ const _BooleanConcept = {
         this.parent = args.parent;
         this.ref = args.ref;
         this.default = valOrDefault(this.schema.default, true);
-        this.description = this.schema.description;
         this.constraint = this.schema.constraint;
         this.errors = [];
 

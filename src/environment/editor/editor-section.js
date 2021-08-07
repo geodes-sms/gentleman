@@ -1,7 +1,6 @@
 import {
-    createDocFragment, createDiv, createSpan, createUnorderedList, createListItem,
-    createI, createButton, isHTMLElement, findAncestor, hasOwn, isNullOrUndefined,
-    valOrDefault,
+    createDocFragment, createDiv, createSpan, createButton, isHTMLElement, findAncestor,
+    hasOwn, isNullOrUndefined, valOrDefault,
 } from 'zenkai';
 import { show, hide, Key, toggle, Events } from '@utils/index.js';
 import { createModelSelector } from './model-selector.js';
@@ -75,7 +74,8 @@ export const EditorSection = {
                 concepts = conceptModel.getSchema("concrete");
             }
 
-            return concepts.map(concept => conceptModel.getCompleteModelConcept(concept));
+            return concepts.filter(concept => conceptModel.isConcept(concept.name))
+                .map(concept => conceptModel.getCompleteModelConcept(concept));
         });
 
         return this;
@@ -220,6 +220,6 @@ export const EditorSection = {
     },
 
     bindEvents() {
-      
+
     }
 };

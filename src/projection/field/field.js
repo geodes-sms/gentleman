@@ -1,6 +1,6 @@
-import { removeChildren, isEmpty, isFunction, isHTMLElement, createI, findAncestor, isNullOrUndefined } from 'zenkai';
+import { removeChildren, isEmpty, isFunction, isHTMLElement, findAncestor, isNullOrUndefined } from 'zenkai';
 import { shake, show, hide, toggle } from '@utils/index.js';
-import { createNotificationMessage } from "./notification.js";
+
 
 const BaseField = {
     init() {
@@ -31,34 +31,14 @@ const BaseField = {
     get hasError() { return this.source.hasError; },
     get hasAttached() { return !isEmpty(this.attached); },
 
-    attach(element, type) {
-        this.attached.push(element);
-    },
-    detach(element) {
-        this.attached.slice(this.attached.indexOf(element), 1);
-    },
+    attach(element, type) { this.attached.push(element); },
+    detach(element) { this.attached.slice(this.attached.indexOf(element), 1); },
     getAttached(pred) {
         if (!isFunction(pred)) {
             return this.attached;
         }
 
         return this.attached.filter(element => pred(element));
-    },
-    getMessageElement() {
-        if (!isHTMLElement(this.messageElement)) {
-            this.messageElement = createI({
-                class: ["field-message", "hidden"],
-                dataset: {
-                    nature: "field-component",
-                    view: this.type,
-                    id: this.id,
-                }
-            });
-
-            this.element.prepend(this.messageElement);
-        }
-
-        return this.messageElement;
     },
 
     show() {
@@ -88,13 +68,10 @@ const BaseField = {
         return this;
     },
     getContainer() { return this.element; },
-    notify(message, type, time = 4500) {
-        let msgElement = this.getMessageElement();
+    notify(message, type, time) {
+        shake(this.element);
 
-        removeChildren(msgElement);
-        msgElement.append(createNotificationMessage(type, message));
-
-        show(msgElement);
+        this.environment.notify(message, type);
     },
     /**
      * Appends an element to the field container

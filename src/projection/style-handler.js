@@ -215,13 +215,18 @@ function resolveColor(schema) {
         return "";
     }
 
-
     const { type, value } = schema;
 
     switch (type) {
         case "rgb":
             if (isObject(value)) {
                 return `rgb(${value.red}, ${value.green}, ${value.blue})`;
+            }
+
+            return value;
+        case "rgba":
+            if (isObject(value)) {
+                return `rgba(${value.red}, ${value.green}, ${value.blue}, ${value.opacity / 100})`;
             }
 
             return value;
@@ -255,7 +260,11 @@ function resolveSize(schema) {
         return "";
     }
 
-    const { value = 0, unit } = schema;
+    const { value, unit } = schema;
+
+    if (isNullOrUndefined(value)) {
+        return "";
+    }
 
     return `${value}${unit}`;
 }
@@ -272,7 +281,7 @@ function styleBoxHandler(element, schema) {
         if (value === false) {
             continue;
         }
-        
+
         switch (rule) {
             case "inner":
                 resolveSpace.call(this, element, value, "padding");
@@ -298,6 +307,9 @@ function styleBoxHandler(element, schema) {
             case "opacity":
                 element.style.opacity = value / 100;
                 break;
+            case "shadow":
+                resolveShadow.call(this, element, value, "shadow");
+                break;
             default:
                 break;
         }
@@ -315,6 +327,7 @@ function resolveSpace(element, schema, prop) {
     if (isNullOrUndefined(schema)) {
         return;
     }
+
     for (const rule in schema) {
         const value = schema[rule];
         switch (rule) {
@@ -337,7 +350,6 @@ function resolveSpace(element, schema, prop) {
     }
 }
 
-
 /**
  * Resolves the background rules
  * @param {HTMLElement} element 
@@ -356,6 +368,35 @@ function resolveBackground(element, schema) {
 
     if (image) {
         element.style.backgroundImage = `url(${image})`;
+    }
+}
+
+/**
+ * Resolves the shadow rules
+ * @param {HTMLElement} element 
+ * @param {*} schema 
+ */
+function resolveShadow(element, schema) {
+    if (isNullOrUndefined(schema)) {
+        return null;
+    }
+
+    const { offsetX, offsetY, blur, spread, inset = false, color } = schema;
+
+    if (isNullOrUndefined(offsetX) || isNullOrUndefined(offsetY)) {
+        return null;
+    }
+
+    let x = resolveSize.call(this, offsetX);
+    let y = resolveSize.call(this, offsetY);
+    let b = resolveSize.call(this, blur);
+    let s = resolveSize.call(this, spread);
+    let c = resolveColor.call(this, color);
+
+    if (inset) {
+        element.style.boxShadow = `inset ${x} ${y} ${b} ${s} ${c}`.trim();
+    } else {
+        element.style.boxShadow = `${x} ${y} ${b} ${s} ${c}`.trim();
     }
 }
 
@@ -413,13 +454,35 @@ function resolveBorder(element, schema) {
  */
 function resolveCorner(element, schema) {
     if (isNullOrUndefined(schema)) {
-        return;
+        return null;
     }
 
-    const { radius } = schema;
+    // const { radius } = schema;
 
-    if (radius) {
-        resolveBorderRadius.call(this, element, schema.radius);
+    // if (radius) {
+    //     resolveBorderRadius.call(this, element, schema.radius);
+    // }
+
+    for (const rule in schema) {
+        const value = schema[rule];
+
+        switch (rule) {
+            case "all":
+                element.style.borderRadius = resolveSize.call(this, value);
+                break;
+            case "top-left":
+                element.style.borderTopLeftRadius = resolveSize.call(this, value);
+                break;
+            case "top-right":
+                element.style.borderTopRightRadius = resolveSize.call(this, value);
+                break;
+            case "bottom-right":
+                element.style.borderBottomRightRadius = resolveSize.call(this, value);
+                break;
+            case "bottom-left":
+                element.style.borderBottomLeftRadius = resolveSize.call(this, value);
+                break;
+        }
     }
 }
 
@@ -430,7 +493,7 @@ function resolveCorner(element, schema) {
  */
 function resolveBorderRadius(element, schema) {
     if (isNullOrUndefined(schema)) {
-        return;
+        return null;
     }
 
     for (const rule in schema) {

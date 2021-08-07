@@ -1,5 +1,5 @@
 import { isNullOrUndefined, isEmpty, isIterable, isString } from "zenkai";
-import { deepCopy } from "@utils/index.js";
+import { deepCopy, NotificationType } from "@utils/index.js";
 import { ProjectionFactory } from "./projection.js";
 
 
@@ -107,7 +107,7 @@ export const ProjectionModel = {
         const schema = this.getProjectionSchema(concept, tag);
 
         if (isEmpty(schema)) {
-            console.warn(concept, schema, tag);
+            this.environment.notify(`Missing projection (#${tag}) for ${concept.name}`, NotificationType.WARNING);
         }
 
         const projection = ProjectionFactory.createProjection(this, schema, concept, this.environment);
@@ -269,7 +269,7 @@ export const ProjectionModel = {
         const hasTag = (p) => Array.isArray(p.tags) && p.tags.includes(tag);
 
         if (isNullOrUndefined(tag)) {
-            return this.schema.findIndex(p => hasConcept(p)) !== -1;
+            return this.schema.findIndex(p => isValid(p.type) && hasConcept(p)) !== -1;
         }
 
         return this.schema.findIndex(p => isValid(p.type) && hasConcept(p) && hasTag(p)) !== -1;

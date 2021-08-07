@@ -5,6 +5,7 @@ import { HTMLStatic } from './html-static.js';
 import { ImageStatic } from './image-static.js';
 import { LinkStatic } from './link-static.js';
 import { TextStatic } from './text-static.js';
+import { ButtonStatic } from './button-static.js';
 
 
 var inc = 0;
@@ -61,6 +62,15 @@ const Handler = {
         object: { value: "static" },
         name: { value: "html-static" },
         type: { value: "html" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+    }),
+    'button': (model, schema, projection) => Object.create(ButtonStatic, {
+        object: { value: "static" },
+        name: { value: "button-static" },
+        type: { value: "button" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
