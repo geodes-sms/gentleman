@@ -17,15 +17,17 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 
 ## Examples
 
-| Mindmap               | Traffic Light (TL)             |
-|:---------------------:|:------------------------------:|
-| ![*Oops!* missing image 😅][3]         | ![*Oops!* missing image 😅][4] |
-| [Try it out][1] | [Try it out][2] |
+| Mindmap               | Traffic Light (TL)             | ReLiS             |
+|:---------------------:|:------------------------------:|:------------------------------:|
+| ![*Oops!* missing image 😅][mindmap-img]         | ![*Oops!* missing image 😅][tl-img] | ![*Oops!* missing image 😅][relis-img] |
+| [Try it out][mindmap-app] | [Try it out][tl-app] | [Try it out][relis-app] |
 
-[1]: https://geodes-sms.github.io/gentleman/demo/mindmap/index.html
-[2]: https://geodes-sms.github.io/gentleman/demo/traffic-light/index.html
-[3]: https://github.com/geodes-sms/gentleman/blob/8bbbdd371a627c5464780cd517670689e79f009b/assets/images/mindmap.gif "Mindmap demo"
-[4]: https://github.com/geodes-sms/gentleman/blob/7c8cd4aa2a8d7a7ab59b339649cfbb9e9785ef88/assets/images/traffic_light.gif "Traffic light demo"
+[mindmap-app]: https://geodes-sms.github.io/gentleman/demo/mindmap/index.html
+[mindmap-img]: https://github.com/geodes-sms/gentleman/blob/8bbbdd371a627c5464780cd517670689e79f009b/assets/images/demo_mindmap.gif "Mindmap demo"
+[tl-app]: https://geodes-sms.github.io/gentleman/demo/traffic-light/index.html
+[tl-img]: https://github.com/geodes-sms/gentleman/blob/7c8cd4aa2a8d7a7ab59b339649cfbb9e9785ef88/assets/images/demo_traffic_light.gif "Traffic light demo"
+[relis-app]: https://geodes-sms.github.io/gentleman/demo/relis/index.html
+[relis-img]: https://geodes-sms.github.io/gentleman/assets/images/demo_relis.gif "ReLiS demo"
 
 # Documentation 📖
 
