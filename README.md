@@ -23,11 +23,11 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 | [Try it out][mindmap-app] | [Try it out][tl-app] | [Try it out][relis-app] |
 
 [mindmap-app]: https://geodes-sms.github.io/gentleman/demo/mindmap/index.html
-[mindmap-img]: https://geodes-sms.github.io/gentleman/assets/images/demo_mindmap.gif "Mindmap demo"
+[mindmap-img]: https://github.com/geodes-sms/gentleman/blob/25ee42a8bbd796d276a0e1720cea66756b2d7108/assets/images/demo_mindmap.gif "Mindmap demo"
 [tl-app]: https://geodes-sms.github.io/gentleman/demo/traffic-light/index.html
-[tl-img]: https://geodes-sms.github.io/gentleman/assets/images/demo_traffic_light.gif "Traffic light demo"
+[tl-img]: https://github.com/geodes-sms/gentleman/blob/25ee42a8bbd796d276a0e1720cea66756b2d7108/assets/images/demo_traffic_light.gif "Traffic light demo"
 [relis-app]: https://geodes-sms.github.io/gentleman/demo/relis/index.html
-[relis-img]: https://geodes-sms.github.io/gentleman/assets/images/demo_relis.gif "ReLiS demo"
+[relis-img]: https://github.com/geodes-sms/gentleman/blob/25ee42a8bbd796d276a0e1720cea66756b2d7108/assets/images/demo_relis.gif "ReLiS demo"
 
 # Documentation 📖
 
