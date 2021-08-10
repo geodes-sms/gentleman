@@ -85,7 +85,6 @@ function resolveInput(schema) {
     const { placeholder = "", type } = schema;
 
     let placeholderValue = resolveValue.call(this, placeholder);
-    console.log(placeholder, placeholderValue);
 
     if (this.readonly || this.resizable) {
         return createSpan({

@@ -228,9 +228,20 @@ const _Concept = {
 
         return parent.getParentWith(prototype);
     },
+    getPrototype() {
+        if (isNullOrUndefined(this.prototype)) {
+            return null;
+        }
+
+        return this.prototype;
+    },
     hasPrototype(name) {
         if (isNullOrUndefined(this.schema.prototype)) {
             return false;
+        }
+
+        if (isNullOrUndefined(name)) {
+            return true;
         }
 
         let prototype = this.model.getConceptSchema(this.schema.prototype);

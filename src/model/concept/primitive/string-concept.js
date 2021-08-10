@@ -13,6 +13,7 @@ const ResponseCode = {
     MAXLENGTH_ERROR: 403,
     FIXLENGTH_ERROR: 404,
     PATTERN_ERROR: 405,
+    UNIQUE_ERROR: 406,
 };
 
 function responseHandler(code, ctx) {
@@ -41,6 +42,11 @@ function responseHandler(code, ctx) {
             return {
                 success: false,
                 message: `The value is not valid.`
+            };
+        case ResponseCode.UNIQUE_ERROR:
+            return {
+                success: false,
+                message: `The value is already used.`
             };
     }
 }
@@ -93,7 +99,7 @@ const _StringConcept = {
     },
     setValue(arg) {
         let value = isObject(arg) ? arg.value : arg;
-        
+
         var { code, ctx } = this.validate(value);
 
         if (this.value !== value) {
@@ -330,6 +336,34 @@ const _StringConcept = {
                     return {
                         code: code,
                         ctx: valueConstraint["match"]
+                    };
+                }
+            } else if (type === "unique") {
+                const { rel = "parent", prototype } = valueConstraint["unique"];
+
+                let parent = this.getParent();
+
+                let candidates = [];
+                if (prototype) {
+                    if (!parent.hasPrototype()) {
+                        candidates = [];
+                    }
+
+                    candidates = this.model.getConceptsByPrototype(parent._prototype);
+                } else {
+                    candidates = this.model.getConcepts(parent.name);
+                }
+
+                let found = candidates.some(c => c !== parent && getValue(c, this.ref.name) === value);
+
+                if (found) {
+                    let code = ResponseCode.UNIQUE_ERROR;
+
+                    this.errors.push(responseHandler.call(this, code, valueConstraint["unique"]).message);
+
+                    return {
+                        code: code,
+                        ctx: valueConstraint["unique"]
                     };
                 }
             }

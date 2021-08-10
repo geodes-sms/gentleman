@@ -1,0 +1,118 @@
+html,
+body {
+    height: 100%;
+    font: normal 10px 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: Garamond, Baskerville, Georgia, 'Times New Roman', Times, serif;
+}
+
+p, li, td, th { font-size: 1.5em; }
+
+li li, 
+p li, td li, th li,
+li p, li td, li th { font-size: 1em; }
+
+table, th, td { border: 1px solid #1b1b1b; border-collapse: collapse; }
+
+th { text-align: center; }
+
+.content-wrapper { position: relative; padding: 0 1%; }
+
+.btn {
+    border: none;
+    background: none;
+    font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
+    text-decoration: none; text-align: center;
+    cursor: default;
+}
+
+[contenteditable=true] { outline: none; }
+
+[data-gentleman] {
+    position: relative;
+    display: flex; flex-direction: column;
+    height: 100%; width: 100%;
+    font-size: 1rem;
+    border-radius: 1px 1px 2px 2px;
+    overflow: hidden;
+}
+
+.font-gentleman { font-family: Garamond, Baskerville, Georgia, 'Times New Roman', Times, serif; }
+
+.font-ui { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif; }
+
+.font-code { font-family: Consolas, 'Courier New', Courier, monospace; }
+
+/* Organization */
+
+.left { float: left; }
+
+.right { float: right; }
+
+.clear { clear: both; display: block; }
+
+.clear:after {
+    content: ".";
+    clear: both;
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+
+/* Reset */
+
+.bare-list { margin: 0; padding: 0; list-style: none; }
+
+.bare-link { color: inherit; text-decoration: none; }
+
+.block { display: block!important; }
+
+.inline { display: inline-block!important; }
+
+.hidden { display: none!important; }
+
+.fit-content { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+/* Scrollbar */
+
+/* width */
+::-webkit-scrollbar {
+    width: calc(6px + 1%); max-width: 10px;
+    height: calc(6px + 1%); max-height: 10px;
+}
+  
+/* Track */
+::-webkit-scrollbar-track {
+    background: #dcdcdc;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #bfbfbf;
+}
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #808080;
+    }
+    /* Handle on active */
+    ::-webkit-scrollbar-thumb:active {
+        background: #555;
+    }
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+* {
+    box-sizing: border-box;
+}

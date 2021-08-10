@@ -97,9 +97,10 @@ const BasePrototypeConcept = {
 
         if (this.target) {
             let value = this.target.copy(false);
+
             // TODO: Filter attributes with prototype
-            concept.setValue(value);
             this.target.delete(true);
+            concept.setValue(value);
         }
 
         this.target = concept;

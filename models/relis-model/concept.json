@@ -10,7 +10,6 @@
                     "target": {
                         "name": "string"
                     },
-                    "unique": true,
                     "required": true
                 },
                 {
@@ -347,10 +346,17 @@
                         "name": "string",
                         "properties": [
                             { "name": "label", "type": "string", "value": "Name" }
-                        ]
+                        ],
+                        "constraint": {
+                            "value": {
+                                "type": "unique",
+                                "unique": {
+                                    "prototype": true
+                                }
+                            }
+                        }
                     },
-                    "required": true,
-                    "unique": true
+                    "required": true
                 },
                 {
                     "name": "title",
@@ -535,10 +541,17 @@
                         "name": "string",
                         "properties": [
                             { "name": "label", "type": "string", "value": "Name" }
-                        ]
+                        ],
+                        "constraint": {
+                            "value": {
+                                "type": "unique",
+                                "unique": {
+                                    "prototype": true
+                                }
+                            }
+                        }
                     },
-                    "required": true,
-                    "unique": true
+                    "required": true
                 },
                 {
                     "name": "title",
