@@ -6,7 +6,7 @@ import {
 } from 'zenkai';
 import {
     hide, show, toggle, Key, getEventTarget, NotificationType, getClosest, highlight,
-    unhighlight, isInputCapable,
+    unhighlight, isInputCapable, shake,
 } from '@utils/index.js';
 import { ConceptModelManager } from '@model/index.js';
 import { createProjectionModel } from '@projection/index.js';
@@ -197,6 +197,8 @@ export const Editor = {
     resources: null,
     /** @type {Map} */
     models: null,
+    /** @type {*[]} */
+    errors: null,
 
     init(args = {}) {
         const { conceptModel, projectionModel, config = {}, handlers = {} } = args;
@@ -208,6 +210,7 @@ export const Editor = {
         this.values = new Map();
         this.resources = new Map();
         this.models = new Map();
+        this.errors = [];
         Object.assign(this, EditorInstanceManager, EditorWindowManager);
 
         this.states = [];
@@ -320,6 +323,11 @@ export const Editor = {
      * @returns {boolean} Value indicating whether the editor has an active instance
      */
     get hasActiveInstance() { return !isNullOrUndefined(this.activeInstance); },
+    /**
+     * Verifies that the editor has errors
+     * @returns {boolean} Value indicating whether the editor has an error
+     */
+    get hasError() { return !isEmpty(this.errors); },
 
     // Model concept operations
 
@@ -843,6 +851,47 @@ export const Editor = {
         this.resources.delete(name);
 
         this.triggerEvent({ name: "resource.removed" });
+
+        this.refresh();
+
+        return true;
+    },
+
+    // Error management
+
+    /**
+     * Adds a resource to the editor
+     * @param {File} file 
+     * @param {string} [_name] 
+     * @returns 
+     */
+    addError(error) {
+        this.errors.push(error);
+
+        this.refresh();
+        shake(this.status.editorstatusBadge);
+
+        return error;
+    },
+    /**
+     * Removes a resource from the register
+     * @param {string} name 
+     * @returns 
+     */
+    removeError(name) {
+        this.errors.pop();
+
+        this.refresh();
+
+        return true;
+    },
+    /**
+     * Removes a resource from the register
+     * @param {string} name 
+     * @returns 
+     */
+    clearError(name) {
+        this.errors = [];
 
         this.refresh();
 

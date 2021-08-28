@@ -3,7 +3,7 @@ import {
     createEmphasis, createButton, createSpan, removeChildren, getElement, isHTMLElement,
     findAncestor, isNullOrUndefined
 } from 'zenkai';
-import { hide, show, toggle, LogType, select, unselect } from '@utils/index.js';
+import { hide, show, toggle, LogType, select, unselect, shake } from '@utils/index.js';
 
 
 /**
@@ -29,6 +29,8 @@ function pluralize(word, suffix, pred) {
 export const EditorStatus = {
     /** @type {HTMLElement} */
     modelstatus: null,
+    /** @type {HTMLElement} */
+    editorstatus: null,
     /** @type {HTMLElement} */
     notification: null,
     /** @type {Map} */
@@ -260,6 +262,20 @@ export const EditorStatus = {
             this.editor.logs.clear();
         }
 
+        if (this.editor.hasError) {
+            this.editorstatusBadge.classList.add("error");
+            this.editorstatusBadge.classList.remove("valid");
+            this.container.classList.add("error");
+            let errorCount = this.editor.errors.length;
+            this.editorstatusInfo.textContent = `${errorCount}`;
+        } else {
+            this.editorstatusBadge.classList.add("valid");
+            this.editorstatusBadge.classList.remove("error");
+            this.container.classList.remove("error");
+            removeChildren(this.editorstatusInfo);
+            this.editor.logs.clear();
+        }
+
     },
     render() {
         const fragment = createDocFragment();
@@ -278,6 +294,14 @@ export const EditorStatus = {
         //     fragment.appendChild(this.notification);
         // }
 
+        if (!isHTMLElement(this.badgeContainer)) {
+            this.badgeContainer = createDiv({
+                class: ["editor-statusbar-badge-container"]
+            });
+
+            fragment.appendChild(this.badgeContainer);
+        }
+
         if (!isHTMLElement(this.modelstatus)) {
             this.modelstatus = createDiv({
                 class: ["editor-statusbar-model"]
@@ -293,7 +317,25 @@ export const EditorStatus = {
 
             this.modelstatus.append(this.modelstatusBadge, this.modelstatusInfo);
 
-            fragment.appendChild(this.modelstatus);
+            this.badgeContainer.appendChild(this.modelstatus);
+        }
+
+        if (!isHTMLElement(this.editorstatus)) {
+            this.editorstatus = createDiv({
+                class: ["editor-statusbar-global"]
+            });
+
+            this.editorstatusBadge = createI({
+                class: ["editor-statusbar-global-badge"]
+            });
+
+            this.editorstatusInfo = createDiv({
+                class: ["editor-statusbar-global-info"],
+            });
+
+            this.editorstatus.append(this.editorstatusBadge, this.editorstatusInfo);
+
+            this.badgeContainer.appendChild(this.editorstatus);
         }
 
         if (!isHTMLElement(this.viewContainer)) {
@@ -419,6 +461,23 @@ export const EditorStatus = {
                     }));
                 }
             });
+            this.editor.logs.clear();
+            this.editor.logs.add(errors, "Validation error", LogType.ERROR);
+        });
+
+        this.editorstatus.addEventListener('click', (event) => {
+            if (!this.editor.hasError) {
+                return;
+            }
+
+            let errors = [];
+            errors.push(...this.editor.errors.map(error => {
+                let message = createSpan({
+                    class: ["error-message"]
+                }, [`${error.message}`]);
+
+                return message;
+            }));
             this.editor.logs.clear();
             this.editor.logs.add(errors, "Validation error", LogType.ERROR);
         });

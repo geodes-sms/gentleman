@@ -65,10 +65,15 @@
     height: 21px;
 }
 
+.editor-statusbar-badge-container {
+    display: flex;
+    padding-left: 1%;
+}
+
 .editor-statusbar.error { border-color: #F64141; }
 
 .editor-statusbar-model {
-    padding: 2px 6px; padding-left: 1%;
+    padding: 2px 6px; 
     display: flex; flex-direction: row; align-items: center;
     cursor: default;
 }
@@ -90,6 +95,38 @@
     .editor-statusbar-model-info {
         font-size: 1.2em; font-weight: 500;
     }
+
+.editor-statusbar-global {
+    padding: 2px 6px; 
+    display: flex; flex-direction: row; align-items: center;
+    cursor: default;
+}
+
+    .editor-statusbar-global-badge {
+        display: flex;
+        width: 12px;
+        height: 100%;
+        margin-right: 3px; 
+        font-style: normal;
+    }
+        .editor-statusbar-global-badge.valid {
+            display: none;
+        }
+        .editor-statusbar-global-badge.error {
+            border-radius: 2px;
+        }
+        .editor-statusbar-global-badge.error:before {
+            content: "⚠";
+            color: #E86923;
+            font-weight: bold;
+            transform: scale(1.6);
+        }
+
+    .editor-statusbar-global-info {
+        display: none;
+        font-size: 1.2em; font-weight: 500;
+    }
+
 
 .editor-statusbar-viewer-container {
     display: flex; justify-content: flex-end;

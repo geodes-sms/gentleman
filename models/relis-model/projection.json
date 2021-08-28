@@ -113,7 +113,7 @@
                                                 "type": "static",
                                                 "static": {
                                                     "type": "text",
-                                                    "content": "Name: ",
+                                                    "content": "Short name: ",
                                                     "style": {
                                                         "ref": ["label"],
                                                         "box": {
@@ -126,7 +126,7 @@
                                             },
                                             {
                                                 "type": "attribute",
-                                                "name": "name"
+                                                "name": "short_name"
                                             }
                                         ],
                                         "style": {
@@ -148,7 +148,7 @@
                                                 "type": "static",
                                                 "static": {
                                                     "type": "text",
-                                                    "content": "Title: ",
+                                                    "content": "Name: ",
                                                     "style": {
                                                         "ref": ["label"],
                                                         "box": {
@@ -161,7 +161,7 @@
                                             },
                                             {
                                                 "type": "attribute",
-                                                "name": "title"
+                                                "name": "name"
                                             }
                                         ],
                                         "style": {
@@ -210,7 +210,7 @@
                                 },
                                 {
                                     "type": "attribute",
-                                    "name": "qa",
+                                    "name": "quality_assess",
                                     "placeholder": {
                                         "content": {
                                             "type": "static",
@@ -230,7 +230,7 @@
                                 },
                                 {
                                     "type": "attribute",
-                                    "name": "data_extraction",
+                                    "name": "classification",
                                     "placeholder": {
                                         "content": {
                                             "type": "static",
@@ -250,7 +250,7 @@
                                 },
                                 {
                                     "type": "attribute",
-                                    "name": "synthesis",
+                                    "name": "reporting",
                                     "placeholder": {
                                         "content": {
                                             "type": "static",
@@ -360,7 +360,7 @@
                                 },
                                 {
                                     "type": "attribute",
-                                    "name": "reviews_per_paper"
+                                    "name": "review_per_paper"
                                 }
                             ]
                         }
@@ -371,60 +371,6 @@
                             "type": "flex",
                             "orientation": "row",
                             "disposition": [
-                                {
-                                    "type": "layout",
-                                    "layout": {
-                                        "type": "flex",
-                                        "orientation": "column",
-                                        "disposition": [
-                                            {
-                                                "type": "static",
-                                                "static": {
-                                                    "type": "text",
-                                                    "content": "Criteria",
-                                                    "style": {
-                                                        "ref": ["group-title"]
-                                                    }
-                                                }
-                                            },
-                                            {
-                                                "type": "layout",
-                                                "layout": {
-                                                    "type": "flex",
-                                                    "orientation": "row",
-                                                    "alignItems": "end",
-                                                    "disposition": [
-                                                        {
-                                                            "type": "attribute",
-                                                            "name": "exclusion_criteria",
-                                                            "tag": "floating-label",
-                                                            "style": {
-                                                                "box": {
-                                                                    "outer": { 
-                                                                        "right": { "value": 6, "unit": "px" }
-                                                                    }
-                                                                }
-                                                            }
-                                                        },
-                                                        {
-                                                            "type": "attribute",
-                                                            "name": "inclusion_criteria",
-                                                            "tag": "floating-label"
-                                                        }
-                                                    ]
-                                                }
-                                            }
-                                        ],
-                                        "style": {
-                                            "css": ["rl-section-group"],
-                                            "box": {
-                                                "outer": { 
-                                                    "top": { "value": 3, "unit": "px" }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
                                 {
                                     "type": "layout",
                                     "layout": {
@@ -542,6 +488,20 @@
                                 }
                             }
                         }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "exclusion_criteria"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "source_papers",
+                        "tag": "values"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "search_strategy",
+                        "tag": "values"
                     },
                     {
                         "type": "attribute",
@@ -706,7 +666,7 @@
             }
         },
         {
-            "concept": { "name": "data-extraction" },
+            "concept": { "name": "classification" },
             "type": "layout",
             "tags": [],
             "content": {
@@ -762,7 +722,7 @@
             }
         },
         {
-            "concept": { "name": "synthesis" },
+            "concept": { "name": "report" },
             "type": "layout",
             "tags": [],
             "content": {
@@ -815,8 +775,8 @@
                   
                     {
                         "type": "attribute",
-                        "name": "charts",
-                        "tag": "charts"
+                        "name": "graphs",
+                        "tag": "graphs"
                     }
                 ],
                 "style": {
@@ -852,14 +812,14 @@
                 "disposition": [
                     {
                         "type": "attribute",
-                        "name": "value",
+                        "name": "title",
                         "style": {
                             "css": ["rl-answer-value"]
                         }
                     },
                     {
                         "type": "attribute",
-                        "name": "score",
+                        "name": "min_score",
                         "style": {
                             "css": ["rl-answer-score"]
                         }
@@ -1894,7 +1854,7 @@
         
 
         {
-            "concept": { "name": "chart" },
+            "concept": { "name": "graph" },
             "tags": ["list-item"],
             "type": "layout",
             "projection": {
@@ -1952,7 +1912,7 @@
         },
 
         {
-            "concept": { "name": "simple-chart" },
+            "concept": { "name": "simple-graph" },
             "type": "layout",
             "tags": ["choice-selection", "config", "field-config"],
             "projection": {
@@ -2069,7 +2029,7 @@
                                                         },
                                                         {
                                                             "type": "attribute",
-                                                            "name": "base"
+                                                            "name": "value"
                                                         }
                                                     ]
                                                 }
@@ -2091,7 +2051,7 @@
                     {
                         "type": "attribute",
                         "name": "charts",
-                        "tag": "chart-types",
+                        "tag": "graph-types",
                         "style": {
                             "box": {
                                 "outer": { 
@@ -2107,7 +2067,7 @@
             }
         },
         {
-            "concept": { "name": "simple-chart" },
+            "concept": { "name": "simple-graph" },
             "type": "layout",
             "tags": ["choice"],
             "projection": {
@@ -2130,7 +2090,7 @@
                         "type": "static",
                         "static": {
                             "type": "text",
-                            "content": "Simple chart",
+                            "content": "Simple graph",
                             "style": {
                                 "css": ["category-choice-tooltip"]
                             }
@@ -2144,7 +2104,7 @@
         },
         
         {
-            "concept": { "name": "compare-chart" },
+            "concept": { "name": "compare-graph" },
             "type": "layout",
             "tags": ["choice-selection", "config", "field-config"],
             "projection": {
@@ -2262,7 +2222,7 @@
                                                         },
                                                         {
                                                             "type": "attribute",
-                                                            "name": "base"
+                                                            "name": "value"
                                                         }
                                                     ]
                                                 }
@@ -2295,7 +2255,7 @@
                                                         },
                                                         {
                                                             "type": "attribute",
-                                                            "name": "compare"
+                                                            "name": "reference"
                                                         }
                                                     ],
                                                     "style": {
@@ -2324,7 +2284,7 @@
                     {
                         "type": "attribute",
                         "name": "charts",
-                        "tag": "chart-types",
+                        "tag": "graph-types",
                         "style": {
                             "box": {
                                 "outer": { 
@@ -2340,7 +2300,7 @@
             }
         },
         {
-            "concept": { "name": "compare-chart" },
+            "concept": { "name": "compare-graph" },
             "type": "layout",
             "tags": ["choice"],
             "projection": {
@@ -2363,7 +2323,7 @@
                         "type": "static",
                         "static": {
                             "type": "text",
-                            "content": "Compare chart",
+                            "content": "Compare graph",
                             "style": {
                                 "css": ["category-choice-tooltip"]
                             }
@@ -2377,7 +2337,7 @@
         },
 
         {
-            "concept": { "prototype": "chart" },
+            "concept": { "prototype": "graph" },
             "type": "layout",
             "tags": ["refchoice"],
             "projection": {
@@ -3084,7 +3044,7 @@
         {
             "concept": { "name": "set" },
             "type": "layout",
-            "tags": ["charts"],
+            "tags": ["graphs"],
             "projection": {
                 "type": "flex",
                 "orientation": "column",
@@ -3099,7 +3059,7 @@
                                     "type": "static",
                                     "static": {
                                         "type": "text",
-                                        "content": "Charts",
+                                        "content": "Graphs",
                                         "style": {
                                             "css": ["rl-chart-set-header-title"]
                                         }
@@ -3113,7 +3073,7 @@
                                         "action": {
                                             "add": {
                                                 "position": "before",
-                                                "help": "Add a chart",
+                                                "help": "Add a graph",
                                                 "content": [      
                                                     {
                                                         "type": "static",
@@ -3174,7 +3134,7 @@
         {
             "concept": { "name": "set" },
             "type": "layout",
-            "tags": ["chart-types"],
+            "tags": ["graph-types"],
             "projection": {
                 "type": "flex",
                 "orientation": "column",
@@ -3189,7 +3149,7 @@
                                     "type": "static",
                                     "static": {
                                         "type": "text",
-                                        "content": "Chart Types",
+                                        "content": "Graph Types",
                                         "style": {
                                             "css": ["rl-charttype-set-header-title"],
                                             "gss": {

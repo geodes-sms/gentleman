@@ -6,9 +6,9 @@
             "nature": "concrete",
             "attributes": [
                 {
-                    "name": "name",
+                    "name": "title",
                     "target": {
-                        "name": "string"
+                        "name": "name"
                     },
                     "unique": true,
                     "required": true
@@ -28,7 +28,8 @@
                     "target": {
                         "name": "set",
                         "accept": {
-                            "name": "task"
+                            "name": "task",
+                            "default": "single-task"
                         },
                         "constraint": {
                             "cardinality": {
@@ -64,7 +65,6 @@
                 }
             ]
         },
-
         {
             "id": "adefde42-abd9-o57f-8e84-ae1f056d26f7",
             "name": "task",
@@ -74,7 +74,7 @@
                 {
                     "name": "name",
                     "target": {
-                        "name": "string"
+                        "name": "name"
                     },
                     "required": true,
                     "unique": true
@@ -129,11 +129,39 @@
                         "name": "string"
                     },
                     "required": true
+                },
+                {
+                    "name": "recurrence",
+                    "target": {
+                        "name": "number",
+                        "constraint": {
+                            "value": {
+                                "type": "range",
+                                "range": {
+                                    "min": { "value": 1 },
+                                    "max": { "value": 7 }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
                 }
             ]
         },
-        
-
+        {
+            "name": "name",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "length": {
+                    "type": "range",
+                    "range": {
+                        "min": { "value": 1 },
+                        "max": { "value": 50 }
+                    }
+                }
+            }
+        },
         {
             "id": "p39a63c6-613e-4e2f-b39f-26707210ab66",
             "name": "priority",

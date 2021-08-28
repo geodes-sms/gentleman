@@ -3,7 +3,7 @@
 // Import CSS
 import './stylesheets.js';
 import '@css/samples/gentleman.css';
-import './../demo/relis/assets/style.css';
+import './../demo/todo/assets/style.css';
 
 import { createDiv, getElements, valOrDefault, isNullOrUndefined, isHTMLElement, hasOwn, getElement, isFunction } from "zenkai";
 import { Editor } from './environment/index.js';
@@ -11,16 +11,17 @@ import { resolveContainer } from './utils/index.js';
 import { buildProjectionHandler, buildConceptHandler } from '@generator/index.js';
 
 const Model = {
-    MP: "projection",
+    DD: "druide",
     MC: "concept",
+    MP: "projection",
     MS: "style",
-    TL: "trafficlight",
     MM: "mindmap",
     RL: "relis",
-    DD: "druide",
+    TL: "trafficlight",
+    TD: "todo",
 };
 
-const modelName = Model.RL;
+const modelName = Model.TD;
 
 const MODEL__EDITOR = require(`@models/${modelName}-model/config.json`);
 const MODEL__CONCEPT = require(`@models/${modelName}-model/concept.json`);

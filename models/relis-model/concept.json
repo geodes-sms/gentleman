@@ -6,14 +6,14 @@
             "nature": "concrete",
             "attributes": [
                 {
-                    "name": "name",
+                    "name": "short_name",
                     "target": {
                         "name": "string"
                     },
                     "required": true
                 },
                 {
-                    "name": "title",
+                    "name": "name",
                     "target": {
                         "name": "string"
                     },
@@ -22,28 +22,37 @@
                 {
                     "name": "screening",
                     "target": {
-                        "name": "screening"
+                        "name": "set",
+                        "accept": {
+                            "name": "screening"
+                        }
                     },
                     "required": false
                 },
                 {
-                    "name": "qa",
+                    "name": "quality_assess",
                     "target": {
-                        "name": "qa"
+                        "name": "set",
+                        "accept": {
+                            "name": "qa"
+                        }
                     },
                     "required": false
                 },
                 {
-                    "name": "data_extraction",
+                    "name": "classification",
                     "target": {
-                        "name": "data-extraction"
+                        "name": "set",
+                        "accept": {
+                            "name": "classification"
+                        }
                     },
                     "required": false
                 },
                 {
-                    "name": "synthesis",
+                    "name": "reporting",
                     "target": {
-                        "name": "synthesis"
+                        "name": "report"
                     },
                     "required": false
                 }
@@ -55,30 +64,10 @@
             "nature": "concrete",
             "attributes": [
                 {
-                    "name": "reviews_per_paper",
+                    "name": "review_per_paper",
                     "target": {
                         "name": "number",
                         "default": 2
-                    },
-                    "required": true
-                },
-                {
-                    "name": "exclusion_criteria",
-                    "target": {
-                        "name": "string",
-                        "properties": [
-                            { "name": "label", "type": "string", "value": "Exclusion" }
-                        ]
-                    },
-                    "required": true
-                },
-                {
-                    "name": "inclusion_criteria",
-                    "target": {
-                        "name": "string",
-                        "properties": [
-                            { "name": "label", "type": "string", "value": "Inclusion" }
-                        ]
                     },
                     "required": true
                 },
@@ -97,13 +86,53 @@
                     "name": "conflict_resolution",
                     "target": {
                         "name": "conflictresolution",
-                        "default": "Unanimous",
+                        "default": "Unanimity",
                         "properties": [
                             { "name": "label", "type": "string", "value": "Resolution" }
                         ]
                     },
                     "required": true
                 },
+                {
+                    "name": "exclusion_criteria",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "value"
+                        },
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Exclusion" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "source_papers",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "value"
+                        },
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Inclusion" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "search_strategy",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "value"
+                        },
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Inclusion" }
+                        ]
+                    },
+                    "required": true
+                },
+               
                 {
                     "name": "validation_percentage",
                     "target": {
@@ -246,7 +275,7 @@
         },
         {
             "id": "69q05489-db4f-42d4-a659-sac8287s22w6",
-            "name": "data-extraction",
+            "name": "classification",
             "nature": "concrete",
             "attributes": [
                 {
@@ -271,15 +300,15 @@
         },
         {
             "id": "gs89f524-fs4d-42d4-l296-5ae22r7ee8c6",
-            "name": "synthesis",
+            "name": "report",
             "nature": "concrete",
             "attributes": [
                 {
-                    "name": "charts",
+                    "name": "graphs",
                     "target": {
                         "name": "set",
                         "accept": {
-                            "name": "chart"
+                            "name": "graph"
                         },
                         "constraint": {
                             "cardinality": {
@@ -317,14 +346,14 @@
             "nature": "concrete",
             "attributes": [
                 {
-                    "name": "value",
+                    "name": "title",
                     "target": {
                         "name": "string"
                     },
                     "required": true
                 },
                 {
-                    "name": "score",
+                    "name": "min_score",
                     "target": {
                         "name": "number"
                     },
@@ -387,6 +416,13 @@
                     "required": true
                 },
                 {
+                    "name": "is_infinity",
+                    "target": {
+                        "name": "boolean"
+                    },
+                    "required": true
+                },
+                {
                     "name": "sub_categories",
                     "target": {
                         "name": "set",
@@ -408,19 +444,9 @@
                     "name": "type",
                     "target": {
                         "name": "simpletype",
-                        "default": "String",
+                        "default": "string",
                         "properties": [
                             { "name": "label", "type": "string", "value": "Type" }
-                        ]
-                    },
-                    "required": true
-                },
-                {
-                    "name": "pattern",
-                    "target": {
-                        "name": "string",
-                        "properties": [
-                            { "name": "label", "type": "string", "value": "Pattern" }
                         ]
                     },
                     "required": true
@@ -433,6 +459,16 @@
                             { "name": "label", "type": "string", "value": "Max character" }
                         ],
                         "default": true
+                    },
+                    "required": true
+                },
+                {
+                    "name": "pattern",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Pattern" }
+                        ]
                     },
                     "required": true
                 },
@@ -513,26 +549,10 @@
             ]
         },
 
-
-        {
-            "id": "abd1fede-rd10-4ddf-b4ed-d26f1f05ae67",
-            "name": "value",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "value",
-                    "target": {
-                        "name": "string"
-                    },
-                    "required": true
-                }
-            ]
-        },
-
         
         {
             "id": "sdga9p7f-sf02-ab3z4-9937-f6922fs0796e",
-            "name": "chart",
+            "name": "graph",
             "nature": "prototype",
             "attributes": [
                 {
@@ -564,29 +584,21 @@
                     "required": true
                 },
                 {
-                    "name": "charts",
+                    "name": "value",
                     "target": {
-                        "name": "set",
+                        "name": "reference",
                         "accept": {
-                            "name": "charttype"
-                        },
-                        "constraint": {
-                            "cardinality": {
-                                "type": "range",
-                                "range": {
-                                    "min": { "value": 1 }
-                                }
-                            }
+                            "name": "category"
                         }
                     },
                     "required": true
                 },
                 {
-                    "name": "base",
+                    "name": "charts",
                     "target": {
-                        "name": "reference",
+                        "name": "set",
                         "accept": {
-                            "name": "category"
+                            "name": "graphtype"
                         }
                     },
                     "required": true
@@ -595,19 +607,19 @@
         },
         {
             "id": "alsd4p7f-0sf2-a43z-9937-f6922fs0796e",
-            "name": "simple-chart",
+            "name": "simple-graph",
             "nature": "concrete",
-            "prototype": "chart",
+            "prototype": "graph",
             "attributes": []
         },
         {
             "id": "sd42sp7f-20sf-a13z-d837-922f6fs0796e",
-            "name": "compare-chart",
+            "name": "compare-graph",
             "nature": "concrete",
-            "prototype": "chart",
+            "prototype": "graph",
             "attributes": [
                 {
-                    "name": "compare",
+                    "name": "reference",
                     "target": {
                         "name": "reference",
                         "accept": {
@@ -619,6 +631,21 @@
             ]
         },
 
+        {
+            "id": "abd1fede-rd10-4ddf-b4ed-d26f1f05ae67",
+            "name": "value",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                }
+            ]
+        },
+    
 
         {
             "id": "79a633c6-361e-4e2f-b39f-26707210ab66",
@@ -635,16 +662,16 @@
             "nature": "derivative",
             "base": "string",
             "constraint": {
-                "values": ["Majority", "Unanimous"]
+                "values": ["Majority", "Unanimity"]
             }
         },
         {
             "id": "dc83ab6d-0ed6-4d7b-baea-7a2b936c2819",
-            "name": "charttype",
+            "name": "graphtype",
             "nature": "derivative",
             "base": "string",
             "constraint": {
-                "values": ["Bar", "Pie", "Line"]
+                "values": ["bar", "pie", "line"]
             }
         },
         {
@@ -653,7 +680,7 @@
             "nature": "derivative",
             "base": "string",
             "constraint": {
-                "values": ["Title", "Abstract", "Paper", "Author", "Reference"]
+                "values": ["Title", "Abstract", "Link", "Preview", "Bibtex"]
             }
         },
         {
@@ -671,7 +698,7 @@
             "nature": "derivative",
             "base": "string",
             "constraint": {
-                "values": ["Number", "Text", "String", "Boolean", "Decimal", "Date"]
+                "values": ["int", "text", "string", "bool", "real", "date"]
             }
         }
     ]

@@ -23,15 +23,18 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 | [Try it out][mindmap-app] | [Try it out][tl-app] | [Try it out][relis-app] |
 
 [mindmap-app]: https://geodes-sms.github.io/gentleman/demo/mindmap/index.html
-[mindmap-img]: https://github.com/geodes-sms/gentleman/blob/25ee42a8bbd796d276a0e1720cea66756b2d7108/assets/images/demo_mindmap.gif "Mindmap demo"
+[mindmap-img]: https://gentlemancp.org/assets/images/demo_mindmap.gif "Mindmap demo"
 [tl-app]: https://geodes-sms.github.io/gentleman/demo/traffic-light/index.html
-[tl-img]: https://github.com/geodes-sms/gentleman/blob/25ee42a8bbd796d276a0e1720cea66756b2d7108/assets/images/demo_traffic_light.gif "Traffic light demo"
+[tl-img]: https://gentlemancp.org/assets/images/demo_traffic_light.gif "Traffic light demo"
 [relis-app]: https://geodes-sms.github.io/gentleman/demo/relis/index.html
-[relis-img]: https://github.com/geodes-sms/gentleman/blob/25ee42a8bbd796d276a0e1720cea66756b2d7108/assets/images/demo_relis.gif "ReLiS demo"
+[relis-img]: https://gentlemancp.org/assets/images/demo_relis.gif "ReLiS demo"
 
 # Documentation 📖
 
-The documentation can be found [here](https://geodes-sms.github.io/gentleman/public/docs) 👈.  
+For live examples (demo), docs and to learn more about Gentleman, please visit [gentlemancp.org](https://gentlemancp.org).  
+If you are in a hurry here are some **quick links**:  
+🔗 [Documentation](https://gentlemancp.org/docs)  
+🔗 [Getting started](https://gentlemancp.org/docs/getting-started)  
 
 ## Integration
 
@@ -75,6 +78,10 @@ editor.init({...});
 // append the editor to the page
 App.container.append(editor.container);
 ```
+
+### Browser Compatibility
+
+Gentleman supports all browsers that are [ES5-compliant](https://kangax.github.io/compat-table/es5/) (IE8 and below are not supported).
 
 # Installation 💻
 

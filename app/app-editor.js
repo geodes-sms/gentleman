@@ -128,41 +128,34 @@ export const App = {
     render() {
         this.refresh();
     },
+    /**
+     * Creates an editor
+     * @param {Editor} editor 
+     * @returns {Editor}
+     */
     createEditor(options) {
         let editor = Gentleman.createEditor().init(options);
         editor.id = nextId();
+        this.addEditor(editor);
+
+        return editor;
+    },
+    /**
+     * Adds editor to the App
+     * @param {Editor} editor 
+     * @returns {App}
+     */
+    addEditor(editor) {
         this.editors.push(editor);
         this.editorSection.append(editor.container);
 
         let tab = createTab(editor.id);
-        this.tabList.append(tab);
-        this.tabs.set(tab, editor);
-
+        this.addTab(tab, editor);
         this.changeTab(tab);
 
         this.refresh();
 
-        return editor;
-    },
-    changeTab(tab) {
-        if (isNullOrUndefined(tab)) {
-            return;
-        }
-
-        if (this.activeTab) {
-            if (this.activeTab === tab) {
-                return this;
-            }
-
-            this.activeTab.classList.remove("active");
-            this.tabs.get(this.activeTab).hide();
-        }
-
-        this.activeTab = tab;
-        this.activeTab.classList.add("active");
-        this.tabs.get(this.activeTab).show();
-
-        this.refresh();
+        return this;
     },
     /**
      * Gets the list of `Editor`
@@ -186,6 +179,11 @@ export const App = {
     getEditor(id) {
         return this.editors.find(editor => editor.id === id);
     },
+    /**
+     * Deletes an editor
+     * @param {string} id 
+     * @returns {boolean}
+     */
     deleteEditor(id) {
         let index = this.editors.findIndex(p => p.id === id);
 
@@ -201,6 +199,18 @@ export const App = {
         this.refresh();
 
         return true;
+    },
+    /**
+     * Adds tab to the App
+     * @param {HTMLElement} tab 
+     * @param {Editor} editor 
+     * @returns 
+     */
+    addTab(tab, editor) {
+        this.tabList.append(tab);
+        this.tabs.set(tab, editor);
+
+        return this;
     },
     /**
      * Closes a tab
@@ -228,6 +238,33 @@ export const App = {
         this.refresh();
 
         return true;
+    },
+    /**
+     * Changes tab
+     * @param {HTMLElement} tab 
+     * @returns {App}
+     */
+    changeTab(tab) {
+        if (isNullOrUndefined(tab)) {
+            return;
+        }
+
+        if (this.activeTab) {
+            if (this.activeTab === tab) {
+                return this;
+            }
+
+            this.activeTab.classList.remove("active");
+            this.tabs.get(this.activeTab).hide();
+        }
+
+        this.activeTab = tab;
+        this.activeTab.classList.add("active");
+        this.tabs.get(this.activeTab).show();
+
+        this.refresh();
+
+        return this;
     },
 
     bindDOM() {

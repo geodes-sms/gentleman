@@ -1,4 +1,5 @@
 import { valOrDefault, createDocFragment, createI, isHTMLElement, htmlToElement, createButton, isNullOrUndefined, } from "zenkai";
+import { NotificationType } from "@utils/index.js";
 import { LayoutFactory } from "./layout/index.js";
 import { FieldFactory } from "./field/index.js";
 import { StaticFactory } from "./static/index.js";
@@ -27,7 +28,13 @@ function AttributeHandler(schema, concept) {
     const { name, tag, placeholder = {}, style } = schema;
 
     if (!concept.hasAttribute(name)) {
-        console.error(`Attribute '${name}' does not exist in the concept '${concept.name}'`);
+        let message = `Attribute '${name}' does not exist in the concept '${concept.name}'`;
+        this.environment.notify(message, NotificationType.ERROR);
+        this.environment.addError({
+            source: "projection",
+            code: "attribute_not_found",
+            message: message
+        });
 
         return createI({
             hidden: true,
