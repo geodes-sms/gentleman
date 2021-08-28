@@ -142,4 +142,4 @@ This distribution contains the following files and folders:
 
 # License ©️
 
-The source code is licensed under a [MIT LICENSE](https://opensource.org/licenses/MIT) ![MIT](https://img.shields.io/badge/license-MIT-blue.svg)
+The source code is licensed under a [GPL 3.0 license](https://opensource.org/licenses/GPL-3.0) ![MIT](https://img.shields.io/badge/license-GPL3.0-blue)
