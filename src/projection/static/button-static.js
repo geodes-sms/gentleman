@@ -141,12 +141,20 @@ const BaseButtonStatic = {
     clickHandler(target) {
         let concept = this.source;
 
-        console.log(this.schema);
         if (this.schema.bind) {
             concept = this.source.getValue(true);
         }
 
+        if (this.schema.action) {
+            const { type, value } = this.schema.action;
+
+            concept.createElement();
+
+            return false;
+        }
+
         this.environment.triggerEvent({ name: this.schema.trigger, args: [concept] });
+
 
         return false;
     },

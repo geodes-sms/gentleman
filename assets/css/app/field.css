@@ -101,8 +101,8 @@
     z-index: 5;
 }
     .field--textbox__input.error {
-        border-color: #dd4124!important;
-        background-color: rgba(191, 25, 50, 0.2)!important;
+        border-color: #dd4124;
+        background-color: rgba(191, 25, 50, 0.2);
     }
     .field--textbox__input.empty {
         white-space: nowrap;

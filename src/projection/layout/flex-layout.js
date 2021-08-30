@@ -117,13 +117,16 @@ export const BaseFlexLayout = {
         if (!isHTMLElement(this.container)) {
             this.container = createDiv({
                 class: ["layout-container"],
-                title: help,
                 dataset: {
                     nature: "layout",
                     layout: "flex",
                     id: this.id,
                 }
             });
+        }
+
+        if (help) {
+            this.container.title = help;
         }
 
         for (let i = 0; i < disposition.length; i++) {

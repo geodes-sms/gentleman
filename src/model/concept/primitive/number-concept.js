@@ -159,7 +159,7 @@ const _NumberConcept = {
             if (type === "range") {
                 const { min, max } = valueConstraint[type];
 
-                if (min && value.length < min.value) {
+                if (min && +value < min.value) {
                     let code = ResponseCode.MIN_ERROR;
 
                     this.errors.push(responseHandler.call(this, code, min).message);
@@ -170,7 +170,7 @@ const _NumberConcept = {
                     };
                 }
 
-                if (max && value.length > max.value) {
+                if (max && +value > max.value) {
                     let code = ResponseCode.MAX_ERROR;
 
                     this.errors.push(responseHandler.call(this, code, max).message);
@@ -183,7 +183,7 @@ const _NumberConcept = {
             } else if (type === "fixed") {
                 const { value: fixedValue } = valueConstraint[type];
 
-                if (value.length !== fixedValue) {
+                if (value !== fixedValue) {
                     let code = ResponseCode.FIX_ERROR;
 
                     this.errors.push(responseHandler.call(this, code, valueConstraint[type]).message);
@@ -222,7 +222,9 @@ const _NumberConcept = {
             }
         }
 
-        return ResponseCode.SUCCESS;
+        return {
+            code: ResponseCode.SUCCESS
+        };
     },
 
 

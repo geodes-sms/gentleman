@@ -238,7 +238,6 @@ export const EditorInstance = {
             this.container = createDiv({
                 class: ["editor-concept", `editor-concept--${this.ctype}`],
                 tabindex: 0,
-                title: this.schema.type === "concept" ? `Instance of "${_name}"` : `Linked instance of "${_name}"`,
                 dataset: {
                     nature: "concept-container",
                     type: this.ctype,
@@ -249,6 +248,7 @@ export const EditorInstance = {
 
         if (!isHTMLElement(this.header)) {
             this.header = createHeader({
+                title: this.schema.type === "concept" ? `Instance of "${_name}"` : `Linked instance of "${_name}"`,
                 class: ["editor-concept-header"],
             });
 

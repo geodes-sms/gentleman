@@ -264,15 +264,31 @@ export const ProjectionModel = {
     hasConceptProjection(concept, tag) {
         const isValid = (type) => !["template", "rule", "style"].includes(type);
 
-        const hasConcept = (projection) => projection.concept.name === concept.name;
+        const hasName = (name) => name && (name === concept.name || concept.schema && name === concept.schema.base); // TODO: change to look for base (include self)
 
         const hasTag = (p) => Array.isArray(p.tags) && p.tags.includes(tag);
 
-        if (isNullOrUndefined(tag)) {
-            return this.schema.findIndex(p => isValid(p.type) && hasConcept(p)) !== -1;
+        const hasPrototype = (prototype) => {
+            if (isNullOrUndefined(prototype) || concept.nature === "prototype") {
+                return false;
+            }
+
+            return concept.hasPrototype(prototype);
+        };
+
+        let candidates = null;
+
+        if (isString(concept)) {
+            candidates = this.schema.filter(p => isValid(p.type) && p.concept.name === concept);
+        } else {
+            candidates = this.schema.filter(p => isValid(p.type) && (hasName(p.concept.name) || hasPrototype(p.concept.prototype)));
         }
 
-        return this.schema.findIndex(p => isValid(p.type) && hasConcept(p) && hasTag(p)) !== -1;
+        if (isIterable(tag) && !isEmpty(tag)) {
+            return candidates.findIndex(p => hasTag(p)) !== -1;
+        }
+
+        return !isEmpty(candidates);
     },
 
     getSchema() {

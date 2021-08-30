@@ -17,17 +17,17 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 
 ## Examples
 
-| Mindmap               | Traffic Light (TL)             | ReLiS             |
+| Mindmap               | Traffic Light (TL)             | TodoList             |
 |:---------------------:|:------------------------------:|:------------------------------:|
-| ![*Oops!* missing image 😅][mindmap-img]         | ![*Oops!* missing image 😅][tl-img] | ![*Oops!* missing image 😅][relis-img] |
-| [Try it out][mindmap-app] | [Try it out][tl-app] | [Try it out][relis-app] |
+| ![*Oops!* missing image 😅][mindmap-img]         | ![*Oops!* missing image 😅][tl-img] | ![*Oops!* missing image 😅][todo-img] |
+| [Try it out][mindmap-app] | [Try it out][tl-app] | [Try it out][todo-app] |
 
 [mindmap-app]: https://geodes-sms.github.io/gentleman/demo/mindmap/index.html
 [mindmap-img]: https://gentlemancp.org/assets/images/demo_mindmap.gif "Mindmap demo"
 [tl-app]: https://geodes-sms.github.io/gentleman/demo/traffic-light/index.html
 [tl-img]: https://gentlemancp.org/assets/images/demo_traffic_light.gif "Traffic light demo"
-[relis-app]: https://geodes-sms.github.io/gentleman/demo/relis/index.html
-[relis-img]: https://gentlemancp.org/assets/images/demo_relis.gif "ReLiS demo"
+[todo-app]: https://geodes-sms.github.io/gentleman/demo/todo/index.html
+[todo-img]: https://gentlemancp.org/assets/images/demo_todo.gif "TodoList demo"
 
 # Documentation 📖
 

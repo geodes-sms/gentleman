@@ -143,6 +143,28 @@ const MODEL__HANDLER = {
 
         window.addInstance(instance);
     },
+    "open-option": function (args) {
+        let concept = args[0];
+        let projection = this.createProjection(concept, "option");
+
+        let window = this.findWindow("side-instance");
+        if (isNullOrUndefined(window)) {
+            window = this.createWindow("side-instance");
+            window.container.classList.add("td-option-sideview");
+        }
+
+        if (window.instances.size > 0) {
+            let instance = Array.from(window.instances)[0];
+            instance.delete();
+        }
+
+        let instance = this.createInstance(concept, projection, {
+            type: "projection",
+            close: "DELETE-PROJECTION"
+        });
+
+        window.addInstance(instance);
+    },
 };
 
 editor.init({

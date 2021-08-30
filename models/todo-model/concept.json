@@ -2,13 +2,22 @@
     "concept": [
         {
             "id": "11g5bwb5-451d-344f-80d0-1e2138a59ec9",
-            "name": "todo",
+            "name": "todolist",
             "nature": "concrete",
             "attributes": [
                 {
                     "name": "title",
                     "target": {
-                        "name": "name"
+                        "name": "string",
+                        "constraint": {
+                            "length": {
+                                "type": "range",
+                                "range": {
+                                    "min": { "value": 1 },
+                                    "max": { "value": 50 }
+                                }
+                            }
+                        }
                     },
                     "unique": true,
                     "required": true
@@ -52,7 +61,7 @@
                 {
                     "name": "name",
                     "target": {
-                        "name": "string"
+                        "name": "tag-name"
                     },
                     "required": true
                 },
@@ -74,16 +83,51 @@
                 {
                     "name": "name",
                     "target": {
-                        "name": "name"
+                        "name": "string",
+                        "constraint": {
+                            "length": {
+                                "type": "range",
+                                "range": {
+                                    "min": { "value": 2 }
+                                }
+                            }
+                        }
                     },
-                    "required": true,
-                    "unique": true
+                    "required": true
+                },
+                {
+                    "name": "description",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "length": {
+                                "type": "range",
+                                "range": {
+                                    "min": { "value": 2 }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
                 },
                 {
                     "name": "completed",
                     "target": {
                         "name": "boolean",
-                        "default": true
+                        "default": false
+                    },
+                    "required": true
+                },
+                {
+                    "name": "tags",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "reference",
+                            "accept": {
+                                "name": "tag"
+                            }
+                        }
                     },
                     "required": true
                 },
@@ -92,14 +136,14 @@
                     "target": {
                         "name": "priority"
                     },
-                    "required": true
+                    "required": false
                 },
                 {
                     "name": "due_date",
                     "target": {
-                        "name": "string"
+                        "name": "date"
                     },
-                    "required": true
+                    "required": false
                 }
             ]
         },
@@ -119,14 +163,14 @@
                 {
                     "name": "start",
                     "target": {
-                        "name": "string"
+                        "name": "date"
                     },
                     "required": true
                 },
                 {
                     "name": "end",
                     "target": {
-                        "name": "string"
+                        "name": "date"
                     },
                     "required": true
                 },
@@ -149,7 +193,16 @@
             ]
         },
         {
-            "name": "name",
+            "id": "p3a693c6-6e13-4e2f-b39f-26707210ab66",
+            "name": "priority",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "values": ["P1", "P2", "P3", "P4"]
+            }
+        },
+        {
+            "name": "tag-name",
             "nature": "derivative",
             "base": "string",
             "constraint": {
@@ -157,18 +210,33 @@
                     "type": "range",
                     "range": {
                         "min": { "value": 1 },
-                        "max": { "value": 50 }
+                        "max": { "value": 20 }
+                    }
+                },
+                "value": {
+                    "type": "pattern",
+                    "pattern": {
+                        "insensitive": true,
+                        "global": true,
+                        "value": "^\\w+(-\\w+)*$"
                     }
                 }
             }
         },
         {
-            "id": "p39a63c6-613e-4e2f-b39f-26707210ab66",
-            "name": "priority",
+            "id": "c6pa3963-713e-2e2f-9fb3-263707d2b6p6",
+            "name": "date",
             "nature": "derivative",
             "base": "string",
             "constraint": {
-                "values": ["P1", "P2", "P3", "P4"]
+                "value": {
+                    "type": "pattern",
+                    "pattern": {
+                        "insensitive": true,
+                        "global": true,
+                        "value": "^([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))$"
+                    }
+                }
             }
         }
     ]

@@ -377,15 +377,13 @@
         display: flex; flex-direction: column;
         font-size: 1.4rem;
         border-radius: 1px;
-        transition: opacity, transform .2s;
-        opacity: 0.9;
+        transition: transform .2s;
     }
         .editor-concept > .layout-container { 
             flex-grow: 2;
         }
 
         .editor-concept.active {
-            opacity: 1;
             border-radius: 2px;
         }
             .editor-concept.active .editor-concept-header { background-color: #808080; }
@@ -408,7 +406,6 @@
             height: 100%;
             border-radius: 0;
             box-shadow: none;
-            opacity: 1;
         }
 
         .editor-concept.collapsed {

@@ -5,7 +5,7 @@ import {
 } from "zenkai";
 import {
     hide, show, getCaretIndex, isHidden, NotificationType, getClosest,
-    getTopElement, getBottomElement, getRightElement, getLeftElement
+    getTopElement, getBottomElement, getRightElement, getLeftElement, shake
 } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { StateHandler } from "./../state-handler.js";
@@ -238,6 +238,7 @@ const BaseTextField = {
         }
 
         if (!response.success) {
+            shake(this.element);
             this.environment.notify(response.message, "error");
         }
 

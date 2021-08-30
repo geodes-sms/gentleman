@@ -44,42 +44,40 @@
                 }
             }
         },
-        {
-            "type": "style",
-            "name": "label",
-            "style": {
-                "text": {
-                    "bold": 500,
-                    "color": { "type": "hex", "value": "#555" }
-                }
-            }
-        },
 
 
         {
-            "concept": { "name": "todo" },
+            "concept": { "name": "todolist" },
             "type": "layout",
             "tags": [],
             "content": {
                 "type": "flex",
                 "orientation": "column",
+                "wrappable": false,
                 "disposition": [
                     {
                         "type": "layout",
                         "layout": {
                             "type": "flex",
                             "orientation": "row",
+                            "alignItems": "center",
                             "disposition": [
                                 {
                                     "type": "static",
                                     "static": {
-                                        "type": "text",
-                                        "content": "TodoList"
+                                        "type": "image",
+                                        "url": "https://geodes-sms.github.io/gentleman/demo/todo/assets/icon_bullets_checkbox.png",
+                                        "style": {
+                                            "css": ["td-todo-icon"]
+                                        }
                                     }
                                 },
                                 {
                                     "type": "attribute",
-                                    "name": "title"
+                                    "name": "title",
+                                    "style": {
+                                        "css": ["td-todo-title"]
+                                    }
                                 }
                             ],
                             "style": {
@@ -133,14 +131,24 @@
                     {
                         "type": "attribute",
                         "name": "name",
-                        "required": true
+                        "required": true,
+                        "style": {
+                            "css": ["td-tag-name"]
+                        }
                     },
                     {
                         "type": "attribute",
                         "name": "priority",
-                        "required": true
+                        "required": true,
+                        "tag": "choice",
+                        "style": {
+                            "css": ["td-tag-priority"]
+                        }
                     }
-                ]
+                ],
+                "style": {
+                    "css": ["td-tag"]
+                }
             }
         },
 
@@ -150,22 +158,12 @@
             "tags": ["refchoice"],
             "content": {
                 "type": "flex",
-                "alignItems": "center",
                 "disposition": [
-                    {
-                        "type": "attribute",
-                        "name": "priority",
-                        "tag": "readonly",
-                        "required": true
-                    },
                     {
                         "type": "attribute",
                         "name": "name",
                         "tag": "readonly",
-                        "required": true,
-                        "style": {
-                            "ref": ["box-left"]
-                        }
+                        "required": true
                     }
                 ]
             }
@@ -185,6 +183,7 @@
                         "layout": {
                             "type": "flex",
                             "orientation": "row",
+                            "justifyContent": "center",
                             "disposition": [
                                 {
                                     "type": "field",
@@ -207,10 +206,46 @@
                                             "css": ["selector-choice", "selector-choice--task"]
                                         }
                                     }
+                                },
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "button",
+                                        "trigger": "open-option",
+                                        "bind": "value",
+                                        "content": [
+                                            {
+                                                "type": "static",
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": {
+                                                        "type": "html",
+                                                        "html": "&hellip;"
+                                                    },
+                                                    "style": {
+                                                        "css": ["td-task__btn-option-content"]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "type": "static",
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": "Options",
+                                                    "style": {
+                                                        "css": ["td-task__btn-option-tooltip"]
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["td-task__btn-option"]
+                                        }
+                                    }
                                 }
                             ],
                             "style": {
-                                "css": ["td-task-header"]
+                                "ref": ["box-bottom"]
                             }
                         }
                     },
@@ -234,58 +269,37 @@
             "tags": ["choice-selection"],
             "projection": {
                 "type": "flex",
-                "orientation": "column",
+                "orientation": "row",
+                "alignItems": "start",
                 "disposition": [
                     {
-                        "type": "layout",
-                        "layout": {
-                            "type": "flex",
-                            "orientation": "row",
-                            "disposition": [
-                                {
-                                    "type": "attribute",
-                                    "name": "name",
-                                    "tag": "floating-label",
-                                    "style": {
-                                        "box": {
-                                            "outer": { 
-                                                "right": { "value": 6, "unit": "px" }
-                                            }
-                                        }
-                                    }
-                                },
-                                {
-                                    "type": "attribute",
-                                    "name": "completed",
-                                    "tag": "switch-field",
-                                    "style": {
-                                        "box": {
-                                            "outer": { 
-                                                "right": { "value": 6, "unit": "px" }
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
+                        "type": "attribute",
+                        "name": "completed",
+                        "tag": "check-field"
                     },
                     {
                         "type": "layout",
                         "layout": {
                             "type": "flex",
-                            "orientation": "row",
+                            "orientation": "column",
                             "disposition": [
                                 {
                                     "type": "attribute",
-                                    "name": "priority",
-                                    "tag": "floating-label"
+                                    "name": "name",
+                                    "tag": "simple-string"
                                 },
                                 {
                                     "type": "attribute",
-                                    "name": "due_date",
-                                    "tag": "date"
+                                    "name": "description",
+                                    "tag": "textarea",
+                                    "style": {
+                                        "ref": ["box-top"]
+                                    }
                                 }
-                            ]
+                            ],
+                            "style": {
+                                "css": ["td-task-header"]
+                            }
                         }
                     }
                 ],
@@ -307,20 +321,10 @@
                     {
                         "type": "static",
                         "static": {
-                            "type": "text",
-                            "content": "Single",
-                            "style": {
-                                "css": ["category-choice-value"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "static",
-                        "static": {
                             "type": "image",
-                            "url": "http://localhost:8080/demo/todo/assets/icon_dot.png",
+                            "url": "https://geodes-sms.github.io/gentleman/demo/todo/assets/icon_dot.png",
                             "style": {
-                                "css": ["category-choice-icon"]
+                                "css": ["task-choice-icon"]
                             }
                         }
                     },
@@ -330,13 +334,13 @@
                             "type": "text",
                             "content": "Single task",
                             "style": {
-                                "css": ["category-choice-tooltip"]
+                                "css": ["task-choice-tooltip"]
                             }
                         }
                     }
                 ],
                 "style": {
-                    "css": ["category-choice"]
+                    "css": ["task-choice"]
                 }
             }
         },
@@ -347,77 +351,90 @@
             "tags": ["choice-selection"],
             "projection": {
                 "type": "flex",
-                "orientation": "column",
+                "orientation": "row",
                 "disposition": [
+                    {
+                        "type": "attribute",
+                        "name": "completed",
+                        "tag": "check-field"
+                    },
                     {
                         "type": "layout",
                         "layout": {
                             "type": "flex",
-                            "orientation": "row",
+                            "orientation": "column",
                             "disposition": [
                                 {
                                     "type": "attribute",
                                     "name": "name",
-                                    "tag": "floating-label",
+                                    "tag": "simple-string"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "description",
+                                    "tag": "textarea",
                                     "style": {
-                                        "box": {
-                                            "outer": { 
-                                                "right": { "value": 6, "unit": "px" }
+                                        "ref": ["box-top"]
+                                    }
+                                },
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Period",
+                                        "style": {
+                                            "ref": ["box-top"],
+                                            "css": ["title", "period-title"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "row",
+                                        "disposition": [
+                                            {
+                                                "type": "attribute",
+                                                "name": "start",
+                                                "tag": "date"
+                                            },
+                                            {
+                                                "type": "static",
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": {
+                                                        "type": "html",
+                                                        "html": "&ndash;"
+                                                    },
+                                                    "style": {
+                                                        "ref": ["box-left", "box-right"]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "end",
+                                                "tag": "date"
                                             }
+                                        ],
+                                        "style": {
+                                            "css": ["td-task-period"]
                                         }
                                     }
                                 },
                                 {
                                     "type": "attribute",
-                                    "name": "completed",
-                                    "tag": "switch-field",
+                                    "name": "recurrence",
+                                    "tag": "label-number",
                                     "style": {
-                                        "box": {
-                                            "outer": { 
-                                                "right": { "value": 6, "unit": "px" }
-                                            }
-                                        }
+                                        "css": ["td-task-recurrence"]
                                     }
                                 }
-                            ]
-                        }
-                    },
-                    {
-                        "type": "layout",
-                        "layout": {
-                            "type": "flex",
-                            "orientation": "row",
-                            "disposition": [
-                                {
-                                    "type": "attribute",
-                                    "name": "start",
-                                    "tag": "date"
-                                },
-                                {
-                                    "type": "attribute",
-                                    "name": "end",
-                                    "tag": "date"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "type": "layout",
-                        "layout": {
-                            "type": "flex",
-                            "orientation": "row",
-                            "disposition": [
-                                {
-                                    "type": "attribute",
-                                    "name": "priority",
-                                    "tag": "floating-label"
-                                },
-                                {
-                                    "type": "attribute",
-                                    "name": "due_date",
-                                    "tag": "date"
-                                }
-                            ]
+                            ],
+                            "style": {
+                                "css": ["td-task-header"]
+                            }
                         }
                     }
                 ],
@@ -439,10 +456,10 @@
                     {
                         "type": "static",
                         "static": {
-                            "type": "text",
-                            "content": "Recurring",
+                            "type": "image",
+                            "url": "https://geodes-sms.github.io/gentleman/demo/todo/assets/icon_recurring.png",
                             "style": {
-                                "css": ["category-choice-value"]
+                                "css": ["task-choice-icon"]
                             }
                         }
                     },
@@ -452,13 +469,97 @@
                             "type": "text",
                             "content": "Recurring task",
                             "style": {
-                                "css": ["category-choice-tooltip"]
+                                "css": ["task-choice-tooltip"]
                             }
                         }
                     }
                 ],
                 "style": {
-                    "css": ["category-choice"]
+                    "css": ["task-choice"]
+                }
+            }
+        },
+        {
+            "concept": { "prototype": "task" },
+            "type": "layout",
+            "tags": ["option"],
+            "projection": {
+                "type": "flex",
+                "orientation": "column",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Options",
+                            "style": {
+                                "css": ["title", "period-title"],
+                                "text": {
+                                    "transform": "uppercase"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "row",
+                            "disposition": [
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Task: ",
+                                        "style": {
+                                            "text": {
+                                                "bold": 500
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "name",
+                                    "tag": "readonly",
+                                    "required": true,
+                                    "style": {
+                                        "box": {
+                                            "outer": { 
+                                                "left": { "value": 2, "unit": "px" } 
+                                            }
+                                        }
+                                    }
+                                }
+                            ],
+                            "style": {
+                                "ref": ["box-bottom"],
+                                "text": {
+                                    "color": { "type": "hex", "value": "#696969" }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "priority",
+                        "tag": "label-string",
+                        "required": true
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "due_date",
+                        "tag": "label-date",
+                        "required": true
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "tags",
+                        "tag": "tags"
+                    }
+                ],
+                "style": {
+                    "css": ["td-task-option"]
                 }
             }
         },
@@ -488,25 +589,23 @@
 
         {
             "concept": { "name": "boolean" },
-            "tags": ["switch-field"],
+            "tags": ["check-field"],
             "type": "field",
             "content": {
                 "type": "binary",
                 "checkbox": {
                     "label": {
-                        "content": [
-                            { "type": "property", "name": "refname" }
-                        ],       
+                        "content": [],       
                         "style": {
-                            "css": ["switch-field__label"]
+                            "css": ["check-field__label"]
                         }
                     },
                     "style": {
-                        "css": ["switch-field__checkbox"]
+                        "css": ["check-field__checkbox"]
                     }
                 },
                 "style": {
-                    "css": ["switch-field"]
+                    "css": ["check-field"]
                 }
             }
         },
@@ -532,43 +631,32 @@
                                         "type": "text",
                                         "content": "Tags",
                                         "style": {
-                                            "css": ["td-tag-set-header-title"],
-                                            "gss": {
-                                                "text": {
-                                                    "bold": 500,
-                                                    "color": { "type": "hex", "value": "#555" }
-                                                }
-                                            }
+                                            "css": ["td-tag-set-title"]
                                         }
                                     }
                                 },
                                 {
-                                    "type": "field",
-                                    "field": {
-                                        "type": "list",
-                                        "list": false,
+                                    "type": "static",
+                                    "static": {
+                                        "type": "button",
                                         "action": {
-                                            "add": {
-                                                "help": "Add a tag",
-                                                "content": [
-                                                    {
-                                                        "type": "static",
-                                                        "static": {
-                                                            "type": "text",
-                                                            "content": "+",
-                                                            "style": {
-                                                                "css": ["td-tag-set-header__button-content"]
-                                                            }
-                                                        }
+                                            "type": "add",
+                                            "value": null
+                                        },
+                                        "content": [
+                                            {
+                                                "type": "static",
+                                                "static": {
+                                                    "type": "text",
+                                                    "content": "+",
+                                                    "style": {
+                                                        "css": ["td-tag-set-header__button-content"]
                                                     }
-                                                ],
-                                                "style": {
-                                                    "css": ["td-tag-set-header__button"]
                                                 }
                                             }
-                                        },
+                                        ],
                                         "style": {
-                                            "css": ["td-tag-set-header__list"]
+                                            "css": ["td-tag-set-header__button"]
                                         }
                                     }
                                 }
@@ -599,7 +687,7 @@
                                 "add": false
                             },
                             "style": {
-                                "css": ["td-tag-set-header__list"]
+                                "css": ["td-tag-set-body"]
                             }
                         }
                     }
@@ -611,186 +699,54 @@
         },
         {
             "concept": { "name": "set" },
-            "type": "layout",
+            "type": "field",
             "tags": ["tasks"],
             "projection": {
-                "type": "flex",
-                "orientation": "column",
-                "disposition": [
-                    {
-                        "type": "layout",
-                        "layout": {
-                            "type": "flex",
-                            "orientation": "row",
-                            "disposition": [
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Tasks",
-                                        "style": {
-                                            "css": ["td-task-set-header-title"]
-                                        }
-                                    }
-                                },
-                                {
-                                    "type": "field",
-                                    "field": {
-                                        "type": "list",
-                                        "list": false,
-                                        "action": {
-                                            "add": {
-                                                "position": "before",
-                                                "help": "Add a task",
-                                                "content": [      
-                                                    {
-                                                        "type": "static",
-                                                        "static": {
-                                                            "type": "text",
-                                                            "content": "+",
-                                                            "style": {
-                                                                "css": ["td-task-set-header__button-content"]
-                                                            }
-                                                        }
-                                                    }
-                                                ],
-                                                "style": {
-                                                    "css": ["td-task-set-header__button"]
-                                                }
-                                            }
-                                        },
-                                        "style": {
-                                            "css": ["td-task-set-header__list"]
-                                        }
-                                    }
-                                }
-                            ],
-                            "style": {
-                                "css": ["td-task-set-header"]
-                            }
+                "type": "list",
+                "list": {
+                    "item": {
+                        "template": { "tag": "", "name": "" },
+                        "style": {
+                            "css": ["td-task-set__list-item"]
                         }
                     },
-                    {
-                        "type": "field",
-                        "field": {
-                            "type": "list",
-                            "list": {
-                                "item": {
-                                    "template": { "tag": "", "name": "" },
+                    "style": {
+                        "css": ["td-task-set__list"]
+                    }
+                },
+                "action": {
+                    "add": {
+                        "position": "after",
+                        "help": "Add a task",
+                        "content": [      
+                            {
+                                "type": "static",
+                                "static": {
+                                    "type": "text",
+                                    "content": "+",
                                     "style": {
-                                        "css": ["td-task-set__list-item"]
+                                        "css": ["td-task-set__button-icon"]
                                     }
-                                },
-                                "style": {
-                                    "css": ["td-task-set__list"]
                                 }
                             },
-                            "action": {
-                                "add": false
-                            },
-                            "style": {
-                                "css": ["td-task-set-header__list"]
+                            {
+                                "type": "static",
+                                "static": {
+                                    "type": "text",
+                                    "content": "Add task",
+                                    "style": {
+                                        "css": ["td-task-set__button-content"]
+                                    }
+                                }
                             }
+                        ],
+                        "style": {
+                            "css": ["td-task-set__button"]
                         }
                     }
-                ],
+                },
                 "style": {
                     "css": ["td-task-set"]
-                }
-            }
-        },
-        {
-            "concept": { "name": "set" },
-            "type": "layout",
-            "tags": ["subtasks"],
-            "projection": {
-                "type": "flex",
-                "orientation": "column",
-                "disposition": [
-                    {
-                        "type": "layout",
-                        "layout": {
-                            "type": "flex",
-                            "orientation": "row",
-                            "disposition": [
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Sub-tasks",
-                                        "style": {
-                                            "css": ["td-subtask-set-header-title"],
-                                            "gss": {
-                                                "text": {
-                                                    "bold": 500,
-                                                    "color": { "type": "hex", "value": "#555" }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                {
-                                    "type": "field",
-                                    "field": {
-                                        "type": "list",
-                                        "list": false,
-                                        "action": {
-                                            "add": {
-                                                "help": "Add a subtask",
-                                                "content": [
-                                                    {
-                                                        "type": "static",
-                                                        "static": {
-                                                            "type": "text",
-                                                            "content": "+",
-                                                            "style": {
-                                                                "css": ["td-subtask-set-header__button-content"]
-                                                            }
-                                                        }
-                                                    }
-                                                ],
-                                                "style": {
-                                                    "css": ["td-subtask-set-header__button"]
-                                                }
-                                            }
-                                        },
-                                        "style": {
-                                            "css": ["td-subtask-set-header__list"]
-                                        }
-                                    }
-                                }
-                            ],
-                            "style": {
-                                "css": ["td-subtask-set-header"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "field",
-                        "field": {
-                            "type": "list",
-                            "list": {
-                                "item": {
-                                    "template": { "tag": "", "name": "" },
-                                    "style": {
-                                        "css": ["td-subtask-set__list-item"]
-                                    }
-                                },
-                                "style": {
-                                    "css": ["td-subtask-set__list"]
-                                }
-                            },
-                            "action": {
-                                "add": false
-                            },
-                            "style": {
-                                "css": ["td-subtask-set-header__list"]
-                            }
-                        }
-                    }
-                ],
-                "style": {
-                    "css": ["td-subtask-set"]
                 }
             }
         },
@@ -808,37 +764,18 @@
                 "input": {
                     "placeholder": { "type": "property", "name": "refname" },
                     "style": {
-                        "css": ["tl-textbox__input"]
+                        "css": ["td-textbox__input"]
                     }
                 },
                 "style": {
-                    "css": ["tl-textbox"]
+                    "css": ["td-textbox"]
                 }
             }
         },
         {
             "concept": { "name": "string" },
-            "type": "field",
-            "tags": ["name"],
-            "content": {
-                "type": "text",
-                "resizable": true,
-                "input": {
-                    "type": "text",
-                    "placeholder": "name",
-                    "style": {
-                        "css": ["tl-textbox__input"]
-                    }
-                },
-                "style": {
-                    "css": ["tl-textbox"]
-                }
-            }
-        },
-        {
-            "concept": { "name": "string" },
+            "tags": ["label-string"],
             "type": "layout",
-            "tags": ["name-label"],
             "content": {
                 "type": "wrap",
                 "disposition": [
@@ -846,9 +783,12 @@
                         "type": "static",
                         "static": {
                             "type": "text",
-                            "content": "Name:",
+                            "content": {
+                                "type": "property",
+                                "name": "refname"
+                            },
                             "style": {
-                                "ref": ["label"]
+                                "css": ["label", "td-groupfield-label"]
                             }
                         }
                     },
@@ -858,102 +798,38 @@
                             "type": "text",
                             "resizable": true,
                             "input": {
-                                "type": "text",
-                                "placeholder": "name",
+                                "placeholder": "null",
                                 "style": {
-                                    "css": ["tl-textbox__input"]
+                                    "css": ["td-textbox__input"]
                                 }
                             },
                             "style": {
-                                "ref": ["box-left"],
-                                "css": ["tl-textbox"]
+                                "css": ["td-textbox", "td-groupfield__textbox"]
                             }
                         }
                     }
                 ],
                 "style": {
-                    "css": ["tl-label-textbox"]
+                    "css": ["td-groupfield"]
                 }
             }
         },
         {
             "concept": { "name": "string" },
             "type": "field",
-            "tags": ["name-deco"],
+            "tags": ["textarea"],
             "content": {
                 "type": "text",
-                "resizable": true,
+                "multiline": true,
                 "input": {
                     "type": "text",
-                    "placeholder": "name",
+                    "placeholder": "Enter a description",
                     "style": {
-                        "css": ["tl-parenthese-textbox__input"]
+                        "css": ["td-textarea__input"]
                     }
                 },
                 "style": {
-                    "css": ["tl-parenthese-textbox"]
-                }
-            }
-        },
-        {
-            "concept": { "name": "string" },
-            "type": "field",
-            "tags": ["date"],
-            "content": {
-                "type": "text",
-                "input": {
-                    "type": "date",
-                    "placeholder": "YYYY-MM-DD",
-                    "style": {
-                        "css": ["td-textbox__input"]
-                    }
-                },
-                "style": {
-                    "css": ["td-textbox", "td-textbox--date"]
-                }
-            }
-        },
-     
-        {
-            "concept": { "name": "string" },
-            "type": "field",
-            "tags": ["floating-label"],
-            "content": {
-                "type": "text",
-                "container": {
-                    "type": "flex",
-                    "orientation": "row",
-                    "content": [
-                        {
-                            "type": "static",
-                            "static": {
-                                "type": "text",
-                                "content": {
-                                    "type": "property",
-                                    "name": "label"
-                                },
-                                "style": {
-                                    "css": ["rl-label"]
-                                }
-                            }
-                        }, 
-                        {
-                            "type": "input",
-                            "input": {
-                                "type": "text",
-                                "placeholder": {
-                                    "type": "property",
-                                    "name": "label"
-                                },
-                                "style": {
-                                    "css": ["rl-textbox__input"]
-                                }
-                            }
-                        }
-                    ],
-                    "style": {
-                        "css": ["rl-textbox", "rl-textbox--float"]
-                    }
+                    "css": ["td-textarea"]
                 }
             }
         },
@@ -972,17 +848,103 @@
                                 "type": "property",
                                 "name": "value",
                                 "style": {
-                                    "css": ["tl-name-reference__value"]
+                                    "css": ["td-name-reference__value"]
                                 }
                             }
                         }
                     }
                 ],
                 "style": {
-                    "css": ["tl-name-reference"]
+                    "css": ["td-name-reference"]
                 }
             }
         },
+        {
+            "concept": { "name": "date" },
+            "type": "field",
+            "tags": ["date"],
+            "content": {
+                "type": "text",
+                "input": {
+                    "type": "date",
+                    "placeholder": "YYYY-MM-DD",
+                    "style": {
+                        "css": ["td-textbox__input"]
+                    }
+                },
+                "style": {
+                    "css": ["td-textbox", "td-textbox--date"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "date" },
+            "tags": ["label-date"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": {
+                                "type": "property",
+                                "name": "refname"
+                            },
+                            "style": {
+                                "css": ["label", "td-groupfield-label"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "field",
+                        "field": {
+                            "type": "text",
+                            "input": {
+                                "type": "date",
+                                "placeholder": "YYYY-MM-DD",
+                                "style": {
+                                    "css": ["td-textbox__input"]
+                                }
+                            },
+                            "style": {
+                                "css": ["td-textbox", "td-textbox--date", "td-groupfield__textbox"]
+                            }
+                        }
+                    }
+                ],
+                "style": {
+                    "css": ["td-groupfield"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "priority" },
+            "type": "field",
+            "tags": ["choice"],
+            "content": {
+                "type": "choice",
+                "choice": {
+                    "option": {
+                        "template": { "tag": "" },
+                        "style": {
+                            "css": ["priority-select__choice-option"]
+                        }
+                    },
+                    "style": {
+                        "css": ["priority-select__choice"]
+                    }
+                },
+                "placeholder": "P0",
+                "expanded": false,
+                "input": false,
+                "style": {
+                    "css": ["priority-select"]
+                }
+            }
+        },
+     
         {
             "concept": { "name": "number" },
             "tags": ["textual"],
@@ -993,11 +955,11 @@
                 "input": {
                     "placeholder": "time",
                     "style": {
-                        "css": ["tl-textbox__input"]
+                        "css": ["td-textbox__input"]
                     }
                 },
                 "style": {
-                    "css": ["tl-textbox"]
+                    "css": ["td-textbox"]
                 }
             }
         },
@@ -1020,7 +982,7 @@
                                     "name": "label"
                                 },
                                 "style": {
-                                    "css": ["rl-label"]
+                                    "css": ["td-label"]
                                 }
                             }
                         }, 
@@ -1033,53 +995,21 @@
                                     "name": "label"
                                 },
                                 "style": {
-                                    "css": ["rl-textbox__input"]
+                                    "css": ["td-textbox__input"]
                                 }
                             }
                         }
                     ],
                     "style": {
-                        "css": ["rl-textbox", "rl-textbox--float"]
-                    }
-                }
-            }
-        },
-
-
-        {
-            "concept": { "name": "reference" },
-            "type": "field",
-            "tags": ["category-reference"],
-            "content": {
-                "type": "choice",
-                "choice": {
-                    "option": {
-                        "template": { "tag": "refchoice" },
-                        "style": {
-                            "css": ["state-reference__choice-option"]
-                        }
-                    },
-                    "style": {
-                        "css": ["state-reference__choice"]
-                    }
-                },
-                "placeholder": "select category",
-                "expanded": false,
-                "input": {
-                    "placeholder": "Search..."
-                },
-                "style": {
-                    "css": ["state-reference"],
-                    "text": {
-                        "color": { "value": "#333", "type": "hex" }                            
+                        "css": ["td-textbox", "td-textbox--float"]
                     }
                 }
             }
         },
         {
-            "concept": { "name": "reference" },
+            "concept": { "name": "number" },
+            "tags": ["label-number"],
             "type": "layout",
-            "tags": ["category-label-reference"],
             "content": {
                 "type": "wrap",
                 "disposition": [
@@ -1087,44 +1017,61 @@
                         "type": "static",
                         "static": {
                             "type": "text",
-                            "content": "Category:",
+                            "content": {
+                                "type": "property",
+                                "name": "refname"
+                            },
                             "style": {
-                                "ref": ["label"]
+                                "css": ["label", "td-groupfield-label"]
                             }
                         }
                     },
                     {
                         "type": "field",
-                        "field":  {
-                            "type": "choice",
-                            "choice": {
-                                "option": {
-                                    "template": { "tag": "refchoice" },
-                                    "style": {
-                                        "css": ["state-reference__choice-option"]
-                                    }
-                                },
-                                "style": {
-                                    "css": ["state-reference__choice"]
-                                }
-                            },
-                            "placeholder": "no selection",
-                            "expanded": false,
+                        "field": {
+                            "type": "text",
                             "input": {
-                                "placeholder": "Search..."
+                                "type": "number",
+                                "style": {
+                                    "css": ["td-textbox__input"]
+                                }
                             },
                             "style": {
-                                "css": ["state-reference"],
-                                "ref": ["box-left"],
-                                "text": {
-                                    "color": { "value": "#333", "type": "hex" }                            
-                                }
+                                "css": ["td-textbox", "td-groupfield__textbox"]
                             }
                         }
                     }
                 ],
                 "style": {
-                    "css": ["state-label-reference"]
+                    "css": ["td-groupfield"]
+                }
+            }
+        },
+
+        {
+            "concept": { "name": "reference" },
+            "type": "field",
+            "tags": ["tag-reference"],
+            "content": {
+                "type": "choice",
+                "choice": {
+                    "option": {
+                        "template": { "tag": "refchoice" },
+                        "style": {
+                            "css": ["tag-reference__choice-option"]
+                        }
+                    },
+                    "style": {
+                        "css": ["tag-reference__choice"]
+                    }
+                },
+                "placeholder": "select tag",
+                "expanded": false,
+                "input": {
+                    "placeholder": "Search..."
+                },
+                "style": {
+                    "css": ["tag-reference"]
                 }
             }
         }
