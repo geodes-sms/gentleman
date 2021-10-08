@@ -3,7 +3,7 @@
 // Import CSS
 import './stylesheets.js';
 import '@css/samples/gentleman.css';
-import './../demo/todo/assets/style.css';
+// import './../demo/todo/assets/style.css';
 
 import { createDiv, getElements, valOrDefault, isNullOrUndefined, isHTMLElement, hasOwn, getElement, isFunction } from "zenkai";
 import { Editor } from './environment/index.js';
@@ -21,7 +21,7 @@ const Model = {
     TD: "todo",
 };
 
-const modelName = Model.TD;
+const modelName = Model.MC;
 
 const MODEL__EDITOR = require(`@models/${modelName}-model/config.json`);
 const MODEL__CONCEPT = require(`@models/${modelName}-model/concept.json`);
@@ -173,6 +173,7 @@ editor.init({
     config: MODEL__EDITOR,
     handlers: MODEL__HANDLER
 });
+editor.home.open();
 
 if (modelName === Model.MP) {
     editor.addConcept(STYLE_CONCEPT);

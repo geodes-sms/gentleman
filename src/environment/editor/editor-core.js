@@ -234,11 +234,11 @@ export const Editor = {
         this.render();
 
         if (conceptModel) {
-            this.loadConceptModel(conceptModel);
+            this.loadConcept(conceptModel);
         }
 
         if (projectionModel) {
-            this.loadProjectionModel(projectionModel);
+            this.loadProjection(projectionModel);
         }
 
         if (this.isReady) {
@@ -1225,64 +1225,48 @@ export const Editor = {
 
     // Utility actions
 
-    unloadConceptModel() {
-        if (this.hasConceptModel) {
-            this.conceptModel.done();
-            this.conceptModel = null;
+    // unloadConceptModel() {
+    //     if (this.hasConceptModel) {
+    //         this.conceptModel.done();
+    //         this.conceptModel = null;
 
-            this.refresh();
-        }
+    //         this.refresh();
+    //     }
 
-        return this;
+    //     return this;
+    // },
+    loadSession() {
+        this.conceptModel.getRootConcepts().forEach(concept => {
+            this.createInstance(concept);
+        });
     },
-    loadConceptModel(schema, _values) {
+    loadConcept(schema, _values) {
         let concepts = schema.concept || schema;
         let values = valOrDefault(_values, schema.values);
 
         if (!Array.isArray(concepts)) {
-            this.notify("Invalid concept model", NotificationType.ERROR);
+            this.notify("Invalid concept schema", NotificationType.ERROR);
 
             return false;
         }
 
         if (isEmpty(concepts)) {
-            this.notify("The concept model is empty", NotificationType.ERROR);
+            this.notify("The concept schema is empty", NotificationType.ERROR);
 
             return false;
         }
 
-        this.unloadConceptModel();
-        this.clear();
-
-        this.conceptModel = ConceptModelManager.createModel(concepts, this).init(values);
-
-        if (isNullOrUndefined(this.conceptModel)) {
-            // TODO: add validation and notify of errors
+        if(isNullOrUndefined(this.conceptModel)) {
+            this.conceptModel = ConceptModelManager.createModel(null, this).init();
         }
-
-        if (this.hasProjectionModel) {
-            this.projectionModel.done();
-        }
-
-        this.conceptModel.getRootConcepts().forEach(concept => {
-            this.createInstance(concept);
-        });
+        this.conceptModel.schema.push(...concepts);
+        this.conceptModel.init(values);
 
         this.refresh();
 
         return this;
     },
-    unloadProjectionModel() {
-        if (this.hasProjectionModel) {
-            this.projectionModel.done();
-            this.projectionModel = null;
-
-            this.refresh();
-        }
-
-        return this;
-    },
-    loadProjectionModel(schema, _views) {
+    loadProjection(schema, _views) {
         let projections = schema.projection || schema;
         let views = valOrDefault(_views, schema.views);
 
@@ -1298,7 +1282,6 @@ export const Editor = {
             return false;
         }
 
-        this.unloadProjectionModel();
         this.activeElement = null;
         this.activeInstance = null;
         this.activeConcept = null;
@@ -1331,16 +1314,16 @@ export const Editor = {
     load(file, type, name) {
         let reader = new FileReader();
 
-        if (type === "model") {
+        if (type === "concept") {
             reader.onload = (event) => {
                 const schema = JSON.parse(reader.result);
 
                 if (Array.isArray(schema)) {
-                    this.loadConceptModel(schema);
+                    this.loadConcept(schema);
                 } else {
                     const { concept, values = [], editor } = schema;
 
-                    this.loadConceptModel(concept, values);
+                    this.loadConcept(concept, values);
 
                     if (editor) {
                         this.setConfig(editor);
@@ -1353,11 +1336,11 @@ export const Editor = {
                 const schema = JSON.parse(reader.result);
 
                 if (Array.isArray(schema)) {
-                    this.loadProjectionModel(schema);
+                    this.loadProjection(schema);
                 } else {
                     const { projection, views = [] } = schema;
 
-                    this.loadProjectionModel(projection, views);
+                    this.loadProjection(projection, views);
                 }
             };
             reader.readAsText(file);
@@ -1874,36 +1857,29 @@ export const Editor = {
                 let value = this.conceptModel.getValue(id);
                 this.copy(value);
             },
-
-
-
-
-
-            "load-model": (target) => {
-                let event = new MouseEvent('click', {
-                    view: window,
-                    bubbles: true,
-                    cancelable: true,
-                });
-                fileType = "model";
-
-                this.input.dispatchEvent(event);
-            },
             "save": (target) => {
                 this.save();
             },
             "undo": (target) => {
                 this.undo();
             },
-            "unload-model": (target) => {
-                this.unloadConceptModel();
-            },
-            "reload-model": (target) => {
-                const { schema, values } = this.conceptModel;
 
-                this.loadConceptModel(schema, values);
+
+            "load-concept": (target) => {
+                let event = new MouseEvent('click', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
+                });
+                fileType = "concept";
+
+                this.input.dispatchEvent(event);
             },
-            "download-model": (target) => {
+         
+            "unload-concept": (target) => {
+                // this.unloadConceptModel();
+            },
+            "download-concept": (target) => {
                 const { schema, values } = this.conceptModel;
 
                 let name = this.getName().toLowerCase().replace(/\s+/g, " ").replace(" ", "_");
@@ -1923,12 +1899,7 @@ export const Editor = {
                 this.input.dispatchEvent(event);
             },
             "unload-projection": (target) => {
-                this.unloadProjectionModel();
-            },
-            "reload-projection": (target) => {
-                const { schema, views } = this.projectionModel;
-
-                this.loadProjectionModel(schema, views);
+                // this.unloadProjectionModel();
             },
             "download-projection": (target) => {
                 const { schema, views } = this.projectionModel;
@@ -1938,7 +1909,7 @@ export const Editor = {
                 this.download({
                     projection: schema
                 }, `${name}_projection`);
-            },
+            }
         };
 
         const dir = {
@@ -1959,8 +1930,17 @@ export const Editor = {
                 return;
             }
 
+            if(context === "menu") {
+                this.home.actionHandler(action, target);
+                return;
+            }
+
             if (this.activeElement) {
                 this.activeElement.clickHandler(target);
+            }
+
+            if(isNullOrUndefined(action)) {
+                return;
             }
 
             const actionHandler = ActionHandler[action];

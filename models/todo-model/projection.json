@@ -629,7 +629,7 @@
                                     "type": "static",
                                     "static": {
                                         "type": "text",
-                                        "content": "Tags",
+                                        "content": "Labels",
                                         "style": {
                                             "css": ["td-tag-set-title"]
                                         }

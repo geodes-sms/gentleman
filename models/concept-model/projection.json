@@ -14,16 +14,17 @@
                         "content": { "type": "param", "name": "conceptType" },
                         "style": {
                             "css": ["keyword", "model-concept__keyword"],
-                            "gss": {
-                                "text": { "bold": true }
-                            }
+                            "text": { "bold": true }
                         }
                     }
                 },
                 {
                     "type": "attribute",
                     "name": "name",
-                    "tag": "textual"
+                    "tag": "textual",
+                    "style": {
+                        "ref": ["box-left"]
+                    }
                 }
             ]
         },
@@ -124,6 +125,40 @@
                     }
                 }
             ]
+        },
+
+        {
+            "type": "style",
+            "name": "box-top",
+            "style": {
+                "box": {
+                    "outer": { 
+                        "top": { "value": 6, "unit": "px" } 
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "box-right",
+            "style": {
+                "box": {
+                    "outer": { 
+                        "right": { "value": 6, "unit": "px" } 
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "box-left",
+            "style": {
+                "box": {
+                    "outer": { 
+                        "left": { "value": 6, "unit": "px" } 
+                    }
+                }
+            }
         },
 
         {
@@ -275,10 +310,6 @@
                                     ]
                                 },
                                 {
-                                    "type": "template",
-                                    "name": "vertical-bar"
-                                },
-                                {
                                     "type": "attribute",
                                     "name": "prototype",
                                     "tag": "label-reference",
@@ -391,45 +422,19 @@
                                     "tag": "textual"
                                 },
                                 {
-                                    "type": "template",
-                                    "name": "vertical-bar"
-                                },
-                                {
                                     "type": "attribute",
                                     "name": "required",
-                                    "tag": "field-binary-state"
-                                },
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "plink",
-                                        "tag": "base",
-                                        "content": [
-                                            {
-                                                "type": "static", 
-                                                "static": {
-                                                    "type": "text",
-                                                    "help": "Compact view (hide target details)",
-                                                    "content": {
-                                                        "type": "html",
-                                                        "html": "&ndash;"
-                                                    }
-                                                }
-                                            }
-                                        ],
-                                        "style": {
-                                            "css": ["attribute-list-item__plink", "attribute-list-item__plink--expanded"]
-                                        }
+                                    "tag": "field-binary-state",
+                                    "style": {
+                                        "ref": ["box-left"]
                                     }
                                 }
                             ],
                             "style": {
                                 "css": ["model-concept__line"],
-                                "gss": {
-                                    "box": {
-                                        "inner": { 
-                                            "bottom": { "value": 4, "unit": "px" } 
-                                        }
+                                "box": {
+                                    "inner": { 
+                                        "bottom": { "value": 4, "unit": "px" } 
                                     }
                                 }
                             }
@@ -439,74 +444,6 @@
                         "type": "attribute",
                         "name": "target",
                         "tag": "textual"
-                    }
-                ],
-                "style": {
-                    "css": ["attribute-list-item-container"]
-                }
-            }
-        },
-        {
-            "concept": { "name": "attribute" },
-            "tags": ["attribute-list-item--textual", "base"],
-            "type": "layout",
-            "content": {
-                "type": "stack",
-                "orientation": "vertical",
-                "disposition": [
-                    {
-                        "type": "layout",
-                        "layout": {
-                            "type": "wrap",
-                            "disposition": [
-                                {
-                                    "type": "attribute",
-                                    "name": "name",
-                                    "tag": "textual"
-                                },
-                                {
-                                    "type": "template",
-                                    "name": "vertical-bar"
-                                },
-                                {
-                                    "type": "attribute",
-                                    "name": "required",
-                                    "tag": "field-binary-state"
-                                },
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "plink",
-                                        "tag": "full",
-                                        "help": "Expand view (show all details)",
-                                        "content": [
-                                            {
-                                                "type": "template",
-                                                "name": "arrow"
-                                            }
-                                        ],
-                                        "style": {
-                                            "css": ["attribute-list-item__plink", "attribute-list-item__plink--compact"]
-                                        }
-                                    }
-                                },
-                                {
-                                    "type": "attribute",
-                                    "name": "target",
-                                    "tag": "value"
-                                }
-                            ],
-                            "style": {
-                                "css": ["model-concept__line"],
-                                "gss": {
-                                    "box": {
-                                        "inner": { 
-                                            "bottom": { "value": 4, "unit": "px" } 
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
                 ],
                 "style": {
@@ -571,16 +508,6 @@
                         "layout": {
                             "type": "wrap",
                             "disposition": [
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": "Target",
-                                        "style": {
-                                            "css": ["label"]
-                                        }
-                                    }
-                                },
                                 {
                                     "type": "field",
                                     "field": {
@@ -2030,7 +1957,7 @@
                         "type": "static",
                         "static": {
                             "type": "text",
-                            "content": "Default value",
+                            "content": "Default",
                             "style": {
                                 "css": ["textfield--labeled__label", "label"]
                             }
@@ -2290,29 +2217,6 @@
                                             }
                                         ]
                                     }
-                                },
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "plink",
-                                        "tag": "collapsed",
-                                        "help": "Collapse the attributes",
-                                        "content": [
-                                            {
-                                                "type": "static", 
-                                                "static": {
-                                                    "type": "text",
-                                                    "content": {
-                                                        "type": "html",
-                                                        "html": "&ndash;"
-                                                    }
-                                                }
-                                            }
-                                        ],
-                                        "style": {
-                                            "css": ["attribute-list__plink", "attribute-list__plink--expanded"]
-                                        }
-                                    }
                                 }
                             ],
                             "style": {
@@ -2357,55 +2261,6 @@
                             },
                             "style": {
                                 "css": ["textual-list", "textual-list--attribute"]
-                            }
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "set" },
-            "tags": ["attribute-set", "collapsed"],
-            "type": "layout",
-            "content": {
-                "type": "stack",
-                "orientation": "vertical",
-                "disposition": [
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "plink",
-                            "tag": "expanded",
-                            "content": [
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": [
-                                            {
-                                                "type": "raw",
-                                                "raw": "View attributes : "
-                                            },
-                                            {
-                                                "type": "property",
-                                                "name": "length",
-                                                "style": {
-                                                    "css": ["attribute-list__plink-content-length"]
-                                                }
-                                            },
-                                            {
-                                                "type": "raw",
-                                                "raw": "defined"
-                                            }
-                                        ],
-                                        "style": {
-                                            "css": ["attribute-list__plink-content"]
-                                        }
-                                    }
-                                }
-                            ],
-                            "style": {
-                                "css": ["attribute-list__plink", "attribute-list__plink--collapsed"]
                             }
                         }
                     }
@@ -2469,29 +2324,6 @@
                                             }
                                         ]
                                     }
-                                },
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "plink",
-                                        "tag": "collapsed",
-                                        "help": "Collapse the properties",
-                                        "content": [
-                                            {
-                                                "type": "static", 
-                                                "static": {
-                                                    "type": "text",
-                                                    "content": {
-                                                        "type": "html",
-                                                        "html": "&ndash;"
-                                                    }
-                                                }
-                                            }
-                                        ],
-                                        "style": {
-                                            "css": ["attribute-list__plink", "attribute-list__plink--expanded"]
-                                        }
-                                    }
                                 }
                             ],
                             "style": {
@@ -2536,55 +2368,6 @@
                             },
                             "style": {
                                 "css": ["textual-list", "textual-list--property"]
-                            }
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "set" },
-            "tags": ["property-set", "collapsed"],
-            "type": "layout",
-            "content": {
-                "type": "stack",
-                "orientation": "vertical",
-                "disposition": [
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "plink",
-                            "tag": "expanded",
-                            "content": [
-                                {
-                                    "type": "static",
-                                    "static": {
-                                        "type": "text",
-                                        "content": [
-                                            {
-                                                "type": "raw",
-                                                "raw": "View properties : "
-                                            },
-                                            {
-                                                "type": "property",
-                                                "name": "length",
-                                                "style": {
-                                                    "css": ["attribute-list__plink-content-length"]
-                                                }
-                                            },
-                                            {
-                                                "type": "raw",
-                                                "raw": "defined"
-                                            }
-                                        ],
-                                        "style": {
-                                            "css": ["attribute-list__plink-content"]
-                                        }
-                                    }
-                                }
-                            ],
-                            "style": {
-                                "css": ["attribute-list__plink", "attribute-list__plink--collapsed"]
                             }
                         }
                     }
@@ -2722,7 +2505,7 @@
                         "type": "static",
                         "static": {
                             "type": "text",
-                            "content": "Default value",
+                            "content": "Default",
                             "style": {
                                 "css": ["textfield--labeled__label", "label"]
                             }

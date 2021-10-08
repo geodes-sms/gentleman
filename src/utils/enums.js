@@ -58,10 +58,6 @@ export const LogType = {
     ERROR: "error"
 };
 
-export const EditorMode = {
-    MODEL: "model",
-    DESIGN: "design"
-};
 
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 export const DocumentType = {

@@ -22,7 +22,11 @@
 
 .model-concept--textual { padding-top: 6px; }
 
-    .model-concept--textual .field--textbox__input { border: 0 none; }
+    .model-concept--textual .field--textbox__input { 
+        border: 0 none; 
+        font-weight: 500;
+        border-bottom: 2px solid #d5d5d5;
+    }
 
     .model-concept--textual .line {
         display: flex; flex-direction: row;
@@ -48,7 +52,10 @@
         font-size: 1.1em;
     }
     
-    .model-concept--textual .label { color: blue; margin-right: 0.5em; }
+    .model-concept--textual .label { 
+        font-weight: 500;
+        margin-right: 4px; 
+    }
         .label:after { content: ":"; margin-right: 2px; }
 
     .concept-section-title {
@@ -416,8 +423,8 @@
         padding: 3px 6px 4px;
         font-size: 1.3rem; font-weight: 500;
         color: #fff;
-        border-radius: 2px;
-        background-color: #00B319;
+        border-radius: 180px;
+        background-color: #D10236;
         transition: .2s;
     }
         .textual-list__btn-add:hover,
@@ -859,7 +866,7 @@
         width: auto;
         padding-left: 1px; padding-right: 2px;
         background-color: #f5f5f5;
-        color: blue;
+        /* color: blue; */
         border-bottom: 1px solid #d5d5d5;
     }
         .textfield--labeled__input:active,
@@ -1398,7 +1405,6 @@
     .target-choice--textual__list-option.selected {
         color: #222;
         font-weight: bold;
-        text-transform: uppercase;
         background-color: #ffd300;
     }
 

@@ -1,6 +1,6 @@
 import {
     createDocFragment, createH3, createDiv, createParagraph, createSection, createI,
-    createButton, removeChildren, valOrDefault, isHTMLElement, isNullOrUndefined,
+    createButton, removeChildren, valOrDefault, isHTMLElement, isNullOrUndefined, createUnorderedList, createListItem,
 } from 'zenkai';
 import { hide, show, toggle } from '@utils/index.js';
 
@@ -71,6 +71,11 @@ export const EditorHome = {
 
         return this;
     },
+    displayConceptInfo(name) {
+        // console.log(name);
+        console.log(this.modelFileIO.container);
+        console.log( this.editor.conceptModel.getConceptSchema(name));
+    },
     update() {
 
     },
@@ -114,8 +119,23 @@ export const EditorHome = {
         return this;
     },
 
-    bindEvents() {
+    
+    /**
+     * 
+     * @param {string} name 
+     * @param {HTMLElement} element 
+     */
+    actionHandler(name, element) {
+        const { concept } = element.dataset;
+       
+        if(name === "open-concept") {
+            this.displayConceptInfo(concept);
+            
+        }
+    },
 
+
+    bindEvents() {
     }
 };
 
@@ -138,9 +158,9 @@ function createMenu() {
         class: ["editor-home-section__content", "editor-home-section--model__content"],
     });
 
-    this.modelFileIO = createFileIO.call(this, "model");
+    this.modelFileIO = createFileIO.call(this, "concept");
     this.projectionFileIO = createFileIO.call(this, "projection");
-  
+
 
     let modelMenu = createDiv({
         class: ["editor-home-section__menu", "editor-home-section__menu--concept"],
@@ -208,7 +228,7 @@ const FileIO = {
     /** @type {HTMLButtonElement} */
     btnDownload: null,
     /** @type {HTMLButtonElement} */
-    btnReLoad: null,
+    btnEdit: null,
 
     init(type, _title) {
         this.type = type;
@@ -232,9 +252,52 @@ const FileIO = {
         } else {
             this.container.classList.remove("empty");
         }
-        this.btnReLoad.disabled = !this.hasFile;
+        this.btnEdit.disabled = !this.hasFile;
         this.btnUnload.disabled = !this.hasFile;
         this.btnDownload.disabled = !this.hasFile;
+
+        switch (this.type) {
+            case "concept":
+                if (this.editor.hasConceptModel) {
+                    this.iconFile.dataset.count = this.editor.conceptModel.schema.length;
+                    this.editor.conceptModel.schema.forEach(c => {
+                        this.iconFile.append(
+                            createListItem({
+                                class: ["file-concept"],
+                                dataset: {
+                                    context: "menu",
+                                    action: "open-concept",
+                                    type: "file-concept",
+                                    concept: c.name,
+                                    status: "active"
+                                }
+                            }, c.name)
+                        );
+                    }); 
+                } else {
+                    this.iconFile.textContent = "";
+                }
+                break;
+            case "projection":
+                if (this.editor.hasProjectionModel) {
+                    this.iconFile.dataset.count = this.editor.projectionModel.schema.length;
+                    this.editor.projectionModel.schema.forEach(c => {
+                        this.iconFile.append(
+                            createDiv({
+                                class: ["file-concept"]
+                            }, c.name)
+                        );
+                    }); 
+                } else {
+                    this.iconFile.textContent = "";
+                }
+                break;
+
+            default:
+                break;
+        }
+
+
 
         return this;
     },
@@ -253,9 +316,9 @@ const FileIO = {
         });
 
         /** @type {HTMLElement} */
-        let iconFile = createI({
-            class: ["icon", "file-section__icon"]
-        }, `${this.type}`);
+        this.iconFile = createUnorderedList({
+            class: ["bare-list", "file-section__icon"]
+        });
 
         let actionBar = createDiv({
             class: ["file-section__actionbar"]
@@ -266,24 +329,24 @@ const FileIO = {
             class: ["btn", "file-section__actionbar-button", "file-section__actionbar-button--remove"],
             title: `Unload the ${this.type}`,
             dataset: { action: `unload-${this.type}`, },
-        }, `UN.load`);
+        });
 
         /** @type {HTMLButtonElement} */
-        this.btnReLoad = createButton({
+        this.btnEdit = createButton({
             class: ["btn", "file-section__actionbar-button", "file-section__actionbar-button--reload"],
             title: `Reload the ${this.type}`,
             dataset: { action: `reload-${this.type}`, },
-        }, `RE.load`);
+        });
 
         /** @type {HTMLButtonElement} */
         this.btnDownload = createButton({
             class: ["btn", "file-section__actionbar-button", "file-section__actionbar-button--download"],
             title: `Download the ${this.type}`,
             dataset: { action: `download-${this.type}`, },
-        }, `Download`);
+        });
 
-        actionBar.append(this.btnUnload, this.btnReLoad, this.btnDownload);
-        fileSection.append(iconFile, actionBar);
+        actionBar.append(this.btnUnload, this.btnEdit, this.btnDownload);
+        fileSection.append(this.iconFile, actionBar);
 
 
         /** @type {HTMLButtonElement} */

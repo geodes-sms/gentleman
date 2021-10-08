@@ -53,71 +53,118 @@
     }
 
     .editor-home-section .drop-area__file-section {
-        display: flex;
-        flex-direction: column;
+        display: flex; flex-direction: row; justify-content: space-between;
         width: 100%;
+        height: 120px;
     }
 
     .editor-home-section__drop-area .file-section__icon {
-        align-self: center; justify-self: center;
-
         position: relative;
-        display: flex; align-items: center;  justify-content: center;
+        display: flex; flex-wrap: wrap;
         text-align: center;
-        width: 48px; height: 60px;
-        border-radius: 1px;
-        text-align: center;
-        background-color: #f0f0f0;
-        border: 2px dashed #d5d5d5;
-        transform: skew(-6deg) scale(0.95);
-        box-shadow: 2px 2px 0 #c0c0c0;
+        max-width: 120px; height: 100%;
         /* opacity: 0.6; */
+        overflow: auto;
         transition: .2s;
-    } 
-        .editor-home-section__drop-area .file-section__icon:after {
-            content: "";
-            position: absolute;
-            top: 24px;
-            width: 80px; height: 24px;
-            border: 4px solid #d5d5d5; border-top: 0;
-            border-radius: 50%;
-            opacity: 0.5;
-            z-index: 5;
-        }
+    }
+
+    .file-concept {
+        width: 12px;
+        height: 12px;
+        overflow: hidden;
+        display: flex;
+        background-color: #d5d5d5;
+        border-radius: 2px;
+        color: transparent;
+        box-shadow: 1px 1px 1px -1px #999;
+        margin-right: 2px; margin-bottom: 2px;
+    }
+     
 
         .file-section__actionbar {
-            display: flex; justify-content: space-between;
-            margin-top: 6px;
+            display: flex; flex-direction: column;
+            margin-left: 12px;
         }
 
         .file-section__actionbar-button {
-            padding: 4px 6px 5px;
-            color: #fff;
-            font-size: 1.2em;
-            border-radius: 2px;
-            background-color: #222444;
+            position: relative;
+            margin-top: 6px;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            font-size: 1.4rem; font-weight: 500;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            box-shadow: 0 1px 2px  #555;
             opacity: 0.9;
             transition: .2s;
+        }    
+            
+            .file-section__actionbar-button:hover {
+                background-color: #6970D1;
+            }
+            .file-section__actionbar-button:disabled {
+                color: #d5d5d5;
+                background-color: #969696;
+                opacity: 0.9;
+            }
+            .file-section__actionbar-button:before {
+                display: block;
+                transition: .4s;
+            }
+            .file-section__actionbar-button:after {
+                display: block;
+                transition: .4s;
+            }
+
+        .file-section__actionbar-button--download:after {
+            display: block;
+            content: "➜";
+            font-weight: 800;
+            transform: scale(1.1) rotate(90deg) translate(-3px, 0);
         }
-        
-        .file-section__actionbar-button:hover {
-            background-color: #6970D1;
+        .file-section__actionbar-button--download:before {
+            content: "";
+            position: absolute;
+            height: 3px;
+            bottom: 4px; left: 4px; right: 4px;
+            background-color: #555;
+            border-radius: 180px;
+        }
+        .file-section__actionbar-button--download:not(:disabled):hover:after {
+            color: #222;
+            transform: scale(1.1) rotate(90deg) translate(-1px, -1px);
         }
 
-        .file-section__actionbar-button:disabled {
-            color: #d5d5d5;
-            background-color: #969696;
-            opacity: 0.9;
-            transform: scale(0.9);
+        .file-section__actionbar-button--reload:after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 0;
+            bottom: 2px; left: calc(50% - 4px);
+            border-left: 2px solid transparent;
+            border-right: 2px solid transparent;
+            border-top: 4px solid #222;
+            transform: rotate(25deg);
         }
-        .file-section__actionbar-button:not(:last-child) {
-            margin-left: 3px;
+        .file-section__actionbar-button--reload:before {
+            content: "";
+            position: absolute;
+            height: 14px;
+            width:  4px;
+            top: 4px; left: 50%;
+            background-color: #555;
+            border-radius:  180px 180px 0 0;
+            transform: rotate(25deg);
+        }
+        .file-section__actionbar-button--reload:not(:disabled):hover:before {
+            transform: rotate(25deg) scale(1.1);
+        }
+        .file-section__actionbar-button--reload:not(:disabled):hover:after {
+            transform: rotate(25deg) scale(1.1);
         }
 
-        .file-section__actionbar-button--download {
-            margin-left: 6px;
-            text-transform: uppercase;
-        }
+
 
         .editor-home-section__drop-area--model:hover {
             border-color: #2d71b5;
@@ -133,41 +180,14 @@
             .editor-home-section__drop-area:hover:after {
                 opacity: 0.8;
             }
-        
-        .editor-home-section__drop-area--model .file-section__icon,
-        .editor-home-section__drop-area--model .file-section__icon:after {
-            border-color: #2d71b5;
-        }
-        
+
             .editor-home-section__drop-area--model .drop-area__button {
                 background-color: #2d71b5;
             }
 
-            .editor-home-section__drop-area--model:not(.empty) .file-section__icon {
-                transform: skew(0) translateY(2px);
-                border-style: solid;
-                background-color: #2d71b5;
-                color: #fff;
-                box-shadow: none;
-                opacity: 1;
-            }
-
-        .editor-home-section__drop-area--projection .file-section__icon,
-        .editor-home-section__drop-area--projection .file-section__icon:after {
-            border-color: #b52d44;
-        }
-        
+         
             .editor-home-section__drop-area--projection .drop-area__button {
                 background-color: #b52d44;
-            }
-
-            .editor-home-section__drop-area--projection:not(.empty) .file-section__icon {
-                transform: skew(0) translateY(2px);
-                border-style: solid;
-                background-color: #b52d44;
-                color: #fff;
-                box-shadow: none;
-                opacity: 1;
             }
 
     .drop-area__instruction {
