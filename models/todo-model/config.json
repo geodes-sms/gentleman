@@ -1,0 +1,14 @@
+{
+    "name": "Todo",
+    "concepts": [
+        {
+            "name": "todolist"
+        },
+        {
+            "name": "single-task"
+        },
+        {
+            "name": "recurring-task"
+        }
+    ]
+}

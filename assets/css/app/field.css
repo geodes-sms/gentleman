@@ -1,0 +1,347 @@
+/*
+ * General field style
+-----------------------------------------------------------------------------*/
+
+.field {
+    position: relative;
+    z-index: 1;
+}
+
+    .field.active { z-index: 30; opacity: 1; }
+
+    .field.focus { z-index: 50; opacity: 1; }
+
+    .field.control {
+        display: inline-flex;
+        flex-direction: column;
+    }
+
+        .field.active > .field-message {
+            opacity: 1;
+            transform: translateY(-2px);
+        }
+
+        .field.active .notification-message {
+            opacity: 1;
+            z-index: 100;
+            background-color: #555;
+        }
+        .field.active .notification-message--error {
+            background-color: #db3b1f;
+        }
+
+    .field-message {
+        margin-left: 5px;
+        height: 10px; width: 10px;
+        font-style: normal;
+        border-radius: 50%;
+        background-color: #555;
+        transition: .2s;
+        z-index: 20;
+    }
+
+        .field-message .notification-message {
+            position: absolute;
+            top: calc(100% + 4px); left: calc(100% + 2px);
+            display: block;
+            padding: 5px;
+            font-size: 1.2rem; font-weight: 600;
+            color: #fff;
+            border-radius: 2px;
+            box-shadow: 1px 1px 3px -1px rgba(50, 50, 50, 0.95);
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: .2s;
+            z-index: -10;
+        }
+        .field-message .notification-message--info { background-color: rgba(50, 50, 50, 0.95); }
+        .field-message .notification-message--error { background-color: rgb(221, 64, 36, 0.95); }
+
+
+/*
+ * Field: Binary
+-----------------------------------------------------------------------------*/
+
+.field--checkbox {
+    display: inline-block;
+}
+
+.field--checkbox__input {
+    white-space: nowrap;
+    font-size: 1em;
+}
+
+.field--checkbox__label {
+    display: inline-flex;
+    align-items: center;
+    text-transform: capitalize;
+}
+
+    .field--checkbox__label-text {
+        margin-left: 4px;
+    }
+
+/*
+ * Field: Text
+-----------------------------------------------------------------------------*/
+
+.field--textbox {
+    display: inline-flex;
+}
+
+.field--textbox__input {
+    display: inline-block;
+    width: 100%; min-width: 42px;
+    padding-left: 1px; padding-right: 1px;
+    font-size: 1em; font-family: inherit;
+    color: inherit;
+    border: 1px solid #000; border-radius: 1px;
+    background-color: transparent;
+    outline: none;
+    z-index: 5;
+}
+    .field--textbox__input.error {
+        border-color: #dd4124;
+        background-color: rgba(191, 25, 50, 0.2);
+    }
+    .field--textbox__input.empty {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .name-field--textual__input {
+        font-family: inherit;
+        display: inline-flex;
+        width: auto;
+        color: #333;
+        border-bottom: 1px solid #d5d5d5;
+        background-color: #f5f5f5;
+    }
+
+    .field--textbox.empty .field--textbox__input-pseudo:before {
+        content: attr(data-placeholder);
+        padding-left: 4px; padding-right: 4px;
+        flex: 1 1;
+        font-style: italic;
+        color: #555;
+    }
+
+.field--textbox__choices {
+    position: absolute;
+    top: calc(100% + 1px); left: 0;
+    min-width: 150px;
+    font-size: 1rem;
+    box-shadow: 0 1px 2px #999;
+    background-color: #fff;
+    z-index: 20;
+    cursor: default;
+}
+
+    .field--textbox__choice {
+        padding: 4px 1%;
+        color: #333;
+        font-size: 1.2em;
+    }
+        .field--textbox__choice:hover,
+        .field--textbox__choice:focus,
+        .field--textbox__choice:active {
+            background-color: #ffd300;
+        }
+
+
+/*
+ * Field: List
+-----------------------------------------------------------------------------*/
+
+.field--list {
+    position: relative;
+}
+
+.field--list__list {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+}
+    .field--list__list.vertical { flex-direction: column; }
+
+    .field--list__list.horizontal { flex-direction: row; }
+
+    .field--list-item {
+        position: relative;
+        display: flex;
+        font-size: 1em;
+    }
+
+    .field--list-item .btn-remove {
+        font-size: 1em;
+    }
+
+
+/*
+ * Field: Table
+-----------------------------------------------------------------------------*/
+
+.field--table {
+    width: 100%;
+}
+
+    .field--table__table {
+        width: 100%;
+        border: 0 none;
+    }
+
+    .field--table-cell {
+        position: relative;
+    }
+
+    .field--table__btn-add {
+        cursor: default;
+    }
+
+    .field--table-row:hover .field--table__btn-add {
+        opacity: 1;
+        transform: translateY(50%);
+    }
+
+/*
+ * Field: Choice
+-----------------------------------------------------------------------------*/
+
+.field--choice {
+    display: inline-flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    font-size: 1em;
+}
+
+    .field--choice__input {
+        font-size: 1em;
+        margin-bottom: 2px;
+        overflow: hidden;
+        outline: none;
+        border: 1px solid #d5d5d5;
+        background-color: #fefefe;
+        z-index: 5;
+    }
+
+    .field--choice__choices {
+        position: relative;
+        display: flex;
+        margin: 0; padding: 0; list-style: none;
+        z-index: 2;
+    }
+    .field--choice__choice {
+        border: 1px solid #555;
+        cursor: pointer;
+    }
+    .field--choice__choice:hover {
+        background-color: #eee;
+    }
+    .field--choice__choice.selected {
+        background-color: #ffd300;
+    }
+
+
+.field--choice__select-wrapper {
+    display: flex; flex-direction: row;
+    border: 1px solid #c0c0c0;
+    border-radius: 2px;
+}
+
+.field--choice__select-value {
+    display: flex; flex-direction: row;
+    padding: 2px;
+    flex-grow: 2;
+}
+
+.field--choice__select-icon {
+    display: block;
+    padding: 2px 4px;
+}
+    .field--choice__select-icon:before {
+        content: '▼';
+        font-size: 0.9em;
+    }
+
+    .field--choice__select-list {
+        position: absolute;
+        top: 100%;
+        display: flex; flex-direction: column;
+        background-color: #fff;
+        box-shadow: 1px 0 1px #c0c0c0;
+        z-index: 50;
+    }
+
+    .field--choice__select-list .field--choice__choices {
+        flex-direction: column;
+        max-height: 300px;
+        overflow: auto;
+    }
+
+    .field--choice__choice {
+        position: relative;
+    }
+    
+    .field--choice__choice:after {
+        content: "";
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 0;
+        background: transparent;
+        z-index: 50;
+    }
+/*
+ * Field: SVG
+-----------------------------------------------------------------------------*/
+
+.field--svg__foreign{
+    display: inline-flex;
+    position: absolute;
+    background-color: #fafafa;
+    border-radius: 1px;
+}
+
+.field--svg__foreign > * {
+    position: relative;
+    width: inherit; height: inherit;
+}
+
+.field--svg__input {
+    display: inline-block;
+    width: 100%;
+    padding-left: 1px; padding-right: 1px;
+    font-size: 50%; font-family: inherit;
+    color: inherit;
+    border: 1px solid #000; border-radius: 1px;
+    background-color: transparent;
+    outline: none;
+    z-index: 5;    
+}
+    .field--svg__input.error {
+        border-color: #dd4124!important;
+        background-color: rgba(191, 25, 50, 0.2)!important;
+    }
+    .field--svg__input.empty {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .name-field--textual__input {
+        font-family: inherit;
+        display: inline-flex;
+        width: auto;
+        color: #333;
+        border-bottom: 1px solid #d5d5d5;
+        background-color: #f5f5f5;
+    }
+
+    .field--textbox.empty .field--svg__input-pseudo:before {
+        content: attr(data-placeholder);
+        padding-left: 4px; padding-right: 4px;
+        flex: 1 1;
+        font-style: italic;
+        color: #555;
+    }

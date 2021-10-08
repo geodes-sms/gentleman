@@ -1,0 +1,304 @@
+body { display: flex; flex-direction: column; }
+
+h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif; }
+
+.content-wrapper { padding-left: 1%; padding-right: 1%; }
+
+.page-header { height: 30px; background-color: #F5DF4D; }
+
+    .page-header .content-wrapper { display: flex; }
+
+.page-title {
+    margin: 0;
+    padding-top: 6px; padding-bottom: 6px;
+    font-size: 1.5rem; font-weight: 500;
+}
+
+.page-body {
+    flex-grow: 2;
+    display: flex;
+    height: calc(100% - 30px);    
+}
+
+.app {
+    flex-grow: 2;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.field-action { 
+    border: 0 none; 
+    padding: 0; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+}
+
+.tl-mode,
+.tl-light {
+    position: relative;
+    background-color: #fefefe;
+}
+
+.tl-light {
+    padding-top: 6px;
+}
+
+.label-icon {
+    height: 48px;
+    width: auto;
+    border-radius: 50%;
+}
+
+.tl-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-right: 4px;
+    width: 18px; height: 18px;
+    font-size: 1rem; font-weight: 500;
+    color: #fff;
+    box-shadow: 0 0 0 1px #c0c0c0;
+    border-radius: 50%;
+}
+
+.tl-icon--mode {
+    background-color: royalblue;
+}
+
+
+.tl-icon--light[data-style-color="RED"] { background-color: red; }
+
+.tl-icon--light[data-style-color="YELLOW"] { background-color: #ffd300; }
+
+.tl-icon--light[data-style-color="GREEN"] { background-color: green; }
+
+.tl-icon--light[data-style-color="WHITE"] { background-color: #f5f5f5; }
+
+.tl-icon--light[data-style-color="BLACK"] { background-color: #111; }
+
+
+.tl-mode-header .tl-icon {
+    width: 24px; height: 24px;
+}
+
+/* Light set
+-----------------------------------------------------------------------------*/
+
+.tl-light-set {
+    padding: 0;
+}
+
+.tl-light-set.empty .tl-light-set__list {
+    display: none;
+}
+
+.tl-light-set__list {
+    margin-top: 6px;
+    display: flex;
+    padding: 2px 12px 8px;
+    border-radius: 6px;
+    background-color: #e5e5e5;
+}
+
+.tl-light-set__list-item {
+    margin-top: 6px; margin-right: 8px;
+    min-width: 240px;
+    box-shadow: 0 1px 3px #a9a9a9;
+    border-radius: 2px;
+}
+
+.tl-light-set__btn-add {
+    display: flex; flex-direction: row; align-items: center;
+    font-size: 0.9em;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 2px 2px 1px 1px;
+    color: #444;
+    border-bottom: 2px solid tomato;
+}
+    .tl-light-set__btn-add:hover {
+        background-color: tomato;
+        color: #fff;
+    }
+
+    .tl-light-set__btn-add .label-icon {
+        height: 24px;
+        opacity: 0.8;
+        margin-right: 6px;
+    }
+
+.tl-light > .projection__btn-delete {
+    position: absolute;
+    top: 2px; right: 2px;
+    z-index: 2;
+}
+
+.tl-behaviour-set-header__list {
+    padding: 0;
+}
+
+.tl-behaviour-set-header__list-button {
+    display: flex; align-items: center; justify-content: center;
+    width: 18px;
+    margin-left: 2px;
+    font-size: 1.2em;
+    color: #111;
+    background: none;
+}
+
+.tl-behaviour-set-header__list-button .text {
+    display: block;
+    transform: scale(1.4) translateY(-1px);
+}
+
+.tl-behaviour-set-header__list-button:hover {
+    color: royalblue;
+}
+
+/* Behaviour set
+-----------------------------------------------------------------------------*/
+
+.tl-behaviour-set-header {
+    align-items: center;
+}
+
+.tl-behaviour-set {
+    padding: 0;
+}
+
+.tl-behaviour-set__list {
+    display: flex; flex-direction: column;
+    width: 100%;    
+}
+
+.tl-behaviour-set__list-item {
+    padding: 6px;
+}
+
+.tl-behaviour-set__list-item:nth-child(even) {
+    background-color: #eee;
+}
+
+.tl-behaviour > .projection__btn-delete {
+    position: absolute;
+    top: 2px; right: 4px;
+}
+
+.primitive-constraint > button {
+    display: none;
+}
+
+.temporal-config,
+.manual-config {
+    align-items: center;
+}
+
+
+/* Normal textbox
+-----------------------------------------------------------------------------*/
+
+.tl-textbox {
+    padding: 0;
+}
+
+.tl-textbox__input {
+    border: 0 none;
+    min-width: 12px;
+    background-color: #f5f5f5;
+    border-bottom: 2px solid #555;
+}
+
+/* Parenthese textbox
+-----------------------------------------------------------------------------*/
+
+.tl-parenthese-textbox {
+    padding: 0;
+    margin-left: 2px;
+}
+
+.tl-parenthese-textbox:before {
+    content: "(";
+    transform: scale(1.1);
+}
+
+.tl-parenthese-textbox:after {
+    content: ")";
+    transform: scale(1.1);
+}
+
+.tl-parenthese-textbox__input {
+    border: 0 none;
+    min-width: 12px;
+    background-color: #f5f5f5;
+    border-bottom: 2px solid #555;
+}
+
+/* Color textbox
+-----------------------------------------------------------------------------*/
+
+.tl-color-textbox {
+    position: relative;
+    padding: 0;
+}
+
+.tl-color-textbox__input {
+    border: 0 none;
+    min-width: 12px;
+    background-color: #f5f5f5;
+    border-bottom: 2px solid #555;
+}
+
+.tl-color-textbox[data-value="RED"]:after,
+.tl-color-textbox[data-value="YELLOW"]:after,
+.tl-color-textbox[data-value="GREEN"]:after,
+.tl-color-textbox[data-value="WHITE"]:after,
+.tl-color-textbox[data-value="BLACK"]:after {
+    content: "";
+    position: absolute;
+    left: 100%; top: 0; bottom: 0;
+    width: 24px;
+    border: 1px solid #222; border-radius: 2px;
+    transform: scale(0.7);
+}
+
+.tl-color-textbox[data-value="RED"]:after { background-color: red; }
+.tl-color-textbox[data-value="YELLOW"]:after { background-color: #ffd300; }
+.tl-color-textbox[data-value="GREEN"]:after { background-color: green; }
+.tl-color-textbox[data-value="WHITE"]:after { background-color: #f5f5f5; }
+.tl-color-textbox[data-value="BLACK"]:after { background-color: black; }
+
+
+
+.tl-behaviour-choice__list-option {
+    border: 0 none;
+    background: none;
+    font-size: 1em;
+    padding-left: 2px; padding-right: 2px;
+    padding: 3px 6px 2px;
+    background-color: #d9d9d9;
+    border-radius: 2px;
+}
+
+.tl-behaviour-choice__list-option:not(:last-child) {
+    margin-right: 6px;
+}
+
+.tl-behaviour-choice__list-option.selected {
+    color: royalblue;
+    font-weight: bold;
+    border-bottom: 2px solid; border-radius: 0;
+    background: none;
+}
+
+.state-reference__choice {
+    z-index: 50;
+    background-color: #fff;
+}
+
+.state-reference__choice-option {
+    font-size: 1.4rem;
+    border: 0 none;
+    padding: 6px 2px;
+}
+
+.state-reference__choice-option:not(:last-child) {
+    border-bottom: 1px solid #d5d5d5;
+}

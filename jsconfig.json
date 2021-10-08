@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "baseUrl": ".",
+    "module": "commonjs",
+    "paths": {
+      "*": [
+        "./src/*"
+      ],
+      "@src/*": [
+        "./src/*"
+      ],
+      "@environment/*": [
+        "src/environment/*"
+      ],
+      "@model/*": [
+        "./src/model/*"
+      ],
+      "@generator/*": [
+        "./src/generator/*"
+      ],
+      "@concept/*": [
+        "./src/model/concept/*"
+      ],
+      "@structure/*": [
+        "./src/model/structure/*"
+      ],
+      "@projection/*": [
+        "./src/projection/*"
+      ],
+      "@field/*": [
+        "./src/projection/field/*"
+      ],
+      "@utils/*": [
+        "./src/utils/*"
+      ],
+    }
+  }
+}

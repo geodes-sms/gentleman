@@ -1,0 +1,14 @@
+{
+    "name": "Gentleman concept",
+    "concepts": [
+        {
+            "name": "concrete concept"
+        },
+        {
+            "name": "prototype concept"
+        },
+        {
+            "name": "derivative concept"
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "name": "Gentleman projection",
+    "concepts": [
+        {
+            "name": "projection-set"
+        },
+        {
+            "name": "projection"
+        },
+        {
+            "name": "template"
+        }
+    ]
+}

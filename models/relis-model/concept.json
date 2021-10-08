@@ -1,0 +1,705 @@
+{
+    "concept": [
+        {
+            "id": "f3115bb5-945d-443f-80d0-3e8a59e3c219",
+            "name": "project",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "short_name",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "screening",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "screening"
+                        }
+                    },
+                    "required": false
+                },
+                {
+                    "name": "quality_assess",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "qa"
+                        }
+                    },
+                    "required": false
+                },
+                {
+                    "name": "classification",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "classification"
+                        }
+                    },
+                    "required": false
+                },
+                {
+                    "name": "reporting",
+                    "target": {
+                        "name": "report"
+                    },
+                    "required": false
+                }
+            ]
+        },
+        {
+            "id": "035316fc-eabd-474e-9cad-fb3c0ec51af5",
+            "name": "screening",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "review_per_paper",
+                    "target": {
+                        "name": "number",
+                        "default": 2
+                    },
+                    "required": true
+                },
+                {
+                    "name": "conflict_type",
+                    "target": {
+                        "name": "conflicttype",
+                        "default": "IncludeExclude",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Type" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "conflict_resolution",
+                    "target": {
+                        "name": "conflictresolution",
+                        "default": "Unanimity",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Resolution" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "exclusion_criteria",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "value"
+                        },
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Exclusion" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "source_papers",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "value"
+                        },
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Inclusion" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "search_strategy",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "value"
+                        },
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Inclusion" }
+                        ]
+                    },
+                    "required": true
+                },
+               
+                {
+                    "name": "validation_percentage",
+                    "target": {
+                        "name": "number",
+                        "default": 20,
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Percentage" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "validation_assignment_mode",
+                    "target": {
+                        "name": "assignmentmode",
+                        "default": "Normal",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Assignment mode" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "phases",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "phase"
+                        },
+                        "constraint": {
+                            "cardinality": {
+                                "type": "range",
+                                "range": {
+                                    "min": { "value": 1 }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "id": "l4cd7f4h-3fs2-4f4f-9379-ef69f027f496",
+            "name": "phase",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "title",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Title" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "description",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Description" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "fields",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "field"
+                        },
+                        "constraint": {
+                            "cardinality": {
+                                "type": "range",
+                                "range": {
+                                    "min": { "value": 1 }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "id": "b8308954-b4df-4d42-a659-aee5822ac7e6",
+            "name": "qa",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "cut_off_score",
+                    "target": {
+                        "name": "number",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Cut-off score" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "questions",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "question"
+                        },
+                        "constraint": {
+                            "cardinality": {
+                                "type": "range",
+                                "range": {
+                                    "min": { "value": 1 }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                {
+                    "name": "answers",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "answer"
+                        },
+                        "constraint": {
+                            "cardinality": {
+                                "type": "range",
+                                "range": {
+                                    "min": { "value": 1 }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "id": "69q05489-db4f-42d4-a659-sac8287s22w6",
+            "name": "classification",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "categories",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "category"
+                        },
+                        "constraint": {
+                            "cardinality": {
+                                "type": "range",
+                                "range": {
+                                    "min": { "value": 1 }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "id": "gs89f524-fs4d-42d4-l296-5ae22r7ee8c6",
+            "name": "report",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "graphs",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "graph"
+                        },
+                        "constraint": {
+                            "cardinality": {
+                                "type": "range",
+                                "range": {
+                                    "min": { "value": 1 }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            ]
+        },
+
+
+        {
+            "id": "93cd2b74-3f22-424f-9b79-9ef69f0f4276",
+            "name": "question",
+            "description": null,
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "text",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "id": "d9583c2a-e004-4154-95d6-2a146c5cff76",
+            "name": "answer",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "title",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "min_score",
+                    "target": {
+                        "name": "number"
+                    },
+                    "required": true
+                }
+            ]
+        },
+
+
+        {
+            "id": "dedebe42-bda1-47f5-8e84-a1f0e56d26f7",
+            "name": "category",
+            "description": null,
+            "nature": "prototype",
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Name" }
+                        ],
+                        "constraint": {
+                            "value": {
+                                "type": "unique",
+                                "unique": {
+                                    "prototype": true
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                {
+                    "name": "title",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Title" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "mandatory",
+                    "target": {
+                        "name": "boolean",
+                        "default": true
+                    },
+                    "required": true
+                },
+                {
+                    "name": "number_of_values",
+                    "target": {
+                        "name": "number",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Number of values" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "is_infinity",
+                    "target": {
+                        "name": "boolean"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "sub_categories",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "category"
+                        }
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "id": "dede42be-b1da-7f54-8e84-d2a1f0e566f7",
+            "name": "free-category",
+            "nature": "concrete",
+            "prototype": "category",
+            "attributes": [
+                {
+                    "name": "type",
+                    "target": {
+                        "name": "simpletype",
+                        "default": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Type" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "max_char",
+                    "target": {
+                        "name": "number",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Max character" }
+                        ],
+                        "default": true
+                    },
+                    "required": true
+                },
+                {
+                    "name": "pattern",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Pattern" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "initial_value",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Initial value" }
+                        ]
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "id": "dede2be4-bad1-7f45-84e8-a51f06d2e6f7",
+            "name": "static-category",
+            "nature": "concrete",
+            "prototype": "category",
+            "attributes": [
+                {
+                    "name": "values",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "value"
+                        }
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "id": "ebd4ede2-bad1-754f-e884-ae5f0266d1f7",
+            "name": "independant-dynamic-category",
+            "nature": "concrete",
+            "prototype": "category",
+            "attributes": [
+                {
+                    "name": "reference_name",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Reference name" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "initial_values",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "value"
+                        }
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "id": "rbdf4de2-r1d1-64df-aed4-d15f26f0ae67",
+            "name": "dependant-dynamic-category",
+            "nature": "concrete",
+            "prototype": "category",
+            "attributes": [
+                {
+                    "name": "depends_on",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "category"
+                        }
+                    },
+                    "required": true
+                }
+            ]
+        },
+
+        
+        {
+            "id": "sdga9p7f-sf02-ab3z4-9937-f6922fs0796e",
+            "name": "graph",
+            "nature": "prototype",
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Name" }
+                        ],
+                        "constraint": {
+                            "value": {
+                                "type": "unique",
+                                "unique": {
+                                    "prototype": true
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                {
+                    "name": "title",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Title" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "category"
+                        }
+                    },
+                    "required": true
+                },
+                {
+                    "name": "charts",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "graphtype"
+                        }
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "id": "alsd4p7f-0sf2-a43z-9937-f6922fs0796e",
+            "name": "simple-graph",
+            "nature": "concrete",
+            "prototype": "graph",
+            "attributes": []
+        },
+        {
+            "id": "sd42sp7f-20sf-a13z-d837-922f6fs0796e",
+            "name": "compare-graph",
+            "nature": "concrete",
+            "prototype": "graph",
+            "attributes": [
+                {
+                    "name": "reference",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "category"
+                        }
+                    },
+                    "required": true
+                }
+            ]
+        },
+
+        {
+            "id": "abd1fede-rd10-4ddf-b4ed-d26f1f05ae67",
+            "name": "value",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                }
+            ]
+        },
+    
+
+        {
+            "id": "79a633c6-361e-4e2f-b39f-26707210ab66",
+            "name": "assignmentmode",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "values": ["Normal", "Veto", "Info"]
+            }
+        },
+        {
+            "id": "a9916dd0-0b9d-4364-8fb0-d8f3d72b6c7c",
+            "name": "conflictresolution",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "values": ["Majority", "Unanimity"]
+            }
+        },
+        {
+            "id": "dc83ab6d-0ed6-4d7b-baea-7a2b936c2819",
+            "name": "graphtype",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "values": ["bar", "pie", "line"]
+            }
+        },
+        {
+            "id": "6773a03d-3ace-4850-8a5f-e0c87a5f0293",
+            "name": "field",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "values": ["Title", "Abstract", "Link", "Preview", "Bibtex"]
+            }
+        },
+        {
+            "id": "d961d547-9055-4c66-b5f7-41db5ac14710",
+            "name": "conflicttype",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "values": ["IncludeExclude", "ExclusionCriteria"]
+            }
+        },
+        {
+            "id": "bf6646ce-cbfd-4af9-9147-0bdf642d8194",
+            "name": "simpletype",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "values": ["int", "text", "string", "bool", "real", "date"]
+            }
+        }
+    ]
+}

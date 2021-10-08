@@ -1,0 +1,608 @@
+{
+    "concept": [
+        {
+            "name": "model element",
+            "nature": "prototype",
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "name"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "description",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                }
+            ]
+        },
+
+
+        {
+            "name": "model concept",
+            "description": "A prototype of a concept.",
+            "nature": "prototype",
+            "prototype": "model element",
+            "attributes": [
+                {
+                    "name": "properties",
+                    "target": {
+                        "name": "set",
+                        "accept": { 
+                            "name": "property" 
+                        }
+                    },
+                    "required": true,
+                    "description": "The list of properties of your concept."
+                }
+            ]
+        },
+        {
+            "name": "prototype concept",
+            "description": "A prototype creates a base skeleton to provide reusability and extension to concepts of the model. Any concept can reuse a prototype and would inherit its structure.",
+            "nature": "concrete",
+            "prototype": "model concept",
+            "attributes": [
+                {
+                    "name": "attributes",
+                    "target": {
+                        "name": "set",
+                        "accept": { 
+                            "name": "attribute" 
+                        }
+                    },
+                    "required": true,
+                    "description": "The list of attributes of your concept."
+                },
+                {
+                    "name": "prototype",
+                    "target": {
+                        "name": "reference",
+                        "accept": { 
+                            "name": "prototype concept" 
+                        }
+                    },
+                    "required": false
+                }
+            ],
+            "properties": [
+                { "name": "nature", "type": "string", "value": "prototype" }
+            ]
+        },
+        {
+            "name": "concrete concept",
+            "description": "A concrete concept represents the model's actual concepts. Projections can be defined against its structure.",
+            "nature": "concrete",
+            "prototype": "model concept",
+            "attributes": [
+                {
+                    "name": "attributes",
+                    "target": {
+                        "name": "set",
+                        "accept": { 
+                            "name": "attribute" 
+                        }
+                    },
+                    "required": true,
+                    "description": "The list of attributes of your concept."
+                },
+                {
+                    "name": "prototype",
+                    "target": {
+                        "name": "reference",
+                        "accept": { 
+                            "name": "prototype concept" 
+                        }
+                    },
+                    "required": false
+                }
+            ],
+            "properties": [
+                { "name": "nature", "type": "string", "value": "concrete" }
+            ]
+        },
+        {
+            "name": "derivative concept",
+            "description": "A derivative concept represents...",
+            "nature": "concrete",
+            "prototype": "model concept",
+            "attributes": [
+                {
+                    "name": "base",
+                    "target": {
+                        "name": "primitive",
+                        "accept": [
+                            { "name": "string primitive" },
+                            { "name": "number primitive" },
+                            { "name": "boolean primitive" }
+                        ]
+                    },
+                    "required": true
+                }
+            ],
+            "properties": [
+                { "name": "nature", "type": "string", "value": "derivative" }
+            ]
+        },
+
+
+        {
+            "name": "structure",
+            "nature": "prototype",
+            "prototype": "model element",
+            "attributes": [
+                {
+                    "name": "alias",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": false,
+                    "description": "The alias of the structure."
+                }
+            ]
+        },
+        {
+            "name": "attribute",
+            "nature": "concrete",
+            "prototype": "structure",
+            "attributes": [
+                {
+                    "name": "required",
+                    "target": {
+                        "name": "boolean"
+                    },
+                    "required": true,
+                    "description": "The value indicating whether the structure is required for the parent concept."
+                },
+                {
+                    "name": "target",
+                    "target": {
+                        "name": "primitive"
+                    },
+                    "required": true,
+                    "description": "The target concept of the attribute structure."
+                }
+            ]
+        },
+        {
+            "name": "property",
+            "nature": "concrete",
+            "prototype": "structure",
+            "attributes": [
+                {
+                    "name": "target",
+                    "target": {
+                        "name": "value"
+                    },
+                    "required": true,
+                    "description": "The target concept of the property structure."
+                }
+            ]
+        },
+
+
+        {
+            "name": "primitive",
+            "nature": "prototype",
+            "attributes": []
+        },
+        {
+            "name": "string primitive",
+            "nature": "concrete",
+            "prototype": "primitive",
+            "attributes": [
+                {
+                    "name": "default",
+                    "target": {
+                        "name": "string"
+                    },
+                    "description": "Default value."
+                },
+                {
+                    "name": "constraint",
+                    "target": {
+                        "name": "string primitive constraint"
+                    },
+                    "description": "Constraint.",
+                    "required": false
+                }
+            ],
+            "properties": [
+                { "name": "cname", "type": "string", "value": "string" }
+            ]
+        },
+        {
+            "name": "string primitive constraint",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "length",
+                    "target": {
+                        "name": "number constraint"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "string constraint"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "values",
+                    "target": {
+                        "name": "set",
+                        "accept": { 
+                            "name": "string" 
+                        }
+                    },
+                    "required": false,
+                    "description": "The list of string values accepted by the string instance."
+                }
+            ]
+        },
+        {
+            "name": "number primitive",
+            "nature": "concrete",
+            "prototype": "primitive",
+            "attributes": [
+                {
+                    "name": "default",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "constraint",
+                    "target": {
+                        "name": "number primitive constraint"
+                    },
+                    "description": "Constraint.",
+                    "required": false
+                }
+            ],
+            "properties": [
+                { "name": "cname", "type": "string", "value": "number" }
+            ]
+        },
+        {
+            "name": "number primitive constraint",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "number constraint"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "values",
+                    "target": {
+                        "name": "set",
+                        "accept": { 
+                            "name": "number" 
+                        }
+                    },
+                    "required": false
+                }
+            ]
+        },
+        {
+            "name": "boolean primitive",
+            "nature": "concrete",
+            "prototype": "primitive",
+            "attributes": [
+                {
+                    "name": "default",
+                    "target": {
+                        "name": "boolean"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "cname", "type": "string", "value": "boolean" }
+            ]
+        },
+        {
+            "name": "set primitive",
+            "nature": "concrete",
+            "prototype": "primitive",
+            "attributes": [
+                {
+                    "name": "accept",
+                    "target": {
+                        "name": "primitive"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "ordered",
+                    "target": {
+                        "name": "boolean",
+                        "default": true
+                    },
+                    "required": true
+                },
+                {
+                    "name": "constraint",
+                    "target": {
+                        "name": "set primitive constraint"
+                    },
+                    "description": "Constraint.",
+                    "required": false
+                }
+            ],
+            "properties": [
+                { "name": "cname", "type": "string", "value": "set" }
+            ]
+        },
+        {
+            "name": "set primitive constraint",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "cardinality",
+                    "target": {
+                        "name": "number constraint"
+                    },
+                    "required": false
+                }
+            ]
+        },
+        {
+            "name": "reference primitive",
+            "nature": "concrete",
+            "prototype": "primitive",
+            "attributes": [
+                {
+                    "name": "accept",
+                    "target": {
+                        "name": "name",
+                        "constraint": {
+                            "values": [
+                                "string", "number", "boolean", "set", "reference", 
+                                { "type": "reference", "rel": "parent", "scope": "model concept" }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "rel",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": ["parent", "child", "sibling"]
+                        }
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "cname", "type": "string", "value": "reference" }
+            ]
+        },
+        {
+            "name": "reference primitive constraint",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "scope",
+                    "target": {
+                        "name": "reference",
+                        "accept": { 
+                            "name": "model concept" 
+                        }
+                    },
+                    "required": false
+                }
+            ]
+        },
+        {
+            "name": "concept primitive",
+            "nature": "concrete",
+            "prototype": "primitive",
+            "attributes": [
+                {
+                    "name": "concept",
+                    "target": {
+                        "name": "reference",
+                        "accept": { 
+                            "name": "model concept" 
+                        }
+                    },
+                    "required": true
+                }
+            ],
+            "properties": [
+                { "name": "cname", "type": "string", "value": "concept" }
+            ]
+        },
+
+
+        {
+            "name": "number constraint",
+            "nature": "prototype",
+            "attributes": []
+        },
+        {
+            "name": "number constraint value",
+            "nature": "concrete",
+            "prototype": "number constraint",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "number"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "number constraint range",
+            "nature": "concrete",
+            "prototype": "number constraint",
+            "attributes": [
+                {
+                    "name": "min",
+                    "target": {
+                        "name": "number constraint value"
+                    },
+                    "description": "Defines the minimum number of characters the user must input. This must be an integer value 0 or higher. If no minlength is specified, or an invalid value is specified, the input has no minimum length."
+                },
+                {
+                    "name": "max",
+                    "target": {
+                        "name": "number constraint value"
+                    },
+                    "description": "Defines the maximum number of characters the user can input. This must be an integer value 0 or higher. If no maxlength is specified, or an invalid value is specified, the input has no maximum length."
+                }
+            ]
+        },
+  
+
+        {
+            "name": "string constraint",
+            "nature": "prototype",
+            "attributes": []
+        },
+        {
+            "name": "string pattern constraint",
+            "nature": "concrete",
+            "prototype": "string constraint",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "insensitive",
+                    "target": {
+                        "name": "boolean"
+                    }
+                },
+                {
+                    "name": "global",
+                    "target": {
+                        "name": "boolean"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "string match constraint",
+            "nature": "concrete",
+            "prototype": "string constraint",
+            "attributes": [
+                {
+                    "name": "start",
+                    "target": {
+                        "name": "string constraint value"
+                    }
+                },
+                {
+                    "name": "end",
+                    "target": {
+                        "name": "string constraint value"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "string constraint value",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "insensitive",
+                    "target": {
+                        "name": "boolean",
+                        "default": false
+                    }
+                }
+            ]
+        },
+       
+
+        {
+            "name": "value",
+            "nature": "prototype",
+            "attributes": []
+        },
+        {
+            "name": "string value",
+            "nature": "concrete",
+            "prototype": "value",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "type", "type": "string", "value": "string" }
+            ]
+        },
+        {
+            "name": "number value",
+            "nature": "concrete",
+            "prototype": "value",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "number"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "type", "type": "string", "value": "number" }
+            ]
+        },
+        {
+            "name": "boolean value",
+            "nature": "concrete",
+            "prototype": "value",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "boolean"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "type", "type": "string", "value": "boolean" }
+            ]
+        },
+
+
+        {
+            "name": "name",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "length": {
+                    "type": "range",
+                    "range": {
+                        "min": { "value": 1 },
+                        "max": { "value": 50 }
+                    }
+                }
+            }
+        }
+    ]
+}

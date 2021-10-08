@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../assets/css/normalize.css">
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/site.css">
+    <link rel="stylesheet" href="../assets/css/docs.css">
+    <title>Introduction</title>
+</head>
+
+<body>
+    <header>
+        <div class="content-wrapper"></div>
+        <div class="content-wrapper content-wrapper--header">
+            <a class="logo noselect" href="../index.html">
+                Gentleman
+            </a>
+            <nav class="header-nav">
+                <ul class="bare-list nav">
+                    <li class="nav-item">
+                        <a class="nav-item__link" href="../about.html">About</a>
+                    </li>
+                    <li class="nav-item selected">
+                        <a class="nav-item__link" href="index.html">Documentation</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-item__link" href="../demo/index.html">Code</a>
+                    </li>
+                </ul>
+            </nav>
+            <a class="action-call" href="../demo/index.html">Try the demo</a>
+        </div>
+    </header>
+    <main>
+        <div class="content-wrapper">
+            <nav class="main-nav">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a href="#intro">Introduction</a>
+                        <ul>
+                            <li class="nav-item">
+                                <a href="#intro">What is a Gentleman?</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#intro">Why use it?</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#intro">Compatibility</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>Getting started
+                        <ul>
+                            <li>
+                                <a href="">Requirement</a>
+                            </li>
+                            <li>
+                                <a href="">Model</a>
+                            </li>
+                            <li></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+            <article>
+                <h1>Introduction</h1>
+                <p>Gentleman is a web-based projectionnal editor generator. It allows you to express and interact with your
+                    DSL.
+                </p>
+                <h2>What is a projectionnal editor?</h2>
+                <p>
+                    In a classic editor, such as a source code editor, you enter a sequence of character (program) that will then be analysed
+                    by a parser. It checks the program for syntactic correctness and constructs an abstract syntax tree (AST)
+                    from the character sequence. The AST contains all the semantic information expressed by the program and
+                    omit the details (ie: grouping parentheses, semicolon).
+                </p>
+                <p>
+                    With projectional editors, we avoid the parsing. As you edit the program, the AST is modified directly. This technique involves
+                    a projection engine that creates some representation of the AST for you to interact with. Every program
+                    element is stored as a node with a unique ID (UID) in the AST and references are based on actual pointers.
+                    This additional capability turns the AST into an ASG, an abstract syntax graph.
+                </p>
+                <h3>Why use it?</h3>
+
+                <h2>Compatibility</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>IE</th>
+                            <th>Edge</th>
+                            <th>Chrome</th>
+                            <th>Firefox</th>
+                            <th>Safari</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>10</td>
+                            <td>pass</td>
+                            <td>pass</td>
+                            <td>pass</td>
+                            <td>check</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </article>
+        </div>
+    </main>
+    <footer></footer>
+</body>
+
+</html>

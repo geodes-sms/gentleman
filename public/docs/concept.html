@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./../assets/css/normalize.css">
+    <link rel="stylesheet" href="./../assets/css/base.css">
+    <link rel="stylesheet" href="./../assets/css/site/site.css">
+    <link rel="stylesheet" href="./../assets/css/site/docs.css">
+    <title>Gentleman | Documentation: Concept</title>
+
+    <style>
+        img {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            height: 240px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="page-header">
+        <a class="link header__link has-helper" href="https://geodes-sms.github.io/gentleman/">
+            <span class="link-logo">Gentleman</span>
+            <i class="helper">Go to the homepage</i>
+        </a>
+        <ul class="bare-list page-menu" data-component="menu">
+            <li class="page-menu-item selected has-helper">
+                <a class="page-menu-item__link" href="./index.html">Docs</a>
+                <span class="page-menu-item__text">Concept</span>
+                <i class="helper">You are there 👇</i>
+            </li>
+            <li class="page-menu-item has-helper">
+                <a class="page-menu-item__link" href="./../about.html">About</a>
+                <i class="helper">Story and Contributors</i>
+            </li>
+            <li class="page-menu-item has-helper">
+                <a class="page-menu-item__link" href="./../faq.html">FAQ</a>
+                <i class="helper">Questions and Answers</i>
+            </li>
+        </ul>
+    </header>
+
+    <main class="docs__main">
+        <nav class="main-nav">
+            <ul class="bare-list main-menu">
+                <li class="main-menu-item">
+                    <a class="main-menu-item__link" href="#introduction">Introduction</a>
+                </li>
+                <li class="main-menu-item">
+                    <a class="main-menu-item__link" href="#metamodelling">Metamodelling</a>
+                </li>
+                <li class="main-menu-item">
+                    <a class="main-menu-item__link" href="#user-interface">User interface</a>
+                </li>
+                <li class="main-menu-item">
+                    <a class="main-menu-item__link" href="#interaction">Interaction</a>
+                </li>
+                <li class="main-menu-item">
+                    <a class="main-menu-item__link" href="#configuration">Configuration</a>
+                </li>
+            </ul>
+        </nav>
+        <article id="getting-started" class="main-content side">
+            <header class="article-header">
+                <h1 class="article-title">Getting started</h1>
+            </header>
+
+            <section id="introduction">
+                <h2>Requirement</h2>
+                <p>
+                    Gentleman is a modelling tool that combines concepts (model structure) and projections (interface)
+                    to create a personnalized dynamic experience for all.
+                    Every modelling activity, begins by loading the concepts and projections, stored as separate JSON-CP
+                    files, which activates the editor.
+                    The concepts will allow you that you to define your model
+                </p>
+                <img class="img"
+                    src="https://geodes-sms.github.io/gentleman/assets/images/doc_editor_getting_started.png"
+                    alt="Editor Setting">
+            </section>
+
+            <section id="metamodelling">
+                <h2>Metamodel</h2>
+                <p>
+                    The <em>metamodelling</em> workflow is reserved for the creation of concepts and projections.
+                    This unique workflow has one key step: the <strong>build step</strong> where the artefacts
+                    (metamodel or projections) are generated as JSON-CP files.
+                </p>
+
+                <h3>Task</h3>
+                <ul>
+                    <li>
+                        Create concepts
+                        <ol>
+                            <li>Open the editor</li>
+                            <li>New or edit existing?</li>
+                            <li>1. New concepts (from scratch): Select `[Create a metamodel]`</li>
+                            <li>2. Edit existing: Load the saved model in the model area (on the left)</li>
+                            <li>Start metamodelling</li>
+                            <li>Build the concepts: Select `[Build]` from the floating menu</li>
+                        </ol>
+                    </li>
+                    <li>
+                        Create projections
+                        <ol>
+                            <li>Open the editor</li>
+                            <li>New or edit existing?</li>
+                            <li>1. New projections (from scratch): Select `[Create a projection]`</li>
+                            <li>2. Edit existing: Load the saved model in the model area (on the left)</li>
+                            <li>Start metamodelling</li>
+                            <li>Preview the projections: Select `[Preview]` in the header</li>
+                            <li>Build the projections: Select `[Build]` in the header</li>
+                        </ol>
+                    </li>
+                </ul>
+                <p>When <em>Build</em> is selected, it validates the model and generates a metamodel or a collection of
+                    projections depending on the task, which can then be used in the <a href="#">modelling workflow</a>
+                </p>
+            </section>
+
+            <section id="user-interface">
+                <h2>User interface</h2>
+                <p>Gentleman adopts a minimalistic approach to its design. The UI is divided between a
+                    header which contains support elements (in [Ribbon](#ribbon)) and a body where you will play with
+                    your
+                    instances.</p>
+
+                <img src="https://geodes-sms.github.io/gentleman/assets/images/doc_editor_ui.png"
+                    alt="Editor User interface">
+
+                <h3>Header</h3>
+                The header's main component is the concepts found in the loaded model, ready to be instanciated
+                - The expanded view gives you an overview of the concept structure
+                - The `[CREATE]` button creates an instance of the concept
+
+
+                <h3>Settings</h3>
+
+                The <em>settings</em> button toggles the home page where you can change the loaded concepts and
+                projections.
+
+                <h3>Export</h3>
+
+                The <em>export</em> button saves the state of the model and download it so you can get back to this
+                version later.
+
+                <h3>Breadcrumbs</h3>
+
+                The editor has a navigation bar at the top of the body called <em>Breadcrumbs</em>, telling you the
+                current location in an active instance.
+                <img src="https://geodes-sms.github.io/gentleman/assets/images/doc_editor_breadcrumbs.png"
+                    alt="Editor breadcrumbs">
+
+                <h3>Instances</h3>
+
+                Every concept instance created have a corresponding window with a header containing its name and a
+                toolbar
+
+                <ul>
+                    <li>Collapse: Toggle between collapsed and expanded window</li>
+                    <li>Maximize: Toggle between fullscreen and normal</li>
+                    <li>Close: delete the instance except for linked instances where it is simply removed</li>
+                </ul>
+                <img src="https://geodes-sms.github.io/gentleman/assets/images/doc_editor_instance.png"
+                    alt="Editor instances">
+            </section>
+
+            <section id="interaction">
+                <h2>Interaction</h2>
+
+                <h3>Create an instance</h3>
+
+                <p>Every editor exposes the concepts available for instanciation in the Ribbon concept tab.
+                    To create a new instance, select `[CREATE]` on the desired concept.</p>
+
+                <h4>Linked instance</h4>
+
+                <p>An instance can quickly become too crowded as you modify it. Fortunately, because the view is a
+                    composition
+                    of projections, they can each be manipulated separetely.
+                    To open part of an instance in a separate window (linked instance),</p>
+
+                <ol>
+                    <li>Select an element</li>
+                    <li>Open in new window: <code>Ctrl + E</code></li>
+                </ol>
+
+                <p>Note: As this is a projection window and not an actual instance, closing it will have no side effects
+                    on your values.</p>
+
+                <h4>Navigation</h4>
+
+                <p>
+                    Gentleman supports both mouse and keyboard navigation.
+                    With the mouse it's simply a matter of clicking on the element you want to focus on.
+                    With the keyboard you can use the arrows to access close-by elements or the `Tab` key to iterate
+                    over the elements.
+                    When the focus element has children elements, press `Enter` to focus on its children and `Esc` to
+                    exit the container.
+                </p>
+
+                <h4>Search and Filter</h4>
+
+                <p>In Gentleman you can use the browser searching functionality as well as the editor's filtering tool.
+                </p>
+                <ol>
+                    <li>Focus on any part of the editor</li>
+                    <li>Press <code>Ctrl + F</code></li>
+                    <li>Type in the search box the name of the instance</li>
+                </ol>
+
+                <p>Note: As you type, the instances' name that do not match the query will be hidden until you close the
+                    filter or change the query.</p>
+
+                <h4>Copy/Paste</h4>
+
+                <p>In Gentleman copy/paste works just as with any editor.</p>
+
+                <ol>
+                    <li>Select source element</li>
+                    <li>Copy value: <code>Ctrl + C</code></li>
+                    <li>Select target element</li>
+                    <li>Copy value: <code>Ctrl + V</code></li>
+                </ol>
+
+                <p>
+                    Note: A value is attached to a concept, not a projection. Therefore copying does not include the
+                    projection (visuals) but only the value attached to the concept.
+                </p>
+            </section>
+
+            <section id="configuration">
+                <h2>Configuration</h2>
+
+                <p>
+                    The editor configuration is done through a JSON file.
+                    It can be used to define elements of the Ribbon and register actions that will be made available in
+                    the floating menu.
+                </p>
+
+                <dl>
+                    <dt>name (string)</dt>
+                    <dd>name of the editor (displayed in the header)</dd>
+                    <dt>concepts (array:concept)</dt>
+                    <dd>list of concepts available for instanciation</dd>
+                </dl>
+            </section>
+        </article>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,20 @@
+{
+    "name": "ReLiS",
+    "concepts": [
+        {
+            "name": "project"
+        },
+        {
+            "name": "screening"
+        },
+        {
+            "name": "qa"
+        },
+        {
+            "name": "data-extraction"
+        },
+        {
+            "name": "synthesis"
+        }
+    ]
+}
