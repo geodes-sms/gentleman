@@ -10,8 +10,8 @@
       "@src/*": [
         "./src/*"
       ],
-      "@environment/*": [
-        "src/environment/*"
+      "@editor/*": [
+        ".src/editor/*"
       ],
       "@model/*": [
         "./src/model/*"

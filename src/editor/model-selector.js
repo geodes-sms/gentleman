@@ -1,7 +1,7 @@
 import {
     createDocFragment, createDiv, createSpan, createUnorderedList, createListItem,
     createH4, createButton, createI, createHeader, createEmphasis, removeChildren,
-    isNullOrUndefined, isHTMLElement,
+    isNullOrUndefined, isHTMLElement, hasOwn, valOrDefault,
 } from 'zenkai';
 import { show, hide } from '@utils/index.js';
 
@@ -75,14 +75,18 @@ export const EditorSelector = {
 
         removeChildren(this.list);
 
+        let conceptConfig = valOrDefault(this.editor.getConfig("concept"), {});
+        let resolveName = (cname) => hasOwn(conceptConfig, cname) ? conceptConfig[cname].name : cname;
+
         this.dataList.forEach(data => {
             // Create header
             const { concept, accept } = data;
 
+
             // Create header
             let title = createH4({
                 class: ["title", "editor-selector__title"]
-            }, `${data.name || data.type}`);
+            }, `${resolveName(data.name)}`);
 
             if (concept) {
                 title.append(createSpan({
@@ -107,16 +111,10 @@ export const EditorSelector = {
                 }
             }, "i");
 
-            let header = createHeader({
+            let label = createHeader({
                 class: ["title", "editor-selector__header"],
                 title: `Expand/Collapse ${this.type}`
-            }, [title, btnInfo]);
-
-            // Create preview
-            let previewHandler = PreviewHandler[this.type];
-            let preview = createDiv({
-                class: ["editor-selector__preview"]
-            }, previewHandler.call(this, data));
+            }, [title]);
 
 
             // Create action bar
@@ -135,7 +133,7 @@ export const EditorSelector = {
                     name: "selector",
                     projection: data.id
                 }
-            }, [header, preview, actionBar]);
+            }, [label, actionBar]);
 
             this.list.append(item);
         });

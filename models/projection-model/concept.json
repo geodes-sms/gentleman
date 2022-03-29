@@ -1,60 +1,14 @@
 {
+    "type": "concept",
     "concept": [
         {
-            "name": "projection-set",
-            "nature": "concrete",
+            "name": "proto-projection",
+            "nature": "prototype",
             "attributes": [
                 {
                     "name": "concept",
                     "target": {
                         "name": "concept"
-                    },
-                    "required": true
-                },
-                {
-                    "name": "projections",
-                    "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "projection"
-                        }
-                    },
-                    "required": true
-                }
-            ],
-            "properties": [
-                { "name": "handler", "type": "string", "value": "collection" }
-            ]
-        },
-        {
-            "name": "projection",
-            "nature": "concrete",
-            "attributes": [
-                {
-                    "name": "concept",
-                    "target": {
-                        "name": "concept"
-                    },
-                    "required": true
-                },
-                {
-                    "name": "name",
-                    "target": {
-                        "name": "name"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "content",
-                    "target": {
-                        "name": "render",
-                        "accept": [
-                            { "name": "text-field" },
-                            { "name": "binary-field" },
-                            { "name": "choice-field" },
-                            { "name": "list-field" },
-                            { "name": "container" }
-                        ]
                     },
                     "required": true
                 },
@@ -68,14 +22,89 @@
                     },
                     "required": true
                 }
+            ]
+        },
+        {
+            "name": "projection",
+            "nature": "concrete",
+            "root": true,
+            "prototype": "proto-projection",
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "name"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "container",
+                    "target": {
+                        "name": "container"
+                    },
+                    "required": true
+                }
             ],
             "properties": [
                 { "name": "handler", "type": "string", "value": "projection" }
             ]
         },
         {
+            "name": "container-projection",
+            "nature": "concrete",
+            "root": false,
+            "prototype": "proto-projection",
+            "attributes": [
+                {
+                    "name": "container",
+                    "target": {
+                        "name": "container"
+                    },
+                    "required": true
+                }
+            ],
+            "properties": [
+                { "name": "handler", "type": "string", "value": "container-projection" }
+            ]
+        },
+        {
+            "name": "static-projection",
+            "nature": "concrete",
+            "root": false,
+            "prototype": "proto-projection",
+            "attributes": [
+                {
+                    "name": "static",
+                    "target": {
+                        "name": "static"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "handler", "type": "string", "value": "static-projection" }
+            ]
+        },
+        {
+            "name": "field-projection",
+            "nature": "concrete",
+            "root": false,
+            "prototype": "proto-projection",
+            "attributes": [
+                {
+                    "name": "field",
+                    "target": {
+                        "name": "field"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "handler", "type": "string", "value": "field-projection" }
+            ]
+        },
+        {
             "name": "template",
             "nature": "concrete",
+            "root": true,
             "attributes": [
                 {
                     "name": "name",
@@ -111,7 +140,7 @@
                                 { "name": "link-static" },
                                 { "name": "plink-static" },
                                 { "name": "button-static" },
-                                { "name": "attribute element" }
+                                { "name": "projection-dynamic" }
                             ]
                         }
                     }
@@ -264,12 +293,73 @@
                 }
             ]
         },
+        
+        {
+            "name": "element",
+            "nature": "prototype",
+            "prototype": "render",
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ]
+        },
 
+        {
+            "name": "container",
+            "nature": "concrete",
+            "prototype": "element",
+            "attributes": [
+                {
+                    "name": "layout",
+                    "target": {
+                        "name": "layout",
+                        "default": "simple-layout"
+                    }
+                },
+                {
+                    "name": "elements",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "render",
+                            "accept": [
+                                { "name": "container" },
+                                { "name": "text-field" },
+                                { "name": "binary-field" },
+                                { "name": "choice-field" },
+                                { "name": "list-field" },
+                                { "name": "text-static" },
+                                { "name": "image-static" },
+                                { "name": "link-static" },
+                                { "name": "plink-static" },
+                                { "name": "button-static" },
+                                { "name": "projection-dynamic" },
+                                { "name": "template element" }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "resizable",
+                    "target": {
+                        "name": "boolean",
+                        "default": false
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "container" }
+            ]
+        },
 
         {
             "name": "field",
             "nature": "prototype",
-            "prototype": "render",
+            "prototype": "element",
             "attributes": [
                 {
                     "name": "readonly",
@@ -283,6 +373,39 @@
                     "target": {
                         "name": "boolean",
                         "default": false
+                    }
+                },
+                {
+                    "name": "source",
+                    "target": {
+                        "name": "string",
+                        "src": [
+                            { 
+                                "type": "meta-reference", 
+                                "target": {
+                                    "name": "attributes",
+                                    "rel": "children",
+                                    "value": "name"
+                                },
+                                "query": {
+                                    "type": "resource",
+                                    "resource": "concepts",
+                                    "params": [
+                                        { 
+                                            "type": "eq",
+                                            "eq": [
+                                                { "type": "property", "value": "name"},
+                                                { "type": "reference", "rel": "parent", "name": "projection",
+                                                    "value": { "type": "reference", "rel": "children", "name": "concept",
+                                                        "value": { "type": "attribute", "name": "name" }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
                     }
                 }
             ]
@@ -612,72 +735,6 @@
             ]
         },
 
-        {
-            "name": "element",
-            "nature": "prototype",
-            "prototype": "render",
-            "attributes": [
-                {
-                    "name": "name",
-                    "target": {
-                        "name": "string"
-                    }
-                }
-            ]
-        },
-
-        {
-            "name": "container",
-            "nature": "concrete",
-            "prototype": "element",
-            "attributes": [
-                {
-                    "name": "elements",
-                    "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "render",
-                            "accept": [
-                                { "name": "container" },
-                                { "name": "text-field" },
-                                { "name": "binary-field" },
-                                { "name": "choice-field" },
-                                { "name": "list-field" },
-                                { "name": "text-static" },
-                                { "name": "image-static" },
-                                { "name": "link-static" },
-                                { "name": "plink-static" },
-                                { "name": "button-static" },
-                                { "name": "attribute element" }
-                            ]
-                        }
-                    }
-                },
-                {
-                    "name": "resizable",
-                    "target": {
-                        "name": "boolean",
-                        "default": false
-                    }
-                },
-                {
-                    "name": "wrappable",
-                    "target": {
-                        "name": "boolean",
-                        "default": true
-                    }
-                },
-                {
-                    "name": "layout",
-                    "target": {
-                        "name": "simple-layout"
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "container" }
-            ]
-        },
 
         {
             "name": "layout",
@@ -857,12 +914,6 @@
             "prototype": "atomic element",
             "attributes": [
                 {
-                    "name": "content",
-                    "target": {
-                        "name": "string"
-                    }
-                },
-                {
                     "name": "asHTML",
                     "target": {
                         "name": "boolean"
@@ -912,19 +963,27 @@
                     }
                 },
                 {
-                    "name": "url type",
+                    "name": "type",
                     "alias": "urlType",
                     "target": {
                         "name": "string",
                         "constraint": {
                             "values": ["link", "email", "phone"]
-                        }
+                        },
+                        "default": "link"
                     }
                 },
                 {
                     "name": "content",
                     "target": {
-                        "name": "string"
+                        "name": "set",
+                        "accept": {
+                            "name": "render",
+                            "accept": [
+                                { "name": "text-static" },
+                                { "name": "image-static" }
+                            ]
+                        }
                     }
                 }
             ],
@@ -949,7 +1008,14 @@
                 {
                     "name": "content",
                     "target": {
-                        "name": "string"
+                        "name": "set",
+                        "accept": {
+                            "name": "render",
+                            "accept": [
+                                { "name": "text-static" },
+                                { "name": "image-static" }
+                            ]
+                        }
                     }
                 }
             ],
@@ -982,7 +1048,11 @@
                     "target": {
                         "name": "set",
                         "accept": {
-                            "name": "atomic element"
+                            "name": "render",
+                            "accept": [
+                                { "name": "text-static" },
+                                { "name": "image-static" }
+                            ]
                         }
                     }
                 }
@@ -1035,10 +1105,7 @@
                 {
                     "name": "tag",
                     "target": {
-                        "name": "reference",
-                        "accept": {
-                            "name": "tag"
-                        }
+                        "name": "tag"
                     },
                     "required": true
                 },
@@ -1081,30 +1148,32 @@
             ]
         },
         {
-            "name": "projection element",
+            "name": "projection-dynamic",
             "nature": "concrete",
             "prototype": "element",
             "attributes": [
                 {
                     "name": "src",
                     "target": {
-                        "name": "name",
-                        "default": "value"
+                        "name": "name"
                     }
                 },
                 {
                     "name": "tag",
                     "target": {
-                        "name": "reference",
-                        "accept": {
-                            "name": "tag"
-                        }
+                        "name": "tag"
                     }
                 },
                 {
                     "name": "placeholder",
                     "target": {
                         "name": "static-content"
+                    }
+                },
+                {
+                    "name": "required",
+                    "target": {
+                        "name": "boolean"
                     }
                 }
             ],

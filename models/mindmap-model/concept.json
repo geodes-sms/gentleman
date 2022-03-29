@@ -1,10 +1,12 @@
 {
+    "type": "concept",
     "concept": [
         {
             "id": "b092e6e2-37be-4258-96c2-6cf1870a70ea",
             "name": "mindmap",
             "description": "",
             "nature": "concrete",
+            "root": true,
             "attributes": [
                 {
                     "name": "title",

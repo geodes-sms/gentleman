@@ -1,5 +1,6 @@
-import { createSpan, isEmpty, isNullOrUndefined, isNullOrWhitespace, isObject, getElement, capitalizeFirstLetter, createEmphasis } from "zenkai";
+import { createSpan, isEmpty, isNullOrUndefined, isNullOrWhitespace, isObject, capitalizeFirstLetter } from "zenkai";
 import { NotificationType, LogType } from "@utils/index.js";
+import { getAttr, getReference, hasAttr, hasValue, getName, getValue, createProjectionLink } from './utils.js';
 
 
 const PROP_NATURE = "nature";
@@ -11,51 +12,6 @@ const ATTR_NAME = "name";
 const ATTR_REQUIRED = "required";
 const ATTR_PROPERTIES = "properties";
 const ATTR_PROTOTYPE = "prototype";
-
-const getAttr = (concept, name) => concept.getAttributeByName(name).target;
-
-const getReference = (concept, attr) => getAttr(concept, attr).getReference();
-
-const getValue = (concept, attr, deep = false) => getAttr(concept, attr).getValue(deep);
-
-const hasValue = (concept, attr) => getAttr(concept, attr).hasValue();
-
-const hasAttr = (concept, name) => concept.isAttributeCreated(name);
-
-const getName = (concept) => getValue(concept, ATTR_NAME).toLowerCase();
-
-
-function createProjectionLink(text, concept) {
-    const { id, name } = concept;
-
-    let link = createEmphasis({
-        class: ["link", "error-message__link"],
-        title: name,
-    }, text);
-
-    const targetSelector = `.projection[data-concept="${id}"]`;
-
-    link.addEventListener("mouseenter", (event) => {
-        let targetProjection = getElement(targetSelector, this.body);
-        if (targetProjection) {
-            this.highlight(targetProjection);
-        }
-    });
-
-    link.addEventListener("mouseleave", (event) => {
-        this.unhighlight();
-    });
-
-    link.addEventListener("click", (event) => {
-        let target = this.resolveElement(getElement(targetSelector, this.body));
-
-        if (target) {
-            target.focus();
-        }
-    });
-
-    return link;
-}
 
 
 export function buildConceptHandler(_options = {}) {
@@ -70,7 +26,7 @@ export function buildConceptHandler(_options = {}) {
         download: true
     }, _options);
 
-    const concepts = conceptModel.getConcepts(["prototype concept", "concrete concept", "derivative concept"]);
+    const concepts = conceptModel.getConcepts(["prototype-concept", "concrete-concept", "derivative-concept"]);
 
     if (isEmpty(concepts)) {
         this.notify("<strong>Empty model</strong>: Please create at least one concept.", NotificationType.WARNING);
@@ -116,6 +72,7 @@ export function buildConceptHandler(_options = {}) {
 function buildConcept(concept) {
     const name = getName(concept);
     const nature = concept.getProperty(PROP_NATURE);
+    const isRoot = getValue(concept, "root");
     const attributes = [];
     const properties = [];
 
@@ -156,6 +113,7 @@ function buildConcept(concept) {
         "id": concept.id,
         "name": name,
         "nature": nature,
+        "root": isRoot,
         "attributes": attributes,
         "properties": properties,
         // "metadata": JSON.stringify(concept.export())
@@ -217,6 +175,10 @@ function buildAttribute(attribute) {
  * @param {*} attribute
  */
 function buildTarget(target, propname = "name") {
+    if (isNullOrUndefined(target)) {
+        return null;
+    }
+
     let name = target.getProperty("cname");
 
     if (name === "concept") {
@@ -253,8 +215,15 @@ function buildTarget(target, propname = "name") {
         });
 
 
-    if (hasAttr(target, "constraint")) {
-        result["constraint"] = buildConstraint.call(this, getAttr(target, "constraint"));
+    if (hasAttr(target, "constraints")) {
+        let constraints = [];
+        getValue(target, "constraints").forEach(ctr => {
+            const result = buildConstraint.call(this, ctr);
+
+            constraints.push(result);
+        });
+
+        result["constraint"] = constraints;
     }
 
     return result;
@@ -263,90 +232,36 @@ function buildTarget(target, propname = "name") {
 function buildConstraint(constraint) {
     const result = {};
 
+    if (!hasValue(constraint, "type")) {
+        return result;
+    }
+
+    result.property = getValue(constraint, "property");
+    let type = getValue(constraint, "type", true);
+
+    if (type.name === "constraint-number-value") {
+        result.type = "value";
+        result.value = getValue(type, "value");
+    } else if (type.name === "constraint-number-range") {
+        result.type = "range";
+        result.range = {
+            min: getValue(type, "min"),
+            max: getValue(type, "max")
+        };
+    } else if (type.name === "constraint-string-pattern") {
+        result.type = "pattern";
+        result.pattern = {
+            insensitive: getValue(type, "insensitive"),
+            global: getValue(type, "global"),
+            value: getValue(type, "value")
+        };
+    } else if (type.name === "constraint-string-values") {
+        result.type = "values";
+        result.values = getValue(constraint, "values", true);
+    }
     if (hasAttr(constraint, "scope") && hasValue(constraint, "scope")) {
         result["scope"] = getName(getReference(constraint, 'scope'));
     }
-
-    ["ordered", "pattern"].filter(prop => hasAttr(constraint, prop) && hasValue(constraint, prop))
-        .forEach(prop => {
-            result[prop] = getValue(constraint, prop);
-        });
-
-    ["length", "value", "cardinality"].filter(prop => hasAttr(constraint, prop) && hasValue(constraint, prop))
-        .forEach(prop => {
-            let numberConstraint = getValue(constraint, prop, true);
-
-            let rules = {};
-
-            if (numberConstraint.name === "number constraint value") {
-                let fixed = {};
-
-                if (hasValue(numberConstraint, "value")) {
-                    fixed["value"] = getValue(numberConstraint, "value");
-                }
-
-                rules["type"] = "fixed";
-                rules["fixed"] = fixed;
-            } else if (numberConstraint.name === "number constraint range") {
-                let range = {};
-
-                let min = getAttr(numberConstraint, "min");
-                if (hasValue(min, "value")) {
-                    range["min"] = {
-                        "value": getValue(min, "value")
-                    };
-                }
-
-                let max = getAttr(numberConstraint, "max");
-                if (hasValue(max, "value")) {
-                    range["max"] = {
-                        "value": getValue(max, "value")
-                    };
-                }
-
-                rules["type"] = "range";
-                rules["range"] = range;
-            } else if (numberConstraint.name === "string pattern constraint") {
-                let fixed = {};
-
-                if (hasValue(numberConstraint, "value")) {
-                    fixed["value"] = getValue(numberConstraint, "value");
-                }
-
-                if (hasValue(numberConstraint, "insensitive")) {
-                    fixed["insensitive"] = getValue(numberConstraint, "insensitive");
-                }
-
-                if (hasValue(numberConstraint, "global")) {
-                    fixed["global"] = getValue(numberConstraint, "global");
-                }
-
-                rules["type"] = "pattern";
-                rules["pattern"] = fixed;
-            } else if (numberConstraint.name === "string match constraint") {
-                let range = {};
-
-                let start = getAttr(numberConstraint, "start");
-                if (hasValue(start, "value")) {
-                    range["start"] = {
-                        "value": getValue(start, "value")
-                    };
-                }
-
-                let end = getAttr(numberConstraint, "end");
-                if (hasValue(end, "value")) {
-                    range["end"] = {
-                        "value": getValue(end, "value")
-                    };
-                }
-
-                rules["type"] = "match";
-                rules["match"] = range;
-            }
-
-            result[prop] = rules;
-
-        });
 
     if (hasAttr(constraint, "values") && hasValue(constraint, "values")) {
         result["values"] = getValue(constraint, "values", true);

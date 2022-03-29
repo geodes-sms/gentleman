@@ -1,11 +1,58 @@
 import {
-    removeChildren, isHTMLElement, valOrDefault, hasOwn, isNullOrWhitespace, isNullOrUndefined, createImage,
+    removeChildren, isHTMLElement, valOrDefault, htmlToElement, isNullOrWhitespace,
+    isNullOrUndefined, createImage,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
 import { StyleHandler } from "../style-handler.js";
 import { Static } from "./static.js";
 
 
+function resolveParam(tpl, name) {
+    let param = tpl.param.find(p => p.name === name);
+    
+    if (isNullOrUndefined(param)) {
+        return undefined;
+    }
+
+    const { type = "string", value } = param;
+
+    let pValue = valOrDefault(value, param.default);
+
+    if (isNullOrUndefined(pValue)) {
+        return null;
+    }
+
+    if (type === "string") {
+        return pValue.toString();
+    }
+
+    if (type === "number") {
+        return +pValue;
+    }
+}
+
+function resolveValue(content) {
+    if (isNullOrUndefined(content)) {
+        return "";
+    }
+
+    const { type } = content;
+
+    if (type === "property") {
+        this.hasProperty = true;
+        return valOrDefault(this.source.getProperty(content.name), "");
+    }
+
+    if (type === "param") {
+        return resolveParam.call(this, this.schema.template, content.name);
+    }
+
+    if (type === "raw") {
+        return htmlToElement(content.raw);
+    }
+
+    return content;
+}
 
 /**
  * Resolves the URL
@@ -40,7 +87,6 @@ const BaseImageStatic = {
     init() {
         const { url, width, height, alt } = this.schema;
 
-        this.url = resolveURL(url);
         this.width = width;
         this.height = height;
         this.alt = alt;
@@ -49,7 +95,9 @@ const BaseImageStatic = {
     },
 
     render() {
-        const { help, style } = this.schema;
+        let bind = false;
+        const { help, style, url } = this.schema;
+        this.url = resolveURL(resolveValue.call(this, url));
 
         if (!isHTMLElement(this.element)) {
             this.element = createImage({
@@ -63,6 +111,8 @@ const BaseImageStatic = {
                     ignore: "all",
                 }
             });
+
+            bind = true;
         }
 
         if (!(isNullOrUndefined(this.width) || isNaN(this.width))) {
@@ -78,6 +128,10 @@ const BaseImageStatic = {
         }
 
         StyleHandler.call(this.projection, this.element, style);
+
+        if (bind) {
+            this.bindEvents();
+        }
 
         this.refresh();
 
@@ -105,8 +159,34 @@ const BaseImageStatic = {
         return this;
     },
     refresh() {
+        if (isNullOrWhitespace(this.url)) {
+            this.element.classList.add("empty");
+        } else {
+            this.element.classList.remove("empty");
+        }
+
         return this;
-    }
+    },
+    update() {
+        const { url } = this.schema;
+        this.element.src = resolveURL(resolveValue.call(this, url));
+
+        return this;
+    },
+
+    bindEvents() {
+        if (this.hasProperty) {
+            this.projection.registerHandler("value.changed", (value) => {
+                this.update();
+            });
+            this.projection.registerHandler("value.added", (value) => {
+                this.update();
+            });
+            this.projection.registerHandler("value.removed", (value) => {
+                this.update();
+            });
+        }
+    },
 };
 
 

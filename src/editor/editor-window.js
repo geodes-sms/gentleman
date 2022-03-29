@@ -45,7 +45,7 @@ export const EditorWindowManager = {
      */
     findWindow(name) {
         let windows = Array.from(this.windows.values());
-        
+
         return windows.find(window => window.refname === name);
     },
     /**
@@ -230,6 +230,12 @@ export const EditorWindow = {
     },
 
 
+    getInstance(id) {
+        if (isNullOrUndefined(id)) {
+            return null;
+        }
+        return Array.from(this.instances).find(instance => instance.id === id);
+    },
     addInstance(instance) {
         if (isNullOrUndefined(instance)) {
             return;

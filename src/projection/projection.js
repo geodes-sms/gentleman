@@ -2,11 +2,12 @@ import {
     createButton, removeChildren, isNode, isHTMLElement, hasOwn, isNullOrUndefined,
     valOrDefault, isEmpty, toBoolean, findAncestor,
 } from "zenkai";
-import { hide, show } from "@utils/index.js";
+import { hide, show, makeResizable } from "@utils/index.js";
 import { LayoutFactory } from "./layout/index.js";
 import { FieldFactory } from "./field/index.js";
 import { StaticFactory } from "./static/index.js";
 import { StyleHandler } from "./style-handler.js";
+import { createContainer } from "./container.js";
 
 
 var inc = 0;
@@ -34,6 +35,7 @@ const Projection = {
         this.containers = new Map();
         this.attributes = [];
         this.params = [];
+        this.templates = [];
         this.handlers = {};
 
         this.args = args;
@@ -66,6 +68,8 @@ const Projection = {
     /** @type {boolean} */
     optional: false,
     /** @type {boolean} */
+    collapsible: false,
+    /** @type {boolean} */
     searchable: false,
     /** @type {boolean} */
     focusable: true,
@@ -79,6 +83,9 @@ const Projection = {
     getSchema(index) {
         return this.schema[valOrDefault(index, this.index)];
     },
+    hasSchema(tag) {
+        return this.schema.findIndex((x) => x.tags.includes(tag)) !== -1;
+    },
     getContainer(index) {
         return this.containers.get(valOrDefault(index, this.index));
     },
@@ -87,10 +94,13 @@ const Projection = {
 
         return style;
     },
+    addTemplate(tpl) {
+        this.templates.push(tpl);
+    },
     addParam(param) {
         this.params.push(...(Array.isArray(param) ? param : [param]));
     },
-    getParam(name) {
+    getParam(name, forElement) {
         let param = this.params.find(p => p.name === name);
 
         if (isNullOrUndefined(param)) {
@@ -310,27 +320,34 @@ const Projection = {
             return null;
         }
 
-        const { type, projection, content } = schema;
+        const { type, projection, content, kind } = schema;
 
         /** @type {HTMLElement} */
         var container = null;
 
-        if (type === "layout") {
+        if (type === "layout" || kind === "layout") {
             this.element = LayoutFactory.createLayout(this.model, valOrDefault(projection, content), this).init(this.args);
 
             this.model.registerLayout(this.element);
-        } else if (type === "field") {
-            this.element = FieldFactory.createField(this.model, valOrDefault(projection, content), this).init(this.args);
+        } else if (type === "field" || kind === "field") {
+            let _schema = hasOwn(schema, "field") ? schema.field : valOrDefault(projection, content);
+
+            this.element = FieldFactory.createField(this.model, _schema, this).init(this.args);
 
             this.model.registerField(this.element);
-        } else if (type === "static") {
+        } else if (type === "static" || kind === "static") {
+            this.element = StaticFactory.createStatic(this.model, valOrDefault(projection, content), this).init(this.args);
+            this.element.source = this.concept;
+
+            this.model.registerStatic(this.element);
+        } else if (type === "dynamic" || kind === "dynamic") {
             this.element = StaticFactory.createStatic(this.model, valOrDefault(projection, content), this).init(this.args);
 
             this.model.registerStatic(this.element);
-        } else if (type === "dynamic") {
-            this.element = StaticFactory.createStatic(this.model, valOrDefault(projection, content), this).init(this.args);
+        } else {
+            this.element = createContainer(this.model, schema.container, this).init(this.args);
 
-            this.model.registerStatic(this.element);
+            this.model.registerLayout(this.element);
         }
 
         if (this.isRoot()) {
@@ -346,6 +363,10 @@ const Projection = {
         }
 
         container = this.element.render();
+        
+        if (type === "layout" || type === "container") {
+            makeResizable(container);
+        }
 
         if (!this.element.focusable) {
             container.tabIndex = -1;
@@ -389,8 +410,30 @@ const Projection = {
             });
 
             container.dataset.deletable = true;
-            container.classList.add("has-toolbar");
+
             container.prepend(btnDelete);
+        }
+
+        if (this.collapsible) {
+            /** @type {HTMLElement} */
+            let btnCollapsible = createButton({
+                class: ["btn", "projection__btn-collapse"],
+                title: `Collapse ${this.concept.name}`,
+                tabindex: -1,
+                dataset: {
+                    "action": "collapse",
+                    "projection": this.id
+                }
+            });
+
+            btnCollapsible.addEventListener('click', (event) => {
+                /** @type {HTMLElement} */
+                let container = this.getContainer();
+                container.classList.toggle("collapsed");
+            });
+
+            container.dataset.collapsible = true;
+            container.prepend(btnCollapsible);
         }
 
         if (this._style) {
@@ -435,13 +478,27 @@ const Projection = {
 
         this.element = this.resolveElement(container);
 
-        // if (this.parent) {
-        //     this.parent.update("view.changed", container, this);
-        // }
+        const handlers = this.getHandlers("view.changed");
+
+        if (!isEmpty(handlers)) {
+            handlers.forEach((handler) => handler(container));
+        }
 
         this.focus();
 
         return this;
+    },
+    findView(tag) {
+        if (!this.hasSchema(tag)) {
+            if (!this.model.hasProjectionSchema(this.concept, tag)) {
+                return -1;
+            }
+
+            let schema = this.model.getProjectionSchema(this.concept, tag);
+            this.schema.push(...schema);
+        }
+
+        return this.schema.findIndex((x) => x.tags.includes(tag));
     },
 
     export() {

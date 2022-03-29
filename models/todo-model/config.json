@@ -1,14 +1,16 @@
 {
-    "name": "Todo",
-    "concepts": [
+    "toolbar": [
         {
-            "name": "todolist"
+            "type": "button",
+            "name": "button-export",
+            "action": "export.model",
+            "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--save"]
         },
         {
-            "name": "single-task"
-        },
-        {
-            "name": "recurring-task"
+            "type": "button",
+            "name": "button-menu",
+            "action": "open.menu",
+            "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--home"]
         }
     ]
 }

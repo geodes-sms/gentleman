@@ -1,0 +1,10 @@
+{
+    "toolbar": [
+        {
+            "type": "button",
+            "name": "button-menu",
+            "action": "open.menu",
+            "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--home"]
+        }
+    ]
+}

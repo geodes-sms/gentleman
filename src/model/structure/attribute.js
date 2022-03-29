@@ -23,6 +23,9 @@ export const BaseAttribute = {
     hasValue() {
         return this.target.hasValue();
     },
+    getTarget() {
+        return this.target;
+    },
 
 
     copy() {

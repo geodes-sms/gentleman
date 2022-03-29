@@ -106,6 +106,7 @@ const _StringConcept = {
             this.value = value;
 
             this.notify("value.changed", value);
+            this.propagate("value.changed", value, this);
         }
 
         if (code !== ResponseCode.SUCCESS) {
@@ -212,6 +213,15 @@ const _StringConcept = {
                     }
 
                     return result;
+                } else if (val.type === "concept") {
+                    const { concept, value } = val; 
+                    let candidates = this.model.getConceptsByPrototype(concept.prototype);
+                    console.log(candidates);
+                    if (value.type === "attribute") {
+                        return candidates.map(x => x.getAttribute(value.name).getValue());
+                    }
+
+                    return [];
                 }
 
                 return val;

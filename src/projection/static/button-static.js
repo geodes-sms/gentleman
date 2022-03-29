@@ -1,12 +1,36 @@
 import {
     createDocFragment, createButton, createSpan, removeChildren, isHTMLElement,
-    isNullOrUndefined, hasOwn, findAncestor, valOrDefault, isFunction,
+    isNullOrUndefined, valOrDefault, findAncestor, isObject,
 } from "zenkai";
 import { hide, show, getCaretIndex } from "@utils/index.js";
 import { StyleHandler } from "../style-handler.js";
 import { ContentHandler } from "../content-handler.js";
 import { Static } from "./static.js";
 
+
+function resolveParam(tpl, name) {
+    let param = tpl.param.find(p => p.name === name);
+    
+    if (isNullOrUndefined(param)) {
+        return undefined;
+    }
+
+    const { type = "string", value } = param;
+
+    let pValue = valOrDefault(value, param.default);
+
+    if (isNullOrUndefined(pValue)) {
+        return null;
+    }
+
+    if (type === "string") {
+        return pValue.toString();
+    }
+
+    if (type === "number") {
+        return +pValue;
+    }
+}
 
 const BaseButtonStatic = {
     /** @type {string} */
@@ -53,7 +77,7 @@ const BaseButtonStatic = {
         }
 
         content.forEach(element => {
-            let content = ContentHandler.call(this, element, this.projection.concept, { focusable: false });
+            let content = ContentHandler.call(this, element, this.projection.concept, { template: this.schema.template, focusable: false });
 
             fragment.append(content);
         });
@@ -146,9 +170,25 @@ const BaseButtonStatic = {
         }
 
         if (this.schema.action) {
-            const { type, value } = this.schema.action;
+            const { type, value, target } = this.schema.action;
 
-            concept.createElement();
+            if (isNullOrUndefined(target)) {
+                concept.createElement();
+            }
+
+            if (isObject(value)) {
+                for (const key in value) {
+                    const element = value[key];
+                    if (element.type === "param") {
+                        value[key] = resolveParam.call(this, this.schema.template, element.name);
+                    }
+                }
+            }
+
+            if (target.type === "attribute") {
+                let attr = concept.getAttribute(target.name);
+                attr.target.createElement({ value: value });
+            }
 
             return false;
         }

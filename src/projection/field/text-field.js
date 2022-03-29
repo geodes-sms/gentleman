@@ -84,7 +84,12 @@ function getItemValue(item) {
 function resolveInput(schema) {
     const { placeholder = "", type } = schema;
 
-    let placeholderValue = resolveValue.call(this, placeholder);
+    let placeholderValue = "";
+    if (this._placeholder) {
+        placeholderValue = valOrDefault(resolveValue.call(this, this._placeholder), "");
+    } else {
+        placeholderValue = valOrDefault(resolveValue.call(this, placeholder), "");
+    }
 
     if (this.readonly || this.resizable) {
         return createSpan({
@@ -110,6 +115,7 @@ function resolveInput(schema) {
             }
         });
     }
+
     return createInput({
         class: ["field--textbox__input"],
         type: valOrDefault(type, "text"),
@@ -139,15 +145,28 @@ const BaseTextField = {
     resizable: false,
     /** @type {*[]} */
     content: null,
+    /** @type {boolean} */
+    hasOwnSource: false,
 
 
-    init() {
-        const { multiline = false, resizable = false, focusable = true } = this.schema;
+    init(args = {}) {
+        Object.assign(this.schema, args);
+
+        const { multiline = false, placeholder = "", resizable = false, focusable = true, source } = this.schema;
 
         this.multiline = multiline;
         this.focusable = focusable;
         this.resizable = resizable;
         this.children = [];
+        this._placeholder = placeholder;
+
+        if (source) {
+            const attr = this.projection.concept.getAttribute(source);
+            const concept = attr.getTarget();
+            concept.register(this);
+            this.source = concept;
+            this.hasOwnSource = true;
+        }
 
         if (!hasOwn(this.schema, "choice")) {
             this.schema.choice = {};
@@ -473,6 +492,22 @@ const BaseTextField = {
     },
 
     /**
+    * Updates the field
+    * @param {string} message 
+    * @param {*} value 
+    */
+    update(message, value, from) {
+        if (message === "delete") {
+            this.delete();
+            return;
+        }
+
+        if (message === "value.changed") {
+            this.setValue(value);
+        }
+    },
+
+    /**
      * Handles the `space` command
      * @param {HTMLElement} target 
      */
@@ -660,9 +695,11 @@ const BaseTextField = {
             this.refresh();
         });
 
-        this.projection.registerHandler("value.changed", (value) => {
-            this.setValue(value);
-        });
+        if (!this.hasOwnSource) {
+            this.projection.registerHandler("value.changed", (value) => {
+                this.setValue(value);
+            });
+        }
     },
 };
 

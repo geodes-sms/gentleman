@@ -1,13 +1,38 @@
-import {
-    createSpan, removeChildren, isHTMLElement, isNullOrUndefined, findAncestor,
-    valOrDefault, htmlToElement
-} from "zenkai";
+import { createSpan, removeChildren, isHTMLElement, isNullOrUndefined, findAncestor, valOrDefault, htmlToElement } from "zenkai";
 import { hide, show, getCaretIndex } from "@utils/index.js";
 import { StyleHandler } from "../style-handler.js";
 import { Static } from "./static.js";
 
 
+function resolveParam(tpl, name) {
+    let param = tpl.param.find(p => p.name === name);
+    
+    if (isNullOrUndefined(param)) {
+        return undefined;
+    }
+
+    const { type = "string", value } = param;
+
+    let pValue = valOrDefault(value, param.default);
+
+    if (isNullOrUndefined(pValue)) {
+        return null;
+    }
+
+    if (type === "string") {
+        return pValue.toString();
+    }
+
+    if (type === "number") {
+        return +pValue;
+    }
+}
+
 function resolveValue(content) {
+    if (isNullOrUndefined(content)) {
+        return "";
+    }
+
     const { type } = content;
 
     if (type === "property") {
@@ -16,7 +41,7 @@ function resolveValue(content) {
     }
 
     if (type === "param") {
-        return this.projection.getParam(content.name);
+        return resolveParam.call(this, this.schema.template, content.name);
     }
 
     if (type === "html") {

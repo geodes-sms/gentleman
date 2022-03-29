@@ -55,7 +55,7 @@ const Handler = {
         model: { value: model },
         schema: { value: schema },
         projection: { value: projection },
-        source: { value: projection.concept },
+        source: { value: projection.concept, writable: true },
     }),
 };
 

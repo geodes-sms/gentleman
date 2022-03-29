@@ -11,7 +11,7 @@ module.exports = {
             '@src': path.resolve(__dirname, 'src'),
             '@bin': path.resolve(__dirname, 'bin'),
             '@models': path.resolve(__dirname, 'models'),
-            '@environment': path.resolve(__dirname, 'src/environment'),
+            '@editor': path.resolve(__dirname, 'src/editor'),
             '@model': path.resolve(__dirname, 'src/model'),
             '@generator': path.resolve(__dirname, 'src/generator'),
             '@concept': path.resolve(__dirname, 'src/model/concept'),

@@ -42,21 +42,13 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
 
 .td-todo-header {
     padding: 6px;
-    border-bottom: 4px solid #5F4B8B;
 }
-
-    .td-todo-icon {
-        height: 30px;
-    }
 
     .td-todo-title {
         flex-grow: 2;
         font-weight: 100;
     }
 
-    .td-todo-icon + .td-todo-title {
-        margin-left: 6px;
-    }
 
     .td-todo-title .td-textbox__input {
         padding: 2px 4px;
@@ -70,8 +62,51 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
         background: none;
     }
 
+.td-todo-nav {
+    padding-left: 6px; padding-right: 6px;
+    /* justify-content: space-between; */
+    font-weight: 500;
+}
+
+    .td-todo-nav-link {
+        flex: 1 1;
+        max-width: 90px;
+        margin-right: 6px;
+        padding: 4px 6px 2px;
+        display: flex; align-items: center; justify-content: center;
+        border-bottom: 4px solid transparent;
+        cursor: pointer;
+    }
+
+    .td-todo-nav-link:hover {
+        background-color: #f5f5f5;
+        border-color: #4AA4FF;
+    }
+
+    .td-todo-nav-link.current {
+        background-color: #fff;
+        border-color: #2D8DED;
+    }
+
+    .td-todo-nav-link.current .td-todo-text {
+        color: #2D8DED;
+    }
+
+    .td-todo-icon {
+        height: 18px;
+        margin-right: 6px;
+    }
+
+    .td-todo-text {
+        font-size: 1.1em; font-weight: 500;
+    }
+
+
+
 .td-todo-body {
     flex-grow: 2;
+    padding-top: 6px;
+    background-color: #f0f0f0;
 }
 
 
@@ -224,24 +259,14 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
 -----------------------------------------------------------------------------*/
 
 .td-tags {
-    padding-bottom: 12px;
-    min-width: 180px; max-width: 300px;
-    background-color: #FFFACD;
-    box-shadow: -1px 0 4px -1px #c0c0c0;
-    background-color: #eee;
+    padding-left: 12px; padding-right: 12px;
     margin-left: 2px;
     z-index: 2;
 }
 
-.td-tag-set-header {
-    align-items: center;
-    padding: 6px 6px 2px;
-    margin-bottom: 6px;
-}
-
 .td-tag-set-body {
     flex-grow: 2;
-    padding: 6px;
+    margin-top: 6px;
 }
 
     .td-tag-set-title {
@@ -251,24 +276,28 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
         margin-right: 6px;
     }
 
-    .td-tag-set-header__button {
+    .td-tag-set__button {
+        align-self: flex-end;
         display: flex; align-items: center;
-        height: 20px; width: 20px;
-        font-weight: 400;
-        border-radius: 50%;
-        background-color: #e5e4e2;
-        color: #2DA65F;
+        font-weight: 300;
+        padding: 8px 12px;
+        border-radius: 180px;
+        background-color: #555;
+        color: #5AF299;
     }
-        .td-tag-set-header__button:hover { 
+        .td-tag-set__button:hover { 
             color: #fff; 
             background-color: #2DA65F;
         }
 
-        .td-tag-set-header__button-content {
+        .td-tag-set__button-icon {
             display: flex; align-items: center; justify-content: center;
-            width: 100%;
             height: 100%;
             transform: scale(1.7) translateY(-1px);
+        }
+        .td-tag-set__button-content {
+            margin-left: 6px;
+            color: #fff;
         }
 
 .td-tag-set__list {
@@ -278,15 +307,23 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
 .td-tag-set__list-item {
     display: flex; flex-direction: row; align-items: center;
     background-color: #f5f5f5;
+    padding-right: 12px;
     margin-right: 6px;
     margin-bottom: 6px;
 }
 
+    .td-tag-set__list-item .projection__btn-collapse {
+        display: none;
+    }
+
     .td-tag-set__list-item .projection__btn-delete {
-        position: relative;
-        background-color: #FFEB69;
-        color: #222;
-        height: 100%;
+        position: absolute;
+        top: -4px; right: -2px;
+        font-size: 0.9em; font-weight: bold;
+        color: #555; 
+        border-radius: 40px;
+        background-color: #d5d5d5;
+        height: 16px; width: 16px;
     }
         .td-tag-set__list-item .projection__btn-delete:hover {
             background-color: #f1645a;
@@ -294,15 +331,16 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
         }
 
 .td-tag {
-    background-color: #FFEB69;
+    background-color: #fff;
 }
 
     .td-tag .td-textbox {
         height: 100%;
+        order: 2;
     }
 
     .td-tag .td-textbox__input  {
-        padding: 1px 2px;
+        padding: 3px 4px;
         height: 100%;
         color: #222;
         background: none;
@@ -320,8 +358,15 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
     }
 
     .td-tag .priority-select {
-        color: #fff;
-        background-color: #7B6BB3;
+        position: relative;
+    }
+
+    .td-tag .priority-select:before {
+        content: "";
+        position: absolute;
+        top: 2px; bottom: 2px; right: 0;
+        width: 1px;
+        background-color: #c0c0c0;
     }
 
     .priority-select .field--choice__select-wrapper {
@@ -332,6 +377,10 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
         color: #fff;
         font-size: 1rem;
         
+    }
+
+    .priority-select .field--choice__select-wrapper {
+        padding-left: 4px; padding-right: 2px;
     }
 
     .td-tag .priority-select__choice-option {
@@ -350,7 +399,6 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
     padding-bottom: 12px; padding-top: 6px; 
     padding-right: 12px;
     min-width: 300px;
-    background-color: #f5f5f5;
 }
 
 .td-task {

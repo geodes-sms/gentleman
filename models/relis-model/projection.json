@@ -1,78 +1,6 @@
 {
+    "type": "projection",
     "projection": [
-        {
-            "type": "style",
-            "name": "box-left",
-            "style": {
-                "box": {
-                    "outer": { 
-                        "left": { "value": 6, "unit": "px" } 
-                    }
-                }
-            }
-        },
-        {
-            "type": "style",
-            "name": "box-top",
-            "style": {
-                "box": {
-                    "outer": { 
-                        "top": { "value": 6, "unit": "px" } 
-                    }
-                }
-            }
-        },
-        {
-            "type": "style",
-            "name": "box-right",
-            "style": {
-                "box": {
-                    "outer": { 
-                        "right": { "value": 6, "unit": "px" } 
-                    }
-                }
-            }
-        },
-        {
-            "type": "style",
-            "name": "box-bottom",
-            "style": {
-                "box": {
-                    "outer": { 
-                        "bottom": { "value": 6, "unit": "px" } 
-                    }
-                }
-            }
-        },
-        {
-            "type": "style",
-            "name": "label",
-            "style": {
-                "text": {
-                    "bold": 500,
-                    "color": { "type": "hex", "value": "#555" }
-                }
-            }
-        },
-        {
-            "type": "style",
-            "name": "group-title",
-            "style": {
-                "text": {
-                    "color": { "type": "hex", "value": "#555" },
-                    "transform": "uppercase",
-                    "size": { "value": "1.4", "unit": "rem" },
-                    "bold": 400
-                },
-                "box": {
-                    "width":{ "value": "100", "unit": "%" }
-                }
-            }
-        },
-
-
-
-
         {
             "concept": { "name": "project" },
             "type": "layout",
@@ -3532,6 +3460,77 @@
                 ],
                 "style": {
                     "css": ["state-label-reference"]
+                }
+            }
+        }
+    ],
+    "style": [
+        {
+            "type": "style",
+            "name": "box-left",
+            "style": {
+                "box": {
+                    "outer": { 
+                        "left": { "value": 6, "unit": "px" } 
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "box-top",
+            "style": {
+                "box": {
+                    "outer": { 
+                        "top": { "value": 6, "unit": "px" } 
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "box-right",
+            "style": {
+                "box": {
+                    "outer": { 
+                        "right": { "value": 6, "unit": "px" } 
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "box-bottom",
+            "style": {
+                "box": {
+                    "outer": { 
+                        "bottom": { "value": 6, "unit": "px" } 
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "label",
+            "style": {
+                "text": {
+                    "bold": 500,
+                    "color": { "type": "hex", "value": "#555" }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "group-title",
+            "style": {
+                "text": {
+                    "color": { "type": "hex", "value": "#555" },
+                    "transform": "uppercase",
+                    "size": { "value": "1.4", "unit": "rem" },
+                    "bold": 400
+                },
+                "box": {
+                    "width":{ "value": "100", "unit": "%" }
                 }
             }
         }

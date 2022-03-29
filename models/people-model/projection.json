@@ -1,0 +1,463 @@
+{
+    "projection": [
+        {
+            "concept": { "name": "organization" },
+            "tags": ["edit-view"],
+            "container": {
+                "content": [
+                    {
+                        "type": "attribute",
+                        "name": "name"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "description",
+                        "tag": "textarea",
+                        "style": {
+                            "ref": ["box-top"]
+                        }
+                    },
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "kind": "static",
+                                "type": "text",
+                                "content": "Members",
+                                "style": {
+                                    "css": ["pp-title"]
+                                }
+                            },
+                            {
+                                "kind": "static",
+                                "type": "button",
+                                "name": "add-member",
+                                "action": {
+                                    "type": "CREATE",
+                                    "target": {
+                                        "type": "attribute",
+                                        "name": "members"
+                                    }
+                                },
+                                "help": "Add a member",
+                                "content": [
+                                    {
+                                        "kind": "static",
+                                        "type": "text",
+                                        "content": "+",
+                                        "style": {
+                                            "css": ["pp__btn-add-icon"]
+                                        }
+                                    },
+                                    {
+                                        "kind": "static",
+                                        "type": "text",
+                                        "content": "New",
+                                        "style": {
+                                            "css": ["pp__btn-add-text"]
+                                        }
+                                    }
+                                ],
+                                "style": {
+                                    "css": ["btn", "pp__btn-add"],
+                                    "ref": ["box-left"]
+                                }
+                            }
+                        ],
+                        "layout": { "type": "flex", "orientation": "row" },
+                        "style": {
+                            "css": ["pp-wrap"],
+                            "ref": ["box-top"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "members",
+                        "style": {
+                            "ref": ["box-top"]
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column", "wrappable": false },
+                "style": {
+                    "css": ["pp-organization"]
+                },
+                "focusable": true
+            }
+        },
+        {
+            "concept": { "name": "person" },
+            "tags": ["edit-view"],
+            "container": {
+                "content": [
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "type": "attribute",
+                                "name": "first-name",
+                                "tag": "textbox-label"
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "last-name",
+                                "tag": "textbox-label",
+                                "style": {
+                                    "ref": ["box-left"]
+                                }
+                            }
+                        ],
+                        "layout": { "type": "flex", "orientation": "row", "wrappable": false },
+                        "style": {
+                            "css": ["pp-fieldgroup"]
+                        }
+                    },                
+                    {
+                        "type": "attribute",
+                        "name": "occupation",
+                        "tag": "textbox-label",
+                        "style": {
+                            "ref": ["box-top"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "email-address",
+                        "tag": "textbox-label",
+                        "style": {
+                            "ref": ["box-top"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "phone-number",
+                        "tag": "textbox-label",
+                        "style": {
+                            "ref": ["box-top"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "photo",
+                        "tag": "textbox-label",
+                        "required": true,
+                        "style": {
+                            "ref": ["box-top"]
+                        }
+                    },
+                    {
+                        "kind": "static",
+                        "type": "plink",
+                        "focusable": true,
+                        "hidden": false,
+                        "tag": "read-view",
+                        "content": [
+                            { "type": "raw", "raw": "Preview" }
+                        ],
+                        "style": {
+                            "css": ["pp-navlink"]
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" },
+                "style": {
+                    "css": ["pp-person", "pp-person--edit"]
+                },
+                "focusable": true
+            }
+        },
+        {
+            "concept": { "name": "person" },
+            "tags": ["read-view"],
+            "container": {
+                "content": [
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "type": "attribute",
+                                "name": "photo",
+                                "tag": "image"
+                            }
+                        ],
+                        "layout": { "type": "flex", "orientation": "row", "wrappable": true },
+                        "style": {
+                            "css": ["pp-person-image"]
+                        }
+                    },
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "type": "container",
+                                "content": [
+                                    {
+                                        "type": "attribute",
+                                        "name": "first-name",
+                                        "tag": "text",
+                                        "style": {
+                                            "css": ["first-name"]
+                                        }
+                                    },
+                                    {
+                                        "type": "attribute",
+                                        "name": "last-name",
+                                        "tag": "text",
+                                        "style": {
+                                            "text": {
+                                                "transform": "uppercase"
+                                            },
+                                            "box": {
+                                                "outer": {
+                                                    "left": { "value": 3, "unit": "px" }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ],
+                                "layout": { "type": "flex", "orientation": "row", "wrappable": true },
+                                "style": {
+                                    "css": ["pp-combi-name"]
+                                }
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "occupation",
+                                "tag": "text",
+                                "style": {
+                                    "text": {
+                                        "bold": 500
+                                    }
+                                }
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "email-address",
+                                "tag": "email"
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "phone-number",
+                                "tag": "text"
+                            },
+                            {
+                                "kind": "static",
+                                "type": "plink",
+                                "focusable": true,
+                                "hidden": false,
+                                "tag": "edit-view",
+                                "content": [
+                                    {
+                                        "type": "raw",
+                                        "raw": "Edit"
+                                    }
+                                ],
+                                "style": {
+                                    "css": ["pp-navlink"]
+                                }
+                            }
+                        ],
+                        "layout": { "type": "flex", "orientation": "column" },
+                        "style": {
+                            "css": ["pp-person-info"]
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" },
+                "style": {
+                    "css": ["pp-person", "pp-person--read"]
+                },
+                "focusable": true
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["textbox"],
+            "content": {
+                "type": "text",
+                "input": {
+                    "type": "text",
+                    "placeholder": { "type": "property", "name": "label" },
+                    "style": {
+                        "css": ["pp-textbox__input"]
+                    }
+                },
+                "style": {
+                    "css": ["pp-textbox"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["textarea"],
+            "content": {
+                "type": "text",
+                "multiline": true,
+                "input": {
+                    "type": "text",
+                    "placeholder": "Enter a description",
+                    "style": {
+                        "css": ["pp-textarea__input"]
+                    }
+                },
+                "style": {
+                    "css": ["pp-textarea"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["textbox-label"],
+            "content": {
+                "type": "text",
+                "container": {
+                    "type": "flex",
+                    "orientation": "row",
+                    "content": [
+                        {
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "content": {
+                                    "type": "property",
+                                    "name": "label"
+                                },
+                                "style": {
+                                    "css": ["pp-textbox2__label"]
+                                }
+                            }
+                        }, 
+                        {
+                            "type": "input",
+                            "input": {
+                                "type": "text",
+                                "placeholder": {
+                                    "type": "property",
+                                    "name": "placeholder"
+                                },
+                                "style": {
+                                    "css": ["pp-textbox2__input"]
+                                }
+                            }
+                        }
+                    ],
+                    "style": {
+                        "css": ["pp-textbox2"]
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "static",
+            "tags": ["text"],
+            "content": {
+                "type": "text",
+                "content": { "type": "property", "name": "value" },
+                "style": {
+                    "css": ["pp-text"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "static",
+            "tags": ["email"],
+            "content": {
+                "type": "link",
+                "urlType": "email",
+                "url": { "type": "property", "name": "value" },
+                "content": [{ "type": "property", "name": "value" }],
+                "style": {
+                    "css": ["pp-email"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "static",
+            "tags": ["image"],
+            "content": {
+                "type": "image",
+                "url": { "type": "property", "name": "value" },
+                "style": {
+                    "css": ["pp-image"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "type": "field",
+            "tags": ["members"],
+            "content": {
+                "type": "list",
+                "list": {
+                    "item": {
+                        "template": { "tag": "edit-view" },
+                        "style": {
+                            "css": ["pp-person-set__list-item"]
+                        }
+                    },
+                    "style": {
+                        "css": ["pp-person-set__list"]
+                    }
+                },
+                "action": {
+                    "add": false,
+                    "remove": {
+                        "content": [
+                            {
+                                "kind": "static",
+                                "type": "text",
+                                "content": "✖"
+                            }
+                        ],
+                        "style": {
+                            "css": ["pp-person-set__btn-remove"]
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "template": [],
+    
+    "style": [
+        {
+            "type": "style",
+            "name": "box-top",
+            "style": {
+                "box": {
+                    "outer": {
+                        "top": { "value": 6, "unit": "px" }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "box-right",
+            "style": {
+                "box": {
+                    "outer": {
+                        "right": { "value": 6, "unit": "px" }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "box-left",
+            "style": {
+                "box": {
+                    "outer": {
+                        "left": { "value": 6, "unit": "px" }
+                    }
+                }
+            }
+        }
+    ]
+}

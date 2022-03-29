@@ -1,6 +1,7 @@
-import { isEmpty, valOrDefault, isNullOrWhitespace, isFunction, createEmphasis, getElement, isNullOrUndefined, createSpan, isString } from "zenkai";
+import { isEmpty, valOrDefault, isNullOrWhitespace, isFunction, isNullOrUndefined, createSpan, camelCase } from "zenkai";
 import { NotificationType, LogType } from "@utils/index.js";
 import { buildStyle, buildGentlemanStyle } from "./build-style.js";
+import { getAttr, getReferenceValue, getReferenceName, hasAttr, hasValue, getName, getValue, createProjectionLink } from './utils.js';
 
 
 const PROP_HANDLER = "handler";
@@ -18,56 +19,8 @@ const PROP_FOCUSABLE = "focusable";
 const PROP_HIDDEN = "hidden";
 const PROP_READONLY = "readonly";
 const PROP_DISABLED = "disabled";
+const PROP_SOURCE = "source";
 
-
-const getAttr = (concept, name) => concept.getAttributeByName(name).target;
-
-const getReference = (concept, attr) => getAttr(concept, attr).getReference();
-
-const getReferenceValue = (concept, attr, deep = false) => getReference(concept, attr).getValue();
-
-const getReferenceName = (concept, attr) => getName(getReference(concept, attr));
-
-const getValue = (concept, attr, deep = false) => getAttr(concept, attr).getValue(deep);
-
-const hasValue = (concept, attr) => getAttr(concept, attr).hasValue();
-
-const hasAttr = (concept, name) => concept.isAttributeCreated(name);
-
-const getName = (concept) => getValue(concept, ATTR_NAME).toLowerCase();
-
-
-function createProjectionLink(text, concept) {
-    const { id, name } = concept;
-
-    let link = createEmphasis({
-        class: ["link", "error-message__link"],
-        title: name,
-    }, text);
-
-    const targetSelector = `.projection[data-concept="${id}"]`;
-
-    link.addEventListener("mouseenter", (event) => {
-        let targetProjection = getElement(targetSelector, this.body);
-        if (targetProjection) {
-            this.highlight(targetProjection);
-        }
-    });
-
-    link.addEventListener("mouseleave", (event) => {
-        this.unhighlight();
-    });
-
-    link.addEventListener("click", (event) => {
-        let target = this.resolveElement(getElement(targetSelector, this.body));
-
-        if (target) {
-            target.focus();
-        }
-    });
-
-    return link;
-}
 
 const ProjectionBuildHandler = {
     "projection": buildProjection,
@@ -76,13 +29,17 @@ const ProjectionBuildHandler = {
 };
 
 const ProjectionHandler = {
-    "layout": buildLayout,
     "container": buildContainer,
+    "layout": buildLayout,
     "field": buildField,
 };
 
 export function buildProjectionHandler(_options = {}) {
-    const result = [];
+    const result = {
+        "projection": [],
+        "template": [],
+        "style": [],
+    };
 
     const { conceptModel } = this;
 
@@ -105,11 +62,12 @@ export function buildProjectionHandler(_options = {}) {
     this.__errors = [];
 
     concepts.forEach(concept => {
-        const handler = ProjectionBuildHandler[valOrDefault(concept.getProperty(PROP_HANDLER), "")];
+        let type = valOrDefault(concept.getProperty(PROP_HANDLER), "");
+        const handler = ProjectionBuildHandler[type];
 
         const { message } = handler.call(this, concept);
 
-        result.push(message);
+        result[type].push(message);
     });
 
 
@@ -127,9 +85,7 @@ export function buildProjectionHandler(_options = {}) {
     }
 
     if (options.download) {
-        this.download({
-            projection: result
-        }, options.name);
+        this.download(result, options.name);
     }
 
     delete this.__errors;
@@ -138,7 +94,7 @@ export function buildProjectionHandler(_options = {}) {
 }
 
 
-function buildProjection(concept) {
+export function buildProjection(concept) {
     const tags = hasAttr(concept, ATTR_TAGS) ? getValue(concept, ATTR_TAGS, true) : [];
 
     let targetConcept = getAttr(concept, ATTR_CONCEPT);
@@ -158,43 +114,34 @@ function buildProjection(concept) {
         this.__errors.push(error);
     }
 
-    if (!hasValue(concept, ATTR_CONTENT)) {
-        let link = createProjectionLink.call(this, "content", getAttr(concept, ATTR_CONTENT));
-        let error = createSpan({
-            class: ["error-message"]
-        }, [`Projection error: `, link, ` is missing a value`]);
+    const container = getAttr(concept, "container");
 
-        this.__errors.push(error);
-    }
+    // const content = getValue(container, ATTR_CONTENT, true);
 
-    const content = getValue(concept, ATTR_CONTENT, true);
+    // if (isNullOrUndefined(content)) {
+    //     let link = createProjectionLink.call(this, "content", getAttr(concept, ATTR_CONTENT));
+    //     let error = createSpan({
+    //         class: ["error-message"]
+    //     }, [`Projection error: `, link, ` is missing a value`]);
 
-    if (isNullOrUndefined(content)) {
-        let link = createProjectionLink.call(this, "content", getAttr(concept, ATTR_CONTENT));
-        let error = createSpan({
-            class: ["error-message"]
-        }, [`Projection error: `, link, ` is missing a value`]);
+    //     return {
+    //         success: false,
+    //         message: {
+    //             "id": concept.id,
+    //             "concept": target,
+    //             "tags": tags,
+    //             "type": null,
+    //             "content": null
+    //         }
+    //     };
+    // }
 
-        return {
-            success: false,
-            message: {
-                "id": concept.id,
-                "concept": target,
-                "tags": tags,
-                "type": null,
-                "content": null
-            }
-        };
-    }
-
-    const contentType = content.getProperty("contentType");
+    // const contentType = content.getProperty("contentType");
 
     let schema = {
-        "id": concept.id,
         "concept": target,
         "tags": tags,
-        "type": contentType === "container" ? "layout" : contentType,
-        "content": ProjectionHandler[contentType].call(this, content),
+        "container": buildContainer.call(this, container),
         // "metadata": JSON.stringify(concept.export()),
     };
 
@@ -313,40 +260,29 @@ function buildElement(element) {
         return null;
     }
 
-    let type = contentType === "container" ? "layout" : contentType;
+    let type = contentType;
 
-    return {
-        type: type,
-        [type]: handler.call(this, element)
-    };
+    return Object.assign({ kind: type }, handler.call(this, element));
 }
 
 
 function buildContainer(container) {
-    const schema = {};
-    var disposition = [];
+    const schema = {
+        type: "container"
+    };
+
+    let elements = [];
 
     getValue(container, "elements").filter(proto => proto.hasValue()).forEach(proto => {
         const element = proto.getValue(true);
-        disposition.push(buildElement.call(this, element));
+        elements.push(buildElement.call(this, element));
     });
 
-    const PROP_ORIENTATION = "orientation";
-    const PROP_WRAPPABLE = "wrappable";
-    const PROP_ALIGNITEMS = "align-items";
-    const PROP_JUSTIFYCONTENT = "justify-content";
+    schema.content = elements;
 
-    let layout = getAttr(container, "layout");
+    schema.layout = buildLayout.call(this, getValue(container, "layout", true));
 
-    schema.type = "flex";
-    schema[PROP_ORIENTATION] = getValue(layout, PROP_ORIENTATION);
-    schema[PROP_WRAPPABLE] = getValue(container, PROP_WRAPPABLE);
     schema[PROP_FOCUSABLE] = getValue(container, PROP_FOCUSABLE);
-    schema[PROP_HIDDEN] = getValue(container, PROP_HIDDEN);
-    schema.alignItems = getValue(layout, PROP_ALIGNITEMS);
-    schema.justifyContent = getValue(layout, PROP_JUSTIFYCONTENT);
-
-    schema.disposition = disposition;
 
     if (hasAttr(container, "style")) {
         schema.style = buildStyle.call(this, getAttr(container, 'style'));
@@ -389,8 +325,6 @@ function buildLayout(layout) {
 function FlexLayoutHandler(layout) {
     const schema = {};
 
-    var disposition = [];
-
     const PROP_ORIENTATION = "orientation";
     const PROP_WRAPPABLE = "wrappable";
     const PROP_ALIGNITEMS = "align-items";
@@ -398,15 +332,17 @@ function FlexLayoutHandler(layout) {
 
     schema[PROP_ORIENTATION] = getValue(layout, PROP_ORIENTATION);
     schema[PROP_WRAPPABLE] = getValue(layout, PROP_WRAPPABLE);
-    schema.alignItems = getValue(layout, PROP_ALIGNITEMS);
-    schema.justifyContent = getValue(layout, PROP_JUSTIFYCONTENT);
+    schema[camelCase(PROP_ALIGNITEMS)] = getValue(layout, PROP_ALIGNITEMS);
+    schema[camelCase(PROP_JUSTIFYCONTENT)] = getValue(layout, PROP_JUSTIFYCONTENT);
 
-    getValue(layout, "elements").filter(proto => proto.hasValue()).forEach(proto => {
-        const element = proto.getValue(true);
-        disposition.push(buildElement.call(this, element));
-    });
+    // let disposition = [];
 
-    schema.disposition = disposition;
+    // getValue(layout, "elements").filter(proto => proto.hasValue()).forEach(proto => {
+    //     const element = proto.getValue(true);
+    //     disposition.push(buildElement.call(this, element));
+    // });
+
+    // schema.disposition = disposition;
 
     return schema;
 }
@@ -446,7 +382,7 @@ function TableLayoutHandler(layout) {
 
 const DynamicHanlders = {
     "attribute": AttributeDynamicHandler,
-    "projection": ProjectionDynamicHandler,
+    "projection": AttributeDynamicHandler,
     "template": TemplateDynamicHandler,
 };
 
@@ -471,14 +407,14 @@ function buildDynamic(dynamic) {
 function AttributeDynamicHandler(element) {
     const schema = {
         type: "attribute",
-        name: getValue(element, "value")
+        name: getValue(element, "src")
     };
 
     const PROP_TAG = "tag";
     const PROP_PLACEHOLDER = "placeholder";
 
     if (hasAttr(element, PROP_TAG) && hasValue(element, PROP_TAG)) {
-        schema[PROP_TAG] = getReferenceValue(element, PROP_TAG);
+        schema[PROP_TAG] = getValue(element, PROP_TAG);
     }
 
     if (hasAttr(element, ATTR_REQUIRED)) {
@@ -509,7 +445,7 @@ function ProjectionDynamicHandler(element) {
     const PROP_PLACEHOLDER = "placeholder";
 
     if (hasAttr(element, PROP_TAG) && hasValue(element, PROP_TAG)) {
-        schema.tag = getReferenceValue(element, PROP_TAG);
+        schema.tag = getValue(element, PROP_TAG);
     }
 
     if (hasAttr(element, PROP_PLACEHOLDER) && hasValue(element, PROP_PLACEHOLDER)) {
@@ -600,7 +536,7 @@ function TextStaticHandler(element) {
     };
 
     // schema[ATTR_CONTENT] = buildContent(getValue(element, ATTR_CONTENT, true));
-    schema[PROP_ASHTML] =  getValue(element, PROP_ASHTML);
+    schema[PROP_ASHTML] = getValue(element, PROP_ASHTML);
     schema[ATTR_CONTENT] = getValue(element, ATTR_CONTENT, true);
 
     return schema;
@@ -622,17 +558,24 @@ function LinkStaticHandler(element) {
     const schema = {};
 
     const PROP_URL = "url";
-    const PROP_URLTYPE = "url type";
+    const PROP_URLTYPE = "type";
 
     schema[PROP_URL] = getValue(element, PROP_URL);
     schema.urlType = getValue(element, PROP_URLTYPE);
-    schema[ATTR_CONTENT] = [];
-
-    let linkContent = getAttr(element, ATTR_CONTENT);
-    getValue(linkContent, ATTR_CONTENT).filter(proto => proto.hasValue()).forEach(proto => {
+    schema[ATTR_CONTENT] = getValue(element, ATTR_CONTENT).filter(proto => proto.hasValue()).map(proto => {
         const element = proto.getValue(true);
-        schema.content.push(buildElement.call(this, element));
+        return buildElement.call(this, element);
     });
+
+    // let linkContent = getAttr(element, ATTR_CONTENT);
+    // if (linkContent.name === "string") {
+    //     schema.content.push({ "type": "raw", "raw": linkContent.getValue() });
+    // } else {
+    //     getValue(linkContent, ATTR_CONTENT).filter(proto => proto.hasValue()).forEach(proto => {
+    //         const element = proto.getValue(true);
+    //         schema.content.push(buildElement.call(this, element));
+    //     });
+    // }
 
     return schema;
 }
@@ -643,13 +586,19 @@ function PLinkStaticHandler(element) {
     const PROP_TAG = "tag";
 
     schema[PROP_TAG] = getValue(element, "tag");
-    schema[ATTR_CONTENT] = [];
-
-    let plinkContent = getAttr(element, ATTR_CONTENT);
-    getValue(plinkContent, ATTR_CONTENT).filter(proto => proto.hasValue()).forEach(proto => {
+    schema[ATTR_CONTENT] = getValue(element, ATTR_CONTENT).filter(proto => proto.hasValue()).map(proto => {
         const element = proto.getValue(true);
-        schema.content.push(buildElement.call(this, element));
+        return buildElement.call(this, element);
     });
+
+    // if (plinkContent.name === "string") {
+    //     schema.content.push({ "type": "raw", "raw": plinkContent.getValue() });
+    // } else {
+    //     getValue(plinkContent, ATTR_CONTENT).filter(proto => proto.hasValue()).forEach(proto => {
+    //         const element = proto.getValue(true);
+    //         schema.content.push(buildElement.call(this, element));
+    //     });
+    // }
 
     return schema;
 }
@@ -659,7 +608,7 @@ function ButtonStaticHandler(element) {
 
     const PROP_TRIGGER = "trigger";
     const PROP_DISABLED = "disabled";
-    
+
     schema[PROP_TRIGGER] = getValue(element, PROP_TRIGGER);
     schema[PROP_DISABLED] = getValue(element, PROP_DISABLED);
     schema[ATTR_CONTENT] = getValue(element, ATTR_CONTENT).filter(proto => proto.hasValue()).map(proto => {
@@ -689,12 +638,11 @@ function buildField(field) {
         type: elementType
     };
 
-    
-  
     schema[PROP_FOCUSABLE] = getValue(field, PROP_FOCUSABLE);
     schema[PROP_READONLY] = getValue(field, PROP_READONLY);
     schema[PROP_DISABLED] = getValue(field, PROP_DISABLED);
     schema[PROP_HIDDEN] = getValue(field, PROP_HIDDEN);
+    schema[PROP_SOURCE] = getValue(field, PROP_SOURCE);
 
     const handler = FieldHanlders[elementType];
 
@@ -925,7 +873,7 @@ function buildFieldTemplate(element) {
     const schema = {};
 
     if (hasAttr(element, ATTR_TAG) && hasValue(element, ATTR_TAG)) {
-        schema[ATTR_TAG] = getReferenceValue(element, ATTR_TAG);
+        schema[ATTR_TAG] = getValue(element, ATTR_TAG);
     }
 
     if (hasAttr(element, ATTR_NAME) && hasValue(element, ATTR_NAME)) {

@@ -1,11 +1,5 @@
-import {
-    createDocFragment, createDiv, createUnorderedList, createListItem, createButton,
-    findAncestor, removeChildren, isHTMLElement, isNullOrUndefined, valOrDefault, hasOwn,
-} from "zenkai";
-import {
-    hide, show, shake, NotificationType, getClosest, isHidden,
-    getTopElement, getBottomElement, getRightElement, getLeftElement
-} from "@utils/index.js";
+import { createDocFragment, createDiv, createButton, findAncestor, removeChildren, isHTMLElement, isNullOrUndefined, valOrDefault, hasOwn, } from "zenkai";
+import { hide, shake, getClosest, isHidden, getTopElement, getBottomElement, getRightElement, getLeftElement } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler } from "./../content-handler.js";
 import { StateHandler } from "./../state-handler.js";
@@ -80,7 +74,7 @@ const BaseListField = {
     content: null,
 
 
-    init() {
+    init(args) {
         const { focusable = true } = this.schema;
 
         this.items = new Map();
@@ -153,7 +147,7 @@ const BaseListField = {
             this.list.firstElementChild.focus();
         } else {
             let target = getTopElement(this.element, (el) => el !== this.list);
-            
+
             if (!isHTMLElement(target)) {
                 return this;
             } else {
@@ -255,12 +249,16 @@ const BaseListField = {
 
         let itemProjection = this.model.createProjection(object, template.tag);
         itemProjection.optional = true;
+        itemProjection.collapsible = true;
         itemProjection.parent = this.projection;
 
-        let container = itemProjection.init().render();
+        let container = itemProjection.init(template.options).render();
         container.dataset.index = object.index;
 
         itemProjection.element.parent = this;
+        itemProjection.registerHandler("view.changed", (container) => {
+            StyleHandler.call(this.projection, container, style);
+        });
 
         StyleHandler.call(this.projection, container, style);
 

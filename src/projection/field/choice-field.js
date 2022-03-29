@@ -114,7 +114,9 @@ const BaseChoiceField = {
     icoToggle: null,
 
 
-    init() {
+    init(args = {}) {
+        Object.assign(this.schema, args);
+
         const { focusable = true, placeholder = false, expanded = true } = this.schema;
 
         this.items = new Map();

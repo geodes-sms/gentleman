@@ -1,4 +1,5 @@
 {
+    "type": "concept",
     "concept": [
         {
             "id": "b1ab20b1-595a-4a46-9804-17bb1930cdf1",
@@ -40,6 +41,7 @@
             "prototype": "state",
             "name": "light",
             "nature": "concrete",
+            "root": true,
             "attributes": [
                 {
                     "name": "color",
@@ -72,6 +74,7 @@
             "prototype": "state",
             "name": "mode",
             "nature": "concrete",
+            "root": true,
             "attributes": [
                 {
                     "name": "lights",

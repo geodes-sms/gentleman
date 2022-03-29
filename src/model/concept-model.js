@@ -43,7 +43,7 @@ export const ConceptModel = {
         // TODO check if has model changes
 
         this.concepts.forEach(concept => {
-            concept.unregisterAll();
+            concept.done();
         });
 
         this.concepts = [];
@@ -317,6 +317,13 @@ export const ConceptModel = {
         return false;
     },
 
+    addConceptSchema(concepts) {
+        this.schema.push(...concepts);
+
+        this.environment.update("concept-model.updated");
+
+        return true;
+    },
     getSchema(nature) {
         if (isIterable(nature)) {
             const pred = Array.isArray(nature) ? (concept) => nature.includes(concept.nature) : (concept) => concept.nature === nature;

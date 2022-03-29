@@ -89,8 +89,6 @@ export const EditorBreadcrumb = {
     container: null,
     /** @type {HTMLElement} */
     title: null,
-    /** @type {boolean} */
-    visible: true,
 
     /** @type {HTMLElement} */
     conceptList: null,
@@ -107,30 +105,12 @@ export const EditorBreadcrumb = {
         return this;
     },
 
-    show() {
-        show(this.container);
-        this.visible = true;
-
-        return this;
-    },
-    hide() {
-        hide(this.container);
-        this.visible = false;
-
-        return this;
-    },
-    toggle() {
-        toggle(this.container);
-        this.visible = !this.visible;
-
-        return this;
-    },
     update() {
 
     },
     refresh() {
         const { activeInstance, activeConcept, hasActiveInstance, hasActiveConcept } = this.editor;
-
+        
         if (!hasActiveInstance || !hasActiveConcept) {
             removeChildren(this.conceptList);
             return this;

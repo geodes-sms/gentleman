@@ -86,6 +86,7 @@ const _NumberConcept = {
             this.value = isNullOrWhitespace(value) ? null : +value;
 
             this.notify("value.changed", value);
+            this.propagate("value.changed", value, this);
         }
 
         if (code !== ResponseCode.SUCCESS) {

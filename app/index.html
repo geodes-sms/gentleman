@@ -6,26 +6,28 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Gentleman</title>
     <meta name="desciption" content="A web-based projectional editor. Enjoy a new way to express and interact with your DSL.">
-    <link rel="stylesheet" href="./../dist/style.min.css">
-    <link rel="stylesheet" href="./../assets/css/samples/gentleman.css">
-    <link rel="stylesheet" href="./style.css">
+    <!-- <link rel="stylesheet" href="./../dist/style.min.css"> -->
+    <!-- <link rel="stylesheet" href="./../assets/css/samples/gentleman.css"> -->
+    <!-- <link rel="stylesheet" href="./style.css"> -->
     <script src="https://cdn.jsdelivr.net/npm/zenkai@0.10.0/dist/zenkai.min.js"></script>
 </head>
 
 <body>
     <header class="page-header">
-        <a class="link header__link has-helper" href="https://geodes-sms.github.io/gentleman/">
-            <span class="link-logo">Gentleman</span>
-            <i class="helper">Go to the homepage</i>
+        <a class="link header__link has-helper" href="#">
+            <span class="link-logo">Gentleman <code class="font-code link-logo-version" title="Last updated: 2022-03-27">0.4.0</code></span>
         </a>
         <ul class="bare-list app-menu" data-component="menu">
-            <li class="app-menu-item app-menu-item--new">
-                <button class="btn app-menu__button has-helper" data-action="new">
-                    <i class="app-menu__button-icon" data-icon="plus">+</i>
-                    <i class="helper">Open a new editor</i>
+            <li class="app-menu-item app-menu-item--new has-helper">
+                <button class="btn app-menu__button" data-action="new">
+                    <span class="app-menu__button-content">
+                        <span class="app-menu__button-content-icon">+</span> 
+                        <span class="app-menu__button-content-text">New</span> 
+                    </span>
                 </button>
+                <i class="helper">Open a new editor</i>
             </li>
-            <li class="app-menu-item">
+            <!-- <li class="app-menu-item">
                 <button class="btn app-menu__button has-helper" data-action="new-metamodel">
                     <span class="app-menu__button-text"><span class="app-menu__button-text-deco">New</span> Concept</span>
                     <i class="helper">Create a metamodel</i>
@@ -36,32 +38,41 @@
                     <span class="app-menu__button-text"><span class="app-menu__button-text-deco">New</span> Projection</span>
                     <i class="helper">Create projections</i>
                 </button>
+            </li> -->
+        </ul>
+
+        <ul class="bare-list app-nav">
+            <li class="app-nav-item has-helper">
+                <a class="btn link app-nav__link" href="https://geodes-sms.github.io/gentleman/docs/index.html" target="_blank">Documentation</a>
+                <i class="helper">Guide and Tutorial</i>
+            </li>
+            <li class="app-nav-item has-helper">
+                <a class="btn link app-nav__link" href="https://github.com/geodes-sms/gentleman/issues" target="_blank">Repository</a>
+                <i class="helper">Ticket and Request</i>
             </li>
         </ul>
     </header>
 
     <main class="page-body">
-        <nav class="app-nav" data-component="nav"></nav>
+        <nav class="app-sidenav" data-component="nav">
+            <ul class="bare-list nav-list" data-component="nav-list">
+                <li class="nav-item nav-item--concept has-helper selected" data-editor="concept">
+                    <span class="nav-item-title">CP</span>
+                    <i class="helper">Create concepts</i>
+                </li>
+                <li class="nav-item nav-item--projection has-helper" data-editor="projection">
+                    <span class="nav-item-title">PJ</span>
+                    <i class="helper">Create projections</i>
+                </li>
+            </ul>
+        </nav>
         <section class="app" data-component="editor">
         </section>
     </main>
 
-    <footer class="page-footer">
-        <div class="content-wrapper">
-            <ul class="bare-list footer-nav">
-                <li class="footer-nav-item">
-                    <a class="link footer-nav__link" href="https://geodes-sms.github.io/gentleman/">Documentation</a>
-                </li>
-                <li class="footer-nav-item">
-                    <a class="link footer-nav__link" href="https://github.com/geodes-sms/gentleman/">Code repository</a>
-                </li>
-            </ul>
-            <p>Gentleman <strong class="font-code" title="Last updated: 2021-07-27">0.3.0</strong></p>
-        </div>
-    </footer>
-
-    <script src="./../dist/gentleman.core.js"></script>
-    <script src="./../dist/gentleman.app.js"></script>
+    <!-- <script src="./../dist/gentleman.core.js"></script> -->
+    <!-- <script src="./../dist/gentleman.app.js"></script> -->
+    <script src="app.bundle.js"></script>
 </body>
 
 </html>

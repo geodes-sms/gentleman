@@ -1,9 +1,11 @@
 {
+    "type": "concept",
     "concept": [
         {
             "id": "f3115bb5-945d-443f-80d0-3e8a59e3c219",
             "name": "project",
             "nature": "concrete",
+            "root": true,
             "attributes": [
                 {
                     "name": "short_name",
@@ -62,6 +64,7 @@
             "id": "035316fc-eabd-474e-9cad-fb3c0ec51af5",
             "name": "screening",
             "nature": "concrete",
+            "root": true,
             "attributes": [
                 {
                     "name": "review_per_paper",
@@ -224,6 +227,7 @@
             "id": "b8308954-b4df-4d42-a659-aee5822ac7e6",
             "name": "qa",
             "nature": "concrete",
+            "root": true,
             "attributes": [
                 {
                     "name": "cut_off_score",
@@ -277,6 +281,7 @@
             "id": "69q05489-db4f-42d4-a659-sac8287s22w6",
             "name": "classification",
             "nature": "concrete",
+            "root": true,
             "attributes": [
                 {
                     "name": "categories",
@@ -302,6 +307,7 @@
             "id": "gs89f524-fs4d-42d4-l296-5ae22r7ee8c6",
             "name": "report",
             "nature": "concrete",
+            "root": true,
             "attributes": [
                 {
                     "name": "graphs",

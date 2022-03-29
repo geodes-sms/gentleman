@@ -186,14 +186,6 @@ export const EditorStatus = {
             this.editor.instances.forEach(instance => {
                 instance.show();
             });
-        } else if (value === "row") {
-            this.editor.instances.forEach(instance => {
-                instance.show();
-            });
-        } else if (value === "col") {
-            this.editor.instances.forEach(instance => {
-                instance.show();
-            });
         }
 
         this.updateActiveView();
@@ -386,7 +378,7 @@ export const EditorStatus = {
             this.viewContainer.appendChild(this.viewList);
         }
 
-        ["tab", "grid", "row"].forEach(name => {
+        ["grid", "tab"].forEach(name => {
             let view = createListItem({
                 class: ["editor-statusbar-viewer"],
                 dataset: {

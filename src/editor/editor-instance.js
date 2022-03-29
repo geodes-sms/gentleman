@@ -12,6 +12,7 @@ export const EditorInstanceManager = {
     /**
      * Creates a concept instance
      * @param {string} name 
+     * @returns {EditorInstance}
      */
     createInstance($concept, _projection, _options) {
         if (isNullOrUndefined($concept)) {
@@ -31,14 +32,13 @@ export const EditorInstanceManager = {
             object: { value: "environment" },
             name: { value: "editor-instance" },
             type: { value: "instance" },
-            concept: { value: concept },
+            concept: { value: concept, writable: true },
             projection: { value: projection, writable: true },
             editor: { value: this }
         });
 
         const options = Object.assign({
             type: "concept",
-            minimize: true,
             resize: true,
             maximize: true,
             close: "DELETE-CONCEPT"
@@ -137,8 +137,6 @@ export const EditorInstance = {
     header: null,
     /** @type {HTMLElement} */
     body: null,
-    /** @type {HTMLButtonElement} */
-    btnCollapse: null,
     /** @type {HTMLButtonElement} */
     btnMaximize: null,
     /** @type {HTMLButtonElement} */
@@ -271,18 +269,6 @@ export const EditorInstance = {
             }
         }
 
-        if (!isHTMLElement(this.btnCollapse)) {
-            this.btnCollapse = createButton({
-                class: ["btn", "editor-concept-toolbar__btn-collapse"],
-                title: `Collapse ${name.toLowerCase()}`,
-                dataset: {
-                    action: `collapse`,
-                    context: this.type,
-                    id: this.id
-                }
-            });
-        }
-
         if (!isHTMLElement(this.btnMaximize)) {
             this.btnMaximize = createButton({
                 class: ["btn", "editor-concept-toolbar__btn-maximize"],
@@ -302,11 +288,11 @@ export const EditorInstance = {
                 nature: "editable",
                 id: this.id,
             }
-        }, name);
+        }, valOrDefault(this.schema.title, name));
 
         let toolbar = createDiv({
             class: ["editor-concept-toolbar"],
-        }, [this.btnCollapse, this.btnMaximize, this.btnClose]);
+        }, [this.btnMaximize, this.btnClose]);
 
         removeChildren(this.header).append(this.title, toolbar);
 
@@ -333,7 +319,9 @@ export const EditorInstance = {
 
         return this.container;
     },
+    clear() {
 
+    },
 
 
     actionHandler(name) {
@@ -384,12 +372,6 @@ export const EditorInstance = {
     bindEvents() {
         this.container.addEventListener('focusin', (event) => {
             this.editor.updateActiveInstance(this);
-        });
-
-        this.header.addEventListener("focusout", (event) => {
-            if (isNullOrWhitespace(this.title.textContent)) {
-                this.title.textContent = this.concept.name;
-            }
         });
     }
 };

@@ -1,0 +1,103 @@
+.tpl-concept {
+    font: normal 1rem 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
+    color: #333;
+    background-color: #c0c0c0;
+    height: 100%;
+}
+
+.tpl-concept-header {
+    display: flex; flex-direction: column;
+    background-color: #dcdcdc;
+    padding: 8px 12px;
+}
+
+    .tpl-concept-heading {
+        display: flex; align-items: center;
+        margin-bottom: 6px;
+    }
+    .tpl-concept-name {
+        margin: 0;
+        font-size: 1.6em; font-weight: 300; font-family: inherit;
+        text-transform: uppercase;
+        color: #222;
+    }
+
+    .tpl-concept-nature {
+        display: inline-block;
+        margin-left: 6px;
+        padding: 2px 6px 3px;
+        font-size: 1.3em; font-weight: 500;
+        color: #fff;
+        background-color: #3B3B3B;
+        border-radius: 18px;
+    }
+
+    .tpl-concept-wrapper {
+        margin: 0;
+        display: inline-flex;
+    }
+
+    .tpl-concept-prototype {
+        color: royalblue;
+        color: rgb(113, 102, 217);
+        font-weight: 500;
+    }
+
+    .tpl-concept__title {
+        margin: 0; margin-bottom: 2px;
+        font-size: 1.5em; font-weight: 800; font-family: inherit;
+        color: #555;
+    }
+
+.tpl-concept-body {
+
+}
+
+    .tpl-concept-section {
+        padding: 6px 12px;
+    }
+
+.tpl-concept-attribute-list {
+    display: flex; flex-direction: row; flex-wrap: wrap;
+}
+
+    .tpl-concept-attribute {
+        display: inline-flex;
+        margin-bottom: 6px; margin-right: 4px;
+        padding: 2px 6px 3px; font-weight: 500;
+        color: rgb(113, 102, 217);
+        border-radius: 2px; overflow: hidden;
+        background-color: #f5f5f5;
+    }
+
+        .tpl-concept-attribute-name {
+            
+        }
+
+        .tpl-concept-attribute-required {
+
+        }
+
+.tpl-concept-property-list {
+    display: flex; flex-direction: row; flex-wrap: wrap;
+}
+
+    .tpl-concept-property {
+        display: inline-flex;
+        margin-bottom: 6px; margin-right: 4px;
+    }
+
+        .tpl-label {
+            padding: 3px 6px; display: inline-flex; align-items: center;
+            color: #fff;
+            font-weight: bold;
+            font-family: Consolas, 'Courier New', Courier, monospace;
+            letter-spacing: -0.2px;
+            background-color: #6667AB;;
+        }
+
+        .tpl-value {
+            padding: 3px 6px;
+            color: rgb(113, 102, 217);
+            background-color: #f5f5f5;
+        }

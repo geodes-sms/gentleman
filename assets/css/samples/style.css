@@ -1,0 +1,111 @@
+.mp-style {
+    padding-top: 6px;
+    background-color: #fff;
+}
+
+.mp-style .field--textbox__input {
+    border: 0 none;
+}
+
+    .mp-style .label {
+        font-weight: 500;
+    }
+
+    .mp-style .label--small {
+        font-size: 0.9em;
+        margin-bottom: 2px;
+    }
+    
+.mp-style__title {
+    text-transform: uppercase;
+    color: #555;
+    padding-left: 6px;
+    font-size: 1.5rem; font-weight: 300;
+}
+
+.text-style {
+    padding: 6px;
+}
+
+    .text-style-rule {
+        margin-bottom: 6px;
+    }
+
+.box-style {
+    padding: 6px;
+}
+
+    .box-style-rule {
+        margin-bottom: 6px;
+    }
+
+    .box-style-rule .title {
+        font-size: 1.1em;
+        font-weight: 500;
+    }
+            
+    .direction-size {
+        margin-right: 6px;
+        background-color: rgba(205, 205, 205, 0.5);
+    }
+    
+        .direction-size > .structure__btn-delete {
+            display: block;
+            width: 24px; height: 100%; margin-right: 4px;
+            font-size: 0.9em; font-weight: 300;
+            color: #fff;
+            background-color: rgba(55, 55, 55, 0.5);;
+            padding: 0;
+            transition: .2s;
+        }
+            .direction-size > .structure__btn-delete:before {
+                content: "✖";
+            }
+            .direction-size > .structure__btn-delete:hover {
+                background-color: #222;
+            }
+    
+        .direction-size .field--textbox__input {
+            border-radius: 0;
+        }
+    
+    .size-config  {
+        border-bottom: 2px solid #696969;
+    }
+    
+        .size-config .field--textbox__input {
+            min-width: 24px;
+            padding-left: 2px;
+        }
+    
+            .size-config .field--textbox:first-child .field--textbox__input {
+                border-bottom-right-radius: 0; border-top-right-radius: 0;
+            }
+    
+            .size-config .field--textbox:last-child .field--textbox__input {
+                border-bottom-left-radius: 0; border-top-left-radius: 0;
+                font-weight: bold;
+                text-transform: lowercase;
+                background-color: #e5e4e2;
+                justify-content: center;
+                min-width: 24px;
+            }
+    
+    .border-value-config > .structure__btn-delete {
+        align-self: flex-end;
+        margin: 0;
+        justify-self: flex-end;
+    }
+    
+    .background-config {
+        margin-top: 2px;
+        background-color: rgba(255, 255, 255, 0.2);
+        padding-bottom: 2px;
+    }
+    
+    .background-config > .structure__btn-delete {
+        align-self: flex-end;
+        margin: 0;
+        color: #fff;
+        justify-self: flex-end;
+    }

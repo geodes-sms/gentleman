@@ -53,6 +53,8 @@ export const EditorSection = {
     btnHome: null,
     /** @type {HTMLButtonElement} */
     btnSave: null,
+    /** @type {HTMLButtonElement} */
+    btnClose: null,
 
     get isRendered() { return isHTMLElement(this.container); },
 
@@ -66,16 +68,7 @@ export const EditorSection = {
                 return [];
             }
 
-            const { conceptModel } = this.editor;
-
-            let concepts = this.editor.getConfig("concepts");
-
-            if (isNullOrUndefined(concepts)) {
-                concepts = conceptModel.getSchema("concrete");
-            }
-
-            return concepts.filter(concept => conceptModel.isConcept(concept.name))
-                .map(concept => conceptModel.getCompleteModelConcept(concept));
+            return this.editor.conceptModel.getSchema("concrete").filter(c => c.root);
         });
 
         return this;
@@ -97,7 +90,7 @@ export const EditorSection = {
         if (!isHTMLElement(this.title)) {
             this.title = createSpan({
                 class: ["editor-header-title"],
-            }, "Editor");
+            }, "Gentleman");
         }
 
         if (!isHTMLElement(this.menu)) {
@@ -106,26 +99,14 @@ export const EditorSection = {
             }, [this.title]);
         }
 
-
-        this.btnSave = createButton({
-            class: ["btn", "editor-toolbar__button", "editor-toolbar__button--save"],
-            title: "Export your model",
-            dataset: {
-                action: "export"
-            }
-        });
-
-        this.btnHome = createButton({
-            class: ["btn", "editor-toolbar__button", "editor-toolbar__button--home"],
-            title: "Toggle the home menu",
-            dataset: {
-                action: "home"
-            }
-        });
-
         let toolbar = createDiv({
             class: ["editor-toolbar"],
-        }, [this.btnSave, this.btnHome]);
+        }, this.editor.getConfig("toolbar").map(element =>
+            createButton({
+                class: valOrDefault(element.class, []),
+                dataset: { name: element.name, action: element.action }
+            }, element.content)
+        ));
 
         if (!isHTMLElement(this.header)) {
             this.header = createDiv({
@@ -143,25 +124,25 @@ export const EditorSection = {
             fragment.append(this.body);
         }
 
-        if (!isHTMLElement(this.btnCollapse)) {
-            this.btnCollapse = createButton({
-                class: ["btn", "editor-header__button", "editor-header__button--collapse"],
-                title: `Collapse ${this.container.dataset.alias}`,
-                dataset: {
-                    action: "collapse",
-                    rel: "parent",
-                    target: this.container.dataset.name,
-                }
-            });
+        // if (!isHTMLElement(this.btnCollapse)) {
+        //     this.btnCollapse = createButton({
+        //         class: ["btn", "editor-header__button", "editor-header__button--collapse"],
+        //         title: `Collapse ${this.container.dataset.alias}`,
+        //         dataset: {
+        //             action: "collapse",
+        //             rel: "parent",
+        //             target: this.container.dataset.name,
+        //         }
+        //     });
 
-            fragment.append(this.btnCollapse);
-        }
+        //     fragment.append(this.btnCollapse);
+        // }
 
         if (!isHTMLElement(this._conceptSelector.container)) {
             this.body.append(this._conceptSelector.render());
         }
 
-        this.btnCollapse.dataset.state = this.container.classList.contains("collapsed") ? "ON" : "OFF";
+        // this.btnCollapse.dataset.state = this.container.classList.contains("collapsed") ? "ON" : "OFF";
 
         if (fragment.hasChildNodes()) {
             this.container.append(fragment);
@@ -174,39 +155,49 @@ export const EditorSection = {
         return this.container;
     },
     refresh() {
-        let name = this.editor.getConfig("name");
         let settings = valOrDefault(this.editor.getConfig("settings"), true);
-
-        if (name) {
-            this.title.textContent = name;
-        }
+        let concepts = valOrDefault(this.editor.getConfig("header"), true);
 
         if (this.editor.hasConceptModel) {
             this._conceptSelector.update();
             show(this.body);
-            show(this.btnCollapse);
+            // show(this.btnCollapse);
         } else {
             hide(this.body);
-            hide(this.btnCollapse);
+            // hide(this.btnCollapse);
         }
 
-        this.btnHome.disabled = !this.editor.isReady;
-        this.btnSave.disabled = !this.editor.hasInstances;
+        // this.btnHome.disabled = !this.editor.isReady;
+        // this.btnSave.disabled = !this.editor.hasInstances;
 
         if (settings === false) {
             hide(this.btnHome);
         }
 
+        if (concepts === false) {
+            hide(this.body);
+        }
+
         return this;
     },
 
-    show() {
+    show(el) {
+        if(isHTMLElement(this[el])) {
+            show(this[el]);
+            return;
+        }
+
         show(this.container);
         this.visible = true;
 
         return this;
     },
-    hide() {
+    hide(el) {
+        if(isHTMLElement(this[el])) {
+            hide(this[el]);
+            return;
+        }
+
         hide(this.container);
         this.visible = false;
 

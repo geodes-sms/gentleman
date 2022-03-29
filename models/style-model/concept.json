@@ -3,6 +3,7 @@
         {
             "name": "style",
             "nature": "concrete",
+            "root": true,
             "attributes": [
                 {
                     "name": "css",

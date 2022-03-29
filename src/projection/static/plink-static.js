@@ -137,7 +137,10 @@ const BaseProjectionLinkStatic = {
      * @param {HTMLElement} target 
      */
     clickHandler(target) {
-        const index = this.projection.schema.findIndex((x) => x.tags.includes(this.schema.tag));
+        let index = this.projection.findView(this.schema.tag);
+        if (index === -1) {
+            return false;
+        }
 
         this.projection.changeView(index);
 

@@ -38,7 +38,14 @@ export function isHidden(element) {
  * @param {HTMLElement} element 
  * @returns {boolean}
  */
-export const isInputCapable = (element) => isHTMLElement(element, ["input", "textarea"]) || element.contentEditable === "true";
+export const isInput = (element) => isHTMLElement(element, ["input", "textarea"]);
+
+/**
+ * Verifies whether an element can receive textual input
+ * @param {HTMLElement} element 
+ * @returns {boolean}
+ */
+export const isInputCapable = (element) => isInput(element) || element.contentEditable === "true";
 
 /**
  * Converts a pixel value to a number

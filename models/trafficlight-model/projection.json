@@ -1,34 +1,6 @@
 {
+    "type": "projection",
     "projection": [
-        {
-            "id": "q1d94bi3-8fpr-63f2-970o-5bgade1f7030",
-            "type": "style",
-            "name": "box-left",
-            "style": {
-                "gss": {
-                    "box": {
-                        "outer": { 
-                            "left": { "value": 6, "unit": "px" } 
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "id": "q1d9p0i3-8fpr-63f2-970o-5bgade1f7030",
-            "type": "style",
-            "name": "label",
-            "style": {
-                "gss": {
-                    "text": {
-                        "bold": 500,
-                        "color": { "type": "hex", "value": "#555" }
-                    }
-                }
-            }
-        },
-
-
         {
             "id": "gca94b6c-0f9e-43f5-976b-de15bfaf7038",
             "concept": { "name": "light" },
@@ -1009,6 +981,35 @@
                 ],
                 "style": {
                     "css": ["state-label-reference"]
+                }
+            }
+        }
+    ],
+    "style": [
+        {
+            "id": "q1d94bi3-8fpr-63f2-970o-5bgade1f7030",
+            "type": "style",
+            "name": "box-left",
+            "style": {
+                "gss": {
+                    "box": {
+                        "outer": { 
+                            "left": { "value": 6, "unit": "px" } 
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "id": "q1d9p0i3-8fpr-63f2-970o-5bgade1f7030",
+            "type": "style",
+            "name": "label",
+            "style": {
+                "gss": {
+                    "text": {
+                        "bold": 500,
+                        "color": { "type": "hex", "value": "#555" }
+                    }
                 }
             }
         }

@@ -1,3 +1,5 @@
+import { isInput } from "@utils/index.js";
+
 /**
  * Gets the caret index in element
  * @param {HTMLElement} element 
@@ -6,7 +8,12 @@
 export function getCaretIndex(element) {
     let position = 0;
 
+    if (isInput(element)) {
+        return element.selectionStart;
+    }
+
     const selection = window.getSelection();
+
     if (selection.rangeCount !== 0) {
         const range = window.getSelection().getRangeAt(0);
         const preCaretRange = range.cloneRange();

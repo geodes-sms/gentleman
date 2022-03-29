@@ -1,11 +1,16 @@
 {
-    "name": "TL editor",
-    "concepts": [
+    "toolbar": [
         {
-            "name": "light"
+            "type": "button",
+            "name": "button-export",
+            "action": "export.model",
+            "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--save"]
         },
         {
-            "name": "mode"
+            "type": "button",
+            "name": "button-menu",
+            "action": "open.menu",
+            "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--home"]
         }
     ]
 }

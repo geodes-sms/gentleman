@@ -30,13 +30,11 @@ th { text-align: center; }
 
 [contenteditable=true] { outline: none; }
 
-[data-gentleman] {
+[data-gentleman="editor"] {
     position: relative;
     display: flex; flex-direction: column;
     height: 100%; width: 100%;
     font-size: 1rem;
-    border-radius: 1px 1px 2px 2px;
-    overflow: hidden;
 }
 
 .font-gentleman { font-family: Garamond, Baskerville, Georgia, 'Times New Roman', Times, serif; }

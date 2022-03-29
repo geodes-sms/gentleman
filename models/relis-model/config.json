@@ -1,20 +1,16 @@
 {
-    "name": "ReLiS",
-    "concepts": [
+    "toolbar": [
         {
-            "name": "project"
+            "type": "button",
+            "name": "button-export",
+            "action": "export.model",
+            "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--save"]
         },
         {
-            "name": "screening"
-        },
-        {
-            "name": "qa"
-        },
-        {
-            "name": "data-extraction"
-        },
-        {
-            "name": "synthesis"
+            "type": "button",
+            "name": "button-menu",
+            "action": "open.menu",
+            "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--home"]
         }
     ]
 }
