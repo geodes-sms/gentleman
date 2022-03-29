@@ -242,7 +242,6 @@ export const App = {
 
             Handlers[editor].call(this)
                 .then(editor => {
-                    console.log(editor);
                     editor.hide();
                     this.addTab(element, editor);
                     if (element.classList.contains("selected")) {

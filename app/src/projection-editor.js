@@ -6,7 +6,7 @@ import { hide, show, NotificationType, Primitive } from "@utils/index.js";
 import { ModelConcept } from "./model-concept.js";
 
 
-const TEST__CONCEPT = require('@models/todo-model/concept.json');
+// const TEST__CONCEPT = require('@models/todo-model/concept.json');
 
 var conceptId = 0;
 const getConceptId = () => conceptId++;
@@ -47,7 +47,7 @@ export const ProjectionEditor = {
 
         this.container.append(this.aside.render());
         this.container.append(this.editor.container);
-        this.aside.addModel(TEST__CONCEPT);
+        // this.aside.addModel(TEST__CONCEPT);
 
         return this.container;
     },
