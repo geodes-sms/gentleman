@@ -102,6 +102,34 @@
             ]
         },
         {
+            "name": "graphic-projection",
+            "nature": "concrete",
+            "root": false,
+            "prototype": "proto-projection",
+            "attributes": [
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "render",
+                            "accept": [
+                                { "name": "interactive-svg" },
+                                { "name": "add-field"},
+                                { "name": "arrow" },
+                                { "name": "svg-container"},
+                                { "name": "svg-text" }
+                            ]
+                        }
+                    },
+                    "required": true
+                }
+            ],
+            "properties": [
+                { "name": "handler", "type": "string", "value": "field-projection" }
+            ]
+        },
+        {
             "name": "template",
             "nature": "concrete",
             "root": true,
@@ -140,6 +168,10 @@
                                 { "name": "link-static" },
                                 { "name": "plink-static" },
                                 { "name": "button-static" },
+                                { "name": "svg-container"},
+                                { "name": "interactive-svg" },
+                                { "name": "static-svg" },
+                                { "name": "dynamic-svg" },
                                 { "name": "projection-dynamic" }
                             ]
                         }
@@ -289,6 +321,12 @@
                     "target": {
                         "name": "boolean",
                         "default": false
+                    }
+                },
+                {
+                    "name": "sibling",
+                    "target": {
+                        "name": "sibling"
                     }
                 }
             ]
@@ -623,6 +661,270 @@
             ]
         },
         {
+            "name": "interactive-svg",
+            "nature": "concrete",
+            "prototype": "field",
+            "attributes":[
+                {
+                    "name": "content",
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "field",
+                    "target": {
+                        "name": "source-svg"
+                    }
+                },
+                {
+                    "name": "static-dependents",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "external-svg"
+                        }
+                    }
+                },
+                {
+                    "name": "dynamic-dependents",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "external-svg"
+                        }
+                    }
+                },
+                {
+                    "name": "marker",
+                    "target": "string"
+                },
+                {
+                    "name": "markers",
+                    "target": {
+                        "name": "set",
+                        "accept":{
+                            "name": "marker"
+                        }
+                    }
+                },
+                {
+                    "name": "self",
+                    "target": {
+                        "name": "set",
+                        "accept":{
+                            "name": "pure-marker"
+                        }
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "field" },
+                { "name": "elementType", "type": "string", "value": "interactive" }
+            ]
+        },
+        {
+            "name": "source-svg",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "tag",
+                    "target": {
+                        "name": "tag"
+                    }
+                },
+                {
+                    "name": "marker",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "visualizer",
+            "prototype": "layout",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "current",
+                    "target":{
+                        "name": "input"
+                    }
+                },
+                {
+                    "name": "root",
+                    "target":{
+                        "name": "boolean"
+                    },
+                    "default": true
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "field" },
+                { "name": "elementType", "type": "string", "value": "visualizer"}
+            ]
+        },
+        {
+            "name": "static-svg",
+            "nature": "concrete",
+            "prototype": "field",
+            "attributes":[
+                {
+                    "name": "content",
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "model-value",
+                    "target": "string"
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "field" },
+                { "name": "elementType", "type": "string", "value": "static" }
+            ]
+        },
+        {
+            "name": "dynamic-svg",
+            "nature": "concrete",
+            "prototype": "field",
+            "attributes":[
+                {
+                    "name": "content",
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "marker",
+                    "target": "string"
+                },
+                {
+                    "name": "markers",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "marker"
+                        }
+                    }
+                },
+                {
+                    "name": "self",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "pure-marker"
+                        }
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "field" },
+                { "name": "elementType", "type": "string", "value": "dynamic" }
+            ]
+        },
+        {
+            "name": "marker",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "model-value",
+                    "target": "string"  
+                },
+                {
+                    "name": "aliases",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "alias"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "pure-marker",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "property",
+                    "target": "string"
+                }
+            ]
+        },
+        {
+            "name": "alias",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "marker-value",
+                    "target":"string"
+                },
+                {
+                    "name": "properties",
+                    "target": "svg-properties"
+                }
+            ]
+        },
+        {
+            "name": "svg-properties",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "bold",
+                    "target": "boolean",
+                    "default": false
+                },
+                {
+                    "name": "italic",
+                    "target": "boolean",
+                    "default": false
+                },
+                {
+                    "name": "underline",
+                    "target": "boolean",
+                    "default": false
+                },
+                {
+                    "name": "text-content",
+                    "target": "string"
+                },
+                {
+                    "name": "color",
+                    "target": "hex-color"
+                },
+                {
+                    "name": "size",
+                    "target": "size"
+                },
+                {
+                    "name": "others",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "other"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "other",
+            "nature":"concrete",
+            "attributes":[
+                {
+                    "name": "property",
+                    "target": "string"
+                },
+                {
+                    "name": "value",
+                    "target": "string"
+                }
+            ]
+        },
+        {
             "name": "list-field-action",
             "nature": "concrete",
             "attributes": [
@@ -710,7 +1012,336 @@
                 { "name": "elementType", "type": "string", "value": "table" }
             ]
         },
-   
+        {
+            "name": "add-field",
+            "prototype": "field",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "string",
+                        "default": "Add"
+                    }
+                },
+                {
+                    "name": "items",
+                    "target":{
+                        "name": "template reference"
+                    }
+                }
+            ],
+            "properties":[ 
+                { "name": "contentType", "type": "string", "value": "field" },
+                { "name": "elementType", "type": "string", "value": "add" }
+            ]            
+        },
+        {
+            "name": "arrow",
+            "prototype": "field",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "source",
+                    "target":{
+                        "name": "attribute element"
+                    }
+                },
+                {
+                    "name": "target",
+                    "target":{
+                        "name": "attribute element"
+                    }
+                },
+                {
+                    "name": "decorator",
+                    "target": {
+                        "name": "decorator element"
+                    }
+                },
+                {
+                    "name": "arrow-style",
+                    "target":{
+                        "name": "arrow-style"
+                    }
+                }
+            ],
+            "properties":[
+                { "name": "contentType", "type": "string", "value": "field" },
+                { "name": "elementType", "type": "string", "value": "arrow" }
+            ]
+        },
+        {
+            "name": "decorator element",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "attribute",
+                    "target":{
+                        "name": "attribute element"
+                    }
+                },
+                {
+                    "name": "base",
+                    "target":{
+                        "name": "string",
+                        "constraint":{
+                            "values":[
+                                "source",
+                                "target",
+                                "center"
+                            ]
+                        },
+                        "default": "center"
+                    }
+                }
+            ]
+        },
+        { 
+            "name": "arrow-target",
+            "nature": "prototype",
+            "attributes":[
+
+            ]
+        },
+        {
+            "name": "self-target",
+            "nature": "concrete",
+            "prototype": "arrow-target",
+            "attributes":[
+
+            ]
+        },
+        {
+            "name": "attribute-target",
+            "nature": "concrete",
+            "prototype":"arrow-target",
+            "attributes":[
+                {
+                    "name": "attribute",
+                    "target":{
+                        "name": "string"
+                    }
+                }
+            ]
+            
+        },
+        {
+            "name" : "svg-text",
+            "nature": "concrete",
+            "prototype": "field",
+            "attributes":[
+                {
+                    "name": "x",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "y",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "field" },
+                { "name": "elementType", "type": "string", "value": "svg" }
+            ]
+        },  
+        {
+            "name": "svg-container",
+            "nature": "concrete",
+            "prototype": "layout",
+            "attributes":[
+                {
+                    "name": "content",
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "p-link",
+                    "target":{
+                        "name": "svg-link"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "attributes",
+                    "target":{
+                        "name": "set",
+                        "accept":
+                            {"name": "svg-attribute"}
+                        
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "svg-container" }
+            ]
+        },
+        {
+            "name": "svg-link",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "tag",
+                    "target":{
+                        "name": "tag"
+                    }
+                },
+                {
+                    "name": "marker",
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "external",
+                    "target":{
+                        "name": "boolean",
+                        "default": false
+                    }
+                }
+            ]
+        },
+        {
+            "name": "svg-attribute",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "attribute",
+                        "src": [
+                            { 
+                                "type": "reference", 
+                                "target": {
+                                    "name": "attributes",
+                                    "rel": "children",
+                                    "value": "name",
+                                    "source": {
+                                        "type": "reference",
+                                        "rel": "parent",
+                                        "name": "projection",
+                                        "value": {
+                                            "type": "reference",
+                                            "rel": "children",
+                                            "name": "concept",
+                                            "value": {
+                                                "type": "attribute",
+                                                "name": "name"
+                                            }
+                                        }
+                                    }
+                                },
+                                "source": {
+                                    "type": "resource",
+                                    "name": "metamodel"
+                                } 
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "placement",
+                    "target":{
+                        "name": "placement",
+                        "accept":[
+                            { "name": "in-place" },
+                            { "name": "link-place" }
+                        ],
+                        "default": "in-place"                        
+                    }
+                },
+                {
+                    "name": "property",
+                    "target":{
+                        "name": "string"
+                    },
+                    "required": false
+                }
+            ]
+        },
+        {
+            "name": "placement",
+            "nature": "prototype"
+        },
+        {
+            "name": "in-place",
+            "prototype": "placement",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "marker",
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "tag",
+                    "target":{
+                        "name": "tag"
+                    }
+                },
+                {
+                    "name": "visible",
+                    "target":{
+                        "name": "boolean"
+                    },
+                    "default": true
+                }
+            ]
+        },
+        {
+            "name": "link-place",
+            "prototype": "placement",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "static-dependents",
+                    "target": {
+                        "name": "set",
+                        "accept":
+                            { "name": "external-svg" }
+                    }
+                },
+                {
+                    "name": "dynamic-dependents",
+                    "target": {
+                        "name": "set",
+                        "accept":{
+                            "name": "external-svg"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "external-svg",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "template",
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "marker",
+                    "target":{
+                        "name": "string"
+                    }
+                }
+            ]
+        },
 
         {
             "name": "template reference",
@@ -734,8 +1365,7 @@
                 }
             ]
         },
-
-
+       
         {
             "name": "layout",
             "nature": "prototype",
@@ -1313,6 +1943,24 @@
                     "range": { "min": 1 }
                 }
             }
+        },
+        {
+            "name": "sibling",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "tag",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "receiver",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ]
         }
     ]
 }

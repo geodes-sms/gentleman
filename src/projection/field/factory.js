@@ -1,9 +1,15 @@
 import { isNullOrUndefined, valOrDefault } from 'zenkai';
+import { AddField } from './add-field.js';
 import { BinaryField } from './binary-field.js';
 import { ChoiceField } from './choice-field.js';
+import { DynamicField } from './dynamic-field.js';
+import { InteractiveField } from './interactive-field.js';
 import { ListField } from './list-field.js';
+import { StaticField } from './static-field.js';
 import { TableField } from './table-field.js';
 import { TextField } from './text-field.js';
+import { Arrow } from './arrow.js';
+import { SvgText } from './svg-text.js';
 
 
 const Handler = {
@@ -55,8 +61,68 @@ const Handler = {
         model: { value: model },
         schema: { value: schema },
         projection: { value: projection },
-        source: { value: projection.concept, writable: true },
+        source: { value: projection.concept },
     }),
+    'interactive': (model, schema, projection) => Object.create(InteractiveField, {
+        object: { value: "field" },
+        name: { value: "interactive-field" },
+        type: { value: "interactive" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept },
+    }),
+    'static': (model, schema, projection) => Object.create(StaticField, {
+        object: { value: "field" },
+        name: { value: "static-field" },
+        type: { value: "static" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept },
+    }),
+    'dynamic': (model, schema, projection) => Object.create(DynamicField, {
+        object: { value: "field" },
+        name: { value: "dynamic-field" },
+        type: { value: "dynamic" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept },
+    }),
+    'add': (model, schema, projection) => Object.create(AddField, {
+        object: { value: "field" },
+        name: { value: "add-field" },
+        type: { value: "add" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept },
+    }),
+    'arrow': (model, schema, projection) => Object.create(Arrow, {
+        object: { value: "field" },
+        name: { value: "arrow" },
+        type: { value: "arrow" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept },
+    }),
+    'svg': (model, schema, projection) => Object.create(SvgText, {
+        object: { value: "field" },
+        name: { value: "svg" },
+        type: { value: "svg" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept },
+    })
 };
 
 var inc = 0;

@@ -78,6 +78,8 @@ export const ProjectionModel = {
     statics: null,
     /** @type {Map} */
     layouts: null,
+    /**  @type {Map}*/
+    algos: null,
 
     init(views) {
         this.projections = [];
@@ -85,28 +87,12 @@ export const ProjectionModel = {
         this.fields = new Map();
         this.statics = new Map();
         this.layouts = new Map();
+        this.algos = new Map();
 
         return this;
     },
-    addSchema(schema) {
-        if (Array.isArray(schema.projection)) {
-            this.schema.projection.push(...schema.projection);
-        }
-        if (Array.isArray(schema.template)) {
-            this.schema.template.push(...schema.template);
-        }
-        if (Array.isArray(schema.style)) {
-            this.schema.style.push(...schema.style);
-        }
-
-        this.environment.update("concept-model.updated");
-
-        return true;
-    },
     setSchema(schema) {
-        this.schema = schema;
-
-        this.environment.update("projection-model.updated");
+        this.schema = [...schema, ...PREDEFINED_PROJECTIONS];
 
         return this;
     },
@@ -262,6 +248,28 @@ export const ProjectionModel = {
         return this.layouts.get(id);
     },
 
+    registerAlgorithm(algo) {
+        algo.environment = this.environment;
+        this.algos.set(algo.id, algo);
+
+        return this;
+    },
+
+    unregisterAlgorithm(algo) {
+        var _algo = this.algos.get(algo.id);
+
+        if (_algo) {
+            _algo.environment = null;
+            this.algos.delete(_algo.id);
+        }
+
+        return this;
+    },
+
+    getAlgo(id) {
+        return this.algos.get(id);
+    },
+
     /**
      * Get the metadata of a projection
      * @param {string} projectionId 
@@ -355,6 +363,20 @@ export const ProjectionModel = {
      */
     getTemplateSchema(name) {
         let schema = this.schema.template.find(p => p.name === name);
+
+        if (isNullOrUndefined(schema)) {
+            return null;
+        }
+
+        return deepCopy(schema);
+    },
+    /**
+     * Gets a template schema
+     * @param {string} name 
+     * @returns 
+     */
+    getGFragmentSchema(name) {
+        let schema = this.schema.find(p => p.type === "g-fragment" && p.name === name);
 
         if (isNullOrUndefined(schema)) {
             return null;

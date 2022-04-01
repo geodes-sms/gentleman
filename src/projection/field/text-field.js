@@ -115,7 +115,6 @@ function resolveInput(schema) {
             }
         });
     }
-
     return createInput({
         class: ["field--textbox__input"],
         type: valOrDefault(type, "text"),

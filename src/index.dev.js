@@ -87,7 +87,6 @@ function createEditor(_container) {
 
 let editor = activateEditor(".app-editor")[0];
 
-
 const MODEL__HANDLER = {
     "open-style": function (args) {
         let concept = args[0];

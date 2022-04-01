@@ -7,6 +7,8 @@ import { LayoutFactory } from "./layout/index.js";
 import { FieldFactory } from "./field/index.js";
 import { StaticFactory } from "./static/index.js";
 import { StyleHandler } from "./style-handler.js";
+import { AlgorithmFactory } from "./algorithm/factory.js";
+import { ContentHandler } from "./content-handler.js";
 import { createContainer } from "./container.js";
 
 
@@ -268,6 +270,13 @@ const Projection = {
             if (isHTMLElement(container)) {
                 container.remove();
             }
+
+            if(container.tagName === "path"){
+                console.log(container);
+                let arrow = this.environment.resolveElement(container);
+                console.log(arrow);
+                arrow.projection.parent.removeArrow(arrow);
+            }
         });
 
         this.model.removeProjection(this.id);
@@ -320,7 +329,7 @@ const Projection = {
             return null;
         }
 
-        const { type, projection, content, kind } = schema;
+        const { type, projection, content, kind, sibling, rtags } = schema;
 
         /** @type {HTMLElement} */
         var container = null;
@@ -344,6 +353,10 @@ const Projection = {
             this.element = StaticFactory.createStatic(this.model, valOrDefault(projection, content), this).init(this.args);
 
             this.model.registerStatic(this.element);
+        }else if (type === "algorithm"){
+            this.element = AlgorithmFactory.createAlgo(this.model, valOrDefault(projection, content), this).init(this.args);
+
+            this.model.registerAlgorithm(this.element);
         } else {
             this.element = createContainer(this.model, schema.container, this).init(this.args);
 
@@ -443,6 +456,15 @@ const Projection = {
 
         this.containers.set(this.index, container);
 
+        if(!isNullOrUndefined(sibling.tag) && !isNullOrUndefined(sibling.receiver)){
+            this.createSibling(this.concept, sibling);
+        }
+
+        if(!isEmpty(rtags)){
+            this.rtags = rtags;
+            this.environment.registerReceiver(this.element, rtags[0]);
+        }
+
         return container;
     },
 
@@ -457,7 +479,25 @@ const Projection = {
             });
         }
     },
+
+    createSibling(concept, sibling){
+        const { tag, receiver } = sibling;
+
+    
+        let projection = this.model.createProjection(concept, tag).init();
+
+        projection.render();
+
+        let target = this.environment.getActiveReceiver(receiver);
+
+
+        projection.parent = target;
+
+        projection.element.refresh();
+    },
+
     changeView(index) {
+
         if (!this.hasMultipleViews) {
             this.environment.notify("There is no alternative projection for this concept");
 
@@ -478,6 +518,13 @@ const Projection = {
 
         this.element = this.resolveElement(container);
 
+        if(this.element.type === "svg"){
+            this.element.update();
+        }
+
+        // if (this.parent) {
+        //     this.parent.update("view.changed", container, this);
+        // }
         const handlers = this.getHandlers("view.changed");
 
         if (!isEmpty(handlers)) {

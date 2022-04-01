@@ -147,7 +147,6 @@ const BaseListField = {
             this.list.firstElementChild.focus();
         } else {
             let target = getTopElement(this.element, (el) => el !== this.list);
-
             if (!isHTMLElement(target)) {
                 return this;
             } else {

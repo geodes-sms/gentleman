@@ -1,12 +1,13 @@
-import { createDiv, getElements, isHTMLElement, hasOwn } from "zenkai";
-import { Editor } from './editor/index.js';
+import { createDiv, getElements, valOrDefault, isHTMLElement, hasOwn } from "zenkai";
+import { Editor } from './environment/index.js';
 import { resolveContainer } from './utils/index.js';
 
 const ENV_EDITOR = "editor";
+const ENV_EXPLORER = "explorer";
 
 const isValid = (element) => isHTMLElement(element) && hasOwn(element.dataset, 'gentleman');
 
-const isEditor = (element) => isValid(element) && element.dataset.gentleman === ENV_EDITOR;
+const isEditor = (element) => isValid(element); // TODO - add this: && element.dataset.gentleman === "editor"
 
 /**
  * Activates the `editor` found in the container (optional)
