@@ -1,4 +1,5 @@
 {
+    "file": "concept",
     "concept":[
         {
             "name": "general",
@@ -55,50 +56,9 @@
             ]
         },
         {
-            "name": "graphic",
-            "nature": "concrete",
-            "root": true,
-            "attributes":[
-                {
-                    "name": "concept",
-                    "target": {
-                        "name": "concept"
-                    },
-                    "required": true
-                },
-                {
-                    "name": "name",
-                    "target": {
-                        "name": "name"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "content",
-                    "target": {
-                        "name": "render",
-                        "accept": [
-                            { "name": "svg-container" },
-                            { "name": "interactive-svg"}
-                        ]
-                    },
-                    "required": true
-                },
-                {
-                    "name": "tags",
-                    "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "tag"
-                        }
-                    },
-                    "required": true
-                }
-            ]
-        },
-        {
             "name": "g-fragment",
             "nature": "concrete",
+            "root": true,
             "attributes": [
                 {
                     "name": "name",

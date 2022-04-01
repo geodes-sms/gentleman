@@ -778,7 +778,7 @@ function createGraphicEditor() {
             let editor =  this.createEditor({
                 conceptModel: GMODEL__CONCEPT,
                 projectionModel: GMODEL__PROJECTION,
-                config: Object.assign({}, GMODEL__EDITOR),
+                config: Object.assign({}),
                 handlers: GMODEL__HANDLER,
             });
 
@@ -789,7 +789,7 @@ function createGraphicEditor() {
             let editor =  this.createEditor({
                 conceptModel: GMODEL__CONCEPT,
                 projectionModel: GMODEL__PROJECTION,
-                config: Object.assign({}, GMODEL__EDITOR),
+                config: Object.assign({}),
                 handlers: GMODEL__HANDLER,
             });
 
