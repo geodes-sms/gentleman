@@ -1,5 +1,5 @@
 import { createDiv, getElements, valOrDefault, isHTMLElement, hasOwn } from "zenkai";
-import { Editor } from './environment/index.js';
+import { Editor } from './editor/index.js';
 import { resolveContainer } from './utils/index.js';
 
 const ENV_EDITOR = "editor";

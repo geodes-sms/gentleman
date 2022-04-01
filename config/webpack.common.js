@@ -4,7 +4,7 @@ const root = `${__dirname}/../`;
 module.exports = {
     output: {
         filename: '[name].bundle.js',
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(root, 'dist')
     },
     resolve: {
         alias: {
@@ -18,7 +18,7 @@ module.exports = {
             '@concept': path.resolve(root, 'src/model/concept'),
             '@structure': path.resolve(root, 'src/model/structure'),
             '@projection': path.resolve(root, 'src/projection'),
-            '@field': path.resolve(__dirname, 'src/projection/field'),
+            '@field': path.resolve(root, 'src/projection/field'),
             '@layout': path.resolve(root, 'src/projection/layout'),
             '@static': path.resolve(root, 'src/projection/static'),
             '@exception': path.resolve(root, 'src/exception'),

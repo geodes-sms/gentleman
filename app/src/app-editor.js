@@ -11,9 +11,12 @@ let PMODEL__CONCEPT = null;
 let PMODEL__PROJECTION = null;
 let SMODEL__CONCEPT = null;
 let SMODEL__PROJECTION = null;
+let GMODEL__CONCEPT = null;
+let GMODEL__PROJECTION = null;
 
 const CMODEL__EDITOR = require('@models/concept-model/config.json');
 const PMODEL__EDITOR = require('@models/projection-model/config.json');
+const GMODEL__EDITOR = require('@models/graphical-model/config.json');
 
 // const CMODEL__CONCEPT = require('@models/concept-model/concept.json');
 // const CMODEL__PROJECTION = require('@models/concept-model/projection.json');
@@ -234,6 +237,7 @@ export const App = {
         const Handlers = {
             "concept": createConceptEditor,
             "projection": createProjectionEditor,
+            "graphic": createGraphicEditor,
         };
 
         for (let i = 0; i < this.tabList.childElementCount; i++) {
@@ -517,7 +521,156 @@ const PMODEL__HANDLER = {
 
         window.addInstance(instance);
     },
+    
+    "open-edit": function (args){
+        let concept = args[0];
+        let projection = this.createProjection(concept, "visualizer");
+
+        let window = this.findWindow("side-instance");
+        if (isNullOrUndefined(window)) {
+            window = this.createWindow("side-instance");
+            window.container.classList.add("model-projection-sideview");
+        }
+
+        if (window.instances.size > 0) {
+            let instance = Array.from(window.instances)[0];
+            instance.delete();
+        }
+
+        let instance = this.createInstance(concept, projection, {
+            type: "projection",
+            close: "DELETE-PROJECTION"
+        });
+
+        window.addInstance(instance);
+    },
+    "make dynamic": function(args){
+        let concept = args[0];
+        let dynamicVal = concept.createProj();
+        
+        let projection = this.createConcept("template");
+
+        let r = this.createConcept("render", "list-item");
+
+        r.schema.accept = projection.getAttributeByName("content").target.accept.accept;
+
+        let dyna = this.createConcept("dynamic-svg", "choice");
+
+        dyna.getAttributeByName("content").target.setValue(dynamicVal);
+
+        r.setValue(dyna);
+
+        projection.getAttributeByName("content").target.addElement(r);
+
+        this.createInstance(projection);
+    },
+    "make static": function(args){
+        let concept = args[0];
+        let staticVal = concept.createProj();
+        
+        let projection = this.createConcept("template");
+
+        let r = this.createConcept("render", "list-item");
+
+        r.schema.accept = projection.getAttributeByName("content").target.accept.accept;
+
+        let stat = this.createConcept("static-svg", "choice");
+
+        stat.getAttributeByName("content").target.setValue(staticVal);
+
+        r.setValue(stat);
+
+        projection.getAttributeByName("content").target.addElement(r);
+
+        this.createInstance(projection);
+    },
+    "make interactive": function (args){
+        let concept = args[0];
+        let interactVal = concept.createProj();
+
+        let projection = this.createConcept("projection");
+
+
+        let interactive = this.createConcept("interactive-svg");
+
+        interactive.getAttributeByName("content").target.setValue(interactVal);
+
+
+        projection.getAttributeByName("content").target.setValue(interactive);
+
+        this.createInstance(projection);
+    }
 };
+
+const GMODEL__HANDLER = {
+    "open-state": function (args) {
+        let concept = args[0];
+        let projection = this.createProjection(concept, "state");
+
+        let window = this.findWindow("side-instance");
+        if (isNullOrUndefined(window)) {
+            window = this.createWindow("side-instance");
+            window.container.classList.add("model-projection-sideview");
+        }
+
+        if (window.instances.size > 0) {
+            let instance = Array.from(window.instances)[0];
+            instance.delete();
+        }
+
+        let instance = this.createInstance(concept, projection, {
+            type: "projection",
+            close: "DELETE-PROJECTION"
+        });
+
+        window.addInstance(instance);
+    },
+    "open-sibling": function (args) {
+        let concept = args[0];
+        let projection = this.createProjection(concept, "sibling");
+
+        let window = this.findWindow("side-instance");
+        if (isNullOrUndefined(window)) {
+            window = this.createWindow("side-instance");
+            window.container.classList.add("model-projection-sideview");
+        }
+
+        if (window.instances.size > 0) {
+            let instance = Array.from(window.instances)[0];
+            instance.delete();
+        }
+
+        let instance = this.createInstance(concept, projection, {
+            type: "projection",
+            close: "DELETE-PROJECTION"
+        });
+
+        window.addInstance(instance);
+    },
+    "open-style": function (args) {
+        let concept = args[0];
+        let projection = this.createProjection(concept, "style");
+
+        let window = this.findWindow("side-instance");
+        if (isNullOrUndefined(window)) {
+            window = this.createWindow("side-instance");
+            window.container.classList.add("model-projection-sideview");
+        }
+
+        if (window.instances.size > 0) {
+            let instance = Array.from(window.instances)[0];
+            instance.delete();
+        }
+
+        let instance = this.createInstance(concept, projection, {
+            type: "projection",
+            close: "DELETE-PROJECTION"
+        });
+
+        window.addInstance(instance);
+    },
+};
+
 
 /**
  * 
@@ -599,6 +752,46 @@ function createProjectionEditor() {
 
             let wrapper = Object.create(ProjectionEditor).init(editor);
             this.editorSection.append(wrapper.render());
+
+            return editor;
+        });
+    }
+
+    // let btnPreview = createMenuButton.call(this, "preview-projection", "Preview", editor);
+}
+
+/**
+ * 
+ * @param {*} conceptModel 
+ * @param {*} projectionModel 
+ * @returns {Promise}
+ */
+function createGraphicEditor() {
+    if (isNullOrUndefined(CMODEL__CONCEPT)) {
+        return Promise.all([
+            fetch("https://geodes.iro.umontreal.ca/gentleman/models/graphical-model/concept.json"),
+            fetch("https://geodes.iro.umontreal.ca/gentleman/models/graphical-model/projection.json"),
+        ]).then(async ([GM_CONCEPT, GM_PROJECTION]) => {
+            GMODEL__CONCEPT = await GM_CONCEPT.json();
+            GMODEL__PROJECTION = await GM_PROJECTION.json();
+
+            let editor =  this.createEditor({
+                conceptModel: GMODEL__CONCEPT,
+                projectionModel: GMODEL__PROJECTION,
+                config: Object.assign({}, GMODEL__EDITOR),
+                handlers: GMODEL__HANDLER,
+            });
+
+            return editor;
+        });
+    } else {
+        return new Promise(() => {
+            let editor =  this.createEditor({
+                conceptModel: GMODEL__CONCEPT,
+                projectionModel: GMODEL__PROJECTION,
+                config: Object.assign({}, GMODEL__EDITOR),
+                handlers: GMODEL__HANDLER,
+            });
 
             return editor;
         });

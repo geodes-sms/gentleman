@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const { merge } = require('webpack-merge');
 const common = require('./webpack.common');
 const path = require('path');
-
+const root = `${__dirname}/../`;
 
 module.exports = merge(common, {
     mode: 'production',
@@ -15,7 +15,7 @@ module.exports = merge(common, {
     },
     output: {
         filename: '[name].js',
-        path: path.resolve(__dirname, 'demo/dist')
+        path: path.resolve(root, 'demo/dist')
     },
     plugins: [
         new webpack.DefinePlugin({

@@ -3,6 +3,7 @@
         {
             "name": "general",
             "nature": "concrete",
+            "root": true,
             "attributes": [
                 {
                     "name": "concept",
@@ -56,6 +57,7 @@
         {
             "name": "graphic",
             "nature": "concrete",
+            "root": true,
             "attributes":[
                 {
                     "name": "concept",

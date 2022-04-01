@@ -91,8 +91,25 @@ export const ProjectionModel = {
 
         return this;
     },
+    addSchema(schema) {
+        if (Array.isArray(schema.projection)) {
+            this.schema.projection.push(...schema.projection);
+        }
+        if (Array.isArray(schema.template)) {
+            this.schema.template.push(...schema.template);
+        }
+        if (Array.isArray(schema.style)) {
+            this.schema.style.push(...schema.style);
+        }
+
+        this.environment.update("projection-model.updated");
+
+        return true;
+    },
     setSchema(schema) {
         this.schema = [...schema, ...PREDEFINED_PROJECTIONS];
+
+        this.environment.update("projection-model.updated");
 
         return this;
     },

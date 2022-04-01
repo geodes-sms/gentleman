@@ -105,7 +105,7 @@ function AttributeHandler(name, schema, concept) {
     return attr.element;
 }
 
-function SVGAttributeHandler(schema, concept){
+function SVGAttributeHandler(schema, concept) {
     const { value, placement } = schema;
 
     const { target, description } = concept.getAttributeByName(value);
@@ -116,7 +116,7 @@ function SVGAttributeHandler(schema, concept){
 
     projection.render();
 
-    if(!isNullOrUndefined(target.value)){
+    if (!isNullOrUndefined(target.value)) {
         projection.element.initValue(target.value);
     }
 
@@ -129,8 +129,7 @@ function SVGAttributeHandler(schema, concept){
     return projection.element;
 }
 
-function ExternalHandler(schema, target){
-
+function ExternalHandler(schema, target) {
     let projection = this.projection.model.createProjection(target, schema.tag).init();
 
     projection.parent = this.projection;
@@ -142,13 +141,24 @@ function ExternalHandler(schema, target){
     return projection.element;
 }
 
-
-
 export function ContentHandler(schema, concept, args = {}) {
+    if (schema.kind) {
+        return ContentKindHandler.call(this, schema, concept, args);
+    }
 
     const contentConcept = valOrDefault(concept, this.projection.concept);
 
-    if (schema.type === "layout") {
+    if (schema.type === "container") {
+        let container = createContainer(this.model, schema, this.projection);
+
+        container.source = contentConcept;
+        container.parent = this;
+        container.init(args);
+
+        this.model.registerLayout(container);
+
+        return container.render();
+    } else if (schema.type === "layout") {
         let layout = LayoutFactory.createLayout(this.model, schema.layout, this.projection);
 
         layout.source = contentConcept;
@@ -180,11 +190,11 @@ export function ContentHandler(schema, concept, args = {}) {
         return ContentHandler.call(this, schema.dynamic, concept, args);
     } else if (schema.type === "attribute") {
         return AttributeHandler.call(this, schema.name, schema, contentConcept);
-    } else if (schema.type === "svg-attribute"){
+    } else if (schema.type === "svg-attribute") {
         return SVGAttributeHandler.call(this, schema, contentConcept);
-    } else if (schema.type === "external"){
+    } else if (schema.type === "external") {
         return ExternalHandler.call(this, schema, contentConcept);
-    } else if (schema.type === "g-fragment"){
+    } else if (schema.type === "g-fragment") {
         let name = schema.name;
 
         let gFragment = this.model.getGFragmentSchema(name.toLowerCase());
@@ -211,19 +221,23 @@ export function ContentHandler(schema, concept, args = {}) {
         }
 
         const fragment = createDocFragment();
+
+        let _args = Object.assign({ template: template }, args);
         let svg = false;
         let improvement;
+
         template.content.forEach(element => {
-            let content = ContentHandler.call(this, element, concept, args);
-            if(!isHTMLElement(content)){
-                svg = true;
-                improvement = content;
-                return;
-            }
-            fragment.append(ContentHandler.call(this, element, concept, args));
+            // let content = ContentHandler.call(this, element, concept, args);
+            // if (!isHTMLElement(content)) {
+            //     svg = true;
+            //     improvement = content;
+            //     return;
+            // }
+            
+            fragment.append(ContentHandler.call(this, element, concept, _args));
         });
 
-        if(svg){
+        if (svg) {
             return improvement;
         }
 

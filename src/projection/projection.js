@@ -8,7 +8,6 @@ import { FieldFactory } from "./field/index.js";
 import { StaticFactory } from "./static/index.js";
 import { StyleHandler } from "./style-handler.js";
 import { AlgorithmFactory } from "./algorithm/factory.js";
-import { ContentHandler } from "./content-handler.js";
 import { createContainer } from "./container.js";
 
 
@@ -271,7 +270,7 @@ const Projection = {
                 container.remove();
             }
 
-            if(container.tagName === "path"){
+            if (container.tagName === "path") {
                 console.log(container);
                 let arrow = this.environment.resolveElement(container);
                 console.log(arrow);
@@ -353,7 +352,7 @@ const Projection = {
             this.element = StaticFactory.createStatic(this.model, valOrDefault(projection, content), this).init(this.args);
 
             this.model.registerStatic(this.element);
-        }else if (type === "algorithm"){
+        } else if (type === "algorithm") {
             this.element = AlgorithmFactory.createAlgo(this.model, valOrDefault(projection, content), this).init(this.args);
 
             this.model.registerAlgorithm(this.element);
@@ -376,7 +375,7 @@ const Projection = {
         }
 
         container = this.element.render();
-        
+
         if (type === "layout" || type === "container") {
             makeResizable(container);
         }
@@ -453,14 +452,15 @@ const Projection = {
             StyleHandler.call(this, container, this._style);
         }
 
-
         this.containers.set(this.index, container);
 
-        if(!isNullOrUndefined(sibling.tag) && !isNullOrUndefined(sibling.receiver)){
+
+        if (sibling && !isNullOrUndefined(sibling.tag) && !isNullOrUndefined(sibling.receiver)) {
             this.createSibling(this.concept, sibling);
         }
 
-        if(!isEmpty(rtags)){
+
+        if (rtags && !isEmpty(rtags)) {
             this.rtags = rtags;
             this.environment.registerReceiver(this.element, rtags[0]);
         }
@@ -480,10 +480,10 @@ const Projection = {
         }
     },
 
-    createSibling(concept, sibling){
+    createSibling(concept, sibling) {
         const { tag, receiver } = sibling;
 
-    
+
         let projection = this.model.createProjection(concept, tag).init();
 
         projection.render();
@@ -518,7 +518,7 @@ const Projection = {
 
         this.element = this.resolveElement(container);
 
-        if(this.element.type === "svg"){
+        if (this.element.type === "svg") {
             this.element.update();
         }
 
