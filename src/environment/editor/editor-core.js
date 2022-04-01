@@ -486,7 +486,7 @@ export const Editor = {
         return this.projectionModel.getLayout(id);
     },
 
-        /**
+    /**
      * Get a the related layout object
      * @param {HTMLElement} element 
      * @returns {Algorithm}
@@ -494,21 +494,21 @@ export const Editor = {
     getAlgo(element) {
         if (!isHTMLElement(element)) {
             console.warn("Algorithm error: Bad argument");
-                return null;
+            return null;
         }
-    
+
         const { id, nature } = element.dataset;
-    
+
         if (isNullOrUndefined(id)) {
             console.warn("Algorithm error: Missing id attribute on field");
             return null;
         }
-    
+
         if (!["algorithm", "algorithm-component"].includes(nature)) {
             console.warn("Layout error: Unknown nature attribute on field");
             return null;
         }
-    
+
         return this.projectionModel.getAlgo(id);
     },
 
@@ -1812,17 +1812,17 @@ export const Editor = {
         return this.handlers.has(name);
     },
 
-    registerReceiver(proj, rtag){
+    registerReceiver(proj, rtag) {
         console.log("REGISTERING RECEIVER");
-        if(isNullOrUndefined(this.activeReceiver[rtag])){
+        if (isNullOrUndefined(this.activeReceiver[rtag])) {
             this.activeReceiver[rtag] = proj;
         }
 
-        if(isNullOrUndefined(this.receivers[rtag])){
+        if (isNullOrUndefined(this.receivers[rtag])) {
             this.receivers[rtag] = {
                 root: proj,
                 projections: []
-            }
+            };
 
             proj.isRoot = true;
         }
@@ -1831,25 +1831,25 @@ export const Editor = {
         this.receivers[rtag].projections.push(proj);
     },
 
-    getActiveReceiver(rtag){
+    getActiveReceiver(rtag) {
         return this.activeReceiver[rtag];
     },
 
-    setActiveReceiver(proj, rtag){
+    setActiveReceiver(proj, rtag) {
         this.activeReceiver[rtag] = proj;
     },
 
-    getRootReceiver(rtag){
+    getRootReceiver(rtag) {
         return this.receivers[rtag].root;
     },
 
-    findReceiverInstance(instance, rtag){
+    findReceiverInstance(instance, rtag) {
         let candidates = this.receivers[rtag].projections;
-        
-        for(let i = 0; i < candidates.length; i++){
+
+        for (let i = 0; i < candidates.length; i++) {
             let res = candidates[i].instances.get(instance);
-            if(isHTMLElement(res)){
-                return {container : candidates[i], instance : res};
+            if (isHTMLElement(res)) {
+                return { container: candidates[i], instance: res };
             }
         }
 

@@ -243,14 +243,14 @@ export const ProjectionModel = {
         return this.layouts.get(id);
     },
 
-    registerAlgorithm(algo){
+    registerAlgorithm(algo) {
         algo.environment = this.environment;
         this.algos.set(algo.id, algo);
 
         return this;
     },
-    
-    unregisterAlgorithm(algo){
+
+    unregisterAlgorithm(algo) {
         var _algo = this.algos.get(algo.id);
 
         if (_algo) {
@@ -261,7 +261,7 @@ export const ProjectionModel = {
         return this;
     },
 
-    getAlgo(id){
+    getAlgo(id) {
         return this.algos.get(id);
     },
 
@@ -374,7 +374,7 @@ export const ProjectionModel = {
      * @param {string} name 
      * @returns 
      */
-     getGFragmentSchema(name) {
+    getGFragmentSchema(name) {
         let schema = this.schema.find(p => p.type === "g-fragment" && p.name === name);
 
         if (isNullOrUndefined(schema)) {

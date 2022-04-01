@@ -3,7 +3,7 @@ import { createDocFragment, isHTMLElement, createDiv, valOrDefault, isNullOrUnde
 import { Algorithm } from "./algorithm";
 
 const BasePatternAlgorithm = {
-    init(){
+    init() {
         /*Svg dimensions*/
         this.width = valOrDefault(this.schema.dimensions.width, 500);
         this.height = valOrDefault(this.schema.dimensions.height, 500);
@@ -21,9 +21,9 @@ const BasePatternAlgorithm = {
         return this;
     },
 
-    render(){
+    render() {
 
-        const {pattern, dimensions, arrow, attributes, anchorAttr} = this.schema;
+        const { pattern, dimensions, arrow, attributes, anchorAttr } = this.schema;
 
         const fragment = createDocFragment();
 
@@ -39,7 +39,7 @@ const BasePatternAlgorithm = {
             });
         }
 
-        if(!isHTMLElement(this.interactionsArea)){
+        if (!isHTMLElement(this.interactionsArea)) {
             this.interactionsArea = createDiv({
                 class: ["layout-container", "projection"],
                 dataset: {
@@ -57,17 +57,17 @@ const BasePatternAlgorithm = {
             this.interactionsArea.style["backgroundColor"] = "white";
         }
 
-        if(!isEmpty(attributes) && isNullOrUndefined(this.attributes)){
+        if (!isEmpty(attributes) && isNullOrUndefined(this.attributes)) {
             this.attributes = [];
             attributes.forEach(a => {
                 let k = ContentHandler.call(this, a);
                 this.attributes.push(k);
                 this.interactionsArea.append(k);
-            })
+            });
         }
 
 
-        if(!isNullOrUndefined(pattern.size.ratio) && isNullOrUndefined(this.patternInventory)){
+        if (!isNullOrUndefined(pattern.size.ratio) && isNullOrUndefined(this.patternInventory)) {
             this.patternInventory = new Map();
             this.anchorInventory = new Map();
 
@@ -82,18 +82,18 @@ const BasePatternAlgorithm = {
             this.interactionsArea.append(attribute);
         }
 
-        if(!isEmpty(anchorAttr) && isNullOrUndefined(this.anchorAttr)){
+        if (!isEmpty(anchorAttr) && isNullOrUndefined(this.anchorAttr)) {
             this.anchorAttr = new Map();
             anchorAttr.forEach(a => {
                 let attr = ContentHandler.call(this, a.attribute);
                 this.anchorAttr.set(attr, a.placement);
                 this.registerPattern(a, attr);
                 this.interactionsArea.append(attr);
-            })
+            });
         }
 
 
-        if(!isHTMLElement(this.svgArea)){
+        if (!isHTMLElement(this.svgArea)) {
             this.svgArea = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
             this.svgArea.setAttribute("width", this.width);
@@ -120,7 +120,7 @@ const BasePatternAlgorithm = {
         }
 
 
-        if(isNullOrUndefined(this.openArrow) && !isNullOrUndefined(arrow)){
+        if (isNullOrUndefined(this.openArrow) && !isNullOrUndefined(arrow)) {
             this.openArrow = createDiv({
                 class: ["button-container", "projection"],
                 dataset: {
@@ -133,70 +133,70 @@ const BasePatternAlgorithm = {
             });
 
             this.openArrow.innerHTML = arrow.content;
-                    
-            this.openArrow.addEventListener("click", (event)=> {
-    
-            let window = this.environment.findWindow("side-instance");
-            if(isNullOrUndefined(window)){
-                window = this.environment.createWindow("side-instance");
-                window.container.classList.add("model-projection-sideview");
-            }
-                        
-            if(window.instances.size > 0){
-                let instance = Array.from(window.instances)[0];
-                instance.delete()
-            }
+
+            this.openArrow.addEventListener("click", (event) => {
+
+                let window = this.environment.findWindow("side-instance");
+                if (isNullOrUndefined(window)) {
+                    window = this.environment.createWindow("side-instance");
+                    window.container.classList.add("model-projection-sideview");
+                }
+
+                if (window.instances.size > 0) {
+                    let instance = Array.from(window.instances)[0];
+                    instance.delete();
+                }
 
 
-            arrow.attribute.forEach(a => {
-                let concept = this.source.getAttributeByName(a.dynamic.name).target;
+                arrow.attribute.forEach(a => {
+                    let concept = this.source.getAttributeByName(a.dynamic.name).target;
 
-                let projection = this.environment.createProjection(concept, a.dynamic.tag);
-                let instance = this.environment.createInstance(concept, projection, {
-                    type: "projection",
-                    close: "DELETE-PROJECTION"
+                    let projection = this.environment.createProjection(concept, a.dynamic.tag);
+                    let instance = this.environment.createInstance(concept, projection, {
+                        type: "projection",
+                        close: "DELETE-PROJECTION"
+                    });
+
+
+                    window.addInstance(instance);
                 });
-                                
-
-                window.addInstance(instance);
-            })
 
 
-            if(!isNullOrUndefined(arrow.ranking)){
-                this.orderRef = arrow.ranking.target;
-                this.order = arrow.ranking.order;
+                if (!isNullOrUndefined(arrow.ranking)) {
+                    this.orderRef = arrow.ranking.target;
+                    this.order = arrow.ranking.order;
 
-                this.setOrderFunctions();
-            }
+                    this.setOrderFunctions();
+                }
 
 
-            this.environment.setActiveReceiver(this, this.projection.rtags[0])
-                       
-            })
+                this.environment.setActiveReceiver(this, this.projection.rtags[0])
+
+            });
 
             this.interactionsArea.append(this.openArrow);
         }
 
-        if(fragment.hasChildNodes()){
+        if (fragment.hasChildNodes()) {
             this.container.append(fragment);
         }
-        
-       return this.container;
+
+        return this.container;
     },
 
-    registerPattern(pattern, attribute){
+    registerPattern(pattern, attribute) {
 
         let schema = {};
 
         let p = pattern.placement;
         let placement = {};
-        switch(p.type){
+        switch (p.type) {
             case "evolutive-anchors":
 
                 placement.type = "fixed";
-                placement.current = {x : p.first.x, y : p.first.y };
-                placement.next = { x : p.next.x, y : p.next.y };
-                
+                placement.current = { x: p.first.x, y: p.first.y };
+                placement.next = { x: p.next.x, y: p.next.y };
+
                 schema.placement = placement;
                 console.log(schema.placement);
                 break;
@@ -206,14 +206,14 @@ const BasePatternAlgorithm = {
                 placement.to = "end";
 
                 schema.placement = placement;
-                break;  
+                break;
         }
-       
-        if(pattern.size){
+
+        if (pattern.size) {
             let s = pattern.size;
             let size = {};
-            
-            switch(s.type){
+
+            switch (s.type) {
                 case "ratio-sized":
                     size.type = "parent";
                     size.ratio = s.ratio
@@ -231,15 +231,15 @@ const BasePatternAlgorithm = {
 
             schema.size = size;
         }
-        
+
 
         this.patternInventory.set(attribute, schema);
-        this.anchorInventory.set(attribute, {data: { first: {x : 0.5, y : 0.5}, next : {x : 0, y : 40}}, inventory: new Map()});
+        this.anchorInventory.set(attribute, { data: { first: { x: 0.5, y: 0.5 }, next: { x: 0, y: 40 } }, inventory: new Map() });
     },
 
-    setOrderFunctions(){
+    setOrderFunctions() {
 
-        switch(this.order){
+        switch (this.order) {
             case "Ascending":
                 this.acceptOrder = this.acceptAscending;
                 this.modifyOrder = this.modifyAscending;
@@ -255,12 +255,12 @@ const BasePatternAlgorithm = {
         }
     },
 
-    createItem(object, button){
+    createItem(object, button) {
         const n = button.item;
 
         /*PRETEND RATIO 0.1*/
 
-        if(!this.model.hasProjectionSchema(object, n.tag)){
+        if (!this.model.hasProjectionSchema(object, n.tag)) {
             return "";
         }
 
@@ -274,14 +274,14 @@ const BasePatternAlgorithm = {
         return container;
     },
 
-    addItem(value, button){
+    addItem(value, button) {
         let schema = this.patternInventory.get(button.element);
 
-        let position = {x : 0, y : 0};
+        let position = { x: 0, y: 0 };
 
         let client = this.computePlacement(schema, position);
 
-        if(client){
+        if (client) {
             this.addToWaitingList(button, schema.placement, value);
 
             return;
@@ -289,10 +289,10 @@ const BasePatternAlgorithm = {
 
         let item = this.createItem(value, button);
 
-    
+
         let holder = this.createHolder(item);
 
-        if(isNullOrUndefined(this.refHolder) && !client){
+        if (isNullOrUndefined(this.refHolder) && !client) {
             this.refHolder = holder;
         }
 
@@ -303,8 +303,8 @@ const BasePatternAlgorithm = {
 
         holder.dataset["source"] = value.id
         holder.dataset["buttonIndex"] = button.buttonIndex;
-        if(isNullOrUndefined(this.items[button.element])){
-            this.items[button.element] = [];    
+        if (isNullOrUndefined(this.items[button.element])) {
+            this.items[button.element] = [];
         }
         holder.dataset["items"] = this.items[button.element].length;
         this.items[button.element].push(holder);
@@ -313,30 +313,30 @@ const BasePatternAlgorithm = {
         this.patterns.push(value.id);
 
         this.holders.set(value.id, holder)
-        
+
 
         this.adapt(item, schema.size);
 
         this.registerAnchor(this.anchorInventory.get(button.element), holder, value);
 
 
-        if(this.augmentCount > 0){
+        if (this.augmentCount > 0) {
             let temp = holder;
-            for(let i = 0; i < this.augmentCount; i++){
+            for (let i = 0; i < this.augmentCount; i++) {
                 temp = this.augmentItem(temp);
             }
 
-            for(let i = 0; i < this.anchorIndex; i++){
+            for (let i = 0; i < this.anchorIndex; i++) {
                 this.nextAnchor(temp.dataset["source"]);
             }
         }
-        
+
 
     },
 
-    computePlacement(schema, position){
+    computePlacement(schema, position) {
         let p = schema.placement;
-        switch(p.type){
+        switch (p.type) {
             case "fixed":
                 position.x = p.current.x;
                 position.y = p.current.y;
@@ -350,22 +350,22 @@ const BasePatternAlgorithm = {
 
             case "duo":
                 return true;;
-                
+
         }
     },
 
-    computePlacementChild(holder, item, source, target, projection){
+    computePlacementChild(holder, item, source, target, projection) {
         let sourceAnchors = this.anchors.get(source);
         let targetAnchors = this.anchors.get(target);
 
         let arrowIndex = this.findFreeIndex(sourceAnchors, targetAnchors);
 
-        if(arrowIndex === -1){
+        if (arrowIndex === -1) {
             let newIndex = this.nextAnchor(source);
-            
-            if(targetAnchors.index < newIndex){
+
+            if (targetAnchors.index < newIndex) {
                 let tIndex = targetAnchors.index;
-                while(tIndex < newIndex){
+                while (tIndex < newIndex) {
                     tIndex = this.nextAnchor(target)
                 }
             }
@@ -401,18 +401,18 @@ const BasePatternAlgorithm = {
     },
 
 
-    addToWaitingList(button, size, value){
-        if(isNullOrUndefined(this.waiting)){
-            this.waiting = [];          
+    addToWaitingList(button, size, value) {
+        if (isNullOrUndefined(this.waiting)) {
+            this.waiting = [];
         }
-    
+
         let window = this.environment.findWindow("side-instance");
-        if(isNullOrUndefined(window)){
+        if (isNullOrUndefined(window)) {
             window = this.environment.createWindow("side-instance");
             window.container.classList.add("model-projection-sideview");
         }
-                        
-        if(window.instances.size > 0){
+
+        if (window.instances.size > 0) {
             let instance = Array.from(window.instances)[0];
             instance.delete();
         }
@@ -424,7 +424,7 @@ const BasePatternAlgorithm = {
             type: "projection",
             close: "DELETE-PROJECTION"
         });
-                        
+
 
         window.addInstance(instance);
 
@@ -436,16 +436,16 @@ const BasePatternAlgorithm = {
         projection.registerHandler("value.changed", (value) => {
             this.notifyValue(projection);
         });
-       
+
         this.waiting.push({
-            projection : projection,
+            projection: projection,
             from: size.from,
             to: size.to
         })
 
     },
 
-    setForWaiting(holder, item, projection, size){
+    setForWaiting(holder, item, projection, size) {
         this.interactionsArea.appendChild(projection.interactionsArea);
         this.adaptForWaiting(projection.interactionsArea, item);
         this.waitingRoom.append(holder);
@@ -454,18 +454,18 @@ const BasePatternAlgorithm = {
 
     },
 
-    registerAnchor(schema, holder, key){
+    registerAnchor(schema, holder, key) {
 
         let anchor = schema.data;
 
-        switch(anchor.type){
+        switch (anchor.type) {
             default:
                 let current = {
-                    x : holder.x.baseVal.value + schema.data.first.x * holder.width.baseVal.value,
-                    y : holder.y.baseVal.value + schema.data.first.y * holder.height.baseVal.value
+                    x: holder.x.baseVal.value + schema.data.first.x * holder.width.baseVal.value,
+                    y: holder.y.baseVal.value + schema.data.first.y * holder.height.baseVal.value
                 }
 
-                
+
                 let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                 circle.setAttribute("cx", current.x);
                 circle.setAttribute("cy", current.y);
@@ -473,16 +473,16 @@ const BasePatternAlgorithm = {
                 circle.style.fill = "red";
                 this.svgArea.append(circle);
 
-                this.anchors.set(key.id, {current : current, next : anchor.next, index : 0, free: [0], indexes: [current]})
-                
+                this.anchors.set(key.id, { current: current, next: anchor.next, index: 0, free: [0], indexes: [current] })
+
         }
     },
 
-    nextAnchor(value, augment = true){
+    nextAnchor(value, augment = true) {
 
         let anchor = this.anchors.get(value);
 
-        let c = {x: anchor.current.x, y: anchor.current.y};
+        let c = { x: anchor.current.x, y: anchor.current.y };
         c.x += anchor.next.x;
         c.y += anchor.next.y;
 
@@ -496,23 +496,23 @@ const BasePatternAlgorithm = {
         this.anchors.set(value, {
             current: c,
             next: anchor.next,
-            indexes : indexes,
+            indexes: indexes,
             index: newIndex,
-            free : free
+            free: free
         })
-        if(newIndex > this.anchorIndex){
+        if (newIndex > this.anchorIndex) {
             this.anchorIndex = newIndex;
         }
 
-        if(augment){
+        if (augment) {
             this.checkAugment(this.holders.get(value));
         }
-        
+
         return newIndex;
 
     },
 
-    nextAnchorChild(value, child){
+    nextAnchorChild(value, child) {
         let childAnchors = this.childAnchors.get(child);
 
         let anchor = childAnchors.get(value);
@@ -526,18 +526,20 @@ const BasePatternAlgorithm = {
         indexes.push(c);
         let free = anchor.free;
         free.push(anchor.index + 1);
-        childAnchors.set(value, {current: c, 
-            next : anchor.next,
-            index: anchor.index + 1, 
-            free: free, 
-            indexes: indexes});
+        childAnchors.set(value, {
+            current: c,
+            next: anchor.next,
+            index: anchor.index + 1,
+            free: free,
+            indexes: indexes
+        });
 
         this.childAnchors.set(child, childAnchors);
 
         return newIndex;
     },
 
-    createHolder(element){
+    createHolder(element) {
         let holder = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         let foreign = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
 
@@ -547,17 +549,17 @@ const BasePatternAlgorithm = {
         return holder;
     },
 
-    adapt(item, size){
+    adapt(item, size) {
         this.adaptForeign(item.parentNode, item);
         this.adaptSVG(item.parentNode.parentNode, item.parentNode, size);
     },
 
-    adaptSimple(item, dr){
+    adaptSimple(item, dr) {
         this.adaptForeign(item.parentNode, item);
         this.adaptSVGSimple(item.parentNode.parentNode, item.parentNode, dr);
     },
 
-    adaptForeign(container, element){
+    adaptForeign(container, element) {
         element.style.width = "fit-content";
 
         let rect = element.getBoundingClientRect();
@@ -566,12 +568,12 @@ const BasePatternAlgorithm = {
         container.setAttribute("height", rect.height);
     },
 
-    adaptSVG(container, foreign, size){
+    adaptSVG(container, foreign, size) {
         let w = Number(foreign.getAttribute("width"));
         let h = Number(foreign.getAttribute("height"));
         container.setAttribute("viewBox", "0 0 " + w + " " + h);
 
-        switch(size.type){
+        switch (size.type) {
             case "parent":
                 let wRatio = this.width * size.ratio;
                 let hRatio = h * (wRatio / w);
@@ -595,7 +597,7 @@ const BasePatternAlgorithm = {
 
                 let baseAnchors = this.anchors.get(base);
                 let targetAnchors = this.anchors.get(target);
-                
+
                 let start = baseAnchors.indexes[index];
                 let end = targetAnchors.indexes[index];
 
@@ -604,7 +606,7 @@ const BasePatternAlgorithm = {
         }
     },
 
-    adaptSVGSimple(container, foreign, dr){
+    adaptSVGSimple(container, foreign, dr) {
         container.setAttribute("width", dr);
         container.setAttribute("height", (dr / Number(foreign.getAttribute("width"))) * Number(foreign.getAttribute("height")));
 
@@ -612,14 +614,14 @@ const BasePatternAlgorithm = {
         container.setAttribute("viewBox", "0 0 " + foreign.getAttribute("width") + " " + foreign.getAttribute("height"));
     },
 
-    adaptRatioSVG(container, foreign, ratio){
+    adaptRatioSVG(container, foreign, ratio) {
         container.setAttribute("width", this.width * ratio);
         container.setAttribute("height", this.width * ratio * Number(foreign.getAttribute("height")) / Number(foreign.getAttribute("width")));
 
         container.setAttribute("viewBox", "0 0 " + foreign.getAttribute("width") + " " + foreign.getAttribute("height"));
     },
 
-    adaptForWaiting(interaction, item){
+    adaptForWaiting(interaction, item) {
         /*projection.updateWidth(100);
         projection.updateHeight(100);*/
 
@@ -643,33 +645,33 @@ const BasePatternAlgorithm = {
 
     },
 
-    focusIn(){
+    focusIn() {
 
     },
 
-    focusOut(){
+    focusOut() {
 
     },
 
-    clickHandler(target){
+    clickHandler(target) {
     },
 
-    updateWidth(value){
+    updateWidth(value) {
         this.width = value;
         this.svgArea.setAttribute("width", value);
 
     },
 
-    updateHeight(value){
+    updateHeight(value) {
         this.height = value;
         this.svgArea.setAttribute("height", value);
 
     },
 
-    augmentItem(i){
+    augmentItem(i) {
 
         this.local(i.querySelector("svg"));
-        
+
         i.remove();
 
         let holder = this.createHolder(i.childNodes[0].childNodes[0]);
@@ -693,25 +695,25 @@ const BasePatternAlgorithm = {
         return holder;
     },
 
-    local(i){
+    local(i) {
         let item = i.querySelector("[data-extension]");
 
         let attribute = item.getAttribute("data-extension");
-    
+
         let previous = Number(item.getAttribute(attribute));
         let add = Number(item.getAttribute("data-add"));
-            
+
         item.setAttribute(attribute, previous + add);
 
         this.arrange(i, attribute, add);
     },
 
-    arrange(i, attribute, add){
-        switch(attribute){
+    arrange(i, attribute, add) {
+        switch (attribute) {
             case "height":
                 i.height.baseVal.valueInSpecifiedUnits += add;
                 i.viewBox.baseVal.height += add;
-                
+
                 //        box.split(/\s+|,/);
                 break;
             case "width":
@@ -721,13 +723,13 @@ const BasePatternAlgorithm = {
         }
     },
 
-    augmentChild(child, next){
+    augmentChild(child, next) {
         let foreign = child.container.parentNode;
 
         let holder = foreign.parentNode;
-        
+
         holder.setAttribute("height", Number(holder.getAttribute("height")) + next.y);
-        
+
         let bh = Number(holder.getAttribute("height"));
         let k = Number(foreign.getAttribute("width"));
         let w = Number(holder.getAttribute("width"));
@@ -737,16 +739,16 @@ const BasePatternAlgorithm = {
 
         holder.setAttribute("viewBox", "0 0 " + k + " " + newH);
 
-        if(holder.x.baseVal.value + holder.width.baseVal.value > this.refHolder.width.baseVal.value || 
-           holder.y.baseVal.value + holder.height.baseVal.value > this.refHolder.height.baseVal.value ){
-               this.items[this.buttons[0].element].forEach(i => {
-                    this.augmentItem(i);
-               })
-           }
+        if (holder.x.baseVal.value + holder.width.baseVal.value > this.refHolder.width.baseVal.value ||
+            holder.y.baseVal.value + holder.height.baseVal.value > this.refHolder.height.baseVal.value) {
+            this.items[this.buttons[0].element].forEach(i => {
+                this.augmentItem(i);
+            })
+        }
     },
 
-    arrangeAbsolute(i, attribute, add){
-        switch(attribute){
+    arrangeAbsolute(i, attribute, add) {
+        switch (attribute) {
             case "height":
                 i.height.baseVal.valueInSpecifiedUnits = add;
                 i.viewBox.baseVal.height = add;
@@ -760,53 +762,54 @@ const BasePatternAlgorithm = {
         }
     },
 
-    branch(){
+    branch() {
         this.buttons.forEach(b => {
-            b.refresh()}
-            );
+            b.refresh()
+        }
+        );
         //this.openArrow.click();
     },
 
-    checkAugment(holder){
+    checkAugment(holder) {
         let schema = this.anchors.get(holder.dataset["source"]);
 
-        if(holder.x.baseVal.value + holder.width.baseVal.value < schema.current.x || holder.y.baseVal.value + holder.height.baseVal.value < schema.current.y){
+        if (holder.x.baseVal.value + holder.width.baseVal.value < schema.current.x || holder.y.baseVal.value + holder.height.baseVal.value < schema.current.y) {
             let newH = this.augmentItem(holder);
             this.augmentCount++;
             this.items[this.buttons[holder.dataset["buttonIndex"]].element].filter((t) => t !== newH).forEach((i) => {
-                    while(this.nextAnchor(i.dataset["source"], false) < schema.index){}
-                    this.augmentItem(i);
-                }
+                while (this.nextAnchor(i.dataset["source"], false) < schema.index) { }
+                this.augmentItem(i);
+            }
             )
             this.refHolder = this.items[this.buttons[holder.dataset["buttonIndex"]].element][0];
         }
     },
 
-    checkForChildGrowth(child, p1, next){
+    checkForChildGrowth(child, p1, next) {
         let container = this.childs.get(child);
-        if(container.x.baseVal.value + container.width.baseVal.value < p1.x || container.y.baseVal.value + container.height.baseVal.value < p1.y){
+        if (container.x.baseVal.value + container.width.baseVal.value < p1.x || container.y.baseVal.value + container.height.baseVal.value < p1.y) {
             this.augmentChild(child, next);
         }
     },
 
-    accept(source, target, arrow){
+    accept(source, target, arrow) {
 
         let sourcePoint, targetPoint;
-        if(!isNullOrUndefined(this.targetWaiter)){
+        if (!isNullOrUndefined(this.targetWaiter)) {
             this.targetWaiter.acceptAsChild(source, target, arrow, this);
             return;
         }
         let arInv = this.arrowInventory.get(arrow.source.id);
 
-        if(!isNullOrUndefined(arInv)){
-            if(arInv.projID !== arrow.id){
+        if (!isNullOrUndefined(arInv)) {
+            if (arInv.projID !== arrow.id) {
                 return;
             }
 
             this.modifyArrow(source, target, arrow, arInv.index)
             return;
         }
-        if(!isNullOrUndefined(this.orderRef)){
+        if (!isNullOrUndefined(this.orderRef)) {
             this.acceptOrder(source, target, arrow);
             return;
         }
@@ -814,21 +817,21 @@ const BasePatternAlgorithm = {
         let sourceAnchors = this.anchors.get(source);
         let targetAnchors = this.anchors.get(target);
 
-        if(source === target){
+        if (source === target) {
             let selfIndex;
-            if(isEmpty(sourceAnchors.free)){
+            if (isEmpty(sourceAnchors.free)) {
                 selfIndex = this.nextAnchor(source);
                 sourceAnchors = this.anchors.get(source);
-            }else{
+            } else {
                 selfIndex = sourceAnchors.free[0];
             }
 
-            arrow.setPath(  "M " + sourceAnchors.indexes[selfIndex].x + " " +  sourceAnchors.indexes[selfIndex].y +
-                            "l 30 0 l 0 20 l -30 0"
+            arrow.setPath("M " + sourceAnchors.indexes[selfIndex].x + " " + sourceAnchors.indexes[selfIndex].y +
+                "l 30 0 l 0 20 l -30 0"
             )
 
 
-            if(arrow.definitions){
+            if (arrow.definitions) {
                 this.definitionsArea.append(arrow.definitions);
             }
 
@@ -838,18 +841,18 @@ const BasePatternAlgorithm = {
 
             return;
 
-            
+
         }
 
-    
+
         let arrowIndex = this.findFreeIndex(sourceAnchors, targetAnchors);
 
-        if(arrowIndex === -1){
+        if (arrowIndex === -1) {
             let newIndex = this.nextAnchor(source);
-            
-            if(targetAnchors.index < newIndex){
+
+            if (targetAnchors.index < newIndex) {
                 let tIndex = targetAnchors.index;
-                while(tIndex < newIndex){
+                while (tIndex < newIndex) {
                     tIndex = this.nextAnchor(target)
                 }
                 return this.accept(source, target, arrow);
@@ -860,13 +863,13 @@ const BasePatternAlgorithm = {
         targetPoint = targetAnchors.indexes[arrowIndex];
 
         arrow.setLine(sourcePoint, targetPoint);
-        if(arrow.definitions){
+        if (arrow.definitions) {
             this.definitionsArea.append(arrow.definitions);
         }
 
         this.arrowsArea.append(arrow.element);
 
-        if(arrow.decorator){
+        if (arrow.decorator) {
             this.createDecorator(arrow);
             this.placeDecorator(arrow, sourcePoint, targetPoint, arrow.decorator.parentNode.parentNode);
         }
@@ -875,13 +878,13 @@ const BasePatternAlgorithm = {
 
     },
 
-    acceptAscending(source, target, arrow){
+    acceptAscending(source, target, arrow) {
         arrow.register(this.orderRef);
 
         let nb = arrow.get(this.orderRef);
         let sourcePoint, targetPoint;
 
-        if(isNullOrUndefined(nb)){
+        if (isNullOrUndefined(nb)) {
             return;
         }
         sourcePoint = this.findAnchorIndex(source, nb);
@@ -889,11 +892,11 @@ const BasePatternAlgorithm = {
 
         arrow.setLine(sourcePoint, targetPoint);
 
-        if(arrow.definitions){
+        if (arrow.definitions) {
             this.definitionsArea.append(arrow.definitions);
         }
 
-        if(arrow.decorator){
+        if (arrow.decorator) {
             this.createDecorator(arrow);
             this.placeDecorator(arrow, sourcePoint, targetPoint, arrow.decorator.parentNode.parentNode);
         }
@@ -906,66 +909,66 @@ const BasePatternAlgorithm = {
         return;
     },
 
-    modifyAscending(source, target, arrow){
+    modifyAscending(source, target, arrow) {
         let nb = arrow.get(this.orderRef);
- 
-        if(isNullOrUndefined(nb)){
-             arrow.remove();
+
+        if (isNullOrUndefined(nb)) {
+            arrow.remove();
             return;
         }
 
         let sourcePoint = this.findAnchorIndex(source, nb);
         let targetPoint = this.findAnchorIndex(target, nb);
- 
+
         arrow.setLine(sourcePoint, targetPoint);
- 
-        if(arrow.definitions){
+
+        if (arrow.definitions) {
             this.definitionsArea.append(arrow.definitions);
         }
- 
+
         this.arrowsArea.append(arrow.element);
- 
+
         this.registerArrowOrder(source, target, arrow, nb)
- 
+
         this.placeDecorator(arrow, sourcePoint, targetPoint, arrow.decorator.parentNode.parentNode)
 
         return;
     },
 
-    acceptMinMax(source, target, arrow){
+    acceptMinMax(source, target, arrow) {
         arrow.register(this.orderRef);
 
         let nb = arrow.get(this.orderRef);
 
-        if(isNullOrUndefined(nb)){
+        if (isNullOrUndefined(nb)) {
             return;
         }
 
         let targetIndex;
 
-        if(isNullOrUndefined(this.orderRanking)){
-            this.orderRanking = [{value: nb, arrow : arrow}];
+        if (isNullOrUndefined(this.orderRanking)) {
+            this.orderRanking = [{ value: nb, arrow: arrow }];
             targetIndex = 0;
-        }else{
+        } else {
             let schema = this.injectOrderMinMax(nb, arrow);
             targetIndex = schema.index;
 
-            if(schema.move){
+            if (schema.move) {
                 this.moveAfterMinMax(schema.index);
             }
         }
         let sourcePoint, targetPoint;
 
-        if(source === target){
+        if (source === target) {
             sourcePoint = this.findAnchorIndex(source, targetIndex);
             arrow.setPath(
-                "M " + sourcePoint.x + " " +  sourcePoint.y +
-                            "l 30 0 l 0 20 l -30 0"
+                "M " + sourcePoint.x + " " + sourcePoint.y +
+                "l 30 0 l 0 20 l -30 0"
             )
 
             this.arrowsArea.append(arrow.element);
 
-            if(arrow.definitions){
+            if (arrow.definitions) {
                 this.definitionsArea.append(arrow.definitions);
             }
 
@@ -978,11 +981,11 @@ const BasePatternAlgorithm = {
 
         arrow.setLine(sourcePoint, targetPoint);
 
-        if(arrow.definitions){
+        if (arrow.definitions) {
             this.definitionsArea.append(arrow.definitions);
         }
 
-        if(arrow.decorator){
+        if (arrow.decorator) {
             this.createDecorator(arrow);
             this.placeDecorator(arrow, sourcePoint, targetPoint, arrow.decorator.parentNode.parentNode);
         }
@@ -995,24 +998,24 @@ const BasePatternAlgorithm = {
         return;
     },
 
-    injectOrderMinMax(value, arrow){
+    injectOrderMinMax(value, arrow) {
         let i = 0;
-        while(i < this.orderRanking.length && this.orderRanking[i].value < value){
+        while (i < this.orderRanking.length && this.orderRanking[i].value < value) {
             i++;
         }
 
-        if(i === this.orderRanking.length){
-            this.orderRanking.push({value: value, arrow : arrow});
-            return {index : i, move : false};
+        if (i === this.orderRanking.length) {
+            this.orderRanking.push({ value: value, arrow: arrow });
+            return { index: i, move: false };
         }
 
-        this.orderRanking.splice(i, 0, {value: value, arrow : arrow});
+        this.orderRanking.splice(i, 0, { value: value, arrow: arrow });
 
-        return {index: i, move : true};
+        return { index: i, move: true };
     },
 
-    moveAfterMinMax(value){
-        for(let i = value + 1; i < this.orderRanking.length; i++){
+    moveAfterMinMax(value) {
+        for (let i = value + 1; i < this.orderRanking.length; i++) {
             let schema = this.orderRanking[i];
 
             let arrowInv = this.arrowInventory.get(schema.arrow.source.id);
@@ -1024,46 +1027,46 @@ const BasePatternAlgorithm = {
 
             let sourceAnchors = this.anchors.get(arrowInv.source);
             let targetAnchors = this.anchors.get(arrowInv.target);
-            
-           
 
-            while(sourceAnchors.index < i){
+
+
+            while (sourceAnchors.index < i) {
                 this.nextAnchor(arrowInv.source);
                 sourceAnchors = this.anchors.get(arrowInv.source);
             }
 
-            if(arrowInv.source === arrowInv.target){
+            if (arrowInv.source === arrowInv.target) {
                 sourceAnchors.indexes[i];
 
-                arrow.setPath("M " + sourcePoint.x + " " +  sourcePoint.y +
-                "l 30 0 l 0 20 l -30 0")
+                arrow.setPath("M " + sourcePoint.x + " " + sourcePoint.y +
+                    "l 30 0 l 0 20 l -30 0")
 
-            }else{
-                while(targetAnchors.index < i){
+            } else {
+                while (targetAnchors.index < i) {
                     this.nextAnchor(arrowInv.target);
                     targetAnchors = this.anchors.get(arrowInv.target);
                 }
-    
-    
-    
+
+
+
                 sourcePoint = sourceAnchors.indexes[i];
                 targetPoint = targetAnchors.indexes[i];
-    
-    
+
+
                 arrow.setLine(sourcePoint, targetPoint);
-    
-                if(arrow.decorator){
+
+                if (arrow.decorator) {
                     this.placeDecorator(arrow, sourcePoint, targetPoint, arrow.decorator.parentNode.parentNode);
                 }
-            }        
+            }
 
             arrowInv.index = i;
 
         }
     },
 
-    moveBeforeMinMax(value, stop){
-        for(let i = value - 1; i >= stop; i--){
+    moveBeforeMinMax(value, stop) {
+        for (let i = value - 1; i >= stop; i--) {
             let schema = this.orderRanking[i];
 
 
@@ -1076,42 +1079,42 @@ const BasePatternAlgorithm = {
 
             let sourceAnchors = this.anchors.get(arrowInv.source);
 
-            if(arrowInv.source === arrowInv.target){
+            if (arrowInv.source === arrowInv.target) {
                 sourceAnchors.indexes[i];
 
-                arrow.setPath("M " + sourcePoint.x + " " +  sourcePoint.y +
-                "l 30 0 l 0 20 l -30 0");
+                arrow.setPath("M " + sourcePoint.x + " " + sourcePoint.y +
+                    "l 30 0 l 0 20 l -30 0");
 
-            }else{
+            } else {
                 let targetAnchors = this.anchors.get(arrowInv.target);
 
-            
+
                 sourcePoint = sourceAnchors.indexes[i];
                 targetPoint = targetAnchors.indexes[i];
-    
+
                 arrow.setLine(sourcePoint, targetPoint);
-    
-                if(arrow.decorator){
+
+                if (arrow.decorator) {
                     this.placeDecorator(arrow, sourcePoint, targetPoint, arrow.decorator.parentNode.parentNode);
                 }
-    
+
             }
-           
+
             arrowInv.index = i;
 
         }
     },
 
-    modifyMinMax(source, target, arrow){
+    modifyMinMax(source, target, arrow) {
         let nb = arrow.get(this.orderRef);
-    
-        if(this.orderRanking.length === 1){
+
+        if (this.orderRanking.length === 1) {
             return;
         }
-        
+
         let i = 0;
 
-        while(i < this.orderRanking.length && this.orderRanking[i].arrow.id !== arrow.id){
+        while (i < this.orderRanking.length && this.orderRanking[i].arrow.id !== arrow.id) {
             i++;
         }
 
@@ -1119,34 +1122,34 @@ const BasePatternAlgorithm = {
 
         let schema = this.injectOrderMinMax(nb, arrow);
 
-        if(schema.index < this.orderRanking.length - 1){
+        if (schema.index < this.orderRanking.length - 1) {
             this.moveAfterMinMax(schema.index);
         }
 
-        if(schema.index > i){
+        if (schema.index > i) {
             this.moveBeforeMinMax(schema.index, i);
         }
 
         let sourceAnchors = this.anchors.get(source);
         let targetAnchors = this.anchors.get(target);
 
-        while(sourceAnchors.index < schema.index){
+        while (sourceAnchors.index < schema.index) {
             this.nextAnchor(source);
             sourceAnchors = this.anchors.get(source);
         }
 
-        if(source === target){
+        if (source === target) {
             let point = sourceAnchors.indexes[schema.index];
 
-            arrow.setPath("M " + point.x + " " +  point.y +
-            "l 30 0 l 0 20 l -30 0");
+            arrow.setPath("M " + point.x + " " + point.y +
+                "l 30 0 l 0 20 l -30 0");
 
             this.registerArrowOrder(source, target, arrow, nb);
 
             return;
         }
 
-        while(targetAnchors.index < schema.index){
+        while (targetAnchors.index < schema.index) {
             this.nextAnchor(target);
             targetAnchors = this.anchors.get(target);
         }
@@ -1156,18 +1159,18 @@ const BasePatternAlgorithm = {
 
         arrow.setLine(sourcePoint, targetPoint);
 
-        if(arrow.decorator){
+        if (arrow.decorator) {
             this.placeDecorator(arrow, sourcePoint, targetPoint, arrow.decorator.parentNode.parentNode);
         }
 
         this.registerArrowOrder(source, target, arrow, nb);
     },
 
-    findAnchorIndex(elem, number){
+    findAnchorIndex(elem, number) {
         let anchors = this.anchors.get(elem);
 
-        if(anchors.indexes.length <= number){
-            for(let i = anchors.indexes.length; i <= number; i++){
+        if (anchors.indexes.length <= number) {
+            for (let i = anchors.indexes.length; i <= number; i++) {
                 this.nextAnchor(elem);
             }
             anchors = this.anchors.get(elem);
@@ -1176,23 +1179,23 @@ const BasePatternAlgorithm = {
         return anchors.indexes[number];
     },
 
-    acceptAsChild(source, target, arrow, child){
-        let anchors = this.childAnchors.get(child); 
+    acceptAsChild(source, target, arrow, child) {
+        let anchors = this.childAnchors.get(child);
 
         let sourceAnchors = anchors.get(source);
         let targetAnchors = anchors.get(target);
 
         let arrowIndex = this.findFreeIndex(sourceAnchors, targetAnchors);
 
-        if(arrowIndex === -1){
+        if (arrowIndex === -1) {
             let newIndex = this.nextAnchorChild(source, child);
 
-            while(targetAnchors.index < newIndex){
+            while (targetAnchors.index < newIndex) {
                 this.nextAnchorChild(target, child);
                 anchors = this.childAnchors.get(child);
                 targetAnchors = anchors.get(target);
             }
-            
+
             anchors = this.childAnchors.get(child);
 
             sourceAnchors = anchors.get(source);
@@ -1205,7 +1208,7 @@ const BasePatternAlgorithm = {
         let targetPoint = targetAnchors.indexes[arrowIndex];
 
         arrow.setLine(sourcePoint, targetPoint);
-        if(arrow.definitions){
+        if (arrow.definitions) {
             this.definitionsArea.append(arrow.definitions);
         }
 
@@ -1216,14 +1219,14 @@ const BasePatternAlgorithm = {
         this.registerAnchorOccupationChild(target, child, arrowIndex);
     },
 
-    modifyArrow(source, target, arrow, index){
+    modifyArrow(source, target, arrow, index) {
 
         let informations = this.arrowInventory.get(arrow.source.id);
         let sourceAnchors, targetAnchors, arrowIndex, tIndex, sourcePoint, targetPoint;
 
 
-        if((informations.source !== source || informations.target !== target) && (!informations.order)){
-            
+        if ((informations.source !== source || informations.target !== target) && (!informations.order)) {
+
 
             this.freeAnchor(informations.source, index);
             this.freeAnchor(informations.target, index);
@@ -1232,11 +1235,11 @@ const BasePatternAlgorithm = {
             targetAnchors = this.anchors.get(target);
 
             arrowIndex = this.findFreeIndex(sourceAnchors, targetAnchors);
-            if(arrowIndex === -1){
+            if (arrowIndex === -1) {
                 arrowIndex = this.nextAnchor(source);
-                        
+
                 tIndex = targetAnchors.index
-                while(tIndex < arrowIndex){
+                while (tIndex < arrowIndex) {
                     tIndex = this.nextAnchor(target)
                 }
                 sourceAnchors = this.anchors.get(source);
@@ -1248,7 +1251,7 @@ const BasePatternAlgorithm = {
 
             arrow.setLine(sourcePoint, targetPoint);
 
-            this.arrowInventory.set(arrow.source.id, {source : source, target : target, index : arrowIndex, projID : arrow.id});
+            this.arrowInventory.set(arrow.source.id, { source: source, target: target, index: arrowIndex, projID: arrow.id });
 
             this.registerAnchorOccupation(source, arrowIndex);
             this.registerAnchorOccupation(target, arrowIndex);
@@ -1258,28 +1261,28 @@ const BasePatternAlgorithm = {
         }
 
 
-        if(informations.order){
+        if (informations.order) {
             this.modifyOrder(source, target, arrow, index);
         }
-        
+
     },
 
 
-    registerArrow(source, target, arrow, index){
-        this.arrowInventory.set(arrow.source.id, {source : source, target : target, index : index, projID : arrow.id});
+    registerArrow(source, target, arrow, index) {
+        this.arrowInventory.set(arrow.source.id, { source: source, target: target, index: index, projID: arrow.id });
 
         this.registerAnchorOccupation(source, index);
 
-        if(source !== target){
+        if (source !== target) {
             this.registerAnchorOccupation(target, index);
         }
     },
 
-    registerArrowOrder(source, target, arrow, index){
-        this.arrowInventory.set(arrow.source.id, {source: source, target: target, index: index, projID: arrow.id, order: true})
+    registerArrowOrder(source, target, arrow, index) {
+        this.arrowInventory.set(arrow.source.id, { source: source, target: target, index: index, projID: arrow.id, order: true })
     },
 
-    createDecorator(arrow){
+    createDecorator(arrow) {
         let holder = this.createHolder(arrow.decorator);
 
         this.patternArea.append(holder);
@@ -1288,16 +1291,16 @@ const BasePatternAlgorithm = {
         this.adaptRatioSVG(arrow.decorator.parentNode.parentNode, arrow.decorator.parentNode, arrow.ratio);
     },
 
-    placeDecorator(arrow, source, target, holder){
+    placeDecorator(arrow, source, target, holder) {
         let baseX, baseY, baseTarget;
 
-        if(source.x < target.x){
+        if (source.x < target.x) {
             baseTarget = source;
-        }else{
+        } else {
             baseTarget = target;
         }
 
-        switch(arrow.base){
+        switch (arrow.base) {
             case "center":
                 let dx = source.x - target.x;
                 let dy = source.y - target.y;
@@ -1314,9 +1317,9 @@ const BasePatternAlgorithm = {
                 break;
             case "right":
 
-                if(source.x > target.x){
+                if (source.x > target.x) {
                     baseTarget = source;
-                }else{
+                } else {
                     baseTarget = target;
                 }
 
@@ -1330,14 +1333,14 @@ const BasePatternAlgorithm = {
 
     },
 
-    freeAnchor(value, index){
+    freeAnchor(value, index) {
         let anchors = this.anchors.get(value);
 
         let free = anchors.free;
         free.push(index);
 
         this.anchors.set(value, {
-            current : anchors.current,
+            current: anchors.current,
             next: anchors.next,
             index: anchors.index,
             free: free,
@@ -1345,14 +1348,14 @@ const BasePatternAlgorithm = {
         })
     },
 
-    registerAnchorOccupation(value, index){
+    registerAnchorOccupation(value, index) {
         let anchors = this.anchors.get(value);
 
         let free = anchors.free;
 
         let freeIndex;
-        for(let i = 0; i < free.length; i++){
-            if(free[i] === index){
+        for (let i = 0; i < free.length; i++) {
+            if (free[i] === index) {
                 freeIndex = i;
                 break;
             }
@@ -1361,7 +1364,7 @@ const BasePatternAlgorithm = {
         free.splice(freeIndex, 1);
 
         this.anchors.set(value, {
-            current : anchors.current,
+            current: anchors.current,
             next: anchors.next,
             index: anchors.index,
             free: free,
@@ -1370,7 +1373,7 @@ const BasePatternAlgorithm = {
 
     },
 
-    registerAnchorOccupationChild(value, child, index){
+    registerAnchorOccupationChild(value, child, index) {
 
         let anchorsChild = this.childAnchors.get(child);
 
@@ -1379,8 +1382,8 @@ const BasePatternAlgorithm = {
         let free = anchors.free;
 
         let freeIndex;
-        for(let i = 0; i < free.length; i++){
-            if(free[i] === index){
+        for (let i = 0; i < free.length; i++) {
+            if (free[i] === index) {
                 freeIndex = i;
                 break;
             }
@@ -1389,7 +1392,7 @@ const BasePatternAlgorithm = {
         free.splice(freeIndex, 1);
 
         anchorsChild.set(value, {
-            current : anchors.current,
+            current: anchors.current,
             next: anchors.next,
             index: anchors.index,
             free: free,
@@ -1399,10 +1402,10 @@ const BasePatternAlgorithm = {
         this.childAnchors.set(anchorsChild);
     },
 
-    findFreeIndex(source, target){
-        for(let i = 0; i < source.free.length; i++){
+    findFreeIndex(source, target) {
+        for (let i = 0; i < source.free.length; i++) {
             let candidate = source.free[i];
-            if(target.free.includes(candidate)){
+            if (target.free.includes(candidate)) {
                 return candidate;
             }
         }
@@ -1410,16 +1413,16 @@ const BasePatternAlgorithm = {
     },
 
 
-    removeArrow(arrow){
+    removeArrow(arrow) {
         arrow.element.remove();
-        
-        if(arrow.decorator){
+
+        if (arrow.decorator) {
             arrow.decorator.parentNode.parentNode.remove();
         }
 
         let informations = this.arrowInventory.get(arrow.source.id);
 
-        if(isNullOrUndefined(informations)){
+        if (isNullOrUndefined(informations)) {
             return;
         }
 
@@ -1431,7 +1434,7 @@ const BasePatternAlgorithm = {
 
     },
 
-    registerWaiter(target){
+    registerWaiter(target) {
         this.targetWaiter = target;
 
         this.attributes[0].addEventListener("click", (event) => {
@@ -1444,23 +1447,23 @@ const BasePatternAlgorithm = {
 
     },
 
-    setValues(){
-        if(!isNullOrUndefined(this.source.getAttributeByName("to").target.value)){
+    setValues() {
+        if (!isNullOrUndefined(this.source.getAttributeByName("to").target.value)) {
             this.valTarget = this.source.getAttributeByName("to").target.value;
         }
 
-        if(!isNullOrUndefined(this.source.getAttributeByName("from").target.value)){
+        if (!isNullOrUndefined(this.source.getAttributeByName("from").target.value)) {
             this.valSource = this.source.getAttributeByName("from").target.value;
         }
 
     },
 
-    exit(target){
+    exit(target) {
         this.setValues();
         this.tryToExit(target);
     },
 
-    joinSvgArea(projection, source, target){
+    joinSvgArea(projection, source, target) {
         console.log("Exiting");
         console.log(projection);
         console.log(source);
@@ -1477,19 +1480,19 @@ const BasePatternAlgorithm = {
 
         let arrowIndex = this.findFreeIndex(sourceAnchors, targetAnchors);
 
-        if(arrowIndex === -1){
+        if (arrowIndex === -1) {
             let newIndex = this.nextAnchor(source);
-            
-            if(targetAnchors.index < newIndex){
+
+            if (targetAnchors.index < newIndex) {
                 let tIndex = targetAnchors.index;
-                while(tIndex < newIndex){
+                while (tIndex < newIndex) {
                     tIndex = this.nextAnchor(target)
                 }
             }
 
             arrowIndex = newIndex;
             sourceAnchors = this.anchors.get(source);
-            targetAnchors = this.anchors.get(target);        
+            targetAnchors = this.anchors.get(target);
         }
 
         let s = sourceAnchors.indexes[arrowIndex];
@@ -1506,7 +1509,7 @@ const BasePatternAlgorithm = {
         let foreign = element.container.parentNode;
         foreign.setAttribute("width", dr);
 
-        
+
 
         this.svgArea.append(holder);
 
@@ -1517,8 +1520,8 @@ const BasePatternAlgorithm = {
 
     },
 
-    setChildAnchors(index, source, target, child){
-        if(isNullOrUndefined(this.childAnchors)){
+    setChildAnchors(index, source, target, child) {
+        if (isNullOrUndefined(this.childAnchors)) {
             this.childAnchors = new Map();
         }
 
@@ -1528,30 +1531,34 @@ const BasePatternAlgorithm = {
 
         let sIndex, tIndex;
 
-        for(let i = 0; i < this.patterns.length; i++){
-            if(this.patterns[i] === source){
+        for (let i = 0; i < this.patterns.length; i++) {
+            if (this.patterns[i] === source) {
                 sIndex = i;
             }
 
-            if(this.patterns[i] === target){
+            if (this.patterns[i] === target) {
                 tIndex = i;
             }
         }
 
-        for(let i = Math.min(tIndex, sIndex); i <= Math.max(tIndex, sIndex); i++){
+        for (let i = Math.min(tIndex, sIndex); i <= Math.max(tIndex, sIndex); i++) {
             containment.push(this.patterns[i]);
         }
 
         containment.forEach(p => {
             let anchor = this.anchors.get(p);
             anchors.set(p, {
-                current : { x : anchor.indexes[index].x + ((Math.max(tIndex, sIndex) - Math.min(tIndex, sIndex) +1 ) * anchor.next.x),
-                            y : anchor.indexes[index].y + ((Math.max(tIndex, sIndex) - Math.min(tIndex, sIndex) + 1) * anchor.next.y)},
-                next : anchor.next,
-                index : 0,
+                current: {
+                    x: anchor.indexes[index].x + ((Math.max(tIndex, sIndex) - Math.min(tIndex, sIndex) + 1) * anchor.next.x),
+                    y: anchor.indexes[index].y + ((Math.max(tIndex, sIndex) - Math.min(tIndex, sIndex) + 1) * anchor.next.y)
+                },
+                next: anchor.next,
+                index: 0,
                 free: [0],
-                indexes : [{    x : anchor.indexes[index].x + ((Math.max(tIndex, sIndex) - Math.min(tIndex, sIndex) +1 ) * anchor.next.x),
-                                y : anchor.indexes[index].y + ((Math.max(tIndex, sIndex) - Math.min(tIndex, sIndex) + 1) * anchor.next.y)}]
+                indexes: [{
+                    x: anchor.indexes[index].x + ((Math.max(tIndex, sIndex) - Math.min(tIndex, sIndex) + 1) * anchor.next.x),
+                    y: anchor.indexes[index].y + ((Math.max(tIndex, sIndex) - Math.min(tIndex, sIndex) + 1) * anchor.next.y)
+                }]
             });
 
         })
@@ -1559,14 +1566,14 @@ const BasePatternAlgorithm = {
         this.childAnchors.set(child, anchors);
     },
 
-    place(){
+    place() {
         this.container.prepend(this.interactionsArea);
     },
 
-    notifyValue(projection){
+    notifyValue(projection) {
         console.log(projection);
-        for(let i = 0; i < this.waiting.length; i++){
-            if(this.waiting[i].projection === projection){
+        for (let i = 0; i < this.waiting.length; i++) {
+            if (this.waiting[i].projection === projection) {
                 let from = projection.element.source.getAttributeByName(
                     this.waiting[i].from
                 ).target.value;
@@ -1577,7 +1584,7 @@ const BasePatternAlgorithm = {
 
                 console.log(projection.element.source);
 
-                if(!isNullOrUndefined(from) && !isNullOrUndefined(to)){
+                if (!isNullOrUndefined(from) && !isNullOrUndefined(to)) {
                     this.waiting.splice(i, 1);
 
                     this.joinSvgArea(projection, from, to);

@@ -109,7 +109,7 @@ const PMODEL__HANDLER = {
         let concept = args[0];
         let dynamicVal = concept.createProj();
         
-        let projection = this.createConcept("template")
+        let projection = this.createConcept("template");
 
         let r = this.createConcept("render", "list-item");
 
@@ -129,7 +129,7 @@ const PMODEL__HANDLER = {
         let concept = args[0];
         let staticVal = concept.createProj();
         
-        let projection = this.createConcept("template")
+        let projection = this.createConcept("template");
 
         let r = this.createConcept("render", "list-item");
 
@@ -507,7 +507,7 @@ export const App = {
                     projectionModel: GMODEL__PROJECTION,
                     config: GMODEL__EDITOR,
                     handlers: GMODEL__HANDLER
-                })
+                });
 
                 editor.addConcept(SMODEL__CONCEPT);
                 editor.addProjection(SMODEL__PROJECTION);

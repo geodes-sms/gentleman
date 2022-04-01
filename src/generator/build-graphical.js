@@ -3,7 +3,7 @@ import { isEmpty, valOrDefault, isNullOrWhitespace, isFunction, createEmphasis, 
 import { NotificationType, LogType } from "@utils/index.js";
 
 const ATTR_RTAGS = "rtags";
-const ATTR_ALGO = "algorithm"
+const ATTR_ALGO = "algorithm";
 const ATTR_CONTENT = "content";
 const ATTR_CONCEPT = "concept";
 const ATTR_VALUE = "value";
@@ -30,12 +30,12 @@ const GraphicalBuildHandler = {
     "general": buildAlgorithm,
     "projection": delegate,
     "template": buildFragment
-}
+};
 
 const AlgorithmHandler = {
     "force": buildForceAlgo,
     "pattern": buildPatternAlgo
-}
+};
 
 
 export function buildGraphicalHandler(_options = {}) {
@@ -94,18 +94,18 @@ export function buildGraphicalHandler(_options = {}) {
     delete this.__errors;
 
     return result;
-};
+}
 
-function delegate(concept){
+function delegate(concept) {
     return buildProjection.call(this, concept);
 }
 
 const FragmentHandler = {
     "static": StaticSVGHandler,
     "dynamic": DynamicSVGHandler
-}
+};
 
-function buildFragment(concept){
+function buildFragment(concept) {
     const name = getName(concept);
 
     if (isNullOrWhitespace(name)) {
@@ -119,7 +119,7 @@ function buildFragment(concept){
 
     const svg = getValue(concept, "content", true);
 
-    const handler = FragmentHandler[svg.getProperty("elementType")]; 
+    const handler = FragmentHandler[svg.getProperty("elementType")];
 
     const content = handler.call(this, svg);
 
@@ -128,8 +128,7 @@ function buildFragment(concept){
         type: "g-fragment",
         name: name,
         content: content,
-
-    }
+    };
 
     return {
         success: true,
@@ -138,7 +137,7 @@ function buildFragment(concept){
 }
 
 
-function buildAlgorithm(concept){
+function buildAlgorithm(concept) {
 
     const rtags = hasAttr(concept, ATTR_RTAGS) ? getValue(concept, ATTR_RTAGS, true) : [];
 
@@ -209,34 +208,34 @@ function buildAlgorithm(concept){
     };
 }
 
-function buildForceAlgo(algo){
+function buildForceAlgo(algo) {
     const schema = {};
 
     schema.type = "force";
 
-    if(hasAttr(algo, "dimensions")){
+    if (hasAttr(algo, "dimensions")) {
         schema.dimensions = buildDimensions.call(this, getAttr(algo, "dimensions"))
     }
 
-    if(hasAttr(algo, "direction")){
+    if (hasAttr(algo, "direction")) {
         schema.direction = getValue(algo, "direction");
     }
 
-    if(hasAttr(algo, "intensity")){
+    if (hasAttr(algo, "intensity")) {
         schema.intensity = buildIntensity.call(this, getValue(algo, "intensity", true));
     }
 
-    if(hasAttr(algo, "center")){
+    if (hasAttr(algo, "center")) {
         schema.center = getValue(algo, "center");
     }
 
-    if(hasAttr(algo, "edges")){
+    if (hasAttr(algo, "edges")) {
         schema.edges = getValue(algo, "edges");
     }
 
-    if(hasAttr(algo, "attributes") && !isEmpty(getValue(algo, "attributes"))){
+    if (hasAttr(algo, "attributes") && !isEmpty(getValue(algo, "attributes"))) {
         let attributes = [];
-        
+
         getValue(algo, "attributes").forEach(a => {
             attributes.push(
                 {
@@ -249,7 +248,7 @@ function buildForceAlgo(algo){
         schema.attributes = attributes;
     }
 
-    if(hasAttr(algo, "fixed-elements") && !isEmpty(getValue(algo, "fixed-elements"))){
+    if (hasAttr(algo, "fixed-elements") && !isEmpty(getValue(algo, "fixed-elements"))) {
         let fixed = [];
 
         getValue(algo, "fixed-elements").forEach(f => {
@@ -259,18 +258,18 @@ function buildForceAlgo(algo){
         schema.fixed = fixed;
     }
 
-    if(hasAttr(algo, "arrow-management")){
+    if (hasAttr(algo, "arrow-management")) {
         schema.arrowManagement = buildArrowManagement.call(this, getValue(algo, "arrow-management", true));
     }
 
     return schema;
 }
 
-function buildIntensity(intensity){
+function buildIntensity(intensity) {
     return getValue(intensity, "intensity");
 }
 
-function buildDimensions(dimensions){
+function buildDimensions(dimensions) {
     const schema = {};
 
     schema.width = getValue(dimensions, "x");
@@ -279,12 +278,12 @@ function buildDimensions(dimensions){
     return schema
 }
 
-function buildFixedElement(element){
+function buildFixedElement(element) {
     const schema = {};
-    
+
     schema.attribute = {
-        type : "dynamic",
-        dynamic : buildDynamic.call(this, getAttr(element, "attribute"))
+        type: "dynamic",
+        dynamic: buildDynamic.call(this, getAttr(element, "attribute"))
     }
 
     schema.coordinates = buildDimensions.call(this, getAttr(element, "coordinates"));
@@ -294,21 +293,21 @@ function buildFixedElement(element){
     return schema;
 }
 
-function buildRatio(ratio){
+function buildRatio(ratio) {
     return getValue(ratio, "value");
 }
 
-function buildPatternAlgo(algo){
+function buildPatternAlgo(algo) {
     const schema = {};
 
     schema.type = "pattern";
 
-    if(hasAttr(algo, "dimensions")){
+    if (hasAttr(algo, "dimensions")) {
         schema.dimensions = buildDimensions.call(this, getAttr(algo, "dimensions"));
     }
 
     let attributes = [];
-    if(hasAttr(algo, "attributes")){
+    if (hasAttr(algo, "attributes")) {
         getValue(algo, "attributes").forEach(a => {
             attributes.push({
                 type: "dynamic",
@@ -319,12 +318,12 @@ function buildPatternAlgo(algo){
     schema.attributes = attributes;
 
 
-    if(hasAttr(algo, "pattern")){
+    if (hasAttr(algo, "pattern")) {
         schema.pattern = buildPattern.call(this, getAttr(algo, "pattern"));
     }
 
     let anchorAttr = []
-    if(hasAttr(algo, "anchor-attributes")){
+    if (hasAttr(algo, "anchor-attributes")) {
         getValue(algo, "anchor-attributes").forEach(a => {
             anchorAttr.push(buildAnchorAttr.call(this, a))
         })
@@ -332,7 +331,7 @@ function buildPatternAlgo(algo){
 
     schema.anchorAttr = anchorAttr;
 
-    if(hasAttr(algo, "arrow-management")){
+    if (hasAttr(algo, "arrow-management")) {
         schema.arrow = buildPatternArrow.call(this, getAttr(algo, "arrow-management"));
     }
 
@@ -340,53 +339,53 @@ function buildPatternAlgo(algo){
     return schema;
 }
 
-function buildPattern(pattern){
+function buildPattern(pattern) {
     const schema = {};
 
-    if(hasAttr(pattern, "attribute")){
+    if (hasAttr(pattern, "attribute")) {
         schema.attribute = {
             type: "dynamic",
             dynamic: buildDynamic.call(this, getAttr(pattern, "attribute"))
         }
     }
 
-    if(hasAttr(pattern, "placement")){
+    if (hasAttr(pattern, "placement")) {
         schema.placement = buildAnchors.call(this, getAttr(pattern, "placement"));
     }
 
-    if(hasAttr(pattern, "anchors")){
+    if (hasAttr(pattern, "anchors")) {
         schema.anchors = buildAnchors.call(this, getValue(pattern, "anchors", true));
     }
 
-    if(hasAttr(pattern, "size")){
+    if (hasAttr(pattern, "size")) {
         schema.size = buildPatternSize.call(this, getValue(pattern, "size", true));
     }
 
     return schema;
 }
 
-function buildAnchorAttr(attribute){
+function buildAnchorAttr(attribute) {
     const schema = {};
 
-    if(hasAttr(attribute, "attribute")){
+    if (hasAttr(attribute, "attribute")) {
         schema.attribute = {
             type: "dynamic",
             dynamic: buildDynamic.call(this, getAttr(attribute, "attribute"))
         }
     }
 
-    if(hasAttr(attribute, "placement")){
+    if (hasAttr(attribute, "placement")) {
         schema.placement = buildPatternPlacement.call(this, getValue(attribute, "placement", true));
     }
 
     return schema;
 }
 
-function buildPatternPlacement(placement){
+function buildPatternPlacement(placement) {
     const schema = {};
     schema.type = placement.name;
 
-    switch(schema.type){
+    switch (schema.type) {
         case "unique-placement":
             schema.base = getValue(placement, "base")
             return schema;
@@ -396,11 +395,11 @@ function buildPatternPlacement(placement){
     }
 }
 
-function buildPatternSize(size){
+function buildPatternSize(size) {
     const schema = {};
     schema.type = size.name;
 
-    switch(schema.type){
+    switch (schema.type) {
         case "inherited-size":
             schema.marker = getValue(size, "marker");
             schema.property = getValue(size, "property");
@@ -413,21 +412,21 @@ function buildPatternSize(size){
     }
 }
 
-function buildAnchors(anchor){
+function buildAnchors(anchor) {
     const schema = {};
     schema.type = anchor.name;
 
-    switch(schema.type){
+    switch (schema.type) {
         case "evolutive-anchors":
 
-            if(hasAttr(anchor, "first")){
+            if (hasAttr(anchor, "first")) {
                 schema.first = buildCoordinates.call(this, getAttr(anchor, "first"));
             }
-        
-            if(hasAttr(anchor, "next")){
+
+            if (hasAttr(anchor, "next")) {
                 schema.next = buildCoordinates.call(this, getAttr(anchor, "next"));
             }
-        
+
             return schema;
         case "inherited-anchors":
             return schema;
@@ -437,7 +436,7 @@ function buildAnchors(anchor){
 
 
 
-function buildCoordinates(coordinates){
+function buildCoordinates(coordinates) {
     const schema = {};
 
     schema.x = getValue(coordinates, "x");
@@ -446,27 +445,27 @@ function buildCoordinates(coordinates){
     return schema;
 }
 
-function DynamicSVGHandler(field){
+function DynamicSVGHandler(field) {
 
     const schema = {};
 
-    if(hasAttr(field, "content")){
+    if (hasAttr(field, "content")) {
         schema.content = getValue(field, "content");
     }
 
-    if(hasAttr(field, "marker")){
+    if (hasAttr(field, "marker")) {
         schema.marker = getValue(field, "marker");
     }
 
-    if(hasAttr(field, "markers")){
+    if (hasAttr(field, "markers")) {
         schema.markers = [];
 
-        getValue(field, "markers").forEach(m =>{
+        getValue(field, "markers").forEach(m => {
             schema.markers.push(buildMarker(m));
         })
     }
 
-    if(hasAttr(field, "self")){
+    if (hasAttr(field, "self")) {
         schema.self = [];
 
         getValue(field, "self").forEach(p => {
@@ -478,15 +477,15 @@ function DynamicSVGHandler(field){
     return schema;
 }
 
-function StaticSVGHandler(field){
+function StaticSVGHandler(field) {
     const schema = {};
 
 
-    if(hasAttr(field, "content")){
+    if (hasAttr(field, "content")) {
         schema.content = getValue(field, "content");
     }
 
-    if(hasAttr(field, "model-value")){
+    if (hasAttr(field, "model-value")) {
         schema.mv = getValue(field, "model-value");
     }
 
@@ -494,14 +493,14 @@ function StaticSVGHandler(field){
     return schema;
 }
 
-function buildMarker(marker){
+function buildMarker(marker) {
     const schema = {};
 
-    if(hasAttr(marker, "model-value")){
+    if (hasAttr(marker, "model-value")) {
         schema.mv = getValue(marker, "model-value");
     }
 
-    if(hasAttr(marker, "aliases")){
+    if (hasAttr(marker, "aliases")) {
         schema.aliases = [];
 
         getValue(marker, "aliases").forEach(a => {
@@ -512,26 +511,26 @@ function buildMarker(marker){
     return schema;
 }
 
-function buildAlias(alias){
+function buildAlias(alias) {
     const schema = {};
 
-    if(hasAttr(alias, "marker-value")){
+    if (hasAttr(alias, "marker-value")) {
         schema.mv = getValue(alias, "marker-value");
     }
 
-    if(hasAttr(alias, "properties")){
+    if (hasAttr(alias, "properties")) {
         schema.props = buildSVGProperties(getAttr(alias, "properties"));
     }
 
     return schema;
 }
 
-function buildSVGProperties(props){
+function buildSVGProperties(props) {
     let schema = {};
 
     schema.props = [];
 
-    if(hasAttr(props, "bold") && getValue(props, "bold")){
+    if (hasAttr(props, "bold") && getValue(props, "bold")) {
         const bold = {};
         bold.props = "font-weight";
         bold.value = "bold"
@@ -539,15 +538,15 @@ function buildSVGProperties(props){
         schema.props.push(bold);
     }
 
-    if(hasAttr(props, "italic") && getValue(props, "italic")){
+    if (hasAttr(props, "italic") && getValue(props, "italic")) {
         const italic = {};
         italic.props = "font-style";
         italic.value = "italic";
-        
+
         schema.props.push(italic);
     }
 
-    if(hasAttr(props, "underline") && getValue(props, "underline")){
+    if (hasAttr(props, "underline") && getValue(props, "underline")) {
         const underline = {};
         underline.props = "text-decoration";
         underline.value = "underline";
@@ -556,23 +555,23 @@ function buildSVGProperties(props){
     }
 
 
-    if(hasAttr(props, "color")){
+    if (hasAttr(props, "color")) {
         let col = getAttr(props, "color");
         let c = getValue(col, "value");
 
-        if(!isNullOrUndefined(c)){
+        if (!isNullOrUndefined(c)) {
             const color = {};
             color.props = "fill";
-            color. value = c;
+            color.value = c;
 
             schema.props.push(color);
         }
     }
 
-    if(hasAttr(props, "size")){
+    if (hasAttr(props, "size")) {
         let s = getAttr(props, "size");
 
-        if(!(isNullOrUndefined(s) || !hasValue(s, "value"))){
+        if (!(isNullOrUndefined(s) || !hasValue(s, "value"))) {
             const size = {};
             size.props = "font-size";
             size.value = getValue(s, "value") + getValue(s, "unit");
@@ -581,20 +580,20 @@ function buildSVGProperties(props){
         }
     }
 
-    if(hasAttr(props, "text-content")){
+    if (hasAttr(props, "text-content")) {
         let t = getValue(props, "text-content");
 
-        if((!isNullOrUndefined(t)) && (t !== "")){
+        if ((!isNullOrUndefined(t)) && (t !== "")) {
             schema.props.push(
-                {   
-                    props : "textContent",
-                    value : t
+                {
+                    props: "textContent",
+                    value: t
                 }
             );
         }
     }
-    
-    if(hasAttr(props, "others")){
+
+    if (hasAttr(props, "others")) {
         getValue(props, "others").forEach(i => {
             schema.props.push(buildOther(i));
         })
@@ -603,7 +602,7 @@ function buildSVGProperties(props){
     return schema.props;
 }
 
-function buildOther(other){
+function buildOther(other) {
     const schema = {};
 
     schema.property = getValue(other, "property");
@@ -612,7 +611,7 @@ function buildOther(other){
     return schema;
 }
 
-function buildPatternArrow(arrow){
+function buildPatternArrow(arrow) {
     const schema = {};
 
     schema.content = getValue(arrow, "content");
@@ -638,9 +637,9 @@ function buildPatternArrow(arrow){
     })
 
     schema.selfArrow = selfArrow;
-    
 
-    if(hasAttr(arrow, "ranking")){
+
+    if (hasAttr(arrow, "ranking")) {
         schema.ranking = buildRanking.call(this, getAttr(arrow, "ranking"));
     }
 
@@ -650,14 +649,14 @@ function buildPatternArrow(arrow){
     return schema;
 }
 
-function buildRanking(rank){
+function buildRanking(rank) {
     const schema = {};
 
-    if(hasAttr(rank, "target")){
+    if (hasAttr(rank, "target")) {
         schema.target = getValue(rank, "target");
     }
 
-    if(hasAttr(rank, "order")){
+    if (hasAttr(rank, "order")) {
         schema.order = getValue(rank, "order");
     }
 
@@ -665,12 +664,12 @@ function buildRanking(rank){
 
 }
 
-function buildArrowManagement(arrow){
+function buildArrowManagement(arrow) {
     const schema = {};
 
     schema.type = arrow.name;
 
-    switch(schema.type){
+    switch (schema.type) {
         case "interaction-management":
             schema.content = getValue(arrow, "content");
 
@@ -700,8 +699,8 @@ function buildArrowManagement(arrow){
             schema.content = getValue(arrow, "content");
 
             schema.attribute = {
-                type : "dynamic",
-                dynamic : buildDynamic.call(this, getAttr(arrow, "attribute"))
+                type: "dynamic",
+                dynamic: buildDynamic.call(this, getAttr(arrow, "attribute"))
             }
 
             schema.ratio = getValue(arrow, "ratio");
