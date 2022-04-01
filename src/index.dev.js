@@ -3,15 +3,18 @@
 // Import CSS
 import './stylesheets.js';
 import '@css/samples/gentleman.css';
-import './../demo/todo/assets/style.css';
+import '@css/samples/projection.css';
+import '@css/samples/style.css';
+// import './../demo/todo/assets/style.css';
 
-import { createDiv, getElements, valOrDefault, isNullOrUndefined, isHTMLElement, hasOwn, getElement, isFunction } from "zenkai";
-import { Editor } from './environment/index.js';
-import { resolveContainer } from './utils/index.js';
-import { buildProjectionHandler, buildConceptHandler } from '@generator/index.js';
+import { createDiv, getElements, isNullOrUndefined, isHTMLElement, hasOwn } from "zenkai";
+import { NotificationType, resolveContainer } from '@utils/index.js';
+import { buildProjectionHandler, buildProjection, buildConceptHandler } from '@generator/index.js';
+import { createProjectionModel } from '@projection/projection-model.js';
+import { ConceptModelManager } from '@model/model-manager.js';
+import { Editor } from '@editor/index.js';
 
 const Model = {
-    DD: "druide",
     MC: "concept",
     MP: "projection",
     MS: "style",
@@ -19,27 +22,23 @@ const Model = {
     RL: "relis",
     TL: "trafficlight",
     TD: "todo",
+    PP: `people`
 };
 
-const modelName = Model.TD;
+const modelName = Model.MP;
 
 const MODEL__EDITOR = require(`@models/${modelName}-model/config.json`);
 const MODEL__CONCEPT = require(`@models/${modelName}-model/concept.json`);
 const MODEL__PROJECTION = require(`@models/${modelName}-model/projection.json`);
 
-const MODEL__TEST = require(`./../.internal/projection-model-test.json`);
-
 const STYLE_CONCEPT = require(`@models/${Model.MS}-model/concept.json`);
 const STYLE_PROJECTION = require(`@models/${Model.MS}-model/projection.json`);
-
-const DRUIDE_CONCEPT = require(`@models/${Model.DD}-model/concept.json`);
-const DRUIDE_PROJECTION = require(`@models/${Model.DD}-model/projection.json`);
 
 const ENV_EDITOR = "editor";
 
 const isValid = (element) => isHTMLElement(element) && hasOwn(element.dataset, 'gentleman');
 
-const isEditor = (element) => isValid(element); // TODO - add this: && element.dataset.gentleman === "editor"
+const isEditor = (element) => isValid(element) && element.dataset.gentleman === ENV_EDITOR;
 
 /**
  * Activates the `editor` found in the container (optional)
@@ -48,22 +47,12 @@ const isEditor = (element) => isValid(element); // TODO - add this: && element.d
  */
 function activateEditor(_container) {
     const container = resolveContainer(_container);
-    const containers = isEditor(container) ? [container] : getElements("[data-gentleman]", container);
+    const containers = isEditor(container) ? [container] : getElements(`[data-gentleman="${ENV_EDITOR}"]`, container);
 
     const editors = [];
 
     containers.forEach(container => {
-        let env = valOrDefault(container.dataset["gentleman"], ENV_EDITOR);
-
-        switch (env) {
-            case ENV_EDITOR:
-                editors.push(createEditor(container));
-                break;
-
-            default:
-                console.warn(`Gentleman does not support this environment ${env}`);
-                break;
-        }
+        editors.push(createEditor(container));
     });
 
     return editors;
@@ -143,6 +132,28 @@ const MODEL__HANDLER = {
 
         window.addInstance(instance);
     },
+    "open-layout": function (args) {
+        let concept = args[0];
+        let projection = this.createProjection(concept, "layout");
+
+        let window = this.findWindow("side-instance");
+        if (isNullOrUndefined(window)) {
+            window = this.createWindow("side-instance");
+            window.container.classList.add("model-projection-sideview");
+        }
+
+        if (window.instances.size > 0) {
+            let instance = Array.from(window.instances)[0];
+            instance.delete();
+        }
+
+        let instance = this.createInstance(concept, projection, {
+            type: "projection",
+            close: "DELETE-PROJECTION"
+        });
+
+        window.addInstance(instance);
+    },
     "open-option": function (args) {
         let concept = args[0];
         let projection = this.createProjection(concept, "option");
@@ -165,35 +176,180 @@ const MODEL__HANDLER = {
 
         window.addInstance(instance);
     },
+    "open-constraint": function (args) {
+        let concept = args[0];
+        let projection = this.createProjection(concept, "constraint");
+
+        let window = this.findWindow("side-instance");
+        if (isNullOrUndefined(window)) {
+            window = this.createWindow("side-instance");
+            window.container.classList.add("concept-constraint-sideview");
+        }
+
+        if (window.instances.size > 0) {
+            let instance = Array.from(window.instances)[0];
+            instance.delete();
+        }
+
+        let attr = concept.getParent("attribute");
+        let name = attr.getAttribute("name");
+        let title = name.hasValue() ? `Context: «${name.getValue()}» attribute` : `Context: attribute`;
+
+        let instance = this.createInstance(concept, projection, {
+            type: "projection",
+            close: "DELETE-PROJECTION",
+            title: title
+        });
+
+        window.addInstance(instance);
+    },
+    "edit-projection": function (args) {
+        let concept = args[0];
+        let projection = this.createProjection(concept, "edit");
+
+        let window = this.findWindow("side-instance");
+        if (isNullOrUndefined(window)) {
+            window = this.createWindow("side-instance");
+            window.container.classList.add("td-option-sideview");
+        }
+
+        if (window.instances.size > 0) {
+            let instance = Array.from(window.instances)[0];
+            instance.delete();
+        }
+
+        let instance = this.createInstance(concept, projection, {
+            type: "projection",
+            close: "DELETE-PROJECTION"
+        });
+
+        window.addInstance(instance);
+    },
+    "preview-projection": function (args) {
+        let concept = args[0];
+        let { success, message: projectionSchema } = buildProjection.call(this, concept);
+        if (!success) {
+            this.notify("The projection contains some error.", NotificationType.ERROR, 3000);
+            return;
+        }
+
+        let cname = projectionSchema.concept.name;
+        let conceptSchema = createConceptSchema(projectionSchema);
+
+        let cmodel = ConceptModelManager.createModel([conceptSchema], this).init();
+        let pmodel = createProjectionModel({ "projection": [projectionSchema] }, this).init();
+
+        let window = this.findWindow("preview-window");
+        if (isNullOrUndefined(window)) {
+            window = this.createWindow("preview-window");
+            window.container.classList.add("preview-window");
+        }
+
+        let fakeconcept = cmodel.createConcept(cname);
+        let projection = pmodel.createProjection(fakeconcept).init();
+        let instance = this.createInstance(fakeconcept, projection, {
+            type: "projection",
+            close: "DELETE-PROJECTION",
+            title: `Preview (${cname} concept)`
+        });
+
+        concept.watch("value.changed", updatePreview.bind(this, instance));
+
+        window.addInstance(instance);
+    },
+
+    "export.model": function () { this.export(); },
+    "open.menu": function () { this.home.open(); },
+    "close.editor": function () { this.close(); },
+    "build-concept": function (args) { buildConceptHandler.call(this); },
+    "build-projection": function (args) { buildProjectionHandler.call(this); },
 };
 
+function createConceptSchema(pSchema) {
+    let cname = pSchema.concept.name;
+    let attributes = getAttributeFromContainer(pSchema.container);
+
+    return {
+        "name": cname,
+        "nature": "concrete",
+        "attributes": attributes
+    };
+}
+
+function getAttributeFromContainer(container) {
+    let attributes = [];
+
+    container.content.forEach(c => {
+        if (c.type === "field") {
+            if (c.field.type === "text") {
+                attributes.push({ "name": c.field.source, "target": { "name": "string" } });
+            } else if (c.field.type === "binary") {
+                attributes.push({ "name": c.field.source, "target": { "name": "boolean" } });
+            } else if (c.field.type === "choice") {
+                attributes.push({ "name": c.field.source, "target": { "name": "string" } });
+            } else if (c.field.type === "list") {
+                attributes.push({ "name": c.field.source, "target": { "name": "set", "accept": { name: "string" } } });
+            }
+        } else if (c.type === "dynamic") {
+            attributes.push({ "name": c.dynamic.name, "target": { "name": "string" } });
+        } else if (c.type === "layout") {
+            attributes.push(...getAttributeFromContainer(c.layout));
+        } else if (c.type === "container") {
+            attributes.push(...getAttributeFromContainer(c.container));
+        }
+    });
+
+    return attributes;
+}
+
+function updatePreview(instance, value, concept) {
+    let { success, message: projectionSchema } = buildProjection.call(this, concept);
+    if (!success) {
+        this.notify("The projection contains some error.", NotificationType.ERROR, 3000);
+        return;
+    }
+
+    let cname = projectionSchema.concept.name;
+    let conceptSchema = createConceptSchema(projectionSchema);
+
+    let cmodel = ConceptModelManager.createModel([conceptSchema], this).init();
+    let pmodel = createProjectionModel({ "projection": [projectionSchema] }, this).init();
+
+    if (instance.concept) {
+        instance.concept.delete(true);
+    }
+
+    if (instance.projection) {
+        instance.projection.delete();
+    }
+
+    instance.concept = cmodel.createConcept(cname);
+    instance.projection = pmodel.createProjection(instance.concept).init();
+    instance.render();
+}
+
 editor.init({
-    conceptModel: MODEL__CONCEPT,
-    projectionModel: MODEL__PROJECTION,
     config: MODEL__EDITOR,
     handlers: MODEL__HANDLER
 });
+editor.home.close();
+
+editor.loadConcept(MODEL__CONCEPT, `${modelName} concept`);
+editor.loadProjection(MODEL__PROJECTION, `${modelName} projection`);
 
 if (modelName === Model.MP) {
-    editor.addConcept(STYLE_CONCEPT);
-    editor.addProjection(STYLE_PROJECTION);
+    editor.loadConcept(STYLE_CONCEPT, "styling concept");
+    editor.loadProjection(STYLE_PROJECTION, "styling projection");
+
+    let window = editor.findWindow("side-instance");
+    if (isNullOrUndefined(window)) {
+        window = editor.createWindow("side-instance");
+        window.container.classList.add("model-projection-sideview");
+    }
+
+    editor.createInstance("projection");
 }
 
 if (modelName === Model.RL) {
     editor.createInstance("project");
 }
-
-const Build = {
-    "concept": buildConceptHandler,
-    "projection": buildProjectionHandler,
-};
-
-let btnBuild = getElement("#btnBuild");
-
-let handler = Build[modelName];
-
-btnBuild.disabled = !isFunction(handler);
-
-btnBuild.addEventListener("click", (event) => {
-    handler.call(editor);
-});

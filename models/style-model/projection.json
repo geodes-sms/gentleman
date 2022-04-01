@@ -1,4 +1,5 @@
 {
+    "type": "projection",
     "projection": [
         {
             "concept": { "name": "style" },
@@ -181,87 +182,6 @@
             }
         },
         {
-            "concept": { "name": "arrow-style" },
-            "tags":[],
-            "type": "layout",
-            "content":{
-                "type": "flex",
-                "orientation": "column",
-                "disposition":[
-                    {
-                        "type": "static",
-                        "static":{
-                            "type": "text",
-                            "content": "Stroke",
-                            "style":{
-                                "css": ["mp-style__title"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "layout",
-                        "layout":{
-                            "type": "flex",
-                            "orientation": "column",
-                            "disposition":[
-                                {
-                                    "type": "attribute",
-                                    "name": "stroke"
-                                },
-                                {
-                                    "type": "attribute",
-                                    "name": "stroke-width",
-                                    "tag": "textual--labelled"
-                                },
-                                {
-                                    "type": "attribute",
-                                    "name": "stroke-dasharray",
-                                    "tag": "label-string"
-                                },
-                                {
-                                    "type": "attribute",
-                                    "name": "stroke-linecap",
-                                    "tag": "label-string"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "type": "static",
-                        "static":{
-                            "type": "text",
-                            "content": "Marker",
-                            "style":{
-                                "css": ["mp-style__title"]
-                            }
-                        }
-                    },
-                    {
-                        "type": "layout",
-                        "layout":{
-                            "type": "flex",
-                            "orientation": "column",
-                            "disposition":[
-                                {
-                                    "type": "attribute",
-                                    "name": "marker-start",
-                                    "tag": "switch-field"
-                                },
-                                {
-                                    "type": "attribute",
-                                    "name": "marker-end",
-                                    "tag": "switch-field"
-                                }
-                            ]
-                        }
-                    }
-                ],
-                "style": {
-                    "css": ["box-style"]
-                }
-            }
-        },
-        {
             "concept": { "name": "box-style" },
             "tags": [],
             "type": "layout",
@@ -360,138 +280,12 @@
                         "style": {
                             "css": ["box-style-rule"]
                         }
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "shadow",
-                        "required": true,
-                        "style": {
-                            "css": ["box-style-rule"]
-                        }
                     }
                 ],
                 "style": {
                     "css": ["box-style"]
                 }
             }
-        },
-
-
-        {
-            "type":"template",
-            "name": "spacing-content",
-            "content": [
-                {
-                    "type": "layout",
-                    "layout": {
-                        "type": "flex",
-                        "orientation": "row",
-                        "disposition": [
-                            {
-                                "type": "layout",
-                                "layout": {
-                                    "type": "flex",
-                                    "orientation": "column",
-                                    "disposition": [
-                                        {
-                                            "type": "static",
-                                            "static":  {
-                                                "type": "text",
-                                                "content": "Top",
-                                                "style": {
-                                                    "css": ["label", "label--small"]
-                                                }
-                                            }
-                                        },
-                                        {
-                                            "type": "attribute",
-                                            "name": "top"
-                                        }
-                                    ],
-                                    "style": {
-                                        "ref": ["box-right"]
-                                    }
-                                }
-                            },
-                            {
-                                "type": "layout",
-                                "layout": {
-                                    "type": "flex",
-                                    "orientation": "column",
-                                    "disposition": [
-                                        {
-                                            "type": "static",
-                                            "static":  {
-                                                "type": "text",
-                                                "content": "Right",
-                                                "style": {
-                                                    "css": ["label", "label--small"]
-                                                }
-                                            }
-                                        },
-                                        {
-                                            "type": "attribute",
-                                            "name": "right"
-                                        }
-                                    ],
-                                    "style": {
-                                        "ref": ["box-right"]
-                                    }
-                                }
-                            },
-                            {
-                                "type": "layout",
-                                "layout": {
-                                    "type": "flex",
-                                    "orientation": "column",
-                                    "disposition": [
-                                        {
-                                            "type": "static",
-                                            "static":  {
-                                                "type": "text",
-                                                "content": "Bottom",
-                                                "style": {
-                                                    "css": ["label", "label--small"]
-                                                }
-                                            }
-                                        },
-                                        {
-                                            "type": "attribute",
-                                            "name": "bottom"
-                                        }
-                                    ],
-                                    "style": {
-                                        "ref": ["box-right"]
-                                    }
-                                }
-                            },
-                            {
-                                "type": "layout",
-                                "layout": {
-                                    "type": "flex",
-                                    "orientation": "column",
-                                    "disposition": [
-                                        {
-                                            "type": "static",
-                                            "static":  {
-                                                "type": "text",
-                                                "content": "Left",
-                                                "style": {
-                                                    "css": ["label", "label--small"]
-                                                }
-                                            }
-                                        },
-                                        {
-                                            "type": "attribute",
-                                            "name": "left"
-                                        }
-                                    ]
-                                }
-                            }
-                        ]
-                    }
-                }
-            ]
         },
         {
             "concept": { "name": "spacing" },
@@ -1061,8 +855,6 @@
         },
 
         
-        
-        
         {
             "concept": { "name": "color" },
             "tags": [],
@@ -1267,9 +1059,6 @@
                 }
             }
         },
-
-
-
 
         {
             "concept": { "name": "set" },
@@ -1490,7 +1279,6 @@
                 }
             }
         },
-
 
         {
             "concept": { "name": "boolean" },
@@ -1895,6 +1683,124 @@
                     "css": ["tag-reference"]
                 }
             }
+        }
+    ],
+    "template": [ 
+        {
+            "type":"template",
+            "name": "spacing-content",
+            "content": [
+                {
+                    "type": "layout",
+                    "layout": {
+                        "type": "flex",
+                        "orientation": "row",
+                        "disposition": [
+                            {
+                                "type": "layout",
+                                "layout": {
+                                    "type": "flex",
+                                    "orientation": "column",
+                                    "disposition": [
+                                        {
+                                            "type": "static",
+                                            "static":  {
+                                                "type": "text",
+                                                "content": "Top",
+                                                "style": {
+                                                    "css": ["label", "label--small"]
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "type": "attribute",
+                                            "name": "top"
+                                        }
+                                    ],
+                                    "style": {
+                                        "ref": ["box-right"]
+                                    }
+                                }
+                            },
+                            {
+                                "type": "layout",
+                                "layout": {
+                                    "type": "flex",
+                                    "orientation": "column",
+                                    "disposition": [
+                                        {
+                                            "type": "static",
+                                            "static":  {
+                                                "type": "text",
+                                                "content": "Right",
+                                                "style": {
+                                                    "css": ["label", "label--small"]
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "type": "attribute",
+                                            "name": "right"
+                                        }
+                                    ],
+                                    "style": {
+                                        "ref": ["box-right"]
+                                    }
+                                }
+                            },
+                            {
+                                "type": "layout",
+                                "layout": {
+                                    "type": "flex",
+                                    "orientation": "column",
+                                    "disposition": [
+                                        {
+                                            "type": "static",
+                                            "static":  {
+                                                "type": "text",
+                                                "content": "Bottom",
+                                                "style": {
+                                                    "css": ["label", "label--small"]
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "type": "attribute",
+                                            "name": "bottom"
+                                        }
+                                    ],
+                                    "style": {
+                                        "ref": ["box-right"]
+                                    }
+                                }
+                            },
+                            {
+                                "type": "layout",
+                                "layout": {
+                                    "type": "flex",
+                                    "orientation": "column",
+                                    "disposition": [
+                                        {
+                                            "type": "static",
+                                            "static":  {
+                                                "type": "text",
+                                                "content": "Left",
+                                                "style": {
+                                                    "css": ["label", "label--small"]
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "type": "attribute",
+                                            "name": "left"
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
         }
     ]
 }

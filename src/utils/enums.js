@@ -4,6 +4,15 @@ export const Environment = {
     TEST: 'test'
 };
 
+export const Primitive = {
+    STRING: "string",
+    NUMBER: "number",
+    BOOLEAN: "boolean",
+    REFERENCE: "reference",
+    SET: "set",
+    list() { return [this.STRING, this.NUMBER, this.BOOLEAN, this.REFERENCE, this.SET]; }
+};
+
 /**
  * Enum for event type values.
  * @readonly
@@ -58,10 +67,6 @@ export const LogType = {
     ERROR: "error"
 };
 
-export const EditorMode = {
-    MODEL: "model",
-    DESIGN: "design"
-};
 
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 export const DocumentType = {
@@ -107,3 +112,15 @@ export const DocumentType = {
     }
 };
 
+export const DocTypeMap = {
+    "audio/aac": "aac",
+    "application/octet-stream": "bin",
+    "image/jpeg": "jpeg",
+    "application/json": "json",
+    "audio/mpeg": "mp3",
+    "application/pdf": "pdf",
+    "image/svg+xml": "svg",
+    "text/plain": "txt",
+    "text/xml": "xml",
+    "application/zip": "zip"
+};

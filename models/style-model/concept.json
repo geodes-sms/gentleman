@@ -3,6 +3,7 @@
         {
             "name": "style",
             "nature": "concrete",
+            "root": true,
             "attributes": [
                 {
                     "name": "css",
@@ -109,58 +110,6 @@
                         "name": "size"
                     },
                     "required": false
-                }
-            ]
-        },
-        {
-            "name": "arrow-style",
-            "nature": "concrete",
-            "attributes":[
-                {
-                    "name": "stroke",
-                    "target": {
-                        "name": "hex-color"
-                    }
-                },
-                {
-                    "name": "stroke-width",
-                    "target": {
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "stroke-linecap",
-                    "target": {
-                        "name": "string",
-                        "constraint":{
-                            "values": [
-                                "round",
-                                "butt",
-                                "square"
-                            ]
-                        },
-                        "default": "butt"
-                    }
-                },
-                {
-                    "name": "stroke-dasharray",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "marker-end",
-                    "target":{
-                        "name": "boolean",
-                        "default": false
-                    }
-                },
-                {
-                    "name": "marker-start",
-                    "target":{
-                        "name": "boolean",
-                        "default": false
-                    }
                 }
             ]
         },

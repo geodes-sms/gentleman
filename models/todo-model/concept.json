@@ -1,9 +1,11 @@
 {
+    "type": "concept",
     "concept": [
         {
             "id": "11g5bwb5-451d-344f-80d0-1e2138a59ec9",
             "name": "todolist",
             "nature": "concrete",
+            "root": true,
             "attributes": [
                 {
                     "name": "title",
@@ -152,6 +154,7 @@
             "name": "single-task",
             "nature": "concrete",
             "prototype": "task",
+            "root": false,
             "attributes": []
         },
         {
@@ -159,6 +162,7 @@
             "name": "recurring-task",
             "nature": "concrete",
             "prototype": "task",
+            "root": false,
             "attributes": [
                 {
                     "name": "start",
@@ -199,7 +203,8 @@
             "base": "string",
             "constraint": {
                 "values": ["P1", "P2", "P3", "P4"]
-            }
+            },
+            "attributes": []
         },
         {
             "name": "tag-name",
@@ -221,7 +226,8 @@
                         "value": "^\\w+(-\\w+)*$"
                     }
                 }
-            }
+            },
+            "attributes": []
         },
         {
             "id": "c6pa3963-713e-2e2f-9fb3-263707d2b6p6",
@@ -237,7 +243,8 @@
                         "value": "^([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))$"
                     }
                 }
-            }
+            },
+            "attributes": []
         }
     ]
 }

@@ -7,3 +7,4 @@ import '@css/app/field.css';
 import '@css/app/editor.css';
 import '@css/app/editor-home.css';
 import '@css/app/editor-header.css';
+import '@css/app/editor-template.css';

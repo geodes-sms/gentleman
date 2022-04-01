@@ -139,6 +139,7 @@ This distribution contains the following files and folders:
 - dist: the distributed library
 - docs: the app documentation
 - assets: contains static files for library and app
+- contributor : Aurélien DUCOIN
 
 # License ©️
 

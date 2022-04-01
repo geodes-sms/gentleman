@@ -12,13 +12,24 @@ const sources = [
     './assets/css/app/editor.css',
     './assets/css/app/editor-home.css',
     './assets/css/app/editor-header.css',
+    './assets/css/app/editor-template.css',
 ];
 
+const samples = [
+    './assets/css/samples/gentleman.css',
+    './assets/css/samples/projection.css',
+    './assets/css/samples/style.css',
+];
 
 const bundle = new CleanCSS({
     sourceMap: true,
     rebaseTo: `./dist/style.min.css`
 }).minify(sources);
+
+const appBundle = new CleanCSS({
+    sourceMap: true,
+    rebaseTo: `./dist/app.min.css`
+}).minify(samples);
 
 // log bundle result
 outputFeedback(bundle.errors, true);
@@ -32,6 +43,8 @@ outputFeedback(bundle.warnings);
 // write bundle file
 output({ path: `./dist/style.min.css` }, bundle.styles);
 output({ path: `./dist/style.min.map` }, bundle.sourceMap.toString());
+output({ path: `./dist/app.min.css` }, appBundle.styles);
+output({ path: `./dist/app.min.map` }, appBundle.sourceMap.toString());
 
 function outputFeedback(messages, isError) {
     var prefix = isError ? '\x1B[31mERROR\x1B[39m:' : 'WARNING:';

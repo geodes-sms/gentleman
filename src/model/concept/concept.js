@@ -1,4 +1,4 @@
-import { isString, valOrDefault, hasOwn, isNullOrUndefined, isObject, isNullOrWhitespace, toBoolean, isEmpty } from "zenkai";
+import { isString, valOrDefault, hasOwn, isNullOrUndefined, isObject, isNullOrWhitespace, toBoolean, isEmpty, isFunction } from "zenkai";
 import { AttributeHandler, ObserverHandler } from "@structure/index.js";
 
 
@@ -35,6 +35,8 @@ const _Concept = {
     action: null,
     /** Concept shadow list */
     shadows: null,
+    /** @type {Map<string,[]>} */
+    watchers: null,
 
     kind: "concept",
 
@@ -42,6 +44,7 @@ const _Concept = {
         this.accept = args.accept;
         this.parent = args.parent;
         this.ref = args.ref;
+        // console.log(args);
         this.properties = valOrDefault(this.schema.properties, []);
         if (Array.isArray(args.properties)) {
             this.properties.push(...args.properties);
@@ -50,6 +53,7 @@ const _Concept = {
         this.values = valOrDefault(args.values, valOrDefault(this.schema.values, []));
         this.src = valOrDefault(this.schema.src, []);
         this.constraint = this.schema.constraint;
+        this.watchers = new Map();
         this.errors = [];
 
 
@@ -313,7 +317,57 @@ const _Concept = {
         return descendants;
     },
 
+    propagate(message, value, concept) {
+        if (this.watchers.has(message)) {
+            this.signal(message, value, concept);
+        }
+
+        if (this.hasParent()) {
+            this.getParent().propagate(message, value, concept);
+        }
+    },
+    watch(message, watcher) {
+        if (!this.watchers.has(message)) {
+            this.watchers.set(message, []);
+        }
+
+        this.watchers.get(message).push(watcher);
+    },
+    signal(message, value, concept) {
+        if (!this.watchers.has(message)) {
+            return;
+        }
+
+        this.watchers.get(message).forEach(w => w(value, this));
+    },
+    unwatch(message, watcher) {
+        if (isNullOrUndefined(message) || !this.watchers.has(message)) {
+            return false;
+        }
+
+        if (!isFunction(watcher)) {
+            this.watchers.delete(message);
+
+            return true;
+        }
+
+        let index = this.watchers.get(message).findIndex(w => w === watcher);
+
+        if (index === -1) {
+            return false;
+        }
+
+        this.watchers.splice(index, 1);
+
+        return true;
+    },
+    done() {
+        this.unregisterAll();
+        this.watchers.clear();
+    },
+
     delete(force = false) {
+        // console.trace("deleting");
         if (!force) {
             const { object } = this.ref;
 

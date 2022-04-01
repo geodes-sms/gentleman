@@ -49,7 +49,8 @@ const _SetConcept = {
         this.accept = this.schema.accept;
         this.ordered = valOrDefault(this.schema.ordered, true);
         this.constraint = this.schema.constraint;
-
+        this.watchers = new Map();
+        
         this.value = [];
 
         this.initObserver();
@@ -140,7 +141,6 @@ const _SetConcept = {
         if (!Array.isArray(value)) {
             if (this.isValidElement(value)) {
                 this.createElement(value);
-                this.notify("value.changed", value);
             }
 
             return;
@@ -151,8 +151,6 @@ const _SetConcept = {
         for (let i = 0; i < value.length; i++) {
             this.createElement(value[i]);
         }
-
-        this.notify("value.changed", value);
     },
     restore(state) {
         const { value } = state;
@@ -202,6 +200,7 @@ const _SetConcept = {
 
         this.validate();
         this.notify("value.added", element);
+        this.propagate("value.changed", element, this);
 
         return true;
     },
@@ -220,6 +219,7 @@ const _SetConcept = {
 
         this.validate();
         this.notify("value.added", element);
+        this.propagate("value.changed", element, this);
 
         return this;
     },
@@ -249,7 +249,7 @@ const _SetConcept = {
         return this;
     },
     removeElement(element) {
-        let index = this.value.indexOf(element.id);
+        let index = valOrDefault(element.index, this.value.indexOf(element.id));
 
         if (index === -1) {
             return false;
@@ -279,6 +279,7 @@ const _SetConcept = {
 
         this.validate();
         this.notify("value.removed", concept);
+        this.propagate("value.changed", concept, this);
 
         return {
             message: `The element '${concept.name}' was successfully removed.`,
@@ -293,6 +294,7 @@ const _SetConcept = {
         this.value = [];
 
         this.notify("value.changed", this.value);
+        this.propagate("value.changed", this.value, this);
 
         return this;
     },

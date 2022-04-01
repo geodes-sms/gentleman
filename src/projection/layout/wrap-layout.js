@@ -49,44 +49,10 @@ export const BaseWrapLayout = {
             });
         }
 
-        if (isNullOrUndefined(this.informations)){
-            this.informations = new Map();
-        }
-
         for (let i = 0; i < disposition.length; i++) {
             let render = ContentHandler.call(this, disposition[i], this.source, this.args);
-            
-            let current = disposition[i];
 
             let element = this.environment.resolveElement(render);
-
-            if(current.type === "dynamic" && current.dynamic.type === "attribute"){
-                switch(element.object){
-                    case "field":
-                        this.informations.set(current.dynamic.name, element);
-                        break;
-                    case "layout":
-                        element.informations.forEach((value, key) => {
-                            this.informations.set(key, value);
-                        })
-                        break;
-                }
-                if(!isNullOrUndefined(this.informations.get("undefined"))){
-                    this.informations.set(current.dynamic.name, this.informations.get("undefined"));
-                    this.informations.delete("undefined");
-                }
-            }
-
-            if(current.type ==="field"){
-                this.informations.set("undefined", element);
-            }
-
-            if(current.type === "layout"){
-                element.informations.forEach((value, key) => {
-                    this.informations.set(key, value);
-                });
-            }
-
             if (element) {
                 element.parent = this;
             }

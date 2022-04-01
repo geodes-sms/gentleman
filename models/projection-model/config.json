@@ -1,14 +1,17 @@
 {
-    "name": "Gentleman projection",
-    "concepts": [
+    "toolbar": [
         {
-            "name": "projection-set"
+            "type": "button",
+            "name": "button-build",
+            "action": "build-projection",
+            "class": ["btn", "app-editor-header__button", "editor-toolbar__button--build"],
+            "content": "Build"
         },
         {
-            "name": "projection"
-        },
-        {
-            "name": "template"
-        }
+            "type": "button",
+            "name": "button-export",
+            "action": "export.model",
+            "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--save"]
+        }       
     ]
 }

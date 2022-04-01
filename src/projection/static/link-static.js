@@ -1,5 +1,5 @@
 import {
-    createDocFragment, createAnchor, removeChildren, isHTMLElement,
+    createDocFragment, createAnchor, removeChildren, isHTMLElement, htmlToElement,
     valOrDefault, isNullOrUndefined, isFunction, isEmpty, isNullOrWhitespace,
 } from "zenkai";
 import { hide, show } from "@utils/index.js";
@@ -14,18 +14,52 @@ const URLHandler = {
     "link": (url) => `${url}`,
 };
 
-/**
- * Resolves the URL
- * @param {string} url 
- */
-function resolveURL(url) {
-    if (url.startsWith("http://")) {
-        return new URL(url).href;
-    } else if (url.startsWith("https://")) {
-        return new URL(url).href;
+
+function resolveParam(tpl, name) {
+    let param = tpl.param.find(p => p.name === name);
+    
+    if (isNullOrUndefined(param)) {
+        return undefined;
     }
 
-    return resolveURL(`https://${url}`);
+    const { type = "string", value } = param;
+
+    let pValue = valOrDefault(value, param.default);
+
+    if (isNullOrUndefined(pValue)) {
+        return null;
+    }
+
+    if (type === "string") {
+        return pValue.toString();
+    }
+
+    if (type === "number") {
+        return +pValue;
+    }
+}
+
+function resolveValue(content) {
+    if (isNullOrUndefined(content)) {
+        return "";
+    }
+
+    const { type } = content;
+
+    if (type === "property") {
+        this.hasProperty = true;
+        return valOrDefault(this.source.getProperty(content.name), "");
+    }
+
+    if (type === "param") {
+        return resolveParam.call(this, this.schema.template, content.name);
+    }
+
+    if (type === "raw") {
+        return htmlToElement(content.raw);
+    }
+
+    return content;
 }
 
 
@@ -36,45 +70,39 @@ const BaseLinkStatic = {
     urlType: null,
     /** @type {string} */
     href: null,
+    /** @type {Function} */
+    hrefHandler: null,
     /** @type {*[]} */
     content: null,
 
     init() {
-        const { url, content = [], urlType = "link" } = this.schema;
+        const { content = [], urlType = "link" } = this.schema;
 
-        this.url = resolveURL(url);
         this.content = content;
         this.urlType = urlType;
         this.children = [];
+        this.hrefHandler = URLHandler[this.urlType];
 
-        const hrefHandler = URLHandler[this.urlType];
-        if (!isFunction(hrefHandler)) {
+        if (!isFunction(this.hrefHandler)) {
             throw new TypeError("type not handled");
         }
-
-        this.href = hrefHandler(this.url);
 
         return this;
     },
 
     render() {
-        if (isNullOrWhitespace(this.url)) {
-            throw new Error("There is no URL defined for this link");
-        }
-
-        if (isEmpty(this.content)) {
-            throw new Error("There is no content defined for this link");
-        }
+        let bind = false;
 
         const fragment = createDocFragment();
 
-        const { help, style } = this.schema;
+        const { help, style, url } = this.schema;
+
+        this.href = this.hrefHandler(resolveValue.call(this, url));
 
         if (!isHTMLElement(this.element)) {
             this.element = createAnchor({
                 class: ["static", "link"],
                 href: this.href,
-                target: "_blank",
                 dataset: {
                     nature: "static",
                     static: "link",
@@ -82,7 +110,14 @@ const BaseLinkStatic = {
                     ignore: "all",
                 }
             });
+
+            if(this.urlType === "link") {
+                this.element.target = "_blank";
+            }
+
+            bind = true;
         }
+
 
         this.content.forEach(element => {
             let content = ContentHandler.call(this, element, this.projection.concept, { focusable: false });
@@ -98,6 +133,10 @@ const BaseLinkStatic = {
 
         if (fragment.hasChildNodes()) {
             this.element.append(fragment);
+        }
+
+        if (bind) {
+            this.bindEvents();
         }
 
         this.refresh();
@@ -127,6 +166,33 @@ const BaseLinkStatic = {
     },
     refresh() {
         return this;
+    },
+
+    update() {
+        const { url } = this.schema;
+        this.element.href = this.hrefHandler(resolveValue.call(this, url));
+
+        removeChildren(this.element);
+
+        this.content.forEach(element => {
+            this.element.append(ContentHandler.call(this, element, this.projection.concept, { focusable: false }));
+        });
+
+        return this;
+    },
+
+    bindEvents() {
+        if (this.hasProperty) {
+            this.projection.registerHandler("value.changed", (value) => {
+                this.update();
+            });
+            this.projection.registerHandler("value.added", (value) => {
+                this.update();
+            });
+            this.projection.registerHandler("value.removed", (value) => {
+                this.update();
+            });
+        }
     },
 };
 

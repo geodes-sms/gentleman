@@ -1,0 +1,551 @@
+{
+    "projection": [
+        {
+            "concept": { "prototype": "organization" },
+            "tags": ["edit-view"],
+            "container": {
+                "content": [
+                    {
+                        "type": "attribute",
+                        "name": "name",
+                        "tag": "textbox-label"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "description",
+                        "tag": "textarea-label",
+                        "style": {
+                            "ref": ["box-top"]
+                        }
+                    },
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "type": "attribute",
+                                "name": "email",
+                                "tag": "textbox-label",
+                                "required": true
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "phone",
+                                "tag": "textbox-label",
+                                "required": true
+                            }      
+                        ],
+                        "layout": { "type": "flex", "orientation": "row", "wrappable": false }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "address",
+                        "required": true
+                    },
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "kind": "static",
+                                "type": "text",
+                                "content": "Areas of research",
+                                "style": {
+                                    "css": ["pp-title"]
+                                }
+                            },
+                            {
+                                "kind": "static",
+                                "type": "button",
+                                "name": "add-area",
+                                "action": {
+                                    "type": "CREATE",
+                                    "target": {
+                                        "type": "attribute",
+                                        "name": "areas"
+                                    }
+                                },
+                                "help": "Add an area",
+                                "content": [
+                                    {
+                                        "kind": "static",
+                                        "type": "text",
+                                        "content": "+",
+                                        "style": {
+                                            "css": ["pp__btn-add-icon"]
+                                        }
+                                    },
+                                    {
+                                        "kind": "static",
+                                        "type": "text",
+                                        "content": "New",
+                                        "style": {
+                                            "css": ["pp__btn-add-text"]
+                                        }
+                                    }
+                                ],
+                                "style": {
+                                    "css": ["btn", "pp__btn-add"],
+                                    "ref": ["box-left"]
+                                }
+                            }
+                        ],
+                        "layout": { "type": "flex", "orientation": "row" },
+                        "style": {
+                            "css": ["pp-wrap"],
+                            "ref": ["box-top"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "areas",
+                        "style": {
+                            "css": ["areas"],
+                            "ref": ["box-top"]
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column", "wrappable": false },
+                "style": {
+                    "css": ["pp-organization"]
+                },
+                "focusable": true
+            }
+        },
+        {
+            "concept": { "name": "address" },
+            "tags": ["edit-view"],
+            "container": {
+                "content": [
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "type": "attribute",
+                                "name": "street-address",
+                                "tag": "textbox-label"
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "locality",
+                                "tag": "textbox-label",
+                                "style": {
+                                    "ref": ["box-left"]
+                                }
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "region",
+                                "tag": "textbox-label",
+                                "style": {
+                                    "ref": ["box-left"]
+                                }
+                            }
+                        ],
+                        "layout": { "type": "flex", "orientation": "row", "wrappable": false },
+                        "style": {
+                            "css": ["pp-fieldgroup"]
+                        }
+                    },                
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "type": "attribute",
+                                "name": "postal-code",
+                                "tag": "textbox-label"
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "country",
+                                "tag": "textbox-label"
+                            }
+                        ],
+                        "layout": { "type": "flex", "orientation": "row", "wrappable": false },
+                        "style": {
+                            "css": ["pp-fieldgroup"]
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" },
+                "style": {
+                    "css": ["pp-person", "pp-person--edit"]
+                },
+                "focusable": true
+            }
+        },
+        {
+            "concept": { "name": "area" },
+            "tags": ["edit-view"],
+            "container": {
+                "content": [             
+                    {
+                        "type": "attribute",
+                        "name": "title",
+                        "tag": "textbox",
+                        "style": {
+                            "ref": ["box-top"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "description",
+                        "tag": "textarea",
+                        "required": true,
+                        "style": {
+                            "ref": ["box-top"]
+                        }
+                    },
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "kind": "static",
+                                "type": "text",
+                                "content": "Tags",
+                                "style": {
+                                    "css": ["pp-title"]
+                                }
+                            },
+                            {
+                                "kind": "static",
+                                "type": "button",
+                                "name": "add-taf",
+                                "action": {
+                                    "type": "CREATE",
+                                    "target": {
+                                        "type": "attribute",
+                                        "name": "tags"
+                                    }
+                                },
+                                "help": "Add a tag",
+                                "content": [
+                                    {
+                                        "kind": "static",
+                                        "type": "text",
+                                        "content": "+",
+                                        "style": {
+                                            "css": ["pp__btn-add-icon"]
+                                        }
+                                    },
+                                    {
+                                        "kind": "static",
+                                        "type": "text",
+                                        "content": "New",
+                                        "style": {
+                                            "css": ["pp__btn-add-text"]
+                                        }
+                                    }
+                                ],
+                                "style": {
+                                    "css": ["btn", "pp__btn-add"],
+                                    "ref": ["box-left"]
+                                }
+                            }
+                        ],
+                        "layout": { "type": "flex", "orientation": "row" },
+                        "style": {
+                            "css": ["pp-wrap"],
+                            "ref": ["box-top"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "tags",
+                        "tag": "tags",
+                        "style": {
+                            "ref": ["box-top"]
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" },
+                "style": {
+                    "css": ["pp-person", "pp-person--edit"]
+                },
+                "focusable": true
+            }
+        },
+       
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["tag"],
+            "content": {
+                "type": "text",
+                "resizable": true,
+                "input": {
+                    "type": "text",
+                    "placeholder": "tag",
+                    "style": {
+                        "css": ["pp-tagbox__input"]
+                    }
+                },
+                "style": {
+                    "css": ["pp-tagbox"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["textbox"],
+            "content": {
+                "type": "text",
+                "input": {
+                    "type": "text",
+                    "placeholder": { "type": "property", "name": "label" },
+                    "style": {
+                        "css": ["pp-textbox__input"]
+                    }
+                },
+                "style": {
+                    "css": ["pp-textbox"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["textarea"],
+            "content": {
+                "type": "text",
+                "multiline": true,
+                "input": {
+                    "type": "text",
+                    "placeholder": "Enter a description",
+                    "style": {
+                        "css": ["pp-textarea__input"]
+                    }
+                },
+                "style": {
+                    "css": ["pp-textarea"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "container",
+            "tags": ["textarea-label"],
+            "container": {
+                "content": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": {
+                                "type": "property",
+                                "name": "label"
+                            },
+                            "style": {
+                                "css": ["pp-textarea2__label"]
+                            }
+                        }
+                    }, 
+                    {
+                        "kind": "field",
+                        "type": "text",
+                        "multiline": true,
+                        "input": {
+                            "type": "text",
+                            "placeholder": "Enter a description",
+                            "style": {
+                                "css": ["pp-textarea2__input"]
+                            }
+                        },
+                        "style": {
+                            "css": ["pp-textarea"]
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "row" },
+                "style": {
+                    "css": ["pp-textarea2"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["textbox-label"],
+            "content": {
+                "type": "text",
+                "container": {
+                    "type": "flex",
+                    "orientation": "row",
+                    "content": [
+                        {
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "content": {
+                                    "type": "property",
+                                    "name": "label"
+                                },
+                                "style": {
+                                    "css": ["pp-textbox2__label"]
+                                }
+                            }
+                        }, 
+                        {
+                            "type": "input",
+                            "input": {
+                                "type": "text",
+                                "placeholder": {
+                                    "type": "property",
+                                    "name": "placeholder"
+                                },
+                                "style": {
+                                    "css": ["pp-textbox2__input"]
+                                }
+                            }
+                        }
+                    ],
+                    "style": {
+                        "css": ["pp-textbox2"]
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "static",
+            "tags": ["text"],
+            "content": {
+                "type": "text",
+                "content": { "type": "property", "name": "value" },
+                "style": {
+                    "css": ["pp-text"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "static",
+            "tags": ["email"],
+            "content": {
+                "type": "link",
+                "urlType": "email",
+                "url": { "type": "property", "name": "value" },
+                "content": [{ "type": "property", "name": "value" }],
+                "style": {
+                    "css": ["pp-email"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "static",
+            "tags": ["image"],
+            "content": {
+                "type": "image",
+                "url": { "type": "property", "name": "value" },
+                "style": {
+                    "css": ["pp-image"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "type": "field",
+            "tags": ["members"],
+            "content": {
+                "type": "list",
+                "list": {
+                    "item": {
+                        "template": { "tag": "edit-view" },
+                        "style": {
+                            "css": ["pp-person-set__list-item"]
+                        }
+                    },
+                    "style": {
+                        "css": ["pp-person-set__list"]
+                    }
+                },
+                "action": {
+                    "add": false,
+                    "remove": {
+                        "content": [
+                            {
+                                "kind": "static",
+                                "type": "text",
+                                "content": "✖"
+                            }
+                        ],
+                        "style": {
+                            "css": ["pp-person-set__btn-remove"]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "type": "field",
+            "tags": ["tags"],
+            "content": {
+                "type": "list",
+                "list": {
+                    "item": {
+                        "template": { "tag": "tag" },
+                        "style": {
+                            "css": ["pp-tag-set__list-item"]
+                        }
+                    },
+                    "style": {
+                        "css": ["pp-tag-set__list"]
+                    }
+                },
+                "action": {
+                    "add": false,
+                    "remove": {
+                        "content": [
+                            {
+                                "kind": "static",
+                                "type": "text",
+                                "content": "✖"
+                            }
+                        ],
+                        "style": {
+                            "css": ["pp-tag-set__btn-remove"]
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "template": [],
+    
+    "style": [
+        {
+            "type": "style",
+            "name": "box-top",
+            "style": {
+                "box": {
+                    "outer": {
+                        "top": { "value": 6, "unit": "px" }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "box-right",
+            "style": {
+                "box": {
+                    "outer": {
+                        "right": { "value": 6, "unit": "px" }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "box-left",
+            "style": {
+                "box": {
+                    "outer": {
+                        "left": { "value": 6, "unit": "px" }
+                    }
+                }
+            }
+        }
+    ]
+}

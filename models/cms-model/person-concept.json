@@ -1,0 +1,191 @@
+{
+    "concept": [
+        {
+            "name": "person",
+            "nature": "concrete",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "first-name",
+                    "target": {
+                        "name": "name",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "First name" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "last-name",
+                    "target": {
+                        "name": "name",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Last name" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "email-address",
+                    "target": {
+                        "name": "email",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Email address" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "website",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Website" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "phone-number",
+                    "target": {
+                        "name": "phone",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Phone number" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "position",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Position" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "occupation",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Occupation" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "photo",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Photo URL" }
+                        ]
+                    },
+                    "required": false
+                },
+                {
+                    "name": "address",
+                    "target": {
+                        "name": "address"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "birth-date",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Birthdate" }
+                        ]
+                    },
+                    "required": false
+                },
+                {
+                    "name": "affiliations",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "affiliation"
+                        }
+                    },
+                    "required": false
+                }
+            ],
+            "properties": []
+        },
+
+        {
+            "name": "affiliation",
+            "nature": "concrete",
+            "root": false,
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "role",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                }
+            ],
+            "properties": []
+        },
+
+
+        {
+            "name": "name",
+            "nature": "derivative",
+            "root": false,
+            "base": "string",
+            "constraint": {
+                "length": {
+                    "type": "range",
+                    "range": {
+                        "min": {
+                            "value": 1
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "email",
+            "nature": "derivative",
+            "root": false,
+            "base": "string",
+            "constraint": {
+                "length": {
+                    "type": "range",
+                    "range": {
+                        "min": { "value": 5 },
+                        "max": { "value": 255 }
+                    }
+                }
+            }
+        },
+        {
+            "name": "phone",
+            "nature": "derivative",
+            "root": false,
+            "base": "string",
+            "constraint": {
+                "value": {
+                    "type": "pattern",
+                    "pattern": {
+                        "insensitive": true,
+                        "global": true,
+                        "value": "^\\(?([0-9]{3})\\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"
+                    }
+                }
+            }
+        }
+    ]
+}

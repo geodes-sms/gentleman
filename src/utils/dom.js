@@ -38,7 +38,14 @@ export function isHidden(element) {
  * @param {HTMLElement} element 
  * @returns {boolean}
  */
-export const isInputCapable = (element) => isHTMLElement(element, ["input", "textarea"]) || element.contentEditable === "true";
+export const isInput = (element) => isHTMLElement(element, ["input", "textarea"]);
+
+/**
+ * Verifies whether an element can receive textual input
+ * @param {HTMLElement} element 
+ * @returns {boolean}
+ */
+export const isInputCapable = (element) => isInput(element) || element.contentEditable === "true";
 
 /**
  * Converts a pixel value to a number
@@ -304,7 +311,7 @@ export function getElementLeftSVG(source, container, relative = true) {
         let $vdist = Math.abs(top - top1);
         let $hdist = Math.abs(left - right);
 
-        let $dist = penalty * $vdist + $hdist
+        let $dist = penalty * $vdist + $hdist;
 
         if (left >= (right - 1) && ($dist < dist || (($dist === dist) && ( $vist < vist)))) {
             closest = items[i];

@@ -50,25 +50,11 @@ const BaseProjectionLinkStatic = {
             }
         }
 
-        if(Array.isArray(content)){
-            content.forEach(element => {
-                let content = ContentHandler.call(this, element, this.projection.concept, { focusable: false });
-    
-                fragment.append(content);
-            });
-        }else{
-            const text = {
-                type : "static",
-                static : {
-                    type : "text",
-                    content : content
-                }
-            }
-    
-            let stat = ContentHandler.call(this, text, this.projection.concept, { focusable: false });
-            
-            fragment.append(stat);
-        }
+        content.forEach(element => {
+            let content = ContentHandler.call(this, element, this.projection.concept, { focusable: false });
+
+            fragment.append(content);
+        });
 
         if (!isNullOrUndefined(help)) {
             this.element.title = help;
@@ -151,7 +137,10 @@ const BaseProjectionLinkStatic = {
      * @param {HTMLElement} target 
      */
     clickHandler(target) {
-        const index = this.projection.schema.findIndex((x) => x.tags.includes(this.schema.tag));
+        let index = this.projection.findView(this.schema.tag);
+        if (index === -1) {
+            return false;
+        }
 
         this.projection.changeView(index);
 

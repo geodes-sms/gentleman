@@ -1,21 +1,6 @@
 {
+    "type": "projection",
     "projection": [
-        {
-            "id": "q4a94bi3-8ppr-43f2-970o-5bgade1f7030",
-            "type": "style",
-            "name": "box-left",
-            "style": {
-                "gss": {
-                    "box": {
-                        "outer": { 
-                            "left": { "value": 6, "unit": "px" } 
-                        }
-                    }
-                }
-            }
-        },
-
-
         {
             "id": "dca94b6c-8f9e-43f2-976b-de15bfaf7038",
             "concept": { "name": "mindmap" },
@@ -856,6 +841,22 @@
                     "gss": {
                         "text": {
                             "color": { "value": "#333", "type": "hex" }                            
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "style": [
+        {
+            "id": "q4a94bi3-8ppr-43f2-970o-5bgade1f7030",
+            "type": "style",
+            "name": "box-left",
+            "style": {
+                "gss": {
+                    "box": {
+                        "outer": { 
+                            "left": { "value": 6, "unit": "px" } 
                         }
                     }
                 }

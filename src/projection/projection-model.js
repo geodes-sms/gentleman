@@ -56,8 +56,13 @@ const PREDEFINED_PROJECTIONS = [
  * @returns {ProjectionModel}
  */
 export function createProjectionModel(schema, environment) {
+    if (!Array.isArray(schema.projection)) {
+        throw new TypeError("Bad projection schema");
+    }
+
+    schema.projection.push(...PREDEFINED_PROJECTIONS);
     const model = Object.create(ProjectionModel, {
-        schema: { value: [...schema, ...PREDEFINED_PROJECTIONS], writable: true },
+        schema: { value: schema, writable: true },
         environment: { value: environment },
     });
 
@@ -287,8 +292,6 @@ export const ProjectionModel = {
      * @returns {boolean}
      */
     hasConceptProjection(concept, tag) {
-        const isValid = (type) => !["template", "rule", "style", "g-fragment"].includes(type);
-
         const hasName = (name) => name && (name === concept.name || concept.schema && name === concept.schema.base); // TODO: change to look for base (include self)
 
         const hasTag = (p) => Array.isArray(p.tags) && p.tags.includes(tag);
@@ -304,9 +307,9 @@ export const ProjectionModel = {
         let candidates = null;
 
         if (isString(concept)) {
-            candidates = this.schema.filter(p => isValid(p.type) && p.concept.name === concept);
+            candidates = this.schema.projection.filter(p => p.concept.name === concept);
         } else {
-            candidates = this.schema.filter(p => isValid(p.type) && (hasName(p.concept.name) || hasPrototype(p.concept.prototype)));
+            candidates = this.schema.projection.filter(p => hasName(p.concept.name) || hasPrototype(p.concept.prototype));
         }
 
         if (isIterable(tag) && !isEmpty(tag)) {
@@ -325,7 +328,6 @@ export const ProjectionModel = {
      * @param {string} tag 
      */
     getProjectionSchema(concept, tag) {
-
         if (isNullOrUndefined(concept)) {
             throw new TypeError("Bad parameter: concept");
         }
@@ -341,12 +343,11 @@ export const ProjectionModel = {
 
             return concept.hasPrototype(prototype);
         };
-        const isValid = (type) => !["template", "rule", "style", "g-fragment"].includes(type);
 
         if (isString(concept)) {
-            projection = this.schema.filter(p => isValid(p.type) && p.concept.name === concept);
+            projection = this.schema.projection.filter(p => p.concept.name === concept);
         } else {
-            projection = this.schema.filter(p => isValid(p.type) && (hasName(p.concept.name) || hasPrototype(p.concept.prototype)));
+            projection = this.schema.projection.filter(p => hasName(p.concept.name) || hasPrototype(p.concept.prototype));
         }
 
         if (isIterable(tag) && !isEmpty(tag)) {
@@ -361,7 +362,7 @@ export const ProjectionModel = {
      * @returns 
      */
     getTemplateSchema(name) {
-        let schema = this.schema.find(p => p.type === "template" && p.name === name);
+        let schema = this.schema.template.find(p => p.name === name);
 
         if (isNullOrUndefined(schema)) {
             return null;
@@ -403,7 +404,7 @@ export const ProjectionModel = {
      * @returns 
      */
     getStyleSchema(name) {
-        let schema = this.schema.find(p => p.type === "style" && p.name === name);
+        let schema = this.schema.style.find(p => p.name === name);
 
         if (isNullOrUndefined(schema)) {
             return null;
@@ -434,12 +435,11 @@ export const ProjectionModel = {
 
             return concept.hasPrototype && concept.hasPrototype(prototype);
         };
-        const isValid = (type) => !["template", "rule", "style", "g-fragment"].includes(type);
 
         if (isString(concept)) {
-            projection = this.schema.filter(p => isValid(p.type) && p.concept.name === concept);
+            projection = this.schema.projection.filter(p => p.concept.name === concept);
         } else {
-            projection = this.schema.filter(p => isValid(p.type) && (hasName(p.concept.name) || hasPrototype(p.concept.prototype)));
+            projection = this.schema.projection.filter(p => hasName(p.concept.name) || hasPrototype(p.concept.prototype));
         }
 
         if (isIterable(tag) && !isEmpty(tag)) {

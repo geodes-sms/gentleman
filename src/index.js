@@ -16,22 +16,12 @@ const isEditor = (element) => isValid(element); // TODO - add this: && element.d
  */
 export function activateEditor(_container) {
     const container = resolveContainer(_container);
-    const containers = isEditor(container) ? [container] : getElements("[data-gentleman]", container);
+    const containers = isEditor(container) ? [container] : getElements(`[data-gentleman="${ENV_EDITOR}"]`, container);
 
     const editors = [];
 
     containers.forEach(container => {
-        let env = valOrDefault(container.dataset["gentleman"], ENV_EDITOR);
-
-        switch (env) {
-            case ENV_EDITOR:
-                editors.push(createEditor(container));
-                break;
-
-            default:
-                console.warn(`Gentleman does not support this environment ${env}`);
-                break;
-        }
+        editors.push(createEditor(container));
     });
 
     return editors;
@@ -63,4 +53,3 @@ export function createEditor(_container) {
 
     return editor;
 }
-

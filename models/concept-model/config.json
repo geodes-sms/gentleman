@@ -1,14 +1,28 @@
 {
-    "name": "Gentleman concept",
-    "concepts": [
-        {
+    "concept": {
+        "concrete-concept": {
             "name": "concrete concept"
         },
-        {
+        "prototype-concept": {
             "name": "prototype concept"
         },
-        {
+        "derivative-concept": {
             "name": "derivative concept"
+        }
+    },
+    "toolbar": [
+        {
+            "type": "button",
+            "name": "button-build",
+            "action": "build-concept",
+            "class": ["btn", "app-editor-header__button"],
+            "content": "Build"
+        },
+        {
+            "type": "button",
+            "name": "button-export",
+            "action": "export.model",
+            "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--save"]
         }
     ]
 }

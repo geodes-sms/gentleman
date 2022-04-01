@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>GEODES CMS</title>
+    <!-- <link rel="stylesheet" href="./../../dist/style.min.css"> -->
+    <!-- <link rel="stylesheet" href="./assets/style.css"> -->
+</head>
+
+<body class="page">
+    <header class="page-header">
+        <a class="site-title" href="https://geodes.iro.umontreal.ca/">
+            <img src="./assets/images/geodes.png" width="160">
+        </a>
+        <h1 class="page-title">CMS</h1>
+
+        <div class="login">
+            <a class="bare-link login-link" href="#">Login</a>
+        </div>
+    </header>
+    <main class="page-body">
+        <nav class="body-nav">
+            <h2 class="body-nav-title">MENU</h2>
+            <ul class="bare-list menu" data-cms="menu">
+                <li class="menu-item" data-cms="menu-item" data-cms-name="general">
+                    <span class="menu-item-label">General</span>
+                </li>
+                <li class="menu-item" data-cms="menu-item" data-cms-name="people">
+                    <span class="menu-item-label">People</span>
+                </li>
+                <li class="menu-item" data-cms="menu-item" data-cms-name="tools">
+                    <span class="menu-item-label">Tools</span>
+                </li>
+                <li class="menu-item" data-cms="menu-item" data-cms-name="projects">
+                    <span class="menu-item-label">Projects</span>
+                </li>
+                <!-- <li class="menu-item" data-cms="menu-item" data-cms-name="admin">
+                    <span class="menu-item-label">Admin</span>
+                </li> -->
+            </ul>
+        </nav>
+        <section class="app">
+            <div class="app-editor" data-gentleman="editor"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="page-footer">
+        <div class="content-wrapper">
+            <p class="">GEODES &bull; Software Engineering Research Group</p>
+            <p class="poweredby">Powered by 
+                <a class="bare-link page-footer__link page-footer__link--gentleman" href="https://gentlemancp.org/">
+                    <span class="label">Gentleman</span>
+                    <span class="info">
+                        version 0.4.0
+                        Github
+                    </span>
+                </a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- <script src="./../../dist/gentleman.core.js?v=2"></script> -->
+    <!-- <script src="./../dist/people.js"></script> -->
+    <script src="app.bundle.js"></script>
+</body>
+</html>

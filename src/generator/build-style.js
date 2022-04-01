@@ -1,19 +1,5 @@
-import { isEmpty, isNullOrUndefined, } from "zenkai";
-
-const ATTR_NAME = "name";
-
-
-const getAttr = (concept, name) => concept.getAttributeByName(name).target;
-
-const getReference = (concept, attr) => getAttr(concept, attr).getReference();
-
-const getValue = (concept, attr, deep = false) => getAttr(concept, attr).getValue(deep);
-
-const hasValue = (concept, attr) => getAttr(concept, attr).hasValue();
-
-const hasAttr = (concept, name) => concept.isAttributeCreated(name);
-
-const getName = (concept) => getValue(concept, ATTR_NAME).toLowerCase();
+import { isNullOrUndefined, } from "zenkai";
+import { getAttr, hasAttr, hasValue, getName, getValue } from './utils.js';
 
 
 export function buildStyle(style) {
@@ -240,8 +226,9 @@ function buildBackground(style) {
 
     if (hasAttr(style, "color")) {
         let color = getAttr(style, "color");
+        let value = getAttr(color, "value");
         // schema.color = buildcolor.call(this, getValue(color, "value", true));
-        schema.color = buildcolor.call(this, color);
+        schema.color = buildcolor.call(this, value);
     }
 
     if (hasAttr(style, "image")) {

@@ -1,0 +1,58 @@
+[
+    {
+        "name": "AToMPM",
+        "startYear": 2009,
+        "url": "https://atompm.github.io",
+        "logo": "atompm.png",
+        "partners": null,
+        "description": "AToMPM (A Tool for Multi-Paradigm Modeling) is the modeling tool we are developing at the University of Montreal in collaboration with McGill University, the University of Antwerp, and the University of Alabama. AToMPM provides facilities for generating web-based, domain-specific modeling tools tools that run on the cloud."
+    },
+    {
+        "name": "gentleman",
+        "startYear": 2019,
+        "url": "https://github.com/geodes-sms/gentleman",
+        "logo": null,
+        "partners": null,
+        "description": "Gentleman is a web-based projectional editor generator. It allows you to express and interact with your DSL."
+    },
+    {
+        "name": "lowkey",
+        "startYear": 2021,
+        "url": "https://github.com/geodes-sms/lowkey",
+        "logo": null,
+        "partners": null,
+        "description": "lowkey is a low-level and transparent framework for real-time collaborative framework for multi-level and multi-view modeling. At the bottom layer of the architecture of lowkey, conflict-free replicated data types (CRDT) take care of preventing inconsistencies before they happen. The physical metamodel built on top of these data types allows for defining arbitrary numbers of linguistic models, which are in a type-instance relationship with each other. The framework is available as a Python implementation."
+    },
+    {
+        "name": "ReLiS",
+        "startYear": 2017,
+        "url": "http://relis.iro.umontreal.ca/auth.html",
+        "logo": null,
+        "partners": null,
+        "description": "Conducting a systematic review involves many steps over a long period of time, and it is typically repetitive and labor-intensive. ReLiS (Revue Littéraire Systématique - Systematic Literature Review) can considerably reduce the effort of many of these steps by providing essential software support to reviewers. ReLiS supports planning, conducting and reportig a review, while following a previously defined process, which can be automatically adapted as the project evolves."
+    },
+    {
+        "name": "BiBler",
+        "startYear": null,
+        "url": "https://github.com/geodes-sms/bibler",
+        "logo": null,
+        "partners": null,
+        "description": "BiBler is a software for managing references to scientific articles using BibTeX. Not only is it a fully functional software, the tool has been entirely modeled and synthesized in Python. It is used for educational purposes in order to understand how to generate a complete application from UML models in an agile and test-driven environment."
+    },
+    {
+        "name": "TAPIR",
+        "startYear": 2019,
+        "url": "https://bitbucket.org/ErickFifa/tapir/",
+        "logo": null,
+        "partners": null,
+        "description": "TAPIR  is a tool developed by Erick Raelijohn for generating recommendations to developers about correct API usage. At its core, it relies on the representation of API usage patterns as LTL formulars."
+    },
+    {
+        "name": "T-Core",
+        "startYear": 200,
+        "url": "https://github.com/geodes-sms/tcore",
+        "logo": null,
+        "partners": null,
+        "description": "T-Core is a python framework for building your own domain-specific model transformation languages."
+    }
+]

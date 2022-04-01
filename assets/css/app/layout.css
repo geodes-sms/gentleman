@@ -1,7 +1,3 @@
-.layout-container {
-    position: relative;
-}
-
 .active {
     z-index: 10;
 }
@@ -16,7 +12,6 @@
 .field.active,
 .field--list-item:focus,
 .field-action:focus {
-    border-radius: 2px;
     /* Visible in the full-colour space */
     box-shadow: 0 0 0 1px #fff, 0 0 1px 3px #5897F5;
 
@@ -74,12 +69,6 @@
     }
 
 
-
-    .layout-container[data-collapsible] {
-        margin-top: 6px;
-        border-top: 2px solid #c0c0c0;
-    }
-
 .layout-container > .btn-collapse {
     position: absolute;
     display: flex; justify-content: center;
@@ -121,8 +110,4 @@
     .layout-container.collapsed > .layout-container-collapse {
         max-height: 48px;
         opacity: 0.5;
-    }
-
-    .foreign-holder > .algorithm-container{
-        border: solid black 1px;
     }

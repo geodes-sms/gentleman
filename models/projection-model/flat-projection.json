@@ -1,0 +1,102 @@
+{
+    "type": "projection",
+    
+    "projection": [
+        {
+            "concept": { "name": "projection" },
+            "type": "container",
+            "container": {
+                "content": [
+                    { "type": "projection", "src": { "type": "attribute", "name": "concept"} },
+                    { "type": "projection", "src": { "type": "attribute", "name": "container"} }
+                ],
+                "layout": { "type": "flex", "orientation": "column" }
+            }
+        },
+        {
+            "concept": { "name": "concept" },
+            "type": "container",
+            "container": {
+                "content": [
+                    { "kind": "static", "type": "text", "content": "Concept" },
+                    { "type": "projection", "src": { "type": "attribute", "name": "name"} }
+                ],
+                "layout": { "type": "flex", "orientation": "row" }
+            }
+        },
+        {
+            "concept": { "name": "container" },
+            "type": "container",
+            "container": {
+                "content": [
+                    { "kind": "static", "type": "text", "content": "Container" },
+                    { "type": "projection", "src": { "type": "attribute", "name": "elements"} }
+                ],
+                "layout": { "type": "flex", "orientation": "row" }
+            }
+        },
+        {
+            "concept": { "name": "render" },
+            "type": "container",
+            "container": {
+                "content": [
+                    {
+                        "type": "field",
+                        "field": {
+                            "type": "choice",
+                            "choice": {
+                                "option": {
+                                    "template": {
+                                        "tag": "choice"
+                                    },
+                                    "style": {
+                                        "css": ["list-choice__option"]
+                                    }
+                                },
+                                "style": {
+                                    "css": ["list-choice__options"]
+                                }
+                            },
+                            "expanded": true,
+                            "input": {
+                                "placeholder": "Filter",
+                                "style": {
+                                    "css": ["list-choice__input"]
+                                }
+                            },
+                            "style": {
+                                "css": ["list-choice", "list-choice--render"]
+                            }
+                        }
+                    },
+                    { "type": "projection", "bind": "value", "required": true, "tag": "choice-selection" }
+                ],
+                "layout": { "type": "flex", "orientation": "row" }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "field": {
+                "type": "text", 
+                "input": {
+                    "placeholder": "Enter text"
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "type": "field",
+            "field": {
+                "type": "text", 
+                "input": {
+                    "placeholder": "Enter text"
+                }
+            }
+        }
+    ],
+    
+    "style": [],
+
+    "template": []
+}

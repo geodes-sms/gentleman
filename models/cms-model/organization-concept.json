@@ -1,0 +1,244 @@
+{
+    "concept": [
+        {
+            "name": "organization",
+            "nature": "prototype",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "name",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Name" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "description",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Description" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "members",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "person"
+                        }
+                    },
+                    "required": true
+                },
+                {
+                    "name": "photo",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Photo URL" }
+                        ]
+                    },
+                    "required": false
+                },
+                {
+                    "name": "address",
+                    "target": {
+                        "name": "address"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "email",
+                    "target": {
+                        "name": "email",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Email" }
+                        ]
+                    },
+                    "required": false
+                },
+                {
+                    "name": "phone",
+                    "target": {
+                        "name": "phone",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Phone" }
+                        ]
+                    },
+                    "required": false
+                }
+            ],
+            "properties": []
+        },
+        {
+            "name": "default-organization",
+            "nature": "concrete",
+            "root": true,
+            "prototype": "organization",
+            "attributes": [
+            ],
+            "properties": []
+        },
+        {
+            "name": "research-organization",
+            "nature": "concrete",
+            "prototype": "organization",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "areas",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "area"
+                        }
+                    }
+                }
+            ],
+            "properties": []
+        },
+        {
+            "name": "area",
+            "nature": "concrete",
+            "root": false,
+            "attributes": [
+                {
+                    "name": "title",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "description",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "tags",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "string"
+                        }
+                    }
+                }
+            ],
+            "properties": []
+        },
+        {
+            "name": "address",
+            "nature": "concrete",
+            "root": false,
+            "attributes": [
+                {
+                    "name": "street-address",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Street address" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "locality",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "City" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "region",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Province" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "country",
+                    "target": {
+                        "name": "name",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Country" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "postal-code",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Postal code" }
+                        ]
+                    },
+                    "required": true
+                }
+            ],
+            "properties": []
+        },
+    
+
+        {
+            "name": "name",
+            "nature": "derivative",
+            "root": false,
+            "base": "string",
+            "constraint": {
+                "length": {
+                    "type": "range",
+                    "range": {
+                        "min": {
+                            "value": 1
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "email",
+            "nature": "derivative",
+            "root": false,
+            "base": "string",
+            "constraint": {
+                "length": {
+                    "type": "range",
+                    "range": {
+                        "min": { "value": 5 },
+                        "max": { "value": 255 }
+                    }
+                }
+            }
+        },
+        {
+            "name": "phone",
+            "nature": "derivative",
+            "root": false,
+            "base": "string",
+            "constraint": {
+                "value": {
+                    "type": "pattern",
+                    "pattern": {
+                        "insensitive": true,
+                        "global": true,
+                        "value": "^\\(?([0-9]{3})\\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"
+                    }
+                }
+            }
+        }
+    ]
+}

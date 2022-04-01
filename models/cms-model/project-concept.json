@@ -1,0 +1,151 @@
+{
+    "concept": [
+        {
+            "name": "project",
+            "nature": "concrete",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Name" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "description",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Description" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "start",
+                    "target": {
+                        "name": "number",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Start year" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "end",
+                    "target": {
+                        "name": "number",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "End year" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "partners",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name" : "partner"
+                        },
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Partners" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "funding",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Funding" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "logo",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Logo" }
+                        ]
+                    },
+                    "required": false
+                }
+            ],
+            "properties": []
+        },
+        {
+            "name": "partner",
+            "nature": "concrete",
+            "root": false,
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "name",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Name" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "description",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Description" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "photo",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Photo URL" }
+                        ]
+                    },
+                    "required": false
+                },
+                {
+                    "name": "website",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Website" }
+                        ]
+                    },
+                    "required": false
+                }
+            ],
+            "properties": []
+        },
+      
+
+        {
+            "name": "name",
+            "nature": "derivative",
+            "root": false,
+            "base": "string",
+            "constraint": {
+                "length": {
+                    "type": "range",
+                    "range": {
+                        "min": {
+                            "value": 1
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
