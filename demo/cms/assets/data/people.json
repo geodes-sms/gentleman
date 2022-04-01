@@ -1,0 +1,187 @@
+[
+    {
+        "name": "Sahraoui, Houari",
+        "image": "houari.png",
+        "position": "Full Professor",
+        "website": "http://www.iro.umontreal.ca/~sahraouh/",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/faculty/houari.jpg"
+    },
+    {
+        "name": "Syriani, Eugene",
+        "image": "eugene.jpg",
+        "position": "Associate Professor",
+        "website": "http://www-ens.iro.umontreal.ca/~syriani/",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/faculty/eugene.jpg"
+    },
+    {
+        "name": "Famelis, Michalis",
+        "image": "michalis.jpg",
+        "position": "Postdoc",
+        "website": "https://michalis.famelis.info/",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/faculty/michalis.jpg"
+    },
+    {
+        "name": "Galasso-Carbonnel, Jessie",
+        "image": "jessie.png",
+        "position": "Postdoc",
+        "start": 2020,
+        "website": "https://jgalasso.github.io/",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/people/jessie.png"
+    },
+    {
+        "name": "David, Istvan",
+        "image": "istvan.png",
+        "position": "Postdoc",
+        "start": 2021,
+        "website": "http://istvandavid.com",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/people/istvan.png"
+    },
+    {
+        "name": "Oakes, Bentley James",
+        "image": "bentley.png",
+        "position": "Postdoc",
+        "start": 2021,
+        "website": "http://msdl.cs.mcgill.ca/people/bentley",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/people/bentley.png"
+    },
+    {
+        "name": "Zadahmad, Manouchehr",
+        "image": "manouchehr.jpg",
+        "position": "PhD",
+        "start": null,
+        "website": "https://www.linkedin.com/in/manouchehr-zadahmad/",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/people/manouchehr.jpg"
+    },
+    {
+        "name": "Weyssow, Martin",
+        "image": "martin.png",
+        "position": "PhD",
+        "start": null,
+        "website": "https://martiwey.github.io/",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/people/martin.png"
+    },
+    {
+        "name": "Zaheri, MohammadAmin",
+        "image": "mohammadamin.png",
+        "position": "PhD",
+        "start": null,
+        "website": "http://zaheri.info/",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/people/mohammadamin.png"
+    },
+    {
+        "name": "Dhaouadi, Mouna",
+        "image": "mouna.jpeg",
+        "position": "PhD",
+        "start": null,
+        "website": "http://www-ens.iro.umontreal.ca/~dhaouadm/",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/people/mouna.jpeg"
+    },
+    {
+        "name": "Ben Sghaier, Oussama",
+        "image": "oussama.jpg",
+        "position": "PhD",
+        "start": null,
+        "website": "https://oussamasghaier.github.io/",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/people/oussama.jpg"
+    },
+    {
+        "name": "Faridmoayer, Sogol",
+        "image": "sogol.jpg",
+        "position": "PhD",
+        "start": 2021,
+        "website": "https://www.linkedin.com/in/sogol-faridmoayer-88413118a",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/people/sogol.jpg"
+    },
+    {
+        "name": "VaraminyBahnemiry, Zahra",
+        "image": "zahra.jpg",
+        "position": "PhD",
+        "start": null,
+        "website": "https://www.linkedin.com/in/zahra-varaminy-b9a47376/",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/people/zahra.jpg"
+    },
+    {
+        "name": "Dougnon, Raïssa Yapan",
+        "image": "raissa.jpg",
+        "position": "PhD",
+        "start": 2021,
+        "website": "https://www.linkedin.com/in/ra%C3%AFssa-yapan-dougnon-54167ab2",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/people/raissa.jpg"
+    },
+    {
+        "name": "Lafontant, Louis-Edouard",
+        "image": "louis_edouard.jpeg",
+        "position": "PhD",
+        "website": "http://www-ens.iro.umontreal.ca/~lafontle/",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/people/louis_edouard.jpeg"
+    },
+    {
+        "name": "Jézéquel, Jean-Marc",
+        "image": "jmjezequel.jpg",
+        "position": "Collaborator",
+        "website": "https://people.irisa.fr/Jean-Marc.Jezequel/",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/people/jmjezequel.jpg"
+    },
+    {
+        "name": "Essadi, Naima",
+        "image": "naima.jpg",
+        "position": "Collaborator",
+        "website": "https://www.linkedin.com/in/naima-essadi/",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/people/naima.jpg"
+    },
+    {
+        "name": "Hernández López, José Antonio",
+        "image": "joseantonio.jpg",
+        "position": "Collaborator",
+        "website": "https://models-lab.github.io/members/joseantonio/",
+        "photo": "https://geodes.iro.umontreal.ca/images/people/people/joseantonio.jpg"
+    },
+    {
+        "name": "Ben Chaaben, Meriem",
+        "image": null,
+        "position": "MSc",
+        "website": null
+    },
+    {
+        "name": "Kamanda, Aton",
+        "image": null,
+        "position": "MSc",
+        "website": null
+    },
+    {
+        "name": "Maes, Lucas",
+        "image": null,
+        "position": "MSc",
+        "website": "https://lumaes.org/"
+    },
+    {
+        "name": "Hornung, Lucas",
+        "image": null,
+        "position": "MSc",
+        "website": null
+    },
+    {
+        "name": "Ducoin, Aurelien",
+        "image": null,
+        "position": "MSc",
+        "website": null
+    },
+    {
+        "name": "Khaldi, Hamed",
+        "image": null,
+        "position": "MSc",
+        "website": "https://www.linkedin.com/in/hamedkhaldi/"
+    },
+    {
+        "name": "Yang, Song",
+        "image": "song.jpg",
+        "position": "MSc",
+        "website": null
+    },
+    {
+        "name": "Nikitchin, Vitaliy",
+        "image": null,
+        "position": "MSc",
+        "website": "http://www-ens.iro.umontreal.ca/~nikitchv/"
+    }
+]

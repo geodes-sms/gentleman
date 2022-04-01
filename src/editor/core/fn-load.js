@@ -61,6 +61,31 @@ export const FnLoad = {
 
         return this;
     },
+    loadConcepts(concepts) {
+        if (!Array.isArray(concepts)) {
+            this.notify("Invalid concept schema", NotificationType.ERROR);
+
+            return false;
+        }
+
+        if (isEmpty(concepts)) {
+            this.notify("The concept schema is empty", NotificationType.ERROR);
+
+            return false;
+        }
+
+        if (isNullOrUndefined(this.conceptModel)) {
+            this.conceptModel = ConceptModelManager.createModel(null, this).init();
+        }
+
+        concepts.forEach(concept => {
+            this.conceptModel.addConceptSchema(concept);
+        });
+
+        this.refresh();
+
+        return this;
+    },
     loadProjection(schema, name) {
         this.activeElement = null;
         this.activeInstance = null;

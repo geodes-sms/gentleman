@@ -317,7 +317,8 @@ export const ConceptModel = {
         return false;
     },
 
-    addConceptSchema(concepts) {
+    addConceptSchema(schema) {
+        let concepts = schema.concept || schema;
         this.schema.push(...concepts);
 
         this.environment.update("concept-model.updated");

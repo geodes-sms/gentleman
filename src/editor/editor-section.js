@@ -99,9 +99,10 @@ export const EditorSection = {
             }, [this.title]);
         }
 
+        let toolbarConfig = valOrDefault(this.editor.getConfig("toolbar"), []);
         let toolbar = createDiv({
             class: ["editor-toolbar"],
-        }, this.editor.getConfig("toolbar").map(element =>
+        }, toolbarConfig.map(element =>
             createButton({
                 class: valOrDefault(element.class, []),
                 dataset: { name: element.name, action: element.action }
@@ -182,7 +183,7 @@ export const EditorSection = {
     },
 
     show(el) {
-        if(isHTMLElement(this[el])) {
+        if (isHTMLElement(this[el])) {
             show(this[el]);
             return;
         }
@@ -193,7 +194,7 @@ export const EditorSection = {
         return this;
     },
     hide(el) {
-        if(isHTMLElement(this[el])) {
+        if (isHTMLElement(this[el])) {
             hide(this[el]);
             return;
         }

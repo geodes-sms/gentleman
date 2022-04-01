@@ -1,7 +1,7 @@
 {
     "projection": [
         {
-            "concept": { "name": "organization" },
+            "concept": { "prototype": "organization" },
             "tags": ["edit-view"],
             "container": {
                 "content": [

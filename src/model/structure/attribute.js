@@ -23,6 +23,9 @@ export const BaseAttribute = {
     hasValue() {
         return this.target.hasValue();
     },
+    setValue(value) {
+        this.target.setValue(value);
+    },
     getTarget() {
         return this.target;
     },

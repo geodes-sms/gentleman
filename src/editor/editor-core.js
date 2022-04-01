@@ -147,13 +147,18 @@ const EditorCore = {
 
         this.render();
 
-        if (conceptModel) {
+        if (Array.isArray(conceptModel)) {
+            this.loadConcepts(conceptModel);
+        } else if (conceptModel) {
             this.loadConcept(conceptModel);
         }
 
-        if (projectionModel) {
+        if (Array.isArray(projectionModel)) {
+            this.loadProjections(projectionModel);
+        } else if (projectionModel) {
             this.loadProjection(projectionModel);
         }
+
 
         if (this.isReady) {
             this.conceptModel.getRootConcepts().forEach(concept => {
@@ -1317,7 +1322,8 @@ const EditorCore = {
                 return;
             }
 
-            if (this.actions.has(action)) {console.warn(action);
+            if (this.actions.has(action)) {
+                console.warn(action);
                 this.actions.get(action).call(this, target);
                 target.blur();
                 return;

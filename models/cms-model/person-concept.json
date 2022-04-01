@@ -1,61 +1,6 @@
 {
     "concept": [
         {
-            "name": "organization",
-            "nature": "concrete",
-            "root": true,
-            "attributes": [
-                {
-                    "name": "name",
-                    "target": {
-                        "name": "name",
-                        "properties": [
-                            { "name": "label", "type": "string", "value": "Name" }
-                        ]
-                    },
-                    "required": true
-                },
-                {
-                    "name": "description",
-                    "target": {
-                        "name": "string",
-                        "properties": [
-                            { "name": "label", "type": "string", "value": "Description" }
-                        ]
-                    },
-                    "required": true
-                },
-                {
-                    "name": "members",
-                    "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "person"
-                        }
-                    },
-                    "required": true
-                },
-                {
-                    "name": "photo",
-                    "target": {
-                        "name": "string",
-                        "properties": [
-                            { "name": "label", "type": "string", "value": "Photo URL" }
-                        ]
-                    },
-                    "required": false
-                },
-                {
-                    "name": "address",
-                    "target": {
-                        "name": "address"
-                    },
-                    "required": false
-                }
-            ],
-            "properties": []
-        },
-        {
             "name": "person",
             "nature": "concrete",
             "root": true,
@@ -91,11 +36,31 @@
                     "required": true
                 },
                 {
+                    "name": "website",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Website" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
                     "name": "phone-number",
                     "target": {
                         "name": "phone",
                         "properties": [
                             { "name": "label", "type": "string", "value": "Phone number" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "position",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Position" }
                         ]
                     },
                     "required": true
@@ -146,63 +111,11 @@
                         }
                     },
                     "required": false
-                },
-                {
-                    "name": "relations",
-                    "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "relation"
-                        }
-                    },
-                    "required": false
                 }
             ],
             "properties": []
         },
-        {
-            "name": "address",
-            "nature": "concrete",
-            "root": false,
-            "attributes": [
-                {
-                    "name": "street-address",
-                    "target": {
-                        "name": "string"
-                    },
-                    "required": true
-                },
-                {
-                    "name": "locality",
-                    "target": {
-                        "name": "string"
-                    },
-                    "required": true
-                },
-                {
-                    "name": "region",
-                    "target": {
-                        "name": "string"
-                    },
-                    "required": true
-                },
-                {
-                    "name": "country",
-                    "target": {
-                        "name": "name"
-                    },
-                    "required": true
-                },
-                {
-                    "name": "postal-code",
-                    "target": {
-                        "name": "string"
-                    },
-                    "required": false
-                }
-            ],
-            "properties": []
-        },
+
         {
             "name": "affiliation",
             "nature": "concrete",
@@ -219,31 +132,6 @@
                     "name": "role",
                     "target": {
                         "name": "string"
-                    },
-                    "required": true
-                }
-            ],
-            "properties": []
-        },
-        {
-            "name": "relation",
-            "nature": "concrete",
-            "root": false,
-            "attributes": [
-                {
-                    "name": "name",
-                    "target": {
-                        "name": "string"
-                    },
-                    "required": true
-                },
-                {
-                    "name": "target",
-                    "target": {
-                        "name": "reference",
-                        "accept": {
-                            "name": "person"
-                        }
                     },
                     "required": true
                 }

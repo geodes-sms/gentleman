@@ -1,7 +1,7 @@
 {
   "name": "gentleman",
   "version": "0.4.0",
-  "description": "Gentleman is a web-based projectionnal editor generator. It allows you to express and interact with your DSL.",
+  "description": "Gentleman is a web-based projectionnal editor. It allows you to express and interact with your DSL.",
   "private": true,
   "directories": {
     "doc": "./docs",
@@ -11,11 +11,12 @@
     "prebuild": "rimraf dist/*",
     "build": "npm-run-all build:*",
     "build:css": "node scripts/build.js",
-    "build:js": "cross-env NODE_ENV=production webpack --config webpack.prod.js",
-    "build:demo": "cross-env NODE_ENV=production webpack --config webpack.demo.js",
-    "start": "cross-env NODE_ENV=development webpack serve --config webpack.dev.js",
-    "start-app": "cross-env NODE_ENV=development webpack serve --config webpack.app.js",
-    "start:chrome": "cross-env NODE_ENV=development webpack serve  --open 'chrome' --config webpack.dev.js",
+    "build:js": "cross-env NODE_ENV=production webpack --config config/webpack.prod.js",
+    "build:demo": "cross-env NODE_ENV=production webpack --config config/webpack.demo.js",
+    "start": "cross-env NODE_ENV=development webpack serve --config config/webpack.dev.js",
+    "start-app": "cross-env NODE_ENV=development webpack serve --config config/webpack.app.js",
+    "start-demo:cms": "cross-env NODE_ENV=development webpack serve  --config config/webpack.cms.js",
+    "start:chrome": "cross-env NODE_ENV=development webpack serve  --open 'chrome' --config config/webpack.dev.js",
     "test": "cross-env NODE_ENV=test nyc mocha --config .mocharc.yml",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
