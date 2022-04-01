@@ -74,6 +74,14 @@ export const EditorInstanceManager = {
             this.status.addView(instance);
         }
 
+        let target = this.resolveElement(instance.body);
+
+        target.source.notify("displayed");
+
+        if(instance.body.getAttribute("data-nature") === "algorithm"){
+            target.branch();
+        }
+
         this.updateActiveInstance(instance);
         this.refresh();
 

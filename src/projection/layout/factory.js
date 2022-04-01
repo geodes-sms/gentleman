@@ -5,6 +5,7 @@ import { TableLayout } from "./table-layout.js";
 import { FlexLayout } from "./flex-layout.js";
 import { SVGLayout } from "./svg-layout";
 import { Visualizer } from "./visualizer.js";
+import { PatternLayout } from "./pattern-svg.js";
 
 var inc = 0;
 const nextId = () => `layout${inc++}`;
@@ -70,6 +71,16 @@ const Handler = {
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
     }),
+    'pattern': (model, schema, projection) => Object.create(PatternLayout, {
+        object: { value: "layout" },
+        name: { value: "pattern-layout" },
+        type: { value: "pattern" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    })
 };
 
 export const LayoutFactory = {

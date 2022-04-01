@@ -57,17 +57,44 @@ const BaseSVGLayout = {
 
             link.type = "svg-link";
 
-            target.addEventListener('click', (event) =>{
-                this.projection.changeView(this.link);
-            })
+
+            if(link.external){
+                target.addEventListener('click', (event) => {
+                    let concept = this.source;
+                    let projection = this.environment.createProjection(concept, link.tag);
+
+                    let window = this.environment.findWindow("side-instance");
+                    if(isNullOrUndefined(window)){
+                        window = this.environment.createWindow("side-instance");
+                        window.container.classList.add("model-projection-sideview");
+                    }
+
+                    if(window.instances.size > 0){
+                        let instance = Array.from(window.instances)[0];
+                        instance.delete()
+                    }
+
+                    let instance = this.environment.createInstance(concept, projection, {
+                        type: "projection",
+                        close: "DELETE-PROJECTION"
+                    });
+
+                    window.addInstance(instance);
+                });
+            }else{
+                target.addEventListener('click', (event) =>{
+                    this.projection.changeView(this.link);
+                })
+            }
+
         }
 
 
-        if((!isNullOrUndefined(link)) && isNullOrUndefined(this.informations)){
+        /*if((!isNullOrUndefined(link)) && isNullOrUndefined(this.informations)){
             let altis = this.projection.getInformations(this.link);
             this.projection.element = this;
             this.informations = altis.informations;
-        }
+        }*/
 
         if(isNullOrUndefined(this.deciders) && !isEmpty(attributes)){
             this.deciders = this.attributeHandler(attributes);
@@ -81,6 +108,7 @@ const BaseSVGLayout = {
         return this.element;
     },
     attributeHandler(attributes){
+
         let deciders = [];
 
         attributes.forEach(element => {
@@ -130,20 +158,15 @@ const BaseSVGLayout = {
                     if(!isEmpty(sd)){
                         current.sd = new Map();
                         sd.forEach(temp => {
-                            console.log("Sd");
-                            console.log(temp);
                             temp.type = "template";
                             const stat = {};
                             var render = ContentHandler.call(this, temp, null, this.args);
                             stat.render = render;
                             stat.parent = this.content.querySelector("[data-" + temp.marker + "]")
-                            console.log(stat);
                             current.sd.set(render.mv, stat);
                         });
 
                     }
-
-                    console.log("Done sd");
 
                     if(isNullOrUndefined(this.dd) && (!(isEmpty(dd) || isNullOrUndefined(dd)))){
                         current.dd = [];
@@ -183,10 +206,8 @@ const BaseSVGLayout = {
     },
 
     update(){
-        console.log("This update");
         if(!isNullOrUndefined(this.linkAttr)){
             this.linkAttr.forEach(attr => {
-                console.log(attr);
                 this.clearStatics(attr.sd, attr.value);
                 if(!isNullOrUndefined(attr.property)){
                     this.clearDynamics(attr.dd, this.translateProperty(attr.value, attr.property));
@@ -206,7 +227,6 @@ const BaseSVGLayout = {
                 this.updateStatics(attr.sd, attr.value);
             })
         }
-        console.log("Deciders?");
         if((!isNullOrUndefined(this.deciders)) && (!isEmpty(this.deciders))){
             this.deciders.forEach(inter => {
                 inter.update(inter.field.value);
@@ -232,7 +252,6 @@ const BaseSVGLayout = {
 
     clearStatics(sd, value){
         if(!isNullOrUndefined(sd)){
-            console.log(sd);
             let target = sd.get(value);
         
             if(!isNullOrUndefined(target)){
@@ -242,14 +261,9 @@ const BaseSVGLayout = {
     },
 
     updateStatics(sd, value){
-        console.log("sVal");
-        console.log(value);
-        console.log(sd)
         if(!isNullOrUndefined(sd)){
             let target = sd.get(value);
-            console.log(target);
             if(!isNullOrUndefined(target)){
-                console.log(target.render.content);            
                 target.parent.appendChild(target.render.content)
             }
         }
@@ -304,7 +318,6 @@ const BaseSVGLayout = {
     },
 
     escapeHandler(target){
-
         if(target !== this.element){
             return this.focus();
         }

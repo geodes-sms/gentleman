@@ -396,6 +396,7 @@ const BaseChoiceField = {
         }
 
         this.values = this.source.getCandidates();
+
         this.values.forEach(value => {
             this.choices.append(this.createChoiceOption(value));
         });
@@ -586,6 +587,7 @@ const BaseChoiceField = {
         return true;
     },
     createChoiceOption(value) {
+
         const { template = {}, style } = this.schema.choice.option;
 
         const isConcept = isObject(value);
@@ -633,6 +635,7 @@ const BaseChoiceField = {
         } else {
             container.append(value.toString());
         }
+
 
         return container;
     },

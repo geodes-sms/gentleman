@@ -141,9 +141,6 @@ const BaseForceLayout = {
 
         var l = this.nodes.length - 1;
 
-        console.log("IN RESTART");
-        console.log(node);
-
         node.enter().insert("foreignObject")
             .style("overflow", "visible")
             .attr("width", 20)
@@ -153,8 +150,6 @@ const BaseForceLayout = {
 
         node.exit().remove();
 
-        console.log("POST EXIT");
-        console.log(node)
     },
 
     addItem(value, button){
@@ -165,13 +160,9 @@ const BaseForceLayout = {
 
 
         this.nodes.push({});
-        console.log("After Push");
-        console.log(this.nodes);
-        console.log(node);
+
         this.restart();
-        console.log("POST RESTART");
-        console.log(this.drawArea);
-        console.log(this.nodes);
+
         let last = document.getElementById(this.nodes.length - 1);        
 
         let item = this.createItem(value, button);

@@ -212,8 +212,6 @@ const BaseInteractiveField = {
                 anchor = "middle";
             }
             
-            console.log("Anchor");
-            console.log(anchor);
 
             switch(anchor){
                 case "middle":

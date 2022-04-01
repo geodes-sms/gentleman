@@ -143,6 +143,7 @@ function ExternalHandler(schema, target){
 }
 
 
+
 export function ContentHandler(schema, concept, args = {}) {
 
     const contentConcept = valOrDefault(concept, this.projection.concept);
@@ -181,8 +182,16 @@ export function ContentHandler(schema, concept, args = {}) {
         return AttributeHandler.call(this, schema, contentConcept);
     } else if (schema.type === "svg-attribute"){
         return SVGAttributeHandler.call(this, schema, contentConcept)
-    } else if(schema.type === "external"){
+    } else if (schema.type === "external"){
         return ExternalHandler.call(this, schema, contentConcept);
+    } else if (schema.type === "g-fragment"){
+        let name = schema.name;
+
+        let gFragment = this.model.getGFragmentSchema(name.toLowerCase());
+
+        let parser = new DOMParser();
+
+        return parser.parseFromString(gFragment.content.content.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement;
     } else if (schema.type === "template") {
         let name = schema.name;
 
@@ -206,7 +215,6 @@ export function ContentHandler(schema, concept, args = {}) {
         let improvement;
         template.content.forEach(element => {
             let content = ContentHandler.call(this, element, concept, args);
-            console.log(content);
             if(!isHTMLElement(content)){
                 svg = true;
                 improvement = content;

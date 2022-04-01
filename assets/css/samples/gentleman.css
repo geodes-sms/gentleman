@@ -1714,6 +1714,7 @@
         .static-choice-value,
         .container-choice-value,
         .dynamic-choice-value
+        .general-choice-value
          {
             margin-left: 3px;
             overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
@@ -1723,7 +1724,8 @@
         .static-choice-icon,
         .container-choice-icon,
         .dynamic-choice-icon,
-        .template-choice-icon {
+        .template-choice-icon,
+        .general-choice-icon {
             flex-direction: column; align-items: center; justify-content: center;
             width: 20px;
             height: 20px;
@@ -1742,6 +1744,8 @@
         .dynamic-choice-icon { background-color: #5F4B8B; }
 
         .template-choice-icon { background-color: #ffd300;}
+
+        .general-choice-icon { background-color: #6f27a0;}
 
     .list-choice__selection {
         margin-right: 6px;

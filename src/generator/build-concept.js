@@ -114,8 +114,7 @@ export function buildConceptHandler(_options = {}) {
 }
 
 function buildConcept(concept) {
-    console.log("Building Concept");
-    console.log(concept);
+
     const name = getName(concept);
     const nature = concept.getProperty(PROP_NATURE);
     const attributes = [];

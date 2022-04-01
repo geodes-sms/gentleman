@@ -181,6 +181,87 @@
             }
         },
         {
+            "concept": { "name": "arrow-style" },
+            "tags":[],
+            "type": "layout",
+            "content":{
+                "type": "flex",
+                "orientation": "column",
+                "disposition":[
+                    {
+                        "type": "static",
+                        "static":{
+                            "type": "text",
+                            "content": "Stroke",
+                            "style":{
+                                "css": ["mp-style__title"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout":{
+                            "type": "flex",
+                            "orientation": "column",
+                            "disposition":[
+                                {
+                                    "type": "attribute",
+                                    "name": "stroke"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "stroke-width",
+                                    "tag": "textual--labelled"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "stroke-dasharray",
+                                    "tag": "label-string"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "stroke-linecap",
+                                    "tag": "label-string"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "static",
+                        "static":{
+                            "type": "text",
+                            "content": "Marker",
+                            "style":{
+                                "css": ["mp-style__title"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout":{
+                            "type": "flex",
+                            "orientation": "column",
+                            "disposition":[
+                                {
+                                    "type": "attribute",
+                                    "name": "marker-start",
+                                    "tag": "switch-field"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "marker-end",
+                                    "tag": "switch-field"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "style": {
+                    "css": ["box-style"]
+                }
+            }
+        },
+        {
             "concept": { "name": "box-style" },
             "tags": [],
             "type": "layout",

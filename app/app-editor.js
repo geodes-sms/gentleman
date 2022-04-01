@@ -5,6 +5,7 @@ import {
 import { duplicateTab } from "@utils";
 import { buildProjectionHandler } from "@generator/build-projection.js";
 import { buildConceptHandler } from "@generator/build-concept.js";
+import { buildGraphicalHandler } from "@generator/build-graphical.js";
 
 const CMODEL__EDITOR = require('@models/concept-model/config.json');
 const CMODEL__CONCEPT = require('@models/concept-model/concept.json');
@@ -160,6 +161,78 @@ const PMODEL__HANDLER = {
 
         this.createInstance(projection);
     }
+};
+
+const GMODEL__EDITOR = require('@models/graphical-model/config.json');
+const GMODEL__CONCEPT = require('@models/graphical-model/concept.json');
+const GMODEL__PROJECTION = require('@models/graphical-model/projection.json');
+const GMODEL__HANDLER = {
+    "open-state": function (args) {
+        let concept = args[0];
+        let projection = this.createProjection(concept, "state");
+
+        let window = this.findWindow("side-instance");
+        if (isNullOrUndefined(window)) {
+            window = this.createWindow("side-instance");
+            window.container.classList.add("model-projection-sideview");
+        }
+
+        if (window.instances.size > 0) {
+            let instance = Array.from(window.instances)[0];
+            instance.delete();
+        }
+
+        let instance = this.createInstance(concept, projection, {
+            type: "projection",
+            close: "DELETE-PROJECTION"
+        });
+
+        window.addInstance(instance);
+    },
+    "open-sibling": function (args) {
+        let concept = args[0];
+        let projection = this.createProjection(concept, "sibling");
+
+        let window = this.findWindow("side-instance");
+        if (isNullOrUndefined(window)) {
+            window = this.createWindow("side-instance");
+            window.container.classList.add("model-projection-sideview");
+        }
+
+        if (window.instances.size > 0) {
+            let instance = Array.from(window.instances)[0];
+            instance.delete();
+        }
+
+        let instance = this.createInstance(concept, projection, {
+            type: "projection",
+            close: "DELETE-PROJECTION"
+        });
+
+        window.addInstance(instance);
+    },
+    "open-style": function (args) {
+        let concept = args[0];
+        let projection = this.createProjection(concept, "style");
+
+        let window = this.findWindow("side-instance");
+        if (isNullOrUndefined(window)) {
+            window = this.createWindow("side-instance");
+            window.container.classList.add("model-projection-sideview");
+        }
+
+        if (window.instances.size > 0) {
+            let instance = Array.from(window.instances)[0];
+            instance.delete();
+        }
+
+        let instance = this.createInstance(concept, projection, {
+            type: "projection",
+            close: "DELETE-PROJECTION"
+        });
+
+        window.addInstance(instance);
+    },
 };
 
 var inc = 0;
@@ -428,6 +501,24 @@ export const App = {
                 let btnPreview = createMenuButton.call(this, "preview-projection", "Preview", editor);
 
                 editor.header.menu.append(btnBuild, btnPreview);
+            } else if (action === "new-graphical"){
+                let editor = this.createEditor({
+                    conceptModel: GMODEL__CONCEPT,
+                    projectionModel: GMODEL__PROJECTION,
+                    config: GMODEL__EDITOR,
+                    handlers: GMODEL__HANDLER
+                })
+
+                editor.addConcept(SMODEL__CONCEPT);
+                editor.addProjection(SMODEL__PROJECTION);
+
+                editor.addConcept(PMODEL__CONCEPT);
+                editor.addProjection(PMODEL__PROJECTION);
+
+                let btnBuild = createMenuButton.call(this, "build-graphical", "Build", editor);
+                let btnPreview = createMenuButton.call(this, "preview-projection", "Preview", editor);
+
+                editor.header.menu.append(btnBuild, btnPreview);
             }
         });
 
@@ -483,6 +574,9 @@ const actionHandler = {
     },
     "build-projection": function (editor) {
         buildProjectionHandler.call(editor);
+    },
+    "build-graphical": function(editor) {
+        buildGraphicalHandler.call(editor);
     },
     "preview-projection": function (editor) {
         const RESOURCE_NAME = "metamodel";

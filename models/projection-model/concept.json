@@ -54,8 +54,11 @@
                             { "name": "choice-field" },
                             { "name": "list-field" },
                             { "name": "interactive-svg" },
+                            { "name": "add-field"},
+                            { "name": "arrow" },
                             { "name": "container" },
-                            { "name": "svg-container"}
+                            { "name": "svg-container"},
+                            { "name": "svg-text" }
                         ]
                     },
                     "required": true
@@ -267,10 +270,15 @@
                         "name": "boolean",
                         "default": false
                     }
+                },
+                {
+                    "name": "sibling",
+                    "target": {
+                        "name": "sibling"
+                    }
                 }
             ]
         },
-
 
         {
             "name": "field",
@@ -857,7 +865,149 @@
                 { "name": "elementType", "type": "string", "value": "table" }
             ]
         },
-        
+        {
+            "name": "add-field",
+            "prototype": "field",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "string",
+                        "default": "Add"
+                    }
+                },
+                {
+                    "name": "items",
+                    "target":{
+                        "name": "template reference"
+                    }
+                }
+            ],
+            "properties":[ 
+                { "name": "contentType", "type": "string", "value": "field" },
+                { "name": "elementType", "type": "string", "value": "add" }
+            ]            
+        },
+        {
+            "name": "arrow",
+            "prototype": "field",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "source",
+                    "target":{
+                        "name": "attribute element"
+                    }
+                },
+                {
+                    "name": "target",
+                    "target":{
+                        "name": "attribute element"
+                    }
+                },
+                {
+                    "name": "decorator",
+                    "target": {
+                        "name": "decorator element"
+                    }
+                },
+                {
+                    "name": "arrow-style",
+                    "target":{
+                        "name": "arrow-style"
+                    }
+                }
+            ],
+            "properties":[
+                { "name": "contentType", "type": "string", "value": "field" },
+                { "name": "elementType", "type": "string", "value": "arrow" }
+            ]
+        },
+        {
+            "name": "decorator element",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "attribute",
+                    "target":{
+                        "name": "attribute element"
+                    }
+                },
+                {
+                    "name": "base",
+                    "target":{
+                        "name": "string",
+                        "constraint":{
+                            "values":[
+                                "source",
+                                "target",
+                                "center"
+                            ]
+                        },
+                        "default": "center"
+                    }
+                }
+            ]
+        },
+        { 
+            "name": "arrow-target",
+            "nature": "prototype",
+            "attributes":[
+
+            ]
+        },
+        {
+            "name": "self-target",
+            "nature": "concrete",
+            "prototype": "arrow-target",
+            "attributes":[
+
+            ]
+        },
+        {
+            "name": "attribute-target",
+            "nature": "concrete",
+            "prototype":"arrow-target",
+            "attributes":[
+                {
+                    "name": "attribute",
+                    "target":{
+                        "name": "string"
+                    }
+                }
+            ]
+            
+        },
+        {
+            "name" : "svg-text",
+            "nature": "concrete",
+            "prototype": "field",
+            "attributes":[
+                {
+                    "name": "x",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "y",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "field" },
+                { "name": "elementType", "type": "string", "value": "svg" }
+            ]
+        },  
         {
             "name": "svg-container",
             "nature": "concrete",
@@ -904,6 +1054,13 @@
                     "name": "marker",
                     "target":{
                         "name": "string"
+                    }
+                },
+                {
+                    "name": "external",
+                    "target":{
+                        "name": "boolean",
+                        "default": false
                     }
                 }
             ]
@@ -986,6 +1143,13 @@
                     "target":{
                         "name": "tag"
                     }
+                },
+                {
+                    "name": "visible",
+                    "target":{
+                        "name": "boolean"
+                    },
+                    "default": true
                 }
             ]
         },
@@ -1687,6 +1851,24 @@
                     "range": { "min": 1 }
                 }
             }
+        },
+        {
+            "name": "sibling",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "tag",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "receiver",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ]
         }
     ]
 }

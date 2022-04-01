@@ -37,7 +37,7 @@ const hasAttr = (concept, name) => concept.isAttributeCreated(name);
 const getName = (concept) => getValue(concept, ATTR_NAME).toLowerCase();
 
 
-function createProjectionLink(text, concept) {
+export function createProjectionLink(text, concept) {
     const { id, name } = concept;
 
     let link = createEmphasis({
@@ -79,6 +79,7 @@ const ProjectionHandler = {
     "layout": buildLayout,
     "container": buildContainer,
     "svg-container": buildSVGContainer,
+    "svg-pattern": buildSVGPattern,
     "field": buildField,
 };
 
@@ -139,7 +140,8 @@ export function buildProjectionHandler(_options = {}) {
 }
 
 
-function buildProjection(concept) {
+export function buildProjection(concept) {
+
     const tags = hasAttr(concept, ATTR_TAGS) ? getValue(concept, ATTR_TAGS, true) : [];
 
     let targetConcept = getAttr(concept, ATTR_CONCEPT);
@@ -194,10 +196,12 @@ function buildProjection(concept) {
         "id": concept.id,
         "concept": target,
         "tags": tags,
-        "type": ((contentType === "container") || (contentType === "svg-container")) ? "layout" : contentType,
+        "sibling": buildSibling.call(this, getAttr(content, "sibling")),
+        "type": ((contentType === "container") || (contentType === "svg-pattern") || (contentType === "svg-container")) ? "layout" : contentType,
         "content": ProjectionHandler[contentType].call(this, content),
         // "metadata": JSON.stringify(concept.export()),
     };
+
 
     if (hasAttr(concept, ATTR_NAME) && hasValue(concept, ATTR_NAME)) {
         schema.name = getName(concept);
@@ -278,7 +282,7 @@ function buildStyleRule(concept) {
     };
 }
 
-function buildConcept(concept) {
+export function buildConcept(concept) {
     const result = {};
 
     if (hasAttr(concept, ATTR_NAME) && hasValue(concept, ATTR_NAME)) {
@@ -357,12 +361,111 @@ function buildContainer(container) {
     return schema;
 }
 
+function buildSVGPattern(container){
+    const schema = {};
+    schema.type = "pattern";
+
+    if(hasAttr(container, "base-pattern")){
+       schema.base = buildBasePattern.call(this, getAttr(container, "base-pattern"));
+    }
+
+    if(hasAttr(container, "width")){
+        schema.width = getValue(container, "width");
+    }
+
+    if(hasAttr(container, "height")){
+        schema.height = getValue(container, "height");
+    }
+
+    if(hasAttr(container, "baseX")){
+        schema.baseX = getValue(container, "baseX");
+    }
+
+    if(hasAttr(container, "baseY")){
+        schema.baseY = getValue(container, "baseY");
+    }
+
+    if(hasAttr(container, "baseRatio")){
+        schema.baseRatio = getValue(container, "baseRatio");
+    }
+
+    if(hasAttr(container, "anchor")){
+        schema.anchor = getValue(container, "anchor");
+    }
+
+    if(hasAttr(container, "add-set") && !isEmpty(getValue(container, "add-set"))){
+        let attributes = [];
+        getValue(container, "add-set").forEach(a =>{ 
+            attributes.push(buildPattern.call(this, a));
+        })
+        schema.attributes = attributes;
+    }
+
+    return schema;
+}
+
+function buildBasePattern(pattern){
+    const schema = {};
+
+    if(hasAttr(pattern, "pattern")){
+        schema.pattern = buildElement.call(this, getValue(pattern, "pattern", true));
+    }
+
+    return schema;
+}
+
+function buildPattern(pattern){
+    const schema = {}
+
+
+    if(hasAttr(pattern, "template")){
+        schema.template = getValue(pattern, "template");
+    }
+
+    if(hasAttr(pattern, "repeat")){
+        schema.repeat = getValue(pattern, "repeat");
+    }
+
+    if(hasAttr(pattern, "attribute")){
+        schema.attribute = {
+            type: "dynamic",
+            dynamic: buildDynamic.call(this, getAttr(pattern, "attribute"))
+        };
+    }
+
+    if(hasAttr(pattern, "properties")){
+        schema.props = buildSVGElement.call(this, getAttr(pattern, "properties"));
+    }
+
+    return schema;
+}
+
+function buildSVGElement(element){
+    const schema = {};
+
+    if(hasAttr(element, "x")){
+        schema.x = getValue(element, "x");
+    }
+
+    if(hasAttr(element, "y")){
+        schema.y = getValue(element, "y");
+    }
+
+    if(hasAttr(element, "ratio")){
+        schema.ratio = getValue(element, "ratio");
+    }
+
+    if(hasAttr(element, "anchor")){
+        schema.anchor = getValue(element, "anchor");
+    }
+
+    return schema;
+}
+
 function buildSVGContainer (field) {
     const schema = {};
 
     schema.type = "svg";
-
-    console.log(schema);
     
     if(hasAttr(field, "content")){
         schema.content = getValue(field, "content");
@@ -464,6 +567,10 @@ function buildSVGLink(link){
         schema.marker = getValue(link, "marker");
     }
 
+    if(hasAttr(link, "external")){
+        schema.external = getValue(link, "external");
+    }
+
     return schema;
 }
 
@@ -563,7 +670,7 @@ const DynamicHanlders = {
     "template": TemplateDynamicHandler,
 };
 
-function buildDynamic(dynamic) {
+export function buildDynamic(dynamic) {
     const elementType = dynamic.getProperty("elementType");
 
     var schema = {
@@ -790,6 +897,9 @@ const FieldHanlders = {
     "interactive": InteractiveHandler,
     "dynamic": DynamicSVGHandler,
     "static": StaticSVGHandler,
+    "add": AddFieldHandler,
+    "arrow": ArrowHandler,
+    "svg": SvgTextHandler
 };
 
 function buildField(field) {
@@ -990,6 +1100,24 @@ function TableFieldHandler(field) {
     return schema;
 }
 
+function SvgTextHandler(field){
+    const schema = {};
+
+    if(hasAttr(field, "content")){
+        schema.content = getValue(field, "content");
+    }
+
+    if(hasAttr(field, "x")){
+        schema.x = getValue(field, "x");
+    }
+
+    if(hasAttr(field, "x")){
+        schema.x = getValue(field, "x");
+    }
+
+    return schema;
+}
+
 function InteractiveHandler(field){
     const schema = {};
 
@@ -1171,7 +1299,7 @@ function buildSVGProperties(props){
         if(!isNullOrUndefined(c)){
             const color = {};
             color.props = "fill";
-            color. value = c;
+            color.value = c;
 
             schema.props.push(color);
         }
@@ -1218,6 +1346,114 @@ function buildOther(other){
     schema.value = getValue(other, "value");
 
     return schema;
+}
+
+function AddFieldHandler(field){
+    const schema = {};
+
+    schema.type = "add";
+
+    if(hasAttr(field, "content")){
+        schema.content = getValue(field, "content");
+    }
+
+    if(hasAttr(field, "items")){
+        schema.items = buildFieldTemplate.call(this, getAttr(field, "items"));
+    }
+    
+    if(hasAttr(field, "ratio")){
+        schema.ratio = getValue(field, "ratio");
+    }
+
+
+    return schema;
+}
+
+function ArrowHandler(arrow){
+    const schema = {};
+
+    schema.type = "arrow";
+
+    if(hasAttr(arrow, "source")){
+        schema.source = getValue(arrow, "source")
+    }
+
+    if(hasAttr(arrow, "target")){
+        schema.target = getValue(arrow, "target");
+    }
+
+    if(hasAttr(arrow, "decorator")){
+        schema.decorator = buildDecorator.call(this, getAttr(arrow, "decorator"))
+    }
+
+    if(hasAttr(arrow, "arrow-style")){
+        schema.arrowStyle = buildArrowStyle.call(this, getAttr(arrow, "arrow-style"));
+    }
+
+    console.log(schema);
+
+    return schema;
+}
+
+function buildDecorator(decorator){
+    const schema = {};
+
+    if(hasAttr(decorator, "attribute")){
+        schema.attribute = {
+            type: "dynamic",
+            dynamic: buildDynamic.call(this, getAttr(decorator, "attribute"))
+        }
+    }
+
+    if(hasAttr(decorator, "base")){
+        schema.base = getValue(decorator, "base");
+    }
+
+    return schema;
+}
+
+function buildArrowStyle(style){
+    const schema = {};
+
+    if(hasAttr(style, "stroke")){
+        let color = getAttr(style, "stroke");
+        let value = getValue(color, "value");
+        if(isNullOrUndefined(value)){
+            schema.stroke = "#000000";
+        }else{
+            schema.stroke = value.startsWith("#") ? value : `#${value}`;
+        }
+    }
+
+    if(hasAttr(style, "stroke-width")){
+        schema.width = getValue(style, "stroke-width");
+    }
+
+    if(hasAttr(style, "stroke-dasharray")){
+        schema.dasharray = getValue(style, "stroke-dasharray")
+    }
+
+    if(hasAttr(style, "stroke-linecap")){
+        schema.linecap = getValue(style, "stroke-linecap")
+    }
+
+    if(hasAttr(style, "marker-end")){
+        schema.end = getValue(style, "marker-end");
+    }
+
+    if(hasAttr(style, "marker-start")){
+        schema.start = getValue(style, "marker-start");
+    }
+
+    return schema;
+}
+
+function buildTarget(target){
+    if(hasAttr(target, "attribute")){
+        return getValue(target, "attribute");
+    }else{
+        return "self";
+    }
 }
 
 function buildInput(element) {
@@ -1274,6 +1510,20 @@ function buildFieldTemplate(element) {
 
     if (hasAttr(element, ATTR_STYLE)) {
         schema[ATTR_STYLE] = buildStyle.call(this, getAttr(element, ATTR_STYLE));
+    }
+
+    return schema;
+}
+
+function buildSibling(sibling){
+    const schema = {};
+
+    if(hasAttr(sibling, "tag")){
+        schema.tag = getValue(sibling, "tag");
+    }
+
+    if(hasAttr(sibling, "receiver")){
+        schema.receiver = getValue(sibling, "receiver");
     }
 
     return schema;

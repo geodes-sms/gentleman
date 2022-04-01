@@ -122,3 +122,7 @@
         max-height: 48px;
         opacity: 0.5;
     }
+
+    .foreign-holder > .algorithm-container{
+        border: solid black 1px;
+    }

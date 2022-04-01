@@ -131,6 +131,10 @@ export const Editor = {
     activeProjection: null,
     /** @type {EditorInstance} */
     activeInstance: null,
+    /**  */
+    activeReceiver: {},
+    receivers: {},
+
 
     /** @type {HTMLElement} */
     container: null,
@@ -412,7 +416,7 @@ export const Editor = {
      * @returns {Field}
      */
     getField(element) {
-        if (!isHTMLElement(element)) {
+        if (!isHTMLElement(element) && element.tagName != "path") {
             console.warn("Field error: Bad argument");
             return null;
         }
@@ -481,8 +485,35 @@ export const Editor = {
 
         return this.projectionModel.getLayout(id);
     },
-    resolveElement(element) {
+
+        /**
+     * Get a the related layout object
+     * @param {HTMLElement} element 
+     * @returns {Algorithm}
+     */
+    getAlgo(element) {
         if (!isHTMLElement(element)) {
+            console.warn("Algorithm error: Bad argument");
+                return null;
+        }
+    
+        const { id, nature } = element.dataset;
+    
+        if (isNullOrUndefined(id)) {
+            console.warn("Algorithm error: Missing id attribute on field");
+            return null;
+        }
+    
+        if (!["algorithm", "algorithm-component"].includes(nature)) {
+            console.warn("Layout error: Unknown nature attribute on field");
+            return null;
+        }
+    
+        return this.projectionModel.getAlgo(id);
+    },
+
+    resolveElement(element) {
+        if (!isHTMLElement(element) && element.tagName != "path") {
             return null;
         }
 
@@ -507,6 +538,8 @@ export const Editor = {
             case "static-component":
                 projectionElement = this.getStatic(element);
                 break;
+            case "algorithm":
+                projectionElement = this.getAlgo(element);
         }
 
         if (projectionElement) {
@@ -1777,6 +1810,51 @@ export const Editor = {
     },
     hasHanlder(name) {
         return this.handlers.has(name);
+    },
+
+    registerReceiver(proj, rtag){
+        console.log("REGISTERING RECEIVER");
+        if(isNullOrUndefined(this.activeReceiver[rtag])){
+            this.activeReceiver[rtag] = proj;
+        }
+
+        if(isNullOrUndefined(this.receivers[rtag])){
+            this.receivers[rtag] = {
+                root: proj,
+                projections: []
+            }
+
+            proj.isRoot = true;
+        }
+
+
+        this.receivers[rtag].projections.push(proj);
+    },
+
+    getActiveReceiver(rtag){
+        return this.activeReceiver[rtag];
+    },
+
+    setActiveReceiver(proj, rtag){
+        this.activeReceiver[rtag] = proj;
+    },
+
+    getRootReceiver(rtag){
+        return this.receivers[rtag].root;
+    },
+
+    findReceiverInstance(instance, rtag){
+        let candidates = this.receivers[rtag].projections;
+        
+        for(let i = 0; i < candidates.length; i++){
+            let res = candidates[i].instances.get(instance);
+            if(isHTMLElement(res)){
+                return {container : candidates[i], instance : res};
+            }
+        }
+
+
+        alert("Not Found");
     },
 
     // Default events management

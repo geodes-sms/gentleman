@@ -73,6 +73,8 @@ export const ProjectionModel = {
     statics: null,
     /** @type {Map} */
     layouts: null,
+    /**  @type {Map}*/
+    algos: null,
 
     init(views) {
         this.projections = [];
@@ -80,6 +82,7 @@ export const ProjectionModel = {
         this.fields = new Map();
         this.statics = new Map();
         this.layouts = new Map();
+        this.algos = new Map();
 
         return this;
     },
@@ -240,6 +243,28 @@ export const ProjectionModel = {
         return this.layouts.get(id);
     },
 
+    registerAlgorithm(algo){
+        algo.environment = this.environment;
+        this.algos.set(algo.id, algo);
+
+        return this;
+    },
+    
+    unregisterAlgorithm(algo){
+        var _algo = this.algos.get(algo.id);
+
+        if (_algo) {
+            _algo.environment = null;
+            this.algos.delete(_algo.id);
+        }
+
+        return this;
+    },
+
+    getAlgo(id){
+        return this.algos.get(id);
+    },
+
     /**
      * Get the metadata of a projection
      * @param {string} projectionId 
@@ -262,7 +287,7 @@ export const ProjectionModel = {
      * @returns {boolean}
      */
     hasConceptProjection(concept, tag) {
-        const isValid = (type) => !["template", "rule", "style"].includes(type);
+        const isValid = (type) => !["template", "rule", "style", "g-fragment"].includes(type);
 
         const hasName = (name) => name && (name === concept.name || concept.schema && name === concept.schema.base); // TODO: change to look for base (include self)
 
@@ -300,6 +325,7 @@ export const ProjectionModel = {
      * @param {string} tag 
      */
     getProjectionSchema(concept, tag) {
+
         if (isNullOrUndefined(concept)) {
             throw new TypeError("Bad parameter: concept");
         }
@@ -315,7 +341,7 @@ export const ProjectionModel = {
 
             return concept.hasPrototype(prototype);
         };
-        const isValid = (type) => !["template", "rule", "style"].includes(type);
+        const isValid = (type) => !["template", "rule", "style", "g-fragment"].includes(type);
 
         if (isString(concept)) {
             projection = this.schema.filter(p => isValid(p.type) && p.concept.name === concept);
@@ -336,6 +362,20 @@ export const ProjectionModel = {
      */
     getTemplateSchema(name) {
         let schema = this.schema.find(p => p.type === "template" && p.name === name);
+
+        if (isNullOrUndefined(schema)) {
+            return null;
+        }
+
+        return deepCopy(schema);
+    },
+    /**
+     * Gets a template schema
+     * @param {string} name 
+     * @returns 
+     */
+     getGFragmentSchema(name) {
+        let schema = this.schema.find(p => p.type === "g-fragment" && p.name === name);
 
         if (isNullOrUndefined(schema)) {
             return null;
@@ -394,7 +434,7 @@ export const ProjectionModel = {
 
             return concept.hasPrototype && concept.hasPrototype(prototype);
         };
-        const isValid = (type) => !["template", "rule", "style"].includes(type);
+        const isValid = (type) => !["template", "rule", "style", "g-fragment"].includes(type);
 
         if (isString(concept)) {
             projection = this.schema.filter(p => isValid(p.type) && p.concept.name === concept);

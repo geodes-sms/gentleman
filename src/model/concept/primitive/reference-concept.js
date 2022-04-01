@@ -110,7 +110,6 @@ const _ReferenceConcept = {
         if (this.reference) {
             this.reference.unregister(this);
         }
-
         this.value = value;
         this.reference = this.model.getConcept(value);
 
