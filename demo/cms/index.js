@@ -1,23 +1,19 @@
-import '@css/normalize.css';
-import '@css/base.css';
-import '@css/effect.css';
-import '@css/app/layout.css';
-import '@css/app/field.css';
-import '@css/app/editor.css';
-import '@css/app/editor-home.css';
-import '@css/app/editor-header.css';
+import '@src/stylesheets.js';
 import './assets/style.css';
 
-import { 
-    findAncestor, getElement, getElements, isHTMLElement, isNullOrUndefined 
+import {
+    findAncestor, getElement, getElements, isHTMLElement, isNullOrUndefined
 } from 'zenkai';
 
 const PEOPLE_CONCEPT = require('@models/cms-model/person-concept.json');
+const PEOPLE_PROJECTION = require('@models/cms-model/person-projection.json');
 const ORGANIZATION_CONCEPT = require('@models/cms-model/organization-concept.json');
 const ORGANIZATION_PROJECTION = require('@models/cms-model/organization-projection.json');
-const PROJECTION = require('@models/cms-model/projection.json');
+const PROJECT_CONCEPT = require('@models/cms-model/project-concept.json');
+const PROJECT_PROJECTION = require('@models/cms-model/project-projection.json');
 
 const PEOPLE_DATA = require('./assets/data/people.json');
+const PROJECTS_DATA = require('./assets/data/projects.json');
 const TOOLS_DATA = require('./assets/data/tools.json');
 const { activateEditor } = require('@src');
 
@@ -27,8 +23,8 @@ editor.init({
     config: {
         header: false,
     },
-    conceptModel: [PEOPLE_CONCEPT, ORGANIZATION_CONCEPT],
-    projectionModel: ORGANIZATION_PROJECTION
+    conceptModel: [PEOPLE_CONCEPT, ORGANIZATION_CONCEPT, PROJECT_CONCEPT],
+    projectionModel: [ORGANIZATION_PROJECTION, PEOPLE_PROJECTION, PROJECT_PROJECTION]
 });
 
 let organization = editor.createConcept("research-organization");
@@ -37,10 +33,9 @@ organization.getAttribute("description").setValue("GEODES was founded as part of
 let instance = editor.createInstance(organization);
 instance.changeSize("fullscreen");
 
-let people = organization.getAttribute("members").getTarget();
-
-
 const App = {
+    /** @type {HTMLElement} */
+    editorInstance: null,
     /** @type {HTMLElement} */
     container: null,
     /** @type {HTMLElement} */
@@ -50,17 +45,68 @@ const App = {
     /** @type {Map<string, View>} */
     views: null,
     /** @type {HTMLElement} */
+    selectedName: null,
+    /** @type {HTMLElement} */
     selectedItem: null,
 
-    init(container) {
+    init(container, instance) {
         this.container = container;
         this.items = new Map();
         this.views = new Map();
+        this.editorInstance = instance;
+
         this.bindDOM();
         this.bindEvents();
+
+        return this;
     },
     refresh() {
 
+    },
+    fetchData() {
+        let people = organization.getAttribute("members").getTarget();
+        let projects = organization.getAttribute("projects").getTarget();
+
+        PEOPLE_DATA.forEach(item => {
+            let person = editor.createConcept("person");
+
+            const [lastName, firstName] = item.name.split(",");
+
+            person.getAttribute("first-name").setValue(firstName);
+            person.getAttribute("last-name").setValue(lastName);
+            person.getAttribute("occupation").setValue(item.position);
+            person.getAttribute("website").setValue(item.website);
+            person.getAttribute("email").setValue(item.email);
+            person.getAttribute("phone").setValue(item.phone);
+            person.getAttribute("photo").setValue(item.photo);
+
+            people.addElement(person);
+        });
+
+        PROJECTS_DATA.forEach(item => {
+            let project = editor.createConcept("project");
+
+            const { name, description, startYear, endYear, funding, logo } = item;
+
+            project.getAttribute("name").setValue(name);
+            project.getAttribute("description").setValue(description);
+            project.getAttribute("start-date").setValue(startYear);
+            project.getAttribute("end-date").setValue(endYear);
+            project.getAttribute("funding").setValue(funding);
+            project.getAttribute("logo").setValue(logo);
+
+            let partners = project.getAttribute("partners").getTarget();
+
+            item.partners.forEach(p => {
+                let partner = editor.createConcept("partner");
+
+                partner.getAttribute("name").setValue(p);
+
+                partners.addElement(partner);
+            });
+
+            projects.addElement(project);
+        });
     },
     selectItem(name) {
         if (isNullOrUndefined(name)) {
@@ -82,16 +128,42 @@ const App = {
         }
 
         this.selectedItem = item;
+        this.selectedName = name;
         this.selectedItem.classList.add("selected");
 
-        this.updateView();
+        this.updateView(name);
 
         this.refresh();
 
         return this;
     },
-    updateView() {
+    updateView(name) {
+        let projection = this.editorInstance.projection;
 
+        if (name === "general") {
+            let index = projection.findView("general");
+            if (index === -1) {
+                return false;
+            }
+
+            projection.changeView(index);
+        } else if (name === "people") {
+            let index = projection.findView("people");
+            if (index === -1) {
+                return false;
+            }
+
+            projection.changeView(index);
+        } else if (name === "projects") {
+            let index = projection.findView("project");
+            if (index === -1) {
+                return false;
+            }
+
+            projection.changeView(index);
+        }
+
+        return;
     },
     bindDOM() {
         this.menu = getElement(`[data-cms="menu"]`);
@@ -143,22 +215,5 @@ const View = {
     }
 };
 
-App.init(getElement(".page-body"));
-
-function loadData(data) {
-    if (Array.isArray(data)) {
-        data.forEach(item => {
-            let person = editor.createConcept("person");
-
-            const [lastName, firstName] = item.name.split(",");
-
-            person.getAttribute("first-name").setValue(firstName);
-            person.getAttribute("last-name").setValue(lastName);
-            person.getAttribute("occupation").setValue(item.position);
-            person.getAttribute("email-address").setValue(item.website);
-            person.getAttribute("photo").setValue(item.photo);
-
-            people.addElement(person);
-        });
-    }
-}
+App.init(getElement(".page-body"), instance);
+App.fetchData();

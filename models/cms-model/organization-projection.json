@@ -2,7 +2,7 @@
     "projection": [
         {
             "concept": { "prototype": "organization" },
-            "tags": ["edit-view"],
+            "tags": ["general"],
             "container": {
                 "content": [
                     {
@@ -23,18 +23,36 @@
                         "content": [
                             {
                                 "type": "attribute",
-                                "name": "email",
+                                "name": "phone",
                                 "tag": "textbox-label",
-                                "required": true
+                                "required": true,
+                                "style": {
+                                    "css": ["pp-wrap-element"]
+                                }
                             },
                             {
                                 "type": "attribute",
-                                "name": "phone",
+                                "name": "email",
                                 "tag": "textbox-label",
-                                "required": true
-                            }      
+                                "required": true,
+                                "style": {
+                                    "css": ["pp-wrap-element", "pp-wrap-element--2"]
+                                }
+                            }
                         ],
+                        "style": {
+                            "css": ["pp-wrap"]
+                        },
                         "layout": { "type": "flex", "orientation": "row", "wrappable": false }
+                    },
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "Address",
+                        "style": {
+                            "css": ["pp-subtitle"],
+                            "ref": ["box-top"]
+                        }
                     },
                     {
                         "type": "attribute",
@@ -121,13 +139,17 @@
                             {
                                 "type": "attribute",
                                 "name": "street-address",
-                                "tag": "textbox-label"
+                                "tag": "textbox-label",
+                                "style": {
+                                    "css": ["pp-fieldgroup-element", "pp-fieldgroup-element--3"]
+                                }
                             },
                             {
                                 "type": "attribute",
                                 "name": "locality",
                                 "tag": "textbox-label",
                                 "style": {
+                                    "css": ["pp-fieldgroup-element"],
                                     "ref": ["box-left"]
                                 }
                             },
@@ -136,6 +158,7 @@
                                 "name": "region",
                                 "tag": "textbox-label",
                                 "style": {
+                                    "css": ["pp-fieldgroup-element"],
                                     "ref": ["box-left"]
                                 }
                             }
@@ -151,17 +174,24 @@
                             {
                                 "type": "attribute",
                                 "name": "postal-code",
-                                "tag": "textbox-label"
+                                "tag": "textbox-label",
+                                "style": {
+                                    "css": ["pp-fieldgroup-element"]
+                                }
                             },
                             {
                                 "type": "attribute",
                                 "name": "country",
-                                "tag": "textbox-label"
+                                "tag": "textbox-label",
+                                "style": {
+                                    "css": ["pp-fieldgroup-element"],
+                                    "ref": ["box-left"]
+                                }
                             }
                         ],
                         "layout": { "type": "flex", "orientation": "row", "wrappable": false },
                         "style": {
-                            "css": ["pp-fieldgroup"]
+                            "css": ["pp-fieldgroup", "pp-fieldgroup--50"]
                         }
                     }
                 ],
@@ -322,40 +352,37 @@
         },
         {
             "concept": { "name": "string" },
-            "type": "container",
+            "type": "field",
             "tags": ["textarea-label"],
-            "container": {
-                "content": [
-                    {
-                        "type": "static",
-                        "static": {
-                            "type": "text",
-                            "content": {
-                                "type": "property",
-                                "name": "label"
-                            },
-                            "style": {
-                                "css": ["pp-textarea2__label"]
+            "field": {
+                "type": "text",
+                "multiline": true,
+                "container": {
+                    "content": [
+                        {
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "content": { "type": "property", "name": "label" },
+                                "style": {
+                                    "css": ["pp-textarea2__label"]
+                                }
+                            }
+                        }, 
+                        {
+                            "type": "input",
+                            "multiline": true,
+                            "input": {
+                                "type": "text",
+                                "placeholder": "Enter a description",
+                                "style": {
+                                    "css": ["pp-textarea2__input"]
+                                }
                             }
                         }
-                    }, 
-                    {
-                        "kind": "field",
-                        "type": "text",
-                        "multiline": true,
-                        "input": {
-                            "type": "text",
-                            "placeholder": "Enter a description",
-                            "style": {
-                                "css": ["pp-textarea2__input"]
-                            }
-                        },
-                        "style": {
-                            "css": ["pp-textarea"]
-                        }
-                    }
-                ],
-                "layout": { "type": "flex", "orientation": "row" },
+                    ],
+                    "layout": { "type": "flex", "orientation": "row", "wrappable": true }
+                },
                 "style": {
                     "css": ["pp-textarea2"]
                 }
@@ -375,10 +402,7 @@
                             "type": "static",
                             "static": {
                                 "type": "text",
-                                "content": {
-                                    "type": "property",
-                                    "name": "label"
-                                },
+                                "content": { "type": "property", "name": "label" },
                                 "style": {
                                     "css": ["pp-textbox2__label"]
                                 }
@@ -388,10 +412,44 @@
                             "type": "input",
                             "input": {
                                 "type": "text",
-                                "placeholder": {
-                                    "type": "property",
-                                    "name": "placeholder"
-                                },
+                                "placeholder": { "type": "property", "name": "placeholder" },
+                                "style": {
+                                    "css": ["pp-textbox2__input"]
+                                }
+                            }
+                        }
+                    ],
+                    "style": {
+                        "css": ["pp-textbox2"]
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "number" },
+            "type": "field",
+            "tags": ["textbox-label"],
+            "content": {
+                "type": "text",
+                "container": {
+                    "type": "flex",
+                    "orientation": "row",
+                    "content": [
+                        {
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "content": { "type": "property", "name": "label" },
+                                "style": {
+                                    "css": ["pp-textbox2__label"]
+                                }
+                            }
+                        }, 
+                        {
+                            "type": "input",
+                            "input": {
+                                "type": "number",
+                                "placeholder": { "type": "property", "name": "placeholder" },
                                 "style": {
                                     "css": ["pp-textbox2__input"]
                                 }
@@ -439,40 +497,6 @@
                 "url": { "type": "property", "name": "value" },
                 "style": {
                     "css": ["pp-image"]
-                }
-            }
-        },
-        {
-            "concept": { "name": "set" },
-            "type": "field",
-            "tags": ["members"],
-            "content": {
-                "type": "list",
-                "list": {
-                    "item": {
-                        "template": { "tag": "edit-view" },
-                        "style": {
-                            "css": ["pp-person-set__list-item"]
-                        }
-                    },
-                    "style": {
-                        "css": ["pp-person-set__list"]
-                    }
-                },
-                "action": {
-                    "add": false,
-                    "remove": {
-                        "content": [
-                            {
-                                "kind": "static",
-                                "type": "text",
-                                "content": "✖"
-                            }
-                        ],
-                        "style": {
-                            "css": ["pp-person-set__btn-remove"]
-                        }
-                    }
                 }
             }
         },

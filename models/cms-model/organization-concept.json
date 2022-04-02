@@ -98,6 +98,15 @@
                             "name": "area"
                         }
                     }
+                },
+                {
+                    "name": "projects",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "project"
+                        }
+                    }
                 }
             ],
             "properties": []

@@ -139,7 +139,7 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
     display: block;
     padding: 6px 4px 2px;
     width: 100%;
-    font-size: 1.5em; font-weight: bold;
+    font-size: 1.5em;
     background-color: #f5f5f5;
     color: #222;
     outline: none;
@@ -267,9 +267,74 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
         border-color: #F27E88;
     }
 
+.pp-wrap-element {
+    flex: 1 1;
+}
+
+    .pp-wrap-element + .pp-wrap-element {
+        margin-left: 6px;
+    }
+
+    .pp-wrap-element--2 {
+        flex-grow: 2;
+    }
+
+    .pp-fieldgroup--50 {
+        width: 50%;
+    }
+    
+.pp-fieldgroup-element {
+    flex: 1 1;
+}
+
+.pp-fieldgroup-element--3 {
+    flex-grow: 2;
+}
+
+.pp-textarea2 {
+    display: inline-flex; flex-direction: column
+}
+
+    .pp-textarea2__label {
+        margin-bottom: 1px;
+        font-size: 1.2em; font-weight: 500;
+        color: #555;
+    }
+
+    .pp-textarea2.active .pp-textarea2__label {
+        color: #1F75FE;
+    }
+
+    .pp-textarea2__input {
+        border: 2px solid #e5e4e2;
+        border-radius: 4px; font-size: 1.3em;
+        padding: 6px;
+        background-color: #fbfbfb;
+    }
+
+    .pp-textarea2__input.empty {
+        border-color: #d5d5d5;
+    }
+
+    .pp-textarea2__input:focus,
+    .pp-textarea2__input:active {
+        border-color: #1F75FE;
+    }
+
+    .pp-textarea2__input.error {
+        border-color: #F27E88;
+    }
+
+
 .pp-title {
     font-size: 1.8em; font-weight: 300;
     text-transform: uppercase; 
+}
+
+
+.pp-subtitle {
+    font-size: 1.6em; font-weight: 500;
+    color: #555;
 }
 
 
@@ -323,7 +388,7 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
     }
 
 .areas .pp-textbox__input {
-    background-color: #fff;
+    background-color: #fefefe;
 }
 
 .areas .pp-textarea__input {
@@ -334,18 +399,22 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
     display: flex;
 }
 
-.pp-person-set__list-item {
-    display: flex;
-    padding: 8px 12px;
-    border-radius: 4px;
-    box-shadow:  0 0 0 1px #d5d5d5;
-    background-color: #f9f9f9;
-    margin-right: 12px; margin-bottom: 6px;
+.pp-person-set__rowlist {
+    display: table;
 }
 
-.pp-person-set__list-item.active {
-    box-shadow: 0 0 0 1px #1F75FE;
-}
+    .pp-person-set__list-item {
+        display: flex;
+        padding: 8px 12px;
+        border-radius: 4px;
+        box-shadow:  0 0 0 1px #d5d5d5;
+        background-color: #f9f9f9;
+        margin-right: 12px; margin-bottom: 6px;
+    }
+
+    .pp-person-set__list-item.active {
+        box-shadow: 0 0 0 1px #1F75FE;
+    }
 
     .pp-person-set__list-item > .projection__btn-delete {
         position: absolute;
@@ -366,6 +435,42 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
     .pp-person {
         position: relative;
         min-height: 120px;
+    }
+
+    .pp-person--row {
+        display: table-row!important;
+        width: 100%;
+    }
+
+    .pp-person--row > .projection__btn-collapse { display: none; }
+
+    .pp-person--row > .projection__btn-delete {
+        position: absolute;
+        top: 10px; right: -6px;
+        display: flex; align-items: center; justify-content: center;
+        width: 20px; height: 20px;
+        color: #fff;
+        font-size: 1.3rem; font-weight: 100;
+        border-radius: 50%;
+        box-shadow: 1px -1px 2px -1px #d5d5d5;
+        background-color: #555;
+    }
+
+    .pp-person--row > .projection__btn-delete:hover {
+        background-color: #FF6F61;
+    }
+
+    .pp-person--row > .field {
+        display: table-cell;
+        padding-left: 2px; padding-right: 2px;
+    }
+
+    .pp-person--row .pp-textbox__input {
+        font-size: 1.4em;
+    }
+
+    .pp-person--row > .field.phone {
+        width: 120px;
     }
     
     .pp-person--read {
@@ -429,4 +534,9 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
     font-weight: 400;
     font-size: 1.2em;
     color: #222;
+}
+
+.pp-project {
+    width: 100%;
+    max-width: 600px;
 }

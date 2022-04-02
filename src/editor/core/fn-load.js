@@ -113,6 +113,36 @@ export const FnLoad = {
 
         return this;
     },
+    loadProjections(projections) {
+        if (!Array.isArray(projections)) {
+            this.notify("Invalid concept schema", NotificationType.ERROR);
+
+            return false;
+        }
+
+        if (isEmpty(projections)) {
+            this.notify("The concept schema is empty", NotificationType.ERROR);
+
+            return false;
+        }
+
+        this.activeElement = null;
+        this.activeInstance = null;
+        this.activeConcept = null;
+        this.activeProjection = null;
+
+        if (isNullOrUndefined(this.projectionModel)) {
+            this.projectionModel = createProjectionModel(null, this).init();
+        }
+
+        projections.forEach(projection => {
+            this.projectionModel.addSchema(projection);
+        });
+
+        this.refresh();
+
+        return this;
+    },
     /**
      * Parse and load a file
      * @param {File} file 

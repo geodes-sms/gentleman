@@ -1,4 +1,4 @@
-import { isNullOrUndefined, isEmpty, isIterable, isString } from "zenkai";
+import { isNullOrUndefined, isEmpty, isIterable, isString, valOrDefault } from "zenkai";
 import { deepCopy, NotificationType } from "@utils/index.js";
 import { ProjectionFactory } from "./projection.js";
 
@@ -55,14 +55,15 @@ const PREDEFINED_PROJECTIONS = [
  * @param {*} environment 
  * @returns {ProjectionModel}
  */
-export function createProjectionModel(schema, environment) {
-    if (!Array.isArray(schema.projection)) {
-        throw new TypeError("Bad projection schema");
-    }
+export function createProjectionModel($schema, environment) {
+    let schema = {
+        projection: [],
+        template: [],
+        style: [],
+    };
 
-    schema.projection.push(...PREDEFINED_PROJECTIONS);
     const model = Object.create(ProjectionModel, {
-        schema: { value: schema, writable: true },
+        schema: { value: valOrDefault($schema, schema), writable: true },
         environment: { value: environment },
     });
 
