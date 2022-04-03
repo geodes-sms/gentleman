@@ -2,15 +2,8 @@ import {
     createDocFragment, createDiv, createUnorderedList, createListItem, createButton,
     findAncestor, removeChildren, isHTMLElement, isNullOrUndefined, valOrDefault, hasOwn,
 } from "zenkai";
-import {
-    hide, show, shake, NotificationType, getClosest, isHidden,
-    getTopElement, getBottomElement, getRightElement, getLeftElement
-} from "@utils/index.js";
 import { StyleHandler } from "../style-handler.js";
-import { ContentHandler } from "../content-handler.js";
-import { StateHandler } from "../state-handler.js";
 import { Field } from "./field.js";
-import { nodes } from "coffeescript";
 
 
 /**
@@ -19,7 +12,7 @@ import { nodes } from "coffeescript";
  * @returns {boolean}
  * @this {BaseListField}
  */
- function isValid(element) {
+function isValid(element) {
     if (!isHTMLElement(element)) {
         return false;
     }
@@ -31,13 +24,13 @@ import { nodes } from "coffeescript";
 
 const BaseAddField = {
 
-    init(){
+    init() {
         this.elements = new Map();
 
         return this;
     },
 
-    render(){
+    render() {
         const fragment = createDocFragment();
 
         const { content = "Add", items } = this.schema;
@@ -65,15 +58,15 @@ const BaseAddField = {
             class: ["field-action", "field--list__add"],
             tabindex: 0,
             dataset: {
-            nature: "field-component",
-            view: "list",
-            component: "action",
-            id: this.id,
-            action: "add",
+                nature: "field-component",
+                view: "list",
+                component: "action",
+                id: this.id,
+                action: "add",
             }
         });
 
-        if(!isNullOrUndefined(items)){
+        if (!isNullOrUndefined(items)) {
             this.item = items;
         }
 
@@ -81,7 +74,7 @@ const BaseAddField = {
 
         fragment.appendChild(addElement);
 
-        if(fragment.hasChildNodes()){
+        if (fragment.hasChildNodes()) {
             this.element.append(fragment);
         }
 
@@ -90,7 +83,7 @@ const BaseAddField = {
         return this.element;
     },
 
-    focusIn(){
+    focusIn() {
     },
 
     clickHandler(target) {
@@ -121,44 +114,44 @@ const BaseAddField = {
 
     },
 
-    createElement(){
+    createElement() {
         this.source.createElement();
     },
 
-    addItem(value){
+    addItem(value) {
         this.parent.addItem(value, this);
-        
+
         /*this.element.append(item);*/
 
         return this;
     },
 
-    removeItem(value){
+    removeItem(value) {
         this.parent.removeItem(value);
     },
 
-    refresh(){
-        if(this.element){
+    refresh() {
+        if (this.element) {
             this.source.getValue().forEach((value) => {
                 this.addItem(value);
-            })
+            });
         }
     },
 
-    focusOut(){
+    focusOut() {
 
     },
 
-    bindEvent(){
+    bindEvent() {
         this.projection.registerHandler("value.added", (value) => {
             this.addItem(value);
         });
 
         this.projection.registerHandler("value.removed", (value) => {
             this.removeItem(value);
-        })
+        });
     }
-}
+};
 
 export const AddField = Object.assign(
     Object.create(Field),

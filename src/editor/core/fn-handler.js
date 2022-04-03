@@ -1,4 +1,4 @@
-import { isNullOrUndefined, isFunction, valOrDefault, } from 'zenkai';
+import { isNullOrUndefined, isFunction, valOrDefault, isHTMLElement } from 'zenkai';
 
 export const FnHandler = {
     /**
@@ -81,5 +81,50 @@ export const FnHandler = {
     },
     hasHanlder(name) {
         return this.handlers.has(name);
+    },
+    
+    registerReceiver(proj, rtag) {
+        console.log("REGISTERING RECEIVER");
+        if (isNullOrUndefined(this.activeReceiver[rtag])) {
+            this.activeReceiver[rtag] = proj;
+        }
+
+        if (isNullOrUndefined(this.receivers[rtag])) {
+            this.receivers[rtag] = {
+                root: proj,
+                projections: []
+            };
+
+            proj.isRoot = true;
+        }
+
+
+        this.receivers[rtag].projections.push(proj);
+    },
+
+    getActiveReceiver(rtag) {
+        return this.activeReceiver[rtag];
+    },
+
+    setActiveReceiver(proj, rtag) {
+        this.activeReceiver[rtag] = proj;
+    },
+
+    getRootReceiver(rtag) {
+        return this.receivers[rtag].root;
+    },
+
+    findReceiverInstance(instance, rtag) {
+        let candidates = this.receivers[rtag].projections;
+
+        for (let i = 0; i < candidates.length; i++) {
+            let res = candidates[i].instances.get(instance);
+            if (isHTMLElement(res)) {
+                return { container: candidates[i], instance: res };
+            }
+        }
+
+
+        alert("Not Found");
     },
 };

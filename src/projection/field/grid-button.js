@@ -1,16 +1,9 @@
 import {
-    createDocFragment, createDiv, createUnorderedList, createListItem, createButton,
-    findAncestor, removeChildren, isHTMLElement, isNullOrUndefined, valOrDefault, hasOwn,
+    createDocFragment, createDiv, createButton, findAncestor, isHTMLElement, isNullOrUndefined
 } from "zenkai";
-import {
-    hide, show, shake, NotificationType, getClosest, isHidden,
-    getTopElement, getBottomElement, getRightElement, getLeftElement
-} from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler } from "./../content-handler.js";
-import { StateHandler } from "./../state-handler.js";
 import { Field } from "./field.js";
-import { nodes } from "coffeescript";
 
 
 /**
@@ -19,7 +12,7 @@ import { nodes } from "coffeescript";
  * @returns {boolean}
  * @this {BaseListField}
  */
- function isValid(element) {
+function isValid(element) {
     if (!isHTMLElement(element)) {
         return false;
     }
@@ -31,13 +24,13 @@ import { nodes } from "coffeescript";
 
 const BaseGridButton = {
 
-    init(){
+    init() {
         this.elements = new Map();
 
         return this;
     },
 
-    render(){
+    render() {
         const fragment = createDocFragment();
 
         const { action = {}, targetGrid } = this.schema;
@@ -61,7 +54,7 @@ const BaseGridButton = {
             StyleHandler.call(this.projection, this.element, this.schema.style);
         }
 
-        if(action){
+        if (action) {
             const { position = "after", content, help, style } = action;
 
             let addElement = createButton({
@@ -89,9 +82,9 @@ const BaseGridButton = {
             StyleHandler.call(this.projection, addElement, style);
 
             fragment.appendChild(addElement);
-        }        
+        }
 
-        if(fragment.hasChildNodes()){
+        if (fragment.hasChildNodes()) {
             this.element.append(fragment);
         }
 
@@ -100,7 +93,7 @@ const BaseGridButton = {
         return this.element;
     },
 
-    focusIn(){
+    focusIn() {
     },
 
     clickHandler(target) {
@@ -128,14 +121,14 @@ const BaseGridButton = {
 
     },
 
-    createElement(){
+    createElement() {
         this.source.createElement();
     },
 
-    createItem(object){
+    createItem(object) {
         const { node = {} } = this.schema.node;
 
-        if(!this.model.hasProjectionSchema(object, node.tag)){
+        if (!this.model.hasProjectionSchema(object, node.tag)) {
             return "";
         }
 
@@ -145,14 +138,14 @@ const BaseGridButton = {
 
         //itemProjection.parent = this.parent.projection;
         //itemProjection.element.parent = this.parent;
-        
+
         let container = itemProjection.init().render();
         container.dataset.index = object.index;
 
         return container;
     },
 
-    addItem(value){
+    addItem(value) {
         this.targetGrid.addItem(value, this);
 
         /*this.element.append(item);*/
@@ -160,24 +153,24 @@ const BaseGridButton = {
         return this;
     },
 
-    removeItem(value){
+    removeItem(value) {
         this.targetGrid.removeItem(value);
     },
 
-    focusOut(){
+    focusOut() {
 
     },
 
-    bindEvent(){
+    bindEvent() {
         this.projection.registerHandler("value.added", (value) => {
             this.addItem(value);
         });
 
         this.projection.registerHandler("value.removed", (value) => {
             this.removeItem(value);
-        })
+        });
     }
-}
+};
 
 export const GridButton = Object.assign(
     Object.create(Field),

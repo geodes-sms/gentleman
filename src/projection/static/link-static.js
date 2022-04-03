@@ -12,6 +12,7 @@ const URLHandler = {
     "email": (url) => `mailto:${url}`,
     "phone": (url) => `tel:${url}`,
     "link": (url) => `${url}`,
+    "url": (url) => `${url}`,
 };
 
 

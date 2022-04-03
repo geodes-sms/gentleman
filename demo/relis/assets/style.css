@@ -36,14 +36,6 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
     padding: 6px 12px;
 }
 
-<<<<<<< HEAD
-.editor-concept > .algorithm-container{
-    background-color: #fefefe;
-    padding: 6px 12px;
-}
-
-=======
->>>>>>> 4fa52361a28ed3a1b742c8a26a93a0bb513e021c
 .rl-option {
     position: relative;
     display: flex; align-items: flex-end; justify-content: center;

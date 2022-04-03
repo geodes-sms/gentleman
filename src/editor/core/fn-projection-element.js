@@ -76,6 +76,31 @@ export const FnProjectionElement = {
 
         return this.projectionModel.getLayout(id);
     },
+    /**
+   * Get a the related layout object
+   * @param {HTMLElement} element 
+   * @returns {Algorithm}
+   */
+    getAlgo(element) {
+        if (!isHTMLElement(element)) {
+            console.warn("Algorithm error: Bad argument");
+            return null;
+        }
+
+        const { id, nature } = element.dataset;
+
+        if (isNullOrUndefined(id)) {
+            console.warn("Algorithm error: Missing id attribute on field");
+            return null;
+        }
+
+        if (!["algorithm", "algorithm-component"].includes(nature)) {
+            console.warn("Layout error: Unknown nature attribute on field");
+            return null;
+        }
+
+        return this.projectionModel.getAlgo(id);
+    },
     resolveElement(element) {
         if (!isHTMLElement(element)) {
             return null;
@@ -102,6 +127,8 @@ export const FnProjectionElement = {
             case "static-component":
                 projectionElement = this.getStatic(element);
                 break;
+            case "algorithm":
+                projectionElement = this.getAlgo(element);
         }
 
         if (projectionElement) {

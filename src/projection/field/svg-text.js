@@ -1,4 +1,4 @@
-import { isNull, isNullOrUndefined } from "zenkai";
+import { isNullOrUndefined } from "zenkai";
 import { Field } from "./field";
 
 const BaseSvgText = {
@@ -32,7 +32,7 @@ const BaseSvgText = {
 
         return this.element;
     }
-}
+};
 
 export const SvgText = Object.assign(
     Object.create(Field),

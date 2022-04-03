@@ -1,31 +1,24 @@
 import {
-    createDocFragment, createSpan, createDiv, createTextArea, createInput,
-    createUnorderedList, createListItem, findAncestor, removeChildren,
-    isHTMLElement, isNullOrWhitespace, isEmpty, valOrDefault, hasOwn, isNullOrUndefined, isNull, first,
+    createDocFragment, createDiv, isHTMLElement, isEmpty, isNullOrUndefined,
 } from "zenkai";
-import {
-    hide, show, getCaretIndex, isHidden, NotificationType, getClosestSVG,
-    getTopElement, getBottomElement, getRightElement, getLeftElement
-} from "@utils/index.js";
-import { ContentHandler, resolveValue } from "../content-handler.js";
+import { ContentHandler } from "../content-handler.js";
 import { Layout } from "./layout.js";
-import { nodes } from "coffeescript";
 
 var node;
 var index;
 const BaseForceLayout = {
 
-    init(){
+    init() {
         return this;
     },
 
-    render(){
-        const { force = "repulsive", intensity, center, edges, attributes} = this.schema;
+    render() {
+        const { force = "repulsive", intensity, center, edges, attributes } = this.schema;
 
 
         const fragment = createDocFragment();
-        
-        if(!isHTMLElement(this.container)){
+
+        if (!isHTMLElement(this.container)) {
             this.container = createDiv({
                 class: ["layout-container"],
                 dataset: {
@@ -35,14 +28,14 @@ const BaseForceLayout = {
                 }
             });
         }
-  
 
-        if(!isEmpty(attributes) && !isHTMLElement(this.interact)){
+
+        if (!isEmpty(attributes) && !isHTMLElement(this.interact)) {
 
             /*Modifier la disposition du container*/
             let container = {
                 type: "layout",
-                layout:{
+                layout: {
                     type: "flex",
                     orientation: "row",
                     disposition: attributes
@@ -58,13 +51,13 @@ const BaseForceLayout = {
             attributes.forEach(a => {
                 layout.informations.get(a.dynamic.name).targetGrid = this;
             });
-            
+
             /*Attacher*/
-            this.interact["style"]["height"] = "9%"; 
+            this.interact["style"]["height"] = "9%";
             fragment.append(this.interact);
         }
 
-        if(!isHTMLElement(this.drawArea)){
+        if (!isHTMLElement(this.drawArea)) {
             this.drawArea = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
             this.drawArea.setAttribute("height", "90%");
@@ -72,32 +65,32 @@ const BaseForceLayout = {
 
             this.drawArea.setAttribute("viewBox", "0 0 " + 400 + " " + 400);
 
-            fragment.append(this.drawArea)
+            fragment.append(this.drawArea);
         }
 
-        if(fragment.hasChildNodes()){
+        if (fragment.hasChildNodes()) {
             this.container.append(fragment);
         }
 
-        if(isNullOrUndefined(this.foreignsID)){
+        if (isNullOrUndefined(this.foreignsID)) {
             this.foreignsID = -1;
         }
 
-        if(isNullOrUndefined(this.item)){
+        if (isNullOrUndefined(this.item)) {
             this.items = new Map();
         }
 
-        if(isNullOrUndefined(this.index)){
+        if (isNullOrUndefined(this.index)) {
             this.index = -1;
         }
 
         return this.container;
     },
 
-    createItem(object, button){
+    createItem(object, button) {
         const { node = {} } = button.schema.node;
 
-        if(!this.model.hasProjectionSchema(object, node.tag)){
+        if (!this.model.hasProjectionSchema(object, node.tag)) {
             return "";
         }
 
@@ -107,36 +100,36 @@ const BaseForceLayout = {
 
         //itemProjection.parent = this.parent.projection;
         //itemProjection.element.parent = this.parent;
-        
+
         let container = itemProjection.init().render();
 
         return container;
     },
 
-    setUpForce(force, intensity, center, edges){
+    setUpForce(force, intensity, center, edges) {
         this.force = d3.layout.force()
-                        .size([400, 400])
-                        .nodes([])
-                        .charge(-100)
-                        .on("tick", this.ticked)
+            .size([400, 400])
+            .nodes([])
+            .charge(-100)
+            .on("tick", this.ticked)
 
         var svg = d3.select("svg");
 
-        
-        this.nodes = this.force.nodes()
+
+        this.nodes = this.force.nodes();
         node = svg.selectAll(".node");
     },
 
-    ticked(){
-        node.attr("x", function(d) { return d.x; })
-                 .attr("y", function(d) { return d.y; })
-                 .attr("id", function(d) { return d.index})
-                 
+    ticked() {
+        node.attr("x", function (d) { return d.x; })
+            .attr("y", function (d) { return d.y; })
+            .attr("id", function (d) { return d.index });
+
     },
-    
+
     /*id non placé*/
 
-    restart(){
+    restart() {
         node = node.data(this.nodes);
 
         var l = this.nodes.length - 1;
@@ -145,16 +138,16 @@ const BaseForceLayout = {
             .style("overflow", "visible")
             .attr("width", 20)
             .attr("width", 20)
-            .attr("id", function(d) { return l;});
-            
+            .attr("id", function (d) { return l; });
+
 
         node.exit().remove();
 
     },
 
-    addItem(value, button){
-        
-        if(isNullOrUndefined(this.force)){
+    addItem(value, button) {
+
+        if (isNullOrUndefined(this.force)) {
             this.setUpForce();
         }
 
@@ -163,14 +156,14 @@ const BaseForceLayout = {
 
         this.restart();
 
-        let last = document.getElementById(this.nodes.length - 1);        
+        let last = document.getElementById(this.nodes.length - 1);
 
         let item = this.createItem(value, button);
-        switch(item.getAttribute("data-view")){
+        switch (item.getAttribute("data-view")) {
             case "svg":
                 let field = this.environment.resolveElement(item);
                 console.log(field.content.getAttribute('viewBox'));
-                field.content.setAttribute("viewBox", " 0 0 170 165")
+                field.content.setAttribute("viewBox", " 0 0 170 165");
                 last.appendChild(item);
                 break;
             default:
@@ -181,12 +174,12 @@ const BaseForceLayout = {
 
         this.force.start();
 
-        this.items.set(value.id, { item : last, index : last.id});
+        this.items.set(value.id, { item: last, index: last.id });
 
         console.log(this.nodes);
     },
 
-    removeItem(value){
+    removeItem(value) {
 
         let item = this.items.get(value.id);
         item.item.remove();
@@ -197,7 +190,7 @@ const BaseForceLayout = {
 
         console.log(this.nodes);
         this.restart();
-        
+
         this.nodes.splice(item.index, 1);
         this.force.start();
         /*this.nodes.forEach(element => {
@@ -206,10 +199,10 @@ const BaseForceLayout = {
     },
 
 
-    adaptForeign(f, i){
+    adaptForeign(f, i) {
         let rect = i.getBoundingClientRect();
 
-        
+
         /*i.childNodes.forEach(c => {
             console.log(c);
             console.log(c.getBoundingClientRect());
@@ -218,7 +211,7 @@ const BaseForceLayout = {
         f.setAttribute("width", /*Math.max(rect.width, 42)*/ rect.width);
         f.setAttribute("height", Number(rect.height + 5));
     }
-}
+};
 
 export const ForceLayout = Object.assign(
     Object.create(Layout),

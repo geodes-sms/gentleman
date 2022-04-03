@@ -1,5 +1,5 @@
-import { ContentHandler } from "./../content-handler";
 import { createDocFragment, isHTMLElement, createDiv, valOrDefault, isNullOrUndefined, isEmpty } from "zenkai";
+import { ContentHandler } from "./../content-handler";
 import { Algorithm } from "./algorithm";
 
 const BasePatternAlgorithm = {

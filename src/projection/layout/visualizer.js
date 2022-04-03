@@ -1,4 +1,7 @@
-import { createDocFragment, isHTMLElement, isNullOrUndefined, createDiv, createInput, valOrDefault, createButton} from "zenkai";
+import { 
+    createDocFragment, isHTMLElement, isNullOrUndefined, createDiv, createInput, valOrDefault,
+    createTextArea, createSpan 
+} from "zenkai";
 import { Layout } from "./layout.js";
 import { ContentHandler, resolveValue } from "./../content-handler.js";
 import { StyleHandler } from "./../style-handler.js";
@@ -47,20 +50,20 @@ function resolveInput(schema) {
 }
 
 const BaseVisualizer = {
-    init(){
+    init() {
         return this;
     },
 
-    render(){
+    render() {
         const fragment = createDocFragment();
 
-        const { current = {}, root} = this.schema;
+        const { current = {}, root } = this.schema;
 
         this.isRoot = root;
 
         var parser = new DOMParser();
 
-        if (!isHTMLElement(this.element)){
+        if (!isHTMLElement(this.element)) {
             this.element = createDiv({
                 id: this.id,
                 dataset: {
@@ -71,12 +74,12 @@ const BaseVisualizer = {
             });
         }
 
-        if(!isHTMLElement(this.content)){
+        if (!isHTMLElement(this.content)) {
             this.svg = this.source.value;
 
-            if(!isNullOrUndefined(this.svg)){
+            if (!isNullOrUndefined(this.svg)) {
                 this.content = parser.parseFromString(this.svg.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement;
-                if(this.content.tagName !== "svg"){
+                if (this.content.tagName !== "svg") {
                     let root = parser.parseFromString('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"/>', "image/svg+xml").documentElement
                     root.appendChild(this.content);
                     this.content = root;
@@ -85,11 +88,11 @@ const BaseVisualizer = {
             }
         }
 
-        if(!isHTMLElement(this.input)){
+        if (!isHTMLElement(this.input)) {
             const { placeholder = "", type, style } = current;
 
             this.input = resolveInput.call(this, current);
-            
+
             if (this.disabled) {
                 this.input.disabled = true;
             }
@@ -109,24 +112,24 @@ const BaseVisualizer = {
             fragment.append(this.input);
         }
 
-        if(root && isNullOrUndefined(this.buttons)){
-            
+        if (root && isNullOrUndefined(this.buttons)) {
+
             this.buttons = [];
 
             const inte = {
                 type: "static",
                 static: {
-                    type : "button",
+                    type: "button",
                     trigger: "make interactive",
                     content: [
                         {
                             type: "static",
                             static:
-                                {
-                                    type: "text",
-                                    content: "Interactive",
-                                    focusable: true
-                                }
+                            {
+                                type: "text",
+                                content: "Interactive",
+                                focusable: true
+                            }
                         }
                     ]
                 }
@@ -141,50 +144,50 @@ const BaseVisualizer = {
             element.visualizer = this;
             this.buttons.push(element);
             fragment.append(this.mkeInteractive);
-            
+
             const dyna = {
                 type: "static",
                 static: {
-                    type : "button",
+                    type: "button",
                     trigger: "make dynamic",
                     content: [
                         {
                             type: "static",
                             static:
-                                {
-                                    type: "text",
-                                    content: "Dynamic",
-                                    focusable: true
-                                }
+                            {
+                                type: "text",
+                                content: "Dynamic",
+                                focusable: true
+                            }
                         }
                     ]
                 }
-            }
+            };
 
             this.mkeDynamic = ContentHandler.call(this, dyna, null, this.args);
 
-            element = this.environment.resolveElement(this.mkeDynamic)
+            element = this.environment.resolveElement(this.mkeDynamic);
 
             element.visualizer = this;
             element.parent = this;
-            this.buttons.push(element)
+            this.buttons.push(element);
 
             fragment.append(this.mkeDynamic);
 
             const stat = {
                 type: "static",
                 static: {
-                    type : "button",
+                    type: "button",
                     trigger: "make static",
                     content: [
                         {
                             type: "static",
                             static:
-                                {
-                                    type: "text",
-                                    content: "Static",
-                                    focusable: true
-                                }
+                            {
+                                type: "text",
+                                content: "Static",
+                                focusable: true
+                            }
                         }
                     ]
                 }
@@ -202,7 +205,7 @@ const BaseVisualizer = {
 
         }
 
-        if(fragment.hasChildNodes()){
+        if (fragment.hasChildNodes()) {
             this.element.appendChild(fragment);
         }
 
@@ -211,21 +214,21 @@ const BaseVisualizer = {
         return this.element;
     },
 
-    focusIn(target){
+    focusIn(target) {
         return this.input.focus();
     },
 
-    focusOut(){
-        
+    focusOut() {
+
     },
 
-    createProj(){
+    createProj() {
         let res = this.current;
-        
-        if(res.tagName.toLowerCase() === "tspan"){
+
+        if (res.tagName.toLowerCase() === "tspan") {
             res = res.parentNode;
         }
-    
+
         let s = new XMLSerializer();
         /*let isntRoot = this.current.tagName !== "svg";
     
@@ -235,24 +238,24 @@ const BaseVisualizer = {
 
         this.cleanInput();
         this.updateInput(s.serializeToString(this.content));
-        
+
         return '<g xmlns="http://www.w3.org/2000/svg">' + s.serializeToString(res) + "</g>";
     },
 
-    cleanInput(){
+    cleanInput() {
         this.input.value = "";
         this.current.parentNode.removeChild(this.current);
     },
 
-    updateInput(value){
+    updateInput(value) {
         this.source.setValue(value)
     },
 
-    bindEvent(){
+    bindEvent() {
         this.content.addEventListener("click", (event) => {
             var s = new XMLSerializer();
             let c = event.target;
-            if(c.tagName.toLowerCase() === "tspan"){
+            if (c.tagName.toLowerCase() === "tspan") {
                 c = c.parentNode;
             }
             var current = s.serializeToString(c);
@@ -261,26 +264,26 @@ const BaseVisualizer = {
         });
 
         this.input.addEventListener("keydown", (event) => {
-            if((this.input.value !== "") && (!isNullOrUndefined(this.current)) && (event.key === "Enter")){
+            if ((this.input.value !== "") && (!isNullOrUndefined(this.current)) && (event.key === "Enter")) {
                 var parser = new DOMParser();
                 var current = parser.parseFromString(this.input.value.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement;
-                if(this.current !== this.content){
+                if (this.current !== this.content) {
                     this.current.replaceWith(current);
-                }else{
+                } else {
                     this.content = current;
                 }
                 this.current = current;
                 var s = new XMLSerializer();
-                if(!this.isRoot){
+                if (!this.isRoot) {
                     this.updateInput(s.serializeToString(this.content.childNodes[0]));
-                }else{
+                } else {
                     this.updateInput(s.serializeToString(this.content));
 
                 }
             }
-        })
+        });
     }
-}
+};
 
 export const Visualizer = Object.assign(
     Object.create(Layout),

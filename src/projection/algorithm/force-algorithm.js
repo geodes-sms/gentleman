@@ -1,5 +1,5 @@
 import { ContentHandler } from "../content-handler.js";
-import { createDocFragment, isHTMLElement, createDiv, createElement, isEmpty, valOrDefault, isNullOrUndefined, last, getNextElementSibling, isNull} from "zenkai";
+import { createDocFragment, isHTMLElement, createDiv, isEmpty, valOrDefault, isNullOrUndefined, } from "zenkai";
 import { Algorithm } from "./algorithm.js";
 
 
@@ -21,9 +21,9 @@ export const BaseForceAlgorithm = {
 
         this.arrowInventory = [];
 
-        this.linkInventory = {}
+        this.linkInventory = {};
 
-        return this
+        return this;
     },
 
     render(){
@@ -163,7 +163,7 @@ export const BaseForceAlgorithm = {
                         
                     if(window.instances.size > 0){
                         let instance = Array.from(window.instances)[0];
-                        instance.delete()
+                        instance.delete();
                     }
 
 
@@ -1398,7 +1398,7 @@ const BorderHandler = {
 
         polygon.points.forEach(p =>{
             points.push({x : p.rW * p1.width + p1.x - p1.width / 2, y : p.rH * p1.height + p1.y - p1.height / 2})
-        })
+        });
 
         let dx = (points[0].x - p2.x);
         let dy = (points[0].y - p2.y);
@@ -1466,7 +1466,7 @@ const BorderHandler = {
         }
         return points.x1;
     },
-}
+};
 
 export const ForceAlgorithm = Object.assign({},
     Algorithm,

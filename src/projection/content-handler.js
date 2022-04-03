@@ -208,7 +208,7 @@ export function ContentHandler(schema, concept, args = {}) {
         if (name.type === "param") {
             name = this.projection.getParam(name.name);
         }
-
+        console.log(schema);
         let template = this.model.getTemplateSchema(name);
 
         if (template.param) {

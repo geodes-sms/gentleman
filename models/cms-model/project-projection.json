@@ -6,11 +6,6 @@
             "container": {
                 "content": [
                     {
-                        "type": "attribute",
-                        "name": "name",
-                        "tag": "textbox"
-                    },
-                    {
                         "type": "container",
                         "content": [
                             {
@@ -24,7 +19,7 @@
                             {
                                 "kind": "static",
                                 "type": "button",
-                                "name": "add-member",
+                                "name": "add-project",
                                 "action": {
                                     "type": "CREATE",
                                     "target": {
@@ -66,7 +61,7 @@
                     {
                         "type": "attribute",
                         "name": "projects",
-                        "tag": "members-grid",
+                        "tag": "view-box",
                         "style": {
                             "ref": ["box-top"]
                         }
@@ -81,7 +76,7 @@
         },
         {
             "concept": { "name": "project" },
-            "tags": ["edit-view"],
+            "tags": ["card-view"],
             "container": {
                 "content": [
                     {
@@ -116,11 +111,20 @@
                                     "css": ["pp-fieldgroup-element"],
                                     "ref": ["box-left"]
                                 }
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "funding",
+                                "tag": "textbox-label",
+                                "style": {
+                                    "css": ["pp-fieldgroup-element", "pp-fieldgroup-element--3"],
+                                    "ref": ["box-left"]
+                                }
                             }
                         ],
                         "layout": { "type": "flex", "orientation": "row", "wrappable": false },
                         "style": {
-                            "css": ["pp-fieldgroup", "pp-fieldgroup--50"]
+                            "css": ["pp-fieldgroup"]
                         }
                     },
                     {
@@ -131,7 +135,7 @@
                                 "type": "text",
                                 "content": "Partners",
                                 "style": {
-                                    "css": ["pp-title"]
+                                    "css": ["pp-subtitle"]
                                 }
                             },
                             {
@@ -179,6 +183,7 @@
                     {
                         "type": "attribute",
                         "name": "partners",
+                        "tag": "partners",
                         "style": {
                             "css": ["areas"],
                             "ref": ["box-top"]
@@ -196,11 +201,22 @@
             "concept": { "name": "partner" },
             "tags": ["edit-view"],
             "container": {
-                "content": [             
+                "content": [
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "Partner",
+                        "style": {
+                            "css": ["pp-area-title"]
+                        }
+                    },     
                     {
                         "type": "attribute",
                         "name": "name",
-                        "tag": "textbox"
+                        "tag": "textbox",
+                        "options": {
+                            "placeholder": "name"
+                        }
                     },
                     {
                         "type": "attribute",
@@ -215,6 +231,10 @@
                         "type": "attribute",
                         "name": "website",
                         "tag": "textbox",
+                        "required": true,
+                        "options": {
+                            "placeholder": "URL"
+                        },
                         "style": {
                             "ref": ["box-top"]
                         }
@@ -222,9 +242,73 @@
                 ],
                 "layout": { "type": "flex", "orientation": "column" },
                 "style": {
-                    "css": ["pp-person", "pp-person--edit"]
+                    "css": ["pp-area", "pp-area--edit"]
                 },
                 "focusable": true
+            }
+        },
+
+        {
+            "concept": { "name": "set" },
+            "tags": ["view-box"],
+            "type": "container",
+            "container": {
+                "content": [
+                    {
+                        "kind": "field",
+                        "type": "list",
+                        "list": {
+                            "item": {
+                                "template": { "tag": "card-view" },
+                                "style": {
+                                    "css": ["pp-person-set__list-item"]
+                                }
+                            },
+                            "style": {
+                                "css": ["pp-person-set__list"]
+                            }
+                        },
+                        "action": {
+                            "add": false,
+                            "remove": {
+                                "content": [
+                                    {
+                                        "kind": "static",
+                                        "type": "text",
+                                        "content": "✖"
+                                    }
+                                ],
+                                "style": {
+                                    "css": ["pp-person-set__btn-remove"]
+                                }
+                            }
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "type": "field",
+            "tags": ["partners"],
+            "content": {
+                "type": "list",
+                "list": {
+                    "item": {
+                        "template": { "tag": "edit-view" },
+                        "style": {
+                            "css": ["pp-set__list-item"]
+                        }
+                    },
+                    "style": {
+                        "css": ["pp-set__list"]
+                    }
+                },
+                "action": {
+                    "add": false,
+                    "remove": false
+                }
             }
         }
     ],

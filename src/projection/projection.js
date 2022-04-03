@@ -503,7 +503,7 @@ const Projection = {
 
             return;
         }
-
+        
         let currentContainer = this.getContainer();
 
         this.index = valOrDefault(index, (this.index + 1) % this.schema.length);

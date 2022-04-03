@@ -1,21 +1,10 @@
-import '@src/stylesheets.js';
-import './assets/style.css';
+// import '@src/stylesheets.js';
+// import './assets/style.css';
 
-import {
-    findAncestor, getElement, getElements, isHTMLElement, isNullOrUndefined
-} from 'zenkai';
-
-const PEOPLE_CONCEPT = require('@models/cms-model/person-concept.json');
-const PEOPLE_PROJECTION = require('@models/cms-model/person-projection.json');
-const ORGANIZATION_CONCEPT = require('@models/cms-model/organization-concept.json');
-const ORGANIZATION_PROJECTION = require('@models/cms-model/organization-projection.json');
-const PROJECT_CONCEPT = require('@models/cms-model/project-concept.json');
-const PROJECT_PROJECTION = require('@models/cms-model/project-projection.json');
-
-const PEOPLE_DATA = require('./assets/data/people.json');
-const PROJECTS_DATA = require('./assets/data/projects.json');
-const TOOLS_DATA = require('./assets/data/tools.json');
-const { activateEditor } = require('@src');
+import { findAncestor, getElement, getElements, hasOwn, isHTMLElement, isNullOrUndefined } from 'zenkai';
+import { activateEditor } from '@src';
+import { PEOPLE_CONCEPT, ORGANIZATION_CONCEPT, PROJECT_CONCEPT, ORGANIZATION_PROJECTION, PEOPLE_PROJECTION, PROJECT_PROJECTION, FIELD_PROJECTION } from './models.js';
+import { PEOPLE_DATA, PROJECTS_DATA, ORGANIZATION_DATA } from './data.js';
 
 
 let editor = activateEditor(".app-editor")[0];
@@ -24,18 +13,29 @@ editor.init({
         header: false,
     },
     conceptModel: [PEOPLE_CONCEPT, ORGANIZATION_CONCEPT, PROJECT_CONCEPT],
-    projectionModel: [ORGANIZATION_PROJECTION, PEOPLE_PROJECTION, PROJECT_PROJECTION]
+    projectionModel: [ORGANIZATION_PROJECTION, PEOPLE_PROJECTION, PROJECT_PROJECTION, FIELD_PROJECTION]
 });
 
-let organization = editor.createConcept("research-organization");
-organization.getAttribute("name").setValue("GEODES");
-organization.getAttribute("description").setValue("GEODES was founded as part of DIRO in 1992. It was then called GÉLO and changed to GEODES in 2005. Since then, more than 30 students have obtained a PhD degree from the group, and more then a 100 students have graduated with a Master's degree. Many of these students are professors in Quebec, Canada, and around the world (ÉTS, Laval, Polytechnique, UQAM, Ottawa, DePaul, Houston, Indiana, Michigan, United Arab Emirates, etc.), and others hold key positions at large tech companies. GEODES is very scientifically very active group with over 20 publications per year in journals, conference proceedings and book chapters.");
-let instance = editor.createInstance(organization);
-instance.changeSize("fullscreen");
+
+const Tags = {
+    "general": "general",
+    "people": "people",
+    "projects": "project",
+    "tools": "tool"
+};
+
+const Titles = {
+    "general": "General information",
+    "people": "Members",
+    "projects": "Funded projects",
+    "tools": "Tools"
+};
 
 const App = {
     /** @type {HTMLElement} */
     editorInstance: null,
+    /** @type {HTMLElement} */
+    organization: null,
     /** @type {HTMLElement} */
     container: null,
     /** @type {HTMLElement} */
@@ -45,27 +45,70 @@ const App = {
     /** @type {Map<string, View>} */
     views: null,
     /** @type {HTMLElement} */
-    selectedName: null,
-    /** @type {HTMLElement} */
     selectedItem: null,
 
-    init(container, instance) {
+    init(container, editor) {
         this.container = container;
         this.items = new Map();
         this.views = new Map();
-        this.editorInstance = instance;
+        this.editor = editor;
 
         this.bindDOM();
         this.bindEvents();
+        this.render();
 
         return this;
     },
-    refresh() {
+    get hasSelectedItem() { return isHTMLElement(this.selectedItem); },
+    getItemName(item) {
+        if (!isHTMLElement(item)) {
+            return null;
+        }
 
+        return item.dataset.cmsName;
+    },
+
+    refresh() {
+        this.container.dataset.item = this.hasSelectedItem ? this.getItemName(this.selectedItem) : "";
+    },
+    render() {
+        if (this.instance) {
+            return this;
+        }
+
+        this.organization = this.editor.createConcept("research-organization");
+        this.editorInstance = this.editor.createInstance(this.organization);
+        this.editorInstance.changeSize("fullscreen");
+
+        this.selectItem("general");
+
+        this.refresh();
+
+        return this;
     },
     fetchData() {
-        let people = organization.getAttribute("members").getTarget();
-        let projects = organization.getAttribute("projects").getTarget();
+        let people = this.organization.getAttribute("members").getTarget();
+        let projects = this.organization.getAttribute("projects").getTarget();
+
+        this.organization.getAttribute("name").setValue(ORGANIZATION_DATA.name);
+        this.organization.getAttribute("description").setValue(ORGANIZATION_DATA.description);
+        this.organization.getAttribute("phone").setValue(ORGANIZATION_DATA.phone);
+        this.organization.getAttribute("website").setValue(ORGANIZATION_DATA.website);
+        this.organization.getAttribute("email").setValue(ORGANIZATION_DATA.email);
+
+        
+        let socials = this.organization.getAttribute("socials").getTarget();
+
+        for (const key in ORGANIZATION_DATA.socials) {
+            const handle = ORGANIZATION_DATA.socials[key];
+
+            let social = editor.createConcept("social");
+
+            social.getAttribute("name").setValue(key);
+            social.getAttribute("handle").setValue(handle);
+
+            socials.addElement(social);
+        }
 
         PEOPLE_DATA.forEach(item => {
             let person = editor.createConcept("person");
@@ -119,7 +162,7 @@ const App = {
 
         let item = this.items.get(name);
 
-        if (item === this.selectItem) {
+        if (item === this.selectedItem) {
             return this;
         }
 
@@ -128,92 +171,61 @@ const App = {
         }
 
         this.selectedItem = item;
-        this.selectedName = name;
         this.selectedItem.classList.add("selected");
 
-        this.updateView(name);
-
-        this.refresh();
+        this.updateView();
 
         return this;
     },
-    updateView(name) {
+    updateView() {
+        let name = this.getItemName(this.selectedItem);
+
+        if (isNullOrUndefined(name) || !hasOwn(Tags, name)) {
+            return;
+        }
+
+        let tag = Tags[name];
+
         let projection = this.editorInstance.projection;
 
-        if (name === "general") {
-            let index = projection.findView("general");
-            if (index === -1) {
-                return false;
-            }
-
-            projection.changeView(index);
-        } else if (name === "people") {
-            let index = projection.findView("people");
-            if (index === -1) {
-                return false;
-            }
-
-            projection.changeView(index);
-        } else if (name === "projects") {
-            let index = projection.findView("project");
-            if (index === -1) {
-                return false;
-            }
-
-            projection.changeView(index);
+        let index = projection.findView(tag);
+        if (index === -1) {
+            return false;
         }
+
+        projection.changeView(index);
+
+        this.editorInstance.setTitle(`GEODES – ${Titles[name]}`);
+
+        this.refresh();
 
         return;
     },
     bindDOM() {
         this.menu = getElement(`[data-cms="menu"]`);
+
         getElements(`[data-cms="menu-item"]`, this.menu).forEach(item => {
             const { cmsName } = item.dataset;
             this.items.set(cmsName, item);
-            let view = Object.create(View, {
-                name: { value: cmsName },
-                parent: { value: this },
-            });
-
-            this.views.set(cmsName, view.init());
         });
-
-        this.selectItem("general");
-
-        this.refresh();
     },
-
     bindEvents() {
-        const getItem = (element) => {
-            let pred = (el) => el.dataset.cms === "menu-item";
-            if (pred(element)) {
-                return element;
-            }
+        const isMenuItem = (element) => isHTMLElement(element) && element.dataset.cms === "menu-item";
 
-            return findAncestor(element, pred, 3);
-        };
+        const getMenuItem = (element) => isMenuItem(element) ? element : findAncestor(element, isMenuItem, 3);
 
         this.menu.addEventListener("click", (event) => {
-            let item = getItem(event.target);
+            let item = getMenuItem(event.target);
+
             if (!isHTMLElement(item)) {
-                return false;
+                return;
             }
 
-            this.selectItem(item.dataset.cmsName);
+            this.selectItem(this.getItemName(item));
         });
     }
 };
 
-const View = {
-    item: null,
-    projection: null,
-    init() {
-        return this;
-    },
-    bindEvents() {
 
-    }
-};
-
-App.init(getElement(".page-body"), instance);
+App.init(getElement(".page-body"), editor);
 App.fetchData();

@@ -160,6 +160,15 @@ export const EditorInstance = {
 
         return this;
     },
+    setTitle(title) {
+        if (isNullOrWhitespace(title)) {
+            return false;
+        }
+
+        this.title.textContent = title;
+
+        return true;
+    },
     collapse() {
         collapse(this.container);
         this.collapsed = true;

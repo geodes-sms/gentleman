@@ -1,4 +1,4 @@
-import { createDocFragment, isHTMLElement, isNullOrUndefined, createDiv, createInput, valOrDefault} from "zenkai";
+import { createDocFragment, isHTMLElement, isNullOrUndefined, createDiv, createSpan, createInput, createTextArea, valOrDefault} from "zenkai";
 import { Field } from "./field.js";
 import { resolveValue } from "./../content-handler.js";
 import { StyleHandler } from "./../style-handler.js";
@@ -129,9 +129,9 @@ const BaseVisualizer = {
                 var s = new XMLSerializer();
                 this.source.value = s.serializeToString(this.content);
             }
-        })
+        });
     }
-}
+};
 
 export const VisualizerField = Object.assign(
     Object.create(Field),
