@@ -186,6 +186,7 @@ const BaseButtonStatic = {
             }
 
             if (target.type === "attribute") {
+                console.log(value);
                 let attr = concept.getAttribute(target.name);
                 attr.target.createElement({ value: value });
             }

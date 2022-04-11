@@ -8,8 +8,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="./../assets/css/normalize.css">
     <link rel="stylesheet" href="./../assets/css/base.css">
-    <link rel="stylesheet" href="./../assets/css/site/site.css">
-    <link rel="stylesheet" href="./../assets/css/site/docs.css">
+    <link rel="stylesheet" href="./../assets/css/site.css">
+    <link rel="stylesheet" href="./../assets/css/docs.css">
     <title>Gentleman | Documentation: Getting started</title>
 
     <style>
@@ -19,12 +19,129 @@
             max-width: 100%;
             height: 240px;
         }
+
+        .docx-model {
+            display: flex;
+            margin-top: 12px;
+        }
+
+        .docx-model-concept {
+            display: flex; flex-direction: column;
+            margin-right: 12px;
+            max-width: 320px;
+            padding: 8px 12px 6px;
+            font-size: 1.4rem;
+            background-color: #f5f5f5;
+            border-radius: 2px;
+            box-shadow: 0 0 1px 1px #d5d5d5;
+        }
+
+            .docx-model-concept i {
+                font-style: normal;
+            }
+
+            .docx-model-concept u {
+                text-decoration: none;
+            }
+
+        .docx-concept-name {
+            margin-top: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.2em; font-weight: 400;
+            color: #111;
+        }
+
+        .docx-concept-description {
+            font-size: 0.95em;
+            margin-bottom: 0;
+        }
+
+        .docx-concept-attributes {
+            display: flex; flex-direction: column;
+        }
+
+        .docx-concept-attribute {
+            font-size: 1em;
+        }
+
+        .attr-name {
+            font: bold 1em Consolas, 'Courier New', Courier, monospace;
+        }
+            .attr-name:after {
+                content: ":";
+            }
+
+        .attr-type {
+            color: blue;
+        }
+
+        .attr-type-accept:before {
+            content: "{";
+            font: bold 1em Consolas, 'Courier New', Courier, monospace;
+        }
+
+        .attr-type-accept:after {
+            content: "}";
+            font: bold 1em Consolas, 'Courier New', Courier, monospace;
+        }
+
+        .attr-type-target:before {
+            content: "->";
+            font: bold 1em Consolas, 'Courier New', Courier, monospace;
+        }
+
+        .attr-constraints {
+            display: inline-flex; align-items: center;
+            text-decoration: none;
+            color: crimson;
+        }
+        .attr-constraints:before {
+            content: "[";
+            font: bold 1em Consolas, 'Courier New', Courier, monospace;
+        }
+        .attr-constraints:after {
+            content: "]";
+            font: bold 1em Consolas, 'Courier New', Courier, monospace;
+        }
+
+        .attr-constraint {
+            font-family: Consolas, 'Courier New', Courier, monospace;
+        }
+
+        .attr-constraint:not(:first-child):before {
+            content: ", ";
+        }
+
+        .attr-constraint-op {
+            font-weight: bold;
+        }
+
+        .vlist {
+            display: flex; flex-direction: column;
+            margin-top: 4px;
+        }
+
+        .docx-model-app {
+            margin-top: 6px;
+        }
+
+        /* .docx-model-editor {
+            height: 300px;
+            background-color: #eee;
+            border-radius: 3px;
+        } */
+
+        .page-footer {
+            display: flex;
+            align-items: flex-end;
+            min-width: 240px;
+        }
     </style>
 </head>
 
 <body>
     <header class="page-header">
-        <a class="link header__link has-helper" href="https://geodes-sms.github.io/gentleman/">
+        <a class="link header__link has-helper" href="/">
             <span class="link-logo">Gentleman</span>
             <i class="helper">Go to the homepage</i>
         </a>
@@ -50,19 +167,40 @@
             <ul class="bare-list main-menu">
                 <li class="main-menu-item">
                     <a class="main-menu-item__link" href="#introduction">Introduction</a>
+                    <ul class="bare-list main-menu-item-details dash">
+                        <li class="item-detail">What is Gentleman</li>
+                        <li class="item-detail">Projectional editing</li>
+                        <li class="item-detail">Library example</li>
+                    </ul>
                 </li>
                 <li class="main-menu-item">
-                    <a class="main-menu-item__link" href="#metamodelling">Metamodelling</a>
+                    <a class="main-menu-item__link" href="#setup">Setup</a>
+                    <ul class="bare-list main-menu-item-details dash">
+                        <li class="item-detail">Basic setup</li>
+                        <li class="item-detail">Configuration</li>
+                        <li class="item-detail">Define handlers</li>
+                    </ul>
                 </li>
                 <li class="main-menu-item">
                     <a class="main-menu-item__link" href="#user-interface">User interface</a>
+                    <ul class="bare-list main-menu-item-details dash">
+                        <li class="item-detail">General layout</li>
+                        <li class="item-detail">Dynamic elements</li>
+                        <li class="item-detail">Toolbar</li>
+                    </ul>
                 </li>
                 <li class="main-menu-item">
                     <a class="main-menu-item__link" href="#interaction">Interaction</a>
+                    <ul class="bare-list main-menu-item-details dash">
+                        <li class="item-detail">Instantiation</li>
+                        <li class="item-detail">Navigation</li>
+                        <li class="item-detail">Copy-Pasting</li>
+                        <li class="item-detail">Undo-Redo</li>
+                    </ul>
                 </li>
-                <li class="main-menu-item">
-                    <a class="main-menu-item__link" href="#configuration">Configuration</a>
-                </li>
+                <!-- <li class="main-menu-item">
+                    <a class="main-menu-item__link" href="#interaction">Example</a>
+                </li> -->
             </ul>
         </nav>
         <article id="getting-started" class="main-content side">
@@ -70,119 +208,246 @@
                 <h1 class="article-title">Getting started</h1>
             </header>
 
-            <section id="introduction">
-                <h2>Requirement</h2>
+            <section class="article-section" id="introduction">
+                <h2 class="article-section-title">What is Gentleman?</h2>
                 <p>
-                    Gentleman is a modelling tool that combines concepts (model structure) and projections (interface)
-                    to create a personnalized dynamic experience for all.
-                    Every modelling activity, begins by loading the concepts and projections, stored as separate JSON-CP
-                    files, which activates the editor.
-                    The concepts will allow you that you to define your model
+                    Gentleman is a lightweight web-based projectional editor that allows you to create and use models. 
+                    The goal is to make software development and modeling more accessible.
+                    In Gentleman, a model is structured using <em>concepts</em> and interacted with using <em>projections</em>.
                 </p>
-                <img class="img"
-                    src="https://geodes-sms.github.io/gentleman/assets/images/doc_editor_getting_started.png"
-                    alt="Editor Setting">
+
+                <h3 class="article-section-subtitle">Projectional editing</h3>
+                <p>
+                    Gentleman is a projectional editor, i.e. it does not need a parser to continuously scan the user's input (code) to build the abstract syntax tree (AST).
+                    Projections rules creates a visual representation of the AST, allowing the user to interact with it directly. 
+                    The flow of a projectional editor follows a fill-in-the-blank approach, as most of the content is generated by the rules. <br>
+                    This approach eliminates the risk of syntactic errors (e.g., typos) and allows you to focus on meaningful input to produce the desired model.
+                    Since the editor doesn't parse the content, you are free to use any representations (e.g., tables, forms, diagrams) that best suit your task. 
+                    In addition, those representations can be easily interchanged and safely composed. 
+                </p>
+
+                <h3 class="article-section-subtitle">Example</h3>
+                <p class="nomargin">
+                    Let's say we want to model a <strong>library</strong> to organize and manage a collection of books. 
+                    This requires some concepts to structure and hold the information. For this example, we define the following three concepts.
+                </p>
+            
+                <div class="docx-model">
+                    <div class="docx-model-concept">
+                        <h4 class="docx-concept-name">Library</h4>
+                        <p class="docx-concept-description">Holds the list of books and authors.</p>
+                        <ul class="bare-list docx-concept-attributes">
+                            <li class="docx-concept-attribute">
+                                <i class="attr-name">name</i>
+                                <i class="attr-type">string</i> 
+                            </li>
+                            <li class="docx-concept-attribute">
+                                <i class="attr-name">description</i>
+                                <i class="attr-type">string</i> 
+                            </li>
+                            <li class="docx-concept-attribute">
+                                <i class="attr-name">books</i>
+                                <i class="attr-type">set <i class="attr-type-accept">Book</i></i> 
+                            </li>
+                            <li class="docx-concept-attribute">
+                                <i class="attr-name">authors</i>
+                                <i class="attr-type">set <i class="attr-type-accept">Author</i></i> 
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="docx-model-concept">
+                        <h4 class="docx-concept-name">Book</h4>
+                        <p class="docx-concept-description">Holds the information we need about a book, makes references to the defined authors.</p>
+                        <ul class="bare-list docx-concept-attributes">
+                            <li class="docx-concept-attribute">
+                                <i class="attr-name">title</i>
+                                <i class="attr-type">string</i>
+                            </li>
+                            <li class="docx-concept-attribute">
+                                <i class="attr-name">year</i>
+                                <i class="attr-type">number</i>
+                            </li>
+                            <li class="docx-concept-attribute">
+                                <i class="attr-name">isbn</i>
+                                <i class="attr-type">string 
+                                    <u class="attr-constraints">
+                                        <i class="attr-constraint">
+                                            <i class="attr-constraint-prop">length</i>
+                                            <b class="attr-constraint-op">&equals;</b>
+                                            <i class="attr-constraint-val">{10, 13}</i>
+                                        </i>
+                                    </u>
+                                </i>
+                            </li>
+                            <li class="docx-concept-attribute">
+                                <i class="attr-name">pages</i>
+                                <i class="attr-type">
+                                    number
+                                    <u class="attr-constraints">
+                                        <i class="attr-constraint">
+                                            <i class="attr-constraint-prop">value</i>
+                                            <b class="attr-constraint-op">&gt;</b>
+                                            <i class="attr-constraint-val">1</i>
+                                        </i> 
+                                    </u>
+                                </i>
+                            </li>
+                            <li class="docx-concept-attribute">
+                                <i class="attr-name">authors</i>
+                                <i class="attr-type">set 
+                                    <i class="attr-type-accept">ref 
+                                        <i class="attr-type-target">Author</i>
+                                    </i>
+                                </i> 
+                            </li>
+                            <li class="docx-concept-attribute">
+                                <i class="attr-name">featured</i>
+                                <i class="attr-type">boolean</i> 
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="docx-model-concept">
+                        <h4 class="docx-concept-name">Author</h4>
+                        <p class="docx-concept-description">Holds the information we need about an author.</p>
+                        <ul class="bare-list docx-concept-attributes">
+                            <li class="docx-concept-attribute">
+                                <li class="docx-concept-attribute">
+                                    <i class="attr-name">first-name</i>
+                                    <i class="attr-type">
+                                        string
+                                        <u class="attr-constraints">
+                                            <i class="attr-constraint">
+                                                <i class="attr-constraint-prop">length</i>
+                                                <b class="attr-constraint-op">&lt;</b>
+                                                <i class="attr-constraint-val">50</i>
+                                            </i>
+                                        </u>
+                                    </i> 
+                                </li>
+                            </li>
+                            <li class="docx-concept-attribute">
+                                <i class="attr-name">last-name</i>
+                                <i class="attr-type">
+                                    string
+                                    <u class="attr-constraints">
+                                        <i class="attr-constraint">
+                                            <i class="attr-constraint-prop">length</i>
+                                            <b class="attr-constraint-op">&lt;</b>
+                                            <i class="attr-constraint-val">50</i>
+                                        </i>
+                                    </u>
+                                </i> 
+                            </li>
+                            <li class="docx-concept-attribute">
+                                <i class="attr-name">about</i>
+                                <i class="attr-type">string</i> 
+                            </li>
+                            <li class="docx-concept-attribute">
+                                <i class="attr-name">photo</i>
+                                <i class="attr-type">
+                                    string
+                                    <u class="attr-constraints">
+                                        <i class="attr-constraint">
+                                            <i class="attr-constraint-prop">pattern</i>
+                                            <b class="attr-constraint-op">&equals;</b>
+                                            <i class="attr-constraint-val">\.(jpg|jpeg|gif|png)$</i>
+                                        </i> 
+                                    </u>
+                                </i> 
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="docx-model-app">
+                    <div class="docx-model-editor" data-gentleman="editor"></div>
+                </div>
             </section>
 
-            <section id="metamodelling">
-                <h2>Metamodel</h2>
-                <p>
-                    The <em>metamodelling</em> workflow is reserved for the creation of concepts and projections.
-                    This unique workflow has one key step: the <strong>build step</strong> where the artefacts
-                    (metamodel or projections) are generated as JSON-CP files.
+            <section class="article-section" id="setup">
+                <h2 class="article-section-title">Setup</h2>
+
+                <p>                   
+                    To add an editor to your application, decorate an HTML tag with the attribute <em>data-gentleman</em>.
+                    Every HTML element on the page with this attribute will have a Gentleman instance
+                    attached with the editor rendered inside. 
+                    
+                    <!-- A more controlled integration is possible by dynamically
+                    creating an instance of the editor in JavaScript on the page.
+                    This approach allows for more customization by providing a configuration specific to the host application
+                    and registering handlers to extend editing services. -->
                 </p>
 
-                <h3>Task</h3>
-                <ul>
-                    <li>
-                        Create concepts
-                        <ol>
-                            <li>Open the editor</li>
-                            <li>New or edit existing?</li>
-                            <li>1. New concepts (from scratch): Select `[Create a metamodel]`</li>
-                            <li>2. Edit existing: Load the saved model in the model area (on the left)</li>
-                            <li>Start metamodelling</li>
-                            <li>Build the concepts: Select `[Build]` from the floating menu</li>
-                        </ol>
-                    </li>
-                    <li>
-                        Create projections
-                        <ol>
-                            <li>Open the editor</li>
-                            <li>New or edit existing?</li>
-                            <li>1. New projections (from scratch): Select `[Create a projection]`</li>
-                            <li>2. Edit existing: Load the saved model in the model area (on the left)</li>
-                            <li>Start metamodelling</li>
-                            <li>Preview the projections: Select `[Preview]` in the header</li>
-                            <li>Build the projections: Select `[Build]` in the header</li>
-                        </ol>
-                    </li>
-                </ul>
-                <p>When <em>Build</em> is selected, it validates the model and generates a metamodel or a collection of
-                    projections depending on the task, which can then be used in the <a href="#">modelling workflow</a>
+                <h3 class="article-section-subtitle">Defining Handlers</h3>
+                <p>
+                    In Gentleman, the editor's behaviour can be customized through <em>handler</em>.
+                    A handler is a function attached to a message (trigger).
                 </p>
+
+                <code>
+                    <pre>
+const Handlers = {
+    "value.changed": function () {
+        let result = validate(this.conceptModel);
+        if(!result.pass) {
+            this.logs.add(result.errors, "Validation error", LogType.ERROR);
+        }
+    },
+    "close.editor": function () { 
+        save(this.conceptModel);
+    }
+};
+                    </pre>
+                </code>
             </section>
 
-            <section id="user-interface">
-                <h2>User interface</h2>
-                <p>Gentleman adopts a minimalistic approach to its design. The UI is divided between a
-                    header which contains support elements (in [Ribbon](#ribbon)) and a body where you will play with
-                    your
-                    instances.</p>
+            <section class="article-section" id="user-interface">
+                <h2 class="article-section-title">User interface</h2>
+                <p>Gentleman adopts a minimalistic approach to its design. </p>
 
-                <img src="https://geodes-sms.github.io/gentleman/assets/images/doc_editor_ui.png"
-                    alt="Editor User interface">
+                <img style="width: 100%; height: auto;" src="../assets/images/gentleman_documentation.svg" alt="Editor User interface">
 
-                <h3>Header</h3>
-                The header's main component is the concepts found in the loaded model, ready to be instanciated
-                - The expanded view gives you an overview of the concept structure
-                - The `[CREATE]` button creates an instance of the concept
+                <h3 class="article-section-subtitle">Header</h3>
+                <p>
+                    The header presents the <em>root concepts</em> (available for instantiation), the <em>toolbar</em> and the <em>breadcrumb</em>.
+                </p>
 
-
-                <h3>Settings</h3>
-
-                The <em>settings</em> button toggles the home page where you can change the loaded concepts and
-                projections.
+                <!-- <h3 class="article-section-subtitle">Settings</h3>
+                <p>The <em>settings</em> button toggles the home page where you can change the loaded concepts and
+                    projections.</p>
 
                 <h3>Export</h3>
 
-                The <em>export</em> button saves the state of the model and download it so you can get back to this
+                <p>
+                    The <em>export</em> button saves the state of the model and download it so you can get back to this
                 version later.
+                </p>
+                
 
                 <h3>Breadcrumbs</h3>
 
-                The editor has a navigation bar at the top of the body called <em>Breadcrumbs</em>, telling you the
+                <p>
+                    The editor has a navigation bar at the top of the body called <em>Breadcrumbs</em>, telling you the
                 current location in an active instance.
-                <img src="https://geodes-sms.github.io/gentleman/assets/images/doc_editor_breadcrumbs.png"
-                    alt="Editor breadcrumbs">
-
-                <h3>Instances</h3>
-
-                Every concept instance created have a corresponding window with a header containing its name and a
-                toolbar
-
-                <ul>
-                    <li>Collapse: Toggle between collapsed and expanded window</li>
-                    <li>Maximize: Toggle between fullscreen and normal</li>
-                    <li>Close: delete the instance except for linked instances where it is simply removed</li>
-                </ul>
-                <img src="https://geodes-sms.github.io/gentleman/assets/images/doc_editor_instance.png"
-                    alt="Editor instances">
+                </p> -->
             </section>
 
-            <section id="interaction">
-                <h2>Interaction</h2>
+            <section class="article-section" id="interaction">
+                <h2 class="article-section-title">Interaction</h2>
 
-                <h3>Create an instance</h3>
+                <p>Like most editors, Gentleman features contextual assistance, copy-pasting, undo and redo, and allows you 
+                    to keep track of the model's state.</p>
 
-                <p>Every editor exposes the concepts available for instanciation in the Ribbon concept tab.
-                    To create a new instance, select `[CREATE]` on the desired concept.</p>
+                <h3 class="article-section-subtitle">Create an instance</h3>
+
+                <p>
+                    Every editor exposes the concepts available for instanciation in the header.
+                    To create a new instance, select the desired concept.</p>
 
                 <h4>Linked instance</h4>
 
-                <p>An instance can quickly become too crowded as you modify it. Fortunately, because the view is a
-                    composition
-                    of projections, they can each be manipulated separetely.
+                <p>
+                    An instance can quickly become too crowded as you modify it. Fortunately, because the view is a
+                    composition of projections, they can each be manipulated separetely.
                     To open part of an instance in a separate window (linked instance),</p>
 
                 <ol>
@@ -190,10 +455,9 @@
                     <li>Open in new window: <code>Ctrl + E</code></li>
                 </ol>
 
-                <p>Note: As this is a projection window and not an actual instance, closing it will have no side effects
-                    on your values.</p>
+                <p class="note">As this is a projection window and not an actual instance, <strong>closing it will have no side effects on your values</strong>.</p>
 
-                <h4>Navigation</h4>
+                <h3 class="article-section-subtitle">Navigation</h3>
 
                 <p>
                     Gentleman supports both mouse and keyboard navigation.
@@ -203,7 +467,7 @@
                     When the focus element has children elements, press `Enter` to focus on its children and `Esc` to
                     exit the container.
                 </p>
-
+<!-- 
                 <h4>Search and Filter</h4>
 
                 <p>In Gentleman you can use the browser searching functionality as well as the editor's filtering tool.
@@ -212,12 +476,9 @@
                     <li>Focus on any part of the editor</li>
                     <li>Press <code>Ctrl + F</code></li>
                     <li>Type in the search box the name of the instance</li>
-                </ol>
+                </ol> -->
 
-                <p>Note: As you type, the instances' name that do not match the query will be hidden until you close the
-                    filter or change the query.</p>
-
-                <h4>Copy/Paste</h4>
+                <h3 class="article-section-subtitle">Copy/Paste</h3>
 
                 <p>In Gentleman copy/paste works just as with any editor.</p>
 
@@ -228,29 +489,61 @@
                     <li>Copy value: <code>Ctrl + V</code></li>
                 </ol>
 
-                <p>
-                    Note: A value is attached to a concept, not a projection. Therefore copying does not include the
-                    projection (visuals) but only the value attached to the concept.
+                <p class="note">
+                    A value is attached to a concept, not a projection. 
+                    Therefore <strong>copying does not include the projection (visuals)</strong> but only the value attached to the concept.
                 </p>
             </section>
 
-            <section id="configuration">
-                <h2>Configuration</h2>
+            
+            <!-- <section id="metamodelling">
+                <h2>Building a Library editor</h2>
 
+                <h3>Creating concepts</h3>
                 <p>
-                    The editor configuration is done through a JSON file.
-                    It can be used to define elements of the Ribbon and register actions that will be made available in
-                    the floating menu.
+                    The <em>metamodelling</em> workflow is reserved for the creation of concepts and projections.
+                    This unique workflow has one key step: the <strong>build step</strong> where the artefacts
+                    (metamodel or projections) are generated as JSON-CP files.
                 </p>
+                <ol>
+                    <li>Open the editor</li>
+                    <li>New or edit existing?</li>
+                    <li>1. New concepts (from scratch): Select `[Create a metamodel]`</li>
+                    <li>2. Edit existing: Load the saved model in the model area (on the left)</li>
+                    <li>Start metamodelling</li>
+                    <li>Build the concepts: Select `[Build]` from the floating menu</li>
+                </ol>
 
-                <dl>
-                    <dt>name (string)</dt>
-                    <dd>name of the editor (displayed in the header)</dd>
-                    <dt>concepts (array:concept)</dt>
-                    <dd>list of concepts available for instanciation</dd>
-                </dl>
-            </section>
+                <h3>Creating projections</h3>
+                <ol>
+                    <li>Open the editor</li>
+                    <li>New or edit existing?</li>
+                    <li>1. New projections (from scratch): Select `[Create a projection]`</li>
+                    <li>2. Edit existing: Load the saved model in the model area (on the left)</li>
+                    <li>Start metamodelling</li>
+                    <li>Preview the projections: Select `[Preview]` in the header</li>
+                    <li>Build the projections: Select `[Build]` in the header</li>
+                </ol>
+                <p>When <em>Build</em> is selected, it validates the model and generates a metamodel or a collection of
+                    projections depending on the task, which can then be used in the <a href="#">modelling workflow</a>
+                </p>
+            </section> -->    
         </article>
+
+        <footer class="page-footer">
+            <div class="content-wrapper">
+                <!-- <ul> 
+                    <li class="page-menu-item has-helper">
+                        <a class="page-menu-item__link" href="https://github.com/geodes-sms/gentleman">Source code</a>
+                        <i class="helper">GitHub Repository</i>
+                    </li>
+                </ul> -->
+                <p>Gentleman</p>
+                <p class="footer-license">
+                    Copyright &copy; 2020 &ndash; 2022 <br> Louis-Edouard LAFONTANT
+                </p>
+            </div>
+        </footer>
     </main>
 </body>
 

@@ -1,0 +1,212 @@
+{
+    "concept": [
+        {
+            "name": "library",
+            "nature": "concrete",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "name",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Name" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "description",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Description" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "books",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "book"
+                        }
+                    },
+                    "required": true
+                },
+                {
+                    "name": "authors",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "author"
+                        }
+                    },
+                    "required": true
+                }
+            ],
+            "properties": []
+        },
+        {
+            "name": "book",
+            "nature": "concrete",
+            "root": false,
+            "attributes": [
+                {
+                    "name": "title",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "year",
+                    "target": {
+                        "name": "number"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "isbn",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "length": {
+                                "type": "values",
+                                "values": [10, 13]
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                {
+                    "name": "pages",
+                    "target": {
+                        "name": "number",
+                        "constraint": {
+                            "value": {
+                                "type": "range",
+                                "range": {
+                                    "min": { "value": 1 }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                {
+                    "name": "authors",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "reference",
+                            "accept": {
+                                "name": "author"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                {
+                    "name": "featured",
+                    "target": {
+                        "name": "boolean"
+                    },
+                    "required": true
+                }
+            ],
+            "properties": []
+        },
+        {
+            "name": "author",
+            "nature": "concrete",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "first-name",
+                    "target": {
+                        "name": "name",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "First name" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "last-name",
+                    "target": {
+                        "name": "name",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Last name" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "about",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "About" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "photo",
+                    "target": {
+                        "name": "image-url",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Photo URL" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "website",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Website" }
+                        ]
+                    },
+                    "required": true
+                }
+            ],
+            "properties": []
+        },
+
+
+        {
+            "name": "name",
+            "nature": "derivative",
+            "root": false,
+            "base": "string",
+            "constraint": {
+                "length": {
+                    "type": "range",
+                    "range": {
+                        "max": { "value": 50 }
+                    }
+                }
+            }
+        },
+        {
+            "name": "image-url",
+            "nature": "derivative",
+            "root": false,
+            "base": "string",
+            "constraint": {
+                "value": {
+                    "type": "pattern",
+                    "pattern": {
+                        "insensitive": true,
+                        "global": true,
+                        "value": "\\.(jpg|jpeg|gif|png)$"
+                    }
+                }
+            }
+        }
+    ]
+}

@@ -14,11 +14,22 @@
 
     <style>
         .background-section,
-        .gentleman-section {
+        .gentleman-section,
+        .motivation-section {
             max-width: 900px;
         }
 
+        .motivation-section,
+        .gentleman-section {
+            margin-top: 18px;
+        }
+
+        .team-section {
+            margin-top: 24px;
+        }
+
         .background-section .section-paragraph,
+        .motivation-section .section-paragraph,
         .gentleman-section p {
             font-size: 1.5em;
             line-height: 1.5;
@@ -33,12 +44,13 @@
         }
 
         .section-title {
+            font-size: 2.6em;
             margin-bottom: 6px;
         }
 
         .paragraph-title {
             text-transform: uppercase;
-            font: 300 1.8em 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
+            font: 300 1.7em 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
             margin-top: 6px;
         }
 
@@ -204,12 +216,75 @@
                                 </ul>
                             </li>
                         </ul>
-                        
                     </div>
-                    In DSM, models are the primary artifact manipulated and produced using domain-speciﬁc languages (DSL).
-                    Contrary to general-purpose programming languages, such as <code>Python</code> or <code>Java</code>, 
-                    DSLs are restricted in their scope of application as they capture precisely the semantics of an application domain. 
-                    However, DSM is still lacking in adoption due to a lack of proper tools and modeling languages.
+                    In DSM, <em>models</em> are the primary artifact manipulated and produced using <a href="https://en.wikipedia.org/wiki/Domain-specific_language">domain-speciﬁc languages</a> (DSL) <span class="example">
+                        <i class="example-icon">Info</i> 
+                        <a class="bare-link example-link" href="https://opensource.com/article/20/2/domain-specific-languages">DSL overview</a>
+                    </span>.
+                    Contrary to general-purpose programming languages (GPLs), such as <code>Python</code> or <code>Java</code>, 
+                    DSLs are languages tailored to a specific application domain. They offer substantial gains in expressiveness
+                    and ease of use compared with GPLs in their domain of application.
+                    <div tabindex="0" class="ref">
+                        <i class="ref-icon">Ref.</i> 
+                        <ul class="bare-list ref-previews">
+                            <li class="ref-preview">
+                                <span class="ref-type">Journal</span>
+                                <a class="ref-title" href="https://dl.acm.org/doi/pdf/10.1145/1118890.1118892">When and how to develop domain-specific languages (2005)</a>
+                                <ul class="bare-list ref-authors">                                
+                                    <li class="ref-author">Mernik, Marjan</li>
+                                    <li class="ref-author">Heering, Jan</li>
+                                    <li class="ref-author">Sloane, Anthony M</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 class="paragraph-title">Language workbenches</h3>
+                <div class="section-paragraph">
+                   <em>Language workbenches</em> were created to support these
+                    modeling and language engineering activities 
+                    <div tabindex="0" class="ref">
+                        <i class="ref-icon">Ref.</i> 
+                        <ul class="bare-list ref-previews">
+                            <li class="ref-preview">
+                                <span class="ref-type">Web</span>
+                                <a href="https://martinfowler.com/articles/languageWorkbench.html" target="_blank" class="ref-title">Language workbenches: The killer-app for domain specific languages (2005)</a>
+                                <ul class="bare-list ref-authors">
+                                    <li class="ref-author">Fowler, Martin</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    They support the efficient definition, reuse, and composition of languages and their IDEs.  <br>
+                    Most language workbenches use a <strong>parser-based approach</strong>, with a textual or graphical syntax
+                    <span class="example">
+                        <i class="example-icon">E.g.</i> 
+                        <a class="bare-link example-link" href="https://www.eclipse.org/Xtext/">Xtext</a>, 
+                        <a class="bare-link example-link" href="https://www.spoofax.dev/">Spoofax</a>, 
+                        <a class="bare-link example-link" href="https://www.metacase.com/products.html">MetaEdit+</a>
+                    </span>.
+                    A parser-based editing approach relies on a parser to continuously scan the input to build the an abstract syntax tree (AST),
+                    validated with a grammar. However, this approach limits the evolution of DSLs and is prone to syntactic errors. <br>
+                    
+                    With a <strong>projectional editing approach</strong>,
+                    <span class="example">
+                        <i class="example-icon">E.g.</i> 
+                        <a class="bare-link example-link" href="https://www.jetbrains.com/mps/">Jetbrains MPS</a>, 
+                        <a class="bare-link example-link" href="https://whole.sourceforge.io/">Whole</a>, 
+                        <a class="bare-link example-link" href="https://scratch.mit.edu/">Scratch</a>
+                    </span>
+                    the AST is modified directly as the user edits a program, thus preventing syntactic errors.
+                    The approach enables the support of notations that cannot be easily parsed, such as tables or mathematical formulas,
+                    and the composition of any language without introducing syntactic ambiguities.
+                </div>
+            </section>
+
+            <section class="motivation-section">
+                <h2 class="section-title">Motivation</h2>
+                
+                <div class="section-paragraph">
+                    Although promising, DSM is still lacking in adoption due to a lack of proper tools and modeling languages
                     <div tabindex="0" class="ref">
                         <i class="ref-icon">Ref.</i> 
                         <ul class="bare-list ref-previews">
@@ -245,52 +320,86 @@
                                 </ul>
                             </li>
                         </ul>
-                    </div>
+                    </div>.
                 </div>
-
-                <h3 class="paragraph-title">Language workbenches</h3>
+                <h3 class="paragraph-title">Interoperability and Usability</h3>
                 <div class="section-paragraph">
-                    Due to their specific nature, common programming tools (perfected throughout the years), like editors 
-                    <span class="example"><i class="example-icon">E.g.</i> <a class="bare-link example-link" href="https://code.visualstudio.com/">VS Code</a>, <a class="bare-link example-link" href="https://www.sublimetext.com/">Sublime Text</a></span>
-                    and <abbr title="Integrated development environment">IDE</abbr> 
-                    <span class="example"><i class="example-icon">E.g.</i> <a class="bare-link example-link" href="https://www.eclipse.org/ide/">Eclipse</a>, <a class="bare-link example-link" href="https://visualstudio.microsoft.com/">Visual Studio</a></span>
-                    are inadequate for DSLs used by domain experts of diverse backgrounds. <em>Language workbenches</em> were created to support these
-                    modeling and language engineering activities 
+                    Presently, the most promising projectional editor in the MDE community is <a class="inline-link" href="https://www.jetbrains.com/mps/">Jetbrains MPS</a>.
+                    However, <strong>MPS cannot be easily integrated with other tools and suffers from usability issues</strong>
                     <div tabindex="0" class="ref">
                         <i class="ref-icon">Ref.</i> 
                         <ul class="bare-list ref-previews">
                             <li class="ref-preview">
-                                <span class="ref-type">Web</span>
-                                <a href="https://martinfowler.com/articles/languageWorkbench.html" target="_blank" class="ref-title">Language workbenches: The killer-app for domain specific languages (2005)</a>
+                                <span class="ref-type">Journal</span>
+                                <span class="ref-title">Towards user-friendly projectional editors (2014)</span>
                                 <ul class="bare-list ref-authors">
-                                    <li class="ref-author">Fowler, Martin</li>
+                                    <li class="ref-author">Völter, Markus</li>
+                                    <li class="ref-author">Siegmund, J.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>.
+                </div>
+
+                <h3 class="paragraph-title">UML and OOP limitation</h3>
+                <div class="section-paragraph">
+                    The <a href="https://www.uml.org/">Unified Modeling Language</a> (UML) is currently the main modeling language used in the practice of MDE.
+                    However, as it is is rooted in object-oriented programming (OOP), <strong>UML hinders the modeling process
+                        and restricts the expression of a concept to the scope and principles of OOP</strong>. 
+                        Its inadequacy was also noted by Petre 
+                        <div tabindex="0" class="ref">
+                            <i class="ref-icon">Ref.</i> 
+                            <ul class="bare-list ref-previews">
+                                <li class="ref-preview">
+                                    <span class="ref-type">Journal IEEE</span>
+                                    <span class="ref-title">UML in practice (2013)</span>
+                                    <ul class="bare-list ref-authors">
+                                        <li class="ref-author">Petre, Marian</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div> , who concluded from a survey that software developers either did not use
+                         UML at all or used it only selectively and informally.
+                </div>
+
+                <h3 class="paragraph-title">Web-based solution</h3>
+                <div class="section-paragraph">
+                    A much-requested feature by practitioners, according to Agner and Lethbridge 
+                    <div tabindex="0" class="ref">
+                        <i class="ref-icon">Ref.</i> 
+                        <ul class="bare-list ref-previews">
+                            <li class="ref-preview">
+                                <span class="ref-type">Journal IEEE</span>
+                                <span class="ref-title">A survey of tool use in modeling education (2017)</span>
+                                <ul class="bare-list ref-authors">
+                                    <li class="ref-author">Agner, L.</li>
+                                    <li class="ref-author">Lethbridge, T.</li>
                                 </ul>
                             </li>
                         </ul>
                     </div>
-                    They support the efficient definition, reuse, and composition of languages and their IDEs. 
-                    Most language workbenches use a parser-based approach 
-                    <span class="example"><i class="example-icon">E.g.</i> <a class="bare-link example-link" href="https://www.eclipse.org/Xtext/">Xtext</a> and <a class="bare-link example-link" href="https://www.metacase.com/products.html">MetaEdit+</a></span>
-                    where
-                    an abstract syntax tree (AST) is progressively built by scanning the input and validated against a grammar. 
-                    Since various experts may use a model with different needs, it should be possible to present the model in different forms, equivalent to one another.
-                    This is found in <em>projectional editing</em>, 
-                    <span class="example"><i class="example-icon">E.g.</i> <a class="bare-link example-link" href="https://www.jetbrains.com/mps/">Jetbrains MPS</a>, <a class="bare-link example-link" href="https://scratch.mit.edu/">Scratch</a></span>, 
-                    which allows the AST to be modified directly; thus enabling support for multiple notations easily interchangeable and composable. <br>
-                    Although promising as an approach, current solutions are heavy-weight, cannot be easily integrated with other tools, and suffer from poor usability.
-                    Additionally, many language workbenches rely on the Unified Modeling Language (UML), which is rooted in object-oriented programming (OOP). Therefore,
-                    they hinder the modeling process and restrict the expression of a concept to the scope and principles of OOP. 
+                    is to have web-based solutions. Although there are some web instances <span class="example">
+                        <i class="example-icon">E.g.</i> 
+                        <a class="bare-link example-link" href="https://atompm.github.io/">AToMPM</a>, 
+                        <a class="bare-link example-link" href="https://webgme.org/">WebGME</a>,
+                        <a class="bare-link example-link" href="https://github.com/modelix/modelix">Modelix</a>
+                    </span> <strong>currently, no web-based modeling tool natively supports projectional editing</strong>.
                 </div>
             </section>
 
             <section class="gentleman-section">
                 <h2 class="section-title">Gentleman</h2>
                 <p>
-                    To better support this paradigm, Gentleman was initiated with the aim to bridge the gap between model and domain expert.
-                    It is a web-based modeling editor that offers a user-friendly environment that is easily integrable through projectional editing.
-                    With Gentleman, models are created by combining concepts (data structures and constraint rules) and projections (visuals and interactions).
-                    In our approach, the domain concepts are defined with structures and languages unrelated to any programming paradigm,
-                    considering modeling as an activity of its own. Gentleman is offered as a JS library that can easily be integrated into a larger web application. 
+                    We aim to provide better support for DSM and <strong>make modeling more accessible to domain experts and practitioners</strong>.
+                    Our approach is implemented in <strong>Gentleman, a lightweight web-based projectional editor</strong>.
+                    With Gentleman, users can create models with structures unrelated to a programming paradigm, called <em>concepts</em>.
+                    The <em>projections</em>, which provide a visual to manipulate the model, leverage web technologies <span class="example">
+                        <i class="example-icon">E.g.</i> 
+                        <span class="bare-link example-link">HTML5</span>, 
+                        <span class="bare-link example-link">CSS</span>
+                    </span> to offer users easy-to-use languages. 
+                    Gentleman is built with Javascript and delivered as a <a href="https://github.com/geodes-sms/gentleman">library</a> that can be 
+                    integrated into any modern web application.
                 </p>
             </section>
 
@@ -302,7 +411,7 @@
                         <p class="card-name"><a href="http://www-ens.iro.umontreal.ca/~lafontle/" target="_blank">Louis-Edouard LAFONTANT, M.Sc.</a></p>
                         <p class="card-role">Creator & Developer</p>
                         <p class="card-description">Louis-Edouard is a Computer Science graduate specialized in software engineering. He is an active
-                            member of the GEODES Software Engineering Research Group.
+                            member of the <a href="https://geodes.iro.umontreal.ca/">GEODES Software Engineering Research Group</a>.
                         </p>
                     </div>
 
@@ -311,23 +420,24 @@
                         <p class="card-name"><a href="http://www-ens.iro.umontreal.ca/~syriani/" target="_blank">Eugene SYRIANI, Ph.D.</a></p>
                         <p class="card-role">Supervisor</p>
                         <p class="card-description">Eugène is an Associate Professor in Computer Science at the University of Montreal. He is one
-                            of the leaders of the GEODES Software Engineering Research Group.
+                            of the leaders of the <a href="https://geodes.iro.umontreal.ca/">GEODES Software Engineering Research Group</a>.
                         </p>
                     </div>
                 </div>
 
-                <!-- <h3 class="title">Contributors</h3>
+                <h3 class="title">Contributors</h3>
                 <div class="card-container card-container--small">
                     <div class="card">
-                        <img class="card-img card-img--small" src="./../assets/images/photo_aurelien.jpeg" alt="Photo de Aurélien DUCOIN">
+                        <img class="card-img card-img--small" src="./assets/images/photo_aurelien_ducoin.png" alt="Photo de Aurélien DUCOIN">
                         <p class="card-name">Aurélien DUCOIN, B.Sc.</p>
                         <p class="card-role">Developer</p>
                         <p class="card-description">
-                            Aurélien added Graphical support to Gentleman.
+                            Aurélien is adding support for graphical (svg-based) projections, as part of his master's degree at the
+                            <a href="https://geodes.iro.umontreal.ca/">GEODES Software Engineering Research Group</a>.
                         </p>
                     </div>
                 </div>
-                <p><a href="mailto:louis.edouard.lafontant@umontreal.ca">Become a contributor</a>.</p> -->
+                <!-- <p><a href="mailto:louis.edouard.lafontant@umontreal.ca">Become a contributor</a>.</p> -->
             </section>
         </div>
     </main>
@@ -336,7 +446,7 @@
         <div class="content-wrapper">
             <p>Gentleman</p>
             <p class="footer-license">
-                Copyright &copy; 2020 &ndash; 2021 Louis-Edouard LAFONTANT &bull;
+                Copyright &copy; 2020 &ndash; 2022 Louis-Edouard LAFONTANT &bull;
                 Code licensed under the <a class="link footer-license__link" href="https://opensource.org/licenses/GPL-3.0"
                     target="_blank" rel="noopener">GPL License</a>.
                 Content licensed under <a class="link footer-license__link"

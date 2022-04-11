@@ -1,0 +1,95 @@
+{
+    "concept": [
+        {
+            "name": "tool",
+            "nature": "concrete",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Name" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "description",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Description" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "start-date",
+                    "target": {
+                        "name": "number",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Start year" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "partners",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name" : "partner"
+                        },
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Partners" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "responsable",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "person"
+                        },
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "URL" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "active",
+                    "target": {
+                        "name": "boolean"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "url",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "URL" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "logo",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Logo" }
+                        ]
+                    },
+                    "required": false
+                }
+            ],
+            "properties": []
+        }
+    ]
+}

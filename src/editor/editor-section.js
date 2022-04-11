@@ -109,6 +109,18 @@ export const EditorSection = {
             }, element.content)
         ));
 
+        if (!isHTMLElement(this.btnHome)) {
+            this.btnHome = createButton({
+                class: ["btn", "editor-toolbar__button", "editor-toolbar__button--home"],
+                title: `Toggle menu`,
+                dataset: {
+                    action: "home"
+                }
+            });
+
+            toolbar.append(this.btnHome);
+        }
+
         if (!isHTMLElement(this.header)) {
             this.header = createDiv({
                 class: ["editor-header-menu"]

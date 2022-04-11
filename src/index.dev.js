@@ -20,19 +20,18 @@ const Model = {
     MS: "style",
     MM: "mindmap",
     RL: "relis",
-    TL: "trafficlight",
+    SP: "simple",
     TD: "todo",
-    PP: `people`
+    TL: "trafficlight",
 };
 
-const modelName = Model.MP;
+const modelName = Model.SP;
 
 const MODEL__EDITOR = require(`@models/${modelName}-model/config.json`);
 const MODEL__CONCEPT = require(`@models/${modelName}-model/concept.json`);
 const MODEL__PROJECTION = require(`@models/${modelName}-model/projection.json`);
 
-const STYLE_CONCEPT = require(`@models/${Model.MS}-model/concept.json`);
-const STYLE_PROJECTION = require(`@models/${Model.MS}-model/projection.json`);
+
 
 const ENV_EDITOR = "editor";
 
@@ -330,14 +329,16 @@ function updatePreview(instance, value, concept) {
 
 editor.init({
     config: MODEL__EDITOR,
-    handlers: MODEL__HANDLER
+    handlers: MODEL__HANDLER,
+    conceptModel: MODEL__CONCEPT,
+    projectionModel: MODEL__PROJECTION
 });
 editor.home.close();
 
-editor.loadConcept(MODEL__CONCEPT, `${modelName} concept`);
-editor.loadProjection(MODEL__PROJECTION, `${modelName} projection`);
-
 if (modelName === Model.MP) {
+    const STYLE_CONCEPT = require(`@models/${Model.MS}-model/concept.json`);
+    const STYLE_PROJECTION = require(`@models/${Model.MS}-model/projection.json`);
+
     editor.loadConcept(STYLE_CONCEPT, "styling concept");
     editor.loadProjection(STYLE_PROJECTION, "styling projection");
 
@@ -352,4 +353,8 @@ if (modelName === Model.MP) {
 
 if (modelName === Model.RL) {
     editor.createInstance("project");
+}
+
+if (modelName === Model.SP) {
+    let instance = editor.createInstance("concept");
 }

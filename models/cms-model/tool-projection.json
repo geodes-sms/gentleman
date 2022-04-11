@@ -1,0 +1,149 @@
+{
+    "projection": [
+        {
+            "concept": { "prototype": "organization" },
+            "tags": ["project"],
+            "container": {
+                "content": [
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "kind": "static",
+                                "type": "text",
+                                "content": "Tools",
+                                "style": {
+                                    "css": ["pp-title"]
+                                }
+                            },
+                            {
+                                "kind": "static",
+                                "type": "button",
+                                "name": "add-project",
+                                "action": {
+                                    "type": "CREATE",
+                                    "target": {
+                                        "type": "attribute",
+                                        "name": "tools"
+                                    }
+                                },
+                                "help": "Add a project",
+                                "content": [
+                                    {
+                                        "kind": "static",
+                                        "type": "text",
+                                        "content": "+",
+                                        "style": {
+                                            "css": ["pp__btn-add-icon"]
+                                        }
+                                    },
+                                    {
+                                        "kind": "static",
+                                        "type": "text",
+                                        "content": "New",
+                                        "style": {
+                                            "css": ["pp__btn-add-text"]
+                                        }
+                                    }
+                                ],
+                                "style": {
+                                    "css": ["btn", "pp__btn-add"],
+                                    "ref": ["box-left"]
+                                }
+                            }
+                        ],
+                        "layout": { "type": "flex", "orientation": "row" },
+                        "style": {
+                            "css": ["pp-wrap"],
+                            "ref": ["box-top"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "tools",
+                        "tag": "view-box",
+                        "style": {
+                            "ref": ["box-top"]
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column", "wrappable": false },
+                "style": {
+                    "css": ["pp-organization"]
+                },
+                "focusable": true
+            }
+        },
+        {
+            "concept": { "name": "tool" },
+            "tags": ["card-view"],
+            "container": {
+                "content": [
+                    {
+                        "type": "attribute",
+                        "name": "name",
+                        "tag": "textbox-label"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "description",
+                        "tag": "textarea-label",
+                        "style": {
+                            "ref": ["box-top"]
+                        }
+                    },              
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "type": "attribute",
+                                "name": "start-date",
+                                "tag": "textbox-label",
+                                "style": {
+                                    "css": ["pp-fieldgroup-element"]
+                                }
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "end-date",
+                                "tag": "textbox-label",
+                                "style": {
+                                    "css": ["pp-fieldgroup-element"],
+                                    "ref": ["box-left"]
+                                }
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "active",
+                                "style": {
+                                    "css": ["pp-fieldgroup-element", "pp-fieldgroup-element--3"],
+                                    "ref": ["box-left"]
+                                }
+                            }
+                        ],
+                        "layout": { "type": "flex", "orientation": "row", "wrappable": false },
+                        "style": {
+                            "css": ["pp-fieldgroup"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "responsible",
+                        "style": {
+                            "css": ["areas"],
+                            "ref": ["box-top"]
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" },
+                "style": {
+                    "css": ["pp-project", "pp-project--edit"]
+                },
+                "focusable": true
+            }
+        }
+    ],
+    "template": [],
+    
+    "style": []
+}

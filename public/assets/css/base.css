@@ -73,6 +73,10 @@ th { text-align: center; }
 
 .hidden { display: none!important; }
 
+.nomargin {
+    margin: 0;
+}
+
 .fit-content { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 
 /* Scrollbar */
