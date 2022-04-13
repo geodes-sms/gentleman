@@ -1,36 +1,33 @@
-body { display: flex; flex-direction: column; }
-
-h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif; }
-
-.content-wrapper { padding-left: 1%; padding-right: 1%; }
-
-.page-header { height: 30px; background-color: #f5f5f5; }
-
-.page-title {
-    margin: 0;
-    padding-top: 6px; padding-bottom: 6px;
-    font-size: 1.5rem; font-weight: 500;
-}
-
-.page-body {
-    flex-grow: 2;
-    display: flex;
-    height: calc(100% - 30px);    
-}
-
-.app {
+.docx-model-app {
     flex-grow: 2;
     display: flex;
     flex-direction: column;
     height: 100%;
 }
 
-.app .editor-statusbar-viewer-container {
+.docx-model-app .editor-toolbar {
+    display: none;
+}
+
+.docx-model-app .editor-statusbar {
+    background-color: #c0c0c0;
+}
+
+.docx-model-app .editor-statusbar-viewer-container {
     display: none;
 }
 
 .editor-concept > .layout-container {
+    padding-top: 4px;
     background-color: #fefefe;
+}
+
+.editor-concept .editor-concept-header {
+    display: none;
+}
+
+.library {
+    flex-wrap: nowrap!important;
 }
 
 .library-header {

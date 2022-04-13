@@ -11,9 +11,10 @@
     <link rel="stylesheet" href="./../assets/css/site.css">
     <link rel="stylesheet" href="./../assets/css/docs.css">
     <title>Gentleman | Documentation: Getting started</title>
-
+    <link rel="stylesheet" href="./../../dist/style.min.css?v=2">
+    <link rel="stylesheet" href="assets/style.css">
     <style>
-        img {
+        .doc-img {
             width: auto;
             height: auto;
             max-width: 100%;
@@ -23,18 +24,21 @@
         .docx-model {
             display: flex;
             margin-top: 12px;
+            margin-bottom: 6px;
         }
 
         .docx-model-concept {
             display: flex; flex-direction: column;
             margin-right: 12px;
-            max-width: 320px;
             padding: 8px 12px 6px;
             font-size: 1.4rem;
             background-color: #f5f5f5;
             border-radius: 2px;
             box-shadow: 0 0 1px 1px #d5d5d5;
         }
+            .docx-model-concept--book {
+                max-width: 400px;
+            }
 
             .docx-model-concept i {
                 font-style: normal;
@@ -122,14 +126,15 @@
         }
 
         .docx-model-app {
-            margin-top: 6px;
+            margin-top: 12px;
+            height: 480px;
         }
 
-        /* .docx-model-editor {
-            height: 300px;
+        .docx-model-editor {
             background-color: #eee;
-            border-radius: 3px;
-        } */
+            border-radius: 4px;
+            border: 1px solid #c0c0c0;
+        }
 
         .page-footer {
             display: flex;
@@ -235,7 +240,7 @@
                 <div class="docx-model">
                     <div class="docx-model-concept">
                         <h4 class="docx-concept-name">Library</h4>
-                        <p class="docx-concept-description">Holds the list of books and authors.</p>
+                        <p class="docx-concept-description">Holds the list of books.</p>
                         <ul class="bare-list docx-concept-attributes">
                             <li class="docx-concept-attribute">
                                 <i class="attr-name">name</i>
@@ -249,13 +254,9 @@
                                 <i class="attr-name">books</i>
                                 <i class="attr-type">set <i class="attr-type-accept">Book</i></i> 
                             </li>
-                            <li class="docx-concept-attribute">
-                                <i class="attr-name">authors</i>
-                                <i class="attr-type">set <i class="attr-type-accept">Author</i></i> 
-                            </li>
                         </ul>
                     </div>
-                    <div class="docx-model-concept">
+                    <div class="docx-model-concept docx-model-concept--book">
                         <h4 class="docx-concept-name">Book</h4>
                         <p class="docx-concept-description">Holds the information we need about a book, makes references to the defined authors.</p>
                         <ul class="bare-list docx-concept-attributes">
@@ -264,8 +265,25 @@
                                 <i class="attr-type">string</i>
                             </li>
                             <li class="docx-concept-attribute">
+                                <i class="attr-name">summary</i>
+                                <i class="attr-type">string</i>
+                            </li>
+                            <li class="docx-concept-attribute">
                                 <i class="attr-name">year</i>
                                 <i class="attr-type">number</i>
+                            </li>
+                            <li class="docx-concept-attribute">
+                                <i class="attr-name">cover</i>
+                                <i class="attr-type">
+                                    string
+                                    <u class="attr-constraints">
+                                        <i class="attr-constraint">
+                                            <i class="attr-constraint-prop">pattern</i>
+                                            <b class="attr-constraint-op">&equals;</b>
+                                            <i class="attr-constraint-val">\.(jpg|jpeg|gif|png)$</i>
+                                        </i> 
+                                    </u>
+                                </i> 
                             </li>
                             <li class="docx-concept-attribute">
                                 <i class="attr-name">isbn</i>
@@ -274,7 +292,7 @@
                                         <i class="attr-constraint">
                                             <i class="attr-constraint-prop">length</i>
                                             <b class="attr-constraint-op">&equals;</b>
-                                            <i class="attr-constraint-val">{10, 13}</i>
+                                            <i class="attr-constraint-val">13</i>
                                         </i>
                                     </u>
                                 </i>
@@ -299,10 +317,6 @@
                                         <i class="attr-type-target">Author</i>
                                     </i>
                                 </i> 
-                            </li>
-                            <li class="docx-concept-attribute">
-                                <i class="attr-name">featured</i>
-                                <i class="attr-type">boolean</i> 
                             </li>
                         </ul>
                     </div>
@@ -339,25 +353,26 @@
                                 </i> 
                             </li>
                             <li class="docx-concept-attribute">
+                                <i class="attr-name">alias</i>
+                                <i class="attr-type">string</i> 
+                            </li>
+                            <li class="docx-concept-attribute">
                                 <i class="attr-name">about</i>
                                 <i class="attr-type">string</i> 
                             </li>
                             <li class="docx-concept-attribute">
-                                <i class="attr-name">photo</i>
-                                <i class="attr-type">
-                                    string
-                                    <u class="attr-constraints">
-                                        <i class="attr-constraint">
-                                            <i class="attr-constraint-prop">pattern</i>
-                                            <b class="attr-constraint-op">&equals;</b>
-                                            <i class="attr-constraint-val">\.(jpg|jpeg|gif|png)$</i>
-                                        </i> 
-                                    </u>
-                                </i> 
+                                <i class="attr-name">url</i>
+                                <i class="attr-type">string</i> 
                             </li>
                         </ul>
                     </div>
                 </div>
+
+                <p>
+                    By coupling these concepts with some projections, we obtain the following editor. 
+                    This editor allows you to define a library and a collection of books. <br>
+                    The editor is preloaded with a list of authors that can be referenced by a book.
+                </p>
                 <div class="docx-model-app">
                     <div class="docx-model-editor" data-gentleman="editor"></div>
                 </div>
@@ -404,7 +419,7 @@ const Handlers = {
                 <h2 class="article-section-title">User interface</h2>
                 <p>Gentleman adopts a minimalistic approach to its design. </p>
 
-                <img style="width: 100%; height: auto;" src="../assets/images/gentleman_documentation.svg" alt="Editor User interface">
+                <img class="doc-img" style="width: 100%; height: auto;" src="../assets/images/gentleman_documentation.svg" alt="Editor User interface">
 
                 <h3 class="article-section-subtitle">Header</h3>
                 <p>
@@ -545,6 +560,9 @@ const Handlers = {
             </div>
         </footer>
     </main>
+
+    <script src="./../../dist/gentleman.core.js?v=3"></script>
+    <script src="assets/library.js"></script>
 </body>
 
 </html>

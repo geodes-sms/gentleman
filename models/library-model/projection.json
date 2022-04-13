@@ -8,91 +8,70 @@
             "container": {
                 "content": [
                     {
-                        "type": "attribute",
-                        "name": "name",
-                        "tag": "textbox",
-                        "style": {
-                            "css": ["lib-name"]
-                        }
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "description",
-                        "tag": "textarea",
-                        "style": {
-                            "css": ["lib-description"]
-                        }
-                    },
-                    {
                         "type": "container",
                         "content": [
                             {
-                                "kind": "static",
-                                "type": "plink",
-                                "tag": "lib-books",
-                                "content": [
-                                    {
-                                        "kind": "static",
-                                        "type": "text",
-                                        "content": "Books",
-                                        "style": {
-                                            "css": ["link-text"]
-                                        }
-                                    }
-                                ],
+                                "type": "attribute",
+                                "name": "name",
+                                "tag": "textbox",
                                 "style": {
-                                    "css": ["library-nav-link", "current"]
+                                    "css": ["lib-name"]
                                 }
                             },
                             {
-                                "kind": "static",
-                                "type": "plink",
-                                "tag": "lib-authors",
-                                "content": [
-                                    {
-                                        "kind": "static",
-                                        "type": "text",
-                                        "content": "Authors",
-                                        "style": {
-                                            "css": ["link-text"]
-                                        }
-                                    }
-                                ],
+                                "type": "attribute",
+                                "name": "description",
+                                "tag": "textarea",
                                 "style": {
-                                    "css": ["library-nav-link"]
+                                    "ref": ["box-top"],
+                                    "css": ["lib-description"]
                                 }
                             }
                         ],
+                        "layout": { "type": "flex", "orientation": "column" },
                         "style": {
-                            "css": ["library-nav"]
-                        },
-                        "layout": { "type": "flex", "orientation": "row" }
+                            "css": ["library-header"]
+                        }
                     },
                     {
                         "type": "container",
                         "content": [
                             {
-                                "kind": "static",
-                                "type": "button",
-                                "name": "add-book",
-                                "action": {
-                                    "type": "CREATE", 
-                                    "target": { "type": "attribute", "name": "books" }
-                                },
-                                "help": "Add a book",
+                                "type": "container",
                                 "content": [
                                     {
                                         "kind": "static",
                                         "type": "text",
-                                        "content": "New book",
+                                        "content": "Book collection",
                                         "style": {
-                                            "css": ["lib__btn-add-text"]
+                                            "css": ["library-body-title"]
+                                        }
+                                    },
+                                    {
+                                        "kind": "static",
+                                        "type": "button",
+                                        "name": "add-book",
+                                        "action": {
+                                            "type": "CREATE", 
+                                            "target": { "type": "attribute", "name": "books" }
+                                        },
+                                        "help": "Add a book",
+                                        "content": [
+                                            {
+                                                "kind": "static",
+                                                "type": "text",
+                                                "content": "New book",
+                                                "style": {
+                                                    "css": ["lib__btn-add-text"]
+                                                }
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["btn", "lib-btn-add"]
                                         }
                                     }
                                 ],
-                                "style": {
-                                    "css": ["btn", "lib__btn-add"]
-                                }
+                                "layout": { "type": "flex", "orientation": "row" }
                             },
                             {
                                 "type": "attribute",
@@ -240,18 +219,112 @@
                         "content": [
                             {
                                 "type": "attribute",
-                                "name": "title",
-                                "tag": "textbox"
+                                "name": "cover",
+                                "tag": "image",
+                                "style": {
+                                    "css": ["lib-book-image"]
+                                }
                             },
                             {
                                 "type": "attribute",
-                                "name": "year",
-                                "tag": "textbox"
+                                "name": "cover",
+                                "tag": "textbox",
+                                "options": {
+                                    "placeholder": "URL"
+                                }
                             }
                         ],
-                        "layout": { "type": "flex", "orientation": "row" },
+                        "layout": { "type": "flex", "orientation": "column" },
                         "style": {
-                            "css": ["lib-fieldgroup"]
+                            "css": ["lib-book-cover"]
+                        }
+                    },
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "type": "attribute",
+                                "name": "title",
+                                "tag": "textbox",
+                                "options": {
+                                    "placeholder": "Title"
+                                }
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "summary",
+                                "tag": "textarea",
+                                "options": {
+                                    "placeholder": "Enter a summary"
+                                },
+                                "style": {
+                                    "ref": ["box-top"]
+                                }
+                            },
+                            {
+                                "type": "container",
+                                "content": [
+                                    {
+                                        "kind": "static",
+                                        "type": "text",
+                                        "content": "Authors",
+                                        "style": {
+                                            "css": ["lib-title"]
+                                        }
+                                    },
+                                    {
+                                        "kind": "static",
+                                        "type": "button",
+                                        "name": "add-author",
+                                        "action": {
+                                            "type": "CREATE",
+                                            "target": {
+                                                "type": "attribute",
+                                                "name": "authors"
+                                            }
+                                        },
+                                        "help": "Add an author",
+                                        "content": [
+                                            {
+                                                "kind": "static",
+                                                "type": "text",
+                                                "content": "+",
+                                                "style": {
+                                                    "css": ["lib-btn-addi-icon"]
+                                                }
+                                            },
+                                            {
+                                                "kind": "static",
+                                                "type": "text",
+                                                "content": "Add",
+                                                "style": {
+                                                    "css": ["lib-btn-addi-text"]
+                                                }
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["btn", "lib-btn-addi"]
+                                        }
+                                    }
+                                ],
+                                "layout": { "type": "flex", "orientation": "row" },
+                                "style": {
+                                    "css": ["pp-wrap"],
+                                    "ref": ["box-top"]
+                                }
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "authors",
+                                "tag": "refauthors",
+                                "style": {
+                                    "ref": ["box-top"]
+                                }
+                            }
+                        ],
+                        "layout": { "type": "flex", "orientation": "column" },
+                        "style": {
+                            "css": ["lib-book-main"]
                         }
                     },
                     {
@@ -260,25 +333,41 @@
                             {
                                 "type": "attribute",
                                 "name": "isbn",
-                                "tag": "textbox"
+                                "tag": "textbox-label"
                             },
                             {
-                                "type": "attribute",
-                                "name": "pages",
-                                "tag": "textbox"
+                                "type": "container",
+                                "content": [
+                                    {
+                                        "type": "attribute",
+                                        "name": "year",
+                                        "tag": "textbox-label",
+                                        "options": {
+                                            "placeholder": "Pub. year"
+                                        }
+                                    },
+                                    {
+                                        "type": "attribute",
+                                        "name": "pages",
+                                        "tag": "textbox-label",
+                                        "options": {
+                                            "placeholder": "Number"
+                                        }
+                                    }
+                                ],
+                                "layout": { "type": "flex", "orientation": "row" },
+                                "style": {
+                                    "css": ["lib-fieldgroup"]
+                                }
                             }
                         ],
-                        "layout": { "type": "flex", "orientation": "row" },
+                        "layout": { "type": "flex", "orientation": "column" },
                         "style": {
-                            "css": ["lib-fieldgroup"]
+                            "css": ["lib-book-aside"]
                         }
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "authors"
                     }
                 ],
-                "layout": { "type": "flex", "orientation": "column" },
+                "layout": { "type": "flex", "orientation": "row" },
                 "style": {
                     "css": ["lib-book"]
                 }
@@ -391,7 +480,11 @@
                     {
                         "type": "attribute",
                         "name": "last-name",
-                        "tag": "text"
+                        "tag": "text",
+                        "style": {
+                            "text": { "transform": "uppercase" },
+                            "ref": ["box-left"]
+                        }
                     }
                 ],
                 "layout": {  "type": "flex", "orientation": "row" },
@@ -422,73 +515,6 @@
                 },
                 "style": {
                     "css": ["check-field"]
-                }
-            }
-        },
-
-
-        {
-            "concept": { "name": "set" },
-            "type": "layout",
-            "tags": ["tags"],
-            "projection": {
-                "type": "flex",
-                "orientation": "column",
-                "disposition": [
-                    {
-                        "kind": "static",
-                        "type": "button",
-                        "action": { "type": "add", "value": null },
-                        "content": [
-                            {
-                                "kind": "static",
-                                "type": "text",
-                                "content": "+",
-                                "style": {
-                                    "css": ["td-tag-set__button-icon"]
-                                }
-                            },
-                            {
-                                "kind": "static",
-                                "type": "text",
-                                "content": "Add author",
-                                "style": {
-                                    "css": ["td-tag-set__button-content"]
-                                }
-                            }
-                        ],
-                        "style": {
-                            "css": ["td-tag-set__button"]
-                        }
-                    },
-                    {
-                        "type": "field",
-                        "field": {
-                            "type": "list",
-                            "readonly": false,
-                            "disabled": false,
-                            "list": {
-                                "item": {
-                                    "template": { "tag": "", "name": "", "collapsible": false },
-                                    "style": {
-                                        "css": ["td-tag-set__list-item"]
-                                    }
-                                },
-                                "style": {
-                                    "css": ["td-tag-set__list"]
-                                }
-                            },
-                            "action": {
-                                "add": false
-                            },
-                            "style": {
-                                "css": ["td-tag-set-body"]
-                            }
-                        }
-                    }
-                ],
-                "style": {
-                    "css": ["td-tag-set"]
                 }
             }
         }

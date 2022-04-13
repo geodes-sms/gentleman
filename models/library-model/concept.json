@@ -56,14 +56,30 @@
                 {
                     "name": "title",
                     "target": {
-                        "name": "string"
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Title" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "summary",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Summary" }
+                        ]
                     },
                     "required": true
                 },
                 {
                     "name": "year",
                     "target": {
-                        "name": "number"
+                        "name": "number",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Year" }
+                        ]
                     },
                     "required": true
                 },
@@ -73,10 +89,15 @@
                         "name": "string",
                         "constraint": {
                             "length": {
-                                "type": "values",
-                                "values": [10, 13]
+                                "type": "fixed",
+                                "fixed": {
+                                    "value": 13
+                                }
                             }
-                        }
+                        },
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "ISBN" }
+                        ]
                     },
                     "required": true
                 },
@@ -91,7 +112,10 @@
                                     "min": { "value": 1 }
                                 }
                             }
-                        }
+                        },
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Pages" }
+                        ]
                     },
                     "required": true
                 },
@@ -109,9 +133,9 @@
                     "required": true
                 },
                 {
-                    "name": "featured",
+                    "name": "cover",
                     "target": {
-                        "name": "boolean"
+                        "name": "image-url"
                     },
                     "required": true
                 }
@@ -144,21 +168,21 @@
                     "required": true
                 },
                 {
-                    "name": "about",
+                    "name": "alias",
                     "target": {
-                        "name": "string",
+                        "name": "name",
                         "properties": [
-                            { "name": "label", "type": "string", "value": "About" }
+                            { "name": "label", "type": "string", "value": "Last name" }
                         ]
                     },
                     "required": true
                 },
                 {
-                    "name": "photo",
+                    "name": "about",
                     "target": {
-                        "name": "image-url",
+                        "name": "string",
                         "properties": [
-                            { "name": "label", "type": "string", "value": "Photo URL" }
+                            { "name": "label", "type": "string", "value": "About" }
                         ]
                     },
                     "required": true
@@ -170,6 +194,13 @@
                         "properties": [
                             { "name": "label", "type": "string", "value": "Website" }
                         ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "favorite",
+                    "target": {
+                        "name": "boolean"
                     },
                     "required": true
                 }

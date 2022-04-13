@@ -192,7 +192,7 @@
         {
             "concept": { "name": "reference" },
             "type": "field",
-            "tags": ["combobox"],
+            "tags": ["combobox", "edit-view"],
             "content": {
                 "type": "choice",
                 "choice": {
@@ -206,7 +206,7 @@
                         "css": ["lib-combobox__choice"]
                     }
                 },
-                "placeholder": "select tag",
+                "placeholder": "author",
                 "expanded": false,
                 "input": {
                     "placeholder": "Search..."
@@ -221,18 +221,18 @@
         {
             "concept": { "name": "set" },
             "type": "field",
-            "tags": ["authors"],
+            "tags": ["refauthors"],
             "content": {
                 "type": "list",
                 "list": {
                     "item": {
                         "template": { "tag": "edit-view" },
                         "style": {
-                            "css": ["lib-tag-set__list-item"]
+                            "css": ["lib-set__inlist-item"]
                         }
                     },
                     "style": {
-                        "css": ["lib-tag-set__list"]
+                        "css": ["lib-set__inlist"]
                     }
                 },
                 "action": {
