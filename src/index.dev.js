@@ -2,9 +2,10 @@
 
 // Import CSS
 import './stylesheets.js';
-import '@css/samples/gentleman.css';
-import '@css/samples/projection.css';
+// import '@css/samples/gentleman.css';
+// import '@css/samples/projection.css';
 import '@css/samples/style.css';
+import './../demo/traffic-light/assets/style.css';
 // import './../demo/todo/assets/style.css';
 
 import { createDiv, getElements, isNullOrUndefined, isHTMLElement, hasOwn } from "zenkai";
@@ -20,12 +21,11 @@ const Model = {
     MS: "style",
     MM: "mindmap",
     RL: "relis",
-    SP: "simple",
     TD: "todo",
     TL: "trafficlight",
 };
 
-const modelName = Model.SP;
+const modelName = Model.TL;
 
 const MODEL__EDITOR = require(`@models/${modelName}-model/config.json`);
 const MODEL__CONCEPT = require(`@models/${modelName}-model/concept.json`);
@@ -358,3 +358,9 @@ if (modelName === Model.RL) {
 if (modelName === Model.SP) {
     let instance = editor.createInstance("concept");
 }
+
+// if (modelName === Model.TL) {
+//     let instance = editor.createInstance("mode");
+//     let lights = instance.concept.getAttribute("lights").getTarget();
+//     lights.createElement();
+// }

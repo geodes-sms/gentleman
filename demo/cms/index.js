@@ -1,10 +1,13 @@
-// import '@src/stylesheets.js';
-// import './assets/style.css';
+import '@src/stylesheets.js';
+import './assets/style.css';
 
 import { findAncestor, getElement, getElements, hasOwn, isHTMLElement, isNullOrUndefined } from 'zenkai';
 import { activateEditor } from '@src';
-import { PEOPLE_CONCEPT, ORGANIZATION_CONCEPT, PROJECT_CONCEPT, ORGANIZATION_PROJECTION, PEOPLE_PROJECTION, PROJECT_PROJECTION, FIELD_PROJECTION } from './models.js';
-import { PEOPLE_DATA, PROJECTS_DATA, ORGANIZATION_DATA } from './data.js';
+import { 
+    PEOPLE_CONCEPT, ORGANIZATION_CONCEPT, PROJECT_CONCEPT, TOOL_CONCEPT, 
+    ORGANIZATION_PROJECTION, PEOPLE_PROJECTION, PROJECT_PROJECTION, TOOL_PROJECTION, FIELD_PROJECTION 
+} from './models.js';
+import { PEOPLE_DATA, PROJECTS_DATA, ORGANIZATION_DATA, TOOLS_DATA } from './data.js';
 
 
 let editor = activateEditor(".app-editor")[0];
@@ -12,8 +15,8 @@ editor.init({
     config: {
         header: false,
     },
-    conceptModel: [PEOPLE_CONCEPT, ORGANIZATION_CONCEPT, PROJECT_CONCEPT],
-    projectionModel: [ORGANIZATION_PROJECTION, PEOPLE_PROJECTION, PROJECT_PROJECTION, FIELD_PROJECTION]
+    conceptModel: [PEOPLE_CONCEPT, ORGANIZATION_CONCEPT, PROJECT_CONCEPT, TOOL_CONCEPT],
+    projectionModel: [ORGANIZATION_PROJECTION, PEOPLE_PROJECTION, PROJECT_PROJECTION, TOOL_PROJECTION, FIELD_PROJECTION]
 });
 
 
@@ -89,6 +92,7 @@ const App = {
     fetchData() {
         let people = this.organization.getAttribute("members").getTarget();
         let projects = this.organization.getAttribute("projects").getTarget();
+        let tools = this.organization.getAttribute("tools").getTarget();
 
         this.organization.getAttribute("name").setValue(ORGANIZATION_DATA.name);
         this.organization.getAttribute("description").setValue(ORGANIZATION_DATA.description);
@@ -96,7 +100,7 @@ const App = {
         this.organization.getAttribute("website").setValue(ORGANIZATION_DATA.website);
         this.organization.getAttribute("email").setValue(ORGANIZATION_DATA.email);
 
-        
+
         let socials = this.organization.getAttribute("socials").getTarget();
 
         for (const key in ORGANIZATION_DATA.socials) {
@@ -149,6 +153,30 @@ const App = {
             });
 
             projects.addElement(project);
+        });
+
+        TOOLS_DATA.forEach(item => {
+            let tool = editor.createConcept("tool");
+
+            const { name, description, startYear, url, logo, contributors = [] } = item;
+
+            tool.getAttribute("name").setValue(name);
+            tool.getAttribute("description").setValue(description);
+            tool.getAttribute("start-date").setValue(startYear);
+            tool.getAttribute("url").setValue(url);
+            tool.getAttribute("logo").setValue(logo);
+
+            let partners = tool.getAttribute("contributors").getTarget();
+
+            contributors.forEach(contrib => {
+                let partner = editor.createConcept("partner");
+
+                partner.getAttribute("name").setValue(contrib);
+
+                partners.addElement(partner);
+            });
+
+            tools.addElement(tool);
         });
     },
     selectItem(name) {

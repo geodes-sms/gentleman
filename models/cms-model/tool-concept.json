@@ -36,19 +36,6 @@
                     "required": true
                 },
                 {
-                    "name": "partners",
-                    "target": {
-                        "name": "set",
-                        "accept": {
-                            "name" : "partner"
-                        },
-                        "properties": [
-                            { "name": "label", "type": "string", "value": "Partners" }
-                        ]
-                    },
-                    "required": true
-                },
-                {
                     "name": "responsable",
                     "target": {
                         "name": "reference",
@@ -57,6 +44,19 @@
                         },
                         "properties": [
                             { "name": "label", "type": "string", "value": "URL" }
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "contributors",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name" : "partner"
+                        },
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Partners" }
                         ]
                     },
                     "required": true

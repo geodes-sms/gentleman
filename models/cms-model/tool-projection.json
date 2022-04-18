@@ -2,7 +2,7 @@
     "projection": [
         {
             "concept": { "prototype": "organization" },
-            "tags": ["project"],
+            "tags": ["tool"],
             "container": {
                 "content": [
                     {
@@ -80,9 +80,28 @@
             "container": {
                 "content": [
                     {
-                        "type": "attribute",
-                        "name": "name",
-                        "tag": "textbox-label"
+                        "type": "container",
+                        "content": [
+                            {
+                                "type": "attribute",
+                                "name": "name",
+                                "tag": "textbox-label",
+                                "style": {
+                                    "css": ["pp-fieldgroup-element", "pp-fieldgroup-element--3"]
+                                }
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "active",
+                                "style": {
+                                    "css": ["pp-fieldgroup-element"]
+                                }
+                            }
+                        ],
+                        "layout": { "type": "flex", "orientation": "row", "wrappable": false },
+                        "style": {
+                            "css": ["pp-fieldgroup"]
+                        }
                     },
                     {
                         "type": "attribute",
@@ -105,16 +124,8 @@
                             },
                             {
                                 "type": "attribute",
-                                "name": "end-date",
+                                "name": "url",
                                 "tag": "textbox-label",
-                                "style": {
-                                    "css": ["pp-fieldgroup-element"],
-                                    "ref": ["box-left"]
-                                }
-                            },
-                            {
-                                "type": "attribute",
-                                "name": "active",
                                 "style": {
                                     "css": ["pp-fieldgroup-element", "pp-fieldgroup-element--3"],
                                     "ref": ["box-left"]
@@ -124,14 +135,6 @@
                         "layout": { "type": "flex", "orientation": "row", "wrappable": false },
                         "style": {
                             "css": ["pp-fieldgroup"]
-                        }
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "responsible",
-                        "style": {
-                            "css": ["areas"],
-                            "ref": ["box-top"]
                         }
                     }
                 ],

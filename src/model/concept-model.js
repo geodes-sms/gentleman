@@ -59,6 +59,10 @@ export const ConceptModel = {
     createConcept(name, args) {
         const schema = this.getCompleteModelConcept(name);
 
+        if(isNullOrUndefined(schema)) {
+            throw new Error(`Concept not found: ${name}`);
+        }
+
         var concept = ConceptFactory.createConcept(this, schema, args);
 
         this.addConcept(concept);

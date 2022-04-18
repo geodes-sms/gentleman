@@ -89,13 +89,12 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
 .app {
     flex-grow: 2;
     display: flex;
-    padding: 6px;
     flex-direction: column;
     height: 100%;
 }
 
 .app-editor {
-    box-shadow: 0 0 0 1px #d5d5d5;
+    
     border-radius: 2px;
 }
 

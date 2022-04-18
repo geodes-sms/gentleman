@@ -1,6 +1,33 @@
 {
     "projection": [
         {
+            "concept": { "name": "boolean" },
+            "tags": ["switch-field"],
+            "type": "field",
+            "content": {
+                "type": "binary",
+                "checkbox": {
+                    "label": {
+                        "content": [
+                            {
+                                "type": "property",
+                                "name": "refname"
+                            }
+                        ],
+                        "style": {
+                            "css": ["switch-field__label"]
+                        }
+                    },
+                    "style": {
+                        "css": ["switch-field__checkbox"]
+                    }
+                },
+                "style": {
+                    "css": ["switch-field"]
+                }
+            }
+        },
+        {
             "concept": { "name": "string" },
             "type": "field",
             "tags": ["tag"],

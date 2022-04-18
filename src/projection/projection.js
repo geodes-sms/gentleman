@@ -376,9 +376,9 @@ const Projection = {
 
         container = this.element.render();
 
-        if (type === "layout" || type === "container") {
-            makeResizable(container);
-        }
+        // if (type === "layout" || type === "container") {
+        //     makeResizable(container);
+        // }
 
         if (!this.element.focusable) {
             container.tabIndex = -1;

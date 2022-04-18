@@ -126,6 +126,15 @@
                             "name": "project"
                         }
                     }
+                },
+                {
+                    "name": "tools",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "tool"
+                        }
+                    }
                 }
             ],
             "properties": []
