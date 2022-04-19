@@ -355,6 +355,10 @@ const EditorCore = {
      * Saves the current model state
      */
     save(concept, element) {
+        if (isNullOrUndefined(concept)) {
+            return;
+        }
+
         this.createState(concept, element);
 
         // this.notify(`${element.name} saved`, NotificationType.NORMAL, 1500);

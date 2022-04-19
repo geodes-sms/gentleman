@@ -1,5 +1,5 @@
-import '@src/stylesheets.js';
-import './assets/style.css';
+// import '@src/stylesheets.js';
+// import './assets/style.css';
 
 import { findAncestor, getElement, getElements, hasOwn, isHTMLElement, isNullOrUndefined } from 'zenkai';
 import { activateEditor } from '@src';
