@@ -2,7 +2,7 @@
 
 <!-- [![Build Status](https://travis-ci.org/geodes-sms/gentleman.svg?branch=master)](https://travis-ci.org/geodes-sms/gentleman) -->
 
-Gentleman is a **lightweight web-based projectional editor** that allows you to create and manipulate concept-based models through projections.
+Gentleman is a **lightweight web-based projectional editor** that allows you to create and manipulate concept-based models through projection.
 
 ## Features
 
