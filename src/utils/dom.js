@@ -313,7 +313,7 @@ export function getElementLeftSVG(source, container, relative = true) {
 
         let $dist = penalty * $vdist + $hdist;
 
-        if (left >= (right - 1) && ($dist < dist || (($dist === dist) && ( $vist < vist)))) {
+        if (left >= (right - 1) && ($dist < dist || (($dist === dist) && ( $vdist < vdist)))) {
             closest = items[i];
             vdist = $vdist;
             dist = $dist;

@@ -86,6 +86,10 @@ export const DocumentType = {
         type: "application/json",
         extension: "json"
     },
+    JSONCP: {
+        type: "application/json",
+        extension: "jsoncp"
+    },
     MP3: {
         type: "audio/mpeg",
         extension: "mp3"

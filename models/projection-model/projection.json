@@ -106,6 +106,23 @@
                         "type": "container",
                         "content": [
                             {
+                                "type": "layout",
+                                "layout": {
+                                    "type": "flex",
+                                    "orientation": "row",
+                                    "disposition": [
+                                        {
+                                            "type": "attribute",
+                                            "name": "concept",
+                                            "help": "Target concept",
+                                            "style": {
+                                                "ref": ["box-left"]
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
                                 "kind": "static",
                                 "type": "text",
                                 "content": "Tags",
@@ -165,6 +182,23 @@
                 "layout": { "type": "flex", "orientation": "column" },
                 "style": {
                     "css": ["model-projection"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "concept" },
+            "tags": [],
+            "type": "container",
+            "container": {
+                "content": [
+                    {
+                        "type": "attribute",
+                        "name": "name"
+                    }
+                ],
+                "layout": {
+                    "type": "flex",
+                    "orientation": "row"
                 }
             }
         },

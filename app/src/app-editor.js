@@ -2,7 +2,7 @@ import { createUnorderedList, createListItem, getElement, createSpan, hasOwn, fi
 import { duplicateTab } from "@utils/index.js";
 import { createEditor } from "@src";
 import { buildConceptHandler, buildProjectionHandler } from "@generator/index.js";
-import { ProjectionEditor } from "./projection-editor.js";
+import { ProjectionEditor, ConceptEditor } from "./projection-editor.js";
 
 
 let CMODEL__CONCEPT = null;
@@ -73,7 +73,7 @@ export const App = {
     render() {
         this.refresh();
     },
- 
+
     /**
      * Creates an editor
      * @param {Editor} editor 
@@ -521,8 +521,8 @@ const PMODEL__HANDLER = {
 
         window.addInstance(instance);
     },
-    
-    "open-edit": function (args){
+
+    "open-edit": function (args) {
         let concept = args[0];
         let projection = this.createProjection(concept, "visualizer");
 
@@ -544,10 +544,10 @@ const PMODEL__HANDLER = {
 
         window.addInstance(instance);
     },
-    "make dynamic": function(args){
+    "make dynamic": function (args) {
         let concept = args[0];
         let dynamicVal = concept.createProj();
-        
+
         let projection = this.createConcept("template");
 
         let r = this.createConcept("render", "list-item");
@@ -564,10 +564,10 @@ const PMODEL__HANDLER = {
 
         this.createInstance(projection);
     },
-    "make static": function(args){
+    "make static": function (args) {
         let concept = args[0];
         let staticVal = concept.createProj();
-        
+
         let projection = this.createConcept("template");
 
         let r = this.createConcept("render", "list-item");
@@ -584,7 +584,7 @@ const PMODEL__HANDLER = {
 
         this.createInstance(projection);
     },
-    "make interactive": function (args){
+    "make interactive": function (args) {
         let concept = args[0];
         let interactVal = concept.createProj();
 
@@ -687,12 +687,17 @@ function createConceptEditor() {
             CMODEL__CONCEPT = await CM_CONCEPT.json();
             CMODEL__PROJECTION = await CM_PROJECTION.json();
 
-            return this.createEditor({
+            let editor = this.createEditor({
                 conceptModel: CMODEL__CONCEPT,
                 projectionModel: CMODEL__PROJECTION,
                 config: CMODEL__EDITOR,
                 handlers: CONCEPT_HANDLERS
             });
+
+            let wrapper = Object.create(ConceptEditor).init(editor);
+            this.editorSection.append(wrapper.render());
+
+            return editor;
         });
     } else {
         return new Promise(() => this.createEditor({
@@ -723,7 +728,7 @@ function createProjectionEditor() {
             SMODEL__CONCEPT = await SM_CONCEPT.json();
             SMODEL__PROJECTION = await SM_PROJECTION.json();
 
-            let editor =  this.createEditor({
+            let editor = this.createEditor({
                 conceptModel: PMODEL__CONCEPT,
                 projectionModel: PMODEL__PROJECTION,
                 config: Object.assign({}, PMODEL__EDITOR),
@@ -740,7 +745,7 @@ function createProjectionEditor() {
         });
     } else {
         return new Promise(() => {
-            let editor =  this.createEditor({
+            let editor = this.createEditor({
                 conceptModel: PMODEL__CONCEPT,
                 projectionModel: PMODEL__PROJECTION,
                 config: Object.assign({}, PMODEL__EDITOR),
@@ -775,7 +780,7 @@ function createGraphicEditor() {
             GMODEL__CONCEPT = await GM_CONCEPT.json();
             GMODEL__PROJECTION = await GM_PROJECTION.json();
 
-            let editor =  this.createEditor({
+            let editor = this.createEditor({
                 conceptModel: GMODEL__CONCEPT,
                 projectionModel: GMODEL__PROJECTION,
                 config: Object.assign({}),
@@ -786,7 +791,7 @@ function createGraphicEditor() {
         });
     } else {
         return new Promise(() => {
-            let editor =  this.createEditor({
+            let editor = this.createEditor({
                 conceptModel: GMODEL__CONCEPT,
                 projectionModel: GMODEL__PROJECTION,
                 config: Object.assign({}),

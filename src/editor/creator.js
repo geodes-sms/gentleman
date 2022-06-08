@@ -1,11 +1,11 @@
 import { hide, show, toggle } from '@utils/index.js';
-import { EditorHome } from './editor-home.js';
-import { EditorBreadcrumb } from './editor-breadcrumb.js';
-import { EditorFilter } from './editor-filter.js';
+import { EditorHome } from './home/editor-home.js';
+import { EditorBreadcrumb } from './status/editor-breadcrumb.js';
 import { EditorStyle } from './editor-style.js';
-import { EditorLog } from './editor-log.js';
+import { EditorLog } from './status/editor-log.js';
 import { EditorSection } from './editor-section.js';
-import { EditorStatus } from './editor-status.js';
+import { EditorStatus } from './status/editor-status.js';
+import { EditorExport } from './editor-export.js';
 
 const BaseWindow = {
     /** @type {HTMLElement} */
@@ -128,4 +128,17 @@ export function createEditorLog() {
         type: { value: "log" },
         editor: { value: this }
     }), EditorLog);
+}
+
+/**
+ * Creates an editor log manager
+ * @returns {EditorExport}
+ */
+export function createEditorExport() {
+    return Object.assign(Object.create(BaseWindow, {
+        object: { value: "environment" },
+        name: { value: "editor-exporter" },
+        type: { value: "exporter" },
+        editor: { value: this }
+    }), EditorExport);
 }

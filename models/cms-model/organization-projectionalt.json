@@ -11,7 +11,7 @@
                             {
                                 "type": "attribute",
                                 "name": "name",
-                                "tag": "textbox-label",
+                                "tag": "text",
                                 "style": {
                                     "css": ["pp-wrap-element", "pp-wrap-element--2"]
                                 }
@@ -19,7 +19,7 @@
                             {
                                 "type": "attribute",
                                 "name": "email",
-                                "tag": "textbox-label",
+                                "tag": "text",
                                 "required": true,
                                 "style": {
                                     "css": ["pp-wrap-element"]
@@ -28,7 +28,7 @@
                             {
                                 "type": "attribute",
                                 "name": "website",
-                                "tag": "textbox-label",
+                                "tag": "text",
                                 "required": true,
                                 "style": {
                                     "css": ["pp-wrap-element"]
@@ -101,65 +101,6 @@
                     {
                         "type": "attribute",
                         "name": "socials",
-                        "tag": "areas",
-                        "style": {
-                            "css": ["areas"],
-                            "ref": ["box-top"]
-                        }
-                    },
-                    {
-                        "type": "container",
-                        "content": [
-                            {
-                                "kind": "static",
-                                "type": "text",
-                                "content": "Areas of research",
-                                "style": {
-                                    "css": ["pp-title"]
-                                }
-                            },
-                            {
-                                "kind": "static",
-                                "type": "button",
-                                "name": "add-area",
-                                "action": {
-                                    "type": "CREATE",
-                                    "target": { "type": "attribute", "name": "areas" }
-                                },
-                                "help": "Add an area",
-                                "content": [
-                                    {
-                                        "kind": "static",
-                                        "type": "text",
-                                        "content": "+",
-                                        "style": {
-                                            "css": ["pp__btn-add-icon"]
-                                        }
-                                    },
-                                    {
-                                        "kind": "static",
-                                        "type": "text",
-                                        "content": "New",
-                                        "style": {
-                                            "css": ["pp__btn-add-text"]
-                                        }
-                                    }
-                                ],
-                                "style": {
-                                    "css": ["btn", "pp__btn-add"],
-                                    "ref": ["box-left"]
-                                }
-                            }
-                        ],
-                        "layout": { "type": "flex", "orientation": "row" },
-                        "style": {
-                            "css": ["pp-wrap"],
-                            "ref": ["box-top"]
-                        }
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "areas",
                         "tag": "areas",
                         "style": {
                             "css": ["areas"],

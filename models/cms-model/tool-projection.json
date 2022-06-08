@@ -89,13 +89,6 @@
                                 "style": {
                                     "css": ["pp-fieldgroup-element", "pp-fieldgroup-element--3"]
                                 }
-                            },
-                            {
-                                "type": "attribute",
-                                "name": "active",
-                                "style": {
-                                    "css": ["pp-fieldgroup-element"]
-                                }
                             }
                         ],
                         "layout": { "type": "flex", "orientation": "row", "wrappable": false },

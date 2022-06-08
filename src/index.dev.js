@@ -2,8 +2,8 @@
 
 // Import CSS
 import './stylesheets.js';
-// import '@css/samples/gentleman.css';
-// import '@css/samples/projection.css';
+import '@css/samples/gentleman.css';
+import '@css/samples/projection.css';
 import '@css/samples/style.css';
 import './../demo/traffic-light/assets/style.css';
 // import './../demo/todo/assets/style.css';
@@ -257,7 +257,7 @@ const MODEL__HANDLER = {
         window.addInstance(instance);
     },
 
-    "export.model": function () { this.export(); },
+    "export.model": function () { this.exporter.open(); },
     "open.menu": function () { this.home.open(); },
     "close.editor": function () { this.close(); },
     "build-concept": function (args) { buildConceptHandler.call(this); },
@@ -333,7 +333,8 @@ editor.init({
     conceptModel: MODEL__CONCEPT,
     projectionModel: MODEL__PROJECTION
 });
-editor.home.close();
+editor.home.open();
+editor.exporter.close();
 
 if (modelName === Model.MP) {
     const STYLE_CONCEPT = require(`@models/${Model.MS}-model/concept.json`);

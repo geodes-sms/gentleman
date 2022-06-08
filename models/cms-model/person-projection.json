@@ -496,14 +496,6 @@
                     "content": [
                         {
                             "kind": "static",
-                            "type": "text",
-                            "content": "List View",
-                            "style": {
-                                "css": ["label"]
-                            }
-                        },
-                        {
-                            "kind": "static",
                             "type": "plink",
                             "tag": "view-table",
                             "content": [

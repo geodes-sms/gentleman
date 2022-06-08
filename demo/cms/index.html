@@ -34,14 +34,13 @@
                 <li class="menu-item" data-cms="menu-item" data-cms-name="projects">
                     <span class="menu-item-label">Projects</span>
                 </li>
-                <li class="menu-item" data-cms="menu-item" data-cms-name="tools">
+                <li class="menu-item hidden" data-cms="menu-item" data-cms-name="tools">
                     <span class="menu-item-label">Tools</span>
                 </li>
             </ul>
         </nav>
         <section class="app">
             <div class="app-editor" data-gentleman="editor"></div>
-            </div>
         </section>
     </main>
 
@@ -51,16 +50,57 @@
             <p class="poweredby">Powered by 
                 <a class="bare-link page-footer__link page-footer__link--gentleman" href="https://gentlemancp.org/">
                     <span class="label">Gentleman</span>
-                    <span class="info">
-                        version 0.4.0
-                        Github
-                    </span>
+                    <span class="info">version 0.4.0 Github</span>
                 </a>
             </p>
         </div>
     </footer>
 
-    <script src="./../dist/cms.js"></script>
-    <!-- <script src="app.bundle.js"></script> -->
+
+    
+    <template data-gentleman="template" id="concept-schema">
+        <div class="tpl-concept">
+            <div class="tpl-concept-header">
+                <div class="tpl-concept-heading">
+                    <h3 class="tpl-concept-name" data-name="name"></h3>
+                    <span class="tpl-concept-nature" data-name="nature"></span>
+                </div>
+                <p data-if="prototype" class="tpl-concept-wrapper">
+                    <span class="tpl-label">Prototype</span>
+                    <span class="tpl-value" data-name="prototype" data-context="menu"
+                     data-action="open-concept" data-attr="concept:$prototype"></span>
+                </p>
+            </div>
+            <div class="tpl-concept-body">
+                <div class="tpl-concept-section tpl-concept-section--attribute" data-bind="attributes">
+                    <h4 class="tpl-concept__title">Attributes</h4>
+                    <ul class="bare-list tpl-concept-attribute-list" data-item="concept-attribute"></ul>
+                </div>
+                <div class="tpl-concept-section tpl-concept-section--property" data-bind="properties">
+                    <h4 class="tpl-concept__title">Properties</h4>
+                    <ul class="bare-list tpl-concept-property-list" data-item="concept-property"></ul>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template data-gentleman="template" id="concept-attribute">
+        <li class="tpl-concept-attribute">
+            <span class="tpl-concept-attribute-name" data-name="name"></span>
+        </li>
+    </template>
+
+    <template data-gentleman="template" id="concept-property">
+        <li class="tpl-concept-property">
+            <span class="tpl-label" data-name="name"></span>
+            <span class="tpl-value" data-name="value"></span>
+        </li>
+    </template>
+
+    <template data-gentleman="template" id="attribute-target">
+        <span class="tpl-concept-attribute-target" data-name="name"></span>
+    </template>
+    <!-- <script src="./../dist/cms.js"></script> -->
+    <script src="app.bundle.js"></script>
 </body>
 </html>
