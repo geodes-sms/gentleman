@@ -1,0 +1,1134 @@
+{
+    "type": "projection",
+    "projection":[
+        {
+            "concept": { "name": "statechart" },
+            "type": "algorithm",
+            "rtag": "sc",
+            "tags": [],
+            "content":{
+                "type": "decoration",
+                "dimensions":{
+                    "width": 1000,
+                    "height": 650
+                },
+                "content":[
+                    {
+                        "coordinates": {
+                            "x": 80,
+                            "y": 10
+                        },
+                        "dimension":{
+                            "type": "pure"
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "name",
+                            "tag": "nm"
+                        }
+                    },
+                    {
+                        "coordinates":{
+                            "x": 10,
+                            "y": 10
+                        },
+                        "dimension":{
+                            "type": "pure"
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "states",
+                            "tag": "st-button"
+                        }
+                    },
+                    {
+                        "coordinates":{
+                            "x": 45,
+                            "y": 10
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render":{
+                            "kind": "static",
+                            "type": "svg-alt",
+                            "content": "<svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"30\"> \t<circle cx=\"15\" cy=\"15\" r=\"15\" fill=\"black\"></circle> \t<text x=\"15\" y=\"16\" style=\"dominant-baseline:middle;\" font-family=\"Segoe UI\" fill=\"white\" text-anchor=\"middle\">M</text> </svg>",
+                            "tag": "mess-view"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 50
+                        },
+                        "dimension":{
+                            "type": "absolute",
+                            "width": 1000,
+                            "height": 570
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "states",
+                            "tag": "force-states"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 50,
+                            "y": 120
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "entry",
+                            "tag": "entry-def"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "statechart" },
+            "tags": ["mess-view"],
+            "type": "layout",
+            "projection":{
+                "type": "flex",
+                "orientation": "column",
+                "disposition":[
+                    {
+                        "type": "layout",
+                        "layout":{
+                            "type": "flex",
+                            "orientation": "row",
+                            "disposition":[
+                                {
+                                    "kind": "static",
+                                    "type": "text",
+                                    "content": "Transition List"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "transitions",
+                                    "tag": "tr-btn"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "transitions",
+                        "tag": "tr-set"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["tr-btn"],
+            "type": "field",
+            "content": {
+                "type": "list",
+                "list": false,
+                "action": {
+                    "add": {
+                        "content": [
+                            {
+                                "type": "static",
+                                "static": {
+                                    "type": "text",
+                                    "content": "+",
+                                    "focusable": false
+                                }
+                            }
+                        ],
+                        "help": "Add an element",
+                        "style": {
+                            "css": ["list-action__btn-add"]
+                        }
+                    }
+                },
+                "style": {
+                    "css": ["list-action"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["list-exit"],
+            "type": "field",
+            "content": {
+                "type": "list",
+                "list": {
+                    "item": {
+                        "template": { 
+                            "tag": "exit"
+                        }
+                    }
+                },
+                "action": {
+                    "add": false
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["list-entry"],
+            "type": "field",
+            "content": {
+                "type": "list",
+                "list": {
+                    "item": {
+                        "template": { 
+                            "tag": "entry"
+                        }
+                    }
+                },
+                "action": {
+                    "add": false
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["tr-set"],
+            "type": "field",
+            "content": {
+                "type": "list",
+                "list": {
+                    "item": {
+                        "template": { 
+                            "tag": "tr"
+                        }
+                    }
+                },
+                "action": {
+                    "add": false
+                }
+            }
+        },
+        {
+            "concept": { "name": "transition" },
+            "tags": ["tr"],
+            "type": "layout",
+            "sibling":{
+                "render":{
+                    "tag": "tr-arrow",
+                    "rtag": "force"
+                }
+            },
+            "projection":{
+                "type": "flex",
+                "orientation": "row",
+                "disposition":[
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "From"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "from",
+                        "tag": "ref"
+                    },
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "To"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "to",
+                        "tag": "ref"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "reference" },
+            "tags": ["ref"],
+            "type": "field",
+            "content":{
+                "type": "choice",
+                "choice": {
+                    "option": {
+                        "template": {
+                            "tag": "choice-tr"
+                        },
+                        "style": {
+                            "css": ["list-choice__option"]
+                        }
+                    },
+                    "style": {
+                        "css": ["list-choice__options"]
+                    }
+                },
+                "expanded": false,
+                "input": {
+                    "placeholder": "Filter",
+                    "style": {
+                        "css": ["list-choice__input"]
+                    }
+                },
+                "style": {
+                    "css": ["list-choice", "list-choice--render"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "concreteState" },
+            "tags": ["choice-tr"],
+            "type": "layout",
+            "projection":{
+                "type": "wrap",
+                "disposition":[
+                    {
+                        "type": "attribute",
+                        "name": "name",
+                        "tag": "ro"
+
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "entry-point" },
+            "tags": ["choice-tr"],
+            "type": "layout",
+            "projection":{
+                "type": "wrap",
+                "disposition":[
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "Entry"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "orthogonalState" },
+            "tags": ["choice-tr"],
+            "type": "layout",
+            "projection": {
+                "type": "wrap",
+                "disposition":[
+                    {
+                        "type": "attribute",
+                        "name": "nameL",
+                        "tags": "ro"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "compositeState" },
+            "tags": ["choice-tr"],
+            "type": "layout",
+            "projection":{
+                "type": "wrap",
+                "disposition":[
+                    {
+                        "type": "attribute",
+                        "name": "name",
+                        "tag": "ro"
+                    }
+                ]
+            } 
+        },
+        {
+            "concept": {
+                "name": "string"
+            },
+            "tags": ["ro"],
+            "container": {
+                "type": "container",
+                "content": [
+                    {
+                        "kind": "field",
+                        "type": "text",
+                        "focusable": true,
+                        "readonly": true,
+                        "disabled": false,
+                        "hidden": false,
+                        "source": null,
+                        "multiline": false,
+                        "resizable": false,
+                        "input": {
+                            "type": "text",
+                            "placeholder": "Undefined"
+                        }
+                    }
+                ],
+                "layout": {
+                    "type": "flex",
+                    "orientation": "row",
+                    "wrappable": true,
+                    "alignItems": "start",
+                    "justifyContent": "start"
+                },
+                "focusable": true
+            }
+        },
+        {
+            "concept": { "name": "entry-point" },
+            "tags": ["entry-def"],
+            "type": "algorithm",
+            "content":{
+                "type": "decoration",
+                "background": "<svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"50\" height=\"50\"> \t<circle data-shape=\"circle\" cx=\"25\" cy=\"25\" r=\"23\" fill=\"white\" stroke=\"black\" stroke-width=\"2\"></circle> \t<circle cx=\"25\" cy=\"25\" r=\"20\"></circle> </svg>",
+                "dimension": false,
+                "content": []
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "type": "static",
+            "rtag": "button",
+            "tags": ["st-button"],
+            "content":{
+                "type": "svg-button",
+                "action": {
+                    "type": "CREATE",
+                    "target": false,
+                    "value": "state"
+                },               
+                "content": "<svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"30\"> \t<circle cx=\"15\" cy=\"15\" r=\"15\" fill=\"#029c2b\"></circle> \t<line x1=\"15\" y1=\"3\" x2=\"15\" y2=\"27\" stroke=\"white\"></line> \t<line x1=\"3\" y1=\"15\" x2=\"27\" y2=\"15\" stroke=\"white\"></line> </svg>"
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["nm"],
+            "type": "field",
+            "content": {
+                "type": "svg",
+                "placeholder": "Name",
+                "readonly": false,
+                "style":{
+                    "baseline": "hanging",
+                    "font": "Segoe UI",
+                    "size": 22,
+                    "weight": 500,
+                    "fill": "black"
+                }
+
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["force-states"],
+            "type": "algorithm",
+            "rtag": "force",
+            "content": {
+                "type": "force",
+                "dimensions":{
+                    "width": 1000,
+                    "height": 570
+                },
+                "force":{
+                    "intensity": -2000,
+                    "linkval": 370
+                },
+                "tag": "state"
+            }
+        },
+        {
+            "concept": { "name": "state" },
+            "tags": ["state"],
+            "type": "algorithm",
+            "rtag": "state",
+            "content":{
+                "type": "decoration",
+                "dimension": false,
+                "background": false,
+                "rmv":{
+                    "type": "bind",
+                    "bind":[
+                        {
+                            "alias":"compositeState",
+                            "focus": false,
+                            "coordinates":{
+                                "x": 300,
+                                "y": 5
+                            },
+                            "content":"<svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\"> \t<circle cx=\"7.5\" cy=\"7.5\" r=\"7.5\" fill=\"red\"></circle> \t<line x1=\"5\" x2=\"10\" y1=\"5\" y2=\"10\" stroke=\"white\" stroke-width=\"2\"></line> \t<line x1=\"5\" x2=\"10\" y1=\"10\" y2=\"5\" stroke=\"white\" stroke-width=\"2\"></line> </svg>"  
+                        },
+                        {
+                            "alias": "orthogonalState",
+                            "focus": false,
+                            "coordinates":{
+                                "x": 380,
+                                "y": 5
+                            },
+                            "content":"<svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\"> \t<circle cx=\"7.5\" cy=\"7.5\" r=\"7.5\" fill=\"red\"></circle> \t<line x1=\"5\" x2=\"10\" y1=\"5\" y2=\"10\" stroke=\"white\" stroke-width=\"2\"></line> \t<line x1=\"5\" x2=\"10\" y1=\"10\" y2=\"5\" stroke=\"white\" stroke-width=\"2\"></line> </svg>"
+                        },
+                        {
+                            "alias": "concreteState",
+                            "focus": true,
+                            "coordinates":{
+                                "x": 80,
+                                "y": 5
+                            },
+                            "content":"<svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\"> \t<circle cx=\"7.5\" cy=\"7.5\" r=\"7.5\" fill=\"red\"></circle> \t<line x1=\"5\" x2=\"10\" y1=\"5\" y2=\"10\" stroke=\"white\" stroke-width=\"2\"></line> \t<line x1=\"5\" x2=\"10\" y1=\"10\" y2=\"5\" stroke=\"white\" stroke-width=\"2\"></line> </svg>"
+                        },
+                        {
+                            "alias": "choiceState",
+                            "focus": true,
+                            "coordinates":{
+                                "x": 35,
+                                "y": 5
+                            },
+                            "content":"<svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\"> \t<circle cx=\"7.5\" cy=\"7.5\" r=\"7.5\" fill=\"red\"></circle> \t<line x1=\"5\" x2=\"10\" y1=\"5\" y2=\"10\" stroke=\"white\" stroke-width=\"2\"></line> \t<line x1=\"5\" x2=\"10\" y1=\"10\" y2=\"5\" stroke=\"white\" stroke-width=\"2\"></line> </svg>"
+                        },
+                        {
+                            "alias": "default",
+                            "focus": false,
+                            "coordinates":{
+                                "x": 190,
+                                "y": 0
+                            },
+                            "content":"<svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\"> \t<circle cx=\"5\" cy=\"5\" r=\"5\" fill=\"red\"></circle> \t<line x1=\"2\" x2=\"8\" y1=\"2\" y2=\"8\" stroke=\"white\" stroke-width=\"1\"></line> \t<line x1=\"2\" x2=\"8\" y1=\"8\" y2=\"2\" stroke=\"white\" stroke-width=\"1\"></line> </svg>"
+                        }                        
+                    ]
+                },
+                "content":[
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "render":{
+                            "type": "field",
+                            "field": {
+                                "type": "svg-choice",
+                                "dimensions": false,
+                                "selection":{
+                                    "item":{
+                                        "dimension":{
+                                            "width": 100,
+                                            "height": 100
+                                        },
+                                        "tag": "choice"
+                                    },
+                                    "breakPoint": 2,
+                                    "direction": "horizontal",
+                                    "close": true
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates":{
+                            "x": 0,
+                            "y": 0
+                        },
+                        "render": {
+                            "type": "projection",
+                            "bind": "value",
+                            "placeholder": false,
+                            "tag": "choice-selection"
+                        }
+                    }
+                ] 
+            }
+        },
+        {
+            "concept": { "name": "concreteState" },
+            "type": "algorithm",
+            "rtag": "concreteState_choice",
+            "tags": ["choice"],
+            "content":{
+                "type": "decoration",
+                "dimensions": false,
+                "background": "<svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"100\"> \t<circle cx=\"50\" cy=\"50\" r=\"48\" fill=\"white\" stroke=\"#87a1ff\" stroke-width=\"4\" ></circle> \t<text x=\"50\" y=\"50\" font-weight=\"500\" font-family=\"Segoe UI\" font-size=\"14\" text-anchor=\"middle\" style=\"dominant-baseline:middle\">State</text> </svg>",
+                "content":[]
+            }
+        },
+        {
+            "concept": { "name": "concreteState"},
+            "type": "algorithm",
+            "rtag": "concrete",
+            "tags": ["choice-selection"],
+            "content":{
+                "type": "decoration",
+                "dimensions": false,
+                "background": "<svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"150\" height=\"150\"> \t<circle cx=\"75\" cy=\"75\" r=\"71\" fill=\"white\" stroke=\"#87a1ff\" stroke-width=\"4\"  data-shape=\"circle\"></circle> </svg>",
+                "content":[
+                    {
+                        "coordinates":{
+                            "x": 75,
+                            "y": 75
+                        },
+                        "dimension":{
+                            "type": "pure"
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "name",
+                            "tag": "nmState"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "concreteState"},
+            "type": "layout",
+            "tags": ["textual"],
+            "content":{
+                "type": "flex",
+                "orientation": "column",
+                "disposition":[
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "row",
+                            "disposition":[
+                                {
+                                    "kind": "static",
+                                    "type": "text",
+                                    "content": "On Entry",
+                                    "style":{
+                                        "css": ["title", "mp-header__title"]
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "entry",
+                                    "tag": "tr-btn"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "entry",
+                        "tag": "list-entry"
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "row",
+                            "disposition":[
+                                {
+                                    "kind": "static",
+                                    "type": "text",
+                                    "content": "On Exit",
+                                    "style":{
+                                        "css": ["title", "mp-header__title"]
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "exit",
+                                    "tag": "tr-btn"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "exit",
+                        "tag": "list-exit"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "action" },
+            "tags": ["exit"],
+            "type": "layout",
+            "projection":{
+                "type": "flex",
+                "orientation": "row",
+                "disposition": [
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "exit / "
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "content",
+                        "tag": "action"
+                    }
+                ]
+            } 
+        },
+        {
+            "concept": { "name": "action" },
+            "tags": ["entry"],
+            "type": "layout",
+            "projection":{
+                "type": "flex",
+                "orientation": "row",
+                "disposition": [
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "entry / "
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "content",
+                        "tag": "action"
+                    }
+                ]
+            } 
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["action"],
+            "type": "layout",
+            "projection":{
+                "type": "wrap",
+                "disposition":[
+                    {
+                        "type": "field",
+                        "field":{
+                            "type": "text",
+                            "readonly": false,
+                            "disabled": false,
+                            "resizable": true,
+                            "input":{
+                                "placeholder": "action...",
+                                "style": {
+                                    "css": ["name-field--textual__input"]
+                                }
+                            },
+                            "style":{
+                                "css": ["name-field", "name-field--textual"]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["nmState"],
+            "content":{
+                "type": "svg",
+                "placeholder": "Name",
+                "readonly": false,
+                "style":{
+                    "anchor": "middle",
+                    "baseline": "middle",
+                    "font": "Segoe UI",
+                    "weight": "500",
+                    "fill": "black",
+                    "size": "20"
+                }
+            }
+        },
+        {
+            "concept": { "name": "choiceState" },
+            "type": "algorithm",
+            "rtag": "choiceState_choice",
+            "tags": ["choice"],
+            "content":{
+                "type": "decoration",
+                "dimensions": false,
+                "background": "<svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"100\"> \t<polygon points=\"50 2, 98 48, 50 98, 2 48\" fill=\"white\" stroke=\"black\" stroke-width=\"4\"></polygon> \t<text x=\"50\" y=\"50\" font-weight=\"500\" font-family=\"Segoe UI\" font-size=\"14\" text-anchor=\"middle\" fill=\"black\" style=\"dominant-baseline:middle\">Choice</text> </svg>",
+                "content":[]
+            }
+        },
+        {
+            "concept": { "name": "choiceState" },
+            "type": "algorithm",
+            "rtag": "choiceState",
+            "tags": ["choice-selection"],
+            "content":{
+                "type": "decoration",
+                "dimensions": false,
+                "background":"<svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"50\" height=\"50\"> \t<polygon data-shape=\"here\" points=\"25 2.75, 47.25 25, 25 47.25, 2.75 25\" fill=\"white\" stroke=\"black\" stroke-width=\"4\"></polygon> </svg>",
+                "content":[]
+            }
+        },
+        {
+            "concept": { "name": "compositeState" },
+            "type": "algorithm",
+            "rtag": "compositeState_choice",
+            "tags": ["choice"],
+            "content":{
+                "type": "decoration",
+                "dimensions": false,
+                "background":  "<svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"100\"> \t<circle cx=\"20\" cy=\"78\" r=\"4\" fill=\"white\" stroke=\"#87a1ff\"></circle> \t<circle cx=\"50\" cy=\"20\" r=\"4\" fill=\"white\" stroke=\"#87a1ff\"></circle> \t<circle cx=\"65\" cy=\"58\" r=\"4\" fill=\"white\" stroke=\"#87a1ff\"></circle> \t<text x=\"50\" y=\"50\" font-weight=\"500\" \tfont-family=\"Segoe UI\" font-size=\"14\" text-anchor=\"middle\" style=\"dominant-baseline:middle\">Composite</text> \t<text x=\"5\" y=\"5\" font-weight=\"500\" \tfont-family=\"Segoe UI\" font-size=\"3\" text-anchor=\"start\" style=\"dominant-baseline:middle\">Name</text> \t<text x=\"20\" y=\"78\" font-weight=\"500\" fill=\"#969696\"\tfont-family=\"Segoe UI\" font-size=\"3\" text-anchor=\"middle\" style=\"dominant-baseline:middle\">A</text> \t<text x=\"50\" y=\"20\" font-weight=\"500\" fill=\"#969696\"\tfont-family=\"Segoe UI\" font-size=\"3\" text-anchor=\"middle\" style=\"dominant-baseline:middle\">B</text> \t<text x=\"65\" y=\"58\" font-weight=\"500\" fill=\"#969696\"\tfont-family=\"Segoe UI\" font-size=\"3\" text-anchor=\"middle\" style=\"dominant-baseline:middle\">C</text> </svg>",
+                "content":[],
+                "style": "border: solid #87a1ff"
+            }
+        },
+        {
+            "concept": { "name": "compositeState" },
+            "type": "algorithm",
+            "rtag": "compositeState",
+            "tags": ["choice-selection"],
+            "content": {
+                "type": "decoration",
+                "dimensions": {
+                    "width": 320,
+                    "height": 200,
+                    "viewBox": {
+                        "minX": 0,
+                        "minY": 0,
+                        "width": 700,
+                        "height": 437.5
+                    }
+                },
+                "data": "rect",
+                "background": false,
+                "content": [
+                    {
+                        "coordinates": { 
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "absolute",
+                            "width": 700,
+                            "height": 437.5
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "states",
+                            "tag": "composite-set"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 35,
+                            "y": 70 
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "entry",
+                            "tag": "entry-def"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 50,
+                            "y": 15
+                        },
+                        "dimension":{
+                            "type": "pure"
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "name",
+                            "tag": "nm"
+                        }
+                    },
+                    {
+                        "coordinates":{
+                            "x": 10,
+                            "y": 10
+                        },
+                        "dimension":{
+                            "type": "pure"
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "states",
+                            "tag": "st-button"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["nm_small"],
+            "content":{
+                "type": "svg",
+                "placeholder": "Name",
+                "readonly": false,
+                "style":{
+                    "anchor": "middle",
+                    "baseline": "middle",
+                    "font": "Segoe UI",
+                    "weight": "500",
+                    "fill": "black",
+                    "size": "8"
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["composite-set"],
+            "rtag": "force",
+            "type": "algorithm",
+            "content":{
+                "type": "force",
+                "dimensions":{
+                    "width": 700,
+                    "height": 437.5
+                },
+                "force":{
+                    "linkval": 325,
+                    "intensity": -200
+                },
+                "tag": "state",
+                "style": "border: 8px solid #87a1ff;border-radius : 25px;"
+            }
+        },
+        {
+            "concept": { "name": "orthogonalState" },
+            "type": "algorithm",
+            "rtag": "orthogonalState_choice",
+            "tags": ["choice"],
+            "content":{
+                "type": "decoration",
+                "dimensions": false,
+                "background": "<svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"100\"> \t<line x1=\"50\" x2=\"50\" y1=\"0\" y2=\"100\" stroke-dasharray=\"1 1\" stroke-width=\"1\" stroke=\"#b0b3b8\"></line> \t<circle cx=\"15\" cy=\"35\" r=\"4\" fill=\"white\" stroke=\"#87a1ff\"></circle> \t<circle cx=\"78\" cy=\"10\" r=\"4\" fill=\"white\" stroke=\"#87a1ff\"></circle> \t<circle cx=\"65\" cy=\"73\" r=\"4\" fill=\"white\" stroke=\"#87a1ff\"></circle> \t<text x=\"50\" y=\"50\" font-weight=\"500\" \tfont-family=\"Segoe UI\" font-size=\"14\" text-anchor=\"middle\" style=\"dominant-baseline:middle\">Orthogonal</text> \t<text x=\"5\" y=\"5\" font-weight=\"500\" \tfont-family=\"Segoe UI\" font-size=\"3\" text-anchor=\"start\" style=\"dominant-baseline:middle\">A</text> \t<text x=\"5\" y=\"55\" font-weight=\"500\" \tfont-family=\"Segoe UI\" font-size=\"3\" text-anchor=\"start\" style=\"dominant-baseline:middle\">B</text> \t<text x=\"15\" y=\"35\" font-weight=\"500\" fill=\"#969696\"\tfont-family=\"Segoe UI\" font-size=\"3\" text-anchor=\"middle\" style=\"dominant-baseline:middle\">A</text> \t<text x=\"78\" y=\"10\" font-weight=\"500\" fill=\"#969696\"\tfont-family=\"Segoe UI\" font-size=\"3\" text-anchor=\"middle\" style=\"dominant-baseline:middle\">B</text> \t<text x=\"65\" y=\"73\" font-weight=\"500\" fill=\"#969696\"\tfont-family=\"Segoe UI\" font-size=\"3\" text-anchor=\"middle\" style=\"dominant-baseline:middle\">C</text> </svg>",
+                "content":[],
+                "style": "border: solid #87a1ff"
+            }
+        },
+        {
+            "concept": { "name": "orthogonalState"},
+            "type": "algorithm",
+            "rtag": "orthogonalState",
+            "tags": ["choice-selection"],
+            "content": {
+                "type": "decoration",
+                "dimensions": {
+                    "width": 400,
+                    "height": 400,
+                    "viewBox":{
+                        "minX": 0,
+                        "minY": 0,
+                        "width": 800,
+                        "height": 800
+                    }
+                },
+                "data": "rect",
+                "background": false,
+                "content": [
+                    {
+                        "coordinates":{
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension":{
+                            "type": "absolute",
+                            "width": 800,
+                            "height": 800
+                        },
+                        "render":{
+                            "type": "algorithm",
+                            "algorithm":{
+                                "type": "decoration",
+                                "dimensions": {
+                                    "width": 800,
+                                    "height": 800
+                                },
+                                "background": false,
+                                "content":[
+                                    
+                                ],
+                                "style":"border: 8px solid #87a1ff;border-radius : 25px;"
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension":{
+                            "type": "absolute",
+                            "width": 800,
+                            "height": 400
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "left",
+                            "tag": "left-set"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 400
+                        },
+                        "dimension":{
+                            "type": "absolute",
+                            "width": 800,
+                            "height": 400
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "right",
+                            "tag": "right-set"
+                        }
+                    },
+                    {
+                        "coordinates":{
+                            "x": 45,
+                            "y": 15
+                        },
+                        "dimension":{
+                            "type": "pure"
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "nameL",
+                            "tag": "nm"
+                        }
+                    },
+                    {
+                        "coordinates":{
+                            "x": 10,
+                            "y": 10
+                        },
+                        "dimension":{
+                            "type": "pure"
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "left",
+                            "tag": "st-button"
+                        }
+                    },
+                    {
+                        "coordinates":{
+                            "x": 10,
+                            "y": 410
+                        },
+                        "dimension":{
+                            "type": "pure"
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "right",
+                            "tag": "st-button"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 10,
+                            "y": 70
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "entryL",
+                            "tag": "entry-def"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 10,
+                            "y": 470
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "entryR",
+                            "tag": "entry-def"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["left-set"],
+            "rtag": "force",
+            "type": "algorithm",
+            "content":{
+                "type": "force",
+                "dimensions":{
+                    "width": 800,
+                    "height": 400
+                },
+                "force":{
+                    "linkval": 400,
+                    "intensity": -200
+                },
+                "tag": "state",
+                "style": "border-bottom: 3px dashed black"
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["right-set"],
+            "rtag": "force",
+            "type": "algorithm",
+            "content":{
+                "type": "force",
+                "dimensions":{
+                    "width": 800,
+                    "height": 400
+                },
+                "force":{
+                    "linkval": 400,
+                    "intensity": -200
+                },
+                "tag": "state"
+            }
+        },
+        {
+            "concept": { "name": "transition" },
+            "tags": ["tr-arrow"],
+            "type": "arrow",
+            "content":{
+                "type": "force",
+                "style":{
+                    "stoke": "black",
+                    "dasharray": null,
+                    "width": 1,
+                    "linecap": "butt",
+                    "end": true
+                },
+                "from": {
+                    "name": "from"
+                },
+                "to": {
+                    "name": "to"
+                },
+                "decorator": {
+                    "type": "attribute",
+                    "name": "description",
+                    "tag": "desc"
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["desc"],
+            "type": "field",
+            "content":{
+                "type": "svg",
+                "placeholder": "Description",
+                "readonly": false,
+                "style":{
+                    "baseline": "hanging",
+                    "font": "Segoe UI",
+                    "size": 15,
+                    "weight": 500,
+                    "fill": "black"
+                }
+            }
+        }
+    ]        
+}
