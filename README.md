@@ -1,4 +1,4 @@
-# **Gentleman** 🎯
+# <img alt="Gentleman logo" height="60" src="https://gentlemancp.org/assets/images/logo_gentleman_200.png"> Gentleman
 
 [![Build Status](https://travis-ci.org/geodes-sms/gentleman.svg?branch=master)](https://travis-ci.org/geodes-sms/gentleman)
 
@@ -11,7 +11,11 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 ✔️ Support textual and tabular notations and multimedia content  
 ✔️ Support multiple projections for a concept  
 ✔️ Easy to switch the projections used against a model  
-✔️ Projections are defined with specialized UI elements
+✔️ Projections are defined with specialized UI elements  
+✔️ Support graphical projectional editor using SVG  
+✔️ SVG projection can be imported or created in the editor  
+✔️ Support multiple layout and offer simulation  
+
 
 **Gentleman IDE**: [Create concepts and projections](https://geodes-sms.github.io/gentleman/app/index.html)
 
