@@ -18,7 +18,7 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 ## Examples
 
 | Mindmap               | Traffic Light (TL)             | TodoList           | Statechart     | Sequence Diagram | Music Sheet      |
-|:---------------------:|:------------------------------:|:------------------------------:|
+|:---------------------:|:------------------------------:|:------------------------------:|:---------------------:|:------------------------------:|:------------------------------:|
 | ![*Oops!* missing image 😅][mindmap-img]         | ![*Oops!* missing image 😅][tl-img] | ![*Oops!* missing image 😅][todo-img] | ![*Oops!* missing image 😅][sc-img] | ![*Oops!* missing image 😅][ds-img] | ![*Oops!* missing image 😅][music-img] 
 | [Try it out][mindmap-app] | [Try it out][tl-app] | [Try it out][todo-app] | [Try it out][sc-app] | [Try it out][ds-app] | [Try it out][music-app] 
 
