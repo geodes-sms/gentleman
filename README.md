@@ -14,7 +14,7 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 ✔️ Projections are defined with specialized UI elements  
 ✔️ Support graphical projectional editor using SVG  
 ✔️ SVG projection can be imported or created in the editor  
-✔️ Support multiple layout and offer simulation  
+✔️ Support multiple layouts with simulations  
 
 
 **Gentleman IDE**: [Create concepts and projections](https://geodes-sms.github.io/gentleman/app/index.html)
@@ -140,8 +140,9 @@ $ npm run build
    [Paper](https://dl.acm.org/doi/pdf/10.1145/3417990.3421998)  
    [Demonstration](https://youtu.be/wJ4hVZjmrv4)
 
-2. Aurélien Ducoin, E.Syriani. *Graphical Projectional Editing in Gentleman*
-   [Demonstration] (https://www.youtube.com/watch?v=wd00pRAHxsU&ab_channel=GEODESGentleman)
+2. Aurélien Ducoin, E.Syriani. *Graphical Projectional Editing in Gentleman*  
+   [Demonstration](https://www.youtube.com/watch?v=wd00pRAHxsU&ab_channel=GEODESGentleman)
+
 # Distribution 📂
 
 This distribution contains the following files and folders:
