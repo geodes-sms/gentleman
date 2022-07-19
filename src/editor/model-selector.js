@@ -77,7 +77,7 @@ export const EditorSelector = {
 
         let conceptConfig = valOrDefault(this.editor.getConfig("concept"), {});
         let resolveName = (cname) => hasOwn(conceptConfig, cname) ? conceptConfig[cname].name : cname;
-
+        
         this.dataList.forEach(data => {
             // Create header
             const { concept, accept } = data;
@@ -116,13 +116,11 @@ export const EditorSelector = {
                 title: `Expand/Collapse ${this.type}`
             }, [title]);
 
-
             // Create action bar
             let actionHandler = ActionHandler[this.type];
             let actionBar = createDiv({
                 class: ["editor-selector__action-bar"]
             }, actionHandler.call(this, data));
-
             // Create item container
             let item = createListItem({
                 class: ["editor-selector", "collapsed", "font-ui"],

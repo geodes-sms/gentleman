@@ -512,8 +512,15 @@ export const Editor = {
         return this.projectionModel.getAlgo(id);
     },
 
+    /**
+     * Get a the related arrow object
+     * @param {HTMLElement} element 
+     * @returns {Algorithm}
+     */
+
+
     resolveElement(element) {
-        if (!isHTMLElement(element) && element.tagName != "path") {
+        if (!isHTMLElement(element) && element.tagName !== "path" && element.tagName !== "svg") {
             return null;
         }
 
@@ -540,6 +547,10 @@ export const Editor = {
                 break;
             case "algorithm":
                 projectionElement = this.getAlgo(element);
+                break;
+            case "arrow": 
+                projectionElement = this.getArrow(element);
+                break;
         }
 
         if (projectionElement) {
@@ -1813,7 +1824,6 @@ export const Editor = {
     },
 
     registerReceiver(proj, rtag) {
-        console.log("REGISTERING RECEIVER");
         if (isNullOrUndefined(this.activeReceiver[rtag])) {
             this.activeReceiver[rtag] = proj;
         }

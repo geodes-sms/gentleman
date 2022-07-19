@@ -156,6 +156,7 @@ export const EditorSection = {
         return this.container;
     },
     refresh() {
+
         let settings = valOrDefault(this.editor.getConfig("settings"), true);
         let concepts = valOrDefault(this.editor.getConfig("header"), true);
 

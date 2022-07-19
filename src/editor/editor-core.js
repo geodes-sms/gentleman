@@ -2,7 +2,7 @@ import {
     createDocFragment, createSection, createDiv, createParagraph, createAnchor, createInput,
     createAside, createUnorderedList, createListItem, createButton, createI, removeChildren,
     isHTMLElement, findAncestor, isNullOrWhitespace, isNullOrUndefined, isEmpty,
-    isFunction, valOrDefault, copytoClipboard, getElements, last,
+    isFunction, valOrDefault, copytoClipboard, getElements, last, isNull,
 } from 'zenkai';
 import {
     hide, show, toggle, Key, getEventTarget, NotificationType, getClosest, highlight,
@@ -37,6 +37,8 @@ const EditorCore = {
     activeConcept: null,
     /** @type {Projection} */
     activeProjection: null,
+    /** @type {Projection} */
+    activeReceiver: null,
     /** @type {EditorInstance} */
     activeInstance: null,
 
@@ -128,7 +130,6 @@ const EditorCore = {
         Object.assign(this, EditorInstanceManager, EditorWindowManager);
 
         this.states = [];
-
 
         this.decoratedElements = new Set();
 
@@ -248,7 +249,6 @@ const EditorCore = {
         if (isNullOrUndefined(concept)) {
             throw new TypeError("Missing argument: The 'concept' is required to create a projection");
         }
-
         if (!this.projectionModel.hasConceptProjection(concept, tag)) {
             this.notify(`The projection for the concept '${concept.name}' is not defined in the model`, NotificationType.ERROR);
             return false;
@@ -425,10 +425,12 @@ const EditorCore = {
 
         let reader = new FileReader();
         reader.onload = (event) => {
-            this.addModel(name, reader.result);
+            const schema = JSON.parse(reader.result);
+            this.addModel(name, schema);
         };
-        reader.readAsText(file);
 
+        reader.readAsText(file);
+    
         this.refresh();
 
         return file;
@@ -1100,6 +1102,7 @@ const EditorCore = {
         this.activeProjection = projection;
 
         let parent = this.activeProjection.parent;
+
         while (parent) {
             parent.getContainer().classList.add("active-parent");
             parent = parent.parent;
@@ -1134,6 +1137,44 @@ const EditorCore = {
     },
 
     // Default events management
+
+    registerReceiver(projection, rtag){
+        if(isNullOrUndefined(this.receivers)){
+            this.receivers = {};
+        }
+
+        if(isNullOrUndefined(this.receivers[rtag])){
+            this.receivers[rtag] = {
+                root: projection,
+                projections: [projection]
+            }
+        }else{
+            this.receivers[rtag].projections.push(projection)
+        }
+
+        this.setActiveReceiver(projection, rtag);
+
+    },
+
+    setActiveReceiver(projection, rtag){
+        if(isNullOrUndefined(this.activeReceiver)){
+            this.activeReceiver = {};
+        }
+
+        this.activeReceiver[rtag] = projection;
+    },
+
+    getActiveReceiver(rtag){
+        return this.activeReceiver[rtag];
+    },
+
+    getReceivers(rtag){
+        return this.receivers[rtag].projections;
+    },
+
+    getRootReceiver(rtag){
+        return this.receivers[rtag].root;
+    },
 
     bindEvents() {
         var lastKey = null;
@@ -1593,6 +1634,9 @@ const EditorCore = {
         }, false);
 
         this.body.addEventListener('focusin', (event) => {
+            console.log("focusin");
+            console.log(event.target);
+
             const { target } = event;
 
             const element = this.resolveElement(target);

@@ -170,31 +170,102 @@ const BaseButtonStatic = {
         }
 
         if (this.schema.action) {
-            const { type, value, target } = this.schema.action;
-
-            if (isNullOrUndefined(target)) {
-                concept.createElement();
-            }
-
-            if (isObject(value)) {
-                for (const key in value) {
-                    const element = value[key];
-                    if (element.type === "param") {
-                        value[key] = resolveParam.call(this, this.schema.template, element.name);
+            const { type, value, target } = this.schema.action
+            switch(type){
+                case "CREATE":
+                    if(isNullOrUndefined(target)) {
+                        concept.createElement();
                     }
-                }
-            }
+        
+                    if (isObject(value)) {
+                        for (const key in value) {
+                            const element = value[key];
+                            if (element.type === "param") {
+                                value[key] = resolveParam.call(this, this.schema.template, element.name);
+                            }
+                        }
+                    }
+        
+                    if (target.type === "attribute") {
+                        let attr = concept.getAttribute(target.name);
+                        attr.target.createElement({ value: value });
+                    }
+                    break;
+                case "SELECT":
+                    if(isNullOrUndefined(target)){
+                        concept.createElement();
+                    }
+                    
+                    if(isObject(value)){
+                        for (const key in value) {
+                            const element = value[key];
+                            if(element.type === "param") {
+                                value[key] = resolveParam.call(this, this.schema.template, element.name);
+                            }
+                        }
+                    }
 
-            if (target.type === "attribute") {
-                let attr = concept.getAttribute(target.name);
-                attr.target.createElement({ value: value });
-            }
+                    if(target.type === "attribute"){
+                        let attr = concept.getAttribute(target.name);
+                        attr.target.setValue(valOrDefault(value.name, value));
+                    }
+
+                    if(target.type === "bind"){
+                        concept.setValue(valOrDefault(value.name, value))
+                    }
+                    break;
+                case "CREATES":
+                    if(isNullOrUndefined(target)) {
+                        concept.createElement();
+                    }
+        
+                    if (isObject(value)) {
+                        for (const key in value) {
+                            const element = value[key];
+                            if (element.type === "param") {
+                                value[key] = resolveParam.call(this, this.schema.template, element.name);
+                            }
+                        }
+                    }
+        
+                    if (target.type === "attribute") {
+                        let attr = concept.getAttribute(target.name);
+                        let attrTarget = attr.target.createElement();
+                        console.log("CREATES");
+                        console.log(attrTarget);
+                        console.log(value);
+                        console.log(target);
+                        console.log(attrTarget.getAttribute(target.attribute).target);
+                        attrTarget.getAttribute(target.attribute).target.setValue(valOrDefault(value.name, value));
+                    }
+                    break;
+                case "SIDE":
+                    let projection = this.environment.createProjection(concept, target);
+
+                    let window = this.environment.findWindow("side-instance");
+                    if (isNullOrUndefined(window)) {
+                        window = this.environment.createWindow("side-instance");
+                        window.container.classList.add("model-projection-sideview");
+                    }
+
+                    if (window.instances.size > 0) {
+                        let instance = Array.from(window.instances)[0];
+                        instance.delete();
+                    }
+
+                    let instance = this.environment.createInstance(concept, projection, {
+                        type: "projection",
+                        close: "DELETE-PROJECTION"
+                    });
+
+                    window.addInstance(instance);
+                    break;        
+                }
 
             return false;
         }
 
         this.environment.triggerEvent({ name: this.schema.trigger, args: [concept] });
-
 
         return false;
     },

@@ -6,6 +6,10 @@ import { ImageStatic } from './image-static.js';
 import { LinkStatic } from './link-static.js';
 import { TextStatic } from './text-static.js';
 import { ButtonStatic } from './button-static.js';
+import { SVGAlt } from './svg-alt.js';
+import { SVGButton } from './button-svg.js';
+import { SVGStatic } from './svg-static.js';
+import { SVGTextStatic } from './svg-text.js';
 
 
 var inc = 0;
@@ -76,11 +80,49 @@ const Handler = {
         schema: { value: schema },
         projection: { value: projection },
     }),
+    'svg-alt': (model, schema, projection) => Object.create(SVGAlt, {
+        object: { value: "static" },
+        name: { value: "svg-static" },
+        type: { value: "svgAlt" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+    }),
+    'svg-button': (model, schema, projection) => Object.create(SVGButton, {
+        object: { value: "static" },
+        name: { value: "svg-button" },
+        type: { value: "svgButton" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+    }),
+    'svg': (model, schema, projection) => Object.create(SVGStatic, {
+        object: { value: "static" },
+        name: { value: "svg-static" },
+        type: { value: "svg" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+    }),
+    'svg-text': (model, schema, projection) => Object.create(SVGTextStatic, {
+        object: { value: "static" },
+        name: { value: "svgText-static" },
+        type: { value: "svgText" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+    }),
 };
 
 export const StaticFactory = {
     createStatic(model, schema, projection) {
+
         const { type } = schema;
+
 
         const handler = Handler[type];
 

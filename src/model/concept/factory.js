@@ -32,6 +32,7 @@ const Handler = {
 
 export const ConceptFactory = {
     createConcept(model, schema, args) {
+
         const { name, nature } = schema;
 
         const handler = Handler[nature];

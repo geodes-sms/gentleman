@@ -588,6 +588,7 @@ const BaseChoiceField = {
         return true;
     },
     createChoiceOption(value) {
+
         const { template = {}, style } = this.schema.choice.option;
 
         const isConcept = isObject(value);

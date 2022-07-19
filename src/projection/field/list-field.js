@@ -722,11 +722,19 @@ const BaseListField = {
 
     bindEvents() {
         this.projection.registerHandler("value.added", (value) => {
-            this.addItem(value);
+            if(this.projection.listen && !isNullOrUndefined(this.environment.activeReceiver)){
+                this.environment.activeReceiver.addItem(value, this, this.schema.list.item.template.tag);
+            }else{
+                this.addItem(value)
+            }
         });
 
         this.projection.registerHandler("value.removed", (value) => {
-            this.removeItem(value);
+            if(this.projection.listen && !isNullOrUndefined(this.environment.activeReceiver)){
+                this.environment.activeReceiver.removeItem(value);
+            }else{
+                this.removeItem(value);
+            }            
         });
 
         this.projection.registerHandler("value.changed", (value) => {

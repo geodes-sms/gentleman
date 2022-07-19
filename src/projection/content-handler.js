@@ -6,6 +6,8 @@ import { StaticFactory } from "./static/index.js";
 import { StyleHandler } from "./style-handler.js";
 import { StateHandler } from "./state-handler.js";
 import { createContainer } from "./container.js";
+import { AlgorithmFactory } from "./algorithm/factory.js";
+import { SimulationFactory } from "./simulations/factory.js";
 
 
 /**
@@ -26,7 +28,8 @@ export function resolveValue(object) {
  * @param {string} name 
  */
 function AttributeHandler(name, schema, concept) {
-    const { tag, placeholder = {}, style, options } = schema;
+    const { tag, placeholder = {}, style, options, listen } = schema;
+
 
     if (!concept.hasAttribute(name)) {
         let message = `Attribute '${name}' does not exist in the concept '${concept.name}'`;
@@ -90,6 +93,10 @@ function AttributeHandler(name, schema, concept) {
 
         let projection = this.projection.model.createProjection(target, tag).init(options);
 
+        if(listen){
+            projection.listen = true;
+        }
+
         projection.parent = this.projection;
         projection._style = style;
 
@@ -101,6 +108,7 @@ function AttributeHandler(name, schema, concept) {
 
         projection.element.parent = this;
     }
+
 
     return attr.element;
 }
@@ -129,8 +137,8 @@ function SVGAttributeHandler(schema, concept) {
     return projection.element;
 }
 
-function ExternalHandler(schema, target) {
-    let projection = this.projection.model.createProjection(target, schema.tag).init();
+function ExternalHandler(tag, target) {
+    let projection = this.projection.model.createProjection(target, tag).init();
 
     projection.parent = this.projection;
 
@@ -138,7 +146,7 @@ function ExternalHandler(schema, target) {
 
     projection.element.parent = this;
 
-    return projection.element;
+    return projection.element.container;
 }
 
 export function ContentHandler(schema, concept, args = {}) {
@@ -186,14 +194,27 @@ export function ContentHandler(schema, concept, args = {}) {
         this.model.registerStatic(staticContent);
 
         return staticContent.render();
-    } else if (schema.type === "dynamic") {
+    } else if (schema.type === "algorithm"){
+        let algorithm = AlgorithmFactory.createAlgo(this.model, schema.algorithm, this.projection);
+        algorithm.init();
+        this.model.registerAlgorithm(algorithm);
+
+        return algorithm.render();
+    } else if (schema.type === "simulation"){
+        let simulation = SimulationFactory.createSimulation(this.model, schema.simulation, this.projection);
+        simulation.init();
+        this.model.registerSimulation(simulation);
+
+        return simulation.render();
+    }
+    else if (schema.type === "dynamic") {
         return ContentHandler.call(this, schema.dynamic, concept, args);
     } else if (schema.type === "attribute") {
         return AttributeHandler.call(this, schema.name, schema, contentConcept);
     } else if (schema.type === "svg-attribute") {
         return SVGAttributeHandler.call(this, schema, contentConcept);
     } else if (schema.type === "external") {
-        return ExternalHandler.call(this, schema, contentConcept);
+        return ExternalHandler.call(this, schema.tag, contentConcept);
     } else if (schema.type === "g-fragment") {
         let name = schema.name;
 
@@ -270,6 +291,7 @@ export function ContentHandler(schema, concept, args = {}) {
 
             clear();
 
+
             if (contentConcept.hasValue()) {
                 let concept = contentConcept.getValue(true);
 
@@ -280,6 +302,7 @@ export function ContentHandler(schema, concept, args = {}) {
 
                 bindElement.element = projection.render();
 
+
                 if (bindElement.placeholder) {
                     bindElement.placeholder.after(bindElement.element);
                 }
@@ -289,6 +312,10 @@ export function ContentHandler(schema, concept, args = {}) {
                 }
 
                 projection.element.parent = this.projection.element;
+
+                projection.update("displayed");
+  
+                this.projection.update("binding", projection.element.container || projection.element.element);
             }
         };
 
@@ -363,9 +390,7 @@ export function ContentKindHandler(schema, concept, args = {}) {
         this.model.registerStatic(staticContent);
 
         return staticContent.render();
-    } else if (kind === "dynamic") {
-        return ContentHandler.call(this, schema, concept, args);
-    } else if (kind === "attribute") {
+    } else if (kind === "attribute" || kind === "dynamic") {
         return AttributeHandler.call(this, schema.name, schema, contentConcept);
     } else if (kind === "template") {
         let name = schema.name;

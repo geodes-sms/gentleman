@@ -10,6 +10,9 @@ import { TableField } from './table-field.js';
 import { TextField } from './text-field.js';
 import { Arrow } from './arrow.js';
 import { SvgText } from './svg-text.js';
+import { SVGChoice } from './svg-choice.js';
+import { SVGPlaceholder } from './svg-placeholder.js';
+import { SVGSwitch } from './svg-switch.js';
 
 
 const Handler = {
@@ -122,7 +125,37 @@ const Handler = {
         schema: { value: schema },
         projection: { value: projection },
         source: { value: projection.concept },
-    })
+    }),
+    'svg-choice': (model, schema, projection) => Object.create(SVGChoice, {
+        object: { value: "field" },
+        name: { value: "switch" },
+        type: { value: "switch" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept },
+    }),
+    'svg-placeholder': (model, schema, projection) => Object.create(SVGPlaceholder, {
+        object: { value: "field" },
+        name: { value: "switch" },
+        type: { value: "switch" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept },
+    }),
+    'svg-switch': (model, schema, projection) => Object.create(SVGSwitch, {
+        object: { value: "field" },
+        name: { value: "switch" },
+        type: { value: "switch" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept },
+    }),
 };
 
 var inc = 0;

@@ -24,6 +24,7 @@ export function activateEditor(_container) {
         editors.push(createEditor(container));
     });
 
+
     return editors;
 }
 

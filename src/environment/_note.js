@@ -76,7 +76,6 @@ function printSchema(schema) {
     for (const key in schema) {
         if (hasOwn(schema, key)) {
             const element = schema[key];
-            console.log(element);
             if (key === 'attribute') {
                 container.appendChild(createListItem({ class: 'schema-attribute' }, [printSchema(element)]));
             } else if (key === 'component') {

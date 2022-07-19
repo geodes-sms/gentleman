@@ -25,8 +25,7 @@ const BaseSVGLayout = {
     render(){
         const fragment = createDocFragment();
 
-
-        const { content, attributes = [], link} = this.schema;
+        const { content, attributes = [], link, dimensions = {}} = this.schema;
 
         var parser = new DOMParser();
 
@@ -45,13 +44,39 @@ const BaseSVGLayout = {
         this.element.setAttribute("tabIndex", 0);
         this.focusable = true;
 
-        if(!isHTMLElement(this.content)){
+        if(!isHTMLElement(this.content) && content){
             this.content = parser.parseFromString(content.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement;
             fragment.appendChild(this.content);
+        }else{
+            if(!isHTMLElement(this.content)){
+                this.content = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                fragment.appendChild(this.content);
+            }
         }
 
+        if(!isEmpty(attributes)){
+            attributes.forEach(a => {
+                let render = ContentHandler.call(this, a.attribute);
 
-        if(isNullOrUndefined(this.link) && (!isNullOrUndefined(link))){
+                let attribute = this.environment.resolveElement(render);
+
+                //this.attributeHandler(attribute, a.marker);
+
+                if((a.marker)){
+                    this.content.querySelector("[data-" + a.marker + "]").append(render);
+                }else{
+                    this.content.append(render);
+                }
+
+
+            })
+        }
+
+        if(dimensions.type){
+            this.dimensions = dimensions;
+        }
+
+        /*if(isNullOrUndefined(this.link) && (!isNullOrUndefined(link.marker))){
             this.link = this.projection.schema.findIndex((x) => x.tags.includes(link.tag));
             let target = this.content.querySelector("[data-" + link.marker + "]");
 
@@ -87,7 +112,7 @@ const BaseSVGLayout = {
                 })
             }
 
-        }
+        }*/
 
 
         /*if((!isNullOrUndefined(link)) && isNullOrUndefined(this.informations)){
@@ -96,10 +121,6 @@ const BaseSVGLayout = {
             this.informations = altis.informations;
         }*/
 
-        if(isNullOrUndefined(this.deciders) && !isEmpty(attributes)){
-            this.deciders = this.attributeHandler(attributes);
-            this.update();
-        }
 
         if(fragment.hasChildNodes()){
             this.element.appendChild(fragment);
@@ -107,7 +128,68 @@ const BaseSVGLayout = {
 
         return this.element;
     },
-    attributeHandler(attributes){
+
+    getWidth(){
+        return Number(this.content.getAttribute("width"));
+    },
+
+    getHeight(){
+        return Number(this.content.getAttribute("height"));
+    },
+
+    registerDimObsever(proj){
+        if(isNullOrUndefined(this.observers)){
+            this.observers = [];
+        }
+
+        this.observers.push(proj);
+    },
+
+    attributeHandler(attribute, marker){       
+        switch(attribute.type){
+            case "interactive":
+                this.content.querySelector("[data-" + marker + "]").append(attribute.content);
+                break;
+            case "text-svg":
+                break;
+            case "choice":
+                break;
+            default:
+                //TODO: Finish
+                let info = this.content.querySelector("[data-" + marker + "]");
+                attribute.element.append(attribute.element);
+
+                let holder = this.createHolder(attribute.element);
+                info.append(holder);
+                this.adapt(attribute.element, attribute.ratio);
+                
+        }
+    },
+
+    createHolder(item){
+        let holder = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        let foreign = document.createElementNS("http://www.w3.org/2000/svg", "foreign");
+        foreign.append(item);
+        holder.append(foreign);
+
+    },
+
+    adapt(item, ratio){
+        let rect = item.getBoundingClientRect();
+
+        item.parentNode.setAttribute("width", rect.width);
+        item.parentNode.setAttribute("height", rect.height);
+
+        let holder = item.parentNode.parentNode;
+        if(!isNullOrUndefined(ratio)){
+            let w = this.content.width.baseVal.value;
+            let h = this.content.height.baseVal.value;
+            holder.setAttribute("width", w * ratio);
+            holder.setAttribute("height", w * ratio);
+        }
+    },
+
+    _attributeHandler(attributes){
 
         let deciders = [];
 
@@ -331,6 +413,16 @@ const BaseSVGLayout = {
         return false;
     },
 
+    getDimensions(){
+        switch(this.dimensions.type){
+            case "absolute":
+                return {
+                    height: this.dimensions.height,
+                    width: this.dimensions.width
+                }
+        }
+    },
+
     setIndex(active){
         let newIndex = 0;
         this.deciders.forEach(d => {
@@ -340,347 +432,6 @@ const BaseSVGLayout = {
             }
             newIndex++;
         })
-    },
-
-    translateProperty(value, property){
-        let ins = new Map();
-        let result;
-
-        property.forEach(i =>{
-            switch(i.type){
-                case "affectation":
-                    ins.set(i.target, this.translateProc(i.proc, ins, value));
-                    break;
-                case "result":
-                    result = this.translateProc(i.proc, ins, value);
-                        return result.value;
-            }
-        })
-        return result.value;
-    },
-
-    translateProc(proc, ins, value){
-        let target = {};
-        const schema = {};
-        let pred;
-
-        switch(proc.type){
-            case "filter":
-                pred = ins.get(proc.target);
-                let result;
-
-                if(proc.order[0] === "V"){
-                    target.value = value;
-                    target.type = this.source.name;
-                }else{
-                    target = ins.get(proc.order[0]);
-                }
-
-                schema.type = target.type;
-
-                if(target.type === "string"){
-                    result = ""
-                    for(let i = 0; i < target.value.length; i++){
-                        const current = {};
-                        current.type = "string";
-                        current.value = target.value.charAt(i);
-                        let test = this.evaluate(pred, current);
-                        if(test){
-                            result += target.value.charAt(i);
-                        }
-                    }
-                    schema.result = result;
-                    return schema;
-                
-                }
-                if (target.type === "table") {
-                    result = [];
-                    target.value.forEach((values, keys) => {
-                        const cur = {};
-                        cur.type = "table";
-                        cur.value = this.projection.resolveElement(values).value;
-                        let t = this.evaluate(pred, cur);
-                        if(t){
-                            result.push(t);
-                        }
-                    })
-                }
-                else{
-                    result = [];
-                    target.value.forEach(c =>{
-                        let test = this.evaluate(pred, c);
-                        if(test){
-                            result.push(c);
-                        }
-                    })
-                }
-
-                schema.type = target.type;
-                schema.value = result;
-
-                return schema;
-            case "lenght":
-                schema.type = "int";
-                if(proc.target === "V"){
-                    target.value = value;
-                    if(value instanceof Map){
-                        target.type = "list";
-                    }else{
-                        target.type = this.source.name;
-                    }
-                }else{
-                    target = ins.get(proc.target);
-                }
-
-                if(target.type === "list"){
-                    schema.value = target.value.size;
-                }else{
-                    schema.value = target.value.length;
-                }
-                return schema;
-            case "check":
-                pred = ins.get(proc.pred);
-                schema.type="bool";
-                
-                if(proc.param === "V"){
-                    target.value = value;
-                    target.type = this.source.name;
-                }else{
-                    target = ins.get(proc.param);
-                }
-
-                schema.value = this.evaluate(pred, target);
-                return schema;
-            case "pred":
-               return proc;
-        }
-    },
-
-    evaluate(p, elem){
-        p.vars.value = elem.value;
-        switch(p.op){
-            case "!=":
-                if(p.vars.name === p.order[0]){
-                    return elem.value !== p.order[1];
-                }else{
-                    return elem.value != p.order[0];
-                }
-            case "=":
-                if(p.vars.name === p.order[0]){
-                    return elem.value === p.order[1];
-                }else{
-                    return elem.value === p.order[0];
-                }
-            case "<=":
-                if(p.vars.name === p.order[0]){
-                    return elem.value <= p.order[1];
-                }else{
-                    return elem.value <= p.order[0];
-                }
-            case "<":
-                if(p.vars.name === p.order[0]){
-                    return elem.value < p.order[1];
-                }else{
-                    return elem.value < p.order[0];
-                }
-            case "<=":
-                if(p.vars.name === p.order[0]){
-                    return elem.value <= p.order[1];
-                }else{
-                    return elem.value <= p.order[0];
-                }
-            case ">":
-                if(p.vars.name === p.order[0]){
-                    return elem.value > p.order[1];
-                }else{
-                    return elem.value > p.order[0];
-                }
-            case "funI":
-                return elem.value[p.fun].call(elem.value, p.order[0]);
-            case "funO":
-                return window[p.fun](...p.args);
-        }
-    }
-}
-
-function propertyHandler(property){
-    let content = property.split(';');
-    let ins = [];
-
-    content.forEach(i => {
-        const schema = {};
-        let sep = i.indexOf(":");
-
-        let type = i.substring(0, sep).replace(/\s/g, "");
-        let action = i.substring(sep + 1, sep.lenght).replace(/\s/g, "");
-
-        switch(type){
-            case "VAR":
-                schema.type = "affectation";
-                
-                let a = action.indexOf("=");
-                
-                schema.target = action.substring(0, a).replace(/\s/g, "");
-
-                let proc = action.substring(a+1, action.lenght).replace(/\s/g, "");
-
-                schema.proc = actionHandler(proc);
-
-                ins.push(schema);
-
-                break;
-            case "RETURN":
-                schema.type = "result";
-
-                schema.proc = actionHandler(action.replace(/\s/g, ""));
-
-                ins.push(schema);
-
-
-                break;
-        }
-
-    })
-    return ins;
-}
-
-function actionHandler(proc){
-    const schema = {}
-
-    let comma;
-    let order;
-    let vars = {};
-    let target;
-
-    let firstP = proc.indexOf("(");
-
-    if(firstP === -1 ){
-        schema.type = "value";
-        schema.value = proc;
-        return schema;
-    }
-
-    let type = proc.substring(0, firstP);
-    let content = proc.substring(firstP + 1, proc.length - 1);
-
-    switch(type){
-        case "COUNT":
-            schema.type = "lenght";
-            schema.target = content;
-            return schema;
-        case "PREDICATE":
-            schema.type = "pred";
-            
-            let checkP = content.lastIndexOf("}") + 1;
-            let declarations = content.substring(1, checkP-1);
-
-
-            comma = declarations.indexOf(",");
-
-            while(comma !== -1){
-                vars.name = declarations.substring(0, comma);
-                vars.value = "";
-                declarations = declarations.substring(comma + 1, declarations.lenght);
-                comma = declarations.indexOf(",")
-            }
-            if(!(declarations === "")){
-                vars.name = declarations;
-                vars.value = "";
-            }
-
-            schema.vars = vars;
-
-            let calc = content.substring(checkP + 1, content.length - 1);
-
-            firstP = calc.indexOf("(");
-
-            schema.op = calc.substring(0, firstP);
-
-            let remaining = calc.substring(firstP + 1, calc.lenght);
-
-            order = [];
-
-            comma = remaining.indexOf(","); 
-
-            switch(schema.op){
-                case "funI":
-                    schema.fun = remaining.substring(0, comma);
-                    remaining = remaining.substring(comma + 1, remaining.length);
-                    comma = remaining.indexOf(",");
-                    schema.caller = remaining.substring(0, comma);
-                    remaining = remaining.substring(comma + 1, remaining.length);
-                    comma = remaining.indexOf(",");
-
-                    while(comma !== -1){
-                        order.push(remaining.substring(0, comma));
-                        remaining = remaining.substring(comma + 1, remaining.lenght);
-                        comma = remaining.indexOf(",")
-                    }
-        
-                    if(!(remaining === "")){
-                        order.push(remaining);
-                    }
-                    schema.order = order;
-                    break;
-                default:
-                    while(comma !== -1){
-                        order.push(remaining.substring(0, comma));
-                        remaining = remaining.substring(comma + 1, remaining.lenght);
-                        comma = remaining.indexOf(",")
-                    }
-        
-                    if(!(remaining === "")){
-                        order.push(remaining);
-                    }
-
-                    schema.order = order;
-            }
-
-            return schema;
-        case "FILTER":
-            schema.type = "filter";
-
-            firstP = content.indexOf("(");
-
-            if(firstP === -1){
-                schema.target = content;
-                return schema;
-            }
-
-            target = content.substring(firstP + 1, content.length - 1);
-            
-            schema.target = content.substring(0, firstP);
-
-            order = [];
-            
-            comma = target.indexOf(",");
-
-            while(comma !== -1){
-                order.push(target.substring(0, comma));
-                target = target.substring(comma + 1, target.length);
-                comma = target.indexOf(",");
-            }
-
-            if(target !== ""){
-                order.push(target);
-            }
-
-            schema.order = order;
-
-            return schema;
-        case "CHECK":
-            schema.type = "check";
-
-            firstP = content.indexOf("(");
-
-            let toCheck = content.substring(firstP + 1, content.length - 1);
-
-            schema.pred = content.substring(0, firstP);
-
-            schema.param = toCheck;
-
-            return schema;
-
     }
 }
 

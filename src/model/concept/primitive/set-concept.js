@@ -249,6 +249,7 @@ const _SetConcept = {
         return this;
     },
     removeElement(element) {
+
         let index = valOrDefault(element.index, this.value.indexOf(element.id));
 
         if (index === -1) {

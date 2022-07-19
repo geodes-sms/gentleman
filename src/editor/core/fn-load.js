@@ -108,7 +108,7 @@ export const FnLoad = {
         });
 
         this.triggerEvent({ name: "editor.load-projection@post", args: [name, JSON.stringify(schema)] });
-
+        
         this.refresh();
 
         return this;
@@ -166,6 +166,7 @@ export const FnLoad = {
         reader.onload = (event) => {
             const schema = JSON.parse(reader.result);
             const { type } = schema;
+
             if (type === "concept") {
                 this.loadConcept(schema, name);
             } else if (type === "projection") {

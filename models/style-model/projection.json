@@ -947,8 +947,6 @@
                 ]
             }
         },
-
-
         {
             "concept": { "name": "hex-color" },
             "tags": ["choice-selection"],
@@ -964,6 +962,25 @@
                         "type": "attribute",
                         "name": "value",
                         "tag": "color-string"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "hex-color" },
+            "tags": ["color-simple"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "style": {
+                    "css": ["text-element"]
+                },
+                "disposition": [
+                    {
+                        "type": "attribute",
+                        "name": "value",
+                        "tag": "color-simple"
                     }
                 ]
             }
@@ -1630,6 +1647,35 @@
                             }
                         }
                     },
+                    {
+                        "type": "field",
+                        "field": {
+                            "type": "text",
+                            "input": {
+                                "type": "color",
+                                "placeholder": "null",
+                                "style": {
+                                    "css": ["name-field--textual__input"]
+                                }
+                            },
+                            "style": {
+                                "css": ["name-field", "name-field--textual"]
+                            }
+                        }
+                    }
+                ],
+                "style": {
+                    "css": ["name-field", "name-field--textual"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["color-simple"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "disposition": [
                     {
                         "type": "field",
                         "field": {

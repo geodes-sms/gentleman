@@ -252,6 +252,7 @@ const FileIO = {
         this.refresh();
     },
     refresh() {
+
         if (!this.hasFile) {
             this.container.classList.add("empty");
             hide(this.files);

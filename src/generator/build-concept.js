@@ -60,6 +60,7 @@ export function buildConceptHandler(_options = {}) {
 
     if (options.download) {
         this.download({
+            type: "concept",
             concept: result
         }, options.name);
     }
@@ -137,6 +138,9 @@ function buildConcept(concept) {
  * @param {*} attribute
  */
 function buildAttribute(attribute) {
+    console.log("BuildingAttribute");
+    console.log(attribute);
+
     const name = getName(attribute);
 
     const required = hasAttr(attribute, ATTR_REQUIRED) && hasValue(attribute, ATTR_REQUIRED) ? getValue(attribute, ATTR_REQUIRED) : true;
@@ -159,6 +163,8 @@ function buildAttribute(attribute) {
         this.__errors.push(error);
     }
 
+    console.log(name, required);
+
     const schema = {
         "name": name,
         "target": buildTarget.call(this, getValue(attribute, "target", true)),
@@ -175,6 +181,9 @@ function buildAttribute(attribute) {
  * @param {*} attribute
  */
 function buildTarget(target, propname = "name") {
+    console.log("target");
+    console.log(target);
+
     if (isNullOrUndefined(target)) {
         return null;
     }
@@ -190,8 +199,10 @@ function buildTarget(target, propname = "name") {
 
             this.__errors.push(error);
         } else {
-            let ref = getReference(target, "concept");
-            name = getName(ref);
+            console.log(getAttr(target,"concept"));
+            console.log(name);
+            console.log(getAttr(target,"concept").getName())
+            name = getAttr(target,"concept").value;
         }
     }
 

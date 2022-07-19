@@ -168,10 +168,6 @@
                                 { "name": "link-static" },
                                 { "name": "plink-static" },
                                 { "name": "button-static" },
-                                { "name": "svg-container"},
-                                { "name": "interactive-svg" },
-                                { "name": "static-svg" },
-                                { "name": "dynamic-svg" },
                                 { "name": "projection-dynamic" }
                             ]
                         }
@@ -327,7 +323,8 @@
                     "name": "sibling",
                     "target": {
                         "name": "sibling"
-                    }
+                    },
+                    "required": false
                 }
             ]
         },
@@ -345,7 +342,6 @@
                 }
             ]
         },
-
         {
             "name": "container",
             "nature": "concrete",
@@ -387,6 +383,13 @@
                         "name": "boolean",
                         "default": false
                     }
+                },
+                {
+                    "name": "sibling",
+                    "target":{
+                        "name": "sibling"
+                    },
+                    "required": false
                 }
             ],
             "properties": [
@@ -739,30 +742,6 @@
                         "name": "string"
                     }
                 }
-            ]
-        },
-        {
-            "name": "visualizer",
-            "prototype": "layout",
-            "nature": "concrete",
-            "attributes":[
-                {
-                    "name": "current",
-                    "target":{
-                        "name": "input"
-                    }
-                },
-                {
-                    "name": "root",
-                    "target":{
-                        "name": "boolean"
-                    },
-                    "default": true
-                }
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "field" },
-                { "name": "elementType", "type": "string", "value": "visualizer"}
             ]
         },
         {
@@ -1153,38 +1132,6 @@
             "properties": [
                 { "name": "contentType", "type": "string", "value": "field" },
                 { "name": "elementType", "type": "string", "value": "svg" }
-            ]
-        },  
-        {
-            "name": "svg-container",
-            "nature": "concrete",
-            "prototype": "layout",
-            "attributes":[
-                {
-                    "name": "content",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "p-link",
-                    "target":{
-                        "name": "svg-link"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "attributes",
-                    "target":{
-                        "name": "set",
-                        "accept":
-                            {"name": "svg-attribute"}
-                        
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "svg-container" }
             ]
         },
         {
@@ -1805,6 +1752,13 @@
                     "target": {
                         "name": "boolean"
                     }
+                },
+                {
+                    "name": "listen",
+                    "target":{
+                        "name": "boolean",
+                        "default": false
+                    }
                 }
             ],
             "properties": [
@@ -1955,7 +1909,7 @@
                     }
                 },
                 {
-                    "name": "receiver",
+                    "name": "r-tag",
                     "target": {
                         "name": "string"
                     }

@@ -17,10 +17,10 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 
 ## Examples
 
-| Mindmap               | Traffic Light (TL)             | TodoList             |
+| Mindmap               | Traffic Light (TL)             | TodoList           | Statechart     | Sequence Diagram | Music Sheet      |
 |:---------------------:|:------------------------------:|:------------------------------:|
-| ![*Oops!* missing image 😅][mindmap-img]         | ![*Oops!* missing image 😅][tl-img] | ![*Oops!* missing image 😅][todo-img] |
-| [Try it out][mindmap-app] | [Try it out][tl-app] | [Try it out][todo-app] |
+| ![*Oops!* missing image 😅][mindmap-img]         | ![*Oops!* missing image 😅][tl-img] | ![*Oops!* missing image 😅][todo-img] | ![*Oops!* missing image 😅][sc-img] | ![*Oops!* missing image 😅][ds-img] | ![*Oops!* missing image 😅][music-img] 
+| [Try it out][mindmap-app] | [Try it out][tl-app] | [Try it out][todo-app] | [Try it out][sc-app] | [Try it out][ds-app] | [Try it out][music-app] 
 
 [mindmap-app]: https://geodes-sms.github.io/gentleman/demo/mindmap/index.html
 [mindmap-img]: https://gentlemancp.org/assets/images/demo_mindmap.gif "Mindmap demo"
@@ -28,6 +28,12 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 [tl-img]: https://gentlemancp.org/assets/images/demo_traffic_light.gif "Traffic light demo"
 [todo-app]: https://geodes-sms.github.io/gentleman/demo/todo/index.html
 [todo-img]: https://gentlemancp.org/assets/images/demo_todo.gif "TodoList demo"
+[sc-app]: https://geodes-sms.github.io/gentleman/demo/sc/index.html
+[sc-img]: https://gentlemancp.org/assets/images/demo_sc.gif "Statechart demo"
+[ds-app]: https://geodes-sms.github.io/gentleman/demo/ds/index.html
+[ds-img]: https://gentlemancp.org/assets/images/demo_ds.gif "Sequence Diagram demo"
+[music-app]: https://geodes-sms.github.io/gentleman/demo/music/index.html
+[music-img]: https://gentlemancp.org/assets/images/demo_music.gif "Music demo"
 
 # Documentation 📖
 
@@ -130,6 +136,8 @@ $ npm run build
    [Paper](https://dl.acm.org/doi/pdf/10.1145/3417990.3421998)  
    [Demonstration](https://youtu.be/wJ4hVZjmrv4)
 
+2. Aurélien Ducoin, E.Syriani. *Graphical Projectional Editing in Gentleman*
+   [Demonstration] (https://www.youtube.com/watch?v=wd00pRAHxsU&ab_channel=GEODESGentleman)
 # Distribution 📂
 
 This distribution contains the following files and folders:

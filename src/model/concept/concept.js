@@ -389,7 +389,6 @@ const _Concept = {
                 child.delete(true);
             }
         });
-
         try {
             if (this.model.removeConcept(this.id)) {
                 this.notify("delete");

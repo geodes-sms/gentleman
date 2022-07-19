@@ -169,7 +169,6 @@ const BaseForceLayout = {
         switch(item.getAttribute("data-view")){
             case "svg":
                 let field = this.environment.resolveElement(item);
-                console.log(field.content.getAttribute('viewBox'));
                 field.content.setAttribute("viewBox", " 0 0 170 165")
                 last.appendChild(item);
                 break;
@@ -183,19 +182,16 @@ const BaseForceLayout = {
 
         this.items.set(value.id, { item : last, index : last.id});
 
-        console.log(this.nodes);
     },
 
     removeItem(value){
 
         let item = this.items.get(value.id);
         item.item.remove();
-        console.log(this.drawArea);
         /*this.nodes.splice(item.index, 1);*/
 
         this.items.delete(value.id);
 
-        console.log(this.nodes);
         this.restart();
         
         this.nodes.splice(item.index, 1);

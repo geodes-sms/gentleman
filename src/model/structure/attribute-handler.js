@@ -82,6 +82,8 @@ export const AttributeHandler = {
      * @returns {Attribute}
      */
     createAttribute(name, _value) {
+
+
         if (!this.hasAttribute(name)) {
             throw new Error(`Attribute not found: The concept '${this.name}' does not contain an attribute named '${name}'`);
         }

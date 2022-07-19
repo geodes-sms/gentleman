@@ -76,6 +76,7 @@ export const EditorInstanceManager = {
 
         let target = this.resolveElement(instance.body);
 
+
         target.source.notify("displayed");
 
         if(instance.body.getAttribute("data-nature") === "algorithm"){

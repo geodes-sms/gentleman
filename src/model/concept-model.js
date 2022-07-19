@@ -57,6 +57,7 @@ export const ConceptModel = {
      * @returns {Concept}
      */
     createConcept(name, args) {
+
         const schema = this.getCompleteModelConcept(name);
 
         var concept = ConceptFactory.createConcept(this, schema, args);
@@ -328,10 +329,8 @@ export const ConceptModel = {
     getSchema(nature) {
         if (isIterable(nature)) {
             const pred = Array.isArray(nature) ? (concept) => nature.includes(concept.nature) : (concept) => concept.nature === nature;
-
             return this.schema.filter(concept => pred(concept));
         }
-
         return this.schema.slice();
     },
     /**
@@ -348,6 +347,7 @@ export const ConceptModel = {
         return deepCopy(concept);
     },
     getCompleteModelConcept(concept) {
+        
         let schema = concept;
 
         if (isString(concept)) {

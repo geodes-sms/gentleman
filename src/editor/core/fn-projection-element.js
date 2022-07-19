@@ -7,7 +7,8 @@ export const FnProjectionElement = {
   * @returns {Field}
   */
     getField(element) {
-        if (!isHTMLElement(element)) {
+
+        if (!isHTMLElement(element) && element.tagName !== "path" && element.tagName !== "text" && element.tagName !== "svg") {
             console.warn("Field error: Bad argument");
             return null;
         }
@@ -32,7 +33,7 @@ export const FnProjectionElement = {
      * @returns {Static}
      */
     getStatic(element) {
-        if (!isHTMLElement(element)) {
+        if (!isHTMLElement(element) && element.tagName !== "svg") {
             console.warn("Static error: Bad argument");
             return null;
         }
@@ -57,7 +58,7 @@ export const FnProjectionElement = {
      * @returns {Layout}
      */
     getLayout(element) {
-        if (!isHTMLElement(element)) {
+        if (!isHTMLElement(element) && element.tagName !== "svg") {
             console.warn("Layout error: Bad argument");
             return null;
         }
@@ -76,8 +77,95 @@ export const FnProjectionElement = {
 
         return this.projectionModel.getLayout(id);
     },
+
+    getAlgo(element) {
+        if (!isHTMLElement(element) && element.tagName !== "svg" && element.tagName !== "text") {
+            console.warn("Algo error: Bad argument");
+            return null;
+        }
+
+        const { id, nature } = element.dataset;
+
+        if (isNullOrUndefined(id)) {
+            console.warn("Algo error: Missing id attribute on field");
+            return null;
+        }
+
+        if (!["algorithm"].includes(nature)) {
+            console.warn("algo error: Unknown nature attribute on field");
+            return null;
+        }
+
+        return this.projectionModel.getAlgo(id);
+    },
+
+    getSimulation(element) {
+        if (!isHTMLElement(element) && element.tagName !== "svg" && element.tagName !== "text") {
+            console.warn("Simulation error: Bad argument");
+            return null;
+        }
+
+        const { id, nature } = element.dataset;
+
+        if (isNullOrUndefined(id)) {
+            console.warn("Simulation error: Missing id attribute on Simulation");
+            return null;
+        }
+
+        if (!["simulation"].includes(nature)) {
+            console.warn("Simulation error: Unknown nature attribute on Simulation");
+            return null;
+        }
+
+        return this.projectionModel.getSimulation(id);
+    },
+
+    /**
+     * Get a the related arrow object
+     * @param {HTMLElement} element 
+     * @returns {Algorithm}
+     */
+     getArrow(element) {
+
+        if (element.tagName !== "path") {
+            console.warn("Arrow error: Bad argument");
+            return null;
+        }
+
+        const { id, nature } = element.dataset;
+
+        if (isNullOrUndefined(id)) {
+            console.warn("Arrow error: Missing id attribute on field");
+            return null;
+        }
+
+        if (!["arrow", "arrow-path"].includes(nature)) {
+            console.warn("Layout error: Unknown nature attribute on field");
+            return null;
+        }
+
+        return this.projectionModel.getArrow(id);
+    },
+
     resolveElement(element) {
-        if (!isHTMLElement(element)) {
+
+        console.log("This resolve?");
+        console.log(element);
+
+        if(element instanceof SVGElement){
+            console.log("SVG");
+            let copy = element;
+
+            while(!isNullOrUndefined(copy.parentNode) && isNullOrUndefined(copy.dataset)){
+                copy = copy.parentNode;
+            }
+
+            if(!isNullOrUndefined(copy.dataset.nature)){
+                element = copy;
+            }
+        }
+
+        if (!isHTMLElement(element) &&  element.tagName !== "path" && element.tagName !== "svg" && element.tagName !== "text") {
             return null;
         }
 
@@ -101,6 +189,15 @@ export const FnProjectionElement = {
             case "static":
             case "static-component":
                 projectionElement = this.getStatic(element);
+                break;
+            case "algorithm":
+                projectionElement = this.getAlgo(element);
+                break;
+            case "simulation":
+                projectionElement = this.getSimulation(element);
+                break;
+            case "arrow":
+                projectionElement = this.getArrow(element);
                 break;
         }
 

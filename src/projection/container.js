@@ -146,7 +146,7 @@ const BaseContainer = {
 
         for (let i = 0; i < content.length; i++) {
             let render = ContentHandler.call(this, content[i], null, this.args);
-
+            
             let element = this.environment.resolveElement(render);
             if (element) {
                 element.parent = this;
