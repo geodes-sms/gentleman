@@ -62,8 +62,6 @@ const BaseAnchorArrow = {
 
             value.notify("accept", (this.bind));
 
-            console.log("accept");
-            console.log(value);
             if(!isNullOrUndefined(this.path.parenNode)){
                 value.notify("cover", (this));
             }

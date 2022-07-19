@@ -115,11 +115,8 @@ const BaseSVGPlaceholder = {
 
         this.selection =  document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
-        console.log(this.candidates);
         this.candidates.forEach((value)  => {
 
-            console.log("New candidate");
-            console.log(value);
             const isConcept = isObject(value);
             const {tag} = item;
 
@@ -148,10 +145,6 @@ const BaseSVGPlaceholder = {
 
                 this.items.set(value.id, render);
 
-                console.log("Render-meta");
-                console.log(render);
-
-
             }else if (isConcept) {
                 if (!this.model.hasProjectionSchema(value, tag)) {
                     return container;
@@ -175,9 +168,6 @@ const BaseSVGPlaceholder = {
 
                 this.items.set(value.id, choiceProj);
 
-                console.log("Render-concept");
-                console.log(choiceProj);
-
             }
 
         })
@@ -185,7 +175,6 @@ const BaseSVGPlaceholder = {
     },
 
     focusIn(){
-        console.log("focusingIn");
         if(!this.opened){
             this.element.append(this.openBack)
         }

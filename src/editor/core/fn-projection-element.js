@@ -149,11 +149,7 @@ export const FnProjectionElement = {
 
     resolveElement(element) {
 
-        console.log("This resolve?");
-        console.log(element);
-
         if(element instanceof SVGElement){
-            console.log("SVG");
             let copy = element;
 
             while(!isNullOrUndefined(copy.parentNode) && isNullOrUndefined(copy.dataset)){

@@ -4012,6 +4012,22 @@
         },
         {
             "concept": { "name": "number" },
+            "tags": ["simulation-large"],
+            "type": "field",
+            "content":{
+                "type": "svg",
+                "placeholder": "0",
+                "style":{
+                    "anchor": "start",
+                    "size": 11,
+                    "baseline": "auto",
+                    "font": "Segoe UI",
+                    "weight": 500
+                }
+            }
+        },
+        {
+            "concept": { "name": "number" },
             "tags": ["selection-info"],
             "type": "algorithm",
             "content":{

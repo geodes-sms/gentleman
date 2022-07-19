@@ -212,8 +212,6 @@ const BaseForceSimulation = {
             this.links = this.force.links()
 
             this.link = svg.selectAll("path").data(this.links);
-
-            console.log(svg);
         }        
 
         this.force.start();
@@ -252,8 +250,6 @@ const BaseForceSimulation = {
 
         let dr = 1;
         
-        console.log("link")
-
         this.link.attr("d", function(d) {return "M" + d.target.x + "," + d.target.y +
         "A" + dr + "," + dr + " 0 0 1," + d.source.x + "," + d.source.y +
         "A" + dr + "," + dr + " 0 0 0," + d.target.x + "," + d.target.y});

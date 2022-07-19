@@ -34,7 +34,6 @@ export const DimensionHandler = {
     },
 
     positionElement(schema, render){
-        console.log(render, schema);
         switch(schema.anchor){
             case "middle":
                 render.setAttribute("x", schema.x - Number(render.getAttribute("width"))/ 2);

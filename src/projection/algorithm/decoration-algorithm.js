@@ -126,8 +126,6 @@ const BaseDecorationAlgorithm = {
 
         this.bindEvents();
 
-        console.log(this.content);
-
         return this.container;
     },
 
@@ -170,8 +168,6 @@ const BaseDecorationAlgorithm = {
 
         if(!isNullOrUndefined(this.content)){
             this.content.forEach(c => {
-                console.log("FocusingOut");
-                console.log(c);
                 c.focusOut();
             })
         }
@@ -346,14 +342,10 @@ const BaseDecorationAlgorithm = {
     },
 
     clickHandler(target){
-        console.log("Clicked");
-
         if(this.container.contains(target)){
             while((target !== this.container) && isNullOrUndefined(target.dataset.nature)){
                 target = target.parentNode;
             }
-            console.log("Found");
-            console.log(target);
             
             if(target !== this.container){
                

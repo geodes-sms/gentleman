@@ -39,8 +39,6 @@ const BaseMarkerSimulation = {
 
         }
 
-        console.log(this);
-
         this.bindEvents();
 
         return this.container;
@@ -56,13 +54,7 @@ const BaseMarkerSimulation = {
         if(!isNullOrUndefined(this.idAttr.value)){
             this.marker.setAttribute("id", (this.idAttr.value));
 
-            console.log(this.container);
-
             this.user = this.container.parentNode.getElementById("path" + this.container.parentNode.id);
-        
-            console.log(this.user);
-
-            console.log(this);
 
             this.user.setAttribute("marker-" + (this.schema.start ? "start" : "end"), "url(#" + this.idAttr.value +")");
         }

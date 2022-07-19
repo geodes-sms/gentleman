@@ -7,6 +7,7 @@ import { TextSimulation } from "./text-simulation";
 import { SelectionSimulation } from "./selection-simulation";
 import { MarkerSimulation } from "./marker-simulation";
 import { ContentSimulation } from "./content-simulation";
+import { PatternSimulation } from "./pattern-simulation";
 
 var inc = 0;
 const nextId = () => `algo${inc++}`;
@@ -63,6 +64,16 @@ const Handler = {
         source: { value: projection.concept, writable: true },
     }),
     'content': (model, schema, projection) => Object.create(ContentSimulation, {
+        object: { value: "simulation" },
+        name: { value: "marker-simulation" },
+        type: { value: "marker" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    }),
+    'pattern': (model, schema, projection) => Object.create(PatternSimulation, {
         object: { value: "simulation" },
         name: { value: "marker-simulation" },
         type: { value: "marker" },

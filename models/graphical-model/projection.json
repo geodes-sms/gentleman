@@ -867,6 +867,44 @@
             }
         },
         {
+            "concept": { "name": "coordinates-first" },
+            "tags": ["anchor-coord"],
+            "type": "layout",
+            "projection":{
+                "type": "flex",
+                "orientation": "row",
+                "disposition":[
+                    {
+                        "type": "attribute", 
+                        "name": "x"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "y"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "coordinates-next" },
+            "tags": ["anchor-coord"],
+            "type": "layout",
+            "projection":{
+                "type": "flex",
+                "orientation": "row",
+                "disposition":[
+                    {
+                        "type": "attribute", 
+                        "name": "x"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "y"
+                    }
+                ]
+            }
+        },
+        {
             "concept": { "name": "coordinates" },
             "tags": ["layout-coordinates"],
             "type": "layout",
@@ -2699,30 +2737,110 @@
         },
         {
             "concept": { "name": "pattern-layout" },
-            "tags": ["choice-selection"],
+            "tags": ["choice-selection__set"],
             "type": "layout",
             "projection":{
                 "type": "flex",
                 "orientation": "column",
                 "disposition":[
                     {
-                        "kind": "static",
-                        "type": "text",
-                        "content": "Anchors",
-                        "style":{
-                            "css": ["title", "mp-style__title"]
+                        "type": "layout",
+                        "layout":{
+                            "type": "flex",
+                            "orientation": "row",
+                            "disposition":[
+                                {
+                                    "type": "attribute",
+                                    "name": "rtag",
+                                    "tag": "label-string"
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout":{
+                                        "type": "flex",
+                                        "orientation": "row",
+                                        "disposition":[
+                                            {
+                                                "kind": "static",
+                                                "type": "text",
+                                                "content": "Tag",
+                                                "style":{
+                                                    "css": ["label", "mp-fieldwrap__label"]
+                                                }
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "item",
+                                                "tag": "text-string",
+                                                "options": { "placeholder": "g-tag" },
+                                                "style": {
+                                                    "css": ["mp-tag"]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "pattern",
+                                    "tag": "interact"
+                                }
+                            ]
                         }
                     },
                     {
-                        "type": "attribute",
-                        "name": "pattern"
-                    },
+                        "type": "layout",
+                        "layout":{
+                            "type": "flex",
+                            "justifyContent": "center",
+                            "disposition":[
+                                {
+                                    "type": "attribute",
+                                    "name": "pattern",
+                                    "tag": "simulation"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "anchors" },
+            "tags": ["simulation"],
+            "type": "simulation",
+            "content":{
+                "type": "pattern"
+            }
+        },
+        {
+            "concept": { "name": "anchors" },
+            "tags": ["interact"],
+            "type": "layout",
+            "projection":{
+                "type": "flex",
+                "orientation": "row",
+                "disposition":[
                     {
-                        "kind": "static",
-                        "type": "text",
-                        "content": "Pattern",
-                        "style":{
-                            "css": ["title", "mp-style__title"]
+                        "type": "layout",
+                        "layout":{
+                            "type": "flex",
+                            "orientation": "row",
+                            "disposition":[
+                                {
+                                    "kind": "static",
+                                    "type": "text",
+                                    "content": "First",
+                                    "style":{
+                                        "css": ["label", "mp-fieldwrap__label"]
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "first",
+                                    "tag": "anchor-coord"
+                                }
+                            ]
                         }
                     },
                     {
@@ -2734,39 +2852,18 @@
                                 {
                                     "kind": "static",
                                     "type": "text",
-                                    "content": "Item",
+                                    "content": "Next",
                                     "style":{
-                                        "css": ["mp-fieldwrap__label", "label"]
+                                        "css": ["label", "mp-fieldwrap__label"]
                                     }
                                 },
                                 {
                                     "type": "attribute",
-                                    "name": "item",
-                                    "tag": "tag-reference"
+                                    "name": "next",
+                                    "tag": "anchor-coord"
                                 }
                             ]
                         }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "anchors" },
-            "tags": [],
-            "type": "layout",
-            "projection":{
-                "type": "flex",
-                "orientation": "row",
-                "disposition":[
-                    {
-                        "type": "attribute",
-                        "name": "first",
-                        "tag": "anchors-first"
-                    },
-                    {
-                        "type": "attribute",
-                        "name": "next",
-                        "tag": "anchors-next"
                     }
                 ]
             }

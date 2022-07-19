@@ -45,8 +45,6 @@ const BaseGroup = {
     },
 
     reconstruct(){
-        console.log(this.projection);
-
         let values = this.source.value;
 
         for(let i = 0; i < values.length; i++){
@@ -92,18 +90,12 @@ const BaseGroup = {
     removeItem(value){
 
         for(let i = 0; i < this.items.length; i++){
-            console.log(value);
-            console.log(this.items[i]);
             if(this.items[i].concept.id === value.id){
-                console.log("EQUAL");
                 this.items[i].projection.remove();
                 if(!isNullOrUndefined(this.items[i].container)){
                     this.items[i].container.remove();
                 }
                 this.items.splice(i, 1);
-
-                console.log("Items");
-                console.log(this.items);
                 return;
             }
         }

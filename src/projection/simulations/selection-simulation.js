@@ -152,7 +152,6 @@ const BaseSelectionSimulation = {
             case "horizontal":
                 if(breakDown > 0 && nb > breakDown){
                     this.selection.setAttribute("x", 200 - (breakDown * width) / 2);
-                    console.log(Math.ceil(nb / breakDown));
                     this.selection.setAttribute("y", 200 - (Math.ceil(nb / breakDown) * height/ 2));
                 }else{
                     this.selection.setAttribute("x", 200 - (nb * width) / 2);

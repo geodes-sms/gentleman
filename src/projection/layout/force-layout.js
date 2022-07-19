@@ -196,20 +196,12 @@ const BaseForceLayout = {
         
         this.nodes.splice(item.index, 1);
         this.force.start();
-        /*this.nodes.forEach(element => {
-            console.log(element);
-        });*/
     },
 
 
     adaptForeign(f, i){
         let rect = i.getBoundingClientRect();
 
-        
-        /*i.childNodes.forEach(c => {
-            console.log(c);
-            console.log(c.getBoundingClientRect());
-        })*/
 
         f.setAttribute("width", /*Math.max(rect.width, 42)*/ rect.width);
         f.setAttribute("height", Number(rect.height + 5));

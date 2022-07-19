@@ -116,7 +116,6 @@ const BasePatternAlgorithm = {
     },
 
     addItem(value){
-        console.log("Getting new elem");
 
         if(this.saturation){
             if(isNullOrUndefined(this.count)){

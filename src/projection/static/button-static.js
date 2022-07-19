@@ -231,11 +231,6 @@ const BaseButtonStatic = {
                     if (target.type === "attribute") {
                         let attr = concept.getAttribute(target.name);
                         let attrTarget = attr.target.createElement();
-                        console.log("CREATES");
-                        console.log(attrTarget);
-                        console.log(value);
-                        console.log(target);
-                        console.log(attrTarget.getAttribute(target.attribute).target);
                         attrTarget.getAttribute(target.attribute).target.setValue(valOrDefault(value.name, value));
                     }
                     break;

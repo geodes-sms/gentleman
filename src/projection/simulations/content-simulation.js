@@ -44,9 +44,6 @@ const BaseContentSimulation = {
         const width = this.content.width.baseVal.value;
         const height = this.content.height.baseVal.value;
 
-
-        console.log(this.content.width);
-
         let ratio = Math.max(width, height) / 100;
 
         this.holder.setAttribute("viewBox", "0 0 " + width + " " + height);

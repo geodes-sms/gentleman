@@ -14,9 +14,6 @@ function openSelection(target){
 }
 
 function openSide(target, value){
-    console.log(this.source);
-    console.log(target);
-
     let projection = this.environment.createProjection(this.source, target);
 
     let window = this.environment.findWindow("side-instance");
@@ -59,8 +56,6 @@ function extractShape(target, value){
 
     let shapeCollection = concept.getAttribute("shape").target.getAttribute("elements").target;
     
-    console.log(shapeCollection)
-
     let element = shapeCollection.createElement();
 
     element.setValue(this.source.name);

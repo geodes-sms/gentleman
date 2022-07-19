@@ -970,12 +970,6 @@
                     }
                 },
                 {
-                    "name": "add",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
                     "name": "pattern",
                     "target":{
                         "name": "anchors"
@@ -984,8 +978,7 @@
                 {
                     "name": "item",
                     "target":{
-                        "name": "reference",
-                        "accept": { "name": "g-tag" }
+                        "name": "g-tag"
                     }
                 }
             ]
@@ -997,13 +990,41 @@
                 {
                     "name": "first",
                     "target":{
-                        "name": "coordinates"
+                        "name": "coordinates-first"
                     }
                 },
                 {
                     "name": "next",
                     "target":{
-                        "name": "coordinates"
+                        "name": "coordinates-next"
+                    }
+                },
+                {
+                    "name": "nbItem",
+                    "target":{
+                        "name": "number",
+                        "default": 3
+                    }
+                },
+                {
+                    "name": "width",
+                    "target":{
+                        "name": "number",
+                        "default": 350
+                    }
+                },
+                {
+                    "name": "height",
+                    "target":{
+                        "name": "number",
+                        "default": 350
+                    }
+                },
+                {
+                    "name": "itemWidth",
+                    "target":{
+                        "name": "number",
+                        "default": 50
                     }
                 }
             ]
@@ -1158,7 +1179,7 @@
                     }
                 },
                 {
-                    "name": "x",
+                    "name": "anchor",
                     "target":{
                         "name": "string",
                         "values":[
@@ -1167,6 +1188,46 @@
                             "right",
                             "center"
                         ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "coordinates-first",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "x",
+                    "target":{
+                        "name": "number",
+                        "default": 50
+                    }
+                },
+                {
+                    "name": "y",
+                    "target":{
+                        "name": "number",
+                        "default": 150
+                    }
+                }
+            ]
+        },
+        {
+            "name": "coordinates-next",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "x",
+                    "target":{
+                        "name": "number",
+                        "default": 100
+                    }
+                },
+                {
+                    "name": "y",
+                    "target":{
+                        "name": "number",
+                        "default": 0
                     }
                 }
             ]

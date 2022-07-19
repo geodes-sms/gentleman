@@ -11,7 +11,6 @@ const BaseSvgText = {
 
         }
 
-
         return this;
     },
 
