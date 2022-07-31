@@ -11,7 +11,7 @@ const BaseDecorationAlgorithm = {
     },
 
     render(){
-        const { content = [], coordinates = false, background, data = false, reference = false, dimensions, style, rmv = false} = this.schema;
+        const { content = [], coordinates = false, background, data = false, reference = false, dimensions = false, style, rmv = false} = this.schema;
 
         const fragment = createDocFragment();
 
@@ -24,11 +24,16 @@ const BaseDecorationAlgorithm = {
                 this.background = parser.parseFromString(background.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement;
                 this.container.append(this.background);
 
+                
+                console.log("Before Error");
+                console.log(this.background);
                 this.container.setAttribute("width", this.background.getAttribute("width"));
+                
                 this.container.setAttribute("height", this.background.getAttribute("height"));
                 this.width = Number(this.background.getAttribute("width"));
                 this.height = Number(this.background.getAttribute("height"));
                 this.fixed = true;
+                console.log("After?");
             }
 
             if(dimensions){

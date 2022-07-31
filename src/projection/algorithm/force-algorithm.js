@@ -1,4 +1,4 @@
-import { createDocFragment, isHTMLElement, createDiv, createElement, isEmpty, valOrDefault, isNullOrUndefined, last, getNextElementSibling, isNull} from "zenkai";
+import { createDocFragment, isHTMLElement, createDiv, createElement, isEmpty, valOrDefault, isNullOrUndefined, last, getNextElementSibling, isNull, isUndefined} from "zenkai";
 import { Algorithm } from "./algorithm.js";
 
 
@@ -19,7 +19,7 @@ export const BaseForceAlgorithm = {
 
         this.arrowInventory = [];
 
-        this.linkInventory = {}
+        this.linkInventory = new Map();
 
         return this
     },
@@ -72,7 +72,7 @@ export const BaseForceAlgorithm = {
         if(isNullOrUndefined(this.content)){
             this.content = [];
         }
-       this.bindEvents();
+        this.bindEvents();
        
         return this.container;
     },
@@ -150,27 +150,51 @@ export const BaseForceAlgorithm = {
         this.content.push(projection);
 
         if(value.schema.nature === "prototype"){
-            this.nodes.push({
-                nbLink : 0,
-                points: [],
-                width: projection.width,
-                height: projection.height,
-                id: projection.id,
-                concept: value.id
-            });
+            if(value.force){
+                value.force.index = this.nodes.length;
+                value.force.id = projection.id;
+
+                this.nodes.push(value.force);
+
+                value.force = this.nodes[this.nodes.length - 1];
+            }else{
+                const prototypeSchema = {
+                    nbLink : 0,
+                    points: [],
+                    width: projection.width,
+                    height: projection.height,
+                    id: projection.id,
+                    concept: value.id
+                }
+                
+                this.nodes.push(prototypeSchema);
+    
+                value.force = prototypeSchema;
+            }
+
         }else{
-            this.nodes.push({
-                nbLink : 0,
-                points: [],
-                width: projection.width,
-                height: projection.height,
-                id: projection.id,
-                concept: value.id,
-                shape: this.computeShape(item)
-            });
-        }
-       
-        
+            if(value.force){
+                value.force.index = this.nodes.length;
+                value.force.id = projection.id;
+
+                this.nodes.push(value.force);
+
+                value.force = this.nodes[this.nodes.length - 1];
+            }else{
+                const conceptSchema = {
+                    nbLink : 0,
+                    points: [],
+                    width: projection.width,
+                    height: projection.height,
+                    id: projection.id,
+                    concept: value.id,
+                    shape: this.computeShape(item)
+                }
+                this.nodes.push(conceptSchema);
+                value.force = conceptSchema;
+            }
+            
+        }     
 
         this.restart();
     },
@@ -223,11 +247,28 @@ export const BaseForceAlgorithm = {
             return;
         }
 
-        this.links.push({
-            source: indexF,
-            target: indexT,
-            id: arrow.id
-        });
+        let inv = this.linkInventory.get(indexF+ "," + indexT);
+
+        if(isNullOrUndefined(inv)){
+            this.linkInventory.set(indexF+ "," + indexT, {length: 1});
+
+            this.links.push({
+                source: indexF,
+                target: indexT,
+                id: arrow.id,
+                indexL: 1
+            });
+        }else{
+            inv.length++;
+            this.links.push({
+                source: indexF,
+                target: indexT,
+                id: arrow.id,
+                indexL: inv.length
+            })
+        }
+
+        
 
         arrow.path.classList.add("link" + this.id);
 
@@ -243,11 +284,6 @@ export const BaseForceAlgorithm = {
     },
 
     addDummy(arrow, decorator = false, index){
-        this.nodes.push({
-            dummy: true,
-            ref: index,
-            fixed: true
-        })
 
         if(!isNullOrUndefined(decorator)){
             this.container.append(decorator);
@@ -258,9 +294,17 @@ export const BaseForceAlgorithm = {
             dummy.classList.add("node" + this.id);
             dummy.classList.add("dummy");
             this.container.append(dummy);
-
         }
 
+        const rect = decorator.getBBox();
+
+        this.nodes.push({
+            dummy: true,
+            ref: index,
+            fixed: true,
+            width: rect.width,
+            height: rect.height
+        })
     },
 
     addTransLink(arrow, from, to){
@@ -619,6 +663,11 @@ export const BaseForceAlgorithm = {
         let links = this.links;
         let svgArea = this.container;
 
+        let linkInventory = this.linkInventory;
+
+        const width = this.width;
+        const height = this.height;
+
         if(!isNullOrUndefined(this.link) ){
 
             this.link.attr("d",
@@ -634,6 +683,16 @@ export const BaseForceAlgorithm = {
                     d.dr = dr;
                     d.s = source;
                     d.t = target;
+
+                    /*console.log(d);
+                    console.log(linkInventory)*/
+                    let inv = linkInventory.get(d.source.index+ "," + d.target.index);
+
+                    if(inv.length > 1){
+                        dr = dr / (1 + (1 / inv.length) * (d.indexL - 1));
+                    }
+
+                    /*dr = dr/(1 + (1/lTotalLinkNum) * (d.linkindex - 1));*/
 
                     return "M" + target.x + "," + target.y +
                        "A" + dr + "," + dr + " 0 0 1," + source.x + "," + source.y +
@@ -657,15 +716,16 @@ export const BaseForceAlgorithm = {
                 if(isNullOrUndefined(toProj)){
                     toProj = document.querySelector("[data-concept='" + to + "']");
                 }
-            
+                
                 const fromRect = fromProj.getBoundingClientRect();
                 const toRect = toProj.getBoundingClientRect();
 
                 const source = {x: fromRect.x + fromRect.width / 2 - rect.x, y: fromRect.y + fromRect.height / 2 - rect.y};
                 const target = {x: toRect.x + toRect.width / 2 - rect.x, y: toRect.y + toRect.height / 2 - rect.y};
 
-                source.shape = this.computeShape(fromProj);
-                target.shape = this.computeShape(toProj);
+                source.shape = this.computeRelativeShape(svgArea, fromProj);
+                target.shape = this.computeRelativeShape(svgArea, toProj);
+
 
                 const s = BorderHandler.computeBorder(source, target);
                 const t = BorderHandler.computeBorder(target, source);
@@ -683,27 +743,50 @@ export const BaseForceAlgorithm = {
 
         this.node.attr("x", function(d){
             if(!isNullOrUndefined(d.ref)){
-                let center = BorderHandler.getEllipseCenter(links[d.ref].dr, links[d.ref].s, links[d.ref].t, svgArea);
+                let dr = links[d.ref].dr;
+
+                let inv = linkInventory.get(links[d.ref].source.index+ "," + links[d.ref].target.index);
+
+                if(inv.length > 1){
+                    dr = dr / (1 + (1 / inv.length) * (links[d.ref].indexL - 1));
+                }
+
+
+                let center = BorderHandler.getEllipseCenter(dr, links[d.ref].s, links[d.ref].t, svgArea);
                 let dEq = BorderHandler.getPerpendicularLine(links[d.ref].s, links[d.ref].t);
-                let rac = BorderHandler.getPointConstructedEllipse(dEq, links[d.ref].dr, links[d.ref].dr, center);
+                let rac = BorderHandler.getPointConstructedEllipse(dEq, dr, dr, center);
                 let v = BorderHandler.getCloserBorder(rac, links[d.ref].t);
 
                 d.fx = v.x;
 
                 if(!isNullOrUndefined(d.width)){
+                    d.fx = v.x - d.width / 2;
                     return v.x - d.width / 2;
                 }
                 return v.x;
                 
             }
-
-            return d.x - d.width / 2})
+            console.log("X setting");
+            console.log(width);
+            console.log(d.width)
+            console.log(Math.min(width - d.width))
+            console.log(Math.max(d.width, Math.min(width - d.width / 2, d.x)) - d.width/ 2);
+            return  (d.x = Math.max(d.width / 2, Math.min(width - d.width / 2, d.x))) - d.width/ 2})
         .attr("y", function(d){ 
             if(!isNullOrUndefined(d.ref)){
-                let center = BorderHandler.getEllipseCenter(links[d.ref].dr, links[d.ref].s, links[d.ref].t, svgArea);
+                let dr = links[d.ref].dr;
+
+                let inv = linkInventory.get(links[d.ref].source.index+ "," + links[d.ref].target.index);
+
+                if(inv.length > 1){
+                    dr = dr / (1 + (1 / inv.length) * (links[d.ref].indexL - 1));
+                }
+
+                let center = BorderHandler.getEllipseCenter(dr, links[d.ref].s, links[d.ref].t, svgArea);
                 let dEq = BorderHandler.getPerpendicularLine(links[d.ref].s, links[d.ref].t);
-                let rac = BorderHandler.getPointConstructedEllipse(dEq, links[d.ref].dr, links[d.ref].dr, center);
+                let rac = BorderHandler.getPointConstructedEllipse(dEq, dr, dr, center);
                 let v = BorderHandler.getCloserBorder(rac, links[d.ref].t);
+
 
                 d.fy = v.y;
 
@@ -712,7 +795,7 @@ export const BaseForceAlgorithm = {
                 }
                 return v.y;
             }
-            return d.y - d.height / 2});
+            return (d.y = Math.max(d.height / 2, Math.min(height - d.height / 2, d.y ))) - d.height / 2});
 
 
     },
@@ -732,6 +815,83 @@ export const BaseForceAlgorithm = {
         this.force.start();
     },
 
+    computeRelativeShape(ref, container){
+        const target = container.querySelector("[data-shape]");
+
+        if(isUndefined(target)){
+            return;
+        }
+        const rectRef = ref.getBoundingClientRect();
+        const rectItem = target.getBoundingClientRect();
+        const rect = container.getBoundingClientRect();
+    
+        const refW = Number(ref.getAttribute("width"));
+        const refH = Number(ref.getAttribute("height"));
+
+
+        const item = {};
+
+        item.width = refW * rectItem.width / rectRef.width;
+        item.height = refH * rectItem.height / rectRef.height;
+
+        const ptA = ref.createSVGPoint();
+        ptA.x = rectItem.x;
+        ptA.y = rectItem.y;
+
+        const resA = ptA.matrixTransform(ref.getScreenCTM().inverse());
+
+        item.x = resA.x;
+        item.y = resA.y;
+
+        const cont = {};
+
+        cont.width = refW * rect.width / rectRef.width;
+        cont.height = refH * rect.height / rectRef.height;
+
+        const ptB = ref.createSVGPoint();
+        ptB.x = rectItem.x;
+        ptB.y = rectItem.y;
+
+        const resB = ptB.matrixTransform(ref.getScreenCTM().inverse());
+
+        cont.x = resB.x;
+        cont.y = resB.y;
+
+        let ratio;
+
+        switch(target.tagName){
+            case "circle":
+                return {
+                    type: "circle", 
+                    r: item.width / 2
+                };
+            case "ellipse":
+                ratio = Number(target.getAttribute("width")) / rectItem.width;
+                const rx = rect.width * ratio;
+
+                ratio = Number(target.getAttribute("height")) / rectItem.height;
+                const ry = rect.height * ratio;
+
+                return {
+                    type: "ellipse",
+                    rx: item.width / 2,
+                    ry: item.height / 2   
+                }
+            default:
+                ratio = Number(target.getAttribute("width")) / rectItem.width;
+                const w = rect.width * ratio;
+                
+                ratio = Number(target.getAttribute("height")) / rectItem.height;
+                const h = rect.height * ratio;
+
+                return{
+                    type: "rect",
+                    w: w,
+                    h: h
+                }
+        }
+    },
+
     computeShape(container){
         const target = container.querySelector("[data-shape]");
 
@@ -741,7 +901,7 @@ export const BaseForceAlgorithm = {
 
         const rectItem = target.getBoundingClientRect();
         const rect = container.getBoundingClientRect();
-
+        
         let ratio;
 
         switch(target.tagName){
@@ -767,10 +927,20 @@ export const BaseForceAlgorithm = {
                     ry: ry   
                 }
             case "polygon":
+                let marker = target.getAttribute("data-points").split(" ");
+                
+                let points = [];
 
-
+                for(let i = 0; i < marker.length; i ++){
+                    points.push({
+                        x: Number(marker[i].split(",")[0]) / rectItem.width,
+                        y: Number(marker[i].split(",")[1]) / rectItem.height 
+                    })
+                }
+                
                 return {
-
+                    type: "polygon",
+                    points: points
                 }
             default:
                 ratio = Number(target.getAttribute("width")) / rectItem.width;
@@ -791,99 +961,214 @@ export const BaseForceAlgorithm = {
     collide(node, conc){
         let res = false;
 
-        if(!isNullOrUndefined(node.ref)){
+        const width = this.width;
+        const height = this.height;
+
+        if(!isNullOrUndefined(node.ref) && !isNullOrUndefined(conc.ref)){
             return res;
         }
 
-        /*if(!isNullOrUndefined(conc.ref) && conc !== node){
+        if(!isNullOrUndefined(node.ref)){
+            if( (node.fx < conc.x) &&
+                (node.fy < conc.y) &&
+                (node.fx + node.width / 2 > conc.x - conc.width / 2) &&
+                (node.fy + node.height > conc.x - conc.height / 2)){
+                    console.log("Left Top");
+                let offW = (node.fx + node.width / 2) - (conc.x - conc.width / 2); 
+                let offH = ((node.fy + node.height / 2) - (conc.y - conc.height / 2)) * 1.1;
+                
+                switch(Math.min(offW, offH)){
+                    case offW:
+                        conc.x += offW;
+                        break;
+                    case offH:
+                        conc.y += offH;
+                        break;
+                }
+            }else{
+                if( (node.fx > conc.x) &&
+                    (node.fy < conc.y) &&
+                    ((conc.x + conc.width / 2) > (node.fx - node.width /2)) &&
+                    ((node.fy + node.height / 2) > (conc.y - conc.height / 2))){
+                        console.log("right Top");
+                    let offW = (conc.x + conc.width / 2) - (node.fx - node.width /2);
+                    let offH = ((node.fy + node.height / 2) - (conc.y - conc.height / 2) ) * 1.1;
+                    
+                    switch(Math.min(offW, offH)){
+                        case offW:
+                            conc.x -= offW;
+                            break;
+                        case offH:
+                            conc.y += offH;
+                            break;
+                    }
+                }else{
+                    if( (node.fx > conc.x) &&
+                        (node.fy > conc.y) &&
+                        (conc.x + conc.width / 2 > node.fx - node.width / 2) &&
+                        (conc.y + conc.height /2 > node.fy - node.height )){
+
+                        let offW = (conc.x + conc.width / 2) - (node.fx - node.width /2);
+                        let offH = ((conc.y + conc.height / 2) - (node.fy - node.height / 2)) * 1.1;
+                        
+                        switch(Math.min(offW, offH)){
+                            case offW:
+                                conc.x -= offW;
+                                break;
+                            case offH:
+                                conc.y -= offH;
+                                break;
+                        }
+                        
+                    }else{                                          
+                        if( (node.fx < conc.x) &&
+                            (node.fy > conc.y) &&
+                            ((node.fx + node.width / 2) > (conc.x - conc.width / 2)) &&
+                            ((node.fy - node.height) < (conc.y + conc.height / 2))){
+                            let offW = (node.x + node.width) - (conc.x - conc.width / 2); 
+                            let offH = ((conc.y + conc.height /2) - (node.y - node.height / 2)) * 1.1;
+                            switch(Math.min(offW, offH)){
+                                case offW:
+                                    conc.x += offW;
+                                    break;
+                                case offH:
+                                    conc.y -= offH;
+                                    break
+                            }
+                        } 
+                    }
+                }
+            }
+            return res;
+        }
+
+        if(!isNullOrUndefined(conc.ref)){
             if( (node.x < conc.fx) &&
                 (node.y < conc.fy) &&
                 (node.x + node.width / 2 > conc.fx - conc.width / 2) &&
                 (node.y + node.height / 2 > conc.fx - conc.height / 2)){
-                    let offW = (node.x + node.width / 2) - (conc.fx - conc.width / 2);
-                    let offH = ((node.y + node.height /2) - (conc.fy - conc.height / 2)) * 1.1;
-
+                let offW = (node.x + node.width / 2) - (conc.fx - conc.width / 2); 
+                let offH = ((node.y + node.height /2) - (conc.fy - conc.height / 2)) * 1.1;
+                
+                switch(Math.min(offW, offH)){
+                    case offW:
+                        node.x -= offW;
+                        break;
+                    case offH:
+                        node.y -= offH;
+                        break;
+                }
+            }else{
+                if( (node.x > conc.fx) &&
+                    (node.y < conc.fy) &&
+                    ((conc.fx + conc.width / 2) > (node.x - node.width /2)) &&
+                    ((node.y + node.height /2) > (conc.fy - conc.height / 2))){
+                    let offW = (conc.fx + conc.width / 2) - (node.x - node.width /2);
+                    let offH = ((node.y + node.height /2) - (conc.fy - conc.height / 2) ) * 1.1;
+                    
                     switch(Math.min(offW, offH)){
                         case offW:
-                            node.x -= offW;
+                            node.x += offW;
                             break;
-
-                        case offH:                      
-                            node.y -= offH;                           
+                        case offH:
+                            node.y -= offH;
                             break;
                     }
                 }else{
                     if( (node.x > conc.fx) &&
-                    (node.y < conc.fy) &&
-                    ((conc.fx + conc.width / 2) > (node.x - node.width /2)) &&
-                    ((node.y + node.height /2) > (conc.fy - conc.height / 2))){
-                        console.log("hoho2");
-                        let offW = (node.x + node.width / 2) - (conc.fx - conc.width / 2); 
-                        let offH = ((node.y + node.height /2) - (conc.fy - conc.height / 2)) * 1.1;
-
-                        switch(Math.min(offW, offH)){
-                            case offW:
-                                node.x -= offW ;
-                                break;
-                            case offH:
-                                node.y -= offH;
-                                break;
-                        }
-                    }else{
-                        if( (node.x > conc.fx) &&
                         (node.y > conc.fy) &&
                         (conc.fx + conc.width / 2 > node.x - node.width / 2) &&
                         (conc.fy + conc.height /2 > node.y - node.height / 2)){
-                            console.log("hoho3");
-                            let offW = (conc.fx + conc.width / 2) - (node.x - node.width /2);
-                            let offH = ((conc.fy + conc.height / 2) - (node.y - node.height / 2)) * 1.1;
+                        let offW = (conc.fx + conc.width / 2) - (node.x - node.width /2);
+                        let offH = ((conc.fy + conc.height / 2) - (node.y - node.height / 2)) * 1.1;
 
-                            switch(Math.min(offW, offH)){
-                                case offW:
-                                    node.x += offW;
-                                    break;
-                                case offH:
-                                    node.y += offH;
-                                    break;
-                            }
-                        }else{
-                            if( (node.x < conc.fx) &&
+                        switch(Math.min(offW, offH)){
+                            case offW:
+                                node.x += offW;
+                                break;
+                            case offH:
+                                node.y += offH;
+                                break;
+                        }
+                        
+                    }else{                                          
+                        if( (node.x < conc.fx) &&
                             (node.y > conc.fy) &&
                             ((node.x + node.width / 2) > (conc.fx - conc.width / 2)) &&
                             ((node.y - node.height / 2) < (conc.fy + conc.height / 2))){
-                                console.log("hoho4");
-                                let offW = (node.x + node.width / 2) - (conc.fx - conc.width / 2); 
-                                let offH = ((conc.fy + conc.height /2) - (node.y - node.height / 2)) * 1.1;
+                            let offW = (node.x + node.width / 2) - (conc.fx - conc.width / 2); 
+                            let offH = ((conc.fy + conc.height /2) - (node.y - node.height / 2)) * 1.1;
 
-                                switch(Math.min(offW, offH)){
-                                    case offW:
-                                        node.x -= offW;
-                                        break;
-                                    case offH:
-                                        node.y += offH;
-                                        break;
-                                }
-                            } 
-                        }
+                            switch(Math.min(offW, offH)){
+                                case offW:
+                                    node.x -= offW;
+                                    break;
+                                case offH:
+                                    node.y += offH;
+                                    break
+                            }
+                        } 
                     }
                 }
-             
-        }*/
-        if (conc && (conc !== node)) {
-            if( (node.x < conc.x) &&
-                (node.y < conc.y) &&
-                (node.x + node.width / 2 > conc.x - conc.width / 2) &&
-                (node.y + node.height / 2 > conc.x - conc.height / 2)){
+            }
+            return res;
+        }
+
+        if (conc && (conc !== node)) {       
+            if( (node.x <= conc.x) &&
+                (node.y <= conc.y) &&
+                (node.x + node.width / 2 >= conc.x - conc.width / 2) &&
+                (node.y + node.height / 2 >= conc.y - conc.height / 2)){
+                    console.log("YEPP");
+                    let saveNode = node.x;
+                    let saveConc = conc.x;
                     let offW = (node.x + node.width / 2) - (conc.x - conc.width / 2); 
                     let offH = ((node.y + node.height /2) - (conc.y - conc.height / 2)) * 1.1;
+                    console.log(offW);
+                    console.log(offH);
+                    console.log(saveNode);
+                    console.log(saveConc);
+                    console.log(width);
+                    console.log("DIR");
+                    console.dir(node);
+                    console.dir(conc);
+                    console.log("LOG");
+                    console.log(node);
+                    console.log(conc);
 
+                                       
                     switch(Math.min(offW, offH)){
                         case offW:
+                            console.log("W move");
+                            if(node.x - offW / 2 < 0){
+                                console.log("Too left");
+                                conc.x += offW;
+                                break;
+                            }
+
+                            if(conc.x + offW / 2 > width){
+                                console.log("Too right");
+                                node.x -= offW;
+                                break;
+                            }
+                            
+                            console.log("Default");
+                            console.log(offW / 2);
+
                             node.x -= offW / 2;
                             conc.x += offW / 2;
                             break;
                         case offH:
-                        
+                            console.log("H move");
+                            if(node.y - offH / 2 < 0){
+                                conc.x += offH;
+                                break;
+                            }
+
+                            if(conc.y + offH / 2 > height){
+                                node.x -= offH;
+                                break;
+                            }
 
                             node.y -= offH / 2;
                             conc.y += offH / 2;
@@ -899,11 +1184,30 @@ export const BaseForceAlgorithm = {
                         
                         switch(Math.min(offW, offH)){
                             case offW:
+                                if(node.x + offW / 2 > width){
+                                    conc.x -= offW;
+                                    break;
+                                }
+
+                                if(conc.x - offW / 2 < 0){
+                                    node.x += offW;
+                                    break;
+                                }
 
                                 node.x += offW / 2;
                                 conc.x -= offW / 2;
                                 break;
                             case offH:
+                                if(node.y - offH / 2 < 0){
+                                    conc.x += offH;
+                                    break;
+                                }
+    
+                                if(conc.y + offH / 2 > height){
+                                    node.x -= offH;
+                                    break;
+                                }
+                            
                                 
                                 node.y -= offH / 2;
                                 conc.y += offH / 2;
@@ -918,13 +1222,30 @@ export const BaseForceAlgorithm = {
                             let offH = ((conc.y + conc.height / 2) - (node.y - node.height / 2)) * 1.1;
 
                             switch(Math.min(offW, offH)){
-                                
                                 case offW:
+                                    if(node.x + offW / 2 > width){
+                                        conc.x -= offW;
+                                        break;
+                                    }
+    
+                                    if(conc.x - offW / 2 < 0){
+                                        node.x += offW;
+                                        break;
+                                    }
 
                                     node.x += offW / 2;
                                     conc.x -= offW / 2;
                                     break;
                                 case offH:
+                                    if(node.y + offH / 2 > height){
+                                        conc.y -= offH;
+                                        break;
+                                    }
+    
+                                    if(conc.y - offH / 2 < 0){
+                                        node.y += offH;
+                                        break;
+                                    }
 
                                     node.y += offH / 2;
                                     conc.y -= offH / 2;
@@ -940,12 +1261,30 @@ export const BaseForceAlgorithm = {
 
                                 switch(Math.min(offW, offH)){
                                     case offW:
+                                        if(node.x - offW / 2 < 0){
+                                            conc.x += offW;
+                                            break;
+                                        }
+            
+                                        if(conc.x + offW / 2 > width){
+                                            node.x -= offW;
+                                            break;
+                                        }
 
                                         node.x -= offW / 2;
                                         conc.x += offW / 2;
                                         break;
                                     case offH:
- 
+                                        if(node.y + offH / 2 > height){
+                                            conc.y -= offH;
+                                            break;
+                                        }
+        
+                                        if(conc.y - offH / 2 < 0){
+                                            node.y += offH;
+                                            break;
+                                        }
+
                                         node.y += offH / 2;
                                         conc.y -= offH / 2;
                                         break
@@ -996,6 +1335,19 @@ export const BaseForceAlgorithm = {
 
         this.projection.registerHandler("value.removed", (value) => {
             this.removeItem(value);
+        })
+
+        this.projection.registerHandler("displayed", () => {
+            if(!isEmpty(this.source.value)){
+                this.source.values.forEach((elem) => {
+                    this.addItem(elem);
+                    
+                    if(value.schema.nature === "prototype"){
+                        this.nodes[this.nodes.length - 1].meta = this.nodes[i].concept;
+                        this.nodes[this.nodes.length - 1].concept = value.getValue(true).id;
+                    }
+                })
+            }
         })
     }
 
@@ -1120,8 +1472,9 @@ const BorderHandler = {
     getPointPolygon(p1, p2, polygon){
         let points = [];
 
+
         polygon.points.forEach(p =>{
-            points.push({x : p.rW * p1.width + p1.x - p1.width / 2, y : p.rH * p1.height + p1.y - p1.height / 2})
+            points.push({x : p.x * p1.width + p1.x - p1.width / 2, y : p.y * p1.height + p1.y - p1.height / 2})
         })
 
         let dx = (points[0].x - p2.x);
@@ -1259,8 +1612,8 @@ const BorderHandler = {
                 answer = BorderHandler.getCloserBorder(schema, target);
                 return answer;
             case "polygon":
-
-                return;
+                schema = BorderHandler.getPointPolygon(source, target, source.shape);
+                return schema;
         }
     }
 
