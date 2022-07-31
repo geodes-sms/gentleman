@@ -38,7 +38,11 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 [ds-img]: https://gentlemancp.org/assets/images/demo_ds.gif "Sequence Diagram demo"
 [music-app]: https://geodes-sms.github.io/gentleman/demo/music/index.html
 [music-img]: https://gentlemancp.org/assets/images/demo_music.gif "Music demo"
-
+If the links for graphical projections examples do not work:
+ - Follow the installation steps.
+ - Create a new Editor.
+ - Import the metamodels and projection available in the `models` folder.
+ - Start the editing!
 # Documentation 📖
 
 For live examples (demo), docs and to learn more about Gentleman, please visit [gentlemancp.org](https://gentlemancp.org).  
