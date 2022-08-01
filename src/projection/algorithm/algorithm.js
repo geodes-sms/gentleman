@@ -95,7 +95,6 @@ export const Algorithm = {
 
     createDelete(){
         const { type } = this.schema.rmv;
-
         switch(type){
             case "bind":
                 this.deleteMap = new Map();

@@ -465,11 +465,7 @@ const _Concept = {
 
         output.force = this.force
 
-        output.attributes = attributes;
-
-        console.log("Exporting?");
-        console.log(output);
-        console.log(this);        
+        output.attributes = attributes;  
 
         return output;
     },

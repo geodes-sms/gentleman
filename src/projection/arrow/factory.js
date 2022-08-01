@@ -1,6 +1,7 @@
 import { isNullOrUndefined } from "zenkai";
 import { AnchorArrow } from "./anchor-arrow.js";
 import { ForceArrow } from "./force-arrow.js";
+import { MultiArrow } from "./multi-arrow.js";
 
 
 var inc = 0;
@@ -27,6 +28,16 @@ const Handler = {
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
     }),
+    'multi': (model, schema, projection) => Object.create(MultiArrow, {
+        object: { value: "arrow" },
+        name: { value: "multi-arrow" },
+        type: { value: "multi" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    })
 };
 
 export const ArrowFactory = {

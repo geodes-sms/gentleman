@@ -1634,8 +1634,6 @@ const EditorCore = {
         }, false);
 
         this.body.addEventListener('focusin', (event) => {
-            console.log("focusin");
-            console.log(event.target);
 
             const { target } = event;
 

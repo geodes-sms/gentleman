@@ -91,6 +91,7 @@ const BaseAnchorArrow = {
 
         let source = AnchorHandler.findSource(this.anchorModel, this.bind.element || this.bind.container);
         let target = AnchorHandler.findTarget(this.anchorModel, value, source.index);
+        
 
         if(this.schema.offset){
             source.x += this.schema.offset.x;
@@ -157,8 +158,11 @@ const BaseAnchorArrow = {
             }
         }
 
-
-        this.setPath("M " + source.x + " " + source.y + " L " + target.x + " " + target.y);
+        if(source.x === target.x && source.y === target.y){
+            this.setSelfPath(source);
+        }else{
+            this.setPath("M " + source.x + " " + source.y + " L " + target.x + " " + target.y);
+        }
 
         if(this.definitions){
             this.projection.parent.container.append(this.definitions);
@@ -180,6 +184,29 @@ const BaseAnchorArrow = {
 
             moveValue.notify("cover", this);
         }
+    },
+
+    setSelfPath(source){
+        const points = this.schema.self.points;
+
+        let buffer = {
+            x: source.x,
+            y: source.y
+        }
+
+        let path = "M " + source.x + " " + source.y + " ";
+
+        for(let i = 0; i < points.length; i++){
+            const {x, y}  = points[i];
+
+            path += " L " + (buffer.x + x) + " " + (buffer.y + y) + " ";
+
+            buffer.x += x;
+            buffer.y += y;
+        }
+
+        this.path.setAttribute("d", path);
+        this.path.setAttribute("fill", "transparent");
     },
 
     bindEvents(){

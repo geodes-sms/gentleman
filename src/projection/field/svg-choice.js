@@ -72,9 +72,17 @@ const BaseSVGChoice = {
             this.openSelection = parser.parseFromString(openSelection.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement;
             this.element.append(this.openSelection);
             this.openSelection.addEventListener("click", () => {
+                if(this.open){
+                 this.selection.remove();
+                 this.open = false;
+                 return;   
+                }
                 this.element.append(this.selection);
+                this.open = true;
             })
         }
+
+        this.open = true;
 
         this.bindEvents();
 
@@ -189,6 +197,7 @@ const BaseSVGChoice = {
         choice.addEventListener("click", () => {
             this.setValue(getItemValue.call(this, choice));
             if(this.schema.selection.close){
+                this.open = false;
                 this.selection.remove();
                 this.width = 0;
                 this.height = 0;
@@ -212,6 +221,7 @@ const BaseSVGChoice = {
 
         this.projection.registerHandler("value.changed", () => {
             if(this.schema.selection.close){
+                this.open = false;
                 this.selection.remove();
                 this.width = 0;
                 this.height = 0;

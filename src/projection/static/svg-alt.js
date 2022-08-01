@@ -131,6 +131,7 @@ const BaseSVGAlt = {
     bindEvents() {
 
         this.element.addEventListener("click", () => {
+
             let concept = this.source;
             let projection = this.environment.createProjection(concept, this.schema.tag);
     
