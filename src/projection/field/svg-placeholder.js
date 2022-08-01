@@ -39,18 +39,24 @@ const BaseSVGPlaceholder = {
     },
 
     render(){
-        const { selection, dimensions, open} = this.schema;
+        const { selection, dimensions, open, overflow = false} = this.schema;
 
         if(isNullOrUndefined(this.element)){
             this.element = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
             this.element.dataset.id = this.id;
             this.element.dataset.nature = "field",
-            this.element.dataset.view = "svg-choice";
+            this.element.dataset.view = "svg-placeholder";
             
             this.element.id = this.id;
             this.element.classList.add("field");
             this.element.classList.add("field--svg_choice");
+        }
+
+        console.log("Rendering overflow");
+        console.log(overflow);
+        if(overflow){
+            this.element.style.overflow = "visible";
         }
 
         if(dimensions){
@@ -61,7 +67,8 @@ const BaseSVGPlaceholder = {
         if(isNullOrUndefined(this.openBack)){
             const {render, coordinates, dimensions } = open;
 
-
+            console.log("rendering open-back");
+            console.log(open);
             this.openBack = ContentHandler.call(this, Object.assign(render,
                 {
                     action:{

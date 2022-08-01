@@ -163,7 +163,7 @@ export const Algorithm = {
                 }
                 break;
             default:
-                const {coordinates, dimensions, render} = this.schema.rmv;
+                const {focus, coordinates, dimensions, render} = this.schema.rmv;
 
                 let proj = ContentHandler.call(this, render);
 
@@ -175,6 +175,10 @@ export const Algorithm = {
                 proj.addEventListener("click", () => {
                     this.source.delete();
                 })
+
+                if(focus){
+                    this.rmv = proj;
+                }
 
                 break;
         }

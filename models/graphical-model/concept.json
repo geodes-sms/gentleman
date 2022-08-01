@@ -277,18 +277,12 @@
             ]
         },
         {
-            "name": "mutli-arrow",
+            "name": "multi-arrow",
             "nature": "concrete",
             "prototype": "arrow",
-            "attribute":[
+            "attributes":[
                 {
-                    "name": "target",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "join",
+                    "name": "meet",
                     "target":{
                         "name": "string",
                         "values":[
@@ -298,6 +292,12 @@
                             "maxW",
                             "minW"
                         ]
+                    }
+                },
+                {
+                    "name": "offSet",
+                    "target":{
+                        "name": "coordinates"
                     }
                 },
                 {

@@ -19,6 +19,24 @@ export const Arrow = {
         }
     },
 
+    styleSubPath(style, sp){
+        const { stroke = "black", dasharray = null, width = 1, linecap = "butt", end = false, start = false } = style;
+
+        sp.style.stroke = stroke;
+
+        if(!isNullOrUndefined(dasharray)){
+            sp.style["stroke-dasharray"] = dasharray;
+        }
+
+        sp.style["stroke-width"] = valOrDefault(width, 5);
+
+        sp.style["stroke-linecap"] = linecap;
+
+        /*if(end){
+            this.createMarkerEnd();
+        }*/
+    },
+
     createMarkerEnd(){
         if(isNullOrUndefined(this.definitions)){
             this.definitions = document.createElementNS("http://www.w3.org/2000/svg", "defs");

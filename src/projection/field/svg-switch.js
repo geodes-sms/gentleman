@@ -9,18 +9,23 @@ const BaseSVGSwitch = {
     },
 
     render(){
-        const { order } = this.schema;
+        const { order, dimensions = false } = this.schema;
 
         if(isNullOrUndefined(this.element)){
             this.element = document.createElementNS("http://www.w3.org/2000/svg", "svg"); 
 
             this.element.dataset.id = this.id;
             this.element.dataset.nature = "field",
-            this.element.dataset.view = "svg-choice";
+            this.element.dataset.view = "svg-switch";
             
             this.element.id = this.id;
             this.element.classList.add("field");
             this.element.classList.add("field--svg_choice");
+        }
+
+        if(dimensions){
+            this.element.setAttribute("width", dimensions.width);
+            this.element.setAttribute("height", dimensions.height);
         }
 
         if(isNullOrUndefined(this.index)){
@@ -44,6 +49,9 @@ const BaseSVGSwitch = {
     },
 
     clickHandler(){
+        this.index = (this.index + 1) % this.order.length;
+            
+        this.source.setValue(this.order[this.index]);
     },
 
     registerDimensionsObserver(o){
@@ -59,12 +67,7 @@ const BaseSVGSwitch = {
     },
 
     bindEvents(){
-        this.element.addEventListener("click", () => {
-            this.index = (this.index + 1) % this.order.length;
-            
-            this.source.setValue(this.order[this.index]);
 
-        })
     }
 }
 

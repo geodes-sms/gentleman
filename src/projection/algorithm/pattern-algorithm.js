@@ -16,7 +16,7 @@ const BasePatternAlgorithm = {
     render(){
         const fragment = createDocFragment();
 
-        const { dimensions, saturation, create, add, style} = this.schema; 
+        const { dimensions, saturation, overflow = false, create, add, style} = this.schema; 
 
         this.focusable = true;
 
@@ -35,6 +35,11 @@ const BasePatternAlgorithm = {
             this.container.dataset.click = "container"
             this.container.tabIndex = 0;
         }
+        
+        if(overflow){
+            this.container.style.overflow = "visible";
+        }
+
 
         if(saturation){
             this.saturation = saturation;
@@ -319,7 +324,9 @@ const BasePatternAlgorithm = {
 
             this.anchors.indexes.splice(this.anchors.indexes.length - 1, 1);
             this.anchors.current =  this.anchors.indexes[this.anchors.indexes.length - 1];
-            this.placeAdd();
+            if(!isNullOrUndefined(this.add) && !this.schema.add.coordinates){
+                this.placeAdd();
+            }
             this.parent.checkAugment(this.anchors.current, this.container);
             
             if(this.anchorModel){
@@ -343,7 +350,9 @@ const BasePatternAlgorithm = {
 
         this.anchors.indexes.splice(this.anchors.indexes.length - 1, 1);
         this.anchors.current =  this.anchors.indexes[this.anchors.indexes.length - 1];
-        this.placeAdd();
+        if(!isNullOrUndefined(this.add) && !this.schema.add.coordinates){
+            this.placeAdd();
+        }
         this.parent.checkAugment(this.anchors.current, this.container);
 
     },
@@ -351,7 +360,9 @@ const BasePatternAlgorithm = {
     moveElemToAnchor(index, itemIndex){
         if(this.anchors.indexes.length <= index + 1 ){
             this.nextAnchor(true);
-            this.placeAdd();
+            if(!isNullOrUndefined(this.add) && !this.schema.add.coordinates){
+                this.placeAdd();
+            }
         }
 
         let newAnchor = this.anchors.indexes[index];

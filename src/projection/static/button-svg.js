@@ -10,7 +10,10 @@ const ActionHandler = {
 }
 
 function openSelection(target){
-    target.open();
+    if(isNullOrUndefined(this.target)){
+        this.target = target
+    }
+    this.target.open();
 }
 
 function openSide(target, value){
@@ -163,6 +166,9 @@ const BaseSVGButton = {
 
         this.content.addEventListener("click", () => {
             const { type, target, value } = this.schema.action;
+            console.log("target");
+            console.log(target);
+            console.log(this.schema.action);
             ActionHandler[type].call(this, target, value);
         })
     },

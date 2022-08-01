@@ -10,7 +10,7 @@ const BaseAnchorAlgorithm = {
     },
 
     render(){
-        const { dimensions, contains, reserve, model, style, offset, zindex, content = [] } = this.schema;
+        const { dimensions, overflow = false, contains, reserve, model, style, offset, zindex, content = [] } = this.schema;
 
         if(isNullOrUndefined(this.container)){
             this.container = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -19,6 +19,10 @@ const BaseAnchorAlgorithm = {
             this.container.dataset.nature = "algorithm";
             this.container.dataset.algorithm = "anchor";
             this.container.dataset.id = this.id;
+        }
+
+        if(overflow){
+            this.container.style.overflow = "visible";
         }
 
         if(dimensions){

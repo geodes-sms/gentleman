@@ -11,7 +11,7 @@ const BaseDecorationAlgorithm = {
     },
 
     render(){
-        const { content = [], coordinates = false, background, data = false, reference = false, dimensions = false, style, rmv = false} = this.schema;
+        const { content = [], coordinates = false, overflow = false, background, data = false, reference = false, dimensions = false, style, rmv = false, anchor = false} = this.schema;
 
         const fragment = createDocFragment();
 
@@ -48,6 +48,12 @@ const BaseDecorationAlgorithm = {
                 }
             }
 
+            
+        if(overflow){
+            this.container.style.overflow = "visible";
+        }
+
+
             if(!background && !dimensions){
                 this.container.style.overflow = "visible";
             }
@@ -71,6 +77,10 @@ const BaseDecorationAlgorithm = {
 
         if(data){
             this.container.setAttribute("data-shape", data);
+        }
+
+        if(anchor){
+            this.attachPoint = anchor;
         }
 
         if(isNullOrUndefined(this.content) && !isEmpty(content)){
@@ -146,14 +156,20 @@ const BaseDecorationAlgorithm = {
             })
         }
 
-        this.content.forEach(c => {
-            c.focusIn();
-        })
+        if(!isNullOrUndefined(this.content)){
+            this.content.forEach(c => {
+                c.focusIn();
+            })
+        }
 
         this.focused = true;
         this.container.classList.add("active");
         this.container.classList.add("focus");
 
+
+        if(this.rmv){
+            this.container.append(this.rmv);
+        }
         return this;
     },
     focusOut() {
@@ -177,6 +193,10 @@ const BaseDecorationAlgorithm = {
         this.container.classList.remove("focus");
 
         this.focused = false;
+
+        if(this.rmv){
+            this.rmv.remove();
+        }
 
         return this;
     },
