@@ -207,7 +207,6 @@ export const BaseForceAlgorithm = {
     },
 
     addArrow(arrow, from, to){
-        
         if(isNullOrUndefined(this.force)){
             this.setUpForce();
         }
@@ -273,7 +272,9 @@ export const BaseForceAlgorithm = {
         arrow.path.classList.add("link" + this.id);
 
         this.container.append(arrow.path);
-
+        console.log("CheckDef");
+        console.log(arrow);
+        console.log(arrow.definitions);
         if(arrow.definitions){
             this.container.append(arrow.definitions);
         }
@@ -323,6 +324,10 @@ export const BaseForceAlgorithm = {
 
         this.container.append(arrow.path);
 
+        if(arrow.definitions){
+            this.container.append(arrow.definitions);
+        }
+
         this.restart();
     },
 
@@ -338,8 +343,27 @@ export const BaseForceAlgorithm = {
                 if(indexF < 0 || indexT < 0){
                     this.removeArrow(arrow, i);
                 }else{
+                    let prevSource = this.links[i].source.index;
+                    let prevTarget = this.links[i].target.index;
+
+                    if(!isNullOrUndefined(this.linkInventory.get(prevSource+ "," + prevTarget))){
+                        let inv = this.linkInventory.get(prevSource+ "," + prevTarget);
+
+                        inv.length--;
+
+                        if(inv.length <= 0){
+                            this.linkInventory.delete(prevSource+ "," + prevTarget);
+                        }
+                    }
+
                     this.links[i].source = indexF;
                     this.links[i].target = indexT;
+                   
+                    if(!isNullOrUndefined(this.linkInventory.get(indexF+ "," + indexT))){
+                        this.linkInventory.get(indexF+ "," + indexT).length++;
+                    }else{
+                        this.linkInventory.set(indexF+ "," + indexT, {length: 1});
+                    }                    
                 }
 
                 this.restart();
@@ -355,6 +379,15 @@ export const BaseForceAlgorithm = {
         }
 
         if(index){
+            if(!isNullOrUndefined(this.linkInventory.get(this.links[index].source.index + "," + this.links[index].target.index))){
+                let inv = this.linkInventory.get(this.links[index].source.index + "," + this.links[index].target.index);
+
+                inv.length--;
+
+                if(inv.length === 0){
+                    this.linkInventory.delete(this.links.source.index + "," + this.links.target.index);
+                }
+            }
             this.links.splice(index, 1);
             arrow.path.remove();
             this.restart();
@@ -363,6 +396,16 @@ export const BaseForceAlgorithm = {
 
         for(let i = 0; i < this.links.length; i++){
             if(this.links[i].id === arrow.id){
+
+                if(!isNullOrUndefined(this.linkInventory.get(this.links[i].source.index + "," + this.links[i].target.index))){
+                    let inv = this.linkInventory.get(this.links[i].source.index + "," + this.links[i].target.index);
+
+                    inv.length--;
+
+                    if(inv.length === 0){
+                        this.linkInventory.delete(this.links.source.index + "," + this.links.target.index);
+                    }
+                }
                 this.links.splice(i, 1);
                 arrow.path.remove();
                 this.restart();
@@ -672,6 +715,9 @@ export const BaseForceAlgorithm = {
 
             this.link.attr("d",
                 function(d){
+                    if(d.source === d.target){
+                        return;
+                    }
                     const source = BorderHandler.computeBorder(d.source, d.target);
                     const target = BorderHandler.computeBorder(d.target, d.source);
                     
@@ -684,15 +730,11 @@ export const BaseForceAlgorithm = {
                     d.s = source;
                     d.t = target;
 
-                    /*console.log(d);
-                    console.log(linkInventory)*/
                     let inv = linkInventory.get(d.source.index+ "," + d.target.index);
 
                     if(inv.length > 1){
                         dr = dr / (1 + (1 / inv.length) * (d.indexL - 1));
                     }
-
-                    /*dr = dr/(1 + (1/lTotalLinkNum) * (d.linkindex - 1));*/
 
                     return "M" + target.x + "," + target.y +
                        "A" + dr + "," + dr + " 0 0 1," + source.x + "," + source.y +
@@ -766,11 +808,6 @@ export const BaseForceAlgorithm = {
                 return v.x;
                 
             }
-            console.log("X setting");
-            console.log(width);
-            console.log(d.width)
-            console.log(Math.min(width - d.width))
-            console.log(Math.max(d.width, Math.min(width - d.width / 2, d.x)) - d.width/ 2);
             return  (d.x = Math.max(d.width / 2, Math.min(width - d.width / 2, d.x))) - d.width/ 2})
         .attr("y", function(d){ 
             if(!isNullOrUndefined(d.ref)){
@@ -973,7 +1010,6 @@ export const BaseForceAlgorithm = {
                 (node.fy < conc.y) &&
                 (node.fx + node.width / 2 > conc.x - conc.width / 2) &&
                 (node.fy + node.height > conc.x - conc.height / 2)){
-                    console.log("Left Top");
                 let offW = (node.fx + node.width / 2) - (conc.x - conc.width / 2); 
                 let offH = ((node.fy + node.height / 2) - (conc.y - conc.height / 2)) * 1.1;
                 
@@ -990,7 +1026,6 @@ export const BaseForceAlgorithm = {
                     (node.fy < conc.y) &&
                     ((conc.x + conc.width / 2) > (node.fx - node.width /2)) &&
                     ((node.fy + node.height / 2) > (conc.y - conc.height / 2))){
-                        console.log("right Top");
                     let offW = (conc.x + conc.width / 2) - (node.fx - node.width /2);
                     let offH = ((node.fy + node.height / 2) - (conc.y - conc.height / 2) ) * 1.1;
                     
@@ -1119,47 +1154,26 @@ export const BaseForceAlgorithm = {
                 (node.y <= conc.y) &&
                 (node.x + node.width / 2 >= conc.x - conc.width / 2) &&
                 (node.y + node.height / 2 >= conc.y - conc.height / 2)){
-                    console.log("YEPP");
-                    let saveNode = node.x;
-                    let saveConc = conc.x;
+
                     let offW = (node.x + node.width / 2) - (conc.x - conc.width / 2); 
                     let offH = ((node.y + node.height /2) - (conc.y - conc.height / 2)) * 1.1;
-                    console.log(offW);
-                    console.log(offH);
-                    console.log(saveNode);
-                    console.log(saveConc);
-                    console.log(width);
-                    console.log("DIR");
-                    console.dir(node);
-                    console.dir(conc);
-                    console.log("LOG");
-                    console.log(node);
-                    console.log(conc);
-
                                        
                     switch(Math.min(offW, offH)){
                         case offW:
-                            console.log("W move");
                             if(node.x - offW / 2 < 0){
-                                console.log("Too left");
                                 conc.x += offW;
                                 break;
                             }
 
                             if(conc.x + offW / 2 > width){
-                                console.log("Too right");
                                 node.x -= offW;
                                 break;
                             }
-                            
-                            console.log("Default");
-                            console.log(offW / 2);
 
                             node.x -= offW / 2;
                             conc.x += offW / 2;
                             break;
                         case offH:
-                            console.log("H move");
                             if(node.y - offH / 2 < 0){
                                 conc.x += offH;
                                 break;
