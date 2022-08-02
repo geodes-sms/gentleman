@@ -287,11 +287,13 @@
                         "name": "string",
                         "values":[
                             "free",
-                            "maxH",
-                            "minH",
-                            "maxW",
-                            "minW"
+                            "maxX",
+                            "minX",
+                            "maxY",
+                            "minY"
                         ]
+                        ,
+                        "default": "free"
                     }
                 },
                 {
@@ -303,13 +305,31 @@
                 {
                     "name": "sub-paths",
                     "target":{
-                        "name": "arrow-style"
+                        "name": "sub-path"
                     }
                 }
             ],
             "properties": [
                 { "name": "handlerType", "type": "string", "value": "arrow"},
                 { "name": "elementType", "type": "string", "value": "multi"}
+            ]
+        },
+        {
+            "name": "sub-path",
+            "nature": "concrete",
+            "attributes":[
+                {
+                    "name": "type",
+                    "target":{
+                        "name": "string"
+                    } 
+                },
+                {
+                    "name": "arrow-style",
+                    "target":{
+                        "name": "arrow-style"
+                    }
+                }
             ]
         },
         {
@@ -1311,7 +1331,7 @@
                 {
                     "name": "stroke",
                     "target":{
-                        "name": "hex-color"
+                        "name": "hex-color__black"
                     }
                 },
                 {

@@ -2824,8 +2824,22 @@
                                 }
                             ]
                         }
+                    },
+                    {
+                        "type": "simulation",
+                        "simulation":{
+                            "type": "multi"
+                        }
                     }
                 ]
+            }
+        },
+        {
+            "concept": { "name": "sub-path" },
+            "type": "simulation",
+            "tags": ["simulation"],
+            "content":{
+                "type": "sub-path"
             }
         },
         {
