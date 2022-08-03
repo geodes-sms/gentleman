@@ -5,7 +5,7 @@ import './stylesheets.js';
 import '@css/samples/gentleman.css';
 import '@css/samples/projection.css';
 import '@css/samples/style.css';
-import './../demo/traffic-light/assets/style.css';
+import './../demo/relis/assets/style.css';
 // import './../demo/todo/assets/style.css';
 
 import { createDiv, getElements, isNullOrUndefined, isHTMLElement, hasOwn } from "zenkai";
@@ -25,7 +25,7 @@ const Model = {
     TL: "trafficlight",
 };
 
-const modelName = Model.TL;
+const modelName = Model.RL;
 
 const MODEL__EDITOR = require(`@models/${modelName}-model/config.json`);
 const MODEL__CONCEPT = require(`@models/${modelName}-model/concept.json`);
@@ -330,35 +330,35 @@ function updatePreview(instance, value, concept) {
 editor.init({
     config: MODEL__EDITOR,
     handlers: MODEL__HANDLER,
-    conceptModel: MODEL__CONCEPT,
-    projectionModel: MODEL__PROJECTION
+    // conceptModel: MODEL__CONCEPT,
+    // projectionModel: MODEL__PROJECTION
 });
 editor.home.open();
 editor.exporter.close();
 
-if (modelName === Model.MP) {
-    const STYLE_CONCEPT = require(`@models/${Model.MS}-model/concept.json`);
-    const STYLE_PROJECTION = require(`@models/${Model.MS}-model/projection.json`);
+// if (modelName === Model.MP) {
+//     const STYLE_CONCEPT = require(`@models/${Model.MS}-model/concept.json`);
+//     const STYLE_PROJECTION = require(`@models/${Model.MS}-model/projection.json`);
 
-    editor.loadConcept(STYLE_CONCEPT, "styling concept");
-    editor.loadProjection(STYLE_PROJECTION, "styling projection");
+//     editor.loadConcept(STYLE_CONCEPT, "styling concept");
+//     editor.loadProjection(STYLE_PROJECTION, "styling projection");
 
-    let window = editor.findWindow("side-instance");
-    if (isNullOrUndefined(window)) {
-        window = editor.createWindow("side-instance");
-        window.container.classList.add("model-projection-sideview");
-    }
+//     let window = editor.findWindow("side-instance");
+//     if (isNullOrUndefined(window)) {
+//         window = editor.createWindow("side-instance");
+//         window.container.classList.add("model-projection-sideview");
+//     }
 
-    editor.createInstance("projection");
-}
+//     editor.createInstance("projection");
+// }
 
-if (modelName === Model.RL) {
-    editor.createInstance("project");
-}
+// if (modelName === Model.RL) {
+//     editor.createInstance("project");
+// }
 
-if (modelName === Model.SP) {
-    let instance = editor.createInstance("concept");
-}
+// if (modelName === Model.SP) {
+//     let instance = editor.createInstance("concept");
+// }
 
 // if (modelName === Model.TL) {
 //     let instance = editor.createInstance("mode");

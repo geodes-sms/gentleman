@@ -64,6 +64,7 @@ export function createProjectionModel($schema, environment) {
 
     const model = Object.create(ProjectionModel, {
         schema: { value: valOrDefault($schema, schema), writable: true },
+        editor: { value: environment },
         environment: { value: environment },
     });
 
@@ -188,6 +189,7 @@ export const ProjectionModel = {
      */
     registerField(field) {
         field.environment = this.environment;
+        field.editor = this.environment;
         this.fields.set(field.id, field);
 
         return this;
@@ -213,6 +215,7 @@ export const ProjectionModel = {
 
     registerStatic(staticElement) {
         staticElement.environment = this.environment;
+        staticElement.editor = this.environment;
         this.statics.set(staticElement.id, staticElement);
 
         return this;
@@ -238,6 +241,7 @@ export const ProjectionModel = {
 
     registerLayout(layout) {
         layout.environment = this.environment;
+        layout.editor = this.environment;
         this.layouts.set(layout.id, layout);
 
         return this;

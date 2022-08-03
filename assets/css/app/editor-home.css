@@ -22,6 +22,7 @@
     position: relative;
     display: flex; flex-direction: row;
     padding-top: 24px; padding-left: 1%;
+    height: calc(100% - 60px);
 }
     .editor-home-section:not(:last-child) {
         margin-right: calc(2% + 2px);
@@ -80,8 +81,7 @@
 
 .editor-home-menu-tabs {
     display: flex; flex-direction: column;
-    width: 300px;
-    padding-right: 120px;
+    min-width: 200px;
 }
 
 .editor-home-menu-tab {
@@ -107,20 +107,15 @@
 .editor-file {
     flex: 1 1;
     position: relative;
-    display: flex; flex-direction: column; 
+    display: flex; flex-direction: row; flex-wrap: wrap; align-content: flex-start;
     margin-right: 12px;
     height: 100%;
     padding-bottom: 12px;
     background-color: #fff;
-    overflow: hidden;
+    /* overflow: auto; */
     border-radius: 6px;
     z-index: 10;
 }
-    .editor-file-main {
-        display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-        padding: 18px;
-    }
-
     .editor-file--concept {
         box-shadow: 0 0 0 1px #2d71b5;
     }
@@ -148,8 +143,10 @@
     }
 
     .editor-file-actionbar {
-        display: flex; flex-direction: row; justify-content: flex-end;
-        padding-left: 6px; padding-right: 6px;
+        display: flex; flex-direction: row; justify-content: flex-end; align-items: flex-end;
+        padding-top: 6px; padding-right: 6px; padding-bottom: 6px;
+        height: 60px;
+        width: 100%;
     }
 
     .editor-file-actionbar__button {
@@ -236,7 +233,6 @@
        
     .editor-file__list {
         display: flex; align-items: center; flex-wrap: wrap;
-        padding: 6px 12px;
         border-radius: 6px;
     }
         .editor-file-placeholder {
@@ -318,8 +314,9 @@
     }
 
     .editor-file__browse-button {
-        margin-top: 6px;
-        padding: 3px 6px 4px;
+        margin-right: 12px;
+        padding-left: 8px; padding-right: 8px;
+        height: 30px;
         font-size: 1.5em; font-weight: 500;
         text-align: center;
         color: #fff;
@@ -332,14 +329,62 @@
 
 .editor-file-mainview {
     flex-grow: 2;
+    display: flex; flex-direction: column;
+    width: 70%;
+    height: calc(100% - 60px);
+    padding-left: 12px;
 }
 
+.detail-area {
+    display: flex; flex-direction: column;
+    flex-grow: 2;
+    height: 50%;
+}
+
+.concept-filter {
+    display: flex; flex-direction: row;
+    margin-bottom: 8px;
+    width: 50%; min-width: 300px;
+    padding: 3px 6px;
+    border-radius: 3px;
+    background-color: #f5f5f5;
+    box-shadow: 1px 2px 1px #d5d5d5;
+}
+
+.concept-filter-option {
+    display: flex;
+    margin-right: 6px;
+    font-size: 1.4em;
+    padding: 6px;
+    border-radius: 180px;
+}
+
+    .concept-filter-option:hover,
+    .concept-filter-option.checked {
+        background-color: #fff;
+    }
+
+    .cf-option-checkbox {
+        
+    }
+
+    .cf-option-text {
+        padding-left: 2px;
+        font-weight: 500;
+        text-transform: capitalize;
+        color: #555;
+    }
+
+    .cf-option-checkbox:checked + .cf-option-text {
+        color: #1f75fe;
+    }
 
 /*
   EDITOR HOME CONCEPT
 --------------------------------------------------------------------*/
 
 .editor-file-concept {
+    display: flex; align-items: center;
     margin-right: 4px; margin-bottom: 4px;
     padding: 4px 12px 6px;
     color: #fff;
@@ -350,6 +395,16 @@
 }
     .editor-file-concept:hover {
         background-color: #5497FF;
+    }
+
+    .editor-file-concept-root {
+        position: relative;
+        display: block;
+        margin-left: 6px;
+        height: 12px;
+        width: 12px;
+        border-radius: 50%;
+        background-color: #fff;
     }
 
 /*
@@ -558,15 +613,9 @@
     font-size: 1.3em;
     margin-bottom: 3px;
     cursor: pointer;
+    height: 100%;
     transition: .2s;
 }
-    .app-model-concept:hover {
-        background-color: #eee;
-    }
-    .app-model-concept.selected {
-        background-color: #fff;
-        cursor: default;
-    }
 
     .app-model-concept.selected .app-model-concept-name {
         font-weight: 500;
@@ -580,6 +629,7 @@
     position: relative;
     display: flex;
     padding-top: 3px; padding-bottom: 3px;
+    height: 24px;
 }
 
     .app-model-concept-nature {
@@ -614,39 +664,32 @@
     }
 
 .app-model-concept-attributes {
-    display: flex; flex-wrap: wrap;
-    font-size: 1rem;
+    display: flex; flex-direction: column;
     padding-top: 6px;
+    font-size: 1rem;
+    border-radius: 3px;
+    box-shadow: inset 0 2px 2px #d5d5d5;
+    background-color: #f9f9f9;
+    height: calc(100% - 24px);
+    overflow: auto;
 }
 
     .app-model-concept-attribute {
-        margin-right: 3px; margin-bottom: 3px;
-        padding: 1px 6px 2px; 
+        margin-bottom: 3px;
         font-size: 1.3em; font-weight: 500;
         color: #738CFF;
-        border-radius: 1px;
-        box-shadow: 0 1px 1px #d5d5d5;
-        background-color: #fff;
         cursor: pointer;
         transition: .2s;
     }
-        .app-model-concept-attribute:hover {
+        .app-model-concept-attribute.selected {
             color: #fff;
-            background-color: #738CFF;
-            border-radius: 3px;
+            border-radius: 2px;
+            background-color: #6667AB;
         }
-
-    .app-model-concept-attribute.selected {
-        color: #fff;
-        border-radius: 2px;
-        background-color: #6667AB;
-    }
 
     .app-model__attribute-info {
         margin-top: 6px;
-        background-color: #fff;
         padding: 4px 6px 2px;
-        box-shadow: inset 0 1px 2px #d5d5d5;
         font-size: 1.3rem;
         border-radius: 4px;
     }
@@ -663,7 +706,7 @@
 
     .app-model__attribute-required {
         position: relative;
-        margin-left: 6px;
+        margin-right: 6px;
         display: inline-block;
         font-size: 0.9em; font-style: normal; font-weight: 500;
         height: 12px; width: 12px;

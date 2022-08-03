@@ -5,6 +5,8 @@ import {
 import { select, unselect } from '@utils/index.js';
 import { FileConfig } from './editor-config.js';
 import { FileIO } from './editor-file.js';
+import { SettingsData } from './editor-data.js';
+import { SettingsBuild } from './editor.build.js';
 
 
 export const EditorHome = {
@@ -117,31 +119,6 @@ export const EditorHome = {
     },
 
     bindEvents() {
-        this.editor.registerHandler("editor.load-concept@post", (args) => {
-            if (!this.editor.hasConceptModel) {
-                return;
-            }
-
-            this.menu.fileIO.addFile("concept", args[0], args[1]);
-        });
-
-        this.editor.registerHandler("editor.load-projection@post", (args) => {
-            if (!this.editor.hasConceptModel) {
-                return;
-            }
-
-            this.menu.fileIO.addFile("projection", args[0], args[1]);
-        });
-
-        this.editor.registerHandler("editor.unload-concept@post", (args) => {
-            this.menu.fileIO.removeFile("concept");
-            this.menu.config.clear();
-        });
-
-        this.editor.registerHandler("editor.unload-projection@post", (args) => {
-            this.menu.fileIO.removeFile("projection");
-        });
-
         this.editor.registerHandler("concept-model.updated", () => {
             this.menu.config.clear();
 
@@ -169,11 +146,21 @@ const Menu = {
     currentTab: null,
     /** @type {HTMLElement} */
     activeTab: null,
+    /** @type {FileIO} */
+    fileIO: null,
+    /** @type {FileConfig} */
+    config: null,
+    /** @type {SettingsData} */
+    dataSettings: null,
+    /** @type {SettingsBuild} */
+    buildSettings: null,
 
     init() {
         this.tabs = new Map();
         this.tabs.set("file", "File");
-        this.tabs.set("config", "Configuration");
+        this.tabs.set("config", "Config");
+        this.tabs.set("data", "Data");
+        this.tabs.set("build", "Build");
         this.currentTab = "file";
 
         return this;
@@ -212,9 +199,13 @@ const Menu = {
 
         this.fileIO = createFileIO.call(this);
         this.config = createFileConfig.call(this);
+        this.dataSettings = createDataSettings.call(this);
+        this.buildSettings = createBuildSettings.call(this);
 
         this.window.append(this.fileIO.render());
         this.window.append(this.config.render());
+        this.window.append(this.dataSettings.render());
+        this.window.append(this.buildSettings.render());
 
         this.selectTab(this.currentTab);
 
@@ -236,9 +227,13 @@ const Menu = {
         if (name === "file") {
             this.fileIO.show();
             this.config.hide();
+            this.dataSettings.hide();
+            this.buildSettings.hide();
         } else if (name === "config") {
             this.config.show();
             this.fileIO.hide();
+            this.dataSettings.hide();
+            this.buildSettings.hide();
         }
 
         if (this.activeTab) {
@@ -260,7 +255,6 @@ const Menu = {
     }
 };
 
-
 /**
  * Creates a drop area
  * @param {string} type 
@@ -277,8 +271,6 @@ function createFileIO(types) {
     return fileIO;
 }
 
-
-
 /**
  * Creates a drop area
  * @returns {FileConfig}
@@ -291,4 +283,32 @@ function createFileConfig() {
     fileConfig.init();
 
     return fileConfig;
+}
+
+/**
+ * Creates a drop area
+ * @returns {FileConfig}
+ * @this {EditorHome}
+ */
+function createDataSettings() {
+    const settings = Object.create(SettingsData, {
+        editor: { value: this.editor }
+    });
+    settings.init();
+
+    return settings;
+}
+
+/**
+ * Creates a drop area
+ * @returns {FileConfig}
+ * @this {EditorHome}
+ */
+function createBuildSettings() {
+    const settings = Object.create(SettingsBuild, {
+        editor: { value: this.editor }
+    });
+    settings.init();
+
+    return settings;
 }

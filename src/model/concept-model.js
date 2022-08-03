@@ -39,6 +39,24 @@ export const ConceptModel = {
 
         return this;
     },
+    initValue(values){
+        console.log(values);
+        if (Array.isArray(values)) {
+            this.values = values;
+
+            values.filter(value => value.root).forEach(value => {
+                this.createConcept({
+                    "name": value.name
+                }, {
+                    "value": value
+                });
+            });
+
+            this.values = values.filter(val => val.id.startsWith("value"));
+        }
+
+        return this;
+    },
     done() {
         // TODO check if has model changes
 
@@ -443,6 +461,22 @@ export const ConceptModel = {
         let start = `<model:gentleman>`;
         let body = this.getRootConcepts().map(concept => concept.toXML()).join("");
         let end = `</model:gentleman>`;
+
+        return start + body + end;
+    },
+    toXMI() {
+        let start = `
+            <?xml version="1.0" encoding="ISO-8859-1"?>
+            <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gent="geodes.sms.gentleman">
+                <gent:Model name="MindMap">
+        `;
+        
+        let body = this.getRootConcepts().map(concept => concept.toXMI()).join("");
+        
+        let end = `
+                </gent:Model>
+            </xmi:XMI>
+        `;
 
         return start + body + end;
     },

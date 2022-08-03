@@ -1,6 +1,7 @@
 import {
     createDiv, createButton, createUnorderedList, createListItem, createSpan, createParagraph,
-    createI, valOrDefault, removeChildren, isHTMLElement, isNullOrUndefined, createDocFragment
+    createI, valOrDefault, removeChildren, isHTMLElement, isNullOrUndefined, createDocFragment,
+    createInput, createLabel, toBoolean
 } from 'zenkai';
 import { hide, show, _b, _i } from '@utils/index.js';
 
@@ -39,15 +40,31 @@ export const FileIO = {
     /** @type {HTMLElement} */
     selection: null,
     /** @type {Map} */
-    cache: null,
+    concepts: null,
+    /** @type {*} */
+    selectedConcept: null,
+    /** @type {Map} */
+    attributes: null,
+    /** @type {ConceptFilter} */
+    filter: null,
 
     init() {
-        this.cache = new Map();
+        this.concepts = new Map();
+        this.attributes = new Map();
+
+        this.filter = Object.create(ConceptFilter, {
+            editor: { value: this.editor },
+            settings: { value: this }
+        }).init([
+            { label: "Concrete", nature: "concrete" },
+            { label: "Prototype", nature: "prototype" },
+            { label: "Derivative", nature: "derivative" },
+        ]);
 
         return this;
     },
 
-    get hasFile() { return this.cache.size > 0; },
+    get hasFile() { return this.concepts.size > 0; },
     get hasSelection() { return !isNullOrUndefined(this.selection); },
     getFile() {
         return this.file;
@@ -94,6 +111,40 @@ export const FileIO = {
 
         return this;
     },
+    reload() {
+        if (!this.editor.hasConceptModel) {
+            return;
+        }
+
+        const concepts = this.editor.conceptModel.schema;
+
+        concepts.forEach(c => {
+            let item = createListItem({
+                class: [`editor-file-concept`],
+                dataset: {
+                    name: c.name,
+                    nature: c.nature,
+                    root: valOrDefault(c.root, `false`),
+                }
+            }, c.name);
+
+            if (c.root) {
+                let icoRoot = createI({
+                    class: ["editor-file-concept-root"],
+                    title: "root concept",
+                });
+    
+                item.append(icoRoot);
+            }
+
+            this.concepts.set(c.name, item);
+
+            this.files.append(item);
+        });
+        
+
+        this.refresh();
+    },
     render() {
         /** @type {HTMLElement} */
         this.container = createDiv({
@@ -104,14 +155,29 @@ export const FileIO = {
             class: ["editor-file-actionbar"]
         });
 
-        /** @type {HTMLButtonElement} */
+        this.btnLoad = createButton({
+            class: ["btn", `editor-file__browse-button`],
+            title: `Load file in editor`,
+            dataset: {
+                action: `load`,
+            },
+        }, "Browse");
+
+        this.btnImport = createButton({
+            class: ["btn", `editor-file__browse-button`],
+            title: `Load file in editor`,
+            dataset: {
+                action: `load`,
+            },
+        }, "Import");
+
         this.btnUnload = createButton({
             class: ["btn", "editor-file-actionbar__button", "editor-file-actionbar__btn-remove"],
             title: `Remove all files`,
             dataset: { action: `unload`, },
         });
 
-        actionBar.append(this.btnUnload);
+        actionBar.append(this.btnLoad, this.btnUnload);
 
         this.mainView = createDiv({
             class: ["editor-file-mainview"]
@@ -126,36 +192,23 @@ export const FileIO = {
             class: ["detail-area", "editor-file-detail"]
         });
 
-        this.mainView.append(this.files, this.infoView);
 
-        let dropArea = createDiv({
-            class: ["drop-area", "editor-file-main"]
-        });
+
+        // let dropArea = createDiv({
+        //     class: ["drop-area", "editor-file-main"]
+        // });
 
         this.placeholder = createParagraph({
             class: ["editor-file-placeholder"],
             html: `Add your ${_b("concepts")}, ${_b("projections")} and all other ${_b("resources")}`
         });
 
-        let browse = createDiv({
-            class: ["editor-file__browse"],
-        });
-        let instruction = createSpan({
-            class: ["editor-file__browse-instruction"],
-        }, "Upload your files");
+        // dropArea.append(this.placeholder);
 
-        this.btnLoad = createButton({
-            class: ["btn", `editor-file__browse-button`],
-            title: `Load file in editor`,
-            dataset: {
-                action: `load`,
-            },
-        }, "Browse");
 
-        browse.append(instruction, this.btnLoad);
-        dropArea.append(this.placeholder, browse);
+        this.mainView.append(this.filter.render(), this.files, this.infoView);
 
-        this.container.append(actionBar, this.mainView, dropArea);
+        this.container.append(actionBar, this.mainView);
 
         this.bindEvents();
 
@@ -179,10 +232,7 @@ export const FileIO = {
         return this;
     },
     selectItem(name) {
-        if (!this.cache.has(name)) {
-            return null;
-        }
-        let item = this.cache.get(name);
+        let item = this.concepts.get(name);
 
         if (isHTMLElement(this.selection)) {
             this.selection.classList.remove("selected");
@@ -191,66 +241,6 @@ export const FileIO = {
         this.selection = item;
         this.selection.classList.add("selected");
         this.displayInfo(name);
-
-        this.refresh();
-    },
-    addFile(type, name, file) {
-        let item = createListItem({
-            class: ["editor-file__list-item", `editor-file__list-item--${type}`],
-            dataset: {
-                context: "menu",
-                action: `open-${type}`,
-                status: "active"
-            }
-        });
-        let icoFile = createI({
-            class: ["ico", "ico-file", "editor-file__list-item-icon"]
-        });
-        let title = createSpan({
-            class: ["editor-file__list-item-type"]
-        }, valOrDefault(name, type));
-
-        let btnRemove = createButton({
-            class: ["editor-file__list-item__btn-remove"],
-            dataset: {
-                action: `unload-${type}`,
-            }
-        }, createI({
-            class: ["ico", "ico-delete"],
-            dataset: {
-                "ignore": "all",
-            }
-        }, "✖"));
-        item.append(icoFile, title, btnRemove);
-
-        // this.files.append(item);
-
-        if (type === "concept") {
-            let cfile = JSON.parse(file);
-            cfile.concept.filter(c => c.nature !== "prototype").forEach(c => {
-                let item = createListItem({
-                    class: [`editor-file-concept`],
-                    dataset: {
-                        name: c.name
-                    }
-                }, c.name);
-
-                this.files.append(item);
-            });
-        }
-
-        this.cache.set(type, item);
-
-        this.refresh();
-    },
-    removeFile(type, c) {
-        if (!this.cache.has(type)) {
-            return;
-        }
-
-        let item = this.cache.get(type);
-        removeChildren(item).remove();
-        this.cache.delete(type);
 
         this.refresh();
     },
@@ -306,9 +296,37 @@ export const FileIO = {
                         name: attr.name,
                         type: "attribute"
                     }
-                }, attr.name);
+                });
 
-                // this.attributes.set(attr.name, element);
+                let header = createDiv({
+                    class: ["app-model__attribute-header"]
+                });
+
+                let nameElement = createSpan({
+                    class: ["app-model__attribute-name"]
+                }, attr.name);
+        
+                if (attr.required) {
+                    let requiredElement = createI({
+                        class: ["app-model__attribute-required"]
+                    }, createSpan({ class: ["help"] }, "required"));
+        
+                    header.append(requiredElement);
+                }
+
+                header.append(nameElement);
+        
+                let targetElement = createDiv({
+                    class: ["app-model__attribute-target"]
+                }, targetHandler(attr.target));
+        
+                let infoElement = createDiv({
+                    class: ["app-model__attribute-info"]
+                }, [header, targetElement]);
+        
+                element.append(infoElement);
+
+                this.attributes.set(attr.name, element);
 
                 attributesElement.append(element);
             });
@@ -316,7 +334,10 @@ export const FileIO = {
 
         container.append(header, attributesElement);
 
+        removeChildren(this.infoView);
         this.infoView.append(container);
+
+        this.selectedConcept = schema;
 
 
         // let nameElement = createSpan({
@@ -351,15 +372,51 @@ export const FileIO = {
 
         this.refresh();
     },
-    bindEvents() {
-        this.editor.registerHandler("editor.load@post", (args) => {
-            if (!this.editor.hasConceptModel) {
-                return;
-            }
+    selectAttribute(name) {
+        if (isNullOrUndefined(name)) {
+            return false;
+        }
 
-            if (!this.editor.hasProjectionModel) {
-                return;
-            }
+        if (this.selectedAttribute === name) {
+            return false;
+        }
+
+        if (this.selectedAttribute) {
+            let element = this.attributes.get(this.selectedAttribute);
+            element.classList.remove("selected");
+        }
+
+        if (!this.attributes.has(name)) {
+            return false;
+        }
+
+        this.selectedAttribute = name;
+        let element = this.attributes.get(name);
+        element.classList.add("selected");
+
+        this.displayAttribute(name);
+
+        this.refresh();
+
+        return true;
+    },
+    displayAttribute(attrName) {
+     
+
+        this.refresh();
+    },
+
+    bindEvents() {
+        this.editor.registerHandler("editor.load-concept@post", (args) => {
+            this.reload();
+        });
+
+        this.editor.registerHandler("editor.unload-concept@post", (args) => {
+            this.reload();
+        });
+
+        this.editor.registerHandler("editor.unload-projection@post", (args) => {
+            this.reload();
         });
 
         this.container.addEventListener('dragenter', (event) => {
@@ -406,10 +463,18 @@ export const FileIO = {
         this.container.addEventListener('click', (event) => {
             const { target } = event;
 
-            const { name } = target.dataset;
+            const { type, name } = target.dataset;
 
             this.displayConcept(name);
+             
+            if (type === "attribute") {
+                this.selectAttribute(name);
+            } else if (type === "concept") {
+                this.parent.selectConcept(name);
+            }
         });
+
+
     }
 };
 
@@ -449,3 +514,98 @@ function targetHandler(target) {
 
     return fragment;
 }
+
+const ConceptFilter = {
+    /** @type {HTMLElement} */
+    container: null,
+    /** @type {*[]} */
+    values: null,
+    /** @type {Map} */
+    filters: null,
+    /** @type {*} */
+    concepts: null,
+
+    init(values) {
+        this.values = valOrDefault(values, []);
+
+        let id = 1;
+        this.values.forEach(element => {
+            element.id = id++;
+        });
+        this.filters = new Map();
+
+        return this;
+    },
+    refresh() {
+        this.filters.forEach((checkbox, key) => {
+            if (checkbox.checked) {
+                checkbox.parentElement.classList.add("checked");
+            } else {
+                checkbox.parentElement.classList.remove("checked");
+            }
+        });
+    },
+    render() {
+        if (!isHTMLElement(this.container)) {
+            this.container = createDiv({
+                class: "concept-filter"
+            });
+        }
+
+        this.search = createInput({
+            class: ["concept-filter-search"]
+        });
+
+        this.values.forEach(value => {
+            let checkbox = createInput({
+                class: ["cf-option-checkbox"],
+                type: "checkbox",
+                checked: true,
+                value: value.id,
+            });
+
+            let text = createSpan({
+                class: ["cf-option-text"]
+            }, value.label);
+
+            let label = createLabel({
+                class: "concept-filter-option"
+            }, [checkbox, text]);
+
+            this.filters.set(value, checkbox);
+
+            this.container.append(label);
+        });
+
+        this.bindEvents();
+
+        this.refresh();
+
+        return this.container;
+    },
+    filterConcepts() {
+        this.settings.concepts.forEach((item, key) => {
+            const { nature, root } = item.dataset;
+
+            this.filters.forEach((checkbox, filter) => {
+                if (filter.nature === nature) {
+                    checkbox.checked ? show(item) : hide(item);
+                }
+
+                if (filter.root === toBoolean(root)) {
+                    checkbox.checked ? show(item) : hide(item);
+                }
+            });
+        });
+
+        this.refresh();
+    },
+
+    bindEvents() {
+        this.container.addEventListener('change', (event) => {
+            const { target } = event;
+
+            this.filterConcepts();
+        });
+    }
+};

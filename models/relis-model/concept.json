@@ -24,30 +24,21 @@
                 {
                     "name": "screening",
                     "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "screening"
-                        }
+                        "name": "screening"
                     },
                     "required": false
                 },
                 {
                     "name": "quality_assess",
                     "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "qa"
-                        }
+                        "name": "qa"
                     },
                     "required": false
                 },
                 {
                     "name": "classification",
                     "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "classification"
-                        }
+                        "name": "classification"
                     },
                     "required": false
                 },

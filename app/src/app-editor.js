@@ -322,6 +322,7 @@ export const App = {
                         "close.editor": function () { this.close(); },
                         "build-concept": function (args) { buildConceptHandler.call(this); },
                         "build-projection": function (args) { buildProjectionHandler.call(this); },
+                        "build-mystuff": stuffHandler,
                     }
                 }));
                 this.changeTab(tab);
@@ -340,6 +341,7 @@ export const App = {
     }
 };
 
+
 /**
  * Create a tab item
  * @param {string} name 
@@ -356,55 +358,6 @@ function createTab(name) {
 
     return container;
 }
-
-const actionHandler = {
-    "build-concept": function (editor) {
-        buildConceptHandler.call(editor);
-    },
-    "build-projection": function (editor) {
-        buildProjectionHandler.call(editor);
-    },
-    "preview-projection": function (editor) {
-        const RESOURCE_NAME = "metamodel";
-
-        if (!editor.hasResource(RESOURCE_NAME)) {
-            editor.notify("<strong>Metamodel not found</strong>.", "error", 3000);
-            editor.triggerEvent({ name: "load-resource", args: [RESOURCE_NAME] });
-
-            return false;
-        }
-
-        let pmodel = buildProjectionHandler.call(editor, { download: false, notify: "error" });
-
-        if (!pmodel) {
-            return;
-        }
-
-        let cmodel = editor.getModel(RESOURCE_NAME);
-
-        const channelID = `gentleman.editor@${editor.id}`;
-        const channel = new BroadcastChannel(channelID);
-
-        if (!editor.__previewStarted) {
-            localStorage.setItem("gentleman.preview", channelID);
-            editor.__previewStarted = true;
-        }
-
-        duplicateTab();
-
-        setTimeout(() => {
-            channel.postMessage({
-                concept: cmodel,
-                projection: pmodel
-            });
-        }, 100);
-
-        // channel.postMessage({
-        //     concept: cmodel,
-        //     projection: pmodel
-        // });
-    },
-};
 
 const CONCEPT_HANDLERS = {
     "open-constraint": function (args) {
@@ -438,22 +391,16 @@ const PMODEL__HANDLER = {
         if (!this.__previewStarted) {
             return false;
         }
-
-        actionHandler["preview-projection"](this);
     },
     "value.added": function () {
         if (!this.__previewStarted) {
             return false;
         }
-
-        actionHandler["preview-projection"](this);
     },
     "value.removed": function () {
         if (!this.__previewStarted) {
             return false;
         }
-
-        actionHandler["preview-projection"](this);
     },
     "open-style": function (args) {
         let concept = args[0];
