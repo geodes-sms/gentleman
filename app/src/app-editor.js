@@ -326,7 +326,6 @@ export const App = {
                         "close.editor": function () { this.close(); },
                         "build-concept": function (args) { buildConceptHandler.call(this); },
                         "build-projection": function (args) { buildProjectionHandler.call(this); },
-                        "build-mystuff": stuffHandler,
                     }
                 }));
                 this.changeTab(tab);
