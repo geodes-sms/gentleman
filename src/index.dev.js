@@ -5,6 +5,7 @@ import './stylesheets.js';
 import '@css/samples/gentleman.css';
 import '@css/samples/projection.css';
 import '@css/samples/style.css';
+import './../demo/relis/assets/style.css';
 // import './../demo/todo/assets/style.css';
 
 import { createDiv, getElements, isNullOrUndefined, isHTMLElement, hasOwn } from "zenkai";
@@ -20,19 +21,17 @@ const Model = {
     MS: "style",
     MM: "mindmap",
     RL: "relis",
-    TL: "trafficlight",
     TD: "todo",
-    PP: `people`
+    TL: "trafficlight",
 };
 
-const modelName = Model.MP;
+const modelName = Model.RL;
 
 const MODEL__EDITOR = require(`@models/${modelName}-model/config.json`);
 const MODEL__CONCEPT = require(`@models/${modelName}-model/concept.json`);
 const MODEL__PROJECTION = require(`@models/${modelName}-model/projection.json`);
 
-const STYLE_CONCEPT = require(`@models/${Model.MS}-model/concept.json`);
-const STYLE_PROJECTION = require(`@models/${Model.MS}-model/projection.json`);
+
 
 const ENV_EDITOR = "editor";
 
@@ -258,7 +257,7 @@ const MODEL__HANDLER = {
         window.addInstance(instance);
     },
 
-    "export.model": function () { this.export(); },
+    "export.model": function () { this.exporter.open(); },
     "open.menu": function () { this.home.open(); },
     "close.editor": function () { this.close(); },
     "build-concept": function (args) { buildConceptHandler.call(this); },
@@ -330,26 +329,39 @@ function updatePreview(instance, value, concept) {
 
 editor.init({
     config: MODEL__EDITOR,
-    handlers: MODEL__HANDLER
+    handlers: MODEL__HANDLER,
+    // conceptModel: MODEL__CONCEPT,
+    // projectionModel: MODEL__PROJECTION
 });
-editor.home.close();
+editor.home.open();
+editor.exporter.close();
 
-editor.loadConcept(MODEL__CONCEPT, `${modelName} concept`);
-editor.loadProjection(MODEL__PROJECTION, `${modelName} projection`);
+// if (modelName === Model.MP) {
+//     const STYLE_CONCEPT = require(`@models/${Model.MS}-model/concept.json`);
+//     const STYLE_PROJECTION = require(`@models/${Model.MS}-model/projection.json`);
 
-if (modelName === Model.MP) {
-    editor.loadConcept(STYLE_CONCEPT, "styling concept");
-    editor.loadProjection(STYLE_PROJECTION, "styling projection");
+//     editor.loadConcept(STYLE_CONCEPT, "styling concept");
+//     editor.loadProjection(STYLE_PROJECTION, "styling projection");
 
-    let window = editor.findWindow("side-instance");
-    if (isNullOrUndefined(window)) {
-        window = editor.createWindow("side-instance");
-        window.container.classList.add("model-projection-sideview");
-    }
+//     let window = editor.findWindow("side-instance");
+//     if (isNullOrUndefined(window)) {
+//         window = editor.createWindow("side-instance");
+//         window.container.classList.add("model-projection-sideview");
+//     }
 
-    editor.createInstance("projection");
-}
+//     editor.createInstance("projection");
+// }
 
-if (modelName === Model.RL) {
-    editor.createInstance("project");
-}
+// if (modelName === Model.RL) {
+//     editor.createInstance("project");
+// }
+
+// if (modelName === Model.SP) {
+//     let instance = editor.createInstance("concept");
+// }
+
+// if (modelName === Model.TL) {
+//     let instance = editor.createInstance("mode");
+//     let lights = instance.concept.getAttribute("lights").getTarget();
+//     lights.createElement();
+// }

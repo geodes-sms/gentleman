@@ -256,6 +256,11 @@ const BaseButtonStatic = {
                     window.addInstance(instance);
                     break;        
                 }
+            if (target.type === "attribute") {
+                console.log(value);
+                let attr = concept.getAttribute(target.name);
+                attr.target.createElement({ value: value });
+            }
 
             return false;
         }

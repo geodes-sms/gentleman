@@ -1,0 +1,164 @@
+{
+    "type": "concept",
+    "concept":[
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9ead3",
+            "name": "diagram",
+            "nature": "concrete",
+            "root": true,
+            "attributes":[
+                {
+                    "name": "lifelines",
+                    "target":{
+                        "name": "set",
+                        "accept": {
+                            "name": "lifeline"
+                        }
+                    }
+                },
+                {
+                    "name": "name",
+                    "target":{
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9ead4",
+            "name": "lifeline",
+            "nature": "concrete",
+            "root": false,
+            "attributes":[
+                {
+                    "name": "name",
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "elements",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "element",
+                            "accept":[
+                                { "name": "message" },
+                                { "name": "response" },
+                                { "name": "loop"}
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9ead5",
+            "name": "element",
+            "nature": "prototype",
+            "root": false,
+            "attributes":[
+                {
+                    "name": "order",
+                    "target":{
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "bloc",
+                    "target":{
+                        "name": "reference",
+                        "accept":{
+                            "name": "loop"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9ead6",
+            "name": "message",
+            "nature": "concrete",
+            "prototype": "element",
+            "attributes":[
+                {
+                    "name": "target",
+                    "target":{
+                        "name": "reference",
+                        "accept":{
+                            "name": "lifeline"
+                        }
+                    }
+                },
+                {
+                    "name": "content",
+                    "target":{
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9ead7",
+            "name": "response",
+            "nature": "concrete",
+            "prototype": "element",
+            "attributes":[
+                {
+                    "name": "target",
+                    "target":{
+                        "name": "reference",
+                        "accept":{
+                            "name": "lifeline"
+                        }
+                    }
+                },
+                {
+                    "name": "content",
+                    "target":{
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9ead8",
+            "name": "loop",
+            "nature": "concrete",
+            "prototype": "element",
+            "attributes":[
+                {
+                    "name": "condition",
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "order",
+                    "target":{
+                        "name": "number"
+                    },
+                    "default": 1
+                }
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9ead9",
+            "name": "ifBloc",
+            "nature": "concrete",
+            "prototype": "element",
+            "attributes":[
+                
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9ead9",
+            "name": "elseBloc",
+            "nature": "concrete",
+            "prototype": "element",
+            "attributes":[
+               
+            ]
+        }
+    ]
+}

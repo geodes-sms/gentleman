@@ -169,7 +169,10 @@ const BaseImageStatic = {
     },
     update() {
         const { url } = this.schema;
-        this.element.src = resolveURL(resolveValue.call(this, url));
+        this.url = resolveURL(resolveValue.call(this, url));
+        this.element.src = this.url;
+
+        this.refresh();
 
         return this;
     },

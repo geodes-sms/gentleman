@@ -3,7 +3,6 @@ import { Editor } from './editor/index.js';
 import { resolveContainer } from './utils/index.js';
 
 const ENV_EDITOR = "editor";
-const ENV_EXPLORER = "explorer";
 
 const isValid = (element) => isHTMLElement(element) && hasOwn(element.dataset, 'gentleman');
 

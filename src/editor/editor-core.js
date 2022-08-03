@@ -6,19 +6,14 @@ import {
 } from 'zenkai';
 import {
     hide, show, toggle, Key, getEventTarget, NotificationType, getClosest, highlight,
-    unhighlight, isInputCapable, shake,
+    unhighlight, isInputCapable, shake, DocumentType
 } from '@utils/index.js';
 
-import { EditorHome } from './editor-home.js';
-import { EditorBreadcrumb } from './editor-breadcrumb.js';
-import { EditorFilter } from './editor-filter.js';
-import { EditorStyle } from './editor-style.js';
-import { EditorLog } from './editor-log.js';
+import { EditorHome } from './home/editor-home.js';
+import { EditorBreadcrumb, EditorLog, EditorStatus } from './status/index.js';
 import { EditorSection } from './editor-section.js';
-import { EditorInstance, EditorInstanceManager } from './editor-instance.js';
-import { EditorWindow, EditorWindowManager } from './editor-window.js';
-import { EditorStatus } from './editor-status.js';
-import { createEditorHeader, createEditorHome, createEditorLog, createEditorStatus, createEditorBreadcrumb } from './creator.js';
+import { EditorInstance, EditorInstanceManager, EditorWindow, EditorWindowManager } from './context/index.js';
+import { createEditorHeader, createEditorHome, createEditorLog, createEditorStatus, createEditorBreadcrumb, createEditorExport } from './creator.js';
 import { FnState, FnLoad, FnProjectionElement, FnHandler } from './core/index.js';
 
 
@@ -64,6 +59,8 @@ const EditorCore = {
     filter: null,
     /** @type {EditorHome} */
     home: null,
+    /** @type {EditorExport} */
+    exporter: null,
     /** @type {EditorStyle} */
     style: null,
     /** @type {EditorLog} */
@@ -145,6 +142,7 @@ const EditorCore = {
         // this.style = createEditorStyle.call(this).init();
         this.logs = createEditorLog.call(this).init();
         this.status = createEditorStatus.call(this).init();
+        this.exporter = createEditorExport.call(this).init();
 
         this.render();
 
@@ -274,8 +272,16 @@ const EditorCore = {
 
     // Editor actions
 
+    /**
+     * 
+     * @param {*} obj 
+     * @param {string} name 
+     * @param {string} type 
+     * @returns 
+     */
     download(obj, name, type) {
-        const MIME_TYPE = 'application/jsoncp';
+        let docType = DocumentType[type.toUpperCase()];
+        const MIME_TYPE = docType.type;
         window.URL = window.webkitURL || window.URL;
 
         /** @type {HTMLAnchorElement} */
@@ -287,9 +293,9 @@ const EditorCore = {
             window.URL.revokeObjectURL(link.href);
         }
 
-        var bb = new Blob([JSON.stringify(obj)], { type: MIME_TYPE });
+        var bb = new Blob([obj], { type: MIME_TYPE });
         Object.assign(link, {
-            download: `${valOrDefault(name, (new Date().getTime()))}.jsoncp`,
+            download: name,
             href: window.URL.createObjectURL(bb),
         });
 
@@ -304,57 +310,15 @@ const EditorCore = {
 
         return obj;
     },
-    /**
-     * Exports the current model (save)
-     * @param {boolean} copy 
-     */
-    export(copy = false) {
-        const MIME_TYPE = 'application/jsoncp';
-        window.URL = window.webkitURL || window.URL;
-
-        /** @type {HTMLAnchorElement} */
-        var link = createAnchor({});
-        this.container.append(link);
-
-        if (!isNullOrWhitespace(link.href)) {
-            window.URL.revokeObjectURL(link.href);
-        }
-
-        const result = {
-            "concept": this.conceptModel.schema,
-            "values": this.conceptModel.export(),
-            "editor": this.config,
-        };
-
-        var bb = new Blob([JSON.stringify(result)], { type: MIME_TYPE });
-        Object.assign(link, {
-            download: `model.jsoncp`,
-            href: window.URL.createObjectURL(bb),
-        });
-        console.log(bb.type);
-
-        link.dataset.downloadurl = [MIME_TYPE, link.download, link.href].join(':');
-        if (copy) {
-            copytoClipboard(JSON.stringify(result));
-            this.notify("The model has been copied to clipboard", NotificationType.SUCCESS);
-        } else {
-            link.click();
-            this.notify("The model has been downloaded", NotificationType.SUCCESS);
-        }
-
-        // Need a small delay for the revokeObjectURL to work properly.
-        setTimeout(() => {
-            window.URL.revokeObjectURL(link.href);
-            link.remove();
-        }, 1500);
-
-        return result;
-    },
 
     /**
      * Saves the current model state
      */
     save(concept, element) {
+        if (isNullOrUndefined(concept)) {
+            return;
+        }
+
         this.createState(concept, element);
 
         // this.notify(`${element.name} saved`, NotificationType.NORMAL, 1500);
@@ -902,6 +866,10 @@ const EditorCore = {
 
         if (!this.header.isRendered) {
             fragment.append(this.header.render());
+        }
+
+        if (!this.exporter.isRendered) {
+            fragment.append(this.exporter.render());
         }
 
         if (!isHTMLElement(this.navigationSection)) {
@@ -1669,7 +1637,6 @@ const EditorCore = {
             this.refresh();
         });
 
-        this.registerHandler("export", () => this.export());
         this.registerHandler("value.changed", () => this.refresh());
         this.registerHandler("value.added", () => this.refresh());
         this.registerHandler("value.removed", () => this.refresh());

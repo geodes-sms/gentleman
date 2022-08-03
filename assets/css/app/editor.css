@@ -41,15 +41,11 @@
 
 .editor-home {
     position: absolute;
-    top: 0; right: 10%;  left: 10%;
-    display: flex; flex-direction: column; align-items: center;
-    height: 100%; max-height: 600px;
-    /* min-width: 60%; */
+    top: 30px; right: 0; bottom: 24px; left: 0;
+    display: flex; flex-direction: column; 
+    padding-right: 15%;
     padding-bottom: 60px;
-    background-color: rgba(245, 245, 245, 0.95);
-    background: linear-gradient(rgba(225, 225, 225, 0.95), #f5f5f5);
-    border-radius: 0 0 20px 20px;
-    box-shadow: 0 2px 10px -1px #a9a9a9;
+    background-color: rgba(255, 255, 255, 0.98);
     overflow: hidden;
     z-index: 80;
 }
@@ -61,6 +57,27 @@
 
 .editor-window-header {
     display: none;
+}
+
+
+.helper {
+    position: absolute;
+    top: 100%; left: 0;
+    width: 120px;
+    padding: 3px 6px 4px;
+    border-radius: 1px;
+    font-size: 1.2rem; font-style: normal;
+    color: #fff;
+    background-color: rgba(55, 55, 55, 0.85);
+    opacity: 0;
+    transition: .2s;
+    transform: scale(0); transition-property: opacity, transform;
+    z-index: 20;
+}
+
+.has-helper:hover > .helper {
+    opacity: 1;   
+    transform: scale(1) translateY(2px);
 }
 
 
@@ -562,6 +579,117 @@
                 transform: rotate(-90deg) scale(2) translateY(-2px);
             }
 
+
+/*
+  Exporter
+-----------------------------------------------------------------------------*/
+
+.editor-exporter {
+    position: absolute;
+    top: 30px; right: 60px;
+    width: 300px; 
+    display: flex; flex-direction: column;
+    padding: 12px;
+    z-index: 50;
+    background-color: #fefefe;
+    border-radius: 4px;
+    box-shadow: -1px 2px 6px -2px #b2b2b2;
+}
+
+
+
+.btn-collapse {
+    position: absolute;
+    top: 6px; right: 4px;
+    width: 20px; height: 20px;
+    font-size: 1.7em;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    border-radius: 4px;
+    background-color: #555;
+}
+    .btn-collapse:before {
+        content: "❯";
+        position: absolute;
+        font-weight: 300;
+        top: 0; right: 0; bottom: 0; left: 0;
+        transform: rotate(-90deg);
+    }
+    .btn-collapse:hover {
+        background-color: #232425;
+    }
+
+.editor-exporter-title {
+    margin: 0;
+    color: #555;
+    font-size: 1.6rem; font-weight: 300;
+    text-transform: uppercase;
+}
+
+.editor-exporter__instruction {
+    font-size: 1.3rem;
+}
+
+.editor-exporter-file__label {
+    display: flex;
+    margin-bottom: 12px;
+}
+
+.editor-exporter-file__label-value {
+    font-size: 1.4em; font-weight: 500;
+    padding: 4px 8px;
+    background-color: #d5d5d5;
+}
+
+.editor-exporter-file__input {
+    flex-grow: 2;
+    width: 100%;
+    padding-left: 4px; padding-right: 4px;
+    font-size: 1.5em;
+    background-color: #f5f5f5;
+    box-shadow: 1px 0 1px #d5d5d5;
+    border: 0 none; border-radius: 0 2px 2px 0;
+}
+
+.export-selector {
+    display: flex;
+    margin-bottom: 6px;
+}
+
+.export-selector-item {
+    display: flex;
+    margin-right: 6px;
+    font-weight: 500;
+    font-size: 1.4em;
+    color: #444;
+    background-color: #eee;
+    border-radius: 3px;
+}
+
+.export-selector-item.selected {
+    color: #007FFF; 
+    background-color: #fff;
+    border-bottom: 2px solid #007FFF;
+    border-radius: 0;
+}
+
+.export-selector-item__label {
+    display: block;
+    padding: 6px 8px 2px;
+}
+
+.export-selector-item__input {
+    display: none;
+}
+
+.btn-export {
+    align-items: flex-end;
+    padding: 6px 12px;
+    color: #fff;
+    font-size: 1.4em; font-weight: 500;
+    border-radius: 2px;
+    background-color: #5F84F4;
+}
 
 /*
   Download list

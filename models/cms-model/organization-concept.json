@@ -63,6 +63,25 @@
                     "required": false
                 },
                 {
+                    "name": "socials",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "social"
+                        }
+                    }
+                },
+                {
+                    "name": "website",
+                    "target": {
+                        "name": "string",
+                        "properties": [
+                            { "name": "label", "type": "string", "value": "Website" }
+                        ]
+                    },
+                    "required": false
+                },
+                {
                     "name": "phone",
                     "target": {
                         "name": "phone",
@@ -107,6 +126,40 @@
                             "name": "project"
                         }
                     }
+                },
+                {
+                    "name": "tools",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "tool"
+                        }
+                    }
+                }
+            ],
+            "properties": []
+        },
+        {
+            "name": "social",
+            "nature": "concrete",
+            "root": false,
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string",
+                        "src": [
+                            "twitter", "facebook", "linkedin", "youtube", "instagram", "tiktok"
+                        ]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "handle",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
                 }
             ],
             "properties": []

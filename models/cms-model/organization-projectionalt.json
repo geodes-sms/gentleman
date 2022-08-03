@@ -1,0 +1,306 @@
+{
+    "projection": [
+        {
+            "concept": { "prototype": "organization" },
+            "tags": ["general"],
+            "container": {
+                "content": [
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "type": "attribute",
+                                "name": "name",
+                                "tag": "text",
+                                "style": {
+                                    "css": ["pp-wrap-element", "pp-wrap-element--2"]
+                                }
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "email",
+                                "tag": "text",
+                                "required": true,
+                                "style": {
+                                    "css": ["pp-wrap-element"]
+                                }
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "website",
+                                "tag": "text",
+                                "required": true,
+                                "style": {
+                                    "css": ["pp-wrap-element"]
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["pp-wrap"]
+                        },
+                        "layout": { "type": "flex", "orientation": "row", "wrappable": false }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "description",
+                        "tag": "textarea-label",
+                        "style": {
+                            "ref": ["box-top"]
+                        }
+                    },
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "kind": "static",
+                                "type": "text",
+                                "content": "Social media",
+                                "style": {
+                                    "css": ["pp-subtitle"]
+                                }
+                            },
+                            {
+                                "kind": "static",
+                                "type": "button",
+                                "name": "add-area",
+                                "action": {
+                                    "type": "CREATE",
+                                    "target": { "type": "attribute", "name": "socials" }
+                                },
+                                "help": "Add a social account",
+                                "content": [
+                                    {
+                                        "kind": "static",
+                                        "type": "text",
+                                        "content": "+",
+                                        "style": {
+                                            "css": ["pp__btn-add-icon"]
+                                        }
+                                    },
+                                    {
+                                        "kind": "static",
+                                        "type": "text",
+                                        "content": "New",
+                                        "style": {
+                                            "css": ["pp__btn-add-text"]
+                                        }
+                                    }
+                                ],
+                                "style": {
+                                    "css": ["btn", "pp__btn-add"],
+                                    "ref": ["box-left"]
+                                }
+                            }
+                        ],
+                        "layout": { "type": "flex", "orientation": "row" },
+                        "style": {
+                            "css": ["pp-wrap"],
+                            "ref": ["box-top"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "socials",
+                        "tag": "areas",
+                        "style": {
+                            "css": ["areas"],
+                            "ref": ["box-top"]
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column", "wrappable": false },
+                "style": {
+                    "css": ["pp-organization"]
+                },
+                "focusable": true
+            }
+        },
+        {
+            "concept": { "name": "address" },
+            "tags": [],
+            "container": {
+                "content": [
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "type": "attribute",
+                                "name": "street-address",
+                                "tag": "textbox-label",
+                                "style": {
+                                    "css": ["pp-fieldgroup-element", "pp-fieldgroup-element--3"]
+                                }
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "locality",
+                                "tag": "textbox-label",
+                                "style": {
+                                    "css": ["pp-fieldgroup-element"],
+                                    "ref": ["box-left"]
+                                }
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "region",
+                                "tag": "textbox-label",
+                                "style": {
+                                    "css": ["pp-fieldgroup-element"],
+                                    "ref": ["box-left"]
+                                }
+                            }
+                        ],
+                        "layout": { "type": "flex", "orientation": "row", "wrappable": false },
+                        "style": {
+                            "css": ["pp-fieldgroup"]
+                        }
+                    },                
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "type": "attribute",
+                                "name": "postal-code",
+                                "tag": "textbox-label",
+                                "style": {
+                                    "css": ["pp-fieldgroup-element"]
+                                }
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "country",
+                                "tag": "textbox-label",
+                                "style": {
+                                    "css": ["pp-fieldgroup-element", "pp-fieldgroup-element--3"],
+                                    "ref": ["box-left"]
+                                }
+                            }
+                        ],
+                        "layout": { "type": "flex", "orientation": "row", "wrappable": false },
+                        "style": {
+                            "css": ["pp-fieldgroup", "pp-fieldgroup--50"]
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" },
+                "style": {
+                    "css": ["pp-address"]
+                },
+                "focusable": true
+            }
+        },
+        {
+            "concept": { "name": "area" },
+            "tags": ["edit-view"],
+            "container": {
+                "content": [
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "Area",
+                        "style": {
+                            "css": ["pp-area-title"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "title",
+                        "tag": "textbox",
+                        "options": {
+                            "placeholder": "Title"
+                        },
+                        "style": {
+                            "ref": ["box-top"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "description",
+                        "tag": "textarea",
+                        "required": true,
+                        "style": {
+                            "ref": ["box-top"]
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" },
+                "style": {
+                    "css": ["pp-area", "pp-area--edit"]
+                },
+                "focusable": true
+            }
+        },
+        {
+            "concept": { "name": "social" },
+            "tags": ["edit-view"],
+            "container": {
+                "content": [
+                    {
+                        "type": "attribute",
+                        "name": "name",
+                        "tag": "textbox",
+                        "options": {
+                            "placeholder": "Media"
+                        },
+                        "style": {
+                            "css": ["pp-social-name"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "handle",
+                        "tag": "textbox",
+                        "options": {
+                            "placeholder": "Handle"
+                        },
+                        "style": {
+                            "css": ["pp-social-handle"]
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "row" },
+                "style": {
+                    "css": ["pp-social"]
+                },
+                "focusable": true
+            }
+        }
+    ],
+    "template": [],
+    
+    "style": [
+        {
+            "type": "style",
+            "name": "box-top",
+            "style": {
+                "box": {
+                    "outer": {
+                        "top": { "value": 6, "unit": "px" }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "box-right",
+            "style": {
+                "box": {
+                    "outer": {
+                        "right": { "value": 6, "unit": "px" }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "box-left",
+            "style": {
+                "box": {
+                    "outer": {
+                        "left": { "value": 6, "unit": "px" }
+                    }
+                }
+            }
+        }
+    ]
+}

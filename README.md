@@ -1,14 +1,12 @@
 # <img alt="Gentleman logo" height="60" src="https://gentlemancp.org/assets/images/logo_gentleman_200.png"> Gentleman
 
-[![Build Status](https://travis-ci.org/geodes-sms/gentleman.svg?branch=master)](https://travis-ci.org/geodes-sms/gentleman)
+<!-- [![Build Status](https://travis-ci.org/geodes-sms/gentleman.svg?branch=master)](https://travis-ci.org/geodes-sms/gentleman) -->
 
-Gentleman is a **lightweight web-based projectional editor** that allows you to create and manipulate concept-based models through projections.
+Gentleman is a **lightweight web-based projectional editor** that allows you to create and manipulate concept-based models through projection.
 
 ## Features
 
-✔️ Easy integration with any web application  
-✔️ Compatible with Ecore model  
-✔️ Support textual and tabular notations and multimedia content  
+✔️ Common editing features: contextual assistance, copy-paste, undo/redo  
 ✔️ Support multiple projections for a concept  
 ✔️ Easy to switch the projections used against a model  
 ✔️ Projections are defined with specialized UI elements  
@@ -17,7 +15,7 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 ✔️ Support multiple layouts with simulations  
 
 
-**Gentleman IDE**: [Create concepts and projections](https://geodes-sms.github.io/gentleman/app/index.html)
+[**Gentleman IDE**](https://geodes-sms.github.io/gentleman/app/index.html)
 
 ## Examples
 
@@ -54,13 +52,10 @@ If you are in a hurry here are some **quick links**:
 
 Gentleman can be added to any web application in 2 steps:
 
-1. Add the [required scripts](#scripts) to your page
+1. Add the library (JS script) to your page
 2. [Decorate an HTML Tag](#decorate-an-html-tag) **OR** [Dynamically create an instance](#dynamically-create-an-instance)
 
-### Scripts
-
-- `gentleman.core.js` (*required*): Gentleman library.
-- `gentleman.app.js` (*optional*): Provides an IDE to create concepts and projections.
+> Gentleman library: `gentleman.core.js`.
 
 ### Decorate an HTML Tag
 
@@ -156,8 +151,12 @@ This distribution contains the following files and folders:
 - dist: the distributed library
 - docs: the app documentation
 - assets: contains static files for library and app
-- contributor : Aurélien DUCOIN
+
+# Contributors
+
+- Louis-Edouard LAFONTANT
+- Aurélien DUCOIN
 
 # License ©️
 
-The source code is licensed under a [GPL 3.0 license](https://opensource.org/licenses/GPL-3.0) ![MIT](https://img.shields.io/badge/license-GPL3.0-blue)
+The source code is licensed under a [GPL 3.0 license](https://opensource.org/licenses/GPL-3.0) ![GPL](https://img.shields.io/badge/license-GPL3.0-blue)

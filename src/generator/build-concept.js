@@ -199,9 +199,6 @@ function buildTarget(target, propname = "name") {
 
             this.__errors.push(error);
         } else {
-            console.log(getAttr(target,"concept"));
-            console.log(name);
-            console.log(getAttr(target,"concept").getName())
             name = getAttr(target,"concept").value;
         }
     }
@@ -268,15 +265,13 @@ function buildConstraint(constraint) {
         };
     } else if (type.name === "constraint-string-values") {
         result.type = "values";
-        result.values = getValue(constraint, "values", true);
+        console.log(constraint);
+        result.values = getValue(type, "values", true);
     }
     if (hasAttr(constraint, "scope") && hasValue(constraint, "scope")) {
         result["scope"] = getName(getReference(constraint, 'scope'));
     }
 
-    if (hasAttr(constraint, "values") && hasValue(constraint, "values")) {
-        result["values"] = getValue(constraint, "values", true);
-    }
 
     return result;
 }

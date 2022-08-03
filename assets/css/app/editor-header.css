@@ -6,9 +6,6 @@
     background-color: #fff;
     z-index: 10;
 }
-    .editor-header:hover {
-        background-color: #f0f0f0;
-    }
     
     .editor-header.collapsed .editor-header-main {
         height: 0;
@@ -22,6 +19,7 @@
     justify-content: space-between;
     height: 30px;
     align-items: center;
+    background-color: #f5f5f5;
     padding-left: 1%; 
 }
 

@@ -486,6 +486,15 @@ const _Concept = {
         let end = `</${name}>`;
 
         return start + body + end;
+    },
+    toXMI() {
+        let name = this.getName().replace(" ", "-");
+
+        let start = `<${name} id="${this.id}">`;
+        let body = this.attributes.map(attr => attr.toXML()).join("");
+        let end = `</${name}>`;
+
+        return start + body + end;
     }
 };
 

@@ -1,0 +1,630 @@
+body { display: flex; flex-direction: column; }
+
+h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif; }
+
+.content-wrapper { padding-left: 1%; padding-right: 1%; }
+
+.page-header { height: 30px; background-color: #f5f5f5; }
+
+.page-title {
+    margin: 0;
+    padding-top: 6px; padding-bottom: 6px;
+    font-size: 1.5rem; font-weight: 500;
+}
+
+.page-body {
+    flex-grow: 2;
+    display: flex;
+    height: calc(100% - 30px);    
+}
+
+.app {
+    flex-grow: 2;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.app .editor-statusbar-viewer-container {
+    display: none;
+}
+
+.editor-concept > .layout-container {
+    background-color: #fefefe;
+}
+
+.library-header {
+    padding: 4px 6px 2px;
+}
+
+.library-body {
+    
+}
+
+
+.library-body-title {
+    font-size: 1.5em;
+    font-weight: 300;
+    padding-left: 6px;
+}
+
+.lib-btn-add {
+    margin-left: 6px;
+    font-weight: 500;
+    color: #fff;
+    padding: 3px 6px;
+    border-radius: 2px;
+    background-color: #2D8DED;
+}
+
+
+.lib-book-cover {
+    width: 96px;
+}
+
+    .lib-book-image {
+        display: block;
+        width: 100%;
+        height: auto;
+        box-shadow: 0 0 1px #d5d5d5;
+        border-radius: 1px;
+        margin-bottom: 2px;
+    }
+
+    .lib-book-image.empty {
+        height: 72px;
+        background-color: #f5f5f5;
+        border: 2px dashed #d5d5d5;
+        border-radius: 2px;
+        color: transparent;
+    }
+
+.lib-book-main {
+    margin-left: 6px;
+    padding: 2px 8px;
+    background-color: #f5f5f5;
+    flex-grow: 2;
+    border-radius: 2px 0 0 2px;
+}
+
+.lib-book-main .lib-textbox__input,
+.lib-book-main .lib-textarea__input {
+    background-color: #fff;
+}
+
+.lib-book-aside {
+    padding: 2px 8px;
+    max-width: 180px;
+    background-color: #d5d5d5;
+    border-radius: 0 4px 4px 0;
+}
+
+.lib-title {
+    text-transform: uppercase;
+}
+
+.lib-btn-addi {
+    display: flex; align-items: center; justify-content: center;
+    margin-left: 3px;
+    padding-left: 6px; padding-right: 6px;
+    font-size: 0.9em;
+    color: #555;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    background-color: #e5e4e2;
+}
+
+    .lib-btn-addi-icon {
+        color: #1F75FE;
+        font-size: 1.2em; font-weight: 300;
+        transform: scale(1.8) translateY(-1px);
+        margin-right: 6px;
+        transition: .2s;
+    }
+
+    .lib-btn-addi-text {
+        font-weight: 500;
+        transition: .2s;
+    }
+
+    .lib-btn-addi:hover,
+    .lib-btn-addi:focus,
+    .lib-btn-addi.active {
+        color: #111;
+        background-color: #f5f5f5;
+        border-color: #1F75FE;
+    }
+
+    .lib-btn-addi:hover .lib-btn-addi-icon,
+    .lib-btn-addi:focus .lib-btn-addi-icon,
+    .lib-btn-addi.active .lib-btn-addi-icon {
+        color: #3884FF;
+        transform: rotate(90deg) scale(1.8) translateY(-2px);;
+    }
+
+
+
+
+
+/*
+    FIELD STYLING
+==============================================================================*/
+
+.lib-fieldgroup > .field {
+    flex: 1 1;
+}
+
+.lib-fieldgroup > .field:not(:last-child) {
+    margin-right: 3px;
+}
+
+.lib-textbox {
+    position: relative;
+    display: flex; flex-direction: row;
+    font-size: 1rem;
+}
+    .lib-textbox.active {
+        box-shadow: none;
+    }
+    
+.lib-textbox__input {
+    position: relative;
+    display: block;
+    padding: 6px 4px 2px;
+    width: 100%;
+    font-size: 1.4em;
+    background-color: #f5f5f5;
+    color: #222;
+    outline: none;
+    border: 0 none; border-radius: 3px;
+    z-index: 1;
+}
+
+    .lib-textbox__input:focus,
+    .lib-textbox__input:active {
+        box-shadow: 0 0 1px 1px #1F75FE;
+    }
+
+    .lib-textbox__input.error {
+        box-shadow: 0 0 1px 1px #F27E88;
+    }
+
+.lib-textbox2 {
+    display: flex; flex-direction: column;
+}
+    .lib-textbox2.active {
+        box-shadow: none;
+    }
+
+
+.lib-textbox2__label {
+    font-size: 1.3rem; font-weight: 500;
+}
+
+.lib-textbox2__input {
+    position: relative;
+    display: block;
+    padding: 2px 4px;
+    width: 100%;
+    font-size: 1.4rem;
+    background-color: #f5f5f5;
+    color: #222;
+    outline: none;
+    border: 2px solid #f0f0f0; border-radius: 3px;
+    z-index: 1;
+}
+
+    .lib-textbox2.active .lib-textbox2__label {
+        color: #3884FF;
+    }
+
+    .lib-textbox2.active .lib-textbox2__input {
+        box-shadow: 0 0 1px 1px #1F75FE;
+    }
+
+.lib-textarea {
+    padding: 0;
+}
+
+.lib-textarea.active {
+    box-shadow: none;
+}
+
+.lib-textarea__input {
+    padding: 4px 6px;
+    border: 0 none;
+    background-color: #f5f5f5;
+    font-size: 1.3rem;
+    border: 0 none;
+    border-radius: 4px;
+}
+
+    .lib-textarea__input:focus,
+    .lib-textarea__input:active {
+        box-shadow: 0 0 1px 1px #1F75FE;
+    }
+
+    .lib-textarea__input.error {
+        box-shadow: 0 0 1px 1px #F27E88;
+    }
+
+
+.lib-combobox {
+    position: relative;
+    z-index: 10;
+}
+
+.lib-combobox .field--choice__select-wrapper {
+    border: 0 none;
+    background-color: #fefefe;
+}
+
+.lib-combobox__choice { 
+    display: flex; 
+}
+
+    .lib-combobox__choice-option { 
+        flex: 1 1; 
+        display: flex; justify-content: center;
+        margin: 0;
+        padding: 6px;
+        font-size: 1.3rem;
+        border: 0 none; border-radius: 3px;
+        z-index: 10;
+    }
+        .lib-combobox__choice-option[data-type="placeholder"] {
+            font-style: italic;
+            color: #555;
+        }
+        .lib-combobox__choice-option:nth-child(odd) {
+            background-color: #f5f5f5;
+        }
+        .lib-combobox__choice-option:hover {
+            background-color: #eee;
+        }
+        .lib-combobox__choice-option.selected {
+            color: #fff;
+            background-color: #2D8DED;
+        }
+
+
+  
+
+/*
+  SET styling
+-----------------------------------------------------------------------------*/
+
+.lib-set__list {
+    width: 100%;
+    flex-direction: column;
+}
+
+.lib-set__list-item {
+    position: relative;
+    padding: 24px 6px 4px;
+    border-radius: 2px;
+    box-shadow: 0 2px 2px -1px #c0c0c0;
+}
+
+.lib-set__list-item > .projection__btn-delete {
+    position: absolute; 
+    top: 2px; right: 0;
+    color: #555;
+}
+
+.lib-set__inlist-item {
+    display: flex; flex-direction: row;
+    margin-right: 6px; margin-bottom: 4px;
+    box-shadow: 0 1px 1px #d5d5d5;
+}
+
+.lib-set__inlist-item .projection__btn-collapse { display: none; }
+
+.lib-set__inlist-item .projection__btn-delete {
+    background-color: #d5d5d5;
+}
+
+
+/*
+  Tag SET styling
+-----------------------------------------------------------------------------*/
+
+.td-tags {
+    padding-left: 12px; padding-right: 12px;
+    margin-left: 2px;
+    z-index: 2;
+}
+
+.td-tag-set-body {
+    flex-grow: 2;
+    margin-top: 6px;
+}
+
+    .td-tag-set-title {
+        color: #555; 
+        font-size: 1.4em; font-weight: 300;
+        text-transform: uppercase;
+        margin-right: 6px;
+    }
+
+    .td-tag-set__button {
+        align-self: flex-end;
+        display: flex; align-items: center;
+        font-weight: 300;
+        padding: 8px 12px;
+        border-radius: 180px;
+        background-color: #555;
+        color: #5AF299;
+    }
+        .td-tag-set__button:hover { 
+            color: #fff; 
+            background-color: #2DA65F;
+        }
+
+        .td-tag-set__button-icon {
+            display: flex; align-items: center; justify-content: center;
+            height: 100%;
+            transform: scale(1.7) translateY(-1px);
+        }
+        .td-tag-set__button-content {
+            margin-left: 6px;
+            color: #fff;
+        }
+
+.td-tag-set__list {
+    display: flex; flex-wrap: wrap;
+}
+
+.td-tag-set__list-item {
+    display: flex; flex-direction: row; align-items: center;
+    background-color: #f5f5f5;
+    padding-right: 12px;
+    margin-right: 6px;
+    margin-bottom: 6px;
+}
+
+    .td-tag-set__list-item .projection__btn-collapse {
+        display: none;
+    }
+
+    .td-tag-set__list-item .projection__btn-delete {
+        position: absolute;
+        top: -4px; right: -2px;
+        font-size: 0.9em; font-weight: bold;
+        color: #555; 
+        border-radius: 40px;
+        background-color: #d5d5d5;
+        height: 16px; width: 16px;
+    }
+        .td-tag-set__list-item .projection__btn-delete:hover {
+            background-color: #f1645a;
+            color: #fff;
+        }
+
+.td-tag {
+    background-color: #fff;
+}
+
+    .td-tag .td-textbox {
+        height: 100%;
+        order: 2;
+    }
+
+    .td-tag .td-textbox__input  {
+        padding: 3px 4px;
+        height: 100%;
+        color: #222;
+        background: none;
+        border: 0 none;
+        border-radius: 0;
+    }
+
+    .td-tag .td-textbox.error .td-textbox__input {
+        background-color: #F55540;
+        border: 0 none;
+    }
+
+    .td-tag .td-textbox.empty .field--textbox__input-pseudo:before  {
+        color: #555;
+    }
+
+    .td-tag .priority-select {
+        position: relative;
+    }
+
+    .td-tag .priority-select:before {
+        content: "";
+        position: absolute;
+        top: 2px; bottom: 2px; right: 0;
+        width: 1px;
+        background-color: #c0c0c0;
+    }
+
+    .priority-select .field--choice__select-wrapper {
+        border: 0 none;
+    }
+
+    .td-tag .priority-select__choice {
+        color: #fff;
+        font-size: 1rem;
+        
+    }
+
+    .priority-select .field--choice__select-wrapper {
+        padding-left: 4px; padding-right: 2px;
+    }
+
+    .td-tag .priority-select__choice-option {
+        color: #3E3366;
+        font-size: 1.3em;
+        padding: 3px 6px;
+        border: 0 none;
+    }
+
+
+
+/*
+  Tag REFERENCE styling
+-----------------------------------------------------------------------------*/
+
+.tag-reference {
+    color: #555;
+    background-color: #fff;
+    box-shadow: 0 1px 1px -1px #999;
+    cursor: default;
+}
+
+    .tag-reference .field--choice__select-wrapper { 
+        padding-left: 2px; 
+        border: 0 none;
+        border-bottom: 2px solid #999;
+    }
+
+    .tag-reference__choice {
+        font-size: 1rem;
+    }
+
+    .tag-reference__choice-option {
+        color: #555;
+        background-color: #fff;
+        padding: 4px 6px;
+        font-size: 1.3em;
+        border: 0 none;
+    }
+        .tag-reference__choice-option:nth-child(odd) { background-color: #eee; }
+        .tag-reference__choice-option:first-child { background-color: #d5d5d5; }
+        .tag-reference__choice-option:hover { background-color: #FFEF94; }
+        
+        .tag-reference .text:empty:after {
+            content: "null";
+            color: #777;
+            font-weight: 400;
+            font-style: italic;
+        }
+
+
+.check-field {
+    position: relative;
+}
+
+.check-field[data-state="on"] + .td-task-header .td-textbox__input {
+    text-decoration: line-through;
+    border: 0 none;
+    background: none;
+}
+
+.check-field[data-state="on"] + .td-task-header .td-textarea__input {
+    background: none;
+}
+
+.check-field__checkbox {
+    display: none;
+}
+
+.check-field__label {
+    position: relative;
+    height: 20px;
+    width: 20px;
+    border-radius: 4px;
+    border: 2px solid #d5d5d5;
+    background-color: #fff;
+    opacity: 0.8;
+    transition: .2s;
+}
+
+.check-field__label:hover,
+.check-field__label:focus {
+    border-color: #555;
+    border-radius: 50%;
+    opacity: 1;
+}
+
+    .check-field__label:after {
+        content: "✓";
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 0;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 800;
+        color: #0E58A1;
+        opacity: 0;
+        transform: scale(0);
+        transition: .1s; transition-property: opacity, transform;
+    }
+
+    .check-field__checkbox:checked + .check-field__label {
+        border-color: #2D8DED;
+        border-radius: 50%;
+        opacity: 1;
+    }
+
+        .check-field__checkbox:checked + .check-field__label:after {
+            opacity: 1;
+            transform: scale(2) translate(1px, -4px);
+        }
+
+.td-option-sideview {
+    width: 50%;
+    max-width: 300px;
+    border: 0 none;
+}
+
+    .td-option-sideview .editor-concept {
+        border-radius: 0;
+        box-shadow: none;
+        background-color: #fff;
+        height: 100%;
+    }
+
+    .td-option-sideview .editor-concept-header {
+        border-radius: 0;
+    }
+
+    .td-option-sideview .editor-concept-toolbar__btn-collapse,
+    .td-option-sideview .editor-concept-toolbar__btn-maximize {
+        display: none;
+    }
+
+    .td-option-sideview .editor-concept-title {
+        font-style: normal;
+    }
+
+    .td-option-sideview .resizers {
+        display: none;
+    }
+
+.td-task-option {
+    padding: 6px 12px;
+}
+
+    .td-task-option .td-tag-set-header {
+        padding-left: 0;
+    }
+
+    .td-task-option .td-tag-set-body {
+        padding: 0;
+    }
+
+    .td-task-option .td-tag-set-title {
+        font-size: 1.2em; font-weight: bold;
+        text-transform: capitalize;
+    }
+
+.td-groupfield-label {
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.period-title {
+    font-size: 1.2em;
+    font-weight: 400;
+    color: #555;
+    margin-bottom: 2px;
+}
+
+.td-task-recurrence {
+    margin-top: 3px;
+}
+
+.td-task-recurrence .td-textbox {
+    width: 20px;
+}

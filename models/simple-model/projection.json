@@ -1,0 +1,888 @@
+{
+    "file": "projection",
+
+    "projection": [
+        {
+            "concept": { "name": "concept" },
+            "tags": ["textual"],
+            "type": "container",
+            "container": {
+                "content": [
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "kind": "static",
+                                "type": "text",
+                                "content": "The "
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "name",
+                                "tag": "textual",
+                                "options": {
+                                    "placeholder": "Name"
+                                }
+                            },
+                            {
+                                "kind": "static",
+                                "type": "text",
+                                "content": " is composed of "
+                            },
+                            {
+                                "kind": "static",
+                                "type": "button",
+                                "name": "add-member",
+                                "action": {
+                                    "type": "CREATE",
+                                    "target": {
+                                        "type": "attribute",
+                                        "name": "attributes"
+                                    }
+                                },
+                                "help": "Add an attribute",
+                                "content": [
+                                    {
+                                        "kind": "static",
+                                        "type": "text",
+                                        "content": "+",
+                                        "style": {
+                                            "css": ["btn-add-icon"]
+                                        }
+                                    },
+                                    {
+                                        "kind": "static",
+                                        "type": "text",
+                                        "content": "Add an attribute",
+                                        "style": {
+                                            "css": ["btn-add-text"]
+                                        }
+                                    }
+                                ],
+                                "style": {
+                                    "css": ["btn", "btn-add"],
+                                    "ref": ["box-left"]
+                                }
+                            }
+                        ],
+                        "layout": { "type": "flex", "orientation": "row" },    
+                        "style": {
+                            "css": ["model-concept-header"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "attributes",
+                        "tag": "attribute-set",
+                        "required": true
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" },
+                "style": {
+                    "css": ["model-concept", "model-concept--textual"]
+                }
+            }
+        },
+        {
+            "concept": { "prototype": "concept" },
+            "tags": ["choice", "choice-selection"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "type": "attribute",
+                        "name": "name",
+                        "tag": "readonly-string"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "attribute" },
+            "tags": ["attribute-list-item--textual", "full"],
+            "type": "container",
+            "container": {
+                "content": [
+                    {
+                        "type": "container",
+                        "content": [
+                            {
+                                "type": "attribute",
+                                "name": "name",
+                                "tag": "textual",
+                                "options": {
+                                    "placeholder": "Name"
+                                }
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "target",
+                                "tag": "select-choice",
+                                "required": true,
+                                "options": {
+                                    "placeholder": "Select a type"
+                                }
+                            },
+                            {
+                                "type": "attribute",
+                                "name": "required",
+                                "tag": "switch-field",
+                                "style": {
+                                    "ref": ["box-left"]
+                                }
+                            }
+                        ],
+                        "layout": { "type": "flex", "orientation": "row" },
+                        "style": {
+                            "css": ["model-concept__line"],
+                            "box": {
+                                "inner": {
+                                    "bottom": { "value": 4, "unit": "px" }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "target",
+                        "tag": "value"
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" },
+                "style": {
+                    "css": ["attribute-list-item-container"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "primitive" },
+            "tags": ["textual"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                {
+                                    "kind": "field",
+                                    "type": "choice",
+                                    "choice": {
+                                        "option": {
+                                            "template": { "tag": "choice" },
+                                            "style": {
+                                                "css": ["target-choice--textual__list-option"]
+                                            }
+                                        },
+                                        "style": {
+                                            "css": ["target-choice--textual__list"]
+                                        }
+                                    },
+                                    "input": false,
+                                    "style": {
+                                        "css": ["target-choice--textual"]
+                                    }
+                                }
+                            ],
+                            "style": {
+                                "gss": {
+                                    "box": {
+                                        "border": {
+                                            "bottom": {
+                                                "type": "solid",
+                                                "width": { "value": 2, "unit": "px" },
+                                                "color": { "type": "hexadecimal", "value": "#c0c0c0" }
+                                            }
+                                        },
+                                        "width": { "value": 100, "unit": "%" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "type": "projection",
+                        "bind": "value",
+                        "placeholder": false,
+                        "tag": "choice-selection",
+                        "style": {
+                            "css": ["primitive-constraint"]
+                        }
+                    }
+                ],
+                "style": {
+                    "css": ["inline"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "primitive" },
+            "tags": ["select-choice"],
+            "type": "field",
+            "content": {
+                "type": "choice",
+                "choice": {
+                    "option": {
+                        "template": { "tag": "choice" },
+                        "style": {
+                            "css": ["select-choice__list-option"]
+                        }
+                    },
+                    "style": {
+                        "css": ["select-choice__list"]
+                    }
+                },
+                "placeholder": "Select a primitive",
+                "expanded": false,
+                "input": false,
+                "style": {
+                    "css": ["select-choice"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "primitive" },
+            "tags": ["value"],
+            "type": "layout",
+            "content": {
+                "type": "flex",
+                "orientation": "horizontal",
+                "disposition": [
+                    {
+                        "type": "projection",
+                        "bind": "value",
+                        "placeholder": false,
+                        "tag": "choice-selection",
+                        "style": {
+                            "css": ["primitive-constraint"]
+                        }
+                    }
+                ],
+                "style": {
+                    "css": ["inline"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "primitive" },
+            "tags": ["full"],
+            "type": "container",
+            "container": {
+                "content": [
+                    {
+                        "type": "projection",
+                        "bind": "value",
+                        "placeholder": false,
+                        "tag": "full",
+                        "style": {
+                            "css": ["primitive-constraint"]
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "row" }
+            }
+        },
+        {
+            "concept": { "name": "string primitive" },
+            "tags": ["choice-selection"],
+            "type": "container",
+            "container": {
+                "content": [
+                    {
+                        "type": "attribute",
+                        "name": "min-length",
+                        "tag": "textual",
+                        "options": {
+                            "placeholder": "Min length"
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "max-length",
+                        "tag": "textual",
+                        "options": {
+                            "placeholder": "Min length"
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "row" }
+            }
+        },
+        {
+            "concept": { "name": "string primitive" },
+            "tags": [ "choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "String",
+                        "focusable": false
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "number primitive" },
+            "tags": ["choice-selection"],
+            "type": "container",
+            "container": {
+                "content": [
+                    {
+                        "type": "attribute",
+                        "name": "default",
+                        "tag": "textual",
+                        "options": {
+                            "placeholder": "default value"
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "row" }
+            }
+        },
+      
+        {
+            "concept": { "name": "number primitive" },
+            "tags": ["full"],
+            "type": "container",
+            "container": {
+                "content": [
+                    {
+                        "type": "attribute",
+                        "name": "default",
+                        "tag": "textual",
+                        "options": {
+                            "placeholder": "default value"
+                        }
+                    },
+                    {
+                        "type": "template",
+                        "name": "attribute-constraint"
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" },
+                "style": {
+                    "css": ["concept-attribute-constraint"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "number primitive" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "Number"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "boolean primitive" },
+            "tags": ["choice-selection"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "attribute",
+                        "name": "default",
+                        "tag": "switch-field"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "boolean primitive" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "Boolean"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "reference primitive" },
+            "tags": ["choice-selection"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                {
+                                    "kind": "static",
+                                    "type": "text",
+                                    "content": "Target",
+                                    "style": {
+                                        "css": ["keyword", "label"]
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "accept",
+                                    "tag": "textual"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "reference primitive" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "Reference",
+                        "focusable": false
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set primitive" },
+            "tags": ["choice-selection"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                {
+                                    "kind": "static",
+                                    "type": "text",
+                                    "content": "Set of",
+                                    "style": {
+                                        "css": ["label"]
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "accept",
+                                    "tag": "select-choice"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "accept",
+                        "tag": "value"
+                    }
+                ],
+                "style": {
+                    "ref": ["pad-left"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "set primitive" },
+            "tags": ["constraint"],
+            "type": "container",
+            "container": {
+                "content": [
+                    {
+                        "type": "template",
+                        "name": "attribute-constraint"
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" },
+                "style": {
+                    "css": ["concept-attribute-constraint"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "set primitive" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "Set",
+                        "focusable": false
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "concept primitive" },
+            "tags": ["choice-selection"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "disposition": [
+                    {
+                        "type": "attribute",
+                        "name": "concept",
+                        "tag": "textual"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "concept primitive" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "User-defined",
+                        "focusable": false
+                    }
+                ]
+            }
+        },
+
+
+        {
+            "concept": { "name": "boolean" },
+            "tags": ["toggle-field"],
+            "kind": "field",
+            "type": "binary",
+            "state": {
+                "true": {
+                    "content": [
+                        {
+                            "kind": "static",
+                            "type": "text",
+                            "content": {
+                                "type": "property",
+                                "name": "refname"
+                            }
+                        }
+                    ]
+                },
+                "false": {
+                    "content": [
+                        {
+                            "kind": "static",
+                            "type": "text",
+                            "content": {
+                                "type": "property",
+                                "name": "refname"
+                            }
+                        }
+                    ]
+                }
+            },
+            "label": {
+                "style": {
+                    "css": ["toggle-field__label"]
+                }
+            },
+            "style": {
+                "css": ["toggle-field", "font-ui"]
+            }
+        },
+        {
+            "concept": { "name": "boolean" },
+            "tags": ["switch-field"],
+            "type": "field",
+            "content": {
+                "type": "binary",
+                "checkbox": {
+                    "label": {
+                        "content": [
+                            {
+                                "type": "property",
+                                "name": "refname"
+                            }
+                        ],
+                        "style": {
+                            "css": ["switch-field__label"]
+                        }
+                    },
+                    "style": {
+                        "css": ["switch-field__checkbox"]
+                    }
+                },
+                "style": {
+                    "css": ["switch-field"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "number" },
+            "tags": ["textual"],            
+            "type": "field",
+            "content": {
+                "type": "text",
+                "resizable": true,
+                "input": {
+                    "placeholder": "number",
+                    "style": {
+                        "css": ["textfield--labeled__input"]
+                    }
+                },
+                "style": {
+                    "css": ["textfield--labeled"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["readonly"],    
+            "type": "static",
+            "content": {
+                "type": "text",
+                "content": { "type": "property", "name": "value" },
+                "focusable": false
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["textual", "list-item"],
+            "type": "field",
+            "content": {
+                "type": "text",
+                "resizable": true,
+                "input": {
+                    "placeholder": "null",
+                    "style": {
+                        "css": [
+                            "textfield--labeled__input"
+                        ]
+                    }
+                },
+                "style": {
+                    "css": ["textfield--labeled"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "reference" },
+            "tags": ["textual", "select-choice"],
+            "type": "field",
+            "content": {
+                "type": "choice",
+                "choice": {
+                    "option": {
+                        "template": { "tag": "choice" },
+                        "style": {
+                            "css": ["select-choice__list-option"]
+                        }
+                    },
+                    "style": {
+                        "css": ["select-choice__list"]
+                    }
+                },
+                "placeholder": "Select a reference",
+                "expanded": false,
+                "input": {
+                    "placeholder": "filter",
+                    "style": {
+                        "css": ["select-choice__input"]
+                    }
+                },
+                "style": {
+                    "css": ["select-choice"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["attribute-set"],
+            "type": "field",
+            "content": {
+                "type": "list",
+                "list": {
+                    "item": {
+                        "template": { "tag": "attribute-list-item--textual" },
+                        "style": {
+                            "css": ["textual-list__list-item--block"]
+                        }
+                    },
+                    "style": {
+                        "css": ["textual-list__list"],
+                        "ref": ["pad-all"]
+                    }
+                },
+                "action": {
+                    "add": false,
+                    "remove": false
+                },
+                "style": {
+                    "css": ["textual-list", "textual-list--attribute"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["value-set"],
+            "type": "field",
+            "content":  {
+                "type": "list",
+                "list": {
+                    "item": {
+                        "template": { 
+                            "tag": "textual",
+                            "options": { "placeholder": "value" }
+                        },
+                        "style": {
+                            "css": ["textual-list__list-item--inline"]
+                        }
+                    },
+                    "style": {
+                        "css": ["textual-list__list", "textual-list__list--inline", "textual-list__list--horizontal"]
+                    }
+                },
+                "action": {
+                    "add": false
+                },
+                "style": {
+                    "css": ["textual-list", "textual-list--value"]
+                }
+            }
+        }
+    ],
+    
+
+    "template": [],
+
+
+    "style": [
+        {
+            "type": "style",
+            "name": "box-top",
+            "style": {
+                "box": {
+                    "outer": {
+                        "top": { "value": 6, "unit": "px" }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "box-right",
+            "style": {
+                "box": {
+                    "outer": {
+                        "right": { "value": 6, "unit": "px" }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "box-left",
+            "style": {
+                "box": {
+                    "outer": {
+                        "left": { "value": 6, "unit": "px" }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "pad-top",
+            "style": {
+                "gss": {
+                    "box": {
+                        "inner": {
+                            "top": { "value": 6, "unit": "px" }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "pad-right",
+            "style": {
+                "gss": {
+                    "box": {
+                        "inner": {
+                            "right": { "value": 6, "unit": "px" }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "pad-bottom",
+            "style": {
+                "gss": {
+                    "box": {
+                        "inner": {
+                            "bottom": { "value": 6, "unit": "px" }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "pad-left",
+            "style": {
+                "gss": {
+                    "box": {
+                        "inner": {
+                            "left": { "value": 6, "unit": "px" }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "style",
+            "name": "pad-all",
+            "style": {
+                "gss": {
+                    "box": {
+                        "inner": {
+                            "all": { "value": 6, "unit": "px" }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

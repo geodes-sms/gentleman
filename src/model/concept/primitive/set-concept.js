@@ -197,6 +197,8 @@ const _SetConcept = {
         this.value.push(element.id);
 
         element.index = this.value.length - 1;
+        element.parent = this,
+        element.ref = this;
 
         this.validate();
         this.notify("value.added", element);

@@ -1,0 +1,322 @@
+{
+    "projection": [
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["textbox"],
+            "content": {
+                "type": "text",
+                "input": {
+                    "type": "text",
+                    "placeholder": { "type": "property", "name": "label" },
+                    "style": {
+                        "css": ["lib-textbox__input"]
+                    }
+                },
+                "style": {
+                    "css": ["lib-textbox"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["textbox-label"],
+            "content": {
+                "type": "text",
+                "container": {
+                    "type": "flex",
+                    "orientation": "row",
+                    "content": [
+                        {
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "content": { "type": "property", "name": "label" },
+                                "style": {
+                                    "css": ["lib-textbox2__label"]
+                                }
+                            }
+                        }, 
+                        {
+                            "type": "input",
+                            "input": {
+                                "type": "text",
+                                "placeholder": { "type": "property", "name": "placeholder" },
+                                "style": {
+                                    "css": ["lib-textbox2__input"]
+                                }
+                            }
+                        }
+                    ],
+                    "style": {
+                        "css": ["lib-textbox2"]
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["textarea"],
+            "content": {
+                "type": "text",
+                "multiline": true,
+                "input": {
+                    "type": "text",
+                    "placeholder": "Enter a description",
+                    "style": {
+                        "css": ["lib-textarea__input"]
+                    }
+                },
+                "style": {
+                    "css": ["lib-textarea"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["textarea-label"],
+            "field": {
+                "type": "text",
+                "multiline": true,
+                "container": {
+                    "content": [
+                        {
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "content": { "type": "property", "name": "label" },
+                                "style": {
+                                    "css": ["lib-textarea2__label"]
+                                }
+                            }
+                        }, 
+                        {
+                            "type": "input",
+                            "multiline": true,
+                            "input": {
+                                "type": "text",
+                                "placeholder": "Enter a description",
+                                "style": {
+                                    "css": ["lib-textarea2__input"]
+                                }
+                            }
+                        }
+                    ],
+                    "layout": { "type": "flex", "orientation": "row", "wrappable": true }
+                },
+                "style": {
+                    "css": ["lib-textarea2"]
+                }
+            }
+        },
+
+        {
+            "concept": { "name": "date" },
+            "type": "field",
+            "tags": ["textbox"],
+            "content": {
+                "type": "text",
+                "input": {
+                    "type": "date",
+                    "placeholder": "YYYY-MM-DD",
+                    "style": {
+                        "css": ["lib-textbox__input"]
+                    }
+                },
+                "style": {
+                    "css": ["lib-textbox", "lib-textbox--date"]
+                }
+            }
+        },
+      
+        {
+            "concept": { "name": "number" },
+            "type": "field",
+            "tags": ["textbox"],
+            "content": {
+                "type": "text",
+                "input": {
+                    "type": "number",
+                    "placeholder": { "type": "property", "name": "label" },
+                    "style": {
+                        "css": ["lib-textbox__input"]
+                    }
+                },
+                "style": {
+                    "css": ["lib-textbox"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "number" },
+            "type": "field",
+            "tags": ["textbox-label"],
+            "content": {
+                "type": "text",
+                "container": {
+                    "type": "flex",
+                    "orientation": "row",
+                    "content": [
+                        {
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "content": { "type": "property", "name": "label" },
+                                "style": {
+                                    "css": ["lib-textbox2__label"]
+                                }
+                            }
+                        }, 
+                        {
+                            "type": "input",
+                            "input": {
+                                "type": "number",
+                                "placeholder": { "type": "property", "name": "placeholder" },
+                                "style": {
+                                    "css": ["lib-textbox2__input"]
+                                }
+                            }
+                        }
+                    ],
+                    "style": {
+                        "css": ["lib-textbox2"]
+                    }
+                }
+            }
+        },
+
+
+        {
+            "concept": { "name": "reference" },
+            "type": "field",
+            "tags": ["combobox", "edit-view"],
+            "content": {
+                "type": "choice",
+                "choice": {
+                    "option": {
+                        "template": { "tag": "refchoice" },
+                        "style": {
+                            "css": ["lib-combobox__choice-option"]
+                        }
+                    },
+                    "style": {
+                        "css": ["lib-combobox__choice"]
+                    }
+                },
+                "placeholder": "author",
+                "expanded": false,
+                "input": {
+                    "placeholder": "Search..."
+                },
+                "style": {
+                    "css": ["lib-combobox"]
+                }
+            }
+        },
+
+
+        {
+            "concept": { "name": "set" },
+            "type": "field",
+            "tags": ["refauthors"],
+            "content": {
+                "type": "list",
+                "list": {
+                    "item": {
+                        "template": { "tag": "edit-view" },
+                        "style": {
+                            "css": ["lib-set__inlist-item"]
+                        }
+                    },
+                    "style": {
+                        "css": ["lib-set__inlist"]
+                    }
+                },
+                "action": {
+                    "add": false,
+                    "remove": false
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "type": "field",
+            "tags": ["books"],
+            "content": {
+                "type": "list",
+                "list": {
+                    "item": {
+                        "template": { "tag": "edit-view" },
+                        "style": {
+                            "css": ["lib-set__list-item"]
+                        }
+                    },
+                    "style": {
+                        "css": ["lib-set__list"]
+                    }
+                },
+                "action": {
+                    "add": false,
+                    "remove": false
+                }
+            }
+        },
+
+
+        {
+            "concept": { "name": "string" },
+            "type": "static",
+            "tags": ["text"],
+            "content": {
+                "type": "text",
+                "content": { "type": "property", "name": "value" },
+                "style": {
+                    "css": ["lib-text"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "static",
+            "tags": ["email"],
+            "content": {
+                "type": "link",
+                "urlType": "email",
+                "url": { "type": "property", "name": "value" },
+                "content": [{ "type": "property", "name": "value" }],
+                "style": {
+                    "css": ["lib-email"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "static",
+            "tags": ["url"],
+            "content": {
+                "type": "link",
+                "urlType": "link",
+                "url": { "type": "property", "name": "value" },
+                "content": [{ "type": "property", "name": "value" }],
+                "style": {
+                    "css": ["lib-email"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "static",
+            "tags": ["image"],
+            "content": {
+                "type": "image",
+                "url": { "type": "property", "name": "value" },
+                "style": {
+                    "css": ["lib-image"]
+                }
+            }
+        }
+    ]
+}

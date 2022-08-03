@@ -1,0 +1,259 @@
+{
+    "file": "concept",
+
+    "concept": [
+        {
+            "name": "concept",
+            "nature": "concrete",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "name"
+                    }
+                },
+                {
+                    "name": "attributes",
+                    "target": {
+                        "name": "set",
+                        "accept": { 
+                            "name": "attribute" 
+                        }
+                    },
+                    "required": true
+                }
+            ]
+        },
+      
+        {
+            "name": "attribute",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "name"
+                    }
+                },
+                {
+                    "name": "required",
+                    "target": {
+                        "name": "boolean"
+                    },
+                    "required": true,
+                    "description": "The value indicating whether the structure is required for the parent concept."
+                },
+                {
+                    "name": "target",
+                    "target": {
+                        "name": "primitive"
+                    },
+                    "required": true,
+                    "description": "The target concept of the attribute structure."
+                }
+            ]
+        },
+        {
+            "name": "property",
+            "nature": "concrete",
+            "prototype": "structure",
+            "attributes": [
+                {
+                    "name": "target",
+                    "target": {
+                        "name": "value"
+                    },
+                    "required": true,
+                    "description": "The target concept of the property structure."
+                }
+            ]
+        },
+
+        {
+            "name": "primitive",
+            "nature": "prototype",
+            "attributes": []
+        },
+        {
+            "name": "string primitive",
+            "nature": "concrete",
+            "prototype": "primitive",
+            "attributes": [
+                {
+                    "name": "default",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "min-length",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "max-length",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "regex",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "cname", "type": "string", "value": "string" }
+            ]
+        },
+        {
+            "name": "number primitive",
+            "nature": "concrete",
+            "prototype": "primitive",
+            "attributes": [
+                {
+                    "name": "default",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "min",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "max",
+                    "target": {
+                        "name": "number"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "cname", "type": "string", "value": "number" }
+            ]
+        },
+        {
+            "name": "boolean primitive",
+            "nature": "concrete",
+            "prototype": "primitive",
+            "attributes": [
+                {
+                    "name": "default",
+                    "target": {
+                        "name": "boolean"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "cname", "type": "string", "value": "boolean" }
+            ]
+        },
+        {
+            "name": "set primitive",
+            "nature": "concrete",
+            "prototype": "primitive",
+            "attributes": [
+                {
+                    "name": "accept",
+                    "target": {
+                        "name": "primitive"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "ordered",
+                    "target": {
+                        "name": "boolean",
+                        "default": true
+                    },
+                    "required": true
+                },
+                {
+                    "name": "min",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "max",
+                    "target": {
+                        "name": "number"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "cname", "type": "string", "value": "set" }
+            ]
+        },
+        {
+            "name": "reference primitive",
+            "nature": "concrete",
+            "prototype": "primitive",
+            "attributes": [
+                {
+                    "name": "accept",
+                    "target": {
+                        "name": "name"
+                    }
+                },
+                {
+                    "name": "rel",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": ["parent", "child", "sibling"]
+                        }
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "cname", "type": "string", "value": "reference" }
+            ]
+        },
+        {
+            "name": "concept primitive",
+            "nature": "concrete",
+            "prototype": "primitive",
+            "attributes": [
+                {
+                    "name": "concept",
+                    "target": {
+                        "name": "string",
+                        "src": [
+                            {
+                                "type": "concept",
+                                "concept": { "prototype": "concept" },
+                                "value": { "type": "attribute", "name": "name" }
+                            }
+                        ]
+                    },
+                    "required": true
+                }
+            ],
+            "properties": [
+                { "name": "cname", "type": "string", "value": "concept" }
+            ]
+        },
+
+
+        {
+            "name": "name",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "length": {
+                    "type": "range",
+                    "range": {
+                        "min": { "value": 1 },
+                        "max": { "value": 50 }
+                    }
+                }
+            }
+        }
+    ]
+}

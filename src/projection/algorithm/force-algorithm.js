@@ -21,7 +21,7 @@ export const BaseForceAlgorithm = {
 
         this.linkInventory = new Map();
 
-        return this
+        return this;
     },
 
     render(){

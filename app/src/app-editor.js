@@ -2,7 +2,7 @@ import { createUnorderedList, createListItem, getElement, createSpan, hasOwn, fi
 import { duplicateTab } from "@utils/index.js";
 import { createEditor } from "@src";
 import { buildConceptHandler, buildProjectionHandler, buildGraphicalHandler } from "@generator/index.js";
-import { ProjectionEditor } from "./projection-editor.js";
+import { ProjectionEditor, ConceptEditor } from "./projection-editor.js";
 
 
 let CMODEL__CONCEPT = null;
@@ -76,7 +76,7 @@ export const App = {
     render() {
         this.refresh();
     },
- 
+
     /**
      * Creates an editor
      * @param {Editor} editor 
@@ -326,6 +326,7 @@ export const App = {
                         "close.editor": function () { this.close(); },
                         "build-concept": function (args) { buildConceptHandler.call(this); },
                         "build-projection": function (args) { buildProjectionHandler.call(this); },
+                        "build-mystuff": stuffHandler,
                     }
                 }));
                 this.changeTab(tab);
@@ -344,6 +345,7 @@ export const App = {
     }
 };
 
+
 /**
  * Create a tab item
  * @param {string} name 
@@ -360,58 +362,6 @@ function createTab(name) {
 
     return container;
 }
-
-const actionHandler = {
-    "build-concept": function (editor) {
-        buildConceptHandler.call(editor);
-    },
-    "build-projection": function (editor) {
-        buildProjectionHandler.call(editor);
-    }, 
-    "build-graphical": function (editor) {
-        buildGraphicalHandler.call(editor);
-    },
-    "preview-projection": function (editor) {
-        const RESOURCE_NAME = "metamodel";
-
-        if (!editor.hasResource(RESOURCE_NAME)) {
-            editor.notify("<strong>Metamodel not found</strong>.", "error", 3000);
-            editor.triggerEvent({ name: "load-resource", args: [RESOURCE_NAME] });
-
-            return false;
-        }
-
-        let pmodel = buildProjectionHandler.call(editor, { download: false, notify: "error" });
-
-        if (!pmodel) {
-            return;
-        }
-
-        let cmodel = editor.getModel(RESOURCE_NAME);
-
-        const channelID = `gentleman.editor@${editor.id}`;
-        const channel = new BroadcastChannel(channelID);
-
-        if (!editor.__previewStarted) {
-            localStorage.setItem("gentleman.preview", channelID);
-            editor.__previewStarted = true;
-        }
-
-        duplicateTab();
-
-        setTimeout(() => {
-            channel.postMessage({
-                concept: cmodel,
-                projection: pmodel
-            });
-        }, 100);
-
-        // channel.postMessage({
-        //     concept: cmodel,
-        //     projection: pmodel
-        // });
-    },
-};
 
 const CONCEPT_HANDLERS = {
     "open-constraint": function (args) {
@@ -445,22 +395,16 @@ const PMODEL__HANDLER = {
         if (!this.__previewStarted) {
             return false;
         }
-
-        actionHandler["preview-projection"](this);
     },
     "value.added": function () {
         if (!this.__previewStarted) {
             return false;
         }
-
-        actionHandler["preview-projection"](this);
     },
     "value.removed": function () {
         if (!this.__previewStarted) {
             return false;
         }
-
-        actionHandler["preview-projection"](this);
     },
     "open-style": function (args) {
         let concept = args[0];
@@ -684,12 +628,17 @@ function createConceptEditor() {
             CMODEL__CONCEPT = await CM_CONCEPT.json();
             CMODEL__PROJECTION = await CM_PROJECTION.json();
 
-            return this.createEditor({
+            let editor = this.createEditor({
                 conceptModel: CMODEL__CONCEPT,
                 projectionModel: CMODEL__PROJECTION,
                 config: CMODEL__EDITOR,
                 handlers: CONCEPT_HANDLERS
             });
+
+            let wrapper = Object.create(ConceptEditor).init(editor);
+            this.editorSection.append(wrapper.render());
+
+            return editor;
         });
     } else {
         return new Promise(() => this.createEditor({
@@ -720,7 +669,7 @@ function createProjectionEditor() {
             /*SMODEL__CONCEPT = await SM_CONCEPT.json();
             SMODEL__PROJECTION = await SM_PROJECTION.json();*/
 
-            let editor =  this.createEditor({
+            let editor = this.createEditor({
                 conceptModel: PMODEL__CONCEPT,
                 projectionModel: PMODEL__PROJECTION,
                 config: Object.assign({}, PMODEL__EDITOR),
@@ -737,7 +686,7 @@ function createProjectionEditor() {
         });
     } else {
         return new Promise(() => {
-            let editor =  this.createEditor({
+            let editor = this.createEditor({
                 conceptModel: PMODEL__CONCEPT,
                 projectionModel: PMODEL__PROJECTION,
                 config: Object.assign({}, PMODEL__EDITOR),
@@ -795,7 +744,7 @@ function createGraphicEditor() {
         });
     } else {
         return new Promise(() => {
-            let editor =  this.createEditor({
+            let editor = this.createEditor({
                 conceptModel: GMODEL__CONCEPT,
                 projectionModel: GMODEL__PROJECTION,
                 config: Object.assign({}),

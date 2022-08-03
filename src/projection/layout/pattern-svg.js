@@ -1,5 +1,5 @@
 import { ContentHandler } from "./../content-handler.js";
-import { createDocFragment, isHTMLElement, isNullOrUndefined, createDiv, valOrDefault, isEmpty } from "zenkai";
+import { createDocFragment, isHTMLElement, isNullOrUndefined, createDiv, valOrDefault } from "zenkai";
 import { Layout } from "./layout.js";
 
 const BasePatternLayout = {
@@ -29,8 +29,8 @@ const BasePatternLayout = {
                     view: "pattern",
                     id: this.id
                 }
-            })
-        };
+            });
+        }
         
         if(isNullOrUndefined(this.svgArea)){
             this.svgArea = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -41,7 +41,7 @@ const BasePatternLayout = {
             this.svgArea.appendChild(this.templateArea);
             this.svgArea.appendChild(this.itemsArea);
 
-            fragment.appendChild(this.svgArea)
+            fragment.appendChild(this.svgArea);
         }
 
         if(!isHTMLElement(this.base)){
@@ -135,7 +135,7 @@ const BasePatternLayout = {
 
         if(svgW < w || svgH < h){
 
-            const template = ContentHandler.call(this, {type: "g-fragment", name: name})
+            const template = ContentHandler.call(this, {type: "g-fragment", name: name});
 
             let holder = this.createHolder(template, this.color);
 
@@ -177,7 +177,7 @@ const BasePatternLayout = {
         itemProjection.optional = true;
         itemProjection.parent = this.projection;
 
-        let container = itemProjection.init().render()
+        let container = itemProjection.init().render();
 
         return container;
     },
@@ -197,7 +197,7 @@ const BasePatternLayout = {
         if(!isNullOrUndefined(this.items.get(value.id)) || this.prio != button.element){
             return;
         }
-        let buttonHolder = this.buttons.get(button.element)
+        let buttonHolder = this.buttons.get(button.element);
         let item = this.createItem(value, button);
 
         let holder = this.createHolder(item, this.color);
@@ -249,8 +249,8 @@ const BasePatternLayout = {
 
             this.upSize(x + Number(button.getAttribute("width")), y + Number(button.getAttribute("height")));
         }else{
-            button.remove()
-            this.buttons.delete(key)
+            button.remove();
+            this.buttons.delete(key);
         }        
     },
 
@@ -292,7 +292,7 @@ const BasePatternLayout = {
         
         this.buttons.set(button, buttonHolder);
     }
-}
+};
 
 export const PatternLayout = Object.assign({},
     Layout,

@@ -410,9 +410,9 @@ const Projection = {
 
         container = this.element.render();
 
-        if (type === "layout" || type === "container") {
-            makeResizable(container);
-        }
+        // if (type === "layout" || type === "container") {
+        //     makeResizable(container);
+        // }
 
         if (!this.element.focusable) {
             container.tabIndex = -1;
@@ -584,7 +584,7 @@ const Projection = {
 
             return;
         }
-
+        
         let currentContainer = this.getContainer();
 
         this.index = valOrDefault(index, (this.index + 1) % this.schema.length);

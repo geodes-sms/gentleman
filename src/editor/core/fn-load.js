@@ -61,6 +61,23 @@ export const FnLoad = {
 
         return this;
     },
+    loadValues($values, name) {
+        let values = $values;
+        
+        if (isNullOrUndefined(this.conceptModel)) {
+            console.error("concept model not found");
+            return;
+        }
+        
+        this.conceptModel.initValue(values);
+        this.loadSession();
+
+        this.triggerEvent({ name: "editor.load-values@post", args: [name, JSON.stringify(values)] });
+
+        this.refresh();
+
+        return this;
+    },
     loadConcepts(concepts) {
         if (!Array.isArray(concepts)) {
             this.notify("Invalid concept schema", NotificationType.ERROR);
@@ -173,7 +190,7 @@ export const FnLoad = {
                 this.loadProjection(schema, name);
             } else if (type === "model") {
                 this.loadConcept(schema.concept, "model");
-                this.loadProjection(schema.projection, "model");
+                this.loadValues(schema.values);
             }
         };
         reader.readAsText(file);

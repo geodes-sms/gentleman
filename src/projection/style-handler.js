@@ -12,7 +12,7 @@ function resolveValue(content) {
     }
 
     if (type === "param") {
-        return this.projection.getParam(content.name);
+        return this.getParam(content.name);
     }
 
     return content;

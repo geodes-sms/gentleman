@@ -932,39 +932,6 @@
                                                 "layout": {
                                                     "type": "flex",
                                                     "orientation": "row",
-                                                    "alignItems": "center",
-                                                    "disposition": [
-                                                        {
-                                                            "type": "static",
-                                                            "static": {
-                                                                "type": "text",
-                                                                "content": "Number of values: ",
-                                                                "style": {
-                                                                    "ref": ["label"],
-                                                                    "text": {
-                                                                        "size": { "value": 1.1, "unit": "em" }
-                                                                    },
-                                                                    "box": {
-                                                                        "outer": { 
-                                                                            "right": { "value": 4, "unit": "px" }
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        },
-                                                        {
-                                                            "type": "attribute",
-                                                            "name": "number_of_values",
-                                                            "tag": "value"
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                "type": "layout",
-                                                "layout": {
-                                                    "type": "flex",
-                                                    "orientation": "row",
                                                     "alignItems": "end",
                                                     "disposition": [
                                                         {
@@ -1386,39 +1353,7 @@
                                                             "type": "static",
                                                             "static": {
                                                                 "type": "text",
-                                                                "content": "Reference name: ",
-                                                                "style": {
-                                                                    "ref": ["label"],
-                                                                    "text": {
-                                                                        "size": { "value": 1.1, "unit": "em" }
-                                                                    },
-                                                                    "box": {
-                                                                        "outer": { 
-                                                                            "right": { "value": 4, "unit": "px" }
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        },
-                                                        {
-                                                            "type": "attribute",
-                                                            "name": "reference_name"
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                "type": "layout",
-                                                "layout": {
-                                                    "type": "flex",
-                                                    "orientation": "row",
-                                                    "alignItems": "center",
-                                                    "disposition": [
-                                                        {
-                                                            "type": "static",
-                                                            "static": {
-                                                                "type": "text",
-                                                                "content": "Number of values: ",
+                                                                "content": "Max number of values: ",
                                                                 "style": {
                                                                     "ref": ["label"],
                                                                     "text": {

@@ -12,6 +12,7 @@ module.exports = merge(common, {
         relis: './demo/relis/index.js',
         todo: './demo/todo/index.js',
         cms: './demo/cms/index.js',
+        library: './demo/library/index.js',
     },
     output: {
         filename: '[name].js',

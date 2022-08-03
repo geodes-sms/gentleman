@@ -1,0 +1,308 @@
+{
+    "projection": [
+        {
+            "concept": { "name": "boolean" },
+            "tags": ["switch-field"],
+            "type": "field",
+            "content": {
+                "type": "binary",
+                "checkbox": {
+                    "label": {
+                        "content": [
+                            {
+                                "type": "property",
+                                "name": "refname"
+                            }
+                        ],
+                        "style": {
+                            "css": ["switch-field__label"]
+                        }
+                    },
+                    "style": {
+                        "css": ["switch-field__checkbox"]
+                    }
+                },
+                "style": {
+                    "css": ["switch-field"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["tag"],
+            "content": {
+                "type": "text",
+                "resizable": true,
+                "input": {
+                    "type": "text",
+                    "placeholder": "tag",
+                    "style": {
+                        "css": ["pp-tagbox__input"]
+                    }
+                },
+                "style": {
+                    "css": ["pp-tagbox"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["textbox"],
+            "content": {
+                "type": "text",
+                "input": {
+                    "type": "text",
+                    "placeholder": { "type": "property", "name": "label" },
+                    "style": {
+                        "css": ["pp-textbox__input"]
+                    }
+                },
+                "style": {
+                    "css": ["pp-textbox"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["textbox-label"],
+            "content": {
+                "type": "text",
+                "container": {
+                    "type": "flex",
+                    "orientation": "row",
+                    "content": [
+                        {
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "content": { "type": "property", "name": "label" },
+                                "style": {
+                                    "css": ["pp-textbox2__label"]
+                                }
+                            }
+                        }, 
+                        {
+                            "type": "input",
+                            "input": {
+                                "type": "text",
+                                "placeholder": { "type": "property", "name": "placeholder" },
+                                "style": {
+                                    "css": ["pp-textbox2__input"]
+                                }
+                            }
+                        }
+                    ],
+                    "style": {
+                        "css": ["pp-textbox2"]
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["textarea"],
+            "content": {
+                "type": "text",
+                "multiline": true,
+                "input": {
+                    "type": "text",
+                    "placeholder": "Enter a description",
+                    "style": {
+                        "css": ["pp-textarea__input"]
+                    }
+                },
+                "style": {
+                    "css": ["pp-textarea"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["textarea-label"],
+            "field": {
+                "type": "text",
+                "multiline": true,
+                "container": {
+                    "content": [
+                        {
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "content": { "type": "property", "name": "label" },
+                                "style": {
+                                    "css": ["pp-textarea2__label"]
+                                }
+                            }
+                        }, 
+                        {
+                            "type": "input",
+                            "multiline": true,
+                            "input": {
+                                "type": "text",
+                                "placeholder": "Enter a description",
+                                "style": {
+                                    "css": ["pp-textarea2__input"]
+                                }
+                            }
+                        }
+                    ],
+                    "layout": { "type": "flex", "orientation": "row", "wrappable": true }
+                },
+                "style": {
+                    "css": ["pp-textarea2"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "number" },
+            "type": "field",
+            "tags": ["textbox-label"],
+            "content": {
+                "type": "text",
+                "container": {
+                    "type": "flex",
+                    "orientation": "row",
+                    "content": [
+                        {
+                            "type": "static",
+                            "static": {
+                                "type": "text",
+                                "content": { "type": "property", "name": "label" },
+                                "style": {
+                                    "css": ["pp-textbox2__label"]
+                                }
+                            }
+                        }, 
+                        {
+                            "type": "input",
+                            "input": {
+                                "type": "number",
+                                "placeholder": { "type": "property", "name": "placeholder" },
+                                "style": {
+                                    "css": ["pp-textbox2__input"]
+                                }
+                            }
+                        }
+                    ],
+                    "style": {
+                        "css": ["pp-textbox2"]
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "static",
+            "tags": ["text"],
+            "content": {
+                "type": "text",
+                "content": { "type": "property", "name": "value" },
+                "style": {
+                    "css": ["pp-text"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "static",
+            "tags": ["email"],
+            "content": {
+                "type": "link",
+                "urlType": "email",
+                "url": { "type": "property", "name": "value" },
+                "content": [{ "type": "property", "name": "value" }],
+                "style": {
+                    "css": ["pp-email"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "static",
+            "tags": ["url"],
+            "content": {
+                "type": "link",
+                "urlType": "link",
+                "url": { "type": "property", "name": "value" },
+                "content": [{ "type": "property", "name": "value" }],
+                "style": {
+                    "css": ["pp-email"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "static",
+            "tags": ["image"],
+            "content": {
+                "type": "image",
+                "url": { "type": "property", "name": "value" },
+                "style": {
+                    "css": ["pp-image"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "type": "field",
+            "tags": ["tags"],
+            "content": {
+                "type": "list",
+                "list": {
+                    "item": {
+                        "template": { "tag": "tag" },
+                        "style": {
+                            "css": ["pp-tag-set__list-item"]
+                        }
+                    },
+                    "style": {
+                        "css": ["pp-tag-set__list"]
+                    }
+                },
+                "action": {
+                    "add": false,
+                    "remove": {
+                        "content": [
+                            {
+                                "kind": "static",
+                                "type": "text",
+                                "content": "✖"
+                            }
+                        ],
+                        "style": {
+                            "css": ["pp-tag-set__btn-remove"]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "type": "field",
+            "tags": ["areas"],
+            "content": {
+                "type": "list",
+                "list": {
+                    "item": {
+                        "template": { "tag": "edit-view" },
+                        "style": {
+                            "css": ["pp-set__list-item"]
+                        }
+                    },
+                    "style": {
+                        "css": ["pp-set__list"]
+                    }
+                },
+                "action": {
+                    "add": false,
+                    "remove": false
+                }
+            }
+        }
+    ]
+}
