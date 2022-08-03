@@ -11,7 +11,7 @@ module.exports = merge(common, {
         trafficlight: './demo/traffic-light/index.js',
         relis: './demo/relis/index.js',
         todo: './demo/todo/index.js',
-        cms: './demo/cms/index.js',
+        /*cms: './demo/cms/index.js',*/
         library: './demo/library/index.js',
     },
     output: {

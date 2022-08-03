@@ -3495,6 +3495,102 @@
             }
         },
         {
+            "concept": { "name": "svg-switch" },
+            "type": "container",
+            "tags": ["choice-selection", "config"],
+            "container": {
+                "content": [
+                    {
+                        "type": "template",
+                        "name": "tpl-element-header_graph",
+                        "param": [
+                            { "name": "type", "value": "Img" }
+                        ]
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "tag",
+                        "tag": "text-string",
+                        "options": {
+                            "resizable": true,
+                            "placeholder": "Tag..."
+                        },
+                        "style": {
+                            "css": ["text-static"]
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "row" },
+                "style": {
+                    "css": ["static-config", "static-config--text"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "svg-switch" },
+            "tags": ["layout-setting"],
+            "type": "layout",
+            "projection":{
+                "type": "flex",
+                "orientation": "column",
+                "disposition":[
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "Coordinates",
+                        "style":{
+                            "css": ["mp-style__title", "title"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "coordinates",
+                        "tag": "layout-coordinates"
+                    },
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "Dimension",
+                        "style":{
+                            "css": ["mp-style__title", "title"]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "dimension",
+                        "tag": "layout-dimensions"
+                    },
+                    {
+                        "type": "layout",
+                        "layout":{
+                            "type": "flex",
+                            "orientation": "row",
+                            "disposition":[
+                                {
+                                    "kind": "static",
+                                    "type": "text",
+                                    "content": "Order",
+                                    "style":{
+                                        "css": ["mp-style__title", "title"]
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "order",
+                                    "tag": "action"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "order",
+                        "tag": "element-set"
+                    }
+                ]
+            }
+        },
+        {
             "concept": { "name": "svg-static" },
             "type": "layout",
             "tags": ["layout-background"],

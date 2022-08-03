@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 import { isNull, isNullOrUndefined } from "zenkai";
 import { Field } from "./field.js";
-=======
-import { isNullOrUndefined } from "zenkai";
-import { Field } from "./field";
->>>>>>> master
 
 const BaseSvgText = {
 

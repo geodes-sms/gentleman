@@ -4267,7 +4267,7 @@
         },
         {
             "concept": { "name": "string" },
-            "tags": ["text-string"],
+            "tags": ["text-string", "list-item"],
             "type": "field",
             "content": {
                 "type": "text",

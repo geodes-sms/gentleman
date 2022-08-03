@@ -283,7 +283,6 @@ const Projection = {
                     let anchor = this.environment.resolveElement(container);
                     anchor.deleteFromView();
                 }
-                console.log("Is a multi");
                 if(container.dataset.algorithm === "multi"){
                     let multi = this.environment.resolveElement(container);
                     multi.deletePaths();

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import {
     createDocFragment, createDiv, createUnorderedList, createListItem, createButton,
     findAncestor, removeChildren, isHTMLElement, isNullOrUndefined, valOrDefault, hasOwn, isEmpty,
@@ -8,22 +7,13 @@ import {
     getTopElement, getBottomElement, getRightElement, getLeftElement
 } from "@utils/index.js";
 import { StyleHandler } from "./../style-handler.js";
-=======
-import { isHTMLElement, isNullOrUndefined, valOrDefault, } from "zenkai";
->>>>>>> master
 import { ContentHandler } from "./../content-handler.js";
 import { Field } from "./field.js";
 import { AnchorHandler } from "./../algorithm/anchor-handler.js";
 
-<<<<<<< HEAD
 const BaseArrow ={
     init(){
         const { arrowStyle = null, path, attach = {}} = this.schema;
-=======
-const BaseArrow = {
-    init() {
-        this.arrowStyle = this.schema.arrowStyle;
->>>>>>> master
 
         if(isNullOrUndefined(arrowStyle)){
             this.arrowStyle = {}
@@ -41,13 +31,8 @@ const BaseArrow = {
         
         return this;
     },
-<<<<<<< HEAD
     render(){
         const { reference, decorator = false} = this.schema;
-=======
-    render() {
-        const { /*target = "self", source = "source",*/ decorator } = this.schema;
->>>>>>> master
 
 
         if (!isHTMLElement(this.element)) {
@@ -60,7 +45,6 @@ const BaseArrow = {
             this.element.tabindex = -1;
             this.element.dataset["nature"] = "field";
             this.element.dataset["view"] = "arrow";
-<<<<<<< HEAD
             this.element.dataset["id"] = this.id;            
         }
 
@@ -84,13 +68,6 @@ const BaseArrow = {
         }
 
         /*if(target != "self"){
-=======
-            this.element.dataset["id"] = this.id;
-
-        }
-
-        if (target != "self") {
->>>>>>> master
             this.source.getAttributeByName(target).target.register(this.projection);
         }
 
@@ -128,14 +105,9 @@ const BaseArrow = {
     },
 
 
-<<<<<<< HEAD
     computeStyle(){
 
         const { stroke = "black", dasharray = null, width = 1, linecap = "butt", end = false, start = false } = this.arrowStyle;
-=======
-    computeStyle() {
-        const { stroke, dasharray, width, linecap, end, start } = this.schema.arrowStyle;
->>>>>>> master
 
         this.element.style.stroke = stroke;
 
@@ -277,16 +249,9 @@ const BaseArrow = {
         });
     },
 
-<<<<<<< HEAD
     get(name){
         for(let i = 0; i < this.registered.length; i++){
             if(this.registered[i].name === name){
-=======
-    get(name) {
-        console.log(this.registered);
-        for (let i = 0; i < this.registered.length; i++) {
-            if (this.registered[i].name === name) {
->>>>>>> master
                 return this.registered[i].value;
             }
         }
@@ -297,7 +262,6 @@ const BaseArrow = {
             this.registered = [];
         }
 
-<<<<<<< HEAD
         value.register(this);
         
         this.registered.push({concept: value, currentVal: value.value});
@@ -600,17 +564,6 @@ const BaseArrow = {
                 break;
         }
 
-=======
-    bindEvent() {
-        this.projection.registerHandler("value.changed", (value) => {
-            console.log(value);
-            this.refresh();
-        });
-
-        this.projection.registerHandler("displayed", () => {
-            this.refresh();
-        });
->>>>>>> master
     }
 };
 
