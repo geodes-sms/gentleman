@@ -30,9 +30,9 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 [tl-img]: https://gentlemancp.org/assets/images/demo_traffic_light.gif "Traffic light demo"
 [todo-app]: https://geodes-sms.github.io/gentleman/demo/todo/index.html
 [todo-img]: https://gentlemancp.org/assets/images/demo_todo.gif "TodoList demo"
-[sc-app]: https://geodes-sms.github.io/gentleman/demo/sc/index.html
+[sc-app]: https://geodes-sms.github.io/gentleman/demo/statechart/index.html
 [sc-img]: https://gentlemancp.org/assets/images/demo_sc.gif "Statechart demo"
-[ds-app]: https://geodes-sms.github.io/gentleman/demo/ds/index.html
+[ds-app]: https://geodes-sms.github.io/gentleman/demo/sequence/index.html
 [ds-img]: https://gentlemancp.org/assets/images/demo_ds.gif "Sequence Diagram demo"
 [music-app]: https://geodes-sms.github.io/gentleman/demo/music/index.html
 [music-img]: https://gentlemancp.org/assets/images/demo_music.gif "Music demo"
