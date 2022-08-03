@@ -389,7 +389,6 @@ const _Concept = {
                 child.delete(true);
             }
         });
-
         try {
             if (this.model.removeConcept(this.id)) {
                 this.notify("delete");
@@ -464,7 +463,9 @@ const _Concept = {
             });
         });
 
-        output.attributes = attributes;
+        output.force = this.force
+
+        output.attributes = attributes;  
 
         return output;
     },

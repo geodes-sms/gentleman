@@ -7,6 +7,11 @@
     cursor: default;
 }
 
+.selected-panel {
+    flex: 1 1;
+    align-items: flex-end;
+}
+
 .model-concept {
     position: relative;
     padding-bottom: 6px;

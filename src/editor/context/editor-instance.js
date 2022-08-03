@@ -74,6 +74,8 @@ export const EditorInstanceManager = {
             this.status.addView(instance);
         }
 
+        instance.concept.notify("displayed", instance.projection.element.id);
+
         this.updateActiveInstance(instance);
         this.refresh();
 

@@ -613,6 +613,14 @@
                                     "type": "template",
                                     "name": "mp-button",
                                     "param": [
+                                        { "name": "type", "value": "svg-container" },
+                                        { "name": "name", "value": "Svg" }
+                                    ] 
+                                },
+                                {
+                                    "type": "template",
+                                    "name": "mp-button",
+                                    "param": [
                                         { "name": "type", "value": "text-static" },
                                         { "name": "name", "value": "Text" }
                                     ]
@@ -1292,9 +1300,46 @@
                         "type": "attribute",
                         "name": "wrappable",
                         "tag": "switch-field"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "sibling",
+                        "placeholder": {
+                            "content": {
+                                "kind": "static",
+                                "type": "text",
+                                "content": "Add Shadow",
+                                "help": "Specify customed coordinates",
+                                "style":{
+                                    "css":["field-config-option", "font-ui"],
+                                    "ref": ["box-top"]
+                                }
+                            }
+                        }
                     }
                 ],
                 "layout": { "type": "flex", "orientation": "column" }
+            }
+        },
+        {
+            "concept": { "name": "sibling" },
+            "tags": [],
+            "type": "layout",
+            "projection":{
+                "type": "flex",
+                "orientation": "column",
+                "disposition":[
+                    {
+                        "type": "attribute",
+                        "name": "r-tag",
+                        "tag": "label-string"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "tag",
+                        "tag": "label-string"
+                    }
+                ]
             }
         },
         {
@@ -3305,8 +3350,6 @@
                 }
             }
         },
-
-
         {
             "concept": { "name": "projection-dynamic" },
             "tags": ["choice-selection", "config"],
@@ -3357,6 +3400,11 @@
                     {
                         "type": "attribute",
                         "name": "focusable",
+                        "tag": "switch-field"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "listen",
                         "tag": "switch-field"
                     }
                 ],
@@ -3981,6 +4029,94 @@
             }
         },
         {
+            "concept": { "name": "number" },
+            "tags": ["simulation"],
+            "type": "field",
+            "content":{
+                "type": "svg",
+                "placeholder": "number...",
+                "style":{
+                    "anchor": "start",
+                    "size": 8,
+                    "baseline": "auto",
+                    "font": "Segoe UI",
+                    "weight": 500
+                }
+            }
+        },
+        {
+            "concept": { "name": "number" },
+            "tags": ["simulation-large"],
+            "type": "field",
+            "content":{
+                "type": "svg",
+                "placeholder": "0",
+                "style":{
+                    "anchor": "start",
+                    "size": 11,
+                    "baseline": "auto",
+                    "font": "Segoe UI",
+                    "weight": 500
+                }
+            }
+        },
+        {
+            "concept": { "name": "number" },
+            "tags": ["selection-info"],
+            "type": "algorithm",
+            "content":{
+                "type": "decoration",
+                "coordinates":{
+                    "x": 100,
+                    "y": 375
+                },
+                "content":[
+                    {
+                        "coordinates":{
+                            "x": 10,
+                            "y": 0
+                        },
+                        "dimension":{
+                            "type": "pure"
+                        },
+                        "render":{
+                            "kind": "static",
+                            "type": "svg-text",
+                            "content": "NbItems:",
+                            "style":{
+                                "anchor": "end",
+                                "size": 18,
+                                "baseline": "hanging",
+                                "font": "Segoe UI",
+                                "weight": 500
+                            }
+                        }
+                    },
+                    {
+                        "coordinates":{
+                            "x": 10,
+                            "y": 0
+                        },
+                        "dimension":{
+                            "type": "pure"
+                        },
+                        "render":{
+                            "kind": "field",
+                            "type": "svg",
+                            "placeholder": "number...",
+                            "style":{
+                                "anchor": "start",
+                                "size": 18,
+                                "baseline": "hanging",
+                                "font": "Segoe UI",
+                                "weight": 500
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
             "concept": { "name": "tag" },
             "tags": ["reference"],
             "type": "layout",
@@ -4131,13 +4267,31 @@
         },
         {
             "concept": { "name": "string" },
-            "tags": ["text-string"],
+            "tags": ["text-string", "list-item"],
             "type": "field",
             "content": {
                 "type": "text",
                 "resizable": true,
                 "input": {
                     "placeholder": "text...",
+                    "style": {
+                        "css": ["mp-textfield-input"]
+                    }
+                },
+                "style": {
+                    "css": ["mp-textfield"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["fixed"],
+            "type": "field",
+            "content": {
+                "type": "text",
+                "resizable": false,
+                "input": {
+                    "placeholder": "...",
                     "style": {
                         "css": ["mp-textfield-input"]
                     }
@@ -4507,6 +4661,156 @@
         },
         {
             "type": "template",
+            "name": "mp-button3",
+            "param": [
+                { "name": "type", "type": "string" },
+                { "name": "name", "type": "string" }
+            ],
+            "content": [
+                {
+                    "kind": "static",
+                    "type": "button",
+                    "action": {
+                        "type": "SELECT",
+                        "target": { "type": "bind" },
+                        "value": { "name": { "type": "param", "name": "type" } }
+                    },
+                    "content": [
+                        { "kind": "static", "type": "text", "content": { "type": "param", "name": "name" } }
+                    ],
+                    "style": {
+                        "css": ["container__btn-element", "graph-elem__btn"]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "template",
+            "name": "mp-button4",
+            "param": [
+                { "name": "type", "type": "string" },
+                { "name": "name", "type": "string" }
+            ],
+            "content": [
+                {
+                    "kind": "static",
+                    "type": "button",
+                    "action": {
+                        "type": "CREATES",
+                        "target": { "type": "attribute", "name": "content", "attribute": "render" },
+                        "value": { "name": { "type": "param", "name": "type" } }
+                    },
+                    "content": [
+                        { "kind": "static", "type": "text", "content": { "type": "param", "name": "name" } }
+                    ],
+                    "style": {
+                        "css": ["container__btn-element"]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "template",
+            "name": "mp-button4",
+            "param": [
+                { "name": "type", "type": "string" },
+                { "name": "name", "type": "string" }
+            ],
+            "content": [
+                {
+                    "kind": "static",
+                    "type": "button",
+                    "action": {
+                        "type": "SELECT",
+                        "target": { "type": "attribute", "name": "content" },
+                        "value": { "name": { "type": "param", "name": "type" } }
+                    },
+                    "content": [
+                        { "kind": "static", "type": "text", "content": { "type": "param", "name": "name" } }
+                    ],
+                    "style": {
+                        "css": ["container__btn-element"]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "template",
+            "name": "fixed-button",
+            "param": [
+                { "name": "type", "type": "string" },
+                { "name": "name", "type": "string" }
+            ],
+            "content": [
+                {
+                    "kind": "static",
+                    "type": "button",
+                    "action": {
+                        "type": "CREATE",
+                        "target": { "type": "attribute", "name": "fixed-elements" },
+                        "value": { "name": { "type": "param", "name": "type" } }
+                    },
+                    "content": [
+                        { "kind": "static", "type": "text", "content": { "type": "param", "name": "name" } }
+                    ],
+                    "style": {
+                        "css": ["container__btn-element"]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "template",
+            "name": "dynamic-button",
+            "param": [
+                { "name": "type", "type": "string" },
+                { "name": "name", "type": "string" }
+            ],
+            "content": [
+                {
+                    "kind": "static",
+                    "type": "button",
+                    "action": {
+                        "type": "CREATE",
+                        "target": { "type": "attribute", "name": "dynamic-elements" },
+                        "value": { "name": { "type": "param", "name": "type" } }
+                    },
+                    "content": [
+                        { "kind": "static", "type": "text", "content": { "type": "param", "name": "name" } }
+                    ],
+                    "style": {
+                        "css": ["container__btn-element"]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "template",
+            "name": "hole-button",
+            "param": [
+                { "name": "type", "type": "string" },
+                { "name": "name", "type": "string" }
+            ],
+            "content": [
+                {
+                    "kind": "static",
+                    "type": "button",
+                    "action": {
+                        "type": "CREATE",
+                        "target": { "type": "attribute", "name": "holes" },
+                        "value": { "name": { "type": "param", "name": "type" } }
+                    },
+                    "content": [
+                        { "kind": "static", "type": "text", "content": { "type": "param", "name": "name" } }
+                    ],
+                    "style": {
+                        "css": ["container__btn-element"]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "template",
             "name": "tpl-element-header",
             "param": [
                 { "name": "type", "type": "string" }
@@ -4639,6 +4943,108 @@
         },
         {
             "type": "template",
+            "name": "tpl-options-nav--create",
+            "content": [
+                {
+                    "type": "container",
+                    "content": [
+                        {
+                            "kind": "static",
+                            "type": "plink",
+                            "tag": "create",
+                            "content": [
+                                {
+                                    "kind": "static",
+                                    "type": "text",
+                                    "content": "Create",
+                                    "style": {
+                                        "css": ["mp-options-nav__link-text"]
+                                    }
+                                }
+                            ],
+                            "style": {
+                                "css": ["mp-options-nav__link", "current"]
+                            }
+                        },
+                        {
+                            "kind": "static",
+                            "type": "plink",
+                            "tag": "import",
+                            "content": [
+                                {
+                                    "kind": "static",
+                                    "type": "text",
+                                    "content": "Import",
+                                    "style": {
+                                        "css": ["mp-options-nav__link-text"]
+                                    }
+                                }
+                            ],
+                            "style": {
+                                "css": ["mp-options-nav__link"]
+                            }
+                        }
+                    ],
+                    "style": {
+                        "css": ["mp-options-nav"]
+                    },
+                    "layout": { "type": "flex", "orientation": "row" }
+                }
+            ]
+        },
+        {
+            "type": "template",
+            "name": "tpl-options-nav--import",
+            "content": [
+                {
+                    "type": "container",
+                    "content": [
+                        {
+                            "kind": "static",
+                            "type": "plink",
+                            "tag": "create",
+                            "content": [
+                                {
+                                    "kind": "static",
+                                    "type": "text",
+                                    "content": "Create",
+                                    "style": {
+                                        "css": ["mp-options-nav__link-text"]
+                                    }
+                                }
+                            ],
+                            "style": {
+                                "css": ["mp-options-nav__link"]
+                            }
+                        },
+                        {
+                            "kind": "static",
+                            "type": "plink",
+                            "tag": "import",
+                            "content": [
+                                {
+                                    "kind": "static",
+                                    "type": "text",
+                                    "content": "Import",
+                                    "style": {
+                                        "css": ["mp-options-nav__link-text"]
+                                    }
+                                }
+                            ],
+                            "style": {
+                                "css": ["mp-options-nav__link", "current"]
+                            }
+                        }
+                    ],
+                    "style": {
+                        "css": ["mp-options-nav"]
+                    },
+                    "layout": { "type": "flex", "orientation": "row" }
+                }
+            ]
+        },
+        {
+            "type": "template",
             "name": "tpl-options-nav--style",
             "content": [
                 {
@@ -4685,6 +5091,167 @@
                         "css": ["mp-options-nav"]
                     },
                     "layout": { "type": "flex", "orientation": "row" }
+                }
+            ]
+        },
+        {
+            "type": "template",
+            "name": "tpl-element-header_graph",
+            "param": [
+                { "name": "type", "type": "string" }
+            ],
+            "content": [
+                {
+                    "type": "container",
+                    "content": [
+                        {
+                            "kind": "static",
+                            "type": "text",
+                            "content": { "type": "param", "name": "type" },
+                            "style": {
+                                "css": ["static-choice-icon"]
+                            }
+                        },
+                        {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "dimensions": {
+                                "width": 40,
+                                "height": 20
+                            },
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"15\" viewBox=\"-5 0 40 20\"><circle cx=\"10\" cy=\"10\" r=\"8\" fill=\"#555\"></circle><path d=\"M 0 12 L 0 8 L 2.5 7.5 L 2.5 12.5 Z\" fill=\"#555\"></path><path d=\"M 1 3.5 L 3.5 1 L 6.5 3 L 3 6.5 Z\" fill=\"#555\"></path><path d=\"M 12 0 L 8 0 L 7.5 2.5 L 12.5 2.5 Z\" fill=\"#555\"></path><path d=\"M 19 16.5 L 16.5 19 L 13.5 17 L 17 13.5 Z\" fill=\"#555\"></path><path d=\"M 1 16.5 L 3.5 19 L 6.5 17 L 3 13.5 Z\" fill=\"#555\"></path><path d=\"M 20 12 L 20 8 L 17.5 7.5 L 17.5 12.5 Z\" fill=\"#555\" ></path><path d=\"M 19 3.5 L 16.5 1 L 13.5 3 L 17 6.5 Z\" fill=\"#555\"></path><path d=\"M 12 20 L 8 20 L 7.5 17.5 L 12.5 17.5 Z\" fill=\"#555\"></path><circle cx=\"10\" cy=\"10\" r=\"3.5\" fill=\"white\"></circle></svg>",
+                            "action":{
+                                "type": "SIDE",
+                                "target": "layout-setting"
+                            },
+                            "style": {
+                                "css": ["mp-element__btn-trigger", "mp-element__btn-trigger--state"]
+                            }
+                        }
+                    ],
+                    "layout": { "type": "flex", "orientation": "row" },
+                    "style": {
+                        "css": ["static-config-header"]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "template",
+            "name": "tpl-element-header_graphd",
+            "param": [
+                { "name": "type", "type": "string" }
+            ],
+            "content": [
+                {
+                    "type": "container",
+                    "content": [
+                        {
+                            "kind": "static",
+                            "type": "text",
+                            "content": { "type": "param", "name": "type" },
+                            "style": {
+                                "css": ["static-choice-icon"]
+                            }
+                        },
+                        {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "dimensions": {
+                                "width": 20,
+                                "height": 20
+                            },
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" width=\"15\" height=\"15\"><circle stroke=\"#1f75fe\" stroke-width=\"1\" cx=\"7.5\" cy=\"12.5\" r=\"6\" fill=\"white\"></circle><rect stroke=\"#1f75fe\" stroke-width=\"1\" x=\"7.5\" y=\"2.5\" width=\"10\" height=\"10\" fill=\"white\"></rect></svg>",
+                            "action":{
+                                "type": "SIDE",
+                                "target": "layout-background"
+                            },
+                            "style": {
+                                "css": ["mp-element__btn-trigger", "mp-element__btn-trigger--state"]
+                            }
+                        },
+                        {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "dimensions": {
+                                "width": 20,
+                                "height": 20
+                            },
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\" viewBox=\"0 0 20 20\"><circle cx=\"10\" cy=\"10\" r=\"8\" fill=\"#555\"></circle><path d=\"M 0 12 L 0 8 L 2.5 7.5 L 2.5 12.5 Z\" fill=\"#555\"></path><path d=\"M 1 3.5 L 3.5 1 L 6.5 3 L 3 6.5 Z\" fill=\"#555\"></path><path d=\"M 12 0 L 8 0 L 7.5 2.5 L 12.5 2.5 Z\" fill=\"#555\"></path><path d=\"M 19 16.5 L 16.5 19 L 13.5 17 L 17 13.5 Z\" fill=\"#555\"></path><path d=\"M 1 16.5 L 3.5 19 L 6.5 17 L 3 13.5 Z\" fill=\"#555\"></path><path d=\"M 20 12 L 20 8 L 17.5 7.5 L 17.5 12.5 Z\" fill=\"#555\" ></path><path d=\"M 19 3.5 L 16.5 1 L 13.5 3 L 17 6.5 Z\" fill=\"#555\"></path><path d=\"M 12 20 L 8 20 L 7.5 17.5 L 12.5 17.5 Z\" fill=\"#555\"></path><circle cx=\"10\" cy=\"10\" r=\"3.5\" fill=\"white\"></circle></svg>",
+                            "action":{
+                                "type": "SIDE",
+                                "target": "layout-setting"
+                            },
+                            "style": {
+                                "css": ["mp-element__btn-trigger", "mp-element__btn-trigger--state"]
+                            }
+                        }
+                    ],
+                    "layout": { "type": "flex", "orientation": "row" },
+                    "style": {
+                        "css": ["static-config-header"]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "template",
+            "name": "tpl-element-header_deco",
+            "param": [
+                { "name": "type", "type": "string" }
+            ],
+            "content": [
+                {
+                    "type": "container",
+                    "content": [
+                        {
+                            "kind": "static",
+                            "type": "text",
+                            "content": { "type": "param", "name": "type" },
+                            "style": {
+                                "css": ["static-choice-icon"]
+                            }
+                        },
+                        {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "dimensions": {
+                                "width": 40,
+                                "height": 20
+                            },
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"15\" viewBox=\"-5 0 40 20\"><circle cx=\"10\" cy=\"10\" r=\"8\" fill=\"#555\"></circle><path d=\"M 0 12 L 0 8 L 2.5 7.5 L 2.5 12.5 Z\" fill=\"#555\"></path><path d=\"M 1 3.5 L 3.5 1 L 6.5 3 L 3 6.5 Z\" fill=\"#555\"></path><path d=\"M 12 0 L 8 0 L 7.5 2.5 L 12.5 2.5 Z\" fill=\"#555\"></path><path d=\"M 19 16.5 L 16.5 19 L 13.5 17 L 17 13.5 Z\" fill=\"#555\"></path><path d=\"M 1 16.5 L 3.5 19 L 6.5 17 L 3 13.5 Z\" fill=\"#555\"></path><path d=\"M 20 12 L 20 8 L 17.5 7.5 L 17.5 12.5 Z\" fill=\"#555\" ></path><path d=\"M 19 3.5 L 16.5 1 L 13.5 3 L 17 6.5 Z\" fill=\"#555\"></path><path d=\"M 12 20 L 8 20 L 7.5 17.5 L 12.5 17.5 Z\" fill=\"#555\"></path><circle cx=\"10\" cy=\"10\" r=\"3.5\" fill=\"white\"></circle></svg>",
+                            "action":{
+                                "type": "SIDE",
+                                "target": "layout-setting"
+                            },
+                            "style": {
+                                "css": ["mp-element__btn-trigger", "mp-element__btn-trigger--state"]
+                            }
+                        },
+                        {
+                            "type": "static",
+                            "static": {
+                                "type": "svg-button",
+                                "dimensions": {
+                                    "width": 20,
+                                    "height": 20
+                                },
+                                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" width=\"15\" height=\"15\"><circle cx=\"7.5\" cy=\"12.5\" r=\"6\" fill=\"purple\"></circle><rect x=\"7.5\" y=\"2.5\" width=\"10\" height=\"10\" fill=\"blue\"></rect></svg>",
+                                "action":{
+                                    "type": "SIDE",
+                                    "target": "layout-background"
+                                },
+                                "style": {
+                                    "css": ["mp-element__btn-trigger", "mp-element__btn-trigger--state"]
+                                }
+                            }
+                        }
+                    ],
+                    
+                    "layout": { "type": "flex", "orientation": "row" },
+                    "style": {
+                        "css": ["static-config-header"]
+                    }
                 }
             ]
         }

@@ -1,0 +1,46 @@
+{
+    "type": "template",
+    "name": "tpl-element-header_graph",
+    "param": [
+        { "name": "type", "type": "string" }
+    ],
+    "content": [
+        {
+            "type": "container",
+            "content": [
+                {
+                    "kind": "static",
+                    "type": "text",
+                    "content": { "type": "param", "name": "type" },
+                    "style": {
+                        "css": ["static-choice-icon"]
+                    }
+                },
+                {
+                    "kind": "static",
+                    "type": "svg-button",
+                    "dimensions": {
+                        "width": 20,
+                        "height": 20
+                    },
+                    "content": {
+                        "type": "svg",
+                        "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\" viewBox=\"0 0 20 20\"><circle cx=\"10\" cy=\"10\" r=\"8\" fill=\"#555\"></circle><path d=\"M 0 12 L 0 8 L 2.5 7.5 L 2.5 12.5 Z\" fill=\"#555\"></path><path d=\"M 1 3.5 L 3.5 1 L 6.5 3 L 3 6.5 Z\" fill=\"#555\"></path><path d=\"M 12 0 L 8 0 L 7.5 2.5 L 12.5 2.5 Z\" fill=\"#555\"></path><path d=\"M 19 16.5 L 16.5 19 L 13.5 17 L 17 13.5 Z\" fill=\"#555\"></path><path d=\"M 1 16.5 L 3.5 19 L 6.5 17 L 3 13.5 Z\" fill=\"#555\"></path><path d=\"M 20 12 L 20 8 L 17.5 7.5 L 17.5 12.5 Z\" fill=\"#555\" ></path><path d=\"M 19 3.5 L 16.5 1 L 13.5 3 L 17 6.5 Z\" fill=\"#555\"></path><path d=\"M 12 20 L 8 20 L 7.5 17.5 L 12.5 17.5 Z\" fill=\"#555\"></path><circle cx=\"10\" cy=\"10\" r=\"3.5\" fill=\"white\"></circle></svg>"
+
+                    },
+                    "action":{
+                        "type": "SIDE",
+                        "target": "layout-setting"
+                    },
+                    "style": {
+                        "css": ["mp-element__btn-trigger", "mp-element__btn-trigger--state"]
+                    }
+                }
+            ],
+            "layout": { "type": "flex", "orientation": "row" },
+            "style": {
+                "css": ["static-config-header"]
+            }
+        }
+    ]
+}

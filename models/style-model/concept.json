@@ -449,6 +449,23 @@
             ]
         },
         {
+            "name": "hex-color__black",
+            "nature": "concrete",
+            "prototype": "color",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "string",
+                        "default": "#000000"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "hex" }
+            ]
+        },
+        {
             "name": "rgb-color",
             "nature": "concrete",
             "prototype": "color",

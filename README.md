@@ -8,18 +8,21 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 
 ✔️ Common editing features: contextual assistance, copy-paste, undo/redo  
 ✔️ Support multiple projections for a concept  
-✔️ Support multiple notations and multimedia content  
-✔️ Configurable editor and customizable UI  
-✔️ Easy integration with any web application  
+✔️ Easy to switch the projections used against a model  
+✔️ Projections are defined with specialized UI elements  
+✔️ Support graphical projectional editor using SVG  
+✔️ SVG projection can be imported or created in the editor  
+✔️ Support multiple layouts with simulations  
+
 
 [**Gentleman IDE**](https://geodes-sms.github.io/gentleman/app/index.html)
 
 ## Examples
 
-| Mindmap               | Traffic Light (TL)             | TodoList             |
-|:---------------------:|:------------------------------:|:------------------------------:|
-| ![*Oops!* missing image 😅][mindmap-img]         | ![*Oops!* missing image 😅][tl-img] | ![*Oops!* missing image 😅][todo-img] |
-| [Try it out][mindmap-app] | [Try it out][tl-app] | [Try it out][todo-app] |
+| Mindmap               | Traffic Light (TL)             | TodoList           | Statechart     | Sequence Diagram | Music Sheet      |
+|:---------------------:|:------------------------------:|:------------------------------:|:---------------------:|:------------------------------:|:------------------------------:|
+| ![*Oops!* missing image 😅][mindmap-img]         | ![*Oops!* missing image 😅][tl-img] | ![*Oops!* missing image 😅][todo-img] | ![*Oops!* missing image 😅][sc-img] | ![*Oops!* missing image 😅][ds-img] | ![*Oops!* missing image 😅][music-img] 
+| [Try it out][mindmap-app] | [Try it out][tl-app] | [Try it out][todo-app] | [Try it out][sc-app] | [Try it out][ds-app] | [Try it out][music-app] 
 
 [mindmap-app]: https://geodes-sms.github.io/gentleman/demo/mindmap/index.html
 [mindmap-img]: https://gentlemancp.org/assets/images/demo_mindmap.gif "Mindmap demo"
@@ -27,7 +30,17 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 [tl-img]: https://gentlemancp.org/assets/images/demo_traffic_light.gif "Traffic light demo"
 [todo-app]: https://geodes-sms.github.io/gentleman/demo/todo/index.html
 [todo-img]: https://gentlemancp.org/assets/images/demo_todo.gif "TodoList demo"
-
+[sc-app]: https://geodes-sms.github.io/gentleman/demo/sc/index.html
+[sc-img]: https://gentlemancp.org/assets/images/demo_sc.gif "Statechart demo"
+[ds-app]: https://geodes-sms.github.io/gentleman/demo/ds/index.html
+[ds-img]: https://gentlemancp.org/assets/images/demo_ds.gif "Sequence Diagram demo"
+[music-app]: https://geodes-sms.github.io/gentleman/demo/music/index.html
+[music-img]: https://gentlemancp.org/assets/images/demo_music.gif "Music demo"
+If the links for graphical projections examples do not work:
+ - Follow the installation steps.
+ - Create a new Editor.
+ - Import the metamodels and projection available in the `models` folder.
+ - Start the editing!
 # Documentation 📖
 
 For live examples (demo), docs and to learn more about Gentleman, please visit [gentlemancp.org](https://gentlemancp.org).  
@@ -125,6 +138,9 @@ $ npm run build
 1. L-E Lafontant, E. Syriani. *Gentleman: a light-weight web-based projectional editor generator*  
    [Paper](https://dl.acm.org/doi/pdf/10.1145/3417990.3421998)  
    [Demonstration](https://youtu.be/wJ4hVZjmrv4)
+
+2. Aurélien Ducoin, E.Syriani. *Graphical Projectional Editing in Gentleman*  
+   [Demonstration](https://www.youtube.com/watch?v=wd00pRAHxsU&ab_channel=GEODESGentleman)
 
 # Distribution 📂
 

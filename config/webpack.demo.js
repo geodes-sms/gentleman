@@ -11,8 +11,11 @@ module.exports = merge(common, {
         trafficlight: './demo/traffic-light/index.js',
         relis: './demo/relis/index.js',
         todo: './demo/todo/index.js',
-        cms: './demo/cms/index.js',
+        /*cms: './demo/cms/index.js',*/
         library: './demo/library/index.js',
+        sequence: './demo/sequence/index.js',
+        statechart: './demo/statechart/index.js',
+        music: './demo/music/index.js',
     },
     output: {
         filename: '[name].js',

@@ -926,6 +926,10 @@
     text-transform: uppercase;
 }
 
+.graph-elem__btn > .active {
+    background-color: #738CFF;
+}
+
 .constraint-choice--textual {
     display: flex; flex-direction: row;
     padding: 0;

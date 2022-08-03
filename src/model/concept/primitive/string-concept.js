@@ -216,7 +216,6 @@ const _StringConcept = {
                 } else if (val.type === "concept") {
                     const { concept, value } = val; 
                     let candidates = this.model.getConceptsByPrototype(concept.prototype);
-                    
                     if (value.type === "attribute") {
                         return candidates.map(x => x.getAttribute(value.name).getValue());
                     }

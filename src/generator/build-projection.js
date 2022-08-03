@@ -38,6 +38,7 @@ const ProjectionHandler = {
 
 export function buildProjectionHandler(_options = {}) {
     const result = {
+        type: "projection",
         "projection": [],
         "template": [],
         "style": [],
@@ -91,13 +92,14 @@ export function buildProjectionHandler(_options = {}) {
     }
 
     delete this.__errors;
-
+ 
     return result;
 }
 
 
 export function buildProjection(concept) {
     const tags = hasAttr(concept, ATTR_TAGS) ? getValue(concept, ATTR_TAGS, true) : [];
+   
 
     let targetConcept = getAttr(concept, ATTR_CONCEPT);
     if (concept.hasParent()) {
@@ -161,7 +163,7 @@ export function buildProjection(concept) {
     };
 }
 
-function buildTemplate(concept) {
+export function buildTemplate(concept) {
     const name = getName(concept);
 
     if (isNullOrWhitespace(name)) {
@@ -203,7 +205,7 @@ function buildTemplate(concept) {
     };
 }
 
-function buildStyleRule(concept) {
+export function buildStyleRule(concept) {
     const name = getName(concept);
 
     if (isNullOrWhitespace(name)) {
@@ -230,7 +232,7 @@ function buildStyleRule(concept) {
     };
 }
 
-function buildConcept(concept) {
+export function buildConcept(concept) {
     const result = {};
 
     if (hasAttr(concept, ATTR_NAME) && hasValue(concept, ATTR_NAME)) {
@@ -259,6 +261,7 @@ const ElementHanlders = {
 };
 
 function buildElement(element) {
+    console.log(element)
     const contentType = element.getProperty("contentType");
 
     const handler = ElementHanlders[contentType];
@@ -274,7 +277,7 @@ function buildElement(element) {
 }
 
 
-function buildContainer(container) {
+export function buildContainer(container) {
     const schema = {
         type: "container"
     };
@@ -608,7 +611,9 @@ const DynamicHanlders = {
     "template": TemplateDynamicHandler,
 };
 
-function buildDynamic(dynamic) {
+export function buildDynamic(dynamic) {
+    console.log(dynamic);
+
     const elementType = dynamic.getProperty("elementType");
 
     var schema = {
@@ -641,6 +646,10 @@ function AttributeDynamicHandler(element) {
 
     if (hasAttr(element, ATTR_REQUIRED)) {
         schema.required = getValue(element, ATTR_REQUIRED);
+    }
+
+    if(hasAttr(element, "listen")){
+        schema.listen = getValue(element, "listen");
     }
 
     if (hasAttr(element, PROP_PLACEHOLDER) && hasValue(element, PROP_PLACEHOLDER)) {
@@ -1344,8 +1353,6 @@ function ArrowHandler(arrow) {
     if (hasAttr(arrow, "arrow-style")) {
         schema.arrowStyle = buildArrowStyle.call(this, getAttr(arrow, "arrow-style"));
     }
-
-    console.log(schema);
 
     return schema;
 }

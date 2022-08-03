@@ -1,0 +1,248 @@
+{
+    "type": "concept",
+    "concept":[
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9eab3",
+            "name": "statechart",
+            "nature": "concrete",
+            "root": true,
+            "attributes":[
+                {
+                    "name": "entry",
+                    "target": {
+                        "name": "entry-point"
+                    }
+                },
+                {
+                    "name": "states",
+                    "target":{
+                        "name": "set",
+                        "accept": {
+                            "name": "state",
+                            "accept":[
+                                { "name": "concreteState" },
+                                { "name": "choiceState" },
+                                { "name": "compositeState" },
+                                { "name": "orthogonalState" }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "name",
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "transitions",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "transition"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9eac1",
+            "name": "entry-point",
+            "nature": "concrete",
+            "root": false,
+            "prototype": "state",
+            "attributes":[]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9eac2",
+            "name": "transition",
+            "nature": "concrete",
+            "root": false,
+            "attributes":[
+                {
+                    "name": "from",
+                    "target":{
+                        "name": "reference",
+                        "accept":{
+                            "name": "state"
+                        }
+                    }
+                },
+                {
+                    "name": "to",
+                    "target":{
+                        "name": "reference",
+                        "accept":{
+                            "name": "state"
+                        }
+                    }
+                },
+                {
+                    "name": "description",
+                    "target":{
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9eab4",
+            "name": "state",
+            "nature": "prototype",
+            "root": false,
+            "attributes":[
+                {
+                    "name": "name",
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "entry",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "action"
+                        }
+                    }
+                },
+                {
+                    "name": "exit",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "action"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9ea478",
+            "name": "action",
+            "nature": "concrete",
+            "root": false,
+            "attributes":[
+                {
+                    "name": "content",
+                    "target":{
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9eab5",
+            "name": "concreteState",
+            "nature": "concrete",
+            "prototype": "state",
+            "root": false,
+            "attributes":[
+                
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9eab6",
+            "name": "choiceState",
+            "nature": "concrete",
+            "prototype": "state",
+            "root":  false,
+            "attributes":[
+
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9eab7",
+            "name": "compositeState",
+            "nature": "concrete",
+            "prototype": "state",
+            "root":  false,
+            "attributes":[
+                {
+                    "name": "entry",
+                    "target":{
+                        "name": "entry-point"
+                    }
+                },
+                {
+                    "name": "states",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "state",
+                            "accept":[
+                                { "name": "concreteState" },
+                                { "name": "choiceState" },
+                                { "name": "compositeState" },
+                                { "name": "orthogonalState" }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9eab8",
+            "name": "orthogonalState",
+            "nature": "concrete",
+            "prototype": "state",
+            "root":  false,
+            "attributes":[
+                {
+                    "name": "nameL",
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "nameR",
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "entryL",
+                    "target":{
+                        "name": "entry-point"
+                    }
+                },
+                {
+                    "name": "entryR",
+                    "target":{
+                        "name": "entry-point"
+                    }
+                },
+                {
+                    "name": "left",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "state",
+                            "accept":[
+                                { "name": "concreteState" },
+                                { "name": "choiceState" },
+                                { "name": "compositeState" },
+                                { "name": "orthogonalState" }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "right",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "state",
+                            "accept":[
+                                { "name": "concreteState" },
+                                { "name": "choiceState" },
+                                { "name": "compositeState" },
+                                { "name": "orthogonalState" }
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

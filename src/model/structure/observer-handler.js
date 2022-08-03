@@ -1,3 +1,4 @@
+
 export const ObserverHandler = {
     /** @type {*[]} */
     listeners: null,

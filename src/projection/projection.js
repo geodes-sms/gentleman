@@ -8,7 +8,10 @@ import { FieldFactory } from "./field/index.js";
 import { StaticFactory } from "./static/index.js";
 import { StyleHandler } from "./style-handler.js";
 import { AlgorithmFactory } from "./algorithm/factory.js";
+import { ArrowFactory } from "./arrow/factory.js";
+import { ShapeFactory} from "./shapes/factory.js"
 import { createContainer } from "./container.js";
+import { SimulationFactory } from "./simulations/factory.js";
 
 
 var inc = 0;
@@ -199,7 +202,7 @@ const Projection = {
             return;
         }
 
-        if (message === "delete") {
+        if (message === "delete" && from.parent !== this.concept) {        
             this.delete();
             return;
         }
@@ -271,10 +274,28 @@ const Projection = {
             }
 
             if (container.tagName === "path") {
-                console.log(container);
-                let arrow = this.environment.resolveElement(container);
-                console.log(arrow);
-                arrow.projection.parent.removeArrow(arrow);
+                if(container.dataset.algorithm === "force"){
+                    let arrow = this.environment.resolveElement(container);
+                    arrow.projection.parent.removeArrow(arrow);
+                }
+
+                if(container.dataset.algorithm === "anchor"){
+                    let anchor = this.environment.resolveElement(container);
+                    anchor.deleteFromView();
+                }
+                if(container.dataset.algorithm === "multi"){
+                    let multi = this.environment.resolveElement(container);
+                    multi.deletePaths();
+                }
+                
+            }
+
+            if(["svg", "text"].includes(container.tagName)){
+                container.remove();
+            } 
+
+            if(this.sibling){
+                this.sibling.delete();
             }
         });
 
@@ -328,7 +349,7 @@ const Projection = {
             return null;
         }
 
-        const { type, projection, content, kind, sibling, rtags } = schema;
+        const { type, projection, content, kind, sibling, rtag, ratio } = schema;
 
         /** @type {HTMLElement} */
         var container = null;
@@ -352,10 +373,22 @@ const Projection = {
             this.element = StaticFactory.createStatic(this.model, valOrDefault(projection, content), this).init(this.args);
 
             this.model.registerStatic(this.element);
-        } else if (type === "algorithm") {
+        } else if (type === "algorithm") {       
             this.element = AlgorithmFactory.createAlgo(this.model, valOrDefault(projection, content), this).init(this.args);
 
             this.model.registerAlgorithm(this.element);
+        } else if (type === "arrow"){ 
+            this.element = ArrowFactory.createArrow(this.model, valOrDefault(projection, content), this).init(this.args);
+
+            this.model.registerArrow(this.element);
+        } else if (type === "shape"){
+            this.element = ShapeFactory.createShape(this.model, valOrDefault(projection, content), this).init(this.args);
+
+            this.model.registerShape(this.element);
+        } else if (type === "simulation"){
+            this.element = SimulationFactory.createSimulation(this.model, valOrDefault(projection, content), this).init(this.args);
+
+            this.model.registerSimulation(this.element);
         } else {
             this.element = createContainer(this.model, schema.container, this).init(this.args);
 
@@ -397,7 +430,12 @@ const Projection = {
         });
 
         if (this.optional) {
-            /** @type {HTMLElement} */
+            if(this.element.schema.rmv){
+                this.element.createDelete();
+
+                container.dataset.deletable = true;
+            }else{
+                /** @type {HTMLElement} */
             let btnDelete = createButton({
                 class: ["btn", "structure__btn-delete", "projection__btn-delete"],
                 title: `Delete ${this.concept.name}`,
@@ -423,9 +461,9 @@ const Projection = {
 
             container.dataset.deletable = true;
 
-            container.prepend(btnDelete);
-        }
-
+            container.prepend(btnDelete);               
+            }
+            }
         if (this.collapsible) {
             /** @type {HTMLElement} */
             let btnCollapsible = createButton({
@@ -454,15 +492,13 @@ const Projection = {
 
         this.containers.set(this.index, container);
 
-
-        if (sibling && !isNullOrUndefined(sibling.tag) && !isNullOrUndefined(sibling.receiver)) {
-            this.createSibling(this.concept, sibling);
+        if (sibling) {
+            this.createSibling(this.concept, sibling, this.element);
         }
 
-
-        if (rtags && !isEmpty(rtags)) {
-            this.rtags = rtags;
-            this.environment.registerReceiver(this.element, rtags[0]);
+        if(rtag){
+            this.rtag = rtag;
+            this.environment.registerReceiver(this.element, rtag);
         }
 
         return container;
@@ -480,20 +516,64 @@ const Projection = {
         }
     },
 
-    createSibling(concept, sibling) {
-        const { tag, receiver } = sibling;
+    createSibling(concept, sibling, ) {
+        const { render, params = false, bind } = sibling;
+        const { tag, rtag} = render;
 
+        if(this.checkForAliveSibling(concept.id, tag, rtag)){
+            return;
+        }
 
         let projection = this.model.createProjection(concept, tag).init();
+        
+        if(bind){
+            projection.bind = this.element;
+        }
 
-        projection.render();
+        let rendered = projection.render();
 
-        let target = this.environment.getActiveReceiver(receiver);
+        if(params){
+            const { coordinates, dimension } = params;
 
+            rendered.setAttribute("x", coordinates.x);
+            rendered.setAttribute("y", coordinates.y);
+        }
+
+        let target = this.environment.getActiveReceiver(rtag);
 
         projection.parent = target;
 
-        projection.element.refresh();
+        if(isNullOrUndefined(projection.element.path)){
+            target.container.append(projection.element.element || projection.element.container)
+        }
+
+        this.sibling = projection;
+    },
+
+    checkForAliveSibling(id, tag, rtag){
+
+        if(isNullOrUndefined(this.environment.siblingModel)){
+            this.environment.siblingModel = new Map();
+        }
+
+        if(isNullOrUndefined(this.environment.siblingModel.get(id))){
+            this.environment.siblingModel.set(id, [{tag: tag, rtag: rtag}]);
+            return false;
+        }
+
+        let sibs = this.environment.siblingModel.get(id);
+
+        for(let i = 0; i < sibs.length; i++){
+            if(sibs[i].rtag === rtag && sibs[i].tag === tag){
+                return true;
+            }
+        }
+
+        sibs.push([{tag: tag, rtag: rtag}]);
+
+        this.environment.siblingModel.set(id, sibs);
+
+        return false;
     },
 
     changeView(index) {

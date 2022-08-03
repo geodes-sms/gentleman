@@ -14,6 +14,7 @@ export const FnHandler = {
      * @param {*} event 
      */
     triggerEvent(event, callback, oneach = true) {
+
         const { name, options, args } = event;
 
         const handlers = this.getHandlers(name);

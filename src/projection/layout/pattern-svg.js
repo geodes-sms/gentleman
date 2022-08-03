@@ -134,8 +134,6 @@ const BasePatternLayout = {
         let svgH = Number(this.svgArea.getAttribute("height"));
 
         if(svgW < w || svgH < h){
-            console.log(this.schema.attributes[0].template);
-            const name = this.schema.attributes[0].template;
 
             const template = ContentHandler.call(this, {type: "g-fragment", name: name});
 
@@ -193,7 +191,6 @@ const BasePatternLayout = {
 
         let newH = Number(this.svgArea.getAttribute("height")) + Number(template.getAttribute("height"));
         this.svgArea.setAttribute("height", newH);
-        console.log(template);
     },
 
     addItem(value, button){

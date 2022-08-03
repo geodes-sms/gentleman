@@ -1,6 +1,7 @@
 import { isNullOrUndefined, isEmpty, isIterable, isString, valOrDefault } from "zenkai";
 import { deepCopy, NotificationType } from "@utils/index.js";
 import { ProjectionFactory } from "./projection.js";
+import { Arrow } from "./field/arrow.js";
 
 
 const PREDEFINED_PROJECTIONS = [
@@ -58,6 +59,7 @@ const PREDEFINED_PROJECTIONS = [
 export function createProjectionModel($schema, environment) {
     let schema = {
         projection: [],
+        algorithm: [],
         template: [],
         style: [],
     };
@@ -90,6 +92,9 @@ export const ProjectionModel = {
         this.statics = new Map();
         this.layouts = new Map();
         this.algos = new Map();
+        this.arrows = new Map();
+        this.shapes = new Map();
+        this.simulations = new Map();
 
         return this;
     },
@@ -270,6 +275,57 @@ export const ProjectionModel = {
         return this.layouts.get(id);
     },
 
+    registerArrow(arrow){
+        arrow.environment = this.environment;
+        this.arrows.set(arrow.id, arrow);
+
+        return this;
+    },
+
+    unregisterArrow(arrow) {
+        var _arrow = this.arrows.get(arrow.id);
+
+        if (_arrow) {
+            _arrow.environment = null;
+            this._arrow.delete(_arrow.id);
+        }
+
+        return this;
+    },
+
+    getArrow(id) {
+        return this.arrows.get(id);
+    },
+
+    registerShape(shape){
+        shape.environment = this.environment;
+        this.shapes.set(shape.id, shape);
+
+        return this;
+    },
+
+    registerSimulation(simulation){
+        simulation.environment = this.environment;
+        this.simulations.set(simulation.id, simulation);
+
+        return this;
+    },
+
+    unregisterArrow(shape) {
+        var _shape = this.shapes.get(shape.id);
+
+        if (_shape) {
+            _shape.environment = null;
+            this._shape.delete(_shape.id);
+        }
+
+        return this;
+    },
+
+    getArrow(id) {
+        return this.shapes.get(id);
+    },
+
     registerAlgorithm(algo) {
         algo.environment = this.environment;
         this.algos.set(algo.id, algo);
@@ -290,6 +346,14 @@ export const ProjectionModel = {
 
     getAlgo(id) {
         return this.algos.get(id);
+    },
+
+    getSimulation(id) {
+        return this.simulations.get(id);
+    },
+
+    getArrow(id) {
+        return this.arrows.get(id);
     },
 
     /**
@@ -314,6 +378,7 @@ export const ProjectionModel = {
      * @returns {boolean}
      */
     hasConceptProjection(concept, tag) {
+
         const hasName = (name) => name && (name === concept.name || concept.schema && name === concept.schema.base); // TODO: change to look for base (include self)
 
         const hasTag = (p) => Array.isArray(p.tags) && p.tags.includes(tag);
@@ -338,6 +403,7 @@ export const ProjectionModel = {
             return candidates.findIndex(p => hasTag(p)) !== -1;
         }
 
+
         return !isEmpty(candidates);
     },
 
@@ -350,6 +416,7 @@ export const ProjectionModel = {
      * @param {string} tag 
      */
     getProjectionSchema(concept, tag) {
+
         if (isNullOrUndefined(concept)) {
             throw new TypeError("Bad parameter: concept");
         }
@@ -375,7 +442,7 @@ export const ProjectionModel = {
         if (isIterable(tag) && !isEmpty(tag)) {
             return projection.filter(p => p.tags && p.tags.includes(tag));
         }
-
+        
         return projection;
     },
     /**

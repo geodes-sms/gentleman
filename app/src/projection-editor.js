@@ -100,6 +100,47 @@ export const ProjectionEditor = {
     }
 };
 
+export const GraphicalEditor = {
+    container: null,
+    editor: null,
+
+    init(editor) {
+        this.editor = editor;
+
+        this.aside = Object.create(ProjectionAside).init(null, editor);
+
+        this.editor.attach(this);
+
+        return this;
+    },
+    show() {
+        show(this.container);
+    },
+    hide() {
+        hide(this.container);
+    },
+
+    render() {
+        if (!isHTMLElement(this.container)) {
+            this.container = createDiv({
+                class: ["app-editor"]
+            });
+        }
+
+        this.container.append(this.aside.render());
+        this.container.append(this.editor.container);
+        // this.aside.addModel(TEST__CONCEPT);
+
+        return this.container;
+    },
+    refresh() {
+
+    },
+    bindEvents() {
+
+    }
+}
+
 
 const ProjectionAside = {
     /** @type {HTMLElement} */
@@ -404,13 +445,31 @@ const ProjectionAside = {
             let projection = this.editor.createProjection(concept, this.selectedConcept.tag);
             let instance = this.editor.createInstance(concept, projection);
 
-            if (cname === "projection") {
+            if (cname === "projection" || cname === "general" || cname === "graphical") {
                 let _concept = instance.concept.getAttribute("concept").getTarget();
                 let _name = _concept.getAttribute("name").getTarget();
                 _name.setValue(this.selectedConcept.getName());
             }
 
             this.selectedConcept.addInstance(instance);
+        });
+
+        this.editor.actions.set("extract-instance", (element) => {
+            const cname = element;
+
+            let concept = this.editor.createConcept(cname); console.log(this.selectedConcept.tag);
+            let projection = this.editor.createProjection(concept, this.selectedConcept.tag);
+            let instance = this.editor.createInstance(concept, projection);
+
+            if (cname === "projection" || cname === "general" || cname === "graphical") {
+                let _concept = instance.concept.getAttribute("concept").getTarget();
+                let _name = _concept.getAttribute("name").getTarget();
+                _name.setValue(this.selectedConcept.getName());
+            }
+
+            this.selectedConcept.addInstance(instance);
+
+            return concept.getAttributeByName("element").target.getValue(true);
         });
     }
 };

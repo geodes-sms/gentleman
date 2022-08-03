@@ -2,13 +2,22 @@
     "name": "Gentleman graphical",
     "concepts":[
         {
-            "name": "general"
+            "name": "graphical"
+        }
+    ],
+    "toolbar": [
+        {
+            "type": "button",
+            "name": "button-build",
+            "action": "build-graphical",
+            "class": ["btn", "app-editor-header__button"],
+            "content": "Build"
         },
         {
-            "name": "projection"
-        },
-        {
-            "name": "g-fragment"
+            "type": "button",
+            "name": "button-export",
+            "action": "export.model",
+            "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--save"]
         }
     ]
 }
