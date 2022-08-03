@@ -173,7 +173,7 @@ export const FnLoad = {
                 this.loadProjection(schema, name);
             } else if (type === "model") {
                 this.loadConcept(schema.concept, "model");
-                this.loadProjection(schema.projection, "model");
+                //this.loadProjection(schema.projection, "model");
             }
         };
         reader.readAsText(file);

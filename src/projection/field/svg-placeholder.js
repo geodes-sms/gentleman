@@ -53,8 +53,6 @@ const BaseSVGPlaceholder = {
             this.element.classList.add("field--svg_choice");
         }
 
-        console.log("Rendering overflow");
-        console.log(overflow);
         if(overflow){
             this.element.style.overflow = "visible";
         }

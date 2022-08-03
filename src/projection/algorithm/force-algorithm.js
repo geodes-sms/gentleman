@@ -272,9 +272,7 @@ export const BaseForceAlgorithm = {
         arrow.path.classList.add("link" + this.id);
 
         this.container.append(arrow.path);
-        console.log("CheckDef");
-        console.log(arrow);
-        console.log(arrow.definitions);
+
         if(arrow.definitions){
             this.container.append(arrow.definitions);
         }

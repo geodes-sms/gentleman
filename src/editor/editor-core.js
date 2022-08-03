@@ -420,12 +420,15 @@ const EditorCore = {
      * @returns 
      */
     addResource(file, _name) {
+
         let name = valOrDefault(_name, file.name.split(".")[0]);
         this.resources.set(name, file);
 
         let reader = new FileReader();
         reader.onload = (event) => {
             const schema = JSON.parse(reader.result);
+            console.log("Resulting Schema");
+            console.log(schema);
             this.addModel(name, schema);
         };
 

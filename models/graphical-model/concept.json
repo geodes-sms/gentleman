@@ -207,8 +207,36 @@
                 {
                     "name": "tag",
                     "target":{
-                        "name": "reference",
-                        "accept": {"name": "g-tag"}
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "order",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "string"
+                        }
+                    }
+                },
+                {
+                    "name": "dimension",
+                    "target":{
+                        "name": "dimensions",
+                        "accept":[
+                            { "name": "pure" },
+                            { "name": "absolute" },
+                            { "name": "fixed" }
+                        ],
+                        "default":{
+                            "name": "pure"
+                        }
+                    }
+                },
+                {
+                    "name": "coordinates",
+                    "target":{
+                        "name": "coordinates"
                     }
                 }
             ],
