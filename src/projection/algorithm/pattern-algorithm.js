@@ -401,6 +401,7 @@ const BasePatternAlgorithm = {
 
                 if(this.count === 0){
 
+                    
                 }
             }
 
