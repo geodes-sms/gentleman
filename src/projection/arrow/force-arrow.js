@@ -1,5 +1,5 @@
 import { ContentHandler } from "./../content-handler";
-import { isNullOrUndefined } from "zenkai";
+import { isNull, isNullOrUndefined } from "zenkai";
 import { Arrow } from "./arrow";
 
 const BaseForceArrow = {
@@ -57,8 +57,8 @@ const BaseForceArrow = {
 
         if(!isNullOrUndefined(this.fromVal) && !isNullOrUndefined(this.toVal)){
             this.projection.parent.addArrow(this, this.fromVal, this.toVal, this.decorator);
-        }else{
-            this.projection.parent.removeArrow(this, false, this.decorator);
+        }else if(!isNullOrUndefined(this.path.parentNode)){
+            this.projection.parent.removeArrow(this, -1, this.decorator);
         }
     },
 

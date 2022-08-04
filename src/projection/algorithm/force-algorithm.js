@@ -99,8 +99,7 @@ export const BaseForceAlgorithm = {
         this.force.start();
     },
     
-    restart(){
-        
+    restart(){        
         let n = d3.select("#" + this.id);
         this.node = n.selectAll(".node" + this.id).data(this.nodes);
 
@@ -195,6 +194,7 @@ export const BaseForceAlgorithm = {
             }
             
         }     
+        let rectFire = item.getBoundingClientRect();
 
         this.restart();
     },
@@ -218,6 +218,9 @@ export const BaseForceAlgorithm = {
         if(this.containsArrow(arrow, from, to)){
             return;
         }
+
+
+        this.containsTransArrow(arrow, from, to);
 
         this.force.stop();
 
@@ -329,6 +332,19 @@ export const BaseForceAlgorithm = {
         this.restart();
     },
 
+    containsTransArrow(arrow, from, to){
+        if(isNullOrUndefined(this.transLinks)){
+            return;
+        }
+        for(let i = 0; i < this.transLinks.length; i++){
+            if(this.transLinks[i].id === arrow.id){
+                this.transLinks.splice(i, 1);
+                return;                
+            }
+        }
+        
+    },
+
     containsArrow(arrow, from, to){
         for(let i = 0; i < this.links.length; i++){
             if(this.links[i].id === arrow.id){
@@ -340,6 +356,7 @@ export const BaseForceAlgorithm = {
 
                 if(indexF < 0 || indexT < 0){
                     this.removeArrow(arrow, i);
+                    this.addTransLink(arrow, from, to);
                 }else{
                     let prevSource = this.links[i].source.index;
                     let prevTarget = this.links[i].target.index;
@@ -371,25 +388,32 @@ export const BaseForceAlgorithm = {
         return false;
     },
 
-    removeArrow(arrow, index = false, decorator){
+    removeArrow(arrow, index = -1, decorator, elem){
         if(isNullOrUndefined(this.links)){
             return;
         }
 
-        if(index){
+        let offSet = 0;
+        if(index >= 0){
             if(!isNullOrUndefined(this.linkInventory.get(this.links[index].source.index + "," + this.links[index].target.index))){
                 let inv = this.linkInventory.get(this.links[index].source.index + "," + this.links[index].target.index);
 
                 inv.length--;
 
                 if(inv.length === 0){
-                    this.linkInventory.delete(this.links.source.index + "," + this.links.target.index);
+                    this.linkInventory.delete(this.links[index].source.index + "," + this.links[index].target.index);
                 }
             }
+
             this.links.splice(index, 1);
+
+            if(arrow.decorator){
+                offSet = this.removeDummy(index);
+                arrow.decorator.remove();
+            }
             arrow.path.remove();
             this.restart();
-            return;
+            return offSet;
         }
 
         for(let i = 0; i < this.links.length; i++){
@@ -401,8 +425,13 @@ export const BaseForceAlgorithm = {
                     inv.length--;
 
                     if(inv.length === 0){
-                        this.linkInventory.delete(this.links.source.index + "," + this.links.target.index);
+                        this.linkInventory.delete(this.links[i].source.index + "," + this.links[i].target.index);
                     }
+                }
+
+                if(arrow.decorator){
+                    offSet = this.removeDummy(i);
+                    arrow.decorator.remove();
                 }
                 this.links.splice(i, 1);
                 arrow.path.remove();
@@ -589,53 +618,59 @@ export const BaseForceAlgorithm = {
         let i;
         for(i = 0; i < this.nodes.length; i++){
             if((this.nodes[i].meta === value.id) || (this.nodes[i].concept === value.id)){
-                this.nodes.splice(i, 1);
                 break;
             }
         }
 
         if(isNullOrUndefined(this.links) || isEmpty(this.links)){
+            this.nodes.splice(i, 1);
             this.restart();
             return;
         }
 
         for(let j = 0; j < this.links.length; j++){
-
+            let offSet;
             if(this.links[j].source.index === i || this.links[j].target.index === i){
                 let arrow = this.projection.model.getArrow(this.links[j].id);
-                this.removeArrow(arrow, j);
+                offSet = this.removeArrow(arrow, j, null, i);
+                j--;
             }
 
-            if(this.links[j].source.index > i){
-                this.links[j].source.index--;
+            if(!isNullOrUndefined(this.links[j])){
+                if(this.links[j].source.index > i){
+                    this.links[j].source.index--;
+                }
+    
+                if(this.links[j].target.index > i){
+                    this.links[j].target.index--;
+                }
             }
+            
 
-            if(this.links[j].target.index > i){
-                this.links[j].target.index--;
+            if(offSet > 0){
+                i - offSet;
             }
         }
+
+        this.nodes.splice(i, 1);
 
         this.restart();
     },
 
-    /*removeDummy(ref){
-        for(let i = 0; i < this.dummies.length; i++){
-            let d = this.dummies[i];
-            if(d.ref === ref){
-                d.item.remove();
-                this.dummies.splice(i, 1);
-                i--;
-            } 
-        }
-
+    removeDummy(ref){
         for(let j = 0; j < this.nodes.length; j++){
             if(this.nodes[j].ref === ref){
                 this.nodes.splice(j, 1);
                 j--;
             }
+
+            if(this.nodes[j].ref > ref){
+                this.nodes[j].ref--;
+            }
+
         }
     },
-
+/*
     removeArrow(arrow, index = -1){
         this.force.stop();
         let ref;
