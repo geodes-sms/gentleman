@@ -42,7 +42,17 @@ const BasePatternAlgorithm = {
 
 
         if(saturation){
-            this.saturation = saturation;
+            this.saturation = saturation.value;
+            this.satTarget = saturation.target;
+
+            if(!isNullOrUndefined(saturation.satParams)){
+                this.satParams = saturation.satParams;
+            }
+
+            if(!isNullOrUndefined(saturation.acceptTarget)){
+                this.acceptTarget = saturation.acceptTarget
+            }
+
         }
 
         if(isNullOrUndefined(this.anchors)){
@@ -121,6 +131,10 @@ const BasePatternAlgorithm = {
     },
 
     addItem(value){
+        console.log("Saturation test");
+        console.log(this);
+        console.log(this.count);
+        console.log(this.saturation);
 
         if(this.saturation){
             if(isNullOrUndefined(this.count)){
@@ -128,6 +142,7 @@ const BasePatternAlgorithm = {
             }
 
             if(this.count >= this.saturation){
+                console.log(this.satTarget);
                 this.environment.getActiveReceiver(this.satTarget).source.createElement()
                 this.saturate(value);
                 return;
@@ -175,10 +190,6 @@ const BasePatternAlgorithm = {
 
         this.count++;
 
-        if(this.count >= this.saturation){
-            this.full = true;
-        }
-
         if(this.warnings){
             this.warnings.forEach( w => {
                 projection.warn(w)
@@ -210,11 +221,16 @@ const BasePatternAlgorithm = {
 
         projection.render();
 
-        this.environment.getActiveReceiver(this.projection.parentTag).accept({render: projection.element.container, params: this.projection.siblingParams});
+        console.log("SATPARAMS");
+        console.log(this.satParams);
+        console.log(this.satParams.coordinates);
+
+        this.environment.getActiveReceiver("solo").accept(projection.element.container, this.satParams.dimension, this.satParams.coordinates);
 
         projection.element.addItem(value);
 
         this.full = true;
+        this.saturated = true;
     },
 
     accept(element, arrow = false){
@@ -230,6 +246,25 @@ const BasePatternAlgorithm = {
         }
 
         this.container.append(render);
+    },
+
+    acceptAnchor(elem){
+        console.log("AcceptingAnchor");
+        this.container.append(elem);
+
+        let current = this.anchors.current;
+
+        this.items.push({render: elem, anchor: current, index: this.anchorIndex, id: elem.id});
+
+        DimensionHandler.positionElement(current, elem);
+
+        this.nextAnchor(true);
+
+        this.count++;
+
+        if(this.count >= this.saturation){
+            this.full = true;
+        }
     },
 
     nextAnchor(balance = false){
@@ -293,6 +328,19 @@ const BasePatternAlgorithm = {
                 break;
         }
     },
+
+    transmitFirst(){
+        const  { render, position, index, id} = this.items[0];
+        
+        console.log("Transmitting");
+        console.log(render);
+
+        this.removeItem({id: id});
+
+        console.log("Removed");
+
+        return render;
+    },
     
     removeItem(value){
         let buffer, i;
@@ -304,7 +352,13 @@ const BasePatternAlgorithm = {
                     break;
                 }
             }
+            console.log("Value");
+            console.log(value);
+            console.log(i);
 
+            if(i >= this.items.length || isNullOrUndefined(this.items[i])){
+                return;
+            }
             const index = this.items[i].index;
             this.items.splice(i, 1);
             if(i > this.items.length){
@@ -327,10 +381,27 @@ const BasePatternAlgorithm = {
             if(!isNullOrUndefined(this.add) && !this.schema.add.coordinates){
                 this.placeAdd();
             }
-            this.parent.checkAugment(this.anchors.current, this.container);
+
+            if(!isNullOrUndefined(this.parent)){
+                this.parent.checkAugment(this.anchors.current, this.container);
+            }            
             
             if(this.anchorModel){
                 AnchorHandler.deleteItem(this.schema.handler.id, this.id, index);
+            }
+
+            if(!isNullOrUndefined(this.count)){
+                this.count--;
+                
+                if(this.full){
+                    this.full = false;
+                    this.environment.saturationRevolved(this, this.projection.rtag);
+                    this.saturated = true;
+                }
+
+                if(this.count === 0){
+
+                }
             }
 
     },
@@ -353,7 +424,10 @@ const BasePatternAlgorithm = {
         if(!isNullOrUndefined(this.add) && !this.schema.add.coordinates){
             this.placeAdd();
         }
-        this.parent.checkAugment(this.anchors.current, this.container);
+
+        if(!isNullOrUndefined(this.parent)){
+            this.parent.checkAugment(this.anchors.current, this.container);
+        }       
 
     },
 
@@ -476,9 +550,10 @@ const BasePatternAlgorithm = {
         this.projection.registerHandler("value.added", (value) => {
             if(!this.full){
                 this.addItem(value);
-            }else{
-                this.environment.notify(`${this.source.name} if full`);
+            }else if(!this.saturated){
+                this.saturate()
             }
+
         })
 
         this.projection.registerHandler("value.removed", (value) => {

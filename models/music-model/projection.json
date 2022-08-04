@@ -444,7 +444,20 @@
                     }
                 },
                 "create": false,
-                "saturation": 16
+                "saturation": {
+                    "value": 16,
+                    "target": "stave-set",
+                    "satParams":{
+                        "dimension":{
+                            "type": "pure"
+                        },
+                        "coordinates":{
+                            "x": 150,
+                            "y": 0
+                        }
+                    },
+                    "acceptTarget": "solo"
+                }
             }
         },
         {

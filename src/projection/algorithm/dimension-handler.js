@@ -12,12 +12,15 @@ export const DimensionHandler = {
     },
 
     analysePos(render, schema){
+        console.log("Analysing");
+        console.log(schema);
         let positions = schema.coordinates;
 
         const res = {};
         res.type = positions.type;
         res.render = render;
 
+        console.log(positions.type);
         switch(positions.type){
             case "delegate":
                 res.await = false;
@@ -29,6 +32,7 @@ export const DimensionHandler = {
                 res.await = true;
                 break;
         }
+        console.log(res);
 
         return res;
     },
@@ -48,6 +52,8 @@ export const DimensionHandler = {
                 render.setAttribute("y", schema.x - Number(render.getAttribute("height"))/ 2);
                 return;
             default:
+                console.log("Undefined");
+                console.log(render);
                 render.setAttribute("x", schema.x);
                 render.setAttribute("y", schema.y);
         }

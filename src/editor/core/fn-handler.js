@@ -85,7 +85,6 @@ export const FnHandler = {
     },
     
     registerReceiver(proj, rtag) {
-        console.log("REGISTERING RECEIVER");
         if (isNullOrUndefined(this.activeReceiver[rtag])) {
             this.activeReceiver[rtag] = proj;
         }
@@ -101,6 +100,34 @@ export const FnHandler = {
 
 
         this.receivers[rtag].projections.push(proj);
+    },
+
+    saturationRevolved(proj, rtag){
+        console.log("Revolving");
+        console.log(rtag);
+        console.log(this.receivers);
+
+        let projections = this.receivers[rtag].projections;
+
+        let index;
+
+        for(let i = 0; i < projections.length; i++){
+            if(proj.id === projections[i].id){
+                index = i;
+            }
+        }
+
+        if(index >= projections.length){
+            this.setActiveReceiver(proj, rtag);
+            return;
+        }
+
+        let element = projections[index + 1].transmitFirst();
+
+        console.log("Transmitting first");
+        console.log(element);
+
+        proj.acceptAnchor(element);
     },
 
     getActiveReceiver(rtag) {
