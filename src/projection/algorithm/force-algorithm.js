@@ -219,8 +219,6 @@ export const BaseForceAlgorithm = {
             return;
         }
 
-        console.log("Adding Arrow");
-        console.log("Checking Trans")
 
         this.containsTransArrow(arrow, from, to);
 
