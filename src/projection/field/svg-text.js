@@ -243,6 +243,10 @@ const BaseSvgText = {
     switchOn(){
         this.on = true;
         this.element.parentNode.append(this.cursor);
+        if(!isNullOrUndefined(this.interval)){
+            clearInterval(this.interval);
+        }
+        
         this.interval = setInterval(() => {
             if(this.on){
                 this.cursor.remove();
@@ -269,23 +273,22 @@ const BaseSvgText = {
 
         let box = this.element.getBBox();
 
-        let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-
-        rect.setAttribute("x", this.char.x);
+        if(isNullOrUndefined){
+            this.cursor = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        }
+        this.cursor.setAttribute("x", this.char.x);
         
         switch(this.baseline){
             case "middle":
             case "auto": 
-                rect.setAttribute("y", Number(this.element.getAttribute("y")) - box.height / 2);
+            this.cursor.setAttribute("y", Number(this.element.getAttribute("y")) - box.height / 2);
                 break;
             case "hanging":
-                rect.setAttribute("y", this.element.getAttribute("y"));
+                this.cursor.setAttribute("y", this.element.getAttribute("y"));
                 break;
         }
-        rect.setAttribute("width", 1);
-        rect.setAttribute("height", box.height);
-
-        this.cursor = rect;
+        this.cursor.setAttribute("width", 1);
+        this.cursor.setAttribute("height", box.height);
     },
 
     updateCursor(){
@@ -387,7 +390,9 @@ const BaseSvgText = {
     },
 
     focusOut(){
+        console.log("SwitchOff");
         if(!this.readonly){
+            console.log("SwitchOff");
             this.switchOff();
             this.setValue(this.content);
         }

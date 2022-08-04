@@ -231,6 +231,8 @@ const BaseDecorationAlgorithm = {
     },
 
     accept(element, dimension, coordinates){
+        console.log("Accepting");
+        console.log(coordinates);
         let schemaDim = DimensionHandler.analyseDim(element, {dimension: dimension});
         let schemaPos = DimensionHandler.analysePos(element, {coordinates: coordinates});
 
@@ -261,7 +263,11 @@ const BaseDecorationAlgorithm = {
             }    
         }else{
             DimensionHandler.setDimensions(schemaDim);
-            DimensionHandler.positionElement(schemaPos, element);
+            if(!isNullOrUndefined(schemaDim.holder)){
+                DimensionHandler.positionElement(schemaPos, schemaDim.holder);
+            }else{
+                DimensionHandler.positionElement(schemaPos, element);
+            }
         }
     
         if(isNullOrUndefined(schemaDim.holder)){
