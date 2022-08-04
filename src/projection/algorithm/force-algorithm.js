@@ -100,6 +100,8 @@ export const BaseForceAlgorithm = {
     },
     
     restart(){
+
+        console.log(this.nodes);
         
         let n = d3.select("#" + this.id);
         this.node = n.selectAll(".node" + this.id).data(this.nodes);
@@ -371,25 +373,39 @@ export const BaseForceAlgorithm = {
         return false;
     },
 
-    removeArrow(arrow, index = false, decorator){
+    removeArrow(arrow, index = false, decorator, elem){
         if(isNullOrUndefined(this.links)){
             return;
         }
 
-        if(index){
+        console.log("Removing Arrow");
+        console.log(arrow, index);
+
+        if(index >= 0){
+            console.log(this.links);
             if(!isNullOrUndefined(this.linkInventory.get(this.links[index].source.index + "," + this.links[index].target.index))){
+                console.log("Condition")
                 let inv = this.linkInventory.get(this.links[index].source.index + "," + this.links[index].target.index);
 
+                console.log("Gettetr");
                 inv.length--;
 
                 if(inv.length === 0){
-                    this.linkInventory.delete(this.links.source.index + "," + this.links.target.index);
+                    this.linkInventory.delete(this.links[index].source.index + "," + this.links[index].target.index);
                 }
             }
+
+            console.log("Before");
             this.links.splice(index, 1);
+
+            let offSet = 0;
+            if(arrow.decorator){
+                offSet = this.removeDummy(index);
+                arrow.decorator.remove();
+            }
             arrow.path.remove();
             this.restart();
-            return;
+            return offSet;
         }
 
         for(let i = 0; i < this.links.length; i++){
@@ -401,9 +417,10 @@ export const BaseForceAlgorithm = {
                     inv.length--;
 
                     if(inv.length === 0){
-                        this.linkInventory.delete(this.links.source.index + "," + this.links.target.index);
+                        this.linkInventory.delete(this.links[i].source.index + "," + this.links[i].target.index);
                     }
                 }
+
                 this.links.splice(i, 1);
                 arrow.path.remove();
                 this.restart();
@@ -589,53 +606,66 @@ export const BaseForceAlgorithm = {
         let i;
         for(i = 0; i < this.nodes.length; i++){
             if((this.nodes[i].meta === value.id) || (this.nodes[i].concept === value.id)){
-                this.nodes.splice(i, 1);
                 break;
             }
         }
 
         if(isNullOrUndefined(this.links) || isEmpty(this.links)){
+            this.nodes.splice(i, 1);
             this.restart();
             return;
         }
 
         for(let j = 0; j < this.links.length; j++){
-
+            let offSet;
+            console.log("Item J");
+            console.log(j);
             if(this.links[j].source.index === i || this.links[j].target.index === i){
                 let arrow = this.projection.model.getArrow(this.links[j].id);
-                this.removeArrow(arrow, j);
+                offSet = this.removeArrow(arrow, j, null, i);
+                j--;
             }
 
-            if(this.links[j].source.index > i){
-                this.links[j].source.index--;
+            if(!isNullOrUndefined(this.links[j])){
+                if(this.links[j].source.index > i){
+                    this.links[j].source.index--;
+                }
+    
+                if(this.links[j].target.index > i){
+                    this.links[j].target.index--;
+                }
             }
+            
 
-            if(this.links[j].target.index > i){
-                this.links[j].target.index--;
+            if(offSet > 0){
+                i - offSet;
             }
         }
+
+        console.log("About to splice");
+        console.log(i);
+
+        this.nodes.splice(i, 1);
 
         this.restart();
     },
 
-    /*removeDummy(ref){
-        for(let i = 0; i < this.dummies.length; i++){
-            let d = this.dummies[i];
-            if(d.ref === ref){
-                d.item.remove();
-                this.dummies.splice(i, 1);
-                i--;
-            } 
-        }
-
+    removeDummy(ref){
         for(let j = 0; j < this.nodes.length; j++){
+            console.log("J");
+            console.log(j);
+            console.log(this.nodes);
             if(this.nodes[j].ref === ref){
                 this.nodes.splice(j, 1);
                 j--;
             }
+
+            if(this.nodes[j].ref > ref){
+                this.nodes[j].ref--;
+            }
         }
     },
-
+/*
     removeArrow(arrow, index = -1){
         this.force.stop();
         let ref;
