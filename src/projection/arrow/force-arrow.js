@@ -58,7 +58,7 @@ const BaseForceArrow = {
         if(!isNullOrUndefined(this.fromVal) && !isNullOrUndefined(this.toVal)){
             this.projection.parent.addArrow(this, this.fromVal, this.toVal, this.decorator);
         }else if(!isNullOrUndefined(this.path.parentNode)){
-            this.projection.parent.removeArrow(this, false, this.decorator);
+            this.projection.parent.removeArrow(this, -1, this.decorator);
         }
     },
 

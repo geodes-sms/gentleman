@@ -99,10 +99,7 @@ export const BaseForceAlgorithm = {
         this.force.start();
     },
     
-    restart(){
-
-        console.log(this.nodes);
-        
+    restart(){        
         let n = d3.select("#" + this.id);
         this.node = n.selectAll(".node" + this.id).data(this.nodes);
 
@@ -197,6 +194,7 @@ export const BaseForceAlgorithm = {
             }
             
         }     
+        let rectFire = item.getBoundingClientRect();
 
         this.restart();
     },
@@ -220,6 +218,11 @@ export const BaseForceAlgorithm = {
         if(this.containsArrow(arrow, from, to)){
             return;
         }
+
+        console.log("Adding Arrow");
+        console.log("Checking Trans")
+
+        this.containsTransArrow(arrow, from, to);
 
         this.force.stop();
 
@@ -331,6 +334,19 @@ export const BaseForceAlgorithm = {
         this.restart();
     },
 
+    containsTransArrow(arrow, from, to){
+        if(isNullOrUndefined(this.transLinks)){
+            return;
+        }
+        for(let i = 0; i < this.transLinks.length; i++){
+            if(this.transLinks[i].id === arrow.id){
+                this.transLinks.splice(i, 1);
+                return;                
+            }
+        }
+        
+    },
+
     containsArrow(arrow, from, to){
         for(let i = 0; i < this.links.length; i++){
             if(this.links[i].id === arrow.id){
@@ -342,6 +358,7 @@ export const BaseForceAlgorithm = {
 
                 if(indexF < 0 || indexT < 0){
                     this.removeArrow(arrow, i);
+                    this.addTransLink(arrow, from, to);
                 }else{
                     let prevSource = this.links[i].source.index;
                     let prevTarget = this.links[i].target.index;
@@ -373,21 +390,16 @@ export const BaseForceAlgorithm = {
         return false;
     },
 
-    removeArrow(arrow, index = false, decorator, elem){
+    removeArrow(arrow, index = -1, decorator, elem){
         if(isNullOrUndefined(this.links)){
             return;
         }
 
-        console.log("Removing Arrow");
-        console.log(arrow, index);
-
+        let offSet = 0;
         if(index >= 0){
-            console.log(this.links);
             if(!isNullOrUndefined(this.linkInventory.get(this.links[index].source.index + "," + this.links[index].target.index))){
-                console.log("Condition")
                 let inv = this.linkInventory.get(this.links[index].source.index + "," + this.links[index].target.index);
 
-                console.log("Gettetr");
                 inv.length--;
 
                 if(inv.length === 0){
@@ -395,10 +407,8 @@ export const BaseForceAlgorithm = {
                 }
             }
 
-            console.log("Before");
             this.links.splice(index, 1);
 
-            let offSet = 0;
             if(arrow.decorator){
                 offSet = this.removeDummy(index);
                 arrow.decorator.remove();
@@ -421,6 +431,10 @@ export const BaseForceAlgorithm = {
                     }
                 }
 
+                if(arrow.decorator){
+                    offSet = this.removeDummy(i);
+                    arrow.decorator.remove();
+                }
                 this.links.splice(i, 1);
                 arrow.path.remove();
                 this.restart();
@@ -618,8 +632,6 @@ export const BaseForceAlgorithm = {
 
         for(let j = 0; j < this.links.length; j++){
             let offSet;
-            console.log("Item J");
-            console.log(j);
             if(this.links[j].source.index === i || this.links[j].target.index === i){
                 let arrow = this.projection.model.getArrow(this.links[j].id);
                 offSet = this.removeArrow(arrow, j, null, i);
@@ -642,9 +654,6 @@ export const BaseForceAlgorithm = {
             }
         }
 
-        console.log("About to splice");
-        console.log(i);
-
         this.nodes.splice(i, 1);
 
         this.restart();
@@ -652,9 +661,6 @@ export const BaseForceAlgorithm = {
 
     removeDummy(ref){
         for(let j = 0; j < this.nodes.length; j++){
-            console.log("J");
-            console.log(j);
-            console.log(this.nodes);
             if(this.nodes[j].ref === ref){
                 this.nodes.splice(j, 1);
                 j--;
@@ -663,6 +669,7 @@ export const BaseForceAlgorithm = {
             if(this.nodes[j].ref > ref){
                 this.nodes[j].ref--;
             }
+
         }
     },
 /*

@@ -63,6 +63,14 @@ const BaseAnchorAlgorithm = {
         return this.container;
     },
 
+    focusIn(){
+
+    },
+
+    focusOut(){
+
+    },
+
     increaseSize(){
         const height = Number(this.container.getAttribute("height"));
 
