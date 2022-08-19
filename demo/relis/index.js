@@ -8,3 +8,6 @@ editor.init({
     conceptModel: CONCEPT,
     projectionModel: PROJECTION
 });
+
+let instance = editor.createInstance("project");
+instance.changeSize("fullscreen");

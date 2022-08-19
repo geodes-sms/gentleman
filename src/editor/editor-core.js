@@ -397,7 +397,7 @@ const EditorCore = {
         };
 
         reader.readAsText(file);
-    
+
         this.refresh();
 
         return file;
@@ -1109,41 +1109,41 @@ const EditorCore = {
 
     // Default events management
 
-    registerReceiver(projection, rtag){
-        if(isNullOrUndefined(this.receivers)){
+    registerReceiver(projection, rtag) {
+        if (isNullOrUndefined(this.receivers)) {
             this.receivers = {};
         }
 
-        if(isNullOrUndefined(this.receivers[rtag])){
+        if (isNullOrUndefined(this.receivers[rtag])) {
             this.receivers[rtag] = {
                 root: projection,
                 projections: [projection]
-            }
-        }else{
-            this.receivers[rtag].projections.push(projection)
+            };
+        } else {
+            this.receivers[rtag].projections.push(projection);
         }
 
         this.setActiveReceiver(projection, rtag);
 
     },
 
-    setActiveReceiver(projection, rtag){
-        if(isNullOrUndefined(this.activeReceiver)){
+    setActiveReceiver(projection, rtag) {
+        if (isNullOrUndefined(this.activeReceiver)) {
             this.activeReceiver = {};
         }
 
         this.activeReceiver[rtag] = projection;
     },
 
-    getActiveReceiver(rtag){
+    getActiveReceiver(rtag) {
         return this.activeReceiver[rtag];
     },
 
-    getReceivers(rtag){
+    getReceivers(rtag) {
         return this.receivers[rtag].projections;
     },
 
-    getRootReceiver(rtag){
+    getRootReceiver(rtag) {
         return this.receivers[rtag].root;
     },
 
@@ -1278,7 +1278,7 @@ const EditorCore = {
 
                 this.download({
                     "concept": schema
-                }, `${name}_model`);
+                }, `${name}_model`, "JSON");
             },
             "load-projection": (target) => {
                 let event = new MouseEvent('click', {
@@ -1299,7 +1299,7 @@ const EditorCore = {
 
                 this.download({
                     projection: schema
-                }, `${name}_projection`);
+                }, `${name}_projection`, "JSON");
             }
         };
 
@@ -1335,7 +1335,6 @@ const EditorCore = {
             }
 
             if (this.actions.has(action)) {
-                console.warn(action);
                 this.actions.get(action).call(this, target);
                 target.blur();
                 return;
@@ -1643,6 +1642,7 @@ const EditorCore = {
         this.registerHandler("value.changed", () => this.refresh());
         this.registerHandler("value.added", () => this.refresh());
         this.registerHandler("value.removed", () => this.refresh());
+        this.registerHandler("export.model", () => this.exporter.open());
         this.registerHandler("load-resource", (args) => {
             let event = new MouseEvent('click', { view: window, bubbles: true, cancelable: true, });
             fileName = args[0];

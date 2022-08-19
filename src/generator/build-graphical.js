@@ -2,15 +2,12 @@ import { isEmpty, valOrDefault, isNullOrWhitespace, isFunction, isNullOrUndefine
 import { NotificationType, LogType, shake } from "@utils/index.js";
 import { buildStyle, buildGentlemanStyle } from "./build-style.js";
 import { getAttr, getReferenceValue, getReferenceName, hasAttr, hasValue, getName, getValue, createProjectionLink } from './utils.js';
-import { buildProjection } from "./build-projection.js";
-import { buildTemplate } from "./build-projection.js";
-import { buildStyleRule } from "./build-projection.js";
-import { buildConcept } from "./build-projection.js";
+import { buildProjection, buildStyleRule, buildTemplate, buildConcept } from "./build-projection.js";
 
 
 const PROP_HANDLER = "handler";
-const PROP_HANDLERTYPE = "handlerType"
-const PROP_ELEMTYPE = "elementType"
+const PROP_HANDLERTYPE = "handlerType";
+const PROP_ELEMTYPE = "elementType";
 
 const ATTR_CONTENT = "content";
 const ATTR_CONCEPT = "concept";
@@ -32,19 +29,20 @@ const GraphicalBuildHandler = {
     "projection": buildProjection,
     "template": buildTemplate,
     "style": buildStyleRule
-}
+};
 
 const GraphicalHandler = {
     "algorithm": buildLayout,
     "arrow": buildArrow,
-}
+};
 
-export function buildGraphicalHandler(_options = {}){
-    const result = {type: "projection",
-    "projection": [],
-    "template": [],
-    "style": [],
-    }
+export function buildGraphicalHandler(_options = {}) {
+    const result = {
+        type: "projection",
+        "projection": [],
+        "template": [],
+        "style": [],
+    };
 
     const { conceptModel } = this;
 
@@ -58,7 +56,7 @@ export function buildGraphicalHandler(_options = {}){
 
     const concepts = conceptModel.getConcepts(["graphical", "projection", "template", "style rule"]);
 
-    if(isEmpty(concepts)){
+    if (isEmpty(concepts)) {
         this.notify("<strong>Empty model</strong>: Please create at least one projection.", NotificationType.WARNING, 2000);
 
         return false;
@@ -74,18 +72,18 @@ export function buildGraphicalHandler(_options = {}){
 
         const handler = GraphicalBuildHandler[type];
 
-        console.log(handler)
+        console.log(handler);
 
         const { message } = handler.call(this, concept);
 
-        if(type === "graphical"){
+        if (type === "graphical") {
             result["projection"].push(message);
-        }else{
+        } else {
             result[type].push(message);
         }
     });
 
-    if(!isEmpty(this.__errors)){
+    if (!isEmpty(this.__errors)) {
         this.notify("<strong>Validation failed</strong>: The model could not be built.<br> <em>See Log for more details</em>.", NotificationType.ERROR);
         this.logs.add(this.__errors, "Validation error", LogType.ERROR);
 
@@ -99,15 +97,15 @@ export function buildGraphicalHandler(_options = {}){
     }
 
     if (options.download) {
-        this.download(result, options.name);
+        this.download(result, options.name, "JSON");
     }
 
     delete this.__errors;
- 
+
     return result;
 }
 
-function buildGraphical(concept){
+function buildGraphical(concept) {
     const tags = hasAttr(concept, ATTR_TAGS) ? getValue(concept, ATTR_TAGS, true) : [];
 
     let targetConcept = getAttr(concept, ATTR_CONCEPT);
@@ -138,7 +136,7 @@ function buildGraphical(concept){
 
     schema.type = handler;
 
-    schema["content"] = GraphicalHandler[handler].call(this, container)
+    schema["content"] = GraphicalHandler[handler].call(this, container);
 
     if (hasAttr(concept, ATTR_NAME) && hasValue(concept, ATTR_NAME)) {
         schema.name = getName(concept);
@@ -147,23 +145,23 @@ function buildGraphical(concept){
     return {
         success: true,
         message: schema,
-    };   
+    };
 }
 
 const ArrowHandler = {
     "force": buildForceArrow
-}
+};
 
-function buildArrow(arrow){
+function buildArrow(arrow) {
     const elementType = arrow.getProperty(PROP_ELEMTYPE);
 
     var schema = {
         type: elementType
-    }
+    };
 
     const handler = ArrowHandler[elementType];
 
-    if(!isFunction(handler)){
+    if (!isFunction(handler)) {
         return null;
     }
 
@@ -172,10 +170,10 @@ function buildArrow(arrow){
     return schema;
 }
 
-function buildForceArrow(arrow){
+function buildForceArrow(arrow) {
     const schema = {};
 
-    if(!hasValue(arrow, "from")){
+    if (!hasValue(arrow, "from")) {
         let link = createProjectionLink.call(this, "from", getAttr(arrow, "from"));
         let error = createSpan({
             class: ["error-message"]
@@ -184,9 +182,9 @@ function buildForceArrow(arrow){
         this.__errors.push(error);
     }
 
-    schema.from = { name: getValue(arrow, "from")};
+    schema.from = { name: getValue(arrow, "from") };
 
-    if(!hasValue(arrow, "to")){
+    if (!hasValue(arrow, "to")) {
         let link = createProjectionLink.call(this, "to", getAttr(arrow, "from"));
         let error = createSpan({
             class: ["error-message"]
@@ -195,10 +193,10 @@ function buildForceArrow(arrow){
         this.__errors.push(error);
     }
 
-    schema.to = { name: getValue(arrow, "to")};
+    schema.to = { name: getValue(arrow, "to") };
 
-    if(hasAttr(arrow, "decorator")){
-        schema.decorator = buildDynamic.call(this, getAttr(arrow, "decorator")); 
+    if (hasAttr(arrow, "decorator")) {
+        schema.decorator = buildDynamic.call(this, getAttr(arrow, "decorator"));
     }
 
     return schema;
@@ -207,18 +205,18 @@ function buildForceArrow(arrow){
 const LayoutHandler = {
     "decoration": buildDecorationLayout,
     "force": buildForceLayout,
-}
+};
 
-function buildLayout(layout){
+function buildLayout(layout) {
     const elementType = layout.getProperty(PROP_ELEMTYPE);
 
     var schema = {
         type: elementType
-    }
+    };
 
     const handler = LayoutHandler[elementType];
 
-    if(!isFunction(handler)){
+    if (!isFunction(handler)) {
         return null;
     }
 
@@ -227,14 +225,14 @@ function buildLayout(layout){
     return schema;
 }
 
-function buildDecorationLayout(layout){
+function buildDecorationLayout(layout) {
     const schema = {};
 
-    if(hasAttr(layout, "dimensions")){
+    if (hasAttr(layout, "dimensions")) {
         schema.dimensions = buildAbsolute.call(this, getAttr(layout, "dimensions"));
     }
 
-    if(hasAttr(layout, "coordinates")){
+    if (hasAttr(layout, "coordinates")) {
         schema.coordinates = buildCoordinates.call(this, getAttr(layout, "coordinates"));
     }
 
@@ -242,15 +240,15 @@ function buildDecorationLayout(layout){
 
     console.log(shape);
     console.log(getValue(shape, "elements"));
-    if(!isEmpty(getValue(shape, "elements"))){
-        schema.background = buildShape.call(this, shape)
+    if (!isEmpty(getValue(shape, "elements"))) {
+        schema.background = buildShape.call(this, shape);
     }
 
-    if(isNullOrUndefined(schema.background) && getValue(layout, "background")){
+    if (isNullOrUndefined(schema.background) && getValue(layout, "background")) {
         schema.background = getValue(layout, "content");
     }
 
-    if(!isEmpty(getValue(layout, "content"))){
+    if (!isEmpty(getValue(layout, "content"))) {
         let content = [];
 
         getValue(layout, "content").forEach(elem => {
@@ -265,14 +263,13 @@ function buildDecorationLayout(layout){
 
             itemSchema.dimension = buildDimension.call(this, getValue(item, "dimension", true));
             itemSchema.coordinates = buildCoordinates.call(this, getAttr(item, "coordinates"));
-            
+
             console.log(itemSchema);
 
             itemSchema.render = buildElement.call(this, item);
 
             content.push(itemSchema);
-
-        })
+        });
 
         schema.content = content;
     }
@@ -280,7 +277,7 @@ function buildDecorationLayout(layout){
     return schema;
 }
 
-function buildForceLayout(layout){
+function buildForceLayout(layout) {
     const schema = {};
 
     schema.dimensions = buildDimension.call(this, getAttr(getAttr(layout, "force"), "dimension"));
@@ -292,12 +289,12 @@ function buildForceLayout(layout){
     return schema;
 }
 
-function buildForce(force){
+function buildForce(force) {
     const schema = {};
 
     schema.intensity = Math.min(getValue(force, "intensity"), -1 * getValue(force, "intensity"));
 
-    schema.linkVal = getValue(force, "linkVal")
+    schema.linkVal = getValue(force, "linkVal");
 
     return schema;
 }
@@ -307,9 +304,9 @@ const ElementHandler = {
     "dynamic": buildDynamic,
     "field": buildField,
     "static": buildStatic,
-}
+};
 
-function buildElement(element){
+function buildElement(element) {
 
     const contentType = element.getProperty("contentType");
 
@@ -328,7 +325,7 @@ const DynamicHanlders = {
     "projection": AttributeDynamicHandler,
 };
 
-export function buildDynamic(dynamic) {
+function buildDynamic(dynamic) {
     const elementType = dynamic.getProperty("elementType");
 
 
@@ -364,7 +361,7 @@ function AttributeDynamicHandler(element) {
         schema.required = getValue(element, ATTR_REQUIRED);
     }
 
-    if(hasAttr(element, "listen")){
+    if (hasAttr(element, "listen")) {
         schema.listen = getValue(element, "listen");
     }
 
@@ -388,22 +385,22 @@ const StaticHandler = {
     "svg-text": buildSVGTextStatic,
     "svg-button": buildSVGButton,
     "svg": buildSVGStatic
-}
+};
 
-function buildStatic(elem){
+function buildStatic(elem) {
     const elemType = elem.getProperty(PROP_ELEMTYPE);
 
     const handler = StaticHandler[elemType];
 
-    if(isNullOrUndefined(handler)){
+    if (isNullOrUndefined(handler)) {
         return null;
     }
 
-    return Object.assign({type: elemType} ,handler.call(this, elem));
+    return Object.assign({ type: elemType }, handler.call(this, elem));
 }
 
-function buildSVGTextStatic(text){
-    const schema = {};  
+function buildSVGTextStatic(text) {
+    const schema = {};
 
     schema.content = getValue(text, "content");
 
@@ -412,33 +409,33 @@ function buildSVGTextStatic(text){
     return schema;
 }
 
-function buildSVGButton(button){
+function buildSVGButton(button) {
     const schema = {};
 
     const shape = getAttr(button, "shape");
 
-    if(!isEmpty(getAttr(shape, "elements"))){
-        schema.content = buildShape.call(this, shape)
+    if (!isEmpty(getAttr(shape, "elements"))) {
+        schema.content = buildShape.call(this, shape);
     }
 
-    if(isNullOrUndefined(schema.background) && getValue(button, "content")){
+    if (isNullOrUndefined(schema.background) && getValue(button, "content")) {
         schema.content = getValue(layout, "content");
     }
 
     schema.action = {
         type: valOrDefault(getValue(button, "action"), "SIDE")
-    }
+    };
 
     console.log(button);
 
-    if(schema.action.type === "SIDE"){
+    if (schema.action.type === "SIDE") {
         schema.action.target = getValue(button, "tag");
     }
 
     return schema;
 }
 
-function buildSVGStatic(image){
+function buildSVGStatic(image) {
     const schema = {};
 
     schema.content = getValue(image, "content");
@@ -449,9 +446,9 @@ function buildSVGStatic(image){
 const FieldHandler = {
     "svg": buildSVGText,
     "svg-choice": buildSVGChoice,
-}
+};
 
-function buildField(field){
+function buildField(field) {
     const schema = {};
 
     console.log("BuildingField");
@@ -461,14 +458,14 @@ function buildField(field){
 
     const handler = FieldHandler[elemType];
 
-    if(isNullOrUndefined(handler)){
+    if (isNullOrUndefined(handler)) {
         return null;
     }
 
-    return Object.assign({type: elemType}, handler.call(this, field));
+    return Object.assign({ type: elemType }, handler.call(this, field));
 }
 
-function buildSVGText(field){
+function buildSVGText(field) {
     const schema = {};
 
     schema.content = getValue(field, "placeholder");
@@ -482,7 +479,7 @@ function buildSVGText(field){
     return schema;
 }
 
-function buildSVGChoice(field){
+function buildSVGChoice(field) {
 
     console.log("BuildingChoice");
     const schema = {};
@@ -494,7 +491,7 @@ function buildSVGChoice(field){
     return schema;
 }
 
-function buildSelection(selection){
+function buildSelection(selection) {
     const schema = {};
 
     schema.orientation = getValue(selection, "orientation");
@@ -506,7 +503,7 @@ function buildSelection(selection){
     return schema;
 }
 
-function buildTextStyle(text){
+function buildTextStyle(text) {
     const schema = {};
 
     schema.font = getValue(text, "font");
@@ -517,30 +514,30 @@ function buildTextStyle(text){
 
     schema.anchor = getValue(text, "anchor");
 
-    if(hasAttr(text, "weight") && hasValue(text, "weight")){
+    if (hasAttr(text, "weight") && hasValue(text, "weight")) {
         schema.weight = getValue(text, "weight");
     }
 
     return schema;
 }
 
-function buildAbsolute(dimension){
+function buildAbsolute(dimension) {
     const schema = {};
-    
-    schema.width = getValue(dimension, "width"); 
+
+    schema.width = getValue(dimension, "width");
     schema.height = getValue(dimension, "height");
 
     return schema;
 }
 
-function buildDimension(dimension){
+function buildDimension(dimension) {
     const schema = {};
     schema.type = dimension.name;
 
-    switch(dimension.name){
+    switch (dimension.name) {
         case "absolute":
             schema.width = getValue(dimension, "width");
-            schema.height = getValue(dimension, "height"); 
+            schema.height = getValue(dimension, "height");
 
             break;
         case "fixed":
@@ -554,7 +551,7 @@ function buildDimension(dimension){
     return schema;
 }
 
-function buildDefaultDimension(dimensions){
+function buildDefaultDimension(dimensions) {
     const schema = {};
 
     schema.width = getValue(dimensions, "width");
@@ -563,7 +560,7 @@ function buildDefaultDimension(dimensions){
     return schema;
 }
 
-function buildCoordinates(coordinates){
+function buildCoordinates(coordinates) {
     const schema = {};
 
     schema.x = getValue(coordinates, "x");
@@ -578,36 +575,36 @@ const ShapeHandler = {
     "ellipse": buildEllipse,
     "polygon": buildPolygon,
     "path": buildPath,
-}
+};
 
-function buildShape(shape){
+function buildShape(shape) {
     let content = '<svg xmlns=\"http://www.w3.org/2000/svg\" ';
 
     const width = getValue(shape, "width");
-    content += 'width=\"' + width +'\" ';
+    content += 'width=\"' + width + '\" ';
 
     const height = getValue(shape, "height");
-    content += 'height=\"' + height +'\" ';
+    content += 'height=\"' + height + '\" ';
 
     const minX = getValue(shape, "minX");
     const minY = getValue(shape, "minY");
     const windowW = getValue(shape, "windowW");
     const windowH = getValue(shape, "windowH");
 
-    content += 'viewBox=\"' + minX + ' ' + minY + ' ' + valOrDefault(windowW, width) + ' ' + valOrDefault(windowH, height)+ '\">';
+    content += 'viewBox=\"' + minX + ' ' + minY + ' ' + valOrDefault(windowW, width) + ' ' + valOrDefault(windowH, height) + '\">';
 
     getValue(shape, "elements").forEach(elem => {
         let item = elem.getValue(true);
 
         content += ShapeHandler[item.name].call(this, item);
-    })
+    });
 
-    content += "</svg>"
+    content += "</svg>";
 
     return content;
 }
 
-function buildCircle(circle){
+function buildCircle(circle) {
     let content = "<circle ";
 
     const cx = getValue(circle, "cx");
@@ -621,12 +618,12 @@ function buildCircle(circle){
 
     content += applyStyleCircle.call(this, getAttr(circle, "style"));
 
-    content += "></circle>"
+    content += "></circle>";
 
     return content;
 }
 
-function buildRectangle(rectangle){
+function buildRectangle(rectangle) {
     let content = "<rect ";
 
     const x = getValue(rectangle, "x");
@@ -643,12 +640,12 @@ function buildRectangle(rectangle){
 
     content += applyStyleRect(getAttr(rectangle, "style"));
 
-    content += "></rect>"
+    content += "></rect>";
 
     return content;
 }
 
-function buildEllipse(ellipse){
+function buildEllipse(ellipse) {
     let content = "<ellipse ";
 
     const x = getValue(ellipse, "cx");
@@ -665,13 +662,13 @@ function buildEllipse(ellipse){
 
     content += applyStyleCircle(getAttr(ellipse, "style"));
 
-    content += "></ellipse>"
+    content += "></ellipse>";
 
     return content;
 
 }
 
-function buildPolygon(polygon){
+function buildPolygon(polygon) {
     let content = "<polygon ";
 
     const points = getValue(polygon, "points");
@@ -679,10 +676,10 @@ function buildPolygon(polygon){
 
     content += applyStyleCircle(getAttr(polygon, "style"));
 
-    return content;    
+    return content;
 }
 
-function buildPath(path){
+function buildPath(path) {
     let content = "<path ";
 
     const d = getValue(path, "d");
@@ -692,10 +689,10 @@ function buildPath(path){
 
     content += "></path>";
 
-    return content;    
+    return content;
 }
 
-function applyStyleCircle(style){
+function applyStyleCircle(style) {
     let content = "";
 
     const fill = valOrDefault(getValue(style, "fill"), "black");
@@ -708,15 +705,15 @@ function applyStyleCircle(style){
     content += "stroke-width=\"" + width + "\" ";
 
     const dasharray = getValue(style, "s-dash");
-    if(!isNullOrUndefined(dasharray)){
-        content += "stroke-dasharray=\"" + dasharray + "\""
+    if (!isNullOrUndefined(dasharray)) {
+        content += "stroke-dasharray=\"" + dasharray + "\"";
     }
 
     return content;
 
 }
 
-function applyStyleRect(style){
+function applyStyleRect(style) {
     let content = "";
 
     const fill = valOrDefault(getValue(style, "fill"), "black");
@@ -729,18 +726,18 @@ function applyStyleRect(style){
     content += "stroke-width=\"" + width + "\" ";
 
     const dasharray = getValue(style, "s-dash");
-    if(!isNullOrUndefined(dasharray)){
-        content += "stroke-dasharray=\"" + dasharray + "\" "
+    if (!isNullOrUndefined(dasharray)) {
+        content += "stroke-dasharray=\"" + dasharray + "\" ";
     }
 
     const rx = getValue(style, "rx");
-    if(!isNullOrUndefined(rx)){
-        content += "rx=\"" + rx + "\" "
+    if (!isNullOrUndefined(rx)) {
+        content += "rx=\"" + rx + "\" ";
     }
 
     const ry = getValue(style, "ry");
-    if(!isNullOrUndefined(ry)){
-        content += "ry=\"" + ry + "\" "
+    if (!isNullOrUndefined(ry)) {
+        content += "ry=\"" + ry + "\" ";
     }
 
     return content;

@@ -59,10 +59,10 @@ export function buildConceptHandler(_options = {}) {
     this.notify("The concept model was <strong>successfully</strong> built", NotificationType.SUCCESS, 2000);
 
     if (options.download) {
-        this.download({
+        this.download(JSON.stringify( {
             type: "concept",
             concept: result
-        }, options.name);
+        }), options.name, "JSON");
     }
 
     delete this.__errors;
@@ -181,9 +181,6 @@ function buildAttribute(attribute) {
  * @param {*} attribute
  */
 function buildTarget(target, propname = "name") {
-    console.log("target");
-    console.log(target);
-
     if (isNullOrUndefined(target)) {
         return null;
     }

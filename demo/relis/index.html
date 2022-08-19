@@ -8,23 +8,302 @@
     <meta name="desciption" content="A ReLiS editor.">
     <link rel="stylesheet" href="./../../dist/style.min.css?v=2">
     <link rel="stylesheet" href="./assets/style.css">
+    <style>
+        .page-aside {
+            display: flex; flex-direction: column;
+            height: 100%;
+            width: 240px;
+        }
+        .relis-header {
+            display: flex; align-items: center;
+            background-color: #2A3F54;
+            color: #fff;
+            padding: 12px 5%;
+        }
+
+        .relis-header .fa-book {
+            padding: 6px 8px;
+            border: 2px solid currentColor;
+            font-size: 1.8em;
+            border-radius: 50%;
+        }
+
+        .relis-header-title {
+            margin: 0; margin-left: 6px;
+            font-weight: 400;
+            font-size: 2.3em;
+        }
+        
+        .user-img {
+            height: 30px;
+            border-radius: 50%;
+        }
+
+        .relis-menu {
+            display: flex; flex-direction: column;
+            background-color: #555;
+            flex-grow: 2;
+            padding-left: 12px;
+        }
+
+        .relis-menu-title {
+            font-size: 1.5em;
+            color: #fff;
+            text-shadow: 0 0 1px #000;
+            text-transform: uppercase;
+        }
+
+        .menu-header {
+            padding-top: 18px;
+            display: flex; align-items: center;
+        }
+
+        .menu-header-user {
+            font-size: 1.5em; font-weight: 500;
+            margin-left: 8px;
+            color: #fff;
+        }
+
+        .menu-header-avatar {
+            background-color: #fff;
+            padding: 6px;
+            margin-right: 6px;
+            font-size: 1.8em;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+        }
+
+        .menu-header-avatar .user-img {
+            height: 48px;
+        }
+
+        .relis-menu-general {
+            display: flex; flex-direction: column;
+        }
+
+        .relis-menu-section--general {
+            flex-grow: 2;
+        }
+
+        .menu {
+            
+        }
+            
+        .menu-item {
+            display: flex; align-items: center;
+            padding-top: 12px; padding-bottom: 12px;
+            padding-right: 12px;
+            color: #eee;
+        }
+
+        .menu-item .fa {
+            margin-right: 6px;
+        }
+
+        .menu-item-name {
+            font-size: 0.95em;
+            flex-grow: 2;
+        }
+
+        .menu-item .fa-chevron-down {
+            font-size: 0.8em;
+            justify-self: flex-end;
+
+        }
+
+        .relis-settings {
+            padding: 12px;
+            background-color: #172D44;
+        }
+
+        .relis-settings-menu {
+            display: flex; justify-content: space-between;
+            color: #fff;
+        }
+
+        .settings-menu-item {
+            padding: 6px;
+        }
+
+        .app-header {
+            height: 30px;
+            padding-left: 12px;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .btn-menu {
+            height: 24px;
+            font-size: 1.5em;
+        }
+
+        .app-header-login {
+            display: flex;
+            align-items: center;
+        }
+
+        .app-title {
+            font-size: 1.6em;
+        }
+
+        .app-editor {
+            flex-grow: 2;
+            border: 1px solid #d5d5d5;
+            margin: 12px;
+            height: calc(100% - 30px);
+        }
+
+        .app-editor-header {
+            height: 30px;
+            padding: 6px 12px;
+        }
+
+        .app-editor-title {
+            margin: 0;
+            font-size: 2em; font-weight: 400;
+        }
+
+        .gentleman-editor {
+            height: calc(100% - 30px);
+        }
+
+        .gentleman-editor .editor-header {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
-    <header class="page-header">
-        <div class="content-wrapper">
-            <h1 class="page-title">ReLiS demo &mdash; Gentleman <strong class="font-code" title="Last updated: 2022-03-27">0.4.0</strong></h1>
-        </div>
-    </header>
     <main class="page-body">
+        <aside class="page-aside">
+            <div class="relis-header">
+                <i class="fa fa-book"></i>
+                <h1 class="relis-header-title">
+                    ReLiS
+                </h1>
+            </div>
+            <div class="relis-menu">
+                <div class="menu-header">
+                    <div class="menu-header-avatar">
+                        <img class="user-img" src="http://relis.iro.umontreal.ca/cside/images/img.jpg" alt="..." class="img-circle profile_img">
+                    </div>
+                    <span class="menu-header-user">Demo</span>
+                </div>
+
+                <div class="relis-menu-section relis-menu-section--general">
+                    <h3 class="relis-menu-title">General</h3>
+                    <ul class="bare-list menu">
+                        <li class="menu-item">
+                            <i class="fa fa-home"></i>
+                            <span class="menu-item-name">Project</span>
+                        </li>
+                        <li class="menu-item">
+                            <i class="fa fa-upload"></i>
+                            <span class="menu-item-name">Import Papers</span>
+                            <span class="fa fa-chevron-down"></span>
+                        </li>
+                        <li class="menu-item">
+                            <i class="fa fa-newspaper-o"></i>
+                            <span class="menu-item-name">Papers</span>
+                            <span class="fa fa-chevron-down"></span>
+                        </li>
+                        <li class="menu-item">
+                            <i class="fa fa-th"></i>
+                            <span class="menu-item-name">Venues</span>
+                        </li>
+                        <li class="menu-item">
+                            <i class="fa fa-users"></i>
+                            <span class="menu-item-name">Authors</span>
+                            <span class="fa fa-chevron-down"></span>
+                        </li>
+                        <li class="menu-item">
+                            <i class="fa fa-database"></i>
+                            <span class="menu-item-name">Query database</span>
+                        </li>
+                        <li class="menu-item">
+                            <i class="fa fa-user"></i>
+                            <span class="menu-item-name">Users</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="relis-menu-section relis-menu-section--administration">
+                    <h3 class="relis-menu-title">Administration</h3>
+                    <ul class="bare-list">
+                        <li class="menu-item">
+                            <i class="fa fa-th"></i>
+                            <span class="menu-item-name">Planning</span>
+                            <span class="fa fa-chevron-down"></span>
+                        </li>
+                        <li class="menu-item">
+                            <i class="fa fa-reorder"></i>
+                            <span class="menu-item-name">Operations Management</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="relis-settings">
+                <ul class="bare-list relis-settings-menu">
+                    <li class="settings-menu-item">
+                        <i class="fa-solid fa-right-left"></i>
+                    </li>
+                    <li class="settings-menu-item">
+                        <i class="fas fa-home"></i>
+                    </li>
+                    <li class="settings-menu-item">
+                        <i class="fa-solid fa-grip"></i>
+                    </li>
+                    <li class="settings-menu-item">
+                        <i class="fas fa-power-off"></i>
+                    </li>
+                </ul>
+            </div>
+        </aside>
         <section class="app">
-            <div class="app-editor" data-gentleman="editor"></div>
+            <header class="app-header">
+                <span class="btn-menu">
+                    <i class="fa-solid fa-bars"></i>
+                </span>
+                <div class="app-header-login">
+                    <span class="app-title">Demo ReLiS</span>
+                    <div class="app-config">
+                        <span class="lang">en</span>
+                        <img class="user-img" src="http://relis.iro.umontreal.ca/cside/images/img.jpg" alt="">
+                        Demo
+                    </div>
+                </div>
+            </header>
+            
+            <div class="app-editor">
+                <div class="app-editor-header">
+                    <h2 class="app-editor-title">ReLiS editor</h2>
+                </div>
+                <div class="gentleman-editor" data-gentleman="editor"></div>
             </div>
         </section>
     </main>
 
+    
+    <footer class="page-footer">
+        <div class="content-wrapper">
+            <p class="">GEODES &bull; Software Engineering Research Group</p>
+            <p>ReLiS is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.</p>
+            <p class="poweredby">Powered by 
+                <a class="bare-link page-footer__link page-footer__link--gentleman" href="https://gentlemancp.org/">
+                    <span class="label">Gentleman</span>
+                    <span class="info">version 0.4.0 Github</span>
+                </a>
+            </p>
+        </div>
+    </footer>
+
     <script src="./../../dist/gentleman.core.js?v=2"></script>
     <script src="./../dist/relis.js"></script>
+    <script src="https://kit.fontawesome.com/6b26121ff3.js" crossorigin="anonymous"></script>
 </body>
 
 </html>

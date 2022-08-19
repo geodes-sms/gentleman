@@ -310,16 +310,8 @@ export const App = {
 
             if (action === "new") {
                 let tab = createTab.call(this, "EX");
-                let config = {
-                    toolbar: [
-                        { "type": "button", "name": "button-export", "action": "export.model", "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--save"] },
-                        { "type": "button", "name": "button-menu", "action": "open.menu", "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--home"] },
-                        { "type": "button", "name": "button-close", "action": "close.editor", "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--close"] },
-                    ]
-                };
 
                 this.addTab(tab, this.createEditor({
-                    config: config,
                     handlers: {
                         "export.model": function () { this.export(); },
                         "open.menu": function () { this.home.open(); },

@@ -1,5 +1,5 @@
-import '@src/stylesheets.js';
-import './assets/style.css';
+// import '@src/stylesheets.js';
+// import './assets/style.css';
 
 import { findAncestor, getElement, getElements, hasOwn, isHTMLElement, isNullOrUndefined } from 'zenkai';
 import { activateEditor } from '@src';
@@ -138,6 +138,25 @@ const App = {
             return;
         }
 
+        switch (name) {
+            case "general":
+                API.fetchOrganization(this.editor, this.organization);        
+                break;
+            case "people":
+                API.fetchPeople(this.editor, this.organization);        
+                break;
+            case "tools":
+                API.fetchTools(this.editor, this.organization);        
+                break;
+            case "projects":
+                API.fetchProjects(this.editor, this.organization);        
+                break;
+        
+            default:
+                break;
+        }
+        
+
         let tag = Tags[name];
 
         let projection = this.editorInstance.projection;
@@ -182,4 +201,3 @@ const App = {
 
 
 App.init(getElement(".page-body"), editor);
-API.fetch(editor, App.organization);

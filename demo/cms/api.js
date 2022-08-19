@@ -1,17 +1,13 @@
-import { PEOPLE_DATA, PROJECTS_DATA, ORGANIZATION_DATA, TOOLS_DATA } from './data.js';
+const ORGANIZATION_DATA = require('./assets/data/organization.json');
+import YAML from 'yaml';
 
 export const API = {
-    fetch(editor, organization) {
-        let people = organization.getAttribute("members").getTarget();
-        let projects = organization.getAttribute("projects").getTarget();
-        let tools = organization.getAttribute("tools").getTarget();
-
+    fetchOrganization(editor, organization) {
         organization.getAttribute("name").setValue(ORGANIZATION_DATA.name);
         organization.getAttribute("description").setValue(ORGANIZATION_DATA.description);
         organization.getAttribute("phone").setValue(ORGANIZATION_DATA.phone);
         organization.getAttribute("website").setValue(ORGANIZATION_DATA.website);
         organization.getAttribute("email").setValue(ORGANIZATION_DATA.email);
-
 
         let socials = organization.getAttribute("socials").getTarget();
 
@@ -25,70 +21,103 @@ export const API = {
 
             socials.addElement(social);
         }
+    },
+    fetchProjects(editor, organization) {
+        fetch("https://raw.githubusercontent.com/geodes-sms/geodes-sms.github.io/main/_data/projects/funded.yml")
+            .then(data => data.text())
+            .then(data => {
+                const PROJECTS_DATA = YAML.parse(data);
 
-        PEOPLE_DATA.forEach(item => {
-            let person = editor.createConcept("person");
+                let projects = organization.getAttribute("projects").getTarget();
+                projects.removeAllElement();
 
-            const [lastName, firstName] = item.name.split(",");
+                PROJECTS_DATA.forEach(item => {
+                    let project = editor.createConcept("project");
 
-            person.getAttribute("first-name").setValue(firstName);
-            person.getAttribute("last-name").setValue(lastName);
-            person.getAttribute("occupation").setValue(item.position);
-            person.getAttribute("website").setValue(item.website);
-            person.getAttribute("email").setValue(item.email);
-            person.getAttribute("phone").setValue(item.phone);
-            person.getAttribute("photo").setValue(item.photo);
+                    const { name, description, startYear, endYear, funding, logo, partners = [] } = item;
 
-            people.addElement(person);
-        });
+                    project.getAttribute("name").setValue(name);
+                    project.getAttribute("description").setValue(description);
+                    project.getAttribute("start-date").setValue(startYear);
+                    project.getAttribute("end-date").setValue(endYear);
+                    project.getAttribute("funding").setValue(funding);
+                    project.getAttribute("logo").setValue(logo);
 
-        PROJECTS_DATA.forEach(item => {
-            let project = editor.createConcept("project");
+                    let projectPartners = project.getAttribute("partners").getTarget();
 
-            const { name, description, startYear, endYear, funding, logo } = item;
+                    if (Array.isArray(partners)) {
+                        partners.forEach(p => {
+                            let partner = editor.createConcept("partner");
 
-            project.getAttribute("name").setValue(name);
-            project.getAttribute("description").setValue(description);
-            project.getAttribute("start-date").setValue(startYear);
-            project.getAttribute("end-date").setValue(endYear);
-            project.getAttribute("funding").setValue(funding);
-            project.getAttribute("logo").setValue(logo);
+                            partner.getAttribute("name").setValue(p);
 
-            let partners = project.getAttribute("partners").getTarget();
+                            projectPartners.addElement(partner);
+                        });
+                    }
+                    projects.addElement(project);
+                });
+            });
+    },
+    fetchTools(editor, organization) {
+        fetch("https://raw.githubusercontent.com/geodes-sms/geodes-sms.github.io/main/_data/projects/tools.yml")
+            .then(data => data.text())
+            .then(data => {
+                const TOOLS_DATA = YAML.parse(data);
 
-            item.partners.forEach(p => {
-                let partner = editor.createConcept("partner");
+                let tools = organization.getAttribute("tools").getTarget();
+                tools.removeAllElement();
 
-                partner.getAttribute("name").setValue(p);
+                TOOLS_DATA.forEach(item => {
+                    let tool = editor.createConcept("tool");
 
-                partners.addElement(partner);
+                    const { name, description, startYear, url, logo, contributors = [] } = item;
+
+                    tool.getAttribute("name").setValue(name);
+                    tool.getAttribute("description").setValue(description);
+                    tool.getAttribute("start-date").setValue(startYear);
+                    tool.getAttribute("url").setValue(url);
+                    tool.getAttribute("logo").setValue(logo);
+
+                    let partners = tool.getAttribute("contributors").getTarget();
+
+                    contributors.forEach(contrib => {
+                        let partner = editor.createConcept("partner");
+
+                        partner.getAttribute("name").setValue(contrib);
+
+                        partners.addElement(partner);
+                    });
+
+                    tools.addElement(tool);
+                });
+            });
+    },
+    fetchPeople(editor, organization) {
+        fetch("https://raw.githubusercontent.com/geodes-sms/geodes-sms.github.io/main/_data/people/people.yml")
+            .then(data => data.text())
+            .then(data => {
+                const PEOPLE_DATA = YAML.parse(data);
+
+                let people = organization.getAttribute("members").getTarget();
+                people.removeAllElement();
+
+                PEOPLE_DATA.forEach(item => {
+                    let person = editor.createConcept("person");
+
+                    const [lastName, firstName] = item.name.split(",");
+
+                    person.getAttribute("first-name").setValue(firstName);
+                    person.getAttribute("last-name").setValue(lastName);
+                    person.getAttribute("occupation").setValue(item.position);
+                    person.getAttribute("website").setValue(item.website);
+                    person.getAttribute("email").setValue(item.email);
+                    person.getAttribute("phone").setValue(item.phone);
+                    person.getAttribute("photo").setValue(`https://geodes.iro.umontreal.ca/images/people/people/${item.image}`);
+
+                    people.addElement(person);
+                });
             });
 
-            projects.addElement(project);
-        });
 
-        TOOLS_DATA.forEach(item => {
-            let tool = editor.createConcept("tool");
-
-            const { name, description, startYear, url, logo, contributors = [] } = item;
-
-            tool.getAttribute("name").setValue(name);
-            tool.getAttribute("description").setValue(description);
-            tool.getAttribute("start-date").setValue(startYear);
-            tool.getAttribute("url").setValue(url);
-            tool.getAttribute("logo").setValue(logo);
-
-            let partners = tool.getAttribute("contributors").getTarget();
-
-            contributors.forEach(contrib => {
-                let partner = editor.createConcept("partner");
-
-                partner.getAttribute("name").setValue(contrib);
-
-                partners.addElement(partner);
-            });
-
-            tools.addElement(tool);
-        });
     }
 };

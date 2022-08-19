@@ -163,6 +163,14 @@ export const FileIO = {
             },
         }, "Browse");
 
+        // this.btnLoadProjection = createButton({
+        //     class: ["btn", `editor-file__browse-button`],
+        //     title: `Load file in editor`,
+        //     dataset: {
+        //         action: `load-projection`,
+        //     },
+        // }, "Load projection");
+
         this.btnImport = createButton({
             class: ["btn", `editor-file__browse-button`],
             title: `Load file in editor`,
