@@ -1,7 +1,7 @@
 import {
     createDiv, createButton, createUnorderedList, createListItem, createSpan, createParagraph,
     createI, valOrDefault, removeChildren, isHTMLElement, isNullOrUndefined, createDocFragment,
-    createInput, createLabel, toBoolean
+    createInput, createLabel, toBoolean, isEmpty
 } from 'zenkai';
 import { hide, show, _b, _i } from '@utils/index.js';
 
@@ -31,6 +31,10 @@ export const FileIO = {
     files: null,
     /** @type {HTMLButtonElement} */
     btnLoad: null,
+    /** @type {HTMLButtonElement} */
+    btnLoadConcept: null,
+    /** @type {HTMLButtonElement} */
+    btnLoadProjection: null,
     /** @type {HTMLButtonElement} */
     btnUnload: null,
     /** @type {HTMLButtonElement} */
@@ -113,6 +117,7 @@ export const FileIO = {
     },
     reload() {
         if (!this.editor.hasConceptModel) {
+            this.clear();
             return;
         }
 
@@ -133,7 +138,7 @@ export const FileIO = {
                     class: ["editor-file-concept-root"],
                     title: "root concept",
                 });
-    
+
                 item.append(icoRoot);
             }
 
@@ -141,7 +146,7 @@ export const FileIO = {
 
             this.files.append(item);
         });
-        
+
 
         this.refresh();
     },
@@ -155,37 +160,29 @@ export const FileIO = {
             class: ["editor-file-actionbar"]
         });
 
-        this.btnLoad = createButton({
+        this.btnOpen = createButton({
             class: ["btn", `editor-file__browse-button`],
-            title: `Load file in editor`,
+            title: "Open a model",
             dataset: {
-                action: `load`,
-            },
-        }, "Browse");
+                action: "load",
+            }
+        }, "Open");
 
-        // this.btnLoadProjection = createButton({
-        //     class: ["btn", `editor-file__browse-button`],
-        //     title: `Load file in editor`,
-        //     dataset: {
-        //         action: `load-projection`,
-        //     },
-        // }, "Load projection");
-
-        this.btnImport = createButton({
-            class: ["btn", `editor-file__browse-button`],
-            title: `Load file in editor`,
-            dataset: {
-                action: `load`,
-            },
-        }, "Import");
-
+        this.btnLoad = createLoadButton("load", "Browse", "Load file in editor");
+        let ModActions = createDiv({
+            class: ["editor-file-modactions"]
+        });
+        this.btnLoadConcept = createLoadButton("load-concept", "Concept", "Load some concepts into the editor");
+        this.btnLoadProjection = createLoadButton("load-projection", "Projection", "Load some projections into the editor");
         this.btnUnload = createButton({
             class: ["btn", "editor-file-actionbar__button", "editor-file-actionbar__btn-remove"],
             title: `Remove all files`,
             dataset: { action: `unload`, },
         });
 
-        actionBar.append(this.btnLoad, this.btnUnload);
+        ModActions.append(this.btnLoadConcept, this.btnLoadProjection, this.btnUnload);
+
+        actionBar.append(ModActions);
 
         this.mainView = createDiv({
             class: ["editor-file-mainview"]
@@ -200,8 +197,6 @@ export const FileIO = {
             class: ["detail-area", "editor-file-detail"]
         });
 
-
-
         // let dropArea = createDiv({
         //     class: ["drop-area", "editor-file-main"]
         // });
@@ -212,7 +207,6 @@ export const FileIO = {
         });
 
         // dropArea.append(this.placeholder);
-
 
         this.mainView.append(this.filter.render(), this.files, this.infoView);
 
@@ -279,6 +273,26 @@ export const FileIO = {
             class: ["app-model-concept-header"]
         });
 
+        let headerMenu = createUnorderedList({
+            class: ["bare-list", "app-model-concept-menu"]
+        });
+
+        let headerMenuItemStructure = createListItem({
+            class: ["app-model-concept-menu-item", "selected"],
+            dataset: {
+                action: "nav-structure"
+            }
+        }, "Structure");
+
+        let headerMenuItemProjection = createListItem({
+            class: ["app-model-concept-menu-item"],
+            dataset: {
+                action: "nav-projections"
+            }
+        }, "Projections");
+
+        headerMenu.append(headerMenuItemStructure, headerMenuItemProjection);
+
         let natureElement = createI({
             class: ["app-model-concept-nature"],
             dataset: {
@@ -292,8 +306,16 @@ export const FileIO = {
 
         header.append(natureElement, nameElement);
 
+        let body = createDiv({
+            class: ["app-model-concept-body"]
+        });
+
         let attributesElement = createUnorderedList({
             class: ["bare-list", "app-model-concept-attributes"]
+        });
+
+        let projectionsElement = createUnorderedList({
+            class: ["bare-list", "app-model-concept-projections", "hidden"]
         });
 
         if (Array.isArray(attributes)) {
@@ -313,25 +335,25 @@ export const FileIO = {
                 let nameElement = createSpan({
                     class: ["app-model__attribute-name"]
                 }, attr.name);
-        
+
                 if (attr.required) {
                     let requiredElement = createI({
                         class: ["app-model__attribute-required"]
                     }, createSpan({ class: ["help"] }, "required"));
-        
+
                     header.append(requiredElement);
                 }
 
                 header.append(nameElement);
-        
+
                 let targetElement = createDiv({
                     class: ["app-model__attribute-target"]
                 }, targetHandler(attr.target));
-        
+
                 let infoElement = createDiv({
                     class: ["app-model__attribute-info"]
                 }, [header, targetElement]);
-        
+
                 element.append(infoElement);
 
                 this.attributes.set(attr.name, element);
@@ -340,13 +362,16 @@ export const FileIO = {
             });
         }
 
-        container.append(header, attributesElement);
+        body.append(attributesElement, projectionsElement);
+
+        container.append(header, body);
 
         removeChildren(this.infoView);
         this.infoView.append(container);
 
         this.selectedConcept = schema;
-
+        this.selectedConceptAttrs = attributesElement;
+        this.selectedConceptProjs = projectionsElement;
 
         // let nameElement = createSpan({
         //     class: ["app-model__attribute-name"]
@@ -380,6 +405,14 @@ export const FileIO = {
 
         this.refresh();
     },
+    showStructure(){
+        show(this.selectedConceptAttrs);
+        hide(this.selectedConceptProjs);
+    },
+    showProjections() {
+        hide(this.selectedConceptAttrs);
+        show(this.selectedConceptProjs);
+    },
     selectAttribute(name) {
         if (isNullOrUndefined(name)) {
             return false;
@@ -409,8 +442,6 @@ export const FileIO = {
         return true;
     },
     displayAttribute(attrName) {
-     
-
         this.refresh();
     },
 
@@ -471,20 +502,47 @@ export const FileIO = {
         this.container.addEventListener('click', (event) => {
             const { target } = event;
 
-            const { type, name } = target.dataset;
+            const { type, action, name } = target.dataset;
+
+            if (action === "nav-structure") {
+                this.showStructure();
+            } else if (action === "nav-projections") {
+                this.showProjections();
+            }
 
             this.displayConcept(name);
-             
+
             if (type === "attribute") {
                 this.selectAttribute(name);
             } else if (type === "concept") {
                 this.parent.selectConcept(name);
             }
         });
-
-
     }
 };
+
+/**
+ * Creates a load button
+ * @param {string} action 
+ * @param {string} label 
+ * @param {string} title 
+ * @returns 
+ */
+function createLoadButton(action, label, title) {
+    let button = createButton({
+        class: ["btn", `editor-file__browse-button`],
+        title: title,
+        dataset: {
+            action: action,
+        },
+        html: `
+            <span class="editor-home__btn-browse-icon" data-ignore="all">+</span> 
+            <span class="editor-home__btn-browse-text" data-ignore="all">${label}</span>
+        `
+    });
+
+    return button;
+}
 
 function targetHandler(target) {
     const fragment = createDocFragment();

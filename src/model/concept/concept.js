@@ -280,7 +280,7 @@ const _Concept = {
     /**
      * Gets the children of parent
      * @param {string} [name]
-     * @returns {Concept}
+     * @returns {Concept[]}
      */
     getChildren(name) {
         const children = [];

@@ -329,11 +329,11 @@ const ProjectionAside = {
         }, time);
     },
     refresh() {
-        if (isNullOrUndefined(this.selectedConcept)) {
-            this.editor.header.hide("body");
-        } else {
-            this.editor.header.show("body");
-        }
+        // if (isNullOrUndefined(this.selectedConcept)) {
+        //     this.editor.header.hide("body");
+        // } else {
+        //     this.editor.header.show("body");
+        // }
     },
 
     render() {

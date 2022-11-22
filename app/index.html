@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <header class="page-header">
+    <header data-component="header" class="page-header">
         <a class="link header__link has-helper" href="#">
             <span class="link-logo">Gentleman <code class="font-code link-logo-version" title="Last updated: 2022-03-27">0.4.0</code></span>
         </a>
@@ -26,6 +26,15 @@
                     </span>
                 </button>
                 <i class="helper">Open a new editor</i>
+            </li>
+            <li class="app-menu-item app-menu-item--new has-helper">
+                <button class="btn app-menu__button" data-action="new-template">
+                    <span class="app-menu__button-content">
+                        <span class="app-menu__button-content-icon">+</span> 
+                        <span class="app-menu__button-content-text">Template</span> 
+                    </span>
+                </button>
+                <i class="helper">Open a new template editor</i>
             </li>
             <!-- <li class="app-menu-item">
                 <button class="btn app-menu__button has-helper" data-action="new-metamodel">
@@ -53,7 +62,7 @@
         </ul>
     </header>
 
-    <main class="page-body">
+    <main data-component="body" class="page-body">
         <nav class="app-sidenav" data-component="nav">
             <ul class="bare-list nav-list" data-component="nav-list">
                 <li class="nav-item nav-item--concept has-helper selected" data-editor="concept">

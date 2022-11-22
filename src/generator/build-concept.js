@@ -61,7 +61,8 @@ export function buildConceptHandler(_options = {}) {
     if (options.download) {
         this.download(JSON.stringify( {
             type: "concept",
-            concept: result
+            concept: result,
+            definition: conceptModel.export()
         }), options.name, "JSON");
     }
 

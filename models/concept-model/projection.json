@@ -872,33 +872,63 @@
         {
             "concept": { "name": "reference primitive" },
             "tags": ["choice-selection"],
-            "type": "layout",
-            "content": {
-                "type": "stack",
-                "orientation": "vertical",
-                "disposition": [
+            "type": "container",
+            "container": {
+                "content": [
                     {
-                        "type": "layout",
-                        "layout": {
-                            "type": "wrap",
-                            "disposition": [
-                                {
-                                    "kind": "static",
-                                    "type": "text",
-                                    "content": "Target",
-                                    "style": {
-                                        "css": ["keyword", "label"]
-                                    }
-                                },
-                                {
-                                    "type": "attribute",
-                                    "name": "accept",
-                                    "tag": "textual"
-                                }
-                            ]
+                        "type": "attribute",
+                        "name": "accept",
+                        "tag": "textual",
+                        "options": {
+                            "placeholder": "Target"
+                        }
+                    },
+                    {
+                        "kind": "static",
+                        "type": "button",
+                        "trigger": "open-constraint",
+                        "content": [
+                            {
+                                "kind": "static",
+                                "type": "text",
+                                "content": "Constraints"
+                            }
+                        ],
+                        "style": {
+                            "css": ["btn", "btn-option"]
                         }
                     }
-                ]
+                ],
+                "layout": { "type": "flex", "orientation": "row" }
+            }
+        },
+        {
+            "concept": { "name": "reference primitive" },
+            "tags": ["constraint"],
+            "type": "container",
+            "container": {
+                "content": [
+                    {
+                        "type": "attribute",
+                        "name": "scope",
+                        "tag": "textual",
+                        "options": {
+                            "placeholder": "Scope"
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "rel",
+                        "tag": "textual",
+                        "options": {
+                            "placeholder": "Relation"
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" },
+                "style": {
+                    "css": ["concept-attribute-constraint"]
+                }
             }
         },
         {
@@ -918,6 +948,7 @@
                 ]
             }
         },
+
         {
             "concept": { "name": "set primitive" },
             "tags": ["choice-selection"],

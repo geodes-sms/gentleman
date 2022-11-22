@@ -5,7 +5,7 @@ import './stylesheets.js';
 import '@css/samples/gentleman.css';
 import '@css/samples/projection.css';
 import '@css/samples/style.css';
-import './../demo/relis/assets/style.css';
+// import './../demo/relis/assets/style.css';
 // import './../demo/todo/assets/style.css';
 
 import { createDiv, getElements, isNullOrUndefined, isHTMLElement, hasOwn } from "zenkai";
@@ -25,12 +25,11 @@ const Model = {
     TL: "trafficlight",
 };
 
-const modelName = Model.RL;
+const modelName = Model.MC;
 
 const MODEL__EDITOR = require(`@models/${modelName}-model/config.json`);
 const MODEL__CONCEPT = require(`@models/${modelName}-model/concept.json`);
 const MODEL__PROJECTION = require(`@models/${modelName}-model/projection.json`);
-
 
 
 const ENV_EDITOR = "editor";
