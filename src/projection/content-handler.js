@@ -229,7 +229,6 @@ export function ContentHandler(schema, concept, args = {}) {
         if (name.type === "param") {
             name = this.projection.getParam(name.name);
         }
-        console.log(schema);
         let template = this.model.getTemplateSchema(name);
 
         if (template.param) {
@@ -312,10 +311,10 @@ export function ContentHandler(schema, concept, args = {}) {
                 }
 
                 projection.element.parent = this.projection.element;
-
-                projection.update("displayed");
   
                 this.projection.update("binding", projection.element.container || projection.element.element);
+
+                projection.update("displayed");
             }
         };
 

@@ -367,6 +367,8 @@ const _Concept = {
     },
 
     delete(force = false) {
+        //console.log("Deleting concept");
+        //console.log(this);
         // console.trace("deleting");
         if (!force) {
             const { object } = this.ref;

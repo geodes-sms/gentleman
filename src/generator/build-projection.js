@@ -261,7 +261,6 @@ const ElementHanlders = {
 };
 
 function buildElement(element) {
-    console.log(element)
     const contentType = element.getProperty("contentType");
 
     const handler = ElementHanlders[contentType];
@@ -612,7 +611,6 @@ const DynamicHanlders = {
 };
 
 export function buildDynamic(dynamic) {
-    console.log(dynamic);
 
     const elementType = dynamic.getProperty("elementType");
 

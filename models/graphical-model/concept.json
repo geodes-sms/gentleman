@@ -288,15 +288,43 @@
             ]
         },
         {
-            "name": "pattern-arrow",
+            "name": "anchor-arrow",
             "nature": "concrete",
             "prototype": "arrow",
-            "attribute":[
+            "attributes":[
                 {
-                    "name": "target",
+                    "name": "aiming",
                     "target":{
                         "name": "string"
                     }
+                },
+                {
+                    "name": "model",
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "offSet",
+                    "target":{
+                        "name": "coordinates"
+                    }
+                },
+                {
+                    "name": "self",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "coordinates"
+                        }
+                    }
+                },
+                {
+                    "name": "move",
+                    "target":{
+                        "name": "string"
+                    },
+                    "required": false
                 }
             ],
             "properties": [
@@ -701,6 +729,7 @@
                 }
             ],
             "properties": [
+                { "name": "handlerType", "type": "string", "value": "field" },
                 { "name": "contentType", "type": "string", "value": "field" },
                 { "name": "elementType", "type": "string", "value": "svg" }
             ]
@@ -744,8 +773,13 @@
                 {
                     "name": "action",
                     "target":{
-                        "name": "string",
-                        "default": "CREATE"
+                        "name": "button-action",
+                        "accept": [
+                            { "name": "add-action" },
+                            { "name": "side-action" },
+                            { "name": "tree-action" }
+                        ],
+                        "default": "add-action"
                     }
                 },
                 {
@@ -772,6 +806,59 @@
             "properties": [
                 { "name": "contentType", "type": "string", "value": "static" },
                 { "name": "elementType", "type": "string", "value": "svg-button" }
+            ]
+        },
+        {
+            "name": "button-action",
+            "nature": "prototype",
+            "attributes":[
+
+            ]
+        },
+        {
+            "name": "tree-action",
+            "nature": "concrete",
+            "prototype": "button-action",
+            "attributes":[
+                {
+                    "name": "treeId",
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "item",
+                    "target":{
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "add-action",
+            "nature": "concrete",
+            "prototype": "button-action",
+            "attributes":[]
+        },
+        {
+            "name": "side-action",
+            "nature": "concrete",
+            "prototype": "button-action",
+            "attributes":[
+                {
+                    "name": "tag",
+                    "target":{
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "open-selection",
+            "nature": "concrete",
+            "prototype": "button-action",
+            "attributes":[
+
             ]
         },
         {
@@ -927,6 +1014,61 @@
                         "name": "rtag"
                     }
                 }
+            ]
+        },
+        {
+            "name": "tree-layout",
+            "nature": "concrete",
+            "prototype": "graphical-layout",
+            "attributes":[
+                {
+                    "name": "tag",
+                    "target":{
+                        "name": "g-tag"
+                    }
+                },
+                {
+                    "name": "treeId",
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "direction",
+                    "target":{
+                        "name": "string",
+                        "values":[
+                            "horizontal",
+                            "vertical"
+                        ],
+                        "default": "horizontal"
+                    }
+                },
+                {
+                    "name": "width",
+                    "target":{
+                        "name": "number",
+                        "default": 400                    
+                    }
+                },
+                {
+                    "name": "height",
+                    "target":{
+                        "name": "number",
+                        "default": 400
+                    }
+                },
+                {
+                    "name": "depth",
+                    "target": {
+                        "name": "number",
+                        "default": 100
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "handlerType", "type": "string", "value": "algorithm" },
+                { "name": "elementType", "type": "string", "value": "tree" }
             ]
         },
         {
@@ -1118,6 +1260,13 @@
                     "default": false
                 },
                 {
+                    "name": "rmv",
+                    "target":{
+                        "name": "rmv"
+                    },
+                    "required": false
+                },
+                {
                     "name": "content",
                     "target":{
                         "name": "set",
@@ -1130,6 +1279,58 @@
             "properties": [
                 { "name": "handlerType", "type": "string", "value": "algorithm" },
                 { "name": "elementType", "type": "string", "value": "decoration" }
+            ]
+        },
+        {
+            "name": "rmv",
+            "nature": "prototype",
+            "attributes":[]
+        },
+        {
+            "name": "rmv-single",
+            "nature": "concrete",
+            "prototype": "rmv",
+            "attributes":[
+                {
+                    "name": "background",
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "shape",
+                    "target":{
+                        "name": "shape"
+                    }
+                },
+                {
+                    "name": "dimensions",
+                    "target":{
+                        "name": "dimensions",
+                        "accept":[
+                            { "name": "pure" },
+                            { "name": "absolute" },
+                            { "name": "fixed" }
+                        ],
+                        "default":{
+                            "name": "pure"
+                        }
+                    }
+                },
+                {
+                    "name": "coordinates",
+                    "target":{
+                        "name": "coordinates"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "rmv-bind",
+            "prototype": "rmv",
+            "nature": "concrete",
+            "attributes":[
+
             ]
         },
         {
@@ -1217,13 +1418,15 @@
                 {
                     "name": "x",
                     "target":{
-                        "name": "number"
+                        "name": "number",
+                        "default": 0
                     }
                 },
                 {
                     "name": "y",
                     "target":{
-                        "name": "number"
+                        "name": "number",
+                        "default": 0
                     }
                 },
                 {

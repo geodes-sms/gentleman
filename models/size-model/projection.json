@@ -1,0 +1,147 @@
+{
+    "type": "projection",
+    "projection":[
+        {
+            "concept": { "name": "screen" },
+            "tags": [],
+            "rtag": "default",
+            "type": "algorithm",
+            "content":{
+                "type": "decoration",
+                "dimensions":{
+                    "width": 500,
+                    "height": 500
+                },
+                "content": [
+                    {   
+                        "coordinates":{
+                            "x": 10,
+                            "y": 10
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "places",
+                            "tag": "place_btnG"
+                        }
+                    },
+                    {
+                        "coordinates":{
+                            "x": 0,
+                            "y":50
+                        },
+                        "dimension":{
+                            "type": "pure"
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "places",
+                            "tag": "force-elem"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["force-elem"],
+            "type": "algorithm",
+            "content":{
+                "type": "force",
+                "dimensions": {
+                    "width": 500,
+                    "height": 500
+                },
+                "force":{
+                    "intensity": -300,
+                    "linkVal": 50
+                },
+                "tag": "force-item"
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["place_btnG"],
+            "type": "algorithm",
+            "content":{
+                "type": "decoration",
+                "dimensions":{
+                    "width": 30,
+                    "height": 30
+                },
+                "content":[
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"30\"><circle r=\"12\" cx=\"15\" cy=\"15\" stroke=\"black\" stroke-width=\"3\" fill=\"white\"></circle><circle r=\"2\" cx=\"15\" cy=\"10\" stroke=\"black\"></circle><circle r=\"2\" cx=\"10\" cy=\"17.5\" stroke=\"black\"></circle><circle r=\"2\" cx=\"20\" cy=\"17.5\" stroke=\"black\"></circle></svg>",
+                            "action":{
+                                "type": "CREATES",
+                                "value": "place"
+                            }
+                        }
+                    }
+                ]
+            
+            }
+        },
+        {
+            "concept": { "name": "place" },
+            "tags": ["force-item"],
+            "rtag": "default",
+            "type": "algorithm",
+            "content":{
+                "type": "decoration",
+                "dimension":{
+                    "type": "wrap",
+                    "ratio": 1 
+                },
+                "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"30\"><circle data-adapter=\"r\" r=\"13\" cx=\"15\" cy=\"15\" fill=\"transparent\" stroke=\"black\" stroke-width=\"2\"></circle></svg>",
+                "content":[
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 15,
+                            "y": 15
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "name",
+                            "tag": "nm"
+                        }
+                    }
+                ]                
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["nm"],
+            "type": "field",
+            "content":{
+                "type": "svg",
+                "readonly": false,
+                "placeholder": "Author",
+                "linebreak": 10,
+                "style":{
+                    "anchor": "middle",
+                    "baseline": "middle",
+                    "font": "Verdana",
+                    "size": 12,
+                    "fill": "black",
+                    "weight": 500
+                }
+            }
+        }
+    ]
+}

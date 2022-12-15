@@ -421,6 +421,7 @@ const ProjectionAside = {
 
             let reader = new FileReader();
             reader.onload = (event) => {
+
                 const schema = JSON.parse(reader.result);
                 this.addModel(schema);
             };
@@ -817,11 +818,11 @@ const ConceptAside = {
             }
         });
 
-        this.editor.actions.set("create-instance", (element) => {
+        this.editor.actions.set("create-instance", (element) => {        
             const { concept: cname } = element.dataset;
 
-            let concept = this.editor.createConcept(cname); console.log(this.selectedConcept.tag);
-            let projection = this.editor.createProjection(concept, this.selectedConcept.tag);
+            let concept = this.editor.createConcept(cname); console.log(/*this.selectedConcept.tag*/);
+            let projection = this.editor.createProjection(concept/*, this.selectedConcept.tag*/);
             let instance = this.editor.createInstance(concept, projection);
 
             if (cname === "projection") {
@@ -830,7 +831,7 @@ const ConceptAside = {
                 _name.setValue(this.selectedConcept.getName());
             }
 
-            this.selectedConcept.addInstance(instance);
+            /*this.selectedConcept.addInstance(instance);*/
         });
     }
 };

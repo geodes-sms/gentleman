@@ -1,12 +1,26 @@
-import { isNullOrUndefined } from "zenkai";
+import { isNullOrUndefined, valOrDefault, isObject } from "zenkai";
 import { Static } from "./static.js"
 
 const ActionHandler = {
     "CREATE": createElement,
+    "CREATES": createAndSelect,
     "DELETE": deleteElement,
     "EXTRACT": extractShape,
     "SIDE": openSide,
     "OPEN": openSelection,
+    "CREATE-TREE": addTree,
+}
+
+function addTree(target, value){
+    let find = this.container;
+
+    while(isNullOrUndefined(find.getAttribute("data-tree")) && !(find.getAttribute("data-tree") === target)){
+        find = find.parentNode;
+    }
+
+    let element = this.source.createElement();
+
+    this.environment.getActiveReceiver(target).accept(element, find, valOrDefault(value, "main"));
 }
 
 function openSelection(target){
@@ -14,6 +28,11 @@ function openSelection(target){
         this.target = target
     }
     this.target.open();
+}
+
+function createAndSelect(target, value){
+    let item = this.source.createElement();
+    item.setValue(valOrDefault(value.name, value));
 }
 
 function openSide(target, value){
@@ -164,13 +183,10 @@ const BaseSVGButton = {
 
         this.container.append(this.content);
 
-        this.content.addEventListener("click", () => {
+        /*this.content.addEventListener("click", () => {
             const { type, target, value } = this.schema.action;
-            console.log("target");
-            console.log(target);
-            console.log(this.schema.action);
             ActionHandler[type].call(this, target, value);
-        })
+        })*/
     },
     
     focusIn(){
@@ -181,14 +197,13 @@ const BaseSVGButton = {
 
     },
 
-    /*clickHandler(){
-        console.log("Clicked");
+    clickHandler(){
         const { type, target, value } = this.schema.action;
         ActionHandler[type].call(this, target, value);
-    }*/
+    }
 }
 
 export const SVGButton = Object.assign({},
-    Static,
+    Object.create(Static),
     BaseSVGButton
 )

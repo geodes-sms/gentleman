@@ -475,7 +475,7 @@ const PMODEL__HANDLER = {
 };
 
 const GMODEL__HANDLER = {
-    "build-graphical": function (args) { buildGraphicalHandler.call(this); },
+    "build-graphical": function (args) { return buildGraphicalHandler.call(this); },
     "open-state": function (args) {
         let concept = args[0];
         let projection = this.createProjection(concept, "state");

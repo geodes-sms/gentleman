@@ -40,7 +40,6 @@ export const ConceptModel = {
         return this;
     },
     initValue(values){
-        console.log(values);
         if (Array.isArray(values)) {
             this.values = values;
 

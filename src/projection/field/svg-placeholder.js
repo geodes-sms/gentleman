@@ -64,9 +64,6 @@ const BaseSVGPlaceholder = {
 
         if(isNullOrUndefined(this.openBack)){
             const {render, coordinates, dimensions } = open;
-
-            console.log("rendering open-back");
-            console.log(open);
             this.openBack = ContentHandler.call(this, Object.assign(render,
                 {
                     action:{

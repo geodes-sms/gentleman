@@ -37,6 +37,7 @@ const GraphicalBuildHandler = {
 const GraphicalHandler = {
     "algorithm": buildLayout,
     "arrow": buildArrow,
+    "field": buildField
 }
 
 export function buildGraphicalHandler(_options = {}){
@@ -67,14 +68,10 @@ export function buildGraphicalHandler(_options = {}){
     this.__errors = [];
 
     concepts.forEach(concept => {
+
         let type = valOrDefault(concept.getProperty(PROP_HANDLER), "");
 
-        console.log("Handler For Base");
-        console.log(type);
-
         const handler = GraphicalBuildHandler[type];
-
-        console.log(handler)
 
         const { message } = handler.call(this, concept);
 
@@ -109,6 +106,13 @@ export function buildGraphicalHandler(_options = {}){
 
 function buildGraphical(concept){
     const tags = hasAttr(concept, ATTR_TAGS) ? getValue(concept, ATTR_TAGS, true) : [];
+    let rtag;
+
+    let test = getValue(concept, "element", true);
+
+    if(hasAttr(test, "treeId")){
+        rtag = getValue(test, "treeId");
+    }
 
     let targetConcept = getAttr(concept, ATTR_CONCEPT);
     if (concept.hasParent()) {
@@ -133,6 +137,10 @@ function buildGraphical(concept){
         "concept": target,
         "tags": tags
     };
+
+    if(!isNullOrUndefined(rtag)){
+        schema.rtag = rtag;
+    }
 
     const handler = container.getProperty(PROP_HANDLERTYPE);
 
@@ -207,6 +215,7 @@ function buildForceArrow(arrow){
 const LayoutHandler = {
     "decoration": buildDecorationLayout,
     "force": buildForceLayout,
+    "tree": buildTreeLayout,
 }
 
 function buildLayout(layout){
@@ -240,34 +249,25 @@ function buildDecorationLayout(layout){
 
     const shape = getAttr(layout, "shape");
 
-    console.log(shape);
-    console.log(getValue(shape, "elements"));
     if(!isEmpty(getValue(shape, "elements"))){
         schema.background = buildShape.call(this, shape)
     }
 
     if(isNullOrUndefined(schema.background) && getValue(layout, "background")){
-        schema.background = getValue(layout, "content");
+        schema.background = getValue(layout, "background");
     }
 
     if(!isEmpty(getValue(layout, "content"))){
         let content = [];
 
         getValue(layout, "content").forEach(elem => {
-
-            console.log(elem);
-
             let item = getValue(elem, "render", true);
-
-            console.log(item);
 
             const itemSchema = {};
 
             itemSchema.dimension = buildDimension.call(this, getValue(item, "dimension", true));
             itemSchema.coordinates = buildCoordinates.call(this, getAttr(item, "coordinates"));
             
-            console.log(itemSchema);
-
             itemSchema.render = buildElement.call(this, item);
 
             content.push(itemSchema);
@@ -277,6 +277,47 @@ function buildDecorationLayout(layout){
         schema.content = content;
     }
 
+    if(hasAttr(layout, "rmv")){
+        schema.rmv = buildRmv.call(this, getValue(layout, "rmv", true));
+    }
+
+    return schema;
+}
+
+function buildRmv(rmv){
+    const schema = {};
+    
+    switch(rmv.name){
+        case "rmv-single":
+            schema.render ={
+                kind: "static",
+                type: "svg",
+                content: getValue(rmv, "background")
+            }
+            schema.dimensions = buildDimension.call(this, getValue(rmv, "dimensions", true));
+            schema.coordinates = buildCoordinates.call(this, getAttr(rmv, "coordinates"));
+            break;
+    }
+
+    return schema;
+}
+
+function buildTreeLayout(layout){
+    const schema = {};
+
+    schema.depth = getValue(layout, "depth");
+
+    schema.dimensions = {
+        width: getValue(layout, "width"),
+        height: getValue(layout, "height")
+    }
+
+    schema.tag = getValue(layout, "tag");
+
+    schema.treeId = getValue(layout, "treeId");
+
+    schema.duration = 500;
+    
     return schema;
 }
 
@@ -291,6 +332,8 @@ function buildForceLayout(layout){
 
     return schema;
 }
+
+
 
 function buildForce(force){
     const schema = {};
@@ -417,22 +460,33 @@ function buildSVGButton(button){
 
     const shape = getAttr(button, "shape");
 
-    if(!isEmpty(getAttr(shape, "elements"))){
+    /*if(!isEmpty(getAttr(shape, "elements"))){
         schema.content = buildShape.call(this, shape)
+    }*/
+
+    if(isNullOrUndefined(schema.content) && getValue(button, "content")){
+        schema.content = getValue(button, "content");
     }
 
-    if(isNullOrUndefined(schema.background) && getValue(button, "content")){
-        schema.content = getValue(layout, "content");
-    }
-
-    schema.action = {
-        type: valOrDefault(getValue(button, "action"), "SIDE")
-    }
-
-    console.log(button);
+    schema.action = buildBtnAction.call(this, getValue(button, "action", true));
 
     if(schema.action.type === "SIDE"){
         schema.action.target = getValue(button, "tag");
+    }
+
+    return schema;
+}
+
+function buildBtnAction(action){
+    const schema = {};
+
+    switch(action.name){
+        case "tree-action":
+            schema.type = "CREATE-TREE";
+            schema.target = getValue(action, "treeId");
+            schema.value = getValue(action, "item");
+
+            break;
     }
 
     return schema;
@@ -449,13 +503,11 @@ function buildSVGStatic(image){
 const FieldHandler = {
     "svg": buildSVGText,
     "svg-choice": buildSVGChoice,
+    "svg-switch": buildSVGSwitch
 }
 
 function buildField(field){
     const schema = {};
-
-    console.log("BuildingField");
-    console.log(field);
 
     const elemType = field.getProperty(PROP_ELEMTYPE);
 
@@ -471,7 +523,7 @@ function buildField(field){
 function buildSVGText(field){
     const schema = {};
 
-    schema.content = getValue(field, "placeholder");
+    schema.placeholder = getValue(field, "placeholder");
 
     schema.readonly = valOrDefault(getValue(field, "readonly"), false);
 
@@ -483,13 +535,31 @@ function buildSVGText(field){
 }
 
 function buildSVGChoice(field){
-
-    console.log("BuildingChoice");
     const schema = {};
 
     schema.tag = getValue(field, "tag");
 
     schema.selection = buildSelection.call(this, getAttr(field, "selection"));
+
+    return schema;
+}
+
+function buildSVGSwitch(field){
+    const schema = {};
+
+    if(hasAttr(field, "order") && !isEmpty(getValue(field, "order"))){
+        let order = [];
+
+        getValue(field, "order").forEach( (value) => {
+            order.push(value.value);
+        })
+
+        schema.order = order;
+    } 
+
+    if(hasAttr(field, "dimensions")){
+        schema.dimensions = buildDimension.call(this, getAttr(field, "dimension"));
+    }
 
     return schema;
 }

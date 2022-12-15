@@ -260,10 +260,16 @@ export const Layout = {
 
         return false;
     },
+
+    updateSize(){
+        return false;
+    },
+
     /**
      * Handles the `control` command
      * @param {HTMLElement} target 
      */
+    
     controlHandler(target) {
         if (this.toolbar) {
             this.toolbar.remove();

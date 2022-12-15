@@ -1,0 +1,164 @@
+{
+    "type": "concept",
+    "concept":[
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9ead3",
+            "name": "petri",
+            "nature": "concrete",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "elements",
+                    "target":{
+                        "name": "set",
+                        "accept": {
+                            "name": "element"
+                        }
+                    }
+                },
+                {
+                    "name": "p-arcs",
+                    "required": true,
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "p-arc"
+                        }
+                    }
+                },
+                {
+                    "name": "t-arcs",
+                    "required": true,
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "t-arc"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9eaz4",
+            "name": "element",
+            "nature": "prototype"
+        },  
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9ead4",
+            "name": "place",
+            "nature": "concrete",
+            "prototype": "element",
+            "attributes": [
+                {
+                    "name": "name",
+                    "required": true,
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "tokens",
+                    "required": "true",
+                    "target":{
+                        "name": "number",
+                        "default": 0
+                    }
+                }
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9ead5",
+            "name": "transition",
+            "nature": "concrete",
+            "prototype": "element",
+            "attributes": [
+                {
+                    "name": "name",
+                    "required": true,
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "tokens",
+                    "required": true,
+                    "target":{
+                        "name": "number",
+                        "default": 0
+                    }
+                }
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9ead6",
+            "name": "arc",
+            "nature": "prototype",
+            "attributes": [
+                {
+                    "name": "value",
+                    "required": true,
+                    "target":{
+                        "name": "number",
+                        "default": 1
+                    }
+                }
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9ead7",
+            "name": "p-arc",
+            "nature": "concrete",
+            "prototype": "arc",
+            "attributes": [
+                {
+                    "name": "from",
+                    "required": true,
+                    "target":{
+                        "name": "reference",
+                        "accept": {
+                            "name": "place"
+                        }
+                    }
+                },
+                {
+                    "name": "to",
+                    "required": true,
+                    "target":{
+                        "name": "reference",
+                        "accept":{
+                            "name": "transition"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9ead8",
+            "name": "t-arc",
+            "nature": "concrete",
+            "prototype": "arc",
+            "attributes": [
+                {
+                    "name": "from",
+                    "required": true,
+                    "target":{
+                        "name": "reference",
+                        "accept": {
+                            "name": "transition"
+                        }
+                    }
+                },
+                {
+                    "name": "to",
+                    "required": true,
+                    "target":{
+                        "name": "reference",
+                        "accept":{
+                            "name": "place"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

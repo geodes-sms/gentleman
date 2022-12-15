@@ -16,7 +16,7 @@ const BaseSvgText = {
 
     render(){
         
-        const { placeholder, style, readonly, breakDown = false} = this.schema;
+        const { placeholder, style, readonly, breakDown = false, linebreak = false} = this.schema;
 
         if(isNullOrUndefined(this.element)){
 
@@ -47,6 +47,10 @@ const BaseSvgText = {
             this.element.textContent = this.content.substring(0, breakDown);
         }else{
             this.element.textContent = this.content;
+        }
+
+        if(linebreak){
+            this.linebreak = linebreak;
         }
         
 
@@ -84,8 +88,6 @@ const BaseSvgText = {
         }else{
             this.char = this.element.getStartPositionOfChar(target);
         }
-
-        /*this.svg.append(circle);*/    
         
         this.createCursor();
 
@@ -116,6 +118,8 @@ const BaseSvgText = {
         }else{
             this.source.setValue(this.content);
         }
+
+        this.parent.updateSize();
     },
 
     addListeners(){
@@ -390,9 +394,7 @@ const BaseSvgText = {
     },
 
     focusOut(){
-        console.log("SwitchOff");
         if(!this.readonly){
-            console.log("SwitchOff");
             this.switchOff();
             this.setValue(this.content);
         }

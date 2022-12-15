@@ -70,7 +70,6 @@ const BaseField = {
     getContainer() { return this.element; },
     notify(message, type, time) {
         shake(this.element);
-
         this.environment.notify(message, type);
     },
     /**

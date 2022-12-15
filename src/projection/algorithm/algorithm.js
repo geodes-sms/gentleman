@@ -1,5 +1,6 @@
+import { SizeHandler } from "./../size-handler";
 import { ContentHandler } from "./../content-handler";
-import { createArticle, createI, isNullOrUndefined , findAncestor, isFunction} from "zenkai";
+import { createArticle, createI, isNullOrUndefined , findAncestor, isFunction, isEmpty, valOrDefault} from "zenkai";
 
 export const Algorithm = {
     
@@ -212,5 +213,95 @@ export const Algorithm = {
 
     findAnchorIndex(index){
         return this.anchors.indexes[index];
+    },
+
+    updateSize(){
+        if(this.wrapped){
+            this.updateSizeWrap();
+            return;
+        }
+
+        if(this.fixed){
+            return;
+        }
+
+        let adapter = this.container.querySelector("[data-adapter]");
+        SizeHandler[adapter.tagName].call(this, adapter);
+
+        if(!isNullOrUndefined(this.parent)){
+            this.parent.updateSize();
+        }
+    },
+
+    updateSizeWrap(){
+        if(isEmpty(this.content)){
+            this.width = 0;
+            this.height = 0;
+            this.container.setAttribute("width", 0);
+            this.container.setAttribute("width", 0);
+
+            return;
+        }
+
+        let contentBase = this.content[0];
+
+        let box = this.getBox(contentBase);
+
+        let minX = box.x;
+        let minY = box.y;
+        let maxX = box.x + box.width;
+        let maxY = box.y + box.height;
+
+        for(let i = 0; i < this.content.length; i++){
+            box = this.getBox(this.content[i]);
+            
+            minX = Math.min(minX, box.x);
+            minY = Math.min(minY, box.y);
+            maxX = Math.min(maxX, box.x + box.width);
+            maxY = Math.min(maxY, box.y + box.height);
+        }
+
+        this.containerView = {
+            x: minX,
+            y: minY,
+            w: maxX - minX,
+            h: maxY - minY
+        }
+
+        this.container.setAttribute("viewBox", 
+        ""  + this.containerView.x +
+        " " + this.containerView.y +
+        " " + this.containerView.w +
+        " " + this.containerView.h 
+        );
+
+        this.container.setAttribute("width", this.containerView.w);
+        this.container.setAttribute("height", this.containerView.h);
+
+        this.width = this.containerView.w;
+        this.height = this.containerView.h;
+
+        if(!isNullOrUndefined(this.parent)){
+            this.parent.updateSize();
+        }
+    },
+
+    getBox(item){
+        let container = (item.container || item.element);
+
+        let itemBox = container.getBBox();
+        
+        if(isNullOrUndefined(item.width)){
+            return container.getBBox();
+        }
+
+        const box = {
+            width: item.width,
+            height: item.height,
+            x: valOrDefault(Number(container.getAttribute("x")), 0),
+            y: valOrDefault(Number(container.getAttribute("y")), 0),
+        };
+
+        return box;
     }
 };

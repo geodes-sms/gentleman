@@ -54,6 +54,7 @@
     "@images": "assets/images"
   },
   "dependencies": {
+    "d3": "^3.5.17",
     "zenkai": "^0.10.0"
   },
   "devDependencies": {

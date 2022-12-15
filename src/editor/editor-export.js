@@ -150,6 +150,7 @@ export const EditorExport = {
     },
 
     bindEvents() {
+
         this.btnClose.addEventListener("click", (event) => {
             this.close();
         });

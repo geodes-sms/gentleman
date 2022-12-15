@@ -140,7 +140,6 @@ const BaseMultiSimulation = {
         this.linecap = style.getAttributeByName("linecap").target;
         this.linecap.register(this.projection);
 
-        console.log(this);
     },
 
     bindSubPath(){

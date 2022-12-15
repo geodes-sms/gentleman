@@ -198,11 +198,12 @@ const Projection = {
      * @param {*} value 
      */
     update(message, value, from) {
+
         if (isEmpty(this.containers)) {
             return;
         }
 
-        if (message === "delete" && from.parent !== this.concept) {        
+        if (message === "delete" && from === this.concept) {        
             this.delete();
             return;
         }
@@ -260,7 +261,9 @@ const Projection = {
     },
     delete() {
         if (this.concept) {
-            this.concept.unregister(this);
+            setTimeout(() => {
+                this.concept.unregister(this);
+            }, 50);
         }
 
         if (this.placeholder) {
@@ -342,7 +345,8 @@ const Projection = {
         this.element.focus();
     },
 
-    render() {
+    render(){
+
         const schema = this.getSchema();
 
         if (isNullOrUndefined(schema)) {

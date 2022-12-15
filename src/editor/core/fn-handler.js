@@ -103,9 +103,6 @@ export const FnHandler = {
     },
 
     saturationRevolved(proj, rtag){
-        console.log("Revolving");
-        console.log(rtag);
-        console.log(this.receivers);
 
         let projections = this.receivers[rtag].projections;
 
@@ -123,9 +120,6 @@ export const FnHandler = {
         }
 
         let element = projections[index + 1].transmitFirst();
-
-        console.log("Transmitting first");
-        console.log(element);
 
         proj.acceptAnchor(element);
     },

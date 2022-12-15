@@ -280,7 +280,14 @@ const EditorCore = {
      * @returns 
      */
     download(obj, name, type) {
-        let docType = DocumentType[type.toUpperCase()];
+        let docType;
+
+        if(isNullOrUndefined(type)){
+            docType = DocumentType["JSON"];
+        }else{
+            docType = DocumentType[type.toUpperCase()];
+        }
+        
         const MIME_TYPE = docType.type;
         window.URL = window.webkitURL || window.URL;
 
@@ -293,7 +300,8 @@ const EditorCore = {
             window.URL.revokeObjectURL(link.href);
         }
 
-        var bb = new Blob([obj], { type: MIME_TYPE });
+        var bb = new Blob([JSON.stringify(obj)], { type: MIME_TYPE });
+
         Object.assign(link, {
             download: name,
             href: window.URL.createObjectURL(bb),
@@ -391,8 +399,6 @@ const EditorCore = {
         let reader = new FileReader();
         reader.onload = (event) => {
             const schema = JSON.parse(reader.result);
-            console.log("Resulting Schema");
-            console.log(schema);
             this.addModel(name, schema);
         };
 

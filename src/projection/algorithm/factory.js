@@ -7,6 +7,7 @@ import { AnchorAlgorithm } from "./anchor-algorithm.js";
 import { AltView } from "./alt-view.js";
 import { Add } from "./add.js";
 import { SVGButton } from "./button.js";
+import { TreeLayout } from "./tree-algorithm.js";
 
 var inc = 0;
 const nextId = () => `algo${inc++}`;
@@ -92,10 +93,21 @@ const Handler = {
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
     }),
+    'tree': (model, schema, projection) => Object.create(TreeLayout, {
+        object: { value: "algorithm" },
+        name: { value: "tree-layout" },
+        type: { value: "tree" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    }),
 };
 
 export const AlgorithmFactory = {
     createAlgo(model, schema, projection) {
+
         const { type } = schema;
 
         const handler = Handler[type];
