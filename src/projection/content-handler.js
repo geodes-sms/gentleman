@@ -294,6 +294,9 @@ export function ContentHandler(schema, concept, args = {}) {
             if (contentConcept.hasValue()) {
                 let concept = contentConcept.getValue(true);
 
+                console.log("ContentConcept");
+                console.log(tag);
+
                 let projection = this.projection.model.createProjection(concept, tag).init();
                 // projection.optional = !required;
                 projection.placeholder = bindElement.placeholder;

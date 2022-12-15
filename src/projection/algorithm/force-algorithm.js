@@ -152,8 +152,7 @@ export const BaseForceAlgorithm = {
 
         projection.projection.update("displayed");
 
-        projection.registerDimensionsObserver(this);
-
+        console.log(projection);
 
         this.content.push(projection);
 
@@ -590,7 +589,12 @@ export const BaseForceAlgorithm = {
     },*/
 
     createItem(object, button){
+        console.log("Item");
+
         const item = this.schema.item;
+
+        console.log(item);
+
 
         let itemProjection = this.model.createProjection(object, item);
         itemProjection.optional = true;
