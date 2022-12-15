@@ -280,7 +280,7 @@ const _Concept = {
     /**
      * Gets the children of parent
      * @param {string} [name]
-     * @returns {Concept}
+     * @returns {Concept[]}
      */
     getChildren(name) {
         const children = [];
@@ -338,7 +338,7 @@ const _Concept = {
             return;
         }
 
-        this.watchers.get(message).forEach(w => w(value, this));
+        this.watchers.get(message).forEach(w => w(value, concept));
     },
     unwatch(message, watcher) {
         if (isNullOrUndefined(message) || !this.watchers.has(message)) {
@@ -391,10 +391,11 @@ const _Concept = {
                 child.delete(true);
             }
         });
+
         try {
-            if (this.model.removeConcept(this.id)) {
-                this.notify("delete");
-            }
+            this.notify("delete");
+            this.model.removeConcept(this.id);
+            this.notify("delete");
         } catch (error) {
             console.error(this);
             return {
@@ -465,7 +466,7 @@ const _Concept = {
             });
         });
 
-        output.force = this.force
+        output.force = this.force;
 
         output.attributes = attributes;  
 

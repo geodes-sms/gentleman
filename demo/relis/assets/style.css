@@ -1,5 +1,3 @@
-body { display: flex; flex-direction: column; }
-
 h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif; }
 
 .content-wrapper { padding-left: 1%; padding-right: 1%; }
@@ -13,15 +11,35 @@ h1, h2, h3, h4 { font-family: 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande',
 }
 
 .page-body {
-    flex-grow: 2;
     display: flex;
-    height: calc(100% - 30px);    
+    height: 100%;
 }
 
+
+.page-footer {
+    color: #fff;
+    background-color: #031E36;
+    padding: 48px 5% 24px;
+}
+
+    .poweredby {
+        font-size: 1.3em;
+    }
+
+    .page-footer__link--gentleman {
+        background-color: #fff;
+        color: #3a3b4f;
+        padding: 1px 6px 2px;
+        border-radius: 180px;
+    }
+
+    .page-footer__link--gentleman .info {
+        display: none;
+    }
+    
 .app {
     flex-grow: 2;
-    display: flex;
-    flex-direction: column;
+    display: flex; flex-direction: column;
     height: 100%;
 }
 

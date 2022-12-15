@@ -97,6 +97,8 @@ Gentleman supports all browsers that are [ES5-compliant](https://kangax.github.i
 
 ## Building the Code
 
+### Requirements
+
 To build the code, follow these steps.
 
 1. Ensure that [NodeJS](http://nodejs.org/) is installed. This provides the platform on which the build tooling runs.

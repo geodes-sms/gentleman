@@ -202,6 +202,15 @@ export const EditorInstance = {
 
         this.refresh();
     },
+    full() {
+        this.size = "fullscreen";
+
+        this.fullscreen = true;
+        this.container.style.removeProperty("width");
+        this.container.style.removeProperty("height");
+
+        this.refresh();
+    },
     show() {
         show(this.container);
         this.visible = true;

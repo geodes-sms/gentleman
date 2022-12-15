@@ -2,10 +2,10 @@ import { isNullOrUndefined, isFunction, valOrDefault, isHTMLElement } from 'zenk
 
 export const FnHandler = {
     /**
- * Get Handlers registered to this name
- * @param {string} name 
- * @returns {*[]} List of registered handlers
- */
+     * Get Handlers registered to this name
+     * @param {string} name 
+     * @returns {*[]} List of registered handlers
+     */
     getHandlers(name) {
         return valOrDefault(this.handlers.get(name), []);
     },
@@ -83,7 +83,7 @@ export const FnHandler = {
     hasHanlder(name) {
         return this.handlers.has(name);
     },
-    
+
     registerReceiver(proj, rtag) {
         if (isNullOrUndefined(this.activeReceiver[rtag])) {
             this.activeReceiver[rtag] = proj;
@@ -102,19 +102,26 @@ export const FnHandler = {
         this.receivers[rtag].projections.push(proj);
     },
 
+<<<<<<< HEAD
     saturationRevolved(proj, rtag){
+=======
+    saturationRevolved(proj, rtag) {
+        console.log("Revolving");
+        console.log(rtag);
+        console.log(this.receivers);
+>>>>>>> f38d7e1649c0b406dae81778273dd69c30c89f5f
 
         let projections = this.receivers[rtag].projections;
 
         let index;
 
-        for(let i = 0; i < projections.length; i++){
-            if(proj.id === projections[i].id){
+        for (let i = 0; i < projections.length; i++) {
+            if (proj.id === projections[i].id) {
                 index = i;
             }
         }
 
-        if(index >= projections.length){
+        if (index >= projections.length) {
             this.setActiveReceiver(proj, rtag);
             return;
         }

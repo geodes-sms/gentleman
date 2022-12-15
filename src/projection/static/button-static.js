@@ -10,7 +10,7 @@ import { Static } from "./static.js";
 
 function resolveParam(tpl, name) {
     let param = tpl.param.find(p => p.name === name);
-    
+
     if (isNullOrUndefined(param)) {
         return undefined;
     }
@@ -170,13 +170,31 @@ const BaseButtonStatic = {
         }
 
         if (this.schema.action) {
-            const { type, value, target } = this.schema.action
-            switch(type){
+            const { type, value, target } = this.schema.action;
+
+            if (isObject(value)) {
+                for (const key in value) {
+                    const element = value[key];
+                    if (element.type === "param") {
+                        value[key] = resolveParam.call(this, this.schema.template, element.name);
+                    }
+                }
+            }
+
+            switch (type) {
                 case "CREATE":
-                    if(isNullOrUndefined(target)) {
+                    if (isNullOrUndefined(target)) {
+                        concept.createElement();
+                    } else if (target.type === "attribute") {
+                        let attr = concept.getAttribute(target.name);
+                        attr.target.createElement({ value: value });
+                    }
+                    break;
+                case "SELECT":
+                    if (isNullOrUndefined(target)) {
                         concept.createElement();
                     }
-        
+
                     if (isObject(value)) {
                         for (const key in value) {
                             const element = value[key];
@@ -185,40 +203,21 @@ const BaseButtonStatic = {
                             }
                         }
                     }
-        
-                    if (target.type === "attribute") {
-                        let attr = concept.getAttribute(target.name);
-                        attr.target.createElement({ value: value });
-                    }
-                    break;
-                case "SELECT":
-                    if(isNullOrUndefined(target)){
-                        concept.createElement();
-                    }
-                    
-                    if(isObject(value)){
-                        for (const key in value) {
-                            const element = value[key];
-                            if(element.type === "param") {
-                                value[key] = resolveParam.call(this, this.schema.template, element.name);
-                            }
-                        }
-                    }
 
-                    if(target.type === "attribute"){
+                    if (target.type === "attribute") {
                         let attr = concept.getAttribute(target.name);
                         attr.target.setValue(valOrDefault(value.name, value));
                     }
 
-                    if(target.type === "bind"){
+                    if (target.type === "bind") {
                         concept.setValue(valOrDefault(value.name, value))
                     }
                     break;
                 case "CREATES":
-                    if(isNullOrUndefined(target)) {
+                    if (isNullOrUndefined(target)) {
                         concept.createElement();
                     }
-        
+
                     if (isObject(value)) {
                         for (const key in value) {
                             const element = value[key];

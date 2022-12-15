@@ -88,7 +88,7 @@ export function buildProjectionHandler(_options = {}) {
     }
 
     if (options.download) {
-        this.download(result, options.name);
+        this.download(JSON.stringify(result), options.name, "JSON");
     }
 
     delete this.__errors;
