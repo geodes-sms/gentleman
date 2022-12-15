@@ -102,14 +102,7 @@ export const FnHandler = {
         this.receivers[rtag].projections.push(proj);
     },
 
-<<<<<<< HEAD
     saturationRevolved(proj, rtag){
-=======
-    saturationRevolved(proj, rtag) {
-        console.log("Revolving");
-        console.log(rtag);
-        console.log(this.receivers);
->>>>>>> f38d7e1649c0b406dae81778273dd69c30c89f5f
 
         let projections = this.receivers[rtag].projections;
 
