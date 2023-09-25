@@ -31,11 +31,12 @@ Gentleman is a **lightweight web-based projectional editor** that allows you to 
 [todo-app]: https://geodes-sms.github.io/gentleman/demo/todo/index.html
 [todo-img]: https://gentlemancp.org/assets/images/demo_todo.gif "TodoList demo"
 [sc-app]: https://geodes-sms.github.io/gentleman/demo/statechart/index.html
-[sc-img]: https://gentlemancp.org/assets/images/demo_sc.gif "Statechart demo"
+[sc-img]: https://gentlemancp.org/assets/images/demo_statechart.gif "Statechart demo"
 [ds-app]: https://geodes-sms.github.io/gentleman/demo/sequence/index.html
-[ds-img]: https://gentlemancp.org/assets/images/demo_ds.gif "Sequence Diagram demo"
+[ds-img]: https://gentlemancp.org/assets/images/demo_sequence.gif "Sequence Diagram demo"
 [music-app]: https://geodes-sms.github.io/gentleman/demo/music/index.html
 [music-img]: https://gentlemancp.org/assets/images/demo_music.gif "Music demo"
+
 If the links for graphical projections examples do not work:
  - Follow the installation steps.
  - Create a new Editor.
@@ -95,6 +96,8 @@ Gentleman supports all browsers that are [ES5-compliant](https://kangax.github.i
 # Installation 💻
 
 ## Building the Code
+
+### Requirements
 
 To build the code, follow these steps.
 

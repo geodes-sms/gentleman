@@ -74,7 +74,7 @@ export const EditorInstanceManager = {
             this.status.addView(instance);
         }
 
-        instance.concept.notify("displayed", instance.projection.element.id);
+        instance.concept.notify("displayed");
 
         this.updateActiveInstance(instance);
         this.refresh();
@@ -199,6 +199,15 @@ export const EditorInstance = {
         } else {
             this.fullscreen = false;
         }
+
+        this.refresh();
+    },
+    full() {
+        this.size = "fullscreen";
+
+        this.fullscreen = true;
+        this.container.style.removeProperty("width");
+        this.container.style.removeProperty("height");
 
         this.refresh();
     },

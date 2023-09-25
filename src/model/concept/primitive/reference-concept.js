@@ -113,10 +113,6 @@ const _ReferenceConcept = {
         this.value = value;
         this.reference = this.model.getConcept(value);
 
-        console.log("This.ref");
-        console.log(this.reference);
-        console.log(this);
-
         if (isNullOrUndefined(this.reference) && retry) { // retry on failure
             setTimeout(() => this.setValue(_value, false), 20);
         } else {
@@ -195,8 +191,6 @@ const _ReferenceConcept = {
     },
 
     update(message, value) {
-        console.log("Updating");
-        console.log(message);
         switch (message) {
             case "delete":
                 this.reference.unregister(this);
@@ -206,7 +200,6 @@ const _ReferenceConcept = {
                 this.notify("value.changed", this.reference);
                 break;
             case "value.changed":
-                console.log("Received message");
                 this.setValue(this.value);
                 break;
             default:

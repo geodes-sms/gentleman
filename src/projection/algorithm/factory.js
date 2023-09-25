@@ -1,12 +1,12 @@
 import { isNullOrUndefined } from "zenkai";
-import { ForceAlgorithm } from "./force-algorithm.js";
-import { PatternAlgorithm } from "./pattern-algorithm.js";
+import { ForceAlgorithm } from "./temp_force.js";
+//import { PatternAlgorithm } from "./pattern-algorithm.js";
+import { PatternAlgorithm } from "./temp_pattern.js";
 import { DecorationAlgorithm } from "./decoration-algorithm.js";
-import { AlgorithmHolder } from "./algorithm-holder.js";
 import { AnchorAlgorithm } from "./anchor-algorithm.js";
-import { AltView } from "./alt-view.js";
-import { Add } from "./add.js";
-import { SVGButton } from "./button.js";
+import { TreeLayout } from "./tree-algorithm.js";
+import { AdaptiveAlgorithm } from "./adaptive-algorithm.js";
+import { WrapAlgoritm } from "./wrap-algorithm.js";
 
 var inc = 0;
 const nextId = () => `algo${inc++}`;
@@ -42,16 +42,6 @@ const Handler = {
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
     }),
-    'holder': (model, schema, projection) => Object.create(AlgorithmHolder, {
-        object: { value: "algorithm" },
-        name: { value: "holder-algorithm" },
-        type: { value: "holder" },
-        id: { value: nextId() },
-        model: { value: model },
-        schema: { value: schema },
-        projection: { value: projection },
-        source: { value: projection.concept, writable: true },
-    }),
     'anchor': (model, schema, projection) => Object.create(AnchorAlgorithm, {
         object: { value: "algorithm" },
         name: { value: "anchor-algorithm" },
@@ -62,30 +52,30 @@ const Handler = {
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
     }),
-    'alt-view': (model, schema, projection) => Object.create(AltView, {
+    'tree': (model, schema, projection) => Object.create(TreeLayout, {
         object: { value: "algorithm" },
-        name: { value: "alt-view" },
-        type: { value: "alt-view" },
+        name: { value: "tree-layout" },
+        type: { value: "tree" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
     }),
-    'add': (model, schema, projection) => Object.create(Add, {
+    'adaptive': (model, schema, projection) => Object.create(AdaptiveAlgorithm, {
         object: { value: "algorithm" },
-        name: { value: "add" },
-        type: { value: "add" },
+        name: { value: "adaptive-layout" },
+        type: { value: "adaptive" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
     }),
-    'button': (model, schema, projection) => Object.create(SVGButton, {
+    'wrap': (model, schema, projection) => Object.create(WrapAlgoritm, {
         object: { value: "algorithm" },
-        name: { value: "svg-button" },
-        type: { value: "button" },
+        name: { value: "adaptive-layout" },
+        type: { value: "adaptive" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
@@ -96,6 +86,7 @@ const Handler = {
 
 export const AlgorithmFactory = {
     createAlgo(model, schema, projection) {
+
         const { type } = schema;
 
         const handler = Handler[type];

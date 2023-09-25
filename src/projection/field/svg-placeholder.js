@@ -1,6 +1,6 @@
 import { ContentHandler } from "./../content-handler.js";
 import { Field } from "./field.js";
-import { DimensionHandler } from "./../algorithm/dimension-handler";
+import { DimensionHandler } from "../dimension-handler";
 
 const { createDocFragment, isNullOrUndefined, createI, createArticle, findAncestor, removeChildren, windowWidth, isObject, valOrDefault } = require("zenkai");
 
@@ -64,9 +64,6 @@ const BaseSVGPlaceholder = {
 
         if(isNullOrUndefined(this.openBack)){
             const {render, coordinates, dimensions } = open;
-
-            console.log("rendering open-back");
-            console.log(open);
             this.openBack = ContentHandler.call(this, Object.assign(render,
                 {
                     action:{

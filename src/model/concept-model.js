@@ -40,7 +40,6 @@ export const ConceptModel = {
         return this;
     },
     initValue(values){
-        console.log(values);
         if (Array.isArray(values)) {
             this.values = values;
 
@@ -149,13 +148,13 @@ export const ConceptModel = {
         }
 
         var index = this.concepts.findIndex(concept => concept.id === id);
-
+        
         if (index === -1) {
             return null;
         }
 
         let removedConcept = this.concepts.splice(index, 1)[0];
-
+        
         return removedConcept;
     },
     hasConcept(arg) {

@@ -16,6 +16,7 @@ module.exports = merge(common, {
         sequence: './demo/sequence/index.js',
         statechart: './demo/statechart/index.js',
         music: './demo/music/index.js',
+        petri: './demo/petri/index.js'
     },
     output: {
         filename: '[name].js',

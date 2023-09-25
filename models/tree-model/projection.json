@@ -1,0 +1,242 @@
+{
+    "type": "projection",
+    "projection":[
+        {
+            "concept": { "name": "mindmap" },
+            "type": "algorithm",
+            "tags": [],
+            "content":{
+                "type": "decoration",
+                "dimensions":{
+                    "width": 1000,
+                    "height": 600
+                },
+                "background": false,
+                "content":[
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates":{
+                            "x": 0,
+                            "y": 0
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "subject",
+                            "tag": "treeRoot"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "centralTopic" },
+            "type": "algorithm",
+            "tags": ["treeRoot"],
+            "rtag": "myTree",
+            "content":{
+                "type": "tree",
+                "tag": "rt",
+                "orientation": "horizontal",
+                "treeId": "myTree",
+                "duration": 500,
+                "dimensions":{
+                    "width": 1000,
+                    "height": 600
+                },
+                "depth": 150
+            }
+        },
+        {
+            "concept": { "name": "centralTopic" },
+            "type": "algorithm",
+            "tags": ["rt"],
+            "content":{
+                "type": "decoration",
+                "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.0\" width=\"113\" height=\"43\"><rect width=\"100\" x=\"1.5\" y=\"1.5\" height=\"40\" stroke=\"black\" stroke-width=\"1.5\" fill=\"#f5e720\" rx=\"5\" ry=\"5\" style-linejoin=\"round\"></rect></svg>",
+                "content":[
+                    {
+                        "dimension":{
+                            "type": "pure"
+                        },
+                        "coordinates":{
+                            "x": 50,
+                            "y": 20
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "subject",
+                            "tag": "subject"
+                        }
+                    },
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates":{
+                            "x": 90,
+                            "y": 10
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "mainTopics",
+                            "tag": "btn"
+                        }
+                    }
+                ]            
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["btn"],
+            "type": "algorithm",
+            "content":{
+                "type": "decoration",
+                "content":[
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates":{
+                            "x": 0,
+                            "y": 0
+                        },
+                        "render":{
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg width=\"20\" height=\"20\" version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" x=\"0.56\"><circle cx=\"10\" cy=\"10\" r=\"8\" fill=\"white\" stroke=\"#87a1ff\" stroke-width=\"1\"></circle><line x1=\"10\" x2=\"10\" y1=\"2\" y2=\"18\" stroke=\"#87a1ff\" stroke-width=\"1\"></line><line x1=\"2\" x2=\"18\" y1=\"10\" y2=\"10\" stroke=\"#87a1ff\" stroke-width=\"1\"></line></svg>",
+                            "action":{
+                                "type": "CREATE-TREE",
+                                "target": "myTree",
+                                "value": "main"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["subject"],
+            "content":{
+                "type": "svg",
+                "placeholder": "Subject",
+                "style":{
+                    "font": "Segoe UI",
+                    "weight": 500,
+                    "size":10,
+                    "anchor": "middle",
+                    "baseline": "middle"
+                }
+            }
+        },
+        {
+            "concept": { "name": "maintTopic" },
+            "type": "algorithm",
+            "tags": ["main"],
+            "content":{
+                "type": "decoration",
+                "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.0\" width=\"113\" height=\"43\"><rect width=\"100\" x=\"1.5\" y=\"1.5\" height=\"40\" stroke=\"#c4230a\" stroke-width=\"1.5\" fill=\"white\" rx=\"5\" ry=\"5\" style-linejoin=\"round\"></rect></svg>",
+                "rmv":{
+                    "coordinates":{
+                        "x": 5,
+                        "y": 5
+                    },
+                    "dimension": {
+                        "type": "pure"
+                    },
+                    "render": {
+                        "kind": "static",
+                        "type": "svg",
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" viewBox=\"0 0 6 6\"><circle cx=\"3\" cy=\"3\" r=\"2.5\" fill=\"red\" stroke=\"#bdbcb9\" stroke-width=\"0.75\"></circle><line x1=\"1.5\" y1=\"1.5\" x2=\"4.5\" y2=\"4.5\" stroke=\"#bdbcb9\" stroke-width=\"1\"></line><line x1=\"4.5\" y1=\"1.5\" x2=\"1.5\" y2=\"4.5\" stroke=\"#bdbcb9\" stroke-width=\"1\"></line></svg>"
+                    }
+                },
+                "content":[
+                    {
+                        "dimension":{
+                            "type": "pure"
+                        },
+                        "coordinates":{
+                            "x": 50,
+                            "y": 20
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "subject",
+                            "tag": "subject"
+                        }
+                    },
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates":{
+                            "x": 90,
+                            "y": 10
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "subTopics",
+                            "tag": "btn"
+                        }
+                    }
+                ]            
+            }
+        },
+        {
+            "concept": { "name": "subTopic" },
+            "type": "algorithm",
+            "tags": ["main"],
+            "content":{
+                "type": "decoration",
+                "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.0\" width=\"113\" height=\"43\"><rect width=\"100\" x=\"1.5\" y=\"1.5\" height=\"40\" stroke=\"#299602\" stroke-width=\"1.5\" fill=\"white\" rx=\"5\" ry=\"5\" style-linejoin=\"round\"></rect></svg>",
+                "rmv":{
+                    "coordinates":{
+                        "x": 5,
+                        "y": 5
+                    },
+                    "dimension": {
+                        "type": "pure"
+                    },
+                    "render": {
+                        "kind": "static",
+                        "type": "svg",
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" viewBox=\"0 0 6 6\"><circle cx=\"3\" cy=\"3\" r=\"2.5\" fill=\"red\" stroke=\"#bdbcb9\" stroke-width=\"0.75\"></circle><line x1=\"1.5\" y1=\"1.5\" x2=\"4.5\" y2=\"4.5\" stroke=\"#bdbcb9\" stroke-width=\"1\"></line><line x1=\"4.5\" y1=\"1.5\" x2=\"1.5\" y2=\"4.5\" stroke=\"#bdbcb9\" stroke-width=\"1\"></line></svg>"
+                    }
+                },
+                "content":[
+                    {
+                        "dimension":{
+                            "type": "pure"
+                        },
+                        "coordinates":{
+                            "x": 50,
+                            "y": 20
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "subject",
+                            "tag": "subject"
+                        }
+                    },
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates":{
+                            "x": 90,
+                            "y": 10
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "subTopics",
+                            "tag": "btn"
+                        }
+                    }
+                ]            
+            }
+        }
+    ]
+}

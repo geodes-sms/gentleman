@@ -1,12 +1,26 @@
-import { isNullOrUndefined } from "zenkai";
+import { isNullOrUndefined, valOrDefault, isObject } from "zenkai";
 import { Static } from "./static.js"
 
 const ActionHandler = {
     "CREATE": createElement,
+    "CREATES": createAndSelect,
     "DELETE": deleteElement,
     "EXTRACT": extractShape,
     "SIDE": openSide,
     "OPEN": openSelection,
+    "CREATE-TREE": addTree,
+}
+
+function addTree(target, value){
+    let find = this.container;
+
+    while(isNullOrUndefined(find.getAttribute("data-tree")) && !(find.getAttribute("data-tree") === target)){
+        find = find.parentNode;
+    }
+
+    let element = this.source.createElement();
+
+    this.environment.getActiveReceiver(target).accept(element, find, valOrDefault(value, "main"));
 }
 
 function openSelection(target){
@@ -14,6 +28,11 @@ function openSelection(target){
         this.target = target
     }
     this.target.open();
+}
+
+function createAndSelect(target, value){
+    let item = this.source.createElement();
+    item.setValue(valOrDefault(value.name, value));
 }
 
 function openSide(target, value){
@@ -130,47 +149,32 @@ const BaseSVGButton = {
     render(){
         const { action, content } = this.schema;
 
-        if(isNullOrUndefined(this.container)){
-            this.container = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        if(isNullOrUndefined(this.element)){
+            this.element = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
-            this.container.classList.add("algorithm-container");
-            this.container.dataset.nature = "static";
-            this.container.dataset.algorithm = "button";
-            this.container.dataset.id = this.id;
+            this.element.classList.add("static");
+            this.element.dataset.nature = "static";
+            this.element.dataset.algorithm = "button";
+            this.element.tabIndex = -1;
+            this.element.dataset.id = this.id;
         }
 
         if(content && isNullOrUndefined(this.content)){
             this.createContent(content);
         }
 
-        if(this.schema.dimensions){
-            const {width, height} = this.schema.dimensions;
-            
-            this.container.setAttribute("width", width);
-            this.container.setAttribute("height", height);
-        }
+        this.action = action;
 
+        this.bindEvents();
 
-        this.container.style["width"] = "fit-content";
-
-
-        return this.container
+        return this.element
     },
 
     createContent(content){
-       
         const parser = new DOMParser()
         this.content = parser.parseFromString(content.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement;
 
-        this.container.append(this.content);
-
-        this.content.addEventListener("click", () => {
-            const { type, target, value } = this.schema.action;
-            console.log("target");
-            console.log(target);
-            console.log(this.schema.action);
-            ActionHandler[type].call(this, target, value);
-        })
+        this.element.append(this.content);
     },
     
     focusIn(){
@@ -181,14 +185,24 @@ const BaseSVGButton = {
 
     },
 
-    /*clickHandler(){
-        console.log("Clicked");
+    clickHandler(){
         const { type, target, value } = this.schema.action;
         ActionHandler[type].call(this, target, value);
-    }*/
+    },
+
+    bindEvents(){
+        this.projection.registerHandler("displayed", () => {
+            if(!this.parent.displayed){
+                return;
+            }
+
+            this.element.setAttribute("width", valOrDefault(Number(this.content.getAttribute("width")), this.content.getBBox().width));
+            this.element.setAttribute("height", valOrDefault(Number(this.content.getAttribute("height")), this.content.getBBox().height));
+        })
+    }
 }
 
 export const SVGButton = Object.assign({},
-    Static,
+    Object.create(Static),
     BaseSVGButton
 )

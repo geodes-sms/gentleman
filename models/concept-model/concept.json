@@ -381,7 +381,19 @@
                         "name": "name",
                         "constraint": {
                             "values": [
-                                "string", "number", "boolean", "set", "reference", 
+                                "string", "number", "boolean", "set", "reference", "any",
+                                { "type": "reference", "rel": "parent", "scope": "model concept" }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "scope",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": [
+                                "model",
                                 { "type": "reference", "rel": "parent", "scope": "model concept" }
                             ]
                         }
@@ -394,6 +406,12 @@
                         "constraint": {
                             "values": ["parent", "child", "sibling"]
                         }
+                    }
+                },
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "string"
                     }
                 }
             ],

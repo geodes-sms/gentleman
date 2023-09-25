@@ -473,9 +473,16 @@ const BaseChoiceField = {
             show(this.selectList);
             this.selectList.dataset.state = "open";
         }
+        
+        this.parent.focusChild(this.element);
 
         return this;
     },
+
+    focusChild(child){
+        return;
+    },
+
     focusOut() {
         if (this.readonly) {
             return;
@@ -815,6 +822,7 @@ const BaseChoiceField = {
                 this.selectList.dataset.state = "close";
             }
         } else if (target === this.selectListValue) {
+            this.parent.focusChild(this.element);
             show(this.selectList);
             this.selectList.dataset.state = "open";
         }

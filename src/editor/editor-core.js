@@ -14,7 +14,7 @@ import { EditorBreadcrumb, EditorLog, EditorStatus } from './status/index.js';
 import { EditorSection } from './editor-section.js';
 import { EditorInstance, EditorInstanceManager, EditorWindow, EditorWindowManager } from './context/index.js';
 import { createEditorHeader, createEditorHome, createEditorLog, createEditorStatus, createEditorBreadcrumb, createEditorExport } from './creator.js';
-import { FnState, FnLoad, FnProjectionElement, FnHandler } from './core/index.js';
+import { FnState, FnLoad, FnProjectionElement, FnHandler, ActionHandler } from './core/index.js';
 
 
 var inc = 0;
@@ -280,7 +280,14 @@ const EditorCore = {
      * @returns 
      */
     download(obj, name, type) {
-        let docType = DocumentType[type.toUpperCase()];
+        let docType;
+
+        if(isNullOrUndefined(type)){
+            docType = DocumentType["JSON"];
+        }else{
+            docType = DocumentType[type.toUpperCase()];
+        }
+        
         const MIME_TYPE = docType.type;
         window.URL = window.webkitURL || window.URL;
 
@@ -293,7 +300,8 @@ const EditorCore = {
             window.URL.revokeObjectURL(link.href);
         }
 
-        var bb = new Blob([obj], { type: MIME_TYPE });
+        var bb = new Blob([JSON.stringify(obj)], { type: MIME_TYPE });
+
         Object.assign(link, {
             download: name,
             href: window.URL.createObjectURL(bb),
@@ -391,13 +399,11 @@ const EditorCore = {
         let reader = new FileReader();
         reader.onload = (event) => {
             const schema = JSON.parse(reader.result);
-            console.log("Resulting Schema");
-            console.log(schema);
             this.addModel(name, schema);
         };
 
         reader.readAsText(file);
-    
+
         this.refresh();
 
         return file;
@@ -1109,41 +1115,41 @@ const EditorCore = {
 
     // Default events management
 
-    registerReceiver(projection, rtag){
-        if(isNullOrUndefined(this.receivers)){
+    registerReceiver(projection, rtag) {
+        if (isNullOrUndefined(this.receivers)) {
             this.receivers = {};
         }
 
-        if(isNullOrUndefined(this.receivers[rtag])){
+        if (isNullOrUndefined(this.receivers[rtag])) {
             this.receivers[rtag] = {
                 root: projection,
                 projections: [projection]
-            }
-        }else{
-            this.receivers[rtag].projections.push(projection)
+            };
+        } else {
+            this.receivers[rtag].projections.push(projection);
         }
 
         this.setActiveReceiver(projection, rtag);
 
     },
 
-    setActiveReceiver(projection, rtag){
-        if(isNullOrUndefined(this.activeReceiver)){
+    setActiveReceiver(projection, rtag) {
+        if (isNullOrUndefined(this.activeReceiver)) {
             this.activeReceiver = {};
         }
 
         this.activeReceiver[rtag] = projection;
     },
 
-    getActiveReceiver(rtag){
+    getActiveReceiver(rtag) {
         return this.activeReceiver[rtag];
     },
 
-    getReceivers(rtag){
+    getReceivers(rtag) {
         return this.receivers[rtag].projections;
     },
 
-    getRootReceiver(rtag){
+    getRootReceiver(rtag) {
         return this.receivers[rtag].root;
     },
 
@@ -1151,157 +1157,6 @@ const EditorCore = {
         var lastKey = null;
 
         var fileName = null;
-
-        const ActionHandler = {
-            "open": (target) => {
-                const { context } = target.dataset;
-
-                if (context) {
-                    this[context].open();
-                } else {
-                    this.open();
-                }
-            },
-            "close": (target) => {
-                const { context, id, type } = target.dataset;
-
-                if (context) {
-                    this[context].close();
-                } else {
-                    this.close();
-                }
-            },
-            "collapse": (target) => {
-                const { rel, target: actionTarget } = target.dataset;
-
-                if (rel === "parent") {
-                    let parent = findAncestor(target, (el) => el.dataset.name === actionTarget);
-                    if (isHTMLElement(parent)) {
-                        const { alias = "" } = parent.dataset;
-                        parent.classList.toggle("collapsed");
-                        let collapsed = parent.classList.contains("collapsed");
-                        target.dataset.state = collapsed ? "ON" : "OFF";
-                        target.title = collapsed ? `Expand ${alias.toLowerCase()}` : `Collapse ${alias.toLowerCase()}`;
-                    }
-                }
-            },
-            "delete": (target) => {
-                const { target: actionTarget } = target.dataset;
-
-                if (actionTarget === "parent") {
-                    let parent = target.parentElement;
-                    removeChildren(parent);
-                    parent.remove();
-                }
-            },
-            "delete:value": (target) => {
-                const { id } = target.dataset;
-
-                this.conceptModel.removeValue(id);
-                this.header._valueSelector.update();
-            },
-            "delete:resource": (target) => {
-                const { id } = target.dataset;
-
-                this.removeResource(id);
-            },
-            "change-view": (target) => {
-                const { value } = target.dataset;
-                this.status.changeView(value);
-            },
-            "add-group": (target) => {
-                this.status.addGroup();
-            },
-
-            "style": (target) => { this.style.toggle(); },
-            "home": (target) => { this.home.toggle(); },
-            "logs": (target) => { this.logs.toggle(); },
-
-            "export": (target) => { this.export(); },
-            "export--copy": (target) => { this.export(true); },
-
-            "create-instance": (target) => {
-                const { concept: cname } = target.dataset;
-
-                let concept = this.createConcept(cname);
-                this.createInstance(concept);
-            },
-            "create-instance:value": (target) => {
-                const { id } = target.dataset;
-
-                let value = this.conceptModel.getValue(id);
-                let concept = this.createConcept(value.name);
-                concept.initValue(value);
-                this.createInstance(concept);
-            },
-            "copy:value": (target) => {
-                const { id } = target.dataset;
-
-                let value = this.conceptModel.getValue(id);
-                this.copy(value);
-            },
-            "save": (target) => {
-                this.save();
-            },
-            "undo": (target) => {
-                this.undo();
-            },
-
-            "load": (target) => {
-                let event = new MouseEvent('click', {
-                    view: window,
-                    bubbles: true,
-                    cancelable: true,
-                });
-
-                this.input.dispatchEvent(event);
-            },
-            "unload": (target) => {
-                this.unload();
-            },
-            "load-concept": (target) => {
-                let event = new MouseEvent('click', {
-                    view: window,
-                    bubbles: true,
-                    cancelable: true,
-                });
-
-                this.input.dispatchEvent(event);
-            },
-            "unload-concept": (target) => {
-                this.unloadAllConcept();
-            },
-            "download-concept": (target) => {
-                const { schema, values } = this.conceptModel;
-
-                let name = this.getName().toLowerCase().replace(/\s+/g, " ").replace(" ", "_");
-
-                this.download({
-                    "concept": schema
-                }, `${name}_model`);
-            },
-            "load-projection": (target) => {
-                let event = new MouseEvent('click', {
-                    view: window,
-                    bubbles: true,
-                    cancelable: true,
-                });
-
-                this.input.dispatchEvent(event);
-            },
-            "unload-projection": (target) => {
-                this.unloadAllProjection();
-            },
-            "download-projection": (target) => {
-                const { schema, views } = this.projectionModel;
-
-                let name = this.getName().toLowerCase().replace(/\s+/g, " ").replace(" ", "_");
-
-                this.download({
-                    projection: schema
-                }, `${name}_projection`);
-            }
-        };
 
         const dir = {
             [Key.up_arrow]: "up",
@@ -1335,7 +1190,6 @@ const EditorCore = {
             }
 
             if (this.actions.has(action)) {
-                console.warn(action);
                 this.actions.get(action).call(this, target);
                 target.blur();
                 return;
@@ -1347,7 +1201,7 @@ const EditorCore = {
                 actionHandler(target);
                 target.blur();
             } else if (action) {
-                this.triggerEvent({ "name": action, });
+                this.triggerEvent({ name: action, args: target });
             }
         }, true);
 
@@ -1605,7 +1459,6 @@ const EditorCore = {
         }, false);
 
         this.body.addEventListener('focusin', (event) => {
-
             const { target } = event;
 
             const element = this.resolveElement(target);
@@ -1626,7 +1479,6 @@ const EditorCore = {
 
                 this.activeElement = null;
             }
-
             if (this.activeElement) {
                 let projection = this.activeElement.projection;
 
@@ -1643,11 +1495,123 @@ const EditorCore = {
         this.registerHandler("value.changed", () => this.refresh());
         this.registerHandler("value.added", () => this.refresh());
         this.registerHandler("value.removed", () => this.refresh());
+        this.registerHandler("export.model", () => this.exporter.open());
+        this.registerHandler("home", (target) => { this.home.toggle(); });
+        this.registerHandler("logs", (target) => { this.logs.toggle(); });
+        this.registerHandler("export", (target) => { this.export(); });
+        this.registerHandler("load", (target) => {
+            let event = new MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true,
+            });
+
+            this.input.dispatchEvent(event);
+        });
         this.registerHandler("load-resource", (args) => {
             let event = new MouseEvent('click', { view: window, bubbles: true, cancelable: true, });
             fileName = args[0];
 
             this.input.dispatchEvent(event);
+        });
+        this.registerHandler("load-concept", (target) => {
+            let event = new MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true,
+            });
+
+            this.input.dispatchEvent(event);
+        });
+        this.registerHandler("load-projection", (target) => {
+            let event = new MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true,
+            });
+
+            this.input.dispatchEvent(event);
+        });
+        this.registerHandler("unload", (target) => {
+            this.unload();
+        });
+        this.registerHandler("unload-concept", (target) => {
+            this.unloadAllConcept();
+        });
+        this.registerHandler("unload-projection", (target) => {
+            this.unloadAllProjection();
+        });
+        this.registerHandler("download-concept", (target) => {
+            const { schema, values } = this.conceptModel;
+
+            let name = this.getName().toLowerCase().replace(/\s+/g, " ").replace(" ", "_");
+
+            this.download({
+                "concept": schema
+            }, `${name}_model`, "JSON");
+        });
+        this.registerHandler("open", (target) => {
+            const { context } = target.dataset;
+
+            if (context) {
+                this[context].open();
+            } else {
+                this.open();
+            }
+        });
+        this.registerHandler("close", (target) => {
+            const { context, id, type } = target.dataset;
+
+            if (context) {
+                this[context].close();
+            } else {
+                this.close();
+            }
+        });
+        this.registerHandler("collapse", (target) => {
+            const { rel, target: actionTarget } = target.dataset;
+
+            if (rel === "parent") {
+                let parent = findAncestor(target, (el) => el.dataset.name === actionTarget);
+                if (isHTMLElement(parent)) {
+                    const { alias = "" } = parent.dataset;
+
+                    parent.classList.toggle("collapsed");
+
+                    let collapsed = parent.classList.contains("collapsed");
+                    target.dataset.state = collapsed ? "ON" : "OFF";
+                    target.title = collapsed ? `Expand ${alias.toLowerCase()}` : `Collapse ${alias.toLowerCase()}`;
+                }
+            }
+        });
+        this.registerHandler("delete", (target) => {
+            const { target: actionTarget } = target.dataset;
+
+            if (actionTarget === "parent") {
+                let parent = target.parentElement;
+                removeChildren(parent);
+                parent.remove();
+            }
+        });
+        this.registerHandler("create-instance", (target) => {
+            const { concept: cname } = target.dataset;
+
+            let concept = this.createConcept(cname);
+            this.createInstance(concept);
+        });
+        this.registerHandler("create-instance:value", (target) => {
+            const { id } = target.dataset;
+
+            let value = this.conceptModel.getValue(id);
+            let concept = this.createConcept(value.name);
+            concept.initValue(value);
+            this.createInstance(concept);
+        });
+        this.registerHandler("copy:value", (target) => {
+            const { id } = target.dataset;
+
+            let value = this.conceptModel.getValue(id);
+            this.copy(value);
         });
     }
 };
@@ -1658,6 +1622,7 @@ export const Editor = Object.assign(
     FnLoad,
     FnProjectionElement,
     FnHandler,
+    ActionHandler,
     EditorCore
 );
 

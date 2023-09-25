@@ -189,7 +189,8 @@ export const FnLoad = {
             } else if (type === "projection") {
                 this.loadProjection(schema, name);
             } else if (type === "model") {
-                this.loadConcept(schema.concept, "model");
+                this.loadConcept(schema.concept);
+                this.loadProjection(schema.projection);
                 this.loadValues(schema.values);
             }
         };

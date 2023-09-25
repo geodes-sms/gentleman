@@ -29,11 +29,15 @@ const BaseArrowSimulation = {
 
             this.path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 
-            this.path.setAttribute("d", "M 0 25 L 200 25");
+            if(this.schema.wider){
+                this.path.setAttribute("d", "M 0 25 L 275 25");
+            }else{
+                this.path.setAttribute("d", "M 0 25 L 200 25");   
+            }
 
             this.container.classList.add("simulation-container");
             this.container.dataset.nature = "simulation";
-            this.container.dataset.shape = "force";
+            this.container.dataset.shape = "arrow";
             this.container.dataset.id = this.id;
 
             this.container.id = this.id;

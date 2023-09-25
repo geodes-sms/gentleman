@@ -45,10 +45,9 @@ export const EditorExport = {
 
         if (!isHTMLElement(this.container)) {
             this.container = createDiv({
-                class: ["editor-exporter"]
+                class: ["editor-exporter", "hidden"]
             });
         }
-
 
         if (!isHTMLElement(this.btnClose)) {
             this.btnClose = createButton({
@@ -136,10 +135,12 @@ export const EditorExport = {
         this.editor.download(result, `${this.outputName.value}.xml`, "XML");
     },
     toJSON() {
-        const { conceptModel } = this.editor;
+        const { conceptModel, projectionModel } = this.editor;
 
         const result = JSON.stringify({
+            "type": "model",
             "concept": conceptModel.schema,
+            "projection": projectionModel.schema,
             "values": conceptModel.export(),
         });
 
@@ -150,6 +151,7 @@ export const EditorExport = {
     },
 
     bindEvents() {
+
         this.btnClose.addEventListener("click", (event) => {
             this.close();
         });

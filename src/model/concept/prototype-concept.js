@@ -108,6 +108,7 @@ const BasePrototypeConcept = {
 
         // this.notify("value.changed", this.value);
         this.notify("value.changed", this.getCandidates().find(c => c.name === this.value));
+        this.propagate("value.changed", value, this);
 
         return {
             success: true,

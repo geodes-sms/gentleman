@@ -1,4 +1,5 @@
 {
+    "header": false,
     "toolbar": [
         {
             "type": "button",

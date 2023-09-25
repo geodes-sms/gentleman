@@ -59,10 +59,11 @@ export function buildConceptHandler(_options = {}) {
     this.notify("The concept model was <strong>successfully</strong> built", NotificationType.SUCCESS, 2000);
 
     if (options.download) {
-        this.download({
+        this.download(JSON.stringify( {
             type: "concept",
-            concept: result
-        }, options.name);
+            concept: result,
+            definition: conceptModel.export()
+        }), options.name, "JSON");
     }
 
     delete this.__errors;
@@ -138,9 +139,6 @@ function buildConcept(concept) {
  * @param {*} attribute
  */
 function buildAttribute(attribute) {
-    console.log("BuildingAttribute");
-    console.log(attribute);
-
     const name = getName(attribute);
 
     const required = hasAttr(attribute, ATTR_REQUIRED) && hasValue(attribute, ATTR_REQUIRED) ? getValue(attribute, ATTR_REQUIRED) : true;
@@ -163,8 +161,6 @@ function buildAttribute(attribute) {
         this.__errors.push(error);
     }
 
-    console.log(name, required);
-
     const schema = {
         "name": name,
         "target": buildTarget.call(this, getValue(attribute, "target", true)),
@@ -181,9 +177,6 @@ function buildAttribute(attribute) {
  * @param {*} attribute
  */
 function buildTarget(target, propname = "name") {
-    console.log("target");
-    console.log(target);
-
     if (isNullOrUndefined(target)) {
         return null;
     }
@@ -265,7 +258,6 @@ function buildConstraint(constraint) {
         };
     } else if (type.name === "constraint-string-values") {
         result.type = "values";
-        console.log(constraint);
         result.values = getValue(type, "values", true);
     }
     if (hasAttr(constraint, "scope") && hasValue(constraint, "scope")) {

@@ -1,7 +1,9 @@
 import { ContentHandler } from './../content-handler.js';
 import { isNull, isNullOrUndefined, isUndefined } from 'zenkai';
 import { Simulation } from './simulation.js';
-5
+
+import * as d3 from "d3";
+
 const BaseForceSimulation = {
 
     init(){
@@ -353,9 +355,6 @@ const MediatriceHandler = {
         if(delta > 0){
             return (- b - Math.sqrt(delta)) / (2 * a);
         }
-
-        console.log(delta);
-        console.log("Not Found");
         
     }
 }

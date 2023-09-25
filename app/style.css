@@ -322,9 +322,20 @@
 
     .app-editor-aside-header {
         position: relative;
-        padding: 12px;
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 12px;
         background-color: #fff;
         border-bottom: 4px solid #738CFF;
+    }
+
+    .app-editor-aside-title {
+        margin-right: 6px;
+        padding: 3px 6px;
+        font-size: 1.4em; font-weight: 300;
+        background-color: #f5f5f5;
+        border-radius: 2px;
+        color: #222;
     }
 
 .app-uploader {
@@ -567,3 +578,51 @@
         border-radius: 180px;
         background-color: #1E90FF;
     }
+
+
+.outline-concept {
+    display: flex; flex-direction: column;
+    padding: 3px;
+    margin-bottom: 2px;
+}
+
+.outline-concept-header {
+    display: flex;
+}
+
+.outline-concept-name {
+    font-size: 1.4em; font-weight: 500;
+}
+
+.outline-concept-nature {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px;
+    margin-right: 3px;
+    font-style: normal; font-weight: bold;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: #232524;
+    border-radius: 50%;
+}
+
+.outline-concept-attrs {
+    display: flex; flex-wrap: wrap;
+    padding-top: 3px;
+    padding-left: 6px;
+}
+
+.outline-concept-attr {
+    margin-right: 2px; margin-bottom: 2px;
+    padding: 2px 4px;
+    background-color: #f5f5f5;
+    border-radius: 2px;
+    font-size: 1em;
+}
+
+.outline-concept-type {
+    font-size: 1.4em; font-weight: 500;
+}
+
+.outline-concept-type:before {
+    content: " : ";
+}

@@ -148,7 +148,6 @@ export const FnProjectionElement = {
     },
 
     resolveElement(element) {
-
         if(element instanceof SVGElement){
             let copy = element;
 

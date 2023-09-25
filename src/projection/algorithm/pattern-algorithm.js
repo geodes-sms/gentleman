@@ -1,8 +1,8 @@
 import { ContentHandler } from "./../content-handler";
 import { createDocFragment, isHTMLElement, createDiv, valOrDefault, isNullOrUndefined, isEmpty, isNull } from "zenkai";
 import { Algorithm } from "./algorithm";
-import { DimensionHandler } from "./dimension-handler";
-import { AnchorHandler } from "./anchor-handler.js"
+import { DimensionHandler } from "../dimension-handler";
+import { AnchorHandler } from "../anchor-handler.js"
 
 const BasePatternAlgorithm = {
     init() {
@@ -131,10 +131,6 @@ const BasePatternAlgorithm = {
     },
 
     addItem(value){
-        console.log("Saturation test");
-        console.log(this);
-        console.log(this.count);
-        console.log(this.saturation);
 
         if(this.saturation){
             if(isNullOrUndefined(this.count)){
@@ -142,7 +138,6 @@ const BasePatternAlgorithm = {
             }
 
             if(this.count >= this.saturation){
-                console.log(this.satTarget);
                 this.environment.getActiveReceiver(this.satTarget).source.createElement()
                 this.saturate(value);
                 return;
@@ -221,10 +216,6 @@ const BasePatternAlgorithm = {
 
         projection.render();
 
-        console.log("SATPARAMS");
-        console.log(this.satParams);
-        console.log(this.satParams.coordinates);
-
         this.environment.getActiveReceiver("solo").accept(projection.element.container, this.satParams.dimension, this.satParams.coordinates);
 
         projection.element.addItem(value);
@@ -249,7 +240,6 @@ const BasePatternAlgorithm = {
     },
 
     acceptAnchor(elem){
-        console.log("AcceptingAnchor");
         this.container.append(elem);
 
         let current = this.anchors.current;
@@ -331,13 +321,8 @@ const BasePatternAlgorithm = {
 
     transmitFirst(){
         const  { render, position, index, id} = this.items[0];
-        
-        console.log("Transmitting");
-        console.log(render);
 
         this.removeItem({id: id});
-
-        console.log("Removed");
 
         return render;
     },
@@ -352,9 +337,6 @@ const BasePatternAlgorithm = {
                     break;
                 }
             }
-            console.log("Value");
-            console.log(value);
-            console.log(i);
 
             if(i >= this.items.length || isNullOrUndefined(this.items[i])){
                 return;

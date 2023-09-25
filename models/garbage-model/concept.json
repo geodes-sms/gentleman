@@ -1,0 +1,88 @@
+{
+    "type": "concept",
+    "concept":[
+        {
+            "name": "Family",
+            "nature": "concrete",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "person",
+                    "target":{
+                        "name": "PersonAbs",
+                        "accept": [
+                            {"name": "guy"},
+                            {"name": "girl"}
+                        ],
+                        "default": {"name": "guy"}
+                    },
+                    "required": true
+                },
+                {
+                    "name": "thirdChoice",
+                    "target":{
+                        "name": "Person"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "infos",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "Person"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "PersonAbs",
+            "nature": "prototype",
+            "root": false,
+            "attributes":[ 
+                {
+                    "name": "name",
+                    "target":{
+                        "name": "string"
+                    } 
+                }
+            ]
+        },
+        {
+            "name": "guy",
+            "nature": "concrete",
+            "prototype": "PersonAbs",
+            "attributes": []
+        },
+        {
+            "name": "girl",
+            "nature": "concrete",
+            "prototype": "PersonAbs",
+            "attributes": []
+        },
+        {
+            "name": "Person",
+            "nature": "concrete",
+            "root": true,
+            "attributes":[
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "dad",
+                    "target":{
+                        "name": "reference",
+                        "accept":{
+                            "name": "Person"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

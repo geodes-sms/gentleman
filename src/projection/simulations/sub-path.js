@@ -32,8 +32,6 @@ const BaseSubPathSimulation = {
 
                 path.setAttribute("stroke", "black");
                 path.setAttribute("fill", "transparent");
-                
-                console.log(path);
                 this.container.append(path);
 
                 this.paths.push(path);
@@ -45,9 +43,6 @@ const BaseSubPathSimulation = {
         this.bindStyle();
 
         /*this.setPath();*/
-
-        console.log("Returning this");
-        console.log(this.container);
 
         return this.container;
     },
@@ -135,7 +130,6 @@ const BaseSubPathSimulation = {
         this.linecap = style.getAttributeByName("linecap").target;
         this.linecap.register(this.projection);
 
-        console.log(this);
     },
 }
 

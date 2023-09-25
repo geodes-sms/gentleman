@@ -2,7 +2,7 @@ import { ContentHandler } from "./../content-handler.js";
 import { Algorithm } from "./algorithm.js";
 
 const { createDocFragment, isNullOrUndefined, isEmpty, isNull } = require("zenkai");
-const { AnchorHandler } = require("./anchor-handler");
+const { AnchorHandler } = require("../anchor-handler");
 
 const BaseAnchorAlgorithm = {
     init(){

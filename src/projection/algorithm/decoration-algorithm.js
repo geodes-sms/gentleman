@@ -1,8 +1,8 @@
 import { ContentHandler } from "./../content-handler.js";
 import { Algorithm } from "./algorithm.js";
-import { DimensionHandler } from "./dimension-handler.js";
+import { DimensionHandler } from "../dimension-handler.js";
 
-const { isHTMLElement, createDiv, isNullOrUndefined, createDocFragment, isEmpty, isNull, valOrDefault, isUndefined } = require("zenkai");
+const {isNullOrUndefined, createDocFragment, isEmpty, isNull, valOrDefault, isUndefined } = require("zenkai");
 
 
 const BaseDecorationAlgorithm = {
@@ -19,17 +19,18 @@ const BaseDecorationAlgorithm = {
 
         if(isNullOrUndefined(this.container)){
             this.container = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-
             if(background){
                 this.background = parser.parseFromString(background.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement;
-                this.container.append(this.background);
-
+                
+                this.background.childNodes.forEach(c => {
+                    this.container.append(c);
+                })
+                
                 this.container.setAttribute("width", this.background.getAttribute("width"));
                 
                 this.container.setAttribute("height", this.background.getAttribute("height"));
                 this.width = Number(this.background.getAttribute("width"));
                 this.height = Number(this.background.getAttribute("height"));
-                this.fixed = true;
             }
 
             if(dimensions){
@@ -46,12 +47,13 @@ const BaseDecorationAlgorithm = {
                         viewBox.minX + " " + viewBox.minY + " " + viewBox.width + " " + viewBox.height
                     );
                 }
-            }
 
+                this.fixed = true;
+            }
             
-        if(overflow){
-            this.container.style.overflow = "visible";
-        }
+            if(overflow){
+                this.container.style.overflow = "visible";
+            }
 
 
             if(!background && !dimensions){
@@ -69,6 +71,7 @@ const BaseDecorationAlgorithm = {
             this.container.dataset.nature = "algorithm";
             this.container.dataset.algorithm = "decoration";
             this.container.dataset.id = this.id;
+            this.container.id = this.id;
 
             if(reference){
                 this.container.dataset.reference = true;
@@ -83,6 +86,7 @@ const BaseDecorationAlgorithm = {
             this.attachPoint = anchor;
         }
 
+
         if(isNullOrUndefined(this.content) && !isEmpty(content)){
             this.waiting = [];
             this.positioning = [];
@@ -91,18 +95,18 @@ const BaseDecorationAlgorithm = {
             this.content = [];
 
             content.forEach(element => {
-                
                 let render = ContentHandler.call(this, element.render);
 
                 let schemaDim = DimensionHandler.analyseDim(render, element);
 
                 this.itemsDim.set(render.dataset.id, schemaDim);
 
-                let resolved = this.projection.resolveElement(render)
+                let resolved = this.projection.resolveElement(render);
 
                 if(isNullOrUndefined(resolved)){
                     this.waitingRendered = true;
                 }else{
+                    resolved.source.register(this.projection);
                     this.content.push(resolved);
                 }
                
@@ -117,6 +121,7 @@ const BaseDecorationAlgorithm = {
                 if(schemaPos.await){
                     this.positioning.push(schemaPos);
                 }
+
                 if(isNullOrUndefined(schemaDim.holder)){
                     this.container.append(schemaDim.item)
                 }else{
@@ -142,7 +147,6 @@ const BaseDecorationAlgorithm = {
 
     focus(element){
         this.container.focus();
-
     },
 
     focusIn() {
@@ -231,8 +235,7 @@ const BaseDecorationAlgorithm = {
     },
 
     accept(element, dimension, coordinates){
-        console.log("Accepting");
-        console.log(coordinates);
+
         let schemaDim = DimensionHandler.analyseDim(element, {dimension: dimension});
         let schemaPos = DimensionHandler.analysePos(element, {coordinates: coordinates});
 
@@ -349,24 +352,6 @@ const BaseDecorationAlgorithm = {
         this.notifyDimObservers();
     },
 
-    notifyDim(w, h, container){
-        if(this.fixed){
-            return;
-        }
-        this.analyseContentDim();
-
-        let x = Number(container.getAttribute("x"));
-        let y = Number(container.getAttribute("y"));
-        
-        
-        if(isNullOrUndefined(this.width) ||  (this.width < x + w)){
-            this.width = x + w;
-        }
-        if(isNullOrUndefined(this.height) ||  (this.height < y + h)){
-            this.height = y + h;
-        }
-
-    },
 
     clickHandler(target){
         if(this.container.contains(target)){
@@ -383,16 +368,7 @@ const BaseDecorationAlgorithm = {
     },
 
     bindEvents(){
-        if(!isNullOrUndefined(this.content)){
-            this.content.forEach((c) => {
-                if(!isNullOrUndefined(c) && c.object !== "static" && c.object !== "simulation"){
-                    c.registerDimensionsObserver(this);
-                }
-            })
-        }
-
         this.projection.registerHandler("displayed", (id) => {
-
             if(!this.displayed){
                 this.displayed = true;
                 if(!isNullOrUndefined(this.waiting)){
@@ -423,22 +399,21 @@ const BaseDecorationAlgorithm = {
                     this.analyseContentDim();
                 }
 
-                if(!isNullOrUndefined(this.parent) && !isHTMLElement(this.parent.element) && !isHTMLElement(this.parent.container)){
+                /*if(!isNullOrUndefined(this.parent) && !isHTMLElement(this.parent.element) && !isHTMLElement(this.parent.container)){
                     this.parent.notifyDim(this.width, this.height, this.container);
+                }*/
+
+                if(!isNullOrUndefined(this.parent)){
+                    this.parent.updateSize();
                 }
             }
         })
 
         if(this.waitingRendered){
             this.projection.registerHandler("binding", (element) => {
-
-                this.itemsDim.set(element.dataset.id, {await: false, item: element, type: "pure"})                
-
                 this.content.push(this.projection.resolveElement(element));
-    
-                this.analyseContentDim();
             })
-        }       
+        }
     }
 }
 

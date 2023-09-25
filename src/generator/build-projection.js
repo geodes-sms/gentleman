@@ -88,7 +88,7 @@ export function buildProjectionHandler(_options = {}) {
     }
 
     if (options.download) {
-        this.download(result, options.name);
+        this.download(JSON.stringify(result), options.name, "JSON");
     }
 
     delete this.__errors;
@@ -261,7 +261,6 @@ const ElementHanlders = {
 };
 
 function buildElement(element) {
-    console.log(element)
     const contentType = element.getProperty("contentType");
 
     const handler = ElementHanlders[contentType];
@@ -612,7 +611,6 @@ const DynamicHanlders = {
 };
 
 export function buildDynamic(dynamic) {
-    console.log(dynamic);
 
     const elementType = dynamic.getProperty("elementType");
 

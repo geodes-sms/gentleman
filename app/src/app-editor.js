@@ -1,5 +1,4 @@
-import { createUnorderedList, createListItem, getElement, createSpan, hasOwn, findAncestor, isHTMLElement, isNullOrUndefined, isFunction, } from "zenkai";
-import { duplicateTab } from "@utils/index.js";
+import { createUnorderedList, createListItem, getElement, createSpan, hasOwn, findAncestor, isHTMLElement, isNullOrUndefined, isFunction, createParagraph, } from "zenkai";
 import { createEditor } from "@src";
 import { buildConceptHandler, buildProjectionHandler, buildGraphicalHandler } from "@generator/index.js";
 import { ProjectionEditor, ConceptEditor } from "./projection-editor.js";
@@ -36,7 +35,11 @@ const nextId = () => `GE${inc++}`;
 
 export const App = {
     /** @type {HTMLElement} */
+    header: null,
+    /** @type {HTMLElement} */
     menu: null,
+    /** @type {HTMLElement} */
+    body: null,
     /** @type {HTMLElement} */
     editorSection: null,
     /** @type {HTMLElement} */
@@ -217,6 +220,35 @@ export const App = {
 
         return this;
     },
+    /**
+     * Diplays a notification message
+     * @param {string} message 
+     * @param {NotificationType} type 
+     */
+    notify(message, type, time = 4500) {
+        /** @type {HTMLElement} */
+        let notify = createParagraph({
+            class: ["notify"],
+            html: message
+        });
+
+        const CSS_OPEN = "open";
+
+        if (type) {
+            notify.classList.add(type);
+        }
+
+        this.body.append(notify);
+
+        setTimeout(() => {
+            notify.classList.add(CSS_OPEN);
+        }, 50);
+
+        setTimeout(() => {
+            notify.classList.remove(CSS_OPEN);
+            setTimeout(() => { notify.remove(); }, 500);
+        }, time);
+    },
 
     bindModel() {
 
@@ -226,7 +258,9 @@ export const App = {
         //     .then(data => console.log(data));
     },
     bindDOM() {
+        this.header = getElement(`[data-component="header"]`);
         this.menu = getElement(`[data-component="menu"]`);
+        this.body = getElement(`[data-component="body"]`);
         this.editorSection = getElement(`[data-component="editor"]`);
         this.tabSection = getElement(`[data-component="nav"]`);
         this.tabList = getElement(`[data-component="nav-list"]`);
@@ -310,18 +344,20 @@ export const App = {
 
             if (action === "new") {
                 let tab = createTab.call(this, "EX");
-                let config = {
-                    toolbar: [
-                        { "type": "button", "name": "button-export", "action": "export.model", "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--save"] },
-                        { "type": "button", "name": "button-menu", "action": "open.menu", "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--home"] },
-                        { "type": "button", "name": "button-close", "action": "close.editor", "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--close"] },
-                    ]
-                };
 
                 this.addTab(tab, this.createEditor({
-                    config: config,
+                    config: {
+                        toolbar: [
+                            {
+                                "type": "button",
+                                "name": "button-export",
+                                "action": "export.model",
+                                "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--save"]
+                            }
+                        ],
+                    },
                     handlers: {
-                        "export.model": function () { this.export(); },
+                        "export.model": function () { console.log(this); this.export(); },
                         "open.menu": function () { this.home.open(); },
                         "close.editor": function () { this.close(); },
                         "build-concept": function (args) { buildConceptHandler.call(this); },
@@ -329,6 +365,8 @@ export const App = {
                     }
                 }));
                 this.changeTab(tab);
+            } else if (action === "new-template") {
+                this.notify("Cette fonction n'est pas encore implémentée");
             }
         });
 
@@ -475,7 +513,7 @@ const PMODEL__HANDLER = {
 };
 
 const GMODEL__HANDLER = {
-    "build-graphical": function (args) { buildGraphicalHandler.call(this); },
+    "build-graphical": function (args) { return buildGraphicalHandler.call(this); },
     "open-state": function (args) {
         let concept = args[0];
         let projection = this.createProjection(concept, "state");
@@ -542,7 +580,7 @@ const GMODEL__HANDLER = {
 
         window.addInstance(instance);
     },
-    "open-area": function(args) {
+    "open-area": function (args) {
         let concept = args[0];
         let projection = this.createProjection(concept, "area");
 
@@ -564,7 +602,7 @@ const GMODEL__HANDLER = {
 
         window.addInstance(instance);
     },
-    "open-draw": function(args) {
+    "open-draw": function (args) {
         let concept = args[0];
         let projection = this.createProjection(concept, "draw");
 
@@ -719,17 +757,17 @@ function createGraphicEditor() {
         ]).then(async ([GM_CONCEPT, GM_PROJECTION]) => {
             /*GMODEL__CONCEPT = await GM_CONCEPT.json();
             GMODEL__PROJECTION = await GM_PROJECTION.json();*/
-            
-        return Promise.all([
-                fetch("https://geodes.iro.umontreal.ca/gentleman/models/projection-model/concept.json"),
-                fetch("https://geodes.iro.umontreal.ca/gentleman/models/projection-model/projection.json"),
-                fetch("https://geodes.iro.umontreal.ca/gentleman/models/style-model/concept.json"),
-                fetch("https://geodes.iro.umontreal.ca/gentleman/models/style-model/projection.json"),
-            ]).then(async ([PM_CONCEPT, PM_PROJECTION, SM_CONCEPT, SM_PROJECTION]) => {
-                /*PMODEL__CONCEPT = await PM_CONCEPT.json();
-                PMODEL__PROJECTION = await PM_PROJECTION.json();*/
 
-            let editor =  this.createEditor({
+        return Promise.all([
+            fetch("https://geodes.iro.umontreal.ca/gentleman/models/projection-model/concept.json"),
+            fetch("https://geodes.iro.umontreal.ca/gentleman/models/projection-model/projection.json"),
+            fetch("https://geodes.iro.umontreal.ca/gentleman/models/style-model/concept.json"),
+            fetch("https://geodes.iro.umontreal.ca/gentleman/models/style-model/projection.json"),
+        ]).then(async ([PM_CONCEPT, PM_PROJECTION, SM_CONCEPT, SM_PROJECTION]) => {
+            /*PMODEL__CONCEPT = await PM_CONCEPT.json();
+            PMODEL__PROJECTION = await PM_PROJECTION.json();*/
+
+            let editor = this.createEditor({
                 conceptModel: [GMODEL__CONCEPT, PMODEL__CONCEPT, SMODEL__CONCEPT],
                 projectionModel: [GMODEL__PROJECTION, PMODEL__PROJECTION, SMODEL__PROJECTION],
                 config: Object.assign({}, GMODEL__EDITOR),
@@ -738,7 +776,7 @@ function createGraphicEditor() {
 
             let wrapper = Object.create(ProjectionEditor).init(editor);
             this.editorSection.append(wrapper.render());
-            
+
             return editor;
         });
     } else {

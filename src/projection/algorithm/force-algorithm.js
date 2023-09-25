@@ -103,10 +103,9 @@ export const BaseForceAlgorithm = {
         let n = d3.select("#" + this.id);
         this.node = n.selectAll(".node" + this.id).data(this.nodes);
 
-        if(!isNullOrUndefined(this.links)){
+        if(!isNullOrUndefined(this.links) && !isEmpty(this.links)){
             this.link = n.selectAll(".link" + this.id).data(this.links);
         }
-
 
         this.force.start();
 
@@ -118,19 +117,27 @@ export const BaseForceAlgorithm = {
         }
 
         if(value.schema.nature === "prototype"){
-            value.register(this.projection);
-            this.projection.registerHandler("value.changed", (val) => {
-
-                if(value.hasValue()){
-                    for(let i = 0; i < this.nodes.length; i++){
-                        if(this.nodes[i].concept === (value.id)){
-                            this.nodes[i].meta = this.nodes[i].concept;
-                            this.nodes[i].concept = value.getValue(true).id;
-                        }
+            if(value.hasValue()){
+                for(let i = 0; i < this.nodes.length; i++){
+                    if(this.nodes[i].concept === (value.id)){
+                        this.nodes[i].meta = this.nodes[i].concept;
+                        this.nodes[i].concept = value.getValue(true).id;
                     }
                 }
-            
-            })
+            }else{
+                value.register(this.projection);
+                this.projection.registerHandler("value.changed", (val) => {
+                    if(value.hasValue()){
+                        for(let i = 0; i < this.nodes.length; i++){
+                            if(this.nodes[i].concept === (value.id)){
+                                this.nodes[i].meta = this.nodes[i].concept;
+                                this.nodes[i].concept = value.getValue(true).id;
+                            }
+                        }
+                    }
+                
+                })
+            }           
         }
 
         let item =  this.createItem(value, this.schema.tag);
@@ -142,9 +149,6 @@ export const BaseForceAlgorithm = {
         let projection = this.projection.resolveElement(item)
 
         projection.projection.update("displayed");
-
-        projection.registerDimensionsObserver(this);
-
 
         this.content.push(projection);
 
@@ -194,7 +198,6 @@ export const BaseForceAlgorithm = {
             }
             
         }     
-        let rectFire = item.getBoundingClientRect();
 
         this.restart();
     },
@@ -260,6 +263,7 @@ export const BaseForceAlgorithm = {
                 id: arrow.id,
                 indexL: 1
             });
+
         }else{
             inv.length++;
             this.links.push({
@@ -285,28 +289,37 @@ export const BaseForceAlgorithm = {
         this.restart();        
     },
 
-    addDummy(arrow, decorator = false, index){
+    addDummy(arrow, decorator, index){
 
         if(!isNullOrUndefined(decorator)){
             this.container.append(decorator);
             decorator.classList.add("node" + this.id);
             decorator.classList.add("dummy");
+            const rect = decorator.getBBox();
+            this.nodes.push({
+                dummy: true,
+                ref: index,
+                fixed: true,
+                width: rect.width,
+                height: rect.height
+            })
+
         }else{
             let dummy = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             dummy.classList.add("node" + this.id);
             dummy.classList.add("dummy");
             this.container.append(dummy);
+            this.nodes.push({
+                dummy: true,
+                ref: index,
+                fixed: true,
+                width: 10,
+                height: 10
+            })
         }
 
-        const rect = decorator.getBBox();
 
-        this.nodes.push({
-            dummy: true,
-            ref: index,
-            fixed: true,
-            width: rect.width,
-            height: rect.height
-        })
+
     },
 
     addTransLink(arrow, from, to){
@@ -572,16 +585,19 @@ export const BaseForceAlgorithm = {
     },*/
 
     createItem(object, button){
-        const n = button.item;
 
         const item = this.schema.item;
 
+        console.log(item);
+
+
         let itemProjection = this.model.createProjection(object, item);
         itemProjection.optional = true;
-        itemProjection.parent = this.projection;
 
 
         let container = itemProjection.init().render();
+
+        itemProjection.element.parent = this;
 
         this.instances.set(itemProjection.element.source.id, container);
 
@@ -725,7 +741,9 @@ export const BaseForceAlgorithm = {
     },*/
 
     ticked(){
+
         let moving = true;
+
         while(moving){
             if(isEmpty(this.nodes)){
                 break;
@@ -736,6 +754,7 @@ export const BaseForceAlgorithm = {
                 })
             })
         }
+
         let links = this.links;
         let svgArea = this.container;
 
@@ -744,8 +763,8 @@ export const BaseForceAlgorithm = {
         const width = this.width;
         const height = this.height;
 
-        if(!isNullOrUndefined(this.link) ){
 
+        if(!isNullOrUndefined(this.link) && !isEmpty(this.links)){
             this.link.attr("d",
                 function(d){
                     if(d.source === d.target){
@@ -777,7 +796,7 @@ export const BaseForceAlgorithm = {
 
         }
 
-        if(!isNullOrUndefined(this.transLinks)){
+        /*if(!isNullOrUndefined(this.transLinks)){
             this.transLinks.forEach((transLink) => {
                 const { arrow, id, from, to } = transLink;
 
@@ -814,7 +833,7 @@ export const BaseForceAlgorithm = {
                        "A" + transDr + "," + transDr + " 0 0 0," + t.x + "," + t.y)
 
             })
-        }
+        }*/
 
         this.node.attr("x", function(d){
             if(!isNullOrUndefined(d.ref)){
@@ -965,14 +984,20 @@ export const BaseForceAlgorithm = {
     computeShape(container){
         const target = container.querySelector("[data-shape]");
 
+        console.log("ComputingShape");
+        console.log(target);
+
         if(isNullOrUndefined(target)){
             return;
         }
 
-        const rectItem = target.getBoundingClientRect();
+        const rectItem = target.getBBox();
         const rect = container.getBoundingClientRect();
         
         let ratio;
+
+        console.log(rectItem);
+        console.log(rect);
 
         switch(target.tagName){
             case "circle":
@@ -1012,6 +1037,14 @@ export const BaseForceAlgorithm = {
                     type: "polygon",
                     points: points
                 }
+            case "rect":
+                return {
+                    type: "rect",
+                    w: rectItem.width,
+                    h: rectItem.height,
+                    yOff: rectItem.y,
+                    xOff: rectItem.x
+                }
             default:
                 ratio = Number(target.getAttribute("width")) / rectItem.width;
                 const w = rect.width * ratio;
@@ -1045,7 +1078,6 @@ export const BaseForceAlgorithm = {
                 (node.fy + node.height > conc.x - conc.height / 2)){
                 let offW = (node.fx + node.width / 2) - (conc.x - conc.width / 2); 
                 let offH = ((node.fy + node.height / 2) - (conc.y - conc.height / 2)) * 1.1;
-                
                 switch(Math.min(offW, offH)){
                     case offW:
                         conc.x += offW;
@@ -1061,7 +1093,6 @@ export const BaseForceAlgorithm = {
                     ((node.fy + node.height / 2) > (conc.y - conc.height / 2))){
                     let offW = (conc.x + conc.width / 2) - (node.fx - node.width /2);
                     let offH = ((node.fy + node.height / 2) - (conc.y - conc.height / 2) ) * 1.1;
-                    
                     switch(Math.min(offW, offH)){
                         case offW:
                             conc.x -= offW;
@@ -1075,7 +1106,6 @@ export const BaseForceAlgorithm = {
                         (node.fy > conc.y) &&
                         (conc.x + conc.width / 2 > node.fx - node.width / 2) &&
                         (conc.y + conc.height /2 > node.fy - node.height )){
-
                         let offW = (conc.x + conc.width / 2) - (node.fx - node.width /2);
                         let offH = ((conc.y + conc.height / 2) - (node.fy - node.height / 2)) * 1.1;
                         
@@ -1133,7 +1163,6 @@ export const BaseForceAlgorithm = {
                     ((node.y + node.height /2) > (conc.fy - conc.height / 2))){
                     let offW = (conc.fx + conc.width / 2) - (node.x - node.width /2);
                     let offH = ((node.y + node.height /2) - (conc.fy - conc.height / 2) ) * 1.1;
-                    
                     switch(Math.min(offW, offH)){
                         case offW:
                             node.x += offW;
@@ -1149,7 +1178,6 @@ export const BaseForceAlgorithm = {
                         (conc.fy + conc.height /2 > node.y - node.height / 2)){
                         let offW = (conc.fx + conc.width / 2) - (node.x - node.width /2);
                         let offH = ((conc.fy + conc.height / 2) - (node.y - node.height / 2)) * 1.1;
-
                         switch(Math.min(offW, offH)){
                             case offW:
                                 node.x += offW;
@@ -1166,7 +1194,6 @@ export const BaseForceAlgorithm = {
                             ((node.y - node.height / 2) < (conc.fy + conc.height / 2))){
                             let offW = (node.x + node.width / 2) - (conc.fx - conc.width / 2); 
                             let offH = ((conc.fy + conc.height /2) - (node.y - node.height / 2)) * 1.1;
-
                             switch(Math.min(offW, offH)){
                                 case offW:
                                     node.x -= offW;
@@ -1369,6 +1396,32 @@ export const BaseForceAlgorithm = {
         return this;
     },
 
+    updateSize(){
+        for(let i = 0; i < this.nodes.length; i++){
+
+            if(!(this.nodes[i].dummy)){
+                let container = this.instances.get(this.nodes[i].meta || this.nodes[i].concept);
+
+                console.log("UpdatingSize Here?");
+                console.log(container);
+                console.log(this.instances);
+                console.log(this.nodes[i]);
+                console.log(i);
+                console.log(this.nodes);
+    
+    
+                let projection = this.projection.resolveElement(container);
+    
+                this.nodes[i].width = projection.width;
+                this.nodes[i].height = projection.height;
+                this.nodes[i].shape = this.computeShape(container)
+            }
+           
+        }
+        
+        this.restart();
+    },
+
     /*enterHandler(){
         if(this.focused){
             this.interactionsArea.focus();
@@ -1568,14 +1621,16 @@ const BorderHandler = {
 
     getPointRect(source, target, shape){
 
-        let topLeftX = source.x - shape.w / 2;
-        let topLeftY = source.y - shape.h / 2;
+        let topLeftX = source.x - source.width / 2 + shape.xOff;
+        let topLeftY = source.y - source.height / 2 + shape.yOff;
+        let topRightY = topLeftY;
 
-        let topRightX = source.x + shape.w / 2;
-        let topRightY = source.y - shape.h / 2;
+        let topRightX = source.x - source.width / 2 + shape.xOff + shape.w;
+        let botRightY = source.y - source.height / 2 + shape.yOff + shape.h;
 
-        let botRightY = source.y + shape.h / 2;
-
+        console.log(source);
+        console.log(target);
+        console.log(topLeftX, topLeftY, topRightX, topRightY, botRightY);
 
         let baseEq = BorderHandler.getDeq({x: source.x, y: source.y}, {x: target.x, y: target.y});
 
@@ -1620,7 +1675,9 @@ const BorderHandler = {
     },
 
     getPointCircle(source, target, shape){
+
         let dEq = BorderHandler.getDeq({x: source.x, y: source.y}, {x: target.x, y: target.y});
+
 
         let a = dEq.a * dEq.a + 1;
         let b = 2 * dEq.a * dEq.b - 2 * dEq.a * source.y - 2 * source.x;
@@ -1641,8 +1698,7 @@ const BorderHandler = {
         
     },
 
-    computeBorder(source, target){
-
+    computeBorder(source, target){ 
         let schema = {}, answer = {};
 
         switch(source.shape.type){

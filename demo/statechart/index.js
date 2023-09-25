@@ -1,4 +1,4 @@
-//const EDITOR = require('@models/statechart-model/config.json');
+g//const EDITOR = require('@models/statechart-model/config.json');
 const CONCEPT = require('@models/statechart-model/concept.json');
 const PROJECTION = require('@models/statechart-model/projection.json');
 

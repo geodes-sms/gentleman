@@ -1,0 +1,158 @@
+{
+    "type": "concept",
+    "concept": [
+        {
+            "name": "prototype",
+            "nature": "prototype",
+            "attributes": []
+        },
+        
+        {
+            "name": "class",
+            "nature": "concrete",
+            "prototype": "prototype",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "attributes",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "classAttribute"
+                        }
+                    }
+                },
+                {
+                    "name": "methods",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "classMethod"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "string-primitive",
+            "prototype": "prototype",
+            "nature": "concrete",
+            "attributes":[]
+        },
+        {
+            "name": "integer-primitive",
+            "prototype": "prototype",
+            "nature": "concrete",
+            "attributes":[]
+        },
+        {
+            "name": "float-primitive",
+            "prototype": "prototype",
+            "nature": "concrete",
+            "attributes":[]
+        },
+        {
+            "name": "boolean-primitive",
+            "prototype": "prototype",
+            "nature": "concrete",
+            "attributes":[]
+        },
+        {
+            "name": "classAttribute",
+            "nature": "concrete",
+            "root": false,
+            "attributes": [
+                {
+                    "name": "visibility",
+                    "target": {
+                        "name": "visibility",
+                        "default": {
+                            "name": "-"
+                        }
+                    }
+                },
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "type",
+                    "target": { 
+                        "name": "prototype",
+                        "accept": [
+                            { "name": "string-primitive" },
+                            { "name": "integer-primitive" },
+                            { "name": "boolean-primitive" }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "classMethod",
+            "nature": "concrete",
+            "root": false,
+            "attributes": [
+                {
+                    "name": "visibility",
+                    "target": {
+                        "name": "visibility",
+                        "default": {
+                            "name": "-"
+                        }
+                    }
+                },
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "returnType",
+                    "target": { 
+                        "name": "prototype",
+                        "accept": [
+                            { "name": "string-primitive" },
+                            { "name": "integer-primitive" },
+                            { "name": "boolean-primitive" }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "visibility",
+            "nature": "prototype",
+            "attributes": [
+
+            ]
+        },
+        {
+            "name": "-",
+            "nature": "concrete",
+            "prototype": "visibility",
+            "attributes": []
+        },
+        {
+            "name": "+",
+            "nature": "concrete",
+            "prototype": "visibility",
+            "attributes": []
+        },
+        {
+            "name": "#",
+            "nature": "concrete",
+            "prototype": "visibility",
+            "attributes": []
+        }
+    ]
+}

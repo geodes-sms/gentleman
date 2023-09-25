@@ -1,4 +1,4 @@
-import { AnchorHandler } from "./../algorithm/anchor-handler.js";
+import { AnchorHandler } from "../anchor-handler.js";
 import { isNullOrUndefined, isString } from "zenkai";
 import { Arrow } from "./arrow.js";
 import { ContentHandler } from "./../content-handler.js";

@@ -6,10 +6,10 @@ import { ImageStatic } from './image-static.js';
 import { LinkStatic } from './link-static.js';
 import { TextStatic } from './text-static.js';
 import { ButtonStatic } from './button-static.js';
-import { SVGAlt } from './svg-alt.js';
 import { SVGButton } from './button-svg.js';
 import { SVGStatic } from './svg-static.js';
 import { SVGTextStatic } from './svg-text.js';
+import { ProjectionLinkSVGStatic } from './plink_temp.js';
 
 
 var inc = 0;
@@ -116,6 +116,15 @@ const Handler = {
         schema: { value: schema },
         projection: { value: projection },
     }),
+    'svg-link': (model, schema, projection) => Object.create(ProjectionLinkSVGStatic, {
+        object: { value: "static" },
+        name: { value: "plinkSVG-static" },
+        type: { value: "plinkSVG" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+    })
 };
 
 export const StaticFactory = {

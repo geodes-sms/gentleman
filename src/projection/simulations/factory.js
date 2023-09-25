@@ -10,6 +10,9 @@ import { ContentSimulation } from "./content-simulation";
 import { PatternSimulation } from "./pattern-simulation";
 import { MultiSimulation } from "./multi-simulation";
 import { SubPathSimulation } from "./sub-path";
+import { AnchorSimulation } from "./anchor-simulation";
+import { SetSimulation } from "./set-simulation";
+import { TreeSimulation } from "./tree-simulation";
 
 var inc = 0;
 const nextId = () => `algo${inc++}`;
@@ -105,11 +108,40 @@ const Handler = {
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
     }),
+    'anchor': (model, schema, projection) => Object.create(AnchorSimulation, {
+    object: { value: "simulation" },
+    name: { value: "anchor-simulation" },
+    type: { value: "anchor" },
+    id: { value: nextId() },
+    model: { value: model },
+    schema: { value: schema },
+    projection: { value: projection },
+    source: { value: projection.concept, writable: true },
+    }),
+    'set': (model, schema, projection) => Object.create(SetSimulation, {
+        object: { value: "simulation" },
+        name: { value: "set-simulation" },
+        type: { value: "set" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    }),
+    'tree': (model, schema, projection) => Object.create(TreeSimulation, {
+        object: { value: "simulation" },
+        name: { value: "tree-simulation" },
+        type: { value: "tree" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    }),
 };
 
 export const SimulationFactory = {
     createSimulation(model, schema, projection) {
-        console.log(schema);
 
         const { type } = schema;
 
@@ -130,9 +162,6 @@ export const SimulationFactory = {
         if (isNullOrUndefined(simulation.id)) {
             simulation.id = nextId();
         }
-
-        console.log("About to return simu");
-        console.log(simulation);
 
         return simulation;
     }

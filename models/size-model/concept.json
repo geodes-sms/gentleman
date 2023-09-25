@@ -1,0 +1,45 @@
+{
+    "type": "concept",
+    "concept":[
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9ead0",
+            "name": "screen",
+            "nature": "concrete",
+            "root": true,
+            "attributes":[
+                {
+                    "name": "places",
+                    "required": true,
+                    "target":{
+                        "name": "set",
+                        "accept": {
+                            "name": "place"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "32437678-2f78-45e1-ae14-41ee79a9ead4",
+            "name": "place",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "name",
+                    "required": true,
+                    "target":{
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "tokens",
+                    "required": "true",
+                    "target":{
+                        "name": "number",
+                        "default": 0
+                    }
+                }
+            ]
+        }
+    ]
+}

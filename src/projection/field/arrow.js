@@ -9,7 +9,7 @@ import {
 import { StyleHandler } from "./../style-handler.js";
 import { ContentHandler } from "./../content-handler.js";
 import { Field } from "./field.js";
-import { AnchorHandler } from "./../algorithm/anchor-handler.js";
+import { AnchorHandler } from "../anchor-handler.js";
 
 const BaseArrow ={
     init(){
@@ -42,7 +42,7 @@ const BaseArrow ={
 
             this.element.id = this.id;
             this.element.classList.add("field");
-            this.element.tabindex = -1;
+            this.element.tabIndex = -1;
             this.element.dataset["nature"] = "field";
             this.element.dataset["view"] = "arrow";
             this.element.dataset["id"] = this.id;            

@@ -196,7 +196,8 @@ export function ContentHandler(schema, concept, args = {}) {
         return staticContent.render();
     } else if (schema.type === "algorithm"){
         let algorithm = AlgorithmFactory.createAlgo(this.model, schema.algorithm, this.projection);
-        algorithm.init();
+        algorithm.parent = this;
+        algorithm.init(args);
         this.model.registerAlgorithm(algorithm);
 
         return algorithm.render();
@@ -229,7 +230,6 @@ export function ContentHandler(schema, concept, args = {}) {
         if (name.type === "param") {
             name = this.projection.getParam(name.name);
         }
-        console.log(schema);
         let template = this.model.getTemplateSchema(name);
 
         if (template.param) {
@@ -312,10 +312,10 @@ export function ContentHandler(schema, concept, args = {}) {
                 }
 
                 projection.element.parent = this.projection.element;
+  
+                this.projection.update("binding", {projection: projection, id: this.projection.element.id});
 
                 projection.update("displayed");
-  
-                this.projection.update("binding", projection.element.container || projection.element.element);
             }
         };
 

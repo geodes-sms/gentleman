@@ -1,8 +1,10 @@
 import {
     createLabel, createParagraph, createUnorderedList, createListItem, createSpan,
-    createDocFragment, isHTMLElement, isNullOrUndefined, createDiv, createInput, valOrDefault,
+    createDocFragment, isHTMLElement, isNullOrUndefined, createDiv, createInput, valOrDefault, isEmpty, getElement, removeChildren, createI, createButton,
 } from "zenkai";
 import { hide, show, NotificationType, Primitive } from "@utils/index.js";
+import { buildConceptHandler } from "@generator/index.js";
+import { getAttr, getValue, hasValue } from "@generator/utils.js";
 import { ModelConcept } from "./model-concept.js";
 
 
@@ -17,6 +19,8 @@ const getConceptId = () => conceptId++;
  * @returns {boolean}
  */
 const isPrimitive = (name) => Primitive.list().includes(name.toLowerCase());
+
+const getVal = (concept, attr, defValue) => hasValue(concept, attr) ? getValue(concept, attr) : defValue;
 
 export const ConceptEditor = {
     container: null,
@@ -139,7 +143,7 @@ export const GraphicalEditor = {
     bindEvents() {
 
     }
-}
+};
 
 
 const ProjectionAside = {
@@ -325,11 +329,11 @@ const ProjectionAside = {
         }, time);
     },
     refresh() {
-        if (isNullOrUndefined(this.selectedConcept)) {
-            this.editor.header.hide("body");
-        } else {
-            this.editor.header.show("body");
-        }
+        // if (isNullOrUndefined(this.selectedConcept)) {
+        //     this.editor.header.hide("body");
+        // } else {
+        //     this.editor.header.show("body");
+        // }
     },
 
     render() {
@@ -421,6 +425,7 @@ const ProjectionAside = {
 
             let reader = new FileReader();
             reader.onload = (event) => {
+
                 const schema = JSON.parse(reader.result);
                 this.addModel(schema);
             };
@@ -483,33 +488,26 @@ const ConceptAside = {
     /** @type {HTMLElement} */
     body: null,
     /** @type {HTMLElement} */
-    nav: null,
-    /** @type {HTMLElement} */
     model: null,
     /** @type {HTMLElement} */
-    userConceptSection: null,
-    /** @type {HTMLElement} */
-    primitiveConceptSection: null,
+    placeholder: null,
     /** @type {Editor} */
     editor: null,
     /** @type {HTMLElement} */
     uploader: null,
     /** @type {HTMLButtonElement} */
     btnModel: null,
-    /** @type {ModelConcept[]} */
+    /** @type {HTMLButtonElement} */
+    btnBuild: null,
+    /** @type {Map<string,HTMLElement>} */
     concepts: null,
     /** @type {ModelConcept} */
     selectedConcept: null,
-    /** @type {Map<string,HTMLElement>} */
-    tabs: null,
-    /** @type {ModelConcept} */
-    selectedNav: null,
 
     init(model, editor) {
         this.model = model;
         this.editor = editor;
-        this.tabs = new Map();
-        this.concepts = [];
+        this.concepts = new Map();
 
         return this;
     },
@@ -519,88 +517,96 @@ const ConceptAside = {
     hide() {
         hide(this.container);
     },
-    addModel(schema) {
-        this.model = schema;
+    addModelConcept(concept) {
+        const { id, schema } = concept;
+        const nature = concept.getProperty("nature");
 
-        this.model.concept.forEach(c => {
-            this.createConcept(c);
-            // this.concepts.push(concept);
-
-            // this.userConceptSection.append(createDiv({
-            //     class: ["app-concept"]
-            // }, concept.render()));
+        let container = createDiv({
+            class: ["outline-concept"],
+            dataset: {
+                id: id,
+                nature: nature
+            }
         });
 
+        let header = createDiv({
+            class: ["outline-concept-header"]
+        });
 
-        // Primitive.list().forEach(prim => {
-        //     let concept = this.createConcept(prim).init({
-        //         nature: "primitive",
-        //         name: prim
-        //     });
-        //     this.concepts.push(concept);
+        let ico = createI({
+            class: ["outline-concept-nature", `outline-concept-nature--${nature}`],
+            title: nature,
+            dataset: {
+                name: nature,
+            }
+        }, nature[0]);
 
-        //     this.primitiveConceptSection.append(createDiv({
-        //         class: ["app-concept"]
-        //     }, concept.render()));
-        // });
+        let name = createSpan({
+            class: ["outline-concept-name"],
+        }, `Undefined ${nature}`);
+
+        header.append(ico, name);
+
+        let attrs = createUnorderedList({
+            class: ["bare-list", "outline-concept-attrs"],
+        });
+
+        container.append(header, attrs);
+
+        concept.register(this);
+        concept.watch("value.changed", (value, self) => {
+            this.updateModelConcept(concept);
+        });
+
+        this.concepts.set(id, container);
+
+        this.body.append(container);
 
         this.refresh();
     },
-    createConcept(schema) {
-        const { name, nature, root, attributes, properties, base, prototype } = schema;
+    removeModelConcept(id) {
+        if (!this.concepts.has(id)) {
+            console.error("Concept not found");
+            return;
+        }
 
-        const NatureHandler = {
-            "prototype": "prototype-concept",
-            "concrete": "concrete-concept",
-            "derivative": "derivative-concept",
-        };
+        let element = this.concepts.get(id);
+        removeChildren(element).remove();
 
-        const TargetHandler = {
-            "string": "string primitive",
-            "number": "number primitive",
-            "boolean": "boolean primitive",
-            "reference": "reference primitive",
-            "set": "set primitive",
-        };
+        this.refresh();
 
-        let concept = this.editor.createConcept(NatureHandler[nature]);
+        return this;
+    },
+    updateModelConcept(concept) {
+        let container = this.concepts.get(concept.id);
 
-        concept.getAttribute("name").getTarget().setValue(name);
+        let name = getElement('.outline-concept-name', container);
+        let attrs = getElement('.outline-concept-attrs', container);
 
-        if (Array.isArray(attributes)) {
-            let attrs = concept.getAttribute("attributes").getTarget();
-            attributes.forEach(attr => {
-                const { name, target } = attr;
-                attrs.createElement({
-                    attributes: [
-                        {
-                            name: "name",
-                            value: { value: name }
-                        },
-                        {
-                            name: "target",
-                            value: {
-                                value: {
-                                    name: valOrDefault(TargetHandler[target.name], "concept primitive")
-                                }
-                            }
-                        }
-                    ]
-                });
+        name.textContent = getVal(concept, "name", "Undefined");
+        removeChildren(attrs);
+
+        getValue(concept, "attributes").forEach((attribute) => {
+            let attr = createListItem({
+                class: ["outline-concept-attr"],
             });
-        }
 
-        if (root) {
-            concept.getAttribute("root").getTarget().setValue(root);
-        }
+            let name = createSpan({
+                class: ["outline-concept-name"],
+            }, `${getVal(attribute, "name", "Undefined")}`);
 
-        if (base) {
-            concept.getAttribute("base").getTarget().setValue({
-                name: TargetHandler[base]
-            });
-        }
+            attr.append(name);
 
-        let instance = this.editor.createInstance(concept);
+            if (hasValue(attribute, "target")) {
+                let target = getAttr(attribute, "target").target;
+
+                let targetElement = renderTarget(target);
+
+                attr.append(targetElement);
+            }
+
+            attrs.append(attr);
+        });
     },
     clear() {
         this.concepts.forEach(concept => {
@@ -650,33 +656,10 @@ const ConceptAside = {
 
         return true;
     },
-    removeModel() {
-
-    },
-    selectTab(key) {
-        if (isNullOrUndefined(key)) {
-            return false;
+    update(message, value, from) {
+        if (message === "delete") {
+            this.removeModelConcept(from.id);
         }
-
-        if (this.selectedNav === key) {
-            return false;
-        }
-
-        if (this.selectedNav) {
-            const { tab, window } = this.tabs.get(this.selectedNav);
-            tab.classList.remove("selected");
-            hide(window);
-        }
-
-        const { tab, window } = this.tabs.get(key);
-
-        tab.classList.add("selected");
-        this.selectedNav = key;
-
-        show(window);
-    },
-    update() {
-
     },
     /**
      * Diplays a notification message
@@ -708,7 +691,11 @@ const ConceptAside = {
         }, time);
     },
     refresh() {
-
+        if (isEmpty(this.concepts)) {
+            show(this.placeholder);
+        } else {
+            hide(this.placeholder);
+        }
     },
 
     render() {
@@ -728,17 +715,23 @@ const ConceptAside = {
         }
 
         if (!isHTMLElement(this.input)) {
-            this.uploader = createLabel({
-                class: ["app-uploader"]
-            }, [createInput({
-                type: "file",
-                class: ["app-uploader-input", "hidden"],
-                accept: '.json,.jsoncp'
-            }), createSpan({
-                class: ["app-uploader-label"]
-            }, "Upload concepts")]);
+            let title = createSpan({
+                class: ["app-editor-aside-title"]
+            }, "Model");
 
-            this.header.append(this.uploader);
+            this.header.append(title);
+        }
+
+        if (!isHTMLElement(this.btnBuild)) {
+            this.btnBuild = createButton({
+                class: ["btn", "app-editor-header__button"],
+                dataset: {
+                    name: "button-build",
+                    action: "build-concept",
+                }
+            }, "Build");
+
+            this.header.append(this.btnBuild);
         }
 
         if (!isHTMLElement(this.body)) {
@@ -749,39 +742,13 @@ const ConceptAside = {
             fragment.append(this.body);
         }
 
-        if (!isHTMLElement(this.nav)) {
-            this.nav = createUnorderedList({
-                class: ["bare-list", "app-editor-aside-nav"]
+        if (!isHTMLElement(this.placeholder)) {
+            this.placeholder = createParagraph({
+                class: ["empty-text"],
+                text: "No concept declared yet."
             });
 
-            ["User-defined", "Primitive"].forEach(type => {
-                this.nav.append(createListItem({
-                    class: ["app-editor-aside-nav-item"],
-                    dataset: {
-                        "type": "nav",
-                        "name": type.toLowerCase()
-                    }
-                }, type));
-            });
-
-            this.body.append(this.nav);
-        }
-
-        this.userConceptSection = createDiv({
-            class: ["app-editor-aside-body-userconcept", "hidden"]
-        });
-
-        this.primitiveConceptSection = createDiv({
-            class: ["app-editor-aside-body-primitiveconcept", "hidden"]
-        });
-
-        this.tabs.set("user-defined", { tab: this.nav.children[0], window: this.userConceptSection });
-        this.tabs.set("primitive", { tab: this.nav.children[1], window: this.primitiveConceptSection });
-
-        this.body.append(this.userConceptSection, this.primitiveConceptSection);
-
-        if (isNullOrUndefined(this.selectedNav)) {
-            this.selectTab("user-defined");
+            this.body.append(this.placeholder);
         }
 
         if (fragment.hasChildNodes()) {
@@ -795,42 +762,33 @@ const ConceptAside = {
         return this.container;
     },
     bindEvents() {
-        this.uploader.addEventListener('change', (event) => {
-            let file = event.target.files[0];
 
-            let reader = new FileReader();
-            reader.onload = (event) => {
-                const schema = JSON.parse(reader.result);
-                this.addModel(schema);
-            };
-
-            reader.readAsText(file);
-        });
-
-        this.container.addEventListener("click", (event) => {
-            const { target } = event;
-
-            const { type, name } = target.dataset;
-
-            if (type === "nav") {
-                this.selectTab(name);
-            }
-        });
-
-        this.editor.actions.set("create-instance", (element) => {
+        this.editor.actions.set("create-instance", (element) => {        
             const { concept: cname } = element.dataset;
 
-            let concept = this.editor.createConcept(cname); console.log(this.selectedConcept.tag);
-            let projection = this.editor.createProjection(concept, this.selectedConcept.tag);
+            let concept = this.editor.createConcept(cname);
+            let projection = this.editor.createProjection(concept);
             let instance = this.editor.createInstance(concept, projection);
 
-            if (cname === "projection") {
-                let _concept = instance.concept.getAttribute("concept").getTarget();
-                let _name = _concept.getAttribute("name").getTarget();
-                _name.setValue(this.selectedConcept.getName());
-            }
+            this.addModelConcept(concept);
+        });
 
-            this.selectedConcept.addInstance(instance);
+        this.btnBuild.addEventListener('click', (event) => {
+            buildConceptHandler.call(this.editor);
         });
     }
 };
+
+function renderTarget(target) {
+    let prop = `${target.getProperty("cname")}`;
+
+    if (prop === "concept") {
+        return createSpan({
+            class: ["outline-concept-type"],
+        }, `${getVal(target, "concept", "Undefined")}`);
+    }
+
+    return createSpan({
+        class: ["outline-concept-type"],
+    }, `${prop}`);
+}

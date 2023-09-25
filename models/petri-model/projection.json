@@ -1,0 +1,721 @@
+{
+    "type": "projection",
+    "projection":[
+        {
+            "concept": { "name": "petri"},
+            "type": "layout",
+            "tags": [],
+            "projection":{
+                "type": "flex",
+                "orientation": "row",
+                "disposition":[
+                    {
+                        "type": "algorithm",
+                        "algorithm":{
+                            "type": "decoration",
+                            "dimensions":{
+                                "width": 500,
+                                "height": 500
+                            },
+                            "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"496\" height=\"496\"><rect rx=\"3\" ry=\"3\" x=\"2\" y=\"2\" fill=\"transparent\" width=\"496\" height=\"496\" stroke=\"black \" stroke-width=\"2\"></rect></svg>",
+                            "content":[
+                                {   
+                                    "coordinates":{
+                                        "x": 10,
+                                        "y": 10
+                                    },
+                                    "dimension": {
+                                        "type": "pure"
+                                    },
+                                    "render": {
+                                        "type": "attribute",
+                                        "name": "elements",
+                                        "tag": "place_btnG"
+                                    }
+                                },
+                                {   
+                                    "coordinates":{
+                                        "x": 55,
+                                        "y": 10
+                                    },
+                                    "dimension": {
+                                        "type": "pure"
+                                    },
+                                    "render": {
+                                        "type": "attribute",
+                                        "name": "elements",
+                                        "tag": "tr_btnG"
+                                    }
+                                },
+                                {
+                                    "coordinates":{
+                                        "x": 0,
+                                        "y":50
+                                    },
+                                    "dimension":{
+                                        "type": "pure"
+                                    },
+                                    "render":{
+                                        "type": "attribute",
+                                        "name": "elements",
+                                        "tag": "force-elem"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "column",
+                            "disposition":[
+                                {  
+                                    "type": "layout",
+                                    "layout":{
+                                        "type": "flex",
+                                        "orientation": "column",
+                                        "disposition":[
+                                            {
+                                                "kind": "static",
+                                                "type": "text",
+                                                "content": "Places",
+                                                "style":{
+                                                    "css": ["title", "mp-header__title"]
+                                                }
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "elements",
+                                                "tag": "items_textual"
+                                            }
+                                        ]
+                                    }
+                                    
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout":{
+                                        "type": "flex",
+                                        "alignItems": "center",
+                                        "orientation": "row",
+                                        "disposition":[
+                                            {
+                                                "kind": "static",
+                                                "type": "text",
+                                                "content": "Entering arcs",
+                                                "style":{
+                                                    "css": ["title", "mp-header__title"]
+                                                }
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "p-arcs",
+                                                "tag": "btn_txt_p"
+                                            }
+                                        ]                                    
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "p-arcs",
+                                    "tag": "items"
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout":{
+                                        "type": "flex",
+                                        "alignItems": "center",
+                                        "orientation": "row",
+                                        "disposition":[
+                                            {
+                                                "kind": "static",
+                                                "type": "text",
+                                                "content": "Exiting arcs",
+                                                "style":{
+                                                    "css": ["title", "mp-header__title"]
+                                                }
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "t-arcs",
+                                                "tag": "btn_txt_t"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "t-arcs",
+                                    "tag": "items"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["items_textual"],
+            "type": "field",
+            "content":{
+                "type": "list",
+                "list": {
+                    "item": {
+                        "template": { "tag": "elem_txt" }
+                    }
+                },
+                "action": {
+                    "add": false
+                }
+            }
+        },
+        {
+            "concept": { "name": "element" },
+            "tags": ["elem_txt"],
+            "type": "layout",
+            "content":{
+                "type": "flex",
+                "disposition":[
+                    {
+                        "type": "projection",
+                        "placeholder": false,
+                        "bind": "value",
+                        "tag": "elemVal_txt"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "place" },
+            "tags": ["elemVal_txt"],
+            "type": "layout",
+            "projection":{
+                "type": "flex",
+                "orientation": "row",
+                "disposition":[
+                    {
+                        "type": "attribute",
+                        "name": "name",
+                        "tag": "textual__label"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "tokens",
+                        "tag": "textual__label"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "transition" },
+            "tags": ["elemVal_txt"],
+            "type": "layout",
+            "projection":{
+                "type": "flex",
+                "orientation": "row",
+                "disposition":[
+                    {
+                        "type": "attribute",
+                        "name": "name",
+                        "tag": "textual__label"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["textual__label"],
+            "type": "layout",
+            "projection":{
+                "type": "flex",
+                "orientation": "row",
+                "disposition": [
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "Name",
+                        "style":{
+                            "text": {
+                                "font": "Verdana",
+                                "size": {
+                                    "value": 1.2,
+                                    "unit": "em!important"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "type": "field",
+                        "field":{
+                            "type": "text",
+                            "placeholder": "..."
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "number" },
+            "tags": ["textual__label"],
+            "type": "layout",
+            "projection":{
+                "type": "flex",
+                "orientation": "row",
+                "disposition": [
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "Tokens",
+                        "style":{
+                            "text": {
+                                "font": "Verdana",
+                                "size": {
+                                    "value": 11,
+                                    "unit": "px"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "type": "field",
+                        "field":{
+                            "type": "text",
+                            "placeholder": "..."
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["items"],
+            "type": "field",
+            "content":{
+                "type": "list",
+                "list":{
+                    "item": {
+                        "template": { "tag": "item_txt" }
+                    }
+                },
+                "action": {
+                    "add": false
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["btn_txt_p"],
+            "type": "static",
+            "content":{
+                "dimensions":{
+                    "width": 30,
+                    "height": 15
+                },
+                "type": "svg-button",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"15\" viewBox=\"0 0 100 50\"><circle cx=\"20\" cy=\"25\" r=\"10\"></circle><rect x=\"75\" y=\"10\" width=\"10\" height=\"30\"></rect><line x1=\"35\" x2=\"60\" y1=\"25\" y2=\"25\" stroke=\"black\" stroke-width=\"5\"></line><path d=\"M 60 25 L 60 18 L 70 25 L 60 32 Z\"></path></svg>",
+                "action":{
+                    "type": "CREATE"
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["btn_txt_t"],
+            "type": "static",
+            "content":{
+                "dimensions":{
+                    "width": 30,
+                    "height": 15
+                },
+                "type": "svg-button",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"15\" viewBox=\"0 0 100 50\"><circle cx=\"80\" cy=\"25\" r=\"10\"></circle><rect x=\"15\" y=\"10\" width=\"10\" height=\"30\"></rect><line x1=\"30\" x2=\"55\" y1=\"25\" y2=\"25\" stroke=\"black\" stroke-width=\"5\"></line><path d=\"M 55 25 L 55 18 L 65 25 L 55 32 Z\"></path></svg>",
+                "action":{
+                    "type": "CREATE"
+                }
+            }
+        },
+        {
+            "concept": { "name": "p-arc" },
+            "tags": ["item_txt"],
+            "type": "layout",
+            "sibling":{
+                "render":{
+                    "tag": "arc-g",
+                    "rtag": "force-elem"
+                }
+            },
+            "projection":{
+                "type": "flex",
+                "alignItems": "center",
+                "orientation": "row",
+                "disposition":[
+                    {
+                        "type": "attribute",
+                        "name": "from",
+                        "tag": "ref"
+                    },
+                    {
+                        "kind": "static",
+                        "type": "svg",
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"15\" viewBox=\"0 0 100 50\"><line x1=\"30\" x2=\"55\" y1=\"25\" y2=\"25\" stroke=\"black\" stroke-width=\"5\"></line><path d=\"M 55 25 L 55 18 L 65 25 L 55 32 Z\"></path></svg>"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "to",
+                        "tag": "ref"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "p-arc" },
+            "tags": ["arc-g"],
+            "type": "arrow",
+            "content":{
+                "type": "force",
+                "style":{
+                    "srtoke": "black",
+                    "dasharray": null,
+                    "width": 1,
+                    "linecap": "butt",
+                    "end": true
+                },
+                "from": {
+                    "name": "from"
+                },
+                "to": {
+                    "name": "to"
+                }
+            }
+        },
+        {
+            "concept": { "name": "t-arc" },
+            "tags": ["item_txt"],
+            "type": "layout",
+            "sibling":{
+                "render":{
+                    "tag": "arc-g",
+                    "rtag": "force-elem"
+                }
+            },
+            "projection":{
+                "type": "flex",
+                "alignItems": "center",
+                "orientation": "row",
+                "disposition":[
+                    {
+                        "type": "attribute",
+                        "name": "from",
+                        "tag": "ref"
+                    },
+                    {
+                        "kind": "static",
+                        "type": "svg",
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"15\" viewBox=\"0 0 100 50\"><line x1=\"30\" x2=\"55\" y1=\"25\" y2=\"25\" stroke=\"black\" stroke-width=\"5\"></line><path d=\"M 55 25 L 55 18 L 65 25 L 55 32 Z\"></path></svg>"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "to",
+                        "tag": "ref"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "t-arc" },
+            "tags": ["arc-g"],
+            "type": "arrow",
+            "content":{
+                "type": "force",
+                "style":{
+                    "srtoke": "black",
+                    "dasharray": null,
+                    "width": 1,
+                    "linecap": "butt",
+                    "end": true
+                },
+                "from": {
+                    "name": "from"
+                },
+                "to": {
+                    "name": "to"
+                }
+            }
+        },
+        {
+            "concept": { "name": "reference" },
+            "tags": ["ref"],
+            "type": "field",
+            "content":{
+                "type": "choice",
+                "choice": {
+                    "option": {
+                        "template": { "tag": "choice" },
+                        "style": {
+                            "css": ["select-choice__list-option"]
+                        }
+                    },
+                    "style": {
+                        "css": ["select-choice__list"]
+                    }
+                },
+                "expanded": false,
+                "input": false,
+                "style": {
+                    "css": ["select-choice"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "place" },
+            "tags": ["choice"],
+            "type": "layout",
+            "projection": {
+                "type": "wrap",
+                "disposition": [
+                    {   
+                        "kind": "static",
+                        "type": "text",
+                        "content": "Pl"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "transition" },
+            "tags": ["choice"],
+            "type": "layout",
+            "projection": {
+                "type": "wrap",
+                "disposition": [
+                    {   
+                        "kind": "static",
+                        "type": "text",
+                        "content": "Tr"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["force-elem"],
+            "type": "algorithm",
+            "rtag": "force-elem",
+            "content":{
+                "type": "force",
+                "dimensions": {
+                    "width": 500,
+                    "height": 500
+                },
+                "force":{
+                    "intensity": -300,
+                    "linkval": 300
+                },
+                "item": "force-item"
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["place_btnG"],
+            "type": "algorithm",
+            "content":{
+                "type": "decoration",
+                "dimensions":{
+                    "width": 30,
+                    "height": 30
+                },
+                "content":[
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"30\"><circle r=\"12\" cx=\"15\" cy=\"15\" stroke=\"black\" stroke-width=\"3\" fill=\"white\"></circle><circle r=\"2\" cx=\"15\" cy=\"10\" stroke=\"black\"></circle><circle r=\"2\" cx=\"10\" cy=\"17.5\" stroke=\"black\"></circle><circle r=\"2\" cx=\"20\" cy=\"17.5\" stroke=\"black\"></circle></svg>",
+                            "action":{
+                                "type": "CREATES",
+                                "value": "place"
+                            }
+                        }
+                    }
+                ]
+            
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["tr_btnG"],
+            "type": "algorithm",
+            "content":{
+                "type": "decoration",
+                "dimensions":{
+                    "width": 30,
+                    "height": 30
+                },
+                "content":[
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"30\"><rect width=\"10\" height=\"30\" data-shape=\"rect\"></rect></svg>",
+                            "action":{
+                                "type": "CREATES",
+                                "value": "transition"
+                            }
+                        }
+                    }
+                ]
+            
+            }
+        },
+        {
+            "concept": { "name": "element" },
+            "tags": ["force-item"],
+            "type": "algorithm",
+            "content":{
+                "type": "decoration",
+                "dimensions":{
+                    "type": "wrap"
+                },
+                "content":[
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates":{
+                            "x": 0,
+                            "y": 0
+                        },
+                        "render":{
+                            "type": "projection",
+                            "bind": "value",
+                            "placeholder": false,
+                            "tag": "force-item"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "place" },
+            "tags": ["force-item"],
+            "type": "algorithm",
+            "content":{
+                "type": "decoration",
+                "dimensions":{
+                    "type": "wrap"
+                },
+                "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"30\"><circle data-shape=\"circle\" data-adapter=\"circle\" cx=\"15\" cy=\"15\" r=\"13\" stroke=\"black\" stroke-width=\"2\" fill=\"transparent\"></circle></svg>",
+                "content":[
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 15,
+                            "y": 15
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "tokens",
+                            "tag": "p-setting"
+                        }
+                    }
+                ]
+            
+            }
+        },
+        {
+            "concept": { "name": "number" },
+            "tags": ["p-setting"],
+            "type": "field",
+            "content":{
+                "type": "svg",
+                "style":{
+                    "font": "Segoe UI",
+                    "weight": 500,
+                    "size":12,
+                    "anchor": "middle",
+                    "baseline": "middle"
+                }
+            }
+
+        },
+        {
+            "concept": { "name": "transition" },
+            "tags": ["force-item"],
+            "type": "algorithm",
+            "content":{
+                "type": "decoration",
+                "overflow": true,
+                "dimensions":{
+                    "width": 30,
+                    "height": 30
+                },
+                "content":[
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"30\"><rect width=\"10\" height=\"30\" data-shape=\"rect\"></rect></svg>"
+                        }
+                    },
+                    {
+                        "dimension":{
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 5,
+                            "y": 35
+                        },
+                        "render":{
+                            "type": "attribute",
+                            "name": "name",
+                            "tag": "nm-g"
+                        }
+                    }
+                ]
+            
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["nm-g"],
+            "type": "field",
+            "content":{
+                "type": "svg",
+                "readonly": false,
+                "placeholder": "Author",
+                "style":{
+                    "anchor": "middle",
+                    "baseline": "hanging",
+                    "font": "Verdana",
+                    "size": 12,
+                    "fill": "black",
+                    "weight": 500
+                }
+            }
+        }
+    ]
+}

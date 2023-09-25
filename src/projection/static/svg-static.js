@@ -19,16 +19,12 @@ const BaseSVGStatic = {
         return this.element;
     },
 
-    focusIn(){
-
-    },
-
-    focusOut(){
-
-    },
-
-    clickHandler(target){
-
+    bindEvents(){
+        this.projection.registerHandler("displayed", () => {
+            if(this.parent.displayed){
+                this.parent.updateSize();
+            }
+        })
     }
 }
 

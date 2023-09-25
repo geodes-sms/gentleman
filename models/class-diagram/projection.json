@@ -1,0 +1,1074 @@
+{
+    "type": "projection",
+    "projection": [
+        {
+            "concept": { "name": "classDiagram" },
+            "tags": [],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "wrap": "myContainer",
+                    "speed": 1,
+                    "content":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1500\" height=\"1200\"><rect data-myContainer=\"here\" x=\"0\" y=\"0\" fill=\"white\" width=\"1500\" height=\"1200\"></rect></svg>",
+                    "padding": 0
+                },
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 20,
+                            "y": 10
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "classes",
+                            "tag": "class_btn"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 40
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "classes",
+                            "tag": "class_force"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": [ "class_btn" ],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"15\"><rect x=\"0.5\" y=\"0.5\" stroke=\"black\" stroke-width=\"1\" width=\"29\" height=\"14\" fill=\"#d9d7d7\"></rect><text style=\"dominant-baseline:middle;\" text-anchor=\"middle\" x=\"15\" y=\"7.5\" font-family=\"Segoe UI\" font-size=\"12\">Class</text></svg>",
+                            "action": {
+                                "type": "CREATE",
+                                "value": "class"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["class_force"],
+            "type": "algorithm",
+            "content": {
+                "type": "force",
+                "dimensions": {
+                    "width": 1500,
+                    "height": 800
+                },
+                "force": {
+                    "intensity": -400,
+                    "edgeDist": 200
+                },
+                "list": {
+                    "item": {
+                        "template": {
+                            "tag": "default"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "class" },
+            "tags": ["default"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "wrap": "myContainer",
+                    "speed": 1,
+                    "padding": 0,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"190\" height=\"400\"><rect data-myContainer=\"here\" x=\"1.25\" y=\"1.25\" width=\"187.5\" height=\"397.5\" fill=\"#d9d7d7\" stroke=\"black\" stroke-width=\"2.5\"></rect></svg>"
+                },
+                "overlap": {
+                    "orientation": "column",
+                    "spacing": 0,
+                    "absolute": true
+                },
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "name",
+                            "tag": "nm_str"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 10,
+                            "y": 10
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-link",
+                            "tag": "rel-view",
+                            "discardable": true,
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\"><circle fill=\"#2dab1a\" cx=\"10\" cy=\"10\" r=\"10\"></circle><text x=\"10\" y=\"10\" font-size=\"12\" style=\"dominant-baseline:middle;\" text-anchor=\"middle\" font-family=\"Segoe UI\">R</text></svg>"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 52.5
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "attributes",
+                            "tag": "attribute_set"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 225
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "methods",
+                            "tag": "method_set"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "type": "algorithm",
+            "tags": ["method_set"],
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "padding": 2.5,
+                    "wrap": "myContainer",
+                    "speed": 1,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"190\" height=\"175\"><rect data-myContainer=\"here\" x=\"1.25\" y=\"1.25\" width=\"187.5\" height=\"172.5\" fill=\"#d9d7d7\" stroke=\"black\" stroke-width=\"2.5\"></rect></svg>"
+                },
+                "content": [
+                    {
+                        "coordinates" : {
+                            "x": 2.5,
+                            "y": 2.5
+                        },
+                        "dimension": { 
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\"><rect x=\"0.5\" y=\"0.5\" stroke=\"#e5e4e2\" fill=\"#555\" stroke-width=\"1\" width=\"9\" height=\"9\"></rect><line x1=\"5\" y1=\"1\" x2=\"5\" y2=\"9\" stroke-width=\"1\" stroke=\"#e5e4e2\"></line><line x1=\"1\" y1=\"5\" x2=\"9\" y2=\"5\" stroke-width=\"1\" stroke=\"#e5e4e2\"></line></svg>",
+                            "action": {
+                                "type": "CREATE",
+                                "value": "classMethod"
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 3.5,
+                            "y": 13.5
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "pattern",
+                                "anchor": {
+                                    "first": {
+                                        "x": 0,
+                                        "y": 0
+                                    },
+                                    "next": {
+                                        "x": 0,
+                                        "y": 16
+                                    }
+                                },
+                                "list": {
+                                    "item": {
+                                        "template": "meth_default"
+                                    },
+                                    "option": {
+                                        "padding": 3
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ],
+                "meet": "meetW"
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "type": "algorithm",
+            "tags": ["attribute_set"],
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "padding": 2.5,
+                    "wrap": "myContainer",
+                    "speed": 1,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"190\" height=\"175\"><rect data-myContainer=\"here\" x=\"1.25\" y=\"1.25\" width=\"187.5\" height=\"172.5\" fill=\"#d9d7d7\" stroke=\"black\" stroke-width=\"2.5\"></rect></svg>"
+                },
+                "content": [
+                    {
+                        "coordinates" : {
+                            "x": 2.5,
+                            "y": 2.5
+                        },
+                        "dimension": { 
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\"><rect x=\"0.5\" y=\"0.5\" stroke=\"#e5e4e2\" fill=\"#555\" stroke-width=\"1\" width=\"9\" height=\"9\"></rect><line x1=\"5\" y1=\"1\" x2=\"5\" y2=\"9\" stroke-width=\"1\" stroke=\"#e5e4e2\"></line><line x1=\"1\" y1=\"5\" x2=\"9\" y2=\"5\" stroke-width=\"1\" stroke=\"#e5e4e2\"></line></svg>",
+                            "action": {
+                                "type": "CREATE",
+                                "value": "classAttribute"
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 3.5,
+                            "y": 13.5
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "pattern",
+                                "anchor": {
+                                    "first": {
+                                        "x": 0,
+                                        "y": 0
+                                    },
+                                    "next": {
+                                        "x": 0,
+                                        "y": 16
+                                    }
+                                },
+                                "list": {
+                                    "item": {
+                                        "template": "attr_default"
+                                    },
+                                    "option": {
+                                        "padding": 3
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ],
+                "meet": "meetW"
+            }
+        },
+        {
+            "concept": { "name": "classMethod" },
+            "tags": ["attr_default"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"17\"><rect data-myContainer=\"here\" fill=\"transparent\"></rect></svg>",
+                    "wrap": "myContainer",
+                    "speed": 1,
+                    "padding": 0
+                },
+                "overlap": {
+                    "orientation": "row",
+                    "spacing": 0,
+                    "absolute": true 
+                },
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 1,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "visibility",
+                            "tag": "vis_default"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 2,
+                            "y": 8.5
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "name",
+                            "tag": "attr_name"
+                        }
+                    },
+                    {
+                        "coordinates": { 
+                            "x": 3,
+                            "y": 7.5
+                        },
+                        "dimension": { 
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-text",
+                            "content": "():",
+                            "baseline": "middle",
+                            "anchor": "start",
+                            "style":{
+                                "font": "Segoe UI",
+                                "size": 12,
+                                "fill": "black",
+                                "weight": false
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 4,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "returnType",
+                            "tag": "choice"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "classAttribute" },
+            "tags": ["attr_default"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"17\"><rect data-myContainer=\"here\" fill=\"transparent\"></rect></svg>",
+                    "wrap": "myContainer",
+                    "speed": 1,
+                    "padding": 0
+                },
+                "overlap": {
+                    "orientation": "row",
+                    "spacing": 0,
+                    "absolute": true 
+                },
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 1,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "visibility",
+                            "tag": "vis_default"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 2,
+                            "y": 8.5
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "name",
+                            "tag": "attr_name"
+                        }
+                    },
+                    {
+                        "coordinates": { 
+                            "x": 3,
+                            "y": 7.5
+                        },
+                        "dimension": { 
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-text",
+                            "content": ":",
+                            "baseline": "middle",
+                            "anchor": "start",
+                            "style":{
+                                "font": "Segoe UI",
+                                "size": 12,
+                                "fill": "black",
+                                "weight": false
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 4,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "type",
+                            "tag": "choice"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "visibility" },
+            "tags": ["vis_default"],
+            "type": "field",
+            "content": {
+                "type": "svg-switch",
+                "choice": {
+                    "option": {
+                        "template": {
+                            "tag": "choice"
+                        }
+                    }
+                }        
+            }
+        },
+        {
+            "concept": { "name": "-" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "speed": 1,
+                    "wrap": "myContainer",
+                    "padding": 0,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"16\"><rect data-myContainer=\"here\" fill=\"transparent\" width=\"5\" height=\"16\"></rect></svg>"
+                },  
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 2.5,
+                            "y": 8
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-text",
+                            "content": "-",
+                            "baseline": "middle",
+                            "anchor": "middle",
+                            "style":{
+                                "font": "Segoe UI",
+                                "size": 12,
+                                "fill": "black",
+                                "weight": false
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "+" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "speed": 1,
+                    "wrap": "myContainer",
+                    "padding": 0,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"16\"><rect data-myContainer=\"here\" fill=\"transparent\" width=\"5\" height=\"16\"></rect></svg>"
+                },  
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 2.5,
+                            "y": 8
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-text",
+                            "content": "+",
+                            "baseline": "middle",
+                            "anchor": "middle",
+                            "style":{
+                                "font": "Segoe UI",
+                                "size": 12,
+                                "fill": "black",
+                                "weight": false
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "#" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "speed": 1,
+                    "wrap": "myContainer",
+                    "padding": 0,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"16\"><rect data-myContainer=\"here\" fill=\"transparent\" width=\"5\" height=\"16\"></rect></svg>"
+                },  
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 2.5,
+                            "y": 8
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-text",
+                            "content": "#",
+                            "baseline": "middle",
+                            "anchor": "middle",
+                            "style":{
+                                "font": "Segoe UI",
+                                "size": 12,
+                                "fill": "black",
+                                "weight": false
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["nm_str"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"190\" height=\"52.5\"><rect data-myContainer=\"here\" x=\"0.5\" y=\"0.5\" fill=\"transparent\" width=\"190\" height=\"52.5\"></rect></svg>",
+                    "padding": 0,
+                    "speed": 1,
+                    "wrap": "myContainer"
+                },
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 95,
+                            "y": 27.25
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "field",
+                            "field": {
+                                "type": "svg",
+                                "readonly": false,
+                                "placeholder": "ClassName",
+                                "multiline": true,
+                                "anchor": "middle",
+                                "baseline": "middle",
+                                "style":{
+                                    "font": "Segoe UI",
+                                    "size": 12,
+                                    "fill": "black",
+                                    "weight": false
+                                } 
+                            }
+                        }
+                    }                    
+                ]
+            }
+        },
+        
+        {
+            "concept": { "name": "string" },
+            "tags": ["attr_name"],
+            "type": "field",
+            "content":{
+                "type": "svg",
+                "readonly": false,
+                "placeholder": "AttributeName",
+                "multiline": true,
+                "anchor": "start",
+                "baseline": "middle",
+                "style":{
+                    "baseline": "middle",
+                    "font": "Segoe UI",
+                    "size": 12,
+                    "fill": "black",
+                    "weight": false
+                } 
+            }
+        },
+        {
+            "concept": { "name": "prototype" },
+            "tags": ["choice"],
+            "type": "field",
+            "content": {
+                "type": "svg-choice",
+                "closeable": true,
+                "direction": "vertical",
+                "choice": {
+                    "option": {
+                        "template": {
+                            "tag": "choice"
+                        }
+                    }
+                },
+                "preserve":{
+                    "multiline": false,
+                    "padding": 0,
+                    "speed": 1,
+                    "placeholder": "typeName",
+                    "tag": "choice-selection"
+                },
+                "icon": false
+            }
+        },
+        {
+            "concept": { "name": "#" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "speed": 1,
+                    "wrap": "myContainer",
+                    "padding": 0,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"16\"><rect data-myContainer=\"here\" fill=\"transparent\" width=\"5\" height=\"16\"></rect></svg>"
+                },  
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 2.5,
+                            "y": 8
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-text",
+                            "content": "String",
+                            "baseline": "middle",
+                            "anchor": "middle",
+                            "style":{
+                                "font": "Segoe UI",
+                                "size": 12,
+                                "fill": "black",
+                                "weight": false
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string-primitive" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "speed": 1,
+                    "wrap": "myContainer",
+                    "padding": 3,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"16\"><rect data-myContainer=\"here\" fill=\"#d9d7d7\" width=\"5\" height=\"16\"></rect></svg>"
+                },  
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 2.5,
+                            "y": 8
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-text",
+                            "content": "String",
+                            "baseline": "middle",
+                            "anchor": "middle",
+                            "style":{
+                                "font": "Segoe UI",
+                                "size": 12,
+                                "fill": "black",
+                                "weight": false
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string-primitive" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "speed": 1,
+                    "wrap": "myContainer",
+                    "padding": 0,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"16\"><rect data-myContainer=\"here\" fill=\"#d9d7d7\" width=\"5\" height=\"16\"></rect></svg>"
+                },  
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 2.5,
+                            "y": 8
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-text",
+                            "content": "String",
+                            "baseline": "middle",
+                            "anchor": "middle",
+                            "style":{
+                                "font": "Segoe UI",
+                                "size": 12,
+                                "fill": "black",
+                                "weight": false
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "integer-primitive" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "speed": 1,
+                    "wrap": "myContainer",
+                    "padding": 3,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"16\"><rect data-myContainer=\"here\" fill=\"#d9d7d7\" width=\"5\" height=\"16\"></rect></svg>"
+                },  
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 2.5,
+                            "y": 8
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-text",
+                            "content": "Int",
+                            "baseline": "middle",
+                            "anchor": "middle",
+                            "style":{
+                                "font": "Segoe UI",
+                                "size": 12,
+                                "fill": "black",
+                                "weight": false
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "integer-primitive" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "speed": 1,
+                    "wrap": "myContainer",
+                    "padding": 0,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"16\"><rect data-myContainer=\"here\" fill=\"#d9d7d7\" width=\"5\" height=\"16\"></rect></svg>"
+                },  
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 2.5,
+                            "y": 8
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-text",
+                            "content": "Int",
+                            "baseline": "middle",
+                            "anchor": "middle",
+                            "style":{
+                                "font": "Segoe UI",
+                                "size": 12,
+                                "fill": "black",
+                                "weight": false
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "float-primitive" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "speed": 1,
+                    "wrap": "myContainer",
+                    "padding": 3,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"16\"><rect data-myContainer=\"here\" fill=\"#d9d7d7\" width=\"5\" height=\"16\"></rect></svg>"
+                },  
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 2.5,
+                            "y": 8
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-text",
+                            "content": "Float",
+                            "baseline": "middle",
+                            "anchor": "middle",
+                            "style":{
+                                "font": "Segoe UI",
+                                "size": 12,
+                                "fill": "black",
+                                "weight": false
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "float-primitive" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "speed": 1,
+                    "wrap": "myContainer",
+                    "padding": 0,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"16\"><rect data-myContainer=\"here\" fill=\"#d9d7d7\" width=\"5\" height=\"16\"></rect></svg>"
+                },  
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 2.5,
+                            "y": 8
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-text",
+                            "content": "Float",
+                            "baseline": "middle",
+                            "anchor": "middle",
+                            "style":{
+                                "font": "Segoe UI",
+                                "size": 12,
+                                "fill": "black",
+                                "weight": false
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "boolean-primitive" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "speed": 1,
+                    "wrap": "myContainer",
+                    "padding": 3,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"16\"><rect data-myContainer=\"here\" fill=\"#d9d7d7\" width=\"5\" height=\"16\"></rect></svg>"
+                },  
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 2.5,
+                            "y": 8
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-text",
+                            "content": "Float",
+                            "baseline": "middle",
+                            "anchor": "middle",
+                            "style":{
+                                "font": "Segoe UI",
+                                "size": 12,
+                                "fill": "black",
+                                "weight": false
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "boolean-primitive" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "speed": 1,
+                    "wrap": "myContainer",
+                    "padding": 0,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"16\"><rect data-myContainer=\"here\" fill=\"#d9d7d7\" width=\"5\" height=\"16\"></rect></svg>"
+                },  
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 2.5,
+                            "y": 8
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-text",
+                            "content": "Float",
+                            "baseline": "middle",
+                            "anchor": "middle",
+                            "style":{
+                                "font": "Segoe UI",
+                                "size": 12,
+                                "fill": "black",
+                                "weight": false
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "class" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptive",
+                "background": {
+                    "speed": 1,
+                    "wrap": "myContainer",
+                    "padding": 0,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"16\"><rect data-myContainer=\"here\" fill=\"#d9d7d7\" width=\"5\" height=\"16\"></rect></svg>"
+                },  
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 2.5,
+                            "y": 8
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "name",
+                            "tag": "nm_str"
+                        }
+                    }
+                ]
+            }
+        }        
+    ]
+}

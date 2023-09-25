@@ -302,6 +302,7 @@ const _SetConcept = {
         return this;
     },
     createElement(_value) {
+
         let value = this.model.getValue(_value);
 
         const options = {
@@ -313,6 +314,7 @@ const _SetConcept = {
         const element = this.model.createConcept(this.accept, options);
 
         this.addElement(element);
+
 
         return element;
     },

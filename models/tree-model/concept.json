@@ -1,0 +1,86 @@
+{
+    "type": "concept",
+    "concept":[
+        {
+            "id": "a100",
+            "nature": "concrete",
+            "name": "mindmap",
+            "root": true,
+            "attributes":[
+                {
+                    "name": "subject",
+                    "target": {
+                        "name": "centraltopic"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "a101",
+            "name": "centraltopic",
+            "nature": "concrete",
+            "prototype": "topic",
+            "root": false,
+            "attributes":[
+                {
+                    "name": "maintopics",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "maintopic"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "p100",
+            "name": "topic",
+            "nature": "prototype",
+            "attributes":[
+                {
+                    "name": "subject",
+                    "target":{
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "a102",
+            "name": "maintopic",
+            "nature": "concrete",
+            "prototype": "topic",
+            "root": false,
+            "attributes":[
+                {
+                    "name": "subtopics",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "subtopic"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "a103",
+            "name": "subtopic",
+            "nature": "concrete",
+            "prototype": "topic",
+            "root": false,
+            "attributes":[
+                {
+                    "name": "subtopics",
+                    "target":{
+                        "name": "set",
+                        "accept":{
+                            "name": "subtopic"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

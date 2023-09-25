@@ -159,8 +159,8 @@ const Menu = {
         this.tabs = new Map();
         this.tabs.set("file", "File");
         this.tabs.set("config", "Config");
-        this.tabs.set("data", "Data");
-        this.tabs.set("build", "Build");
+        // this.tabs.set("data", "Data");
+        // this.tabs.set("build", "Build");
         this.currentTab = "file";
 
         return this;
@@ -200,12 +200,12 @@ const Menu = {
         this.fileIO = createFileIO.call(this);
         this.config = createFileConfig.call(this);
         this.dataSettings = createDataSettings.call(this);
-        this.buildSettings = createBuildSettings.call(this);
+        // this.buildSettings = createBuildSettings.call(this);
 
         this.window.append(this.fileIO.render());
         this.window.append(this.config.render());
         this.window.append(this.dataSettings.render());
-        this.window.append(this.buildSettings.render());
+        // this.window.append(this.buildSettings.render());
 
         this.selectTab(this.currentTab);
 
@@ -228,12 +228,12 @@ const Menu = {
             this.fileIO.show();
             this.config.hide();
             this.dataSettings.hide();
-            this.buildSettings.hide();
+            // this.buildSettings.hide();
         } else if (name === "config") {
             this.config.show();
             this.fileIO.hide();
             this.dataSettings.hide();
-            this.buildSettings.hide();
+            // this.buildSettings.hide();
         }
 
         if (this.activeTab) {

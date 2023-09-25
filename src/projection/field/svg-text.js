@@ -16,7 +16,7 @@ const BaseSvgText = {
 
     render(){
         
-        const { placeholder, style, readonly, breakDown = false} = this.schema;
+        const { placeholder, style, readonly, breakDown = false, linebreak = false} = this.schema;
 
         if(isNullOrUndefined(this.element)){
 
@@ -24,7 +24,6 @@ const BaseSvgText = {
 
             this.element.id = this.id;
             this.element.classList.add("field");
-            this.element.tabindex = -1;
 
             this.element.dataset.nature = "field";
             this.element.dataset.view = "svg";
@@ -39,14 +38,18 @@ const BaseSvgText = {
             this.content = placeholder;
         }
 
-        if(breakDown){
-            this.breakDown = breakDown;
+        if(isNullOrUndefined(this.start)){
+            this.start = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+            this.start.textContent = this.content;
+            this.element.append(this.start);
         }
 
-        if(this.breakDown){
-            this.element.textContent = this.content.substring(0, breakDown);
-        }else{
-            this.element.textContent = this.content;
+        if(linebreak){
+            this.linebreak = linebreak;
+        }
+
+        if(!readonly){
+            this.element.tabIndex = -1;
         }
         
 
@@ -84,8 +87,6 @@ const BaseSvgText = {
         }else{
             this.char = this.element.getStartPositionOfChar(target);
         }
-
-        /*this.svg.append(circle);*/    
         
         this.createCursor();
 
@@ -116,6 +117,8 @@ const BaseSvgText = {
         }else{
             this.source.setValue(this.content);
         }
+        
+        this.parent.updateSize();
     },
 
     addListeners(){
@@ -390,11 +393,9 @@ const BaseSvgText = {
     },
 
     focusOut(){
-        console.log("SwitchOff");
         if(!this.readonly){
-            console.log("SwitchOff");
             this.switchOff();
-            this.setValue(this.content);
+            //this.setValue(this.content);
         }
     },
 
