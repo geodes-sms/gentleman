@@ -598,13 +598,7 @@ const Projection = {
             container = this.render();
         }
 
-        currentContainer.replaceWith(container);
-
-        this.element = this.resolveElement(container);
-
-        if (this.element.type === "svg") {
-            this.element.update();
-        }
+        currentContainer.replaceWith(container);2
 
         // if (this.parent) {
         //     this.parent.update("view.changed", container, this);

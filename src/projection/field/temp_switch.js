@@ -229,8 +229,6 @@ const BaseSwitchField = {
     bindEvents(){
         this.projection.registerHandler("displayed", () => {
 
-
-            console.log("Switch displayed");
             if(!this.parent.displayed){
                 return;
             }

@@ -134,7 +134,6 @@ const BaseAdaptiveAlgorithm = {
             return;
         }
 
-
         if(this.displayed){
             return;
         }
@@ -176,7 +175,9 @@ const BaseAdaptiveAlgorithm = {
     },
 
     focus(){
-
+        if(!this.displayed){
+            this.display();
+        }
     },
 
     focusIn(){
