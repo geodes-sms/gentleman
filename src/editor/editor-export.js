@@ -137,12 +137,12 @@ export const EditorExport = {
     toJSON() {
         const { conceptModel, projectionModel } = this.editor;
 
-        const result = JSON.stringify({
+        const result = {
             "type": "model",
             "concept": conceptModel.schema,
             "projection": projectionModel.schema,
             "values": conceptModel.export(),
-        });
+        };
 
         this.editor.download(result, `${this.outputName.value}.json`, "JSON");
     },

@@ -59,11 +59,11 @@ export function buildConceptHandler(_options = {}) {
     this.notify("The concept model was <strong>successfully</strong> built", NotificationType.SUCCESS, 2000);
 
     if (options.download) {
-        this.download(JSON.stringify( {
+        this.download({
             type: "concept",
             concept: result,
             definition: conceptModel.export()
-        }), options.name, "JSON");
+        }, options.name, "JSON");
     }
 
     delete this.__errors;

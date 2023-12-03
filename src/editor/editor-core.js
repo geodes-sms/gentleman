@@ -300,7 +300,21 @@ const EditorCore = {
             window.URL.revokeObjectURL(link.href);
         }
 
-        var bb = new Blob([JSON.stringify(obj)], { type: MIME_TYPE });
+        var prettyPrint = "";
+
+        // Is obj already a valid string ?
+        // If yes => download
+        // Else   => pretty print it in JSON format
+        if (typeof obj === 'string' || obj instanceof String) {
+            prettyPrint = obj;
+        }
+        else {
+            prettyPrint = JSON.stringify(obj, undefined, 2);
+            // https://stackoverflow.com/a/45594892
+            // https://stackoverflow.com/a/7220510
+        }
+
+        var bb = new Blob([prettyPrint], { type: MIME_TYPE });
 
         Object.assign(link, {
             download: name,
