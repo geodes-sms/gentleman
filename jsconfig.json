@@ -11,7 +11,7 @@
         "./src/*"
       ],
       "@editor/*": [
-        ".src/editor/*"
+        "./src/editor/*"
       ],
       "@model/*": [
         "./src/model/*"

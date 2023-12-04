@@ -4,5 +4,6 @@ build
 .DS_STORE
 .vscode
 .nyc_output
+.idea
 coverage
 *.lcov
