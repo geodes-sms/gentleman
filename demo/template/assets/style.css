@@ -33,5 +33,16 @@
     font-size: 15px;
     line-height: 25px;
 }
-
+iframe {
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    z-index: 100;
+    border: none;
+    width: 80%;
+    background-color: white;
+    height: 80%;
+    box-shadow: 0 10px 30px #000;
+    border-radius: 10px;
+}
 

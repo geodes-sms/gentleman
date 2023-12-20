@@ -29,6 +29,40 @@ const Model = {
 
 const modelName = Model.TT;
 
+document.addEventListener("DOMContentLoaded", function() {
+
+    console.log("Let's inject that.");
+
+    setTimeout(() => {
+
+        var parent = document.getElementsByClassName("editor-toolbar")[0];
+
+        var button = document.createElement("button");
+        button.textContent = "Run Template";
+        button.classList.add("btn");
+        button.classList.add("editor-toolbar__button");
+        button.style.width = "120px";
+
+        var iframe = document.createElement("iframe");
+        iframe.style.display = "none"; // Initially hide the iframe
+        iframe.src = "/tool/index.html";
+
+        button.addEventListener("click", function() {
+            if (iframe.style.display === "none") {
+                iframe.style.display = "block";
+            } else {
+                iframe.style.display = "none";
+            }
+        });
+
+        // Append the elements to the body or any other container
+        parent.insertBefore(button, parent.firstChild);
+        document.body.appendChild(iframe);
+
+    }, 500);
+
+});
+
 const MODEL__EDITOR = require(`@models/${modelName}-model/config.json`);
 const MODEL__CONCEPT = require(`@models/${modelName}-model/concept.json`);
 const MODEL__PROJECTION = require(`@models/${modelName}-model/projection.json`);
