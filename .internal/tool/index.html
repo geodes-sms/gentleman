@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All in one</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0" />
+    <style type="text/css">
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .container {
+            margin: 30px;
+        }
+        .dragdrop {
+            border: 5px dashed black;
+            border-radius: 10px;
+            display: inline-block;
+            width: calc(50% - 20px);
+            height: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            height: 200px;
+            line-height: 200px;
+        }
+        #template {
+            margin-left: 40px;
+        }
+        .invalid {
+            color: white;
+            background-color: red;
+            border: 5px dashed white;
+        }
+        .valid {
+            color: white;
+            background-color: green;
+            border: 5px dashed white;
+        }
+        .special {
+            background-color: cyan;
+        }
+    </style>
+    <link rel="stylesheet" href="sweetalert2.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="dragdrop" id="model">Drag & Drop <strong>Model</strong></div><div class="dragdrop" id="template">Drag & Drop <strong>Template</strong></div>
+    </div>
+    <script src="../lib/ocl.min.js"></script>
+    <script src="../lib/voca.min.js"></script>
+    <script src="../lib/template-lib.js"></script>
+    <script src="../lib/cycle.js"></script>
+    <script src="sweetalert2.min.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

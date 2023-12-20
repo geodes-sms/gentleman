@@ -1,6 +1,5 @@
 node_modules
 build
-.internal
 .DS_STORE
 .vscode
 .nyc_output
