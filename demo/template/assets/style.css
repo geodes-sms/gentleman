@@ -1,0 +1,37 @@
+.template-css-08 {
+    padding: 5px;
+    color: white;
+    background-color: black;
+    border-radius: 5px;
+}
+.template-css-15 {
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+    padding: 2px 8px;
+    margin: 0 4px;
+}
+.template-css-15:hover, .template-css-15.selected {
+    background-color: black;
+    color: white;
+}
+.template-css-12 {
+    flex-direction: column;
+    margin: 10px 0 10px 10px;
+    border: 1px solid black;
+    border-right: none !important;
+    padding: 10px 0 10px 10px;
+    background-color: rgba(0, 0, 0, .1);
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    width: auto;
+}
+.template-css-27 {
+    background-color: white;
+    border-radius: 5px;
+    height: 25px;
+    font-size: 15px;
+    line-height: 25px;
+}
+
+

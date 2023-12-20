@@ -1,0 +1,238 @@
+{
+    "type": "concept",
+    "concept": [
+        {
+            "id": "6550505e-88a6-4377-91a0-f741aa30f163",
+            "name": "template",
+            "nature": "concrete",
+            "root": true,
+            "properties": [],
+            "attributes": [
+                {
+                    "name": "name",
+                    "required": true,
+                    "target": {
+                        "name": "string",
+                        "constraint": []
+                    }
+                },
+                {
+                    "name": "is_main_entry_point",
+                    "required": true,
+                    "target": {
+                        "name": "boolean",
+                        "default": true
+                    }
+                },
+                {
+                    "name": "content",
+                    "required": true,
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "instruction"
+                        },
+                        "ordered": true,
+                        "constraint": {
+                            "cardinality": {
+                                "type": "range",
+                                "range": {
+                                    "min": {
+                                        "value": 0
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "5fe6ceb2-f905-44e2-a383-13e19b3acf4e",
+            "name": "instruction",
+            "nature": "prototype",
+            "root": false,
+            "properties": [],
+            "attributes": []
+        },
+        {
+            "id": "3fbba619-cdca-4c7a-b09b-3edb627dd210",
+            "name": "static",
+            "nature": "concrete",
+            "root": false,
+            "prototype": "instruction",
+            "properties": [],
+            "attributes": [
+                {
+                    "name": "value",
+                    "required": true,
+                    "target": {
+                        "name": "string",
+                        "constraint": []
+                    }
+                }
+            ]
+        },
+        {
+            "id": "8068fe1e-3ee5-46ad-ad2e-c085f6ee6753",
+            "name": "selection",
+            "nature": "concrete",
+            "root": false,
+            "prototype": "instruction",
+            "properties": [],
+            "attributes": [
+                {
+                    "name": "path",
+                    "required": true,
+                    "target": {
+                        "name": "string",
+                        "constraint": []
+                    }
+                },
+                {
+                    "name": "post_processing",
+                    "required": true,
+                    "target": {
+                        "name": "string",
+                        "constraint": []
+                    }
+                }
+            ]
+        },
+        {
+            "id": "d0f9480a-1ebd-4747-b3fa-c13447ca2150",
+            "name": "foreach",
+            "nature": "concrete",
+            "root": false,
+            "prototype": "instruction",
+            "properties": [],
+            "attributes": [
+                {
+                    "name": "items",
+                    "required": true,
+                    "target": {
+                        "name": "string",
+                        "constraint": []
+                    }
+                },
+                {
+                    "name": "as",
+                    "required": true,
+                    "target": {
+                        "name": "string",
+                        "constraint": []
+                    }
+                },
+                {
+                    "name": "content",
+                    "required": true,
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "instruction"
+                        },
+                        "ordered": true,
+                        "constraint": {
+                            "cardinality": {
+                                "type": "range",
+                                "range": {
+                                    "min": {
+                                        "value": 0
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "2efb9675-0a00-45b7-8c52-77a4abbd20c6",
+            "name": "if",
+            "nature": "concrete",
+            "root": false,
+            "prototype": "instruction",
+            "properties": [],
+            "attributes": [
+                {
+                    "name": "condition",
+                    "required": true,
+                    "target": {
+                        "name": "string",
+                        "constraint": []
+                    }
+                },
+                {
+                    "name": "then_content",
+                    "required": true,
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "instruction"
+                        },
+                        "ordered": true,
+                        "constraint": {
+                            "cardinality": {
+                                "type": "range",
+                                "range": {
+                                    "min": {
+                                        "value": 0
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "else_content",
+                    "required": true,
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "instruction"
+                        },
+                        "ordered": true,
+                        "constraint": {
+                            "cardinality": {
+                                "type": "range",
+                                "range": {
+                                    "min": {
+                                        "value": 0
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "a2368c91-8351-4d2a-a7a1-ce28c7cd91e1",
+            "name": "run_template",
+            "nature": "concrete",
+            "root": false,
+            "prototype": "instruction",
+            "properties": [],
+            "attributes": [
+                {
+                    "name": "template",
+                    "required": true,
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "template"
+                        }
+                    }
+                },
+                {
+                    "name": "with_context",
+                    "required": true,
+                    "target": {
+                        "name": "string",
+                        "constraint": []
+                    }
+                }
+            ]
+        }
+    ]
+}

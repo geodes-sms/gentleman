@@ -1,0 +1,10 @@
+{
+    "toolbar": [
+        {
+            "type": "button",
+            "name": "button-export",
+            "action": "export.model",
+            "class": ["btn", "editor-toolbar__button", "editor-toolbar__button--save"]
+        }
+    ]
+}

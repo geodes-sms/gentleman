@@ -1,0 +1,659 @@
+{
+    "type": "projection",
+    "projection": [
+        {
+            "id": "gca94b6c-0f9e-43f5-976b-de15bfaf7038",
+            "concept": { "name": "template" },
+            "type": "layout",
+            "tags": [],
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "name =>"
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "name",
+                        "tag": "mystr",
+                        "required": true
+                    },
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "is_main_entry_point =>"
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "is_main_entry_point",
+                        "tag": "mybool",
+                        "required": true
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "content",
+                        "tag": "instructions-header"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "content",
+                        "tag": "instructions"
+                    }
+                ],
+                "style": {
+                    "css": ["template-css-01"]
+                }
+            }
+        },
+        {
+            "id": "ab6se1ra-6f32-4p93-0001-442ecfe282sd",
+            "concept": { "name": "static" },
+            "tags": ["choice-selection"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "value =>"
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "value",
+                        "tag": "mystr",
+                        "required": true
+                    }
+                ],
+                "style": {
+                    "css": ["template-css-02"]
+                }
+            }
+        },
+        {
+            "id": "ab6se1ra-6f32-4p93-0002-442ecfe282sd",
+            "concept": { "name": "selection" },
+            "tags": ["choice-selection"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "path =>"
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "path",
+                        "tag": "mystr",
+                        "required": true
+                    },
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "post_processing =>"
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "post_processing",
+                        "tag": "mystr",
+                        "required": true
+                    }
+                ],
+                "style": {
+                    "css": ["template-css-03"]
+                }
+            }
+        },
+        {
+            "id": "ab6se1ra-6f32-4p93-0003-442ecfe282sd",
+            "concept": { "name": "foreach" },
+            "tags": ["choice-selection"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "items =>"
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "items",
+                        "tag": "mystr",
+                        "required": true
+                    },
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "as =>"
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "as",
+                        "tag": "mystr",
+                        "required": true
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "content",
+                        "tag": "instructions-header"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "content",
+                        "tag": "instructions"
+                    }
+                ],
+                "style": {
+                    "css": ["template-css-04"]
+                }
+            }
+        },
+        {
+            "id": "ab6se1ra-6f32-4p93-0004-442ecfe282sd",
+            "concept": { "name": "if" },
+            "tags": ["choice-selection"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "condition =>"
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "condition",
+                        "tag": "mystr",
+                        "required": true
+                    },
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "then_content =>"
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "then_content",
+                        "tag": "instructions-header"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "then_content",
+                        "tag": "instructions"
+                    },
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "else_content =>"
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "else_content",
+                        "tag": "instructions-header"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "else_content",
+                        "tag": "instructions"
+                    },
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "HECK"
+                        }
+                    }
+                ],
+                "style": {
+                    "css": ["template-css-05"]
+                }
+            }
+        },
+        {
+            "id": "ab6se1ra-6f32-4p93-0006-442ecfe282sd",
+            "concept": { "name": "run_template" },
+            "tags": ["choice-selection"],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "template =>"
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "template",
+                        "required": true
+                    },
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "with_context =>"
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "with_context",
+                        "tag": "mystr",
+                        "required": true
+                    }
+                ],
+                "style": {
+                    "css": ["template-css-06"]
+                }
+            }
+        },
+
+
+
+        {
+            "id": "8f2d8871-b3a4-4l9f-b3fb-f3a56b886e15",
+            "concept": { "name": "set" },
+            "type": "layout",
+            "tags": ["instructions-header"],
+            "content": {
+                "type": "wrap",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Instructions",
+                            "style": {
+                                "css": ["template-css-07"],
+                                "gss": {}
+                            }
+                        }
+                    },
+                    {
+                        "type": "field",
+                        "field": {
+                            "type": "list",
+                            "readonly": false,
+                            "disabled": false,
+                            "list": false,
+                            "action": {
+                                "add": {
+                                    "help": "Add an instruction",
+                                    "content": [
+                                        {
+                                            "type": "static",
+                                            "static": {
+                                                "type": "text",
+                                                "content": "+"
+                                            }
+                                        }
+                                    ],
+                                    "style": {
+                                        "css": ["template-css-08"],
+                                        "gss": {}
+                                    }
+                                }
+                            },
+                            "style": {
+                                "css": ["template-css-09"]
+                            }
+                        }
+                    }
+                ],
+                "style": {
+                    "css": ["template-css-10"],
+                    "gss": {}
+                }
+            }
+        },
+        {
+            "id": "ab6se1ra-6f32-4e23-b864-44aecfe282e1",
+            "concept": { "name": "set" },
+            "type": "field",
+            "tags": ["instructions"],
+            "content": {
+                "type": "list",
+                "readonly": false,
+                "disabled": false,
+                "list": {
+                    "item": {
+                        "template": { "tag": "", "name": "" },
+                        "style": {
+                            "css": ["template-css-11"]
+                        }
+                    },
+                    "style": {
+                        "css": ["template-css-12"]
+                    }
+                },
+                "action": {
+                    "add": false,
+                    "remove": {
+                        "content": [
+                            {
+                                "type": "static",
+                                "static": {
+                                    "type": "text",
+                                    "content": "✖"
+                                }
+                            }
+                        ],
+                        "style": {
+                            "css": ["template-css-13"]
+                        }
+                    }
+                },
+                "style": {
+                    "css": ["template-css-14"]
+                }
+            }
+        },
+        {
+            "id": "cg46csa3-0f95-45vt-g62b-53f7edawbf91",
+            "concept": { "name": "instruction" },
+            "tags": [],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "field",
+                        "field": {
+                            "type": "choice",
+                            "choice": {
+                                "option": {
+                                    "template": { "tag": "choice" },
+                                    "style": {
+                                        "css": ["template-css-15"]
+                                    }
+                                },
+                                "style": {
+                                    "css": ["template-css-16"]
+                                }
+                            },
+                            "input": false,
+                            "style": {
+                                "css": ["template-css-17"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "projection",
+                        "bind": "value",
+                        "placeholder": false,
+                        "tag": "choice-selection",
+                        "style": {
+                            "css": ["template-css-18"]
+                        }
+                    }
+                ],
+                "style": {
+                    "css": ["template-css-19"]
+                }
+            }
+        },
+
+
+
+        {
+            "id": "1adfrr6a-643d-5463-l64o-42z92s4f2eed",
+            "concept": { "name": "static" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Static"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "1adfrr6a-643d-5464-l64o-42z92s4f2eed",
+            "concept": { "name": "selection" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Selection"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "1adfrr6a-643d-5465-l64o-42z92s4f2eed",
+            "concept": { "name": "foreach" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Foreach"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "1adfrr6a-643d-5466-l64o-42z92s4f2eed",
+            "concept": { "name": "if" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "If"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "1adfrr6a-643d-5468-l64o-42z92s4f2eed",
+            "concept": { "name": "run_template" },
+            "tags": ["choice"],
+            "type": "layout",
+            "content": {
+                "type": "wrap",
+                "focusable": false,
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Run Template"
+                        }
+                    }
+                ]
+            }
+        },
+
+
+
+        {
+            "id": "redo2728-503b-404b-9114-8a240c787l03",
+            "concept": { "name": "reference" },
+            "type": "field",
+            "tags": [],
+            "content": {
+                "type": "choice",
+                "choice": {
+                    "option": {
+                        "template": { "tag": "choice" },
+                        "style": {
+                            "css": ["template-css-20"]
+                        }
+                    },
+                    "style": {
+                        "css": ["template-css-21"]
+                    }
+                },
+                "placeholder": "No Template",
+                "expanded": false,
+                "input": {
+                    "placeholder": "Filter the Templates"
+                },
+                "style": {
+                    "css": ["template-css-22"]
+                }
+            }
+        },
+        {
+            "id": "60efd021-2465-4315-b22b-ee8d9c699c56",
+            "concept": { "name": "template" },
+            "type": "layout",
+            "tags": ["choice"],
+            "content": {
+                "type": "wrap",
+                "disposition": [
+                    {
+                        "type": "attribute",
+                        "name": "name",
+                        "tag": "readonly",
+                        "required": true,
+                        "placeholder": []
+                    }
+                ],
+                "style": {
+                    "css": ["template-css-23"]
+                }
+            }
+        },
+
+
+
+        {
+            "id": "aeee0728-503b-404b-9123-8a4b07e87704",
+            "concept": { "name": "boolean" },
+            "type": "field",
+            "tags": ["mybool"],
+            "content": {
+                "type": "binary",
+                "checkbox": {
+                    "label": {
+                        "content": [],       
+                        "style": {
+                            "css": ["template-css-24"]
+                        }
+                    },
+                    "style": {
+                        "css": ["template-css-25"]
+                    }
+                },
+                "style": {
+                    "css": ["template-css-26"]
+                }
+            }
+        },
+        {
+            "id": "aeee0728-503b-404b-9123-8a4b07e87703",
+            "concept": { "name": "string" },
+            "type": "field",
+            "tags": ["mystr"],
+            "content": {
+                "type": "text",
+                "readonly": false,
+                "disabled": false,
+                "multiline": false,
+                "resizable": true,
+                "input": {
+                    "type": "text",
+                    "placeholder": "",
+                    "style": {
+                        "css": ["template-css-27"]
+                    }
+                },
+                "style": {
+                    "css": ["template-css-28"]
+                }
+            }
+        },
+        {
+            "id": "c5sl4988-0978-48c8-57b6-a50po9fe4c9f",
+            "concept": { "name": "string" },
+            "type": "layout",
+            "tags": ["readonly"],
+            "content": {
+                "type": "wrap",
+                "disposition": [
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": {
+                                "type": "property",
+                                "name": "value",
+                                "style": {
+                                    "css": ["template-css-29"]
+                                }
+                            }
+                        }
+                    }
+                ],
+                "style": {
+                    "css": ["template-css-30"]
+                }
+            }
+        }
+    ]
+}
+
+

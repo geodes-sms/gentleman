@@ -6,7 +6,8 @@ import '@css/samples/gentleman.css';
 import '@css/samples/projection.css';
 import '@css/samples/style.css';
 // import './../demo/relis/assets/style.css';
-import './../demo/todo/assets/style.css';
+// import './../demo/todo/assets/style.css';
+import './../demo/template/assets/style.css';
 
 import { createDiv, getElements, isNullOrUndefined, isHTMLElement, hasOwn } from "zenkai";
 import { NotificationType, resolveContainer } from '@utils/index.js';
@@ -22,10 +23,11 @@ const Model = {
     MM: "mindmap",
     RL: "relis",
     TD: "todo",
+    TT: "template",
     TL: "trafficlight",
 };
 
-const modelName = Model.TD;
+const modelName = Model.TT;
 
 const MODEL__EDITOR = require(`@models/${modelName}-model/config.json`);
 const MODEL__CONCEPT = require(`@models/${modelName}-model/concept.json`);
