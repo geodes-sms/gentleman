@@ -7,6 +7,47 @@ import { OverlapManager } from "./overlap-manager";
 
 
 const BaseAdaptiveAlgorithm = {
+    /** Basic Attributes */
+    /** @type {boolean}*/
+    focusable: null,
+    /** @type {boolean} */
+    meet: null,
+    /** @type {boolean}  */
+    fixed: null,
+    /** @type {boolean}  */
+    displayed: null,
+
+    /**Projections */
+    /** @type {SVGElement}*/
+    container: null,
+    /** @type {SVGElement}*/
+    background: null,
+    /** @type {SVGElement}*/
+    adapter: null,
+    /** @type {Array} */
+    content: null,
+    /** @type {Array}*/
+    displayWaitings: null,
+ 
+
+    /**Positioning Strategy */
+    /** @type {Object}*/
+    overlap: null,
+
+    
+    /** Size adjustment strategy*/
+    /** @type {String}*/
+    wrap: null,
+    /** @type {Int}*/
+    padding: null,
+    /** @type {Int} */
+    speed: null,
+
+
+    /** 
+     * Creates the object from its schema
+     * @returns An instance of AdaptiveAlgorithm
+    */
     init(args){
         Object.assign(this.schema, args);
 
@@ -23,8 +64,12 @@ const BaseAdaptiveAlgorithm = {
         return this;
     },
 
+    /** 
+     * Creates the SVG elements and binds the events
+     * @return An SVG element
+    */
     render(){
-        const {background, coordinates, content = [], meet = false} = this.schema;
+        const {background, coordinates, content = []} = this.schema;
 
         if(isNullOrUndefined(this.container)){
             this.container = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -54,7 +99,6 @@ const BaseAdaptiveAlgorithm = {
             this.wrap = background.wrap;
             this.padding = background.padding;
             this.speed = background.speed;
-            this.strategy = background.strategy;
         }
 
         if(isNullOrUndefined(this.container.getAttribute("x")) && coordinates){
@@ -99,10 +143,14 @@ const BaseAdaptiveAlgorithm = {
         return this.container;
     },
 
+
+    /**
+     * Adapts the container size
+     * @return nothing
+     */
     updateSize(){
-        /*if(!isNullOrUndefined(this.overlap)){
-            OverlapManager.call(this);
-        }*/
+        console.log("Adaptive update");
+
         if(this.fixed){
             return;
         }
@@ -128,6 +176,10 @@ const BaseAdaptiveAlgorithm = {
         }
     },
 
+    /**
+     * Adapts the projection to the DOM
+     * @returns nothing
+     */
     display(){
 
         if((!isNullOrUndefined(this.parent) && !this.parent.displayed) || !document.body.contains(this.container)){
@@ -137,9 +189,7 @@ const BaseAdaptiveAlgorithm = {
         if(this.displayed){
             return;
         }
-        console.log(this.container);
-        console.log(this.container.parentNode);
-
+        
         this.displayed = true;
 
         let adapter = this.container.querySelector("[data-" + this.wrap + "]");
@@ -180,20 +230,40 @@ const BaseAdaptiveAlgorithm = {
         }
     },
 
+    /**
+     * Handles the focusin event
+     * @returns this
+     */
     focusIn(){
-        if(this.focusable){
-            
-        }
+        console.warn(`FOCUSIN_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        return;
     },
 
+    /**
+     * Handles the focusin event
+     * @returns this
+     */
     focusOut(){
-
+        console.warn(`FOCUSOUT_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        return;
     },
 
+    
+    /**
+     * Handles the click event
+     * Switches to the next value
+     * @returns false if the event is handled
+     */
     clickHandler(target){
-
+        console.warn(`CLICK_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        return;
     },
 
+
+    /**
+     * Creates the handlers for the projection
+     * @returns nothing
+     */
     bindEvents(){
         this.projection.registerHandler("displayed", () => {
             this.display();
