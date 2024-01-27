@@ -3,6 +3,24 @@ import { Static } from "./static";
 const { isNullOrUndefined, valOrDefault } = require("zenkai");
 
 const BaseProjectionLinkSVGStatic = {
+    /** @type {SVGElement} */
+    element: null,
+    /** @type {SVGElement} */
+    content: null,
+
+    /** @type {boolean} */
+    focusable: null,
+    /** @type {boolean} */
+    displayed: null,
+
+    /** @type {boolean} */
+    /** TO DO: Unknown Property*/
+    discardable: null,
+    
+    
+    /** Creates the object from its schema
+     * @returns An instance of ProjectionLink
+    */
     init(args){
         Object.assign(this.schema, args);
 
@@ -14,6 +32,10 @@ const BaseProjectionLinkSVGStatic = {
         return this;
     },
 
+    /** 
+     * Creates the SVG elements and binds the events
+     * @return An SVG element
+    */
     render(){
         const { content } = this.schema;
 
@@ -22,6 +44,7 @@ const BaseProjectionLinkSVGStatic = {
             this.element.classList.add("static");
 
             this.element.dataset.id = this.id;
+            this.element.tabIndex = -1;
             this.element.dataset.nature = "static";
             this.element.dataset.view = "svg-plink";
             this.element.dataset.ignore = "all";
@@ -43,14 +66,29 @@ const BaseProjectionLinkSVGStatic = {
 
     },
 
+    /**
+     * Handles the focusin event
+     * @returns this
+     */
     focusIn(){
-
+        console.warn(`FOCUSIN_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        return;
     },
 
+    /**
+     * Handles the focusin event
+     * @returns this
+     */
     focusOut(){
-
+        console.warn(`FOCUSOUT_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        return;
     },
 
+    /**
+     * Handles the click event
+     * Changes the view of the projection using the targeted tag
+     * @returns false if the event is handled
+     */
     clickHandler(){
         let index = this.projection.findView(this.schema.tag);
 
@@ -58,11 +96,17 @@ const BaseProjectionLinkSVGStatic = {
             return false;
         }
 
+
         this.projection.changeView(index);
 
         return false;
     },
 
+
+    /**
+     * Adapts the projection to the DOM
+     * @returns nothing
+     */
     display(){
         if(!this.parent.displayed){
             return;
@@ -78,12 +122,19 @@ const BaseProjectionLinkSVGStatic = {
         this.element.setAttribute("height", valOrDefault(Number(this.content.getAttribute("height"))), this.content.getBBox().height);
 
         this.parent.updateSize();
+        
+        return;
     },
 
+    /**
+     * Creates the handlers for the projection
+     * @returns nothing
+     */
     bindEvent(){
         this.projection.registerHandler("displayed", () => {
             this.display();
         })
+        return;
     }
 }
 
