@@ -18,7 +18,8 @@ const BaseProjectionLinkSVGStatic = {
     discardable: null,
     
     
-    /** Creates the object from its schema
+    /** 
+     * Creates the object from its schema
      * @returns An instance of ProjectionLink
     */
     init(args){

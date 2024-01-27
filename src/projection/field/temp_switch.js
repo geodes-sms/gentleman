@@ -62,12 +62,38 @@ function getItemValue(item) {
 }
 
 const BaseSwitchField = {
+    /** @type {SVGElement} */
+    element: null,
+
+    /** @type {Array} */
+    values: null,
+
+    /** @type {Array} */
+    selectionList: null,
+    /** @type {SVGElement} */
+    selection: null,
+    /** @type {Projection} */
+    selectionProjection: null,
+    /** @type {Int}*/
+    selectionIndex: null,
+
+    /** @type {boolean} */
+    displayed: null,
+
+    /** 
+     * Creates the object from its schema
+     * @returns An instance of SwitchField
+    */
     init(){
         this.selectionList = [];
 
         return this;
     },
 
+    /** 
+     * Creates the SVG elements and binds the events
+     * @return An SVG element
+    */
     render(){
         const {} = this.schema;
 
@@ -98,6 +124,11 @@ const BaseSwitchField = {
         return this.element;
     },
 
+    /**
+     * Creates a projection for a possible value
+     * @param {Concept} value 
+     * @return A projection for the value
+     */
     createChoiceOption(value){
         const { template = {} } = this.schema.choice.option;
 
@@ -137,6 +168,11 @@ const BaseSwitchField = {
         return container;
     },
 
+    /**
+     * Updated the displayed projection according to the value
+     * @param {Concept} value 
+     * @returns The current instance
+     */
     setChoice(value){
         for(let i = 0; i < this.selectionList.length; i++){
             const item = this.selectionList[i];
@@ -165,6 +201,12 @@ const BaseSwitchField = {
         return this;
     },
 
+    /**
+     * Updates the value of the field. Can update the related concept value.
+     * @param {Concept} value 
+     * @param {boolean} update 
+     * @returns nothing
+     */
     setValue(value, update = false){
         var response = null;
 
@@ -184,6 +226,11 @@ const BaseSwitchField = {
             this.updateSize();
         }
     },
+
+    /**
+     * Adapts the container size
+     * @return nothing
+     */
 
     updateSize(){
         if(isNullOrUndefined(this.containerView)){
@@ -212,10 +259,29 @@ const BaseSwitchField = {
         this.parent.updateSize();
     },
 
+    /**
+     * Handles the focusin event
+     * @returns this
+     */
     focusIn(){
-
+        console.warn(`FOCUSIN_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        return;
     },
 
+    /**
+     * Handles the focusin event
+     * @returns this
+     */
+    focusOut(){
+        console.warn(`FOCUSOUT_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        return;
+    },
+
+    /**
+     * Handles the click event
+     * Switches to the next value
+     * @returns false if the event is handled
+     */
     clickHandler(target){
         const item = getItem.call(this, target);
 
@@ -224,26 +290,38 @@ const BaseSwitchField = {
             this.selectionIndex = (this.selectionIndex + 1) % this.selectionList.length;
             this.setValue(this.values[this.selectionIndex], true);
         }
+        return false;
     },
 
+    /**
+     * Adapts the projection to the DOM
+     * @returns nothing
+     */
+    display() {
+        if(!this.parent.displayed){
+            return;
+        }
+
+        if(this.displayed){
+            return;
+        }
+
+        this.displayed = true;
+                    
+        if(this.source.hasValue()){
+            this.setValue(this.source.getValue());
+        }
+
+        this.displayed = true;
+    },
+
+    /**
+     * Creates the handlers for the projection
+     * @returns nothing
+     */
     bindEvents(){
         this.projection.registerHandler("displayed", () => {
-
-            if(!this.parent.displayed){
-                return;
-            }
-
-            if(this.displayed){
-                return;
-            }
-
-            this.displayed = true;
-                        
-            if(this.source.hasValue()){
-                this.setValue(this.source.getValue());
-            }
-
-            this.displayed = true;
+            this.display();
         });
 
         this.projection.registerHandler("value.changed", (value) => {
