@@ -6,7 +6,7 @@ import { DecorationAlgorithm } from "./decoration-algorithm.js";
 import { AnchorAlgorithm } from "./anchor-algorithm.js";
 import { TreeLayout } from "./tree-algorithm.js";
 import { AdaptiveAlgorithm } from "./adaptive-algorithm.js";
-import { WrapAlgoritm } from "./wrap-algorithm.js";
+import { WrapAlgorithm } from "./wrap-algorithm.js";
 
 var inc = 0;
 const nextId = () => `algo${inc++}`;
@@ -72,10 +72,10 @@ const Handler = {
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
     }),
-    'wrap': (model, schema, projection) => Object.create(WrapAlgoritm, {
+    'wrap': (model, schema, projection) => Object.create(WrapAlgorithm, {
         object: { value: "algorithm" },
-        name: { value: "adaptive-layout" },
-        type: { value: "adaptive" },
+        name: { value: "wrap-layout" },
+        type: { value: "wrap" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
