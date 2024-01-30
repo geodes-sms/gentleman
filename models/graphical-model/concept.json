@@ -2,9 +2,8 @@
     "type": "concept",
     "concept":[
         {
-            "name": "proto-graphical",
-            "nature": "prototype",
-            "attributes":[
+            "name": "proto-projection",
+            "attributes": [
                 {
                     "name": "concept",
                     "target": {
@@ -14,1707 +13,376 @@
                 },
                 {
                     "name": "tags",
-                    "target":{
+                    "target": {
                         "name": "set",
                         "accept": {
-                            "name": "g-tag"
+                            "name": "tag"
                         }
-                    }
+                    },
+                    "required": true
                 }
             ]
         },
         {
-            "name": "g-tag",
-            "nature": "derivative",
-            "base": "string",
-            "constraint": {
-                "value": {
-                    "type": "pattern",
-                    "pattern": {
-                        "insensitive": true,
-                        "global": true,
-                        "value": "^\\w+(-\\w+)*$"
-                    }
-                }
-            }
-        },
-        {
-            "name": "graphical",
+            "name": "graphical-projection",
             "nature": "concrete",
             "root": true,
-            "prototype": "proto-graphical",
+            "prototype": "proto-projection",
             "attributes": [
                 {
                     "name": "name",
-                    "target":{
+                    "target": {
                         "name": "name"
                     },
-                    "required": false
-                },
-                {
-                    "name": "element",
-                    "target":{
-                        "name": "graphics",
-                        "default": {
-                            "name": "decoration-layout"
-                        }
-                    },
-                    "required": true
-                }
-            ],
-            "properties":[
-                { "name": "handler", "type": "string", "value": "graphical"}
-            ]
-        },
-        {
-            "name": "graphics",
-            "nature": "prototype",
-            "attributes":[]
-        },
-        {
-            "name": "graphical-field",
-            "nature": "prototype",
-            "attributes":[
-                {
-                    "name": "dimensions",
-                    "target":{
-                        "name": "dimensions"
-                    }
-                },
-                {
-                    "name": "coordinates",
-                    "target":{
-                        "name": "coordinates"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "svg-choice",
-            "nature": "concrete",
-            "prototype": "graphical-field",
-            "attributes":[
-                {
-                    "name": "dimension",
-                    "target":{
-                        "name": "dimensions",
-                        "accept":[
-                            { "name": "pure" },
-                            { "name": "absolute" },
-                            { "name": "fixed" }
-                        ],
-                        "default":{
-                            "name": "pure"
-                        }
-                    }
-                },
-                {
-                    "name": "coordinates",
-                    "target":{
-                        "name": "coordinates"
-                    }
-                },
-                {
-                    "name": "dimensions",
-                    "target":{
-                        "name": "absolute"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "tag",
-                    "target":{
-                        "name": "g-tag"
-                    }
-                },
-                {
-                    "name": "selection",
-                    "target":{
-                        "name": "choice-selection"
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "field" },
-                { "name": "elementType", "type": "string", "value": "svg-choice" }
-            ]
-        },
-        {
-            "name": "choice-selection",
-            "nature": "concrete",
-            "attributes":[
-                {
-                    "name": "orientation",
-                    "target":{
-                        "name": "string",
-                        "values":[
-                            "horizontal",
-                            "vertical"
-                        ],
-                        "default": "horizontal"
-                    }
-                },
-                {
-                    "name": "break",
-                    "target":{
-                        "name": "number"
-                    },
                     "required": true
                 },
                 {
-                    "name": "nbItem",
-                    "target":{
-                        "name": "number",
-                        "default": 2
-                    }
-                },
-                {
-                    "name": "dimensions",
-                    "target":{
-                        "name": "absolute-default"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "svg-placeholder",
-            "nature": "concrete",
-            "prototype": "graphical-field",
-            "attributes":[
-                {
-                    "name": "dimensions",
-                    "target":{
-                        "name" : "absolute"
+                    "name": "layout",
+                    "target": {
+                        "name": "adaptive-algorithm"
                     },
-                    "required": false
-                },
-                {
-                    "name": "tag",
-                    "target":{
-                       "name": "g-tag"
-                    }
+                    "required": true
                 }
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "field" },
-                { "name": "elementType", "type": "string", "value": "svg-placeholder" }
             ]
+
         },
         {
-            "name": "svg-switch",
+            "name": "concept",
             "nature": "concrete",
-            "attributes":[
+            "attributes": [
                 {
-                    "name": "tag",
-                    "target":{
-                        "name": "string"
+                    "name": "name",
+                    "target": {
+                        "name": "name",
+                        "src": [
+                            "string", "number", "boolean", "set", "reference",
+                            { 
+                                "type": "reference", 
+                                "target": { "value": "name" },
+                                "source": { "type": "resource", "name": "metamodel" } 
+                            }
+                        ]
                     }
                 },
                 {
-                    "name": "order",
-                    "target":{
-                        "name": "set",
-                        "accept":{
-                            "name": "string"
-                        }
-                    }
-                },
-                {
-                    "name": "dimension",
-                    "target":{
-                        "name": "dimensions",
-                        "accept":[
-                            { "name": "pure" },
-                            { "name": "absolute" },
-                            { "name": "fixed" }
-                        ],
-                        "default":{
-                            "name": "pure"
-                        }
-                    }
-                },
-                {
-                    "name": "coordinates",
-                    "target":{
-                        "name": "coordinates"
+                    "name": "prototype",
+                    "target": {
+                        "name": "name"
                     }
                 }
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "field" },
-                { "name": "elementType", "type": "string", "value": "svg-switch" }
             ]
         },
         {
-            "name": "arrow",
+            "name": "render",
             "nature": "prototype",
-            "attributes":[
+            "attributes": [
                 {
-                    "name": "arrow-style",
-                    "target":{
-                        "name": "arrow-style"
-                    }
-                },
-                {
-                    "name": "decorator",
-                    "target":{
-                        "name": "projection-dynamic"
-                    },
-                    "required": false
-                }
-            ]
-        },
-        {
-            "name": "force-arrow",
-            "nature": "concrete",
-            "prototype": "arrow",
-            "attributes":[
-                {
-                    "name": "from",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "to",
-                    "target":{
-                        "name": "attribute"
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "handlerType", "type": "string", "value": "arrow"},
-                { "name": "elementType", "type": "string", "value": "force"}
-            ]
-        },
-        {
-            "name": "anchor-arrow",
-            "nature": "concrete",
-            "prototype": "arrow",
-            "attributes":[
-                {
-                    "name": "aiming",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "model",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "offSet",
-                    "target":{
-                        "name": "coordinates"
-                    }
-                },
-                {
-                    "name": "self",
-                    "target":{
-                        "name": "set",
-                        "accept":{
-                            "name": "coordinates"
-                        }
-                    }
-                },
-                {
-                    "name": "move",
-                    "target":{
+                    "name": "help",
+                    "target": {
                         "name": "string"
                     },
                     "required": false
+                },
+                {
+                    "name": "focusable",
+                    "target": {
+                        "name": "boolean",
+                        "default": true
+                    }
                 }
-            ],
-            "properties": [
-                { "name": "handlerType", "type": "string", "value": "arrow"},
-                { "name": "elementType", "type": "string", "value": "pattern"}
             ]
         },
         {
-            "name": "multi-arrow",
+            "name": "element",
+            "nature": "prototype",
+            "prototype": "render",
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "adaptive-algorithm",
             "nature": "concrete",
-            "prototype": "arrow",
-            "attributes":[
+            "prototype": "element",
+            "attributes": [
                 {
                     "name": "meet",
-                    "target":{
-                        "name": "string",
-                        "values":[
-                            "free",
-                            "maxX",
-                            "minX",
-                            "maxY",
-                            "minY"
-                        ]
-                        ,
-                        "default": "free"
+                    "default": "free",
+                    "target": {
+                        "name": "string"
+                    },
+                    "constraint": {
+                        "values": ["free", "rect", "circle"]
                     }
                 },
                 {
-                    "name": "offSet",
-                    "target":{
+                    "name": "overlap",
+                    "target": {
+                        "name": "overlap"
+                    },
+                    "required": false                    
+                },
+                {
+                    "name": "background",
+                    "target": {
+                        "name": "background"
+                    }
+                },
+                {
+                    "name": "coordinates",
+                    "target": {
                         "name": "coordinates"
                     }
                 },
-                {
-                    "name": "sub-paths",
-                    "target":{
-                        "name": "sub-path"
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "handlerType", "type": "string", "value": "arrow"},
-                { "name": "elementType", "type": "string", "value": "multi"}
-            ]
-        },
-        {
-            "name": "sub-path",
-            "nature": "concrete",
-            "attributes":[
-                {
-                    "name": "type",
-                    "target":{
-                        "name": "string"
-                    } 
-                },
-                {
-                    "name": "arrow-style",
-                    "target":{
-                        "name": "arrow-style"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "shape",
-            "nature": "concrete",
-            "attributes":[
                 {
                     "name": "elements",
                     "target": {
                         "name": "set",
-                        "accept": { 
-                            "name": "shape-element",
-                            "accept": [
-                                { "name": "circle" },
-                                { "name": "rectangle" },
-                                { "name": "ellipse" },
-                                { "name": "polygon"},
-                                { "name": "path" },
-                                { "name": "text" }
-                            ]
-                        }
-                    }
-                },
-                {
-                    "name": "current",
-                    "target":{
-                        "name": "reference",
-                        "accept":{
-                            "name": "shape-element"
-                        }
-                    }
-                },
-                {
-                    "name": "width",
-                    "target":{
-                        "name": "number",
-                        "default": 200
-                    }
-                },
-                {
-                    "name": "height",
-                    "target":{
-                        "name": "number",
-                        "default": 200
-                    }
-                },
-                {
-                    "name": "minX",
-                    "target":{
-                        "name": "number",
-                        "default": 0
-                    }
-                },
-                {
-                    "name": "minY",
-                    "target":{
-                        "name": "number",
-                        "default": 0
-                    }
-                },
-                {
-                    "name": "windowW",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "windowH",
-                    "target":{
-                        "name": "number"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "shape-style",
-            "nature": "concrete",
-            "attributes":[
-                {
-                    "name": "fill",
-                    "target":{
-                        "name": "string",
-                        "default": "black"
-                    }
-                },
-                {
-                    "name": "stroke",
-                    "target":{
-                        "name": "string",
-                        "default": "black"
-                    }
-                },
-                {
-                    "name": "s-width",
-                    "target":{
-                        "name": "number",
-                        "default": 0
-                    }
-                },
-                {
-                    "name": "s-dash",
-                    "target":{
-                        "name": "string",
-                        "default": "0"
-                    }
-                },
-                {
-                    "name": "rx",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "ry",
-                    "target":{
-                        "name": "number"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "shape-element",
-            "nature": "prototype",
-            "attributes":[
-
-            ]
-        },
-        {
-            "name": "circle",
-            "nature": "concrete",
-            "prototype": "shape-element",
-            "attributes":[
-                {
-                    "name": "cx",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "cy",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "r",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "fill",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "style",
-                    "target":{
-                        "name": "shape-style"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "rectangle",
-            "nature": "concrete",
-            "prototype": "shape-element",
-            "attributes":[
-                {
-                    "name": "x",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "y",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "width",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "height",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "style",
-                    "target":{
-                        "name": "shape-style"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "polygon",
-            "nature": "concrete",
-            "prototype": "shape-element",
-            "attributes":[
-                {
-                    "name": "points",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "style",
-                    "target":{
-                        "name": "shape-style"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "ellipse",
-            "nature": "concrete",
-            "prototype": "shape-element",
-            "attributes":[
-                {
-                    "name": "cx",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "cy",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "rx",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "ry",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "style",
-                    "target":{
-                        "name": "shape-style"
-                    }
-                }
-            ]
-
-        },
-        {
-            "name": "text",
-            "nature": "concrete",
-            "prototype": "shape-element",
-            "attributes":[
-                {
-                    "name": "content",
-                    "target":{
-                        "name": "string"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "path",
-            "nature": "concrete",
-            "prototype": "shape-element",
-            "attributes":[
-                {
-                    "name": "d",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "style",
-                    "target":{
-                        "name": "shape-style"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "svg-text",
-            "nature": "concrete",
-            "prototype": "graphical-field",
-            "attributes":[
-                {
-                    "name": "placeholder",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "readonly",
-                    "target":{
-                        "name": "boolean",
-                        "default": false
-                    }
-                },
-                {
-                    "name": "break",
-                    "target":{
-                        "name": "number"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "style",
-                    "target":{
-                        "name": "textSVG-style"
-                    }
-                },
-                {
-                    "name": "dimension",
-                    "target":{
-                        "name": "dimensions",
-                        "accept":[
-                            { "name": "pure" },
-                            { "name": "absolute" },
-                            { "name": "fixed" }
-                        ],
-                        "default":{
-                            "name": "pure"
-                        }
-                    }
-                },
-                {
-                    "name": "coordinates",
-                    "target":{
-                        "name": "coordinates"
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "handlerType", "type": "string", "value": "field" },
-                { "name": "contentType", "type": "string", "value": "field" },
-                { "name": "elementType", "type": "string", "value": "svg" }
-            ]
-        },
-        {
-            "name": "graphical-static",
-            "nature": "prototype",
-            "prototype": "graphics",
-            "attributes":[
-                {
-                    "name": "dimensions",
-                    "target":{
-                        "name": "dimensions"
-                    }
-                },
-                {
-                    "name": "coordinates",
-                    "target":{
-                        "name": "coordinates"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "svg-button",
-            "nature": "concrete",
-            "prototype": "graphical-static",
-            "attributes":[
-                {
-                    "name": "content",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "shape",
-                    "target":{
-                        "name": "shape"
-                    }
-                },
-                {
-                    "name": "action",
-                    "target":{
-                        "name": "button-action",
-                        "accept": [
-                            { "name": "add-action" },
-                            { "name": "side-action" },
-                            { "name": "tree-action" }
-                        ],
-                        "default": "add-action"
-                    }
-                },
-                {
-                    "name": "dimension",
-                    "target":{
-                        "name": "dimensions",
-                        "accept":[
-                            { "name": "pure" },
-                            { "name": "absolute" },
-                            { "name": "fixed" }
-                        ],
-                        "default":{
-                            "name": "pure"
-                        }
-                    }
-                },
-                {
-                    "name": "coordinates",
-                    "target":{
-                        "name": "coordinates"
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "static" },
-                { "name": "elementType", "type": "string", "value": "svg-button" }
-            ]
-        },
-        {
-            "name": "button-action",
-            "nature": "prototype",
-            "attributes":[
-
-            ]
-        },
-        {
-            "name": "tree-action",
-            "nature": "concrete",
-            "prototype": "button-action",
-            "attributes":[
-                {
-                    "name": "treeId",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "item",
-                    "target":{
-                        "name": "string"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "add-action",
-            "nature": "concrete",
-            "prototype": "button-action",
-            "attributes":[]
-        },
-        {
-            "name": "side-action",
-            "nature": "concrete",
-            "prototype": "button-action",
-            "attributes":[
-                {
-                    "name": "tag",
-                    "target":{
-                        "name": "string"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "open-selection",
-            "nature": "concrete",
-            "prototype": "button-action",
-            "attributes":[
-
-            ]
-        },
-        {
-            "name": "alt-view",
-            "nature": "concrete",
-            "prototype": "graphical-static",
-            "attributes":[
-                {
-                    "name": "content",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "shape",
-                    "target":{
-                        "name": "shape"
-                    }
-                },
-                {
-                    "name": "tag",
-                    "target":{
-                        "name": "tag"
-                    }
-                },
-                {
-                    "name": "dimension",
-                    "target":{
-                        "name": "dimensions",
-                        "accept":[
-                            { "name": "pure" },
-                            { "name": "absolute" },
-                            { "name": "fixed" }
-                        ],
-                        "default":{
-                            "name": "pure"
-                        }
-                    }
-                },
-                {
-                    "name": "coordinates",
-                    "target":{
-                        "name": "coordinates"
-                    }
-                },
-                {
-                    "name": "action",
-                    "target":{
-                        "name": "string",
-                        "default": "SIDE"
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "static" },
-                { "name": "elementType", "type": "string", "value": "svg-button" }
-            ]
-        },
-        {
-            "name": "svg-static",
-            "nature": "concrete",
-            "prototype": "graphical-static",
-            "attributes":[
-                {
-                    "name": "content",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "dimension",
-                    "target":{
-                        "name": "dimensions",
-                        "accept":[
-                            { "name": "pure" },
-                            { "name": "absolute" },
-                            { "name": "fixed" }
-                        ],
-                        "default":{
-                            "name": "pure"
-                        }
-                    }
-                },
-                {
-                    "name": "coordinates",
-                    "target":{
-                        "name": "coordinates"
-                    }
-                },
-                {
-                    "name": "shape",
-                    "target":{
-                        "name": "shape"
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "static" },
-                { "name": "elementType", "type": "string", "value": "svg"}
-            ]
-        },
-        {
-            "name": "svgText-static",
-            "nature": "concrete",
-            "prototype": "graphical-static",
-            "attributes":[
-                {
-                    "name": "content",
-                    "target": {
-                        "name": "string" 
-                    }
-                },
-                {
-                    "name": "style",
-                    "target":{
-                        "name": "textSVG-style"
-                    }
-                },
-                {
-                    "name": "dimension",
-                    "target":{
-                        "name": "dimensions",
-                        "accept":[
-                            { "name": "pure" },
-                            { "name": "absolute" },
-                            { "name": "fixed" }
-                        ],
-                        "default":{
-                            "name": "pure"
-                        }
-                    }
-                },
-                {
-                    "name": "coordinates",
-                    "target":{
-                        "name": "coordinates"
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "static" },
-                { "name": "elementType", "type": "string", "value": "svg-text"}
-            ]
-        },
-        {
-            "name": "graphical-layout",
-            "nature": "prototype",
-            "prototype": "graphics",
-            "attributes":[
-                {
-                    "name": "rtag",
-                    "target":{
-                        "name": "rtag"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "tree-layout",
-            "nature": "concrete",
-            "prototype": "graphical-layout",
-            "attributes":[
-                {
-                    "name": "tag",
-                    "target":{
-                        "name": "g-tag"
-                    }
-                },
-                {
-                    "name": "treeId",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "direction",
-                    "target":{
-                        "name": "string",
-                        "values":[
-                            "horizontal",
-                            "vertical"
-                        ],
-                        "default": "horizontal"
-                    }
-                },
-                {
-                    "name": "width",
-                    "target":{
-                        "name": "number",
-                        "default": 400                    
-                    }
-                },
-                {
-                    "name": "height",
-                    "target":{
-                        "name": "number",
-                        "default": 400
-                    }
-                },
-                {
-                    "name": "depth",
-                    "target": {
-                        "name": "number",
-                        "default": 100
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "handlerType", "type": "string", "value": "algorithm" },
-                { "name": "elementType", "type": "string", "value": "tree" }
-            ]
-        },
-        {
-            "name": "force-layout",
-            "nature": "concrete",
-            "prototype": "graphical-layout",
-            "attributes":[
-                {
-                    "name": "force",
-                    "target":{
-                        "name": "force"
-                    }
-                },
-                {
-                    "name": "tag",
-                    "target":{
-                       "name": "g-tag"
-                    }
-                }
-            ],
-            "properties": [
-                { "name": "handlerType", "type": "string", "value": "algorithm" },
-                { "name": "elementType", "type": "string", "value": "force" }
-            ]
-        },
-        {
-            "name": "force",
-            "nature": "concrete",
-            "attributes":[
-                {
-                    "name": "dimension",
-                    "target":{
-                        "name": "absolute"
-                    }
-                },
-                {
-                    "name": "intensity",
-                    "target":{
-                        "name": "number",
-                        "default": 500
-                    }
-                },
-                {
-                    "name": "linkVal",
-                    "target":{
-                        "name": "number",
-                        "default": 300
-                    }
-                },
-                {
-                    "name": "radius",
-                    "target":{
-                        "name": "number",
-                        "default": 50
-                    }
-                },
-                {
-                    "name": "width",
-                    "target":{
-                        "name": "number",
-                        "default": 700
-                    }
-                },
-                {
-                    "name": "height",
-                    "target":{
-                        "name": "number",
-                        "default": 700
-                    }
-                }
-            ]
-        },
-        {
-            "name": "pattern-layout",
-            "nature": "concrete",
-            "prototype": "graphical-layout",
-            "attributes":[
-                {
-                    "name": "saturation",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "create",
-                    "target":{
-                        "name": "boolean",
-                        "default": "false"
-                    }
-                },
-                {
-                    "name": "pattern",
-                    "target":{
-                        "name": "anchors"
-                    }
-                },
-                {
-                    "name": "item",
-                    "target":{
-                        "name": "g-tag"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "anchors",
-            "nature": "concrete",
-            "attributes":[
-                {
-                    "name": "first",
-                    "target":{
-                        "name": "coordinates-first"
-                    }
-                },
-                {
-                    "name": "next",
-                    "target":{
-                        "name": "coordinates-next"
-                    }
-                },
-                {
-                    "name": "nbItem",
-                    "target":{
-                        "name": "number",
-                        "default": 3
-                    }
-                },
-                {
-                    "name": "width",
-                    "target":{
-                        "name": "number",
-                        "default": 350
-                    }
-                },
-                {
-                    "name": "height",
-                    "target":{
-                        "name": "number",
-                        "default": 350
-                    }
-                },
-                {
-                    "name": "itemWidth",
-                    "target":{
-                        "name": "number",
-                        "default": 50
-                    }
-                }
-            ]
-        },
-        {
-            "name": "decoration-layout",
-            "nature": "concrete",
-            "prototype": "graphical-layout",
-            "attributes":[
-                {
-                    "name": "dimensions",
-                    "target":{
-                        "name": "absolute"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "coordinates",
-                    "target":{
-                        "name": "coordinates"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "background",
-                    "target":{
-                        "name": "string"
-                    },
-                    "required": true
-                },
-                {
-                    "name": "shape",
-                    "target":{
-                        "name": "shape"
-                    },
-                    "required": true
-                },
-                {
-                    "name": "reference",
-                    "target":{
-                        "name": "boolean"
-                    },
-                    "default": false
-                },
-                {
-                    "name": "rmv",
-                    "target":{
-                        "name": "rmv"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "content",
-                    "target":{
-                        "name": "set",
-                        "accept":{
-                            "name": "graphical-component"
+                        "target": {
+                           "name": "render",
+                           "accept": [
+                            { "name": "adaptive-algorithm"},
+                            { "name": "text-field" },
+                            { "name": "choice-field" },
+                            { "name": "switch-field" },
+                            { "name": "placeholder-field" },
+                            { "name": "button-static" },
+                            { "name": "plink-static" },
+                            { "name": "text-static" },
+                            { "name": "image-static"}
+                           ]
                         }
                     }
                 }
-            ],
-            "properties": [
-                { "name": "handlerType", "type": "string", "value": "algorithm" },
-                { "name": "elementType", "type": "string", "value": "decoration" }
             ]
         },
         {
-            "name": "rmv",
-            "nature": "prototype",
-            "attributes":[]
-        },
-        {
-            "name": "rmv-single",
+            "name": "background",
             "nature": "concrete",
-            "prototype": "rmv",
-            "attributes":[
-                {
-                    "name": "background",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "shape",
-                    "target":{
-                        "name": "shape"
-                    }
-                },
-                {
-                    "name": "dimensions",
-                    "target":{
-                        "name": "dimensions",
-                        "accept":[
-                            { "name": "pure" },
-                            { "name": "absolute" },
-                            { "name": "fixed" }
-                        ],
-                        "default":{
-                            "name": "pure"
-                        }
-                    }
-                },
-                {
-                    "name": "coordinates",
-                    "target":{
-                        "name": "coordinates"
-                    }
-                }
+            "attributes": [
+        
             ]
         },
         {
-            "name": "rmv-bind",
-            "prototype": "rmv",
+            "name": "overlap",
             "nature": "concrete",
-            "attributes":[
-
+            "attributes": [
+  
             ]
-        },
-        {
-            "name": "graphical-component",
-            "nature": "concrete",
-            "attributes":[
-                {
-                    "name": "render",
-                    "target":{
-                        "name": "graphics"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "dimensions",
-            "nature": "prototype",
-            "attributes":[]
-        },
-        {
-            "name": "absolute-default",
-            "nature": "concrete",
-            "prototype": "dimensions",
-            "attributes":[
-                {
-                    "name": "width",
-                    "target":{
-                        "name": "number",
-                        "default": 50
-                    },
-                    "default": 50
-                },
-                {
-                    "name": "height",
-                    "target":{
-                        "name": "number",
-                        "default": 50  
-                    },
-                    "default": 50
-                }
-            ]
-        },
-        {
-            "name": "absolute",
-            "nature": "concrete",
-            "prototype": "dimensions",
-            "attributes":[
-                {
-                    "name": "width",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "height",
-                    "target":{
-                        "name": "number"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "fixed",
-            "nature": "concrete",
-            "prototype": "dimensions",
-            "attributes":[
-                {
-                    "name": "width",
-                    "target":{
-                        "name": "number"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "pure",
-            "nature": "concrete",
-            "prototype": "dimensions",
-            "attributes":[]
         },
         {
             "name": "coordinates",
             "nature": "concrete",
-            "attributes":[
+            "attributes": [
+            
+            ]
+        },
+        {
+            "name": "dimension",
+            "nature": "prototype",
+            "attributes": []
+        },
+        {
+            "name": "pure-dimension",
+            "prototype": "dimension",
+            "attributes": []
+        },
+        {
+            "name": "field",
+            "nature": "prototype",
+            "prototype": "element",
+            "attributes": [
                 {
-                    "name": "x",
-                    "target":{
-                        "name": "number",
-                        "default": 0
-                    }
-                },
-                {
-                    "name": "y",
-                    "target":{
-                        "name": "number",
-                        "default": 0
-                    }
-                },
-                {
-                    "name": "anchor",
-                    "target":{
+                    "name": "source",
+                    "target": {
                         "name": "string",
-                        "values":[
-                            "left",
-                            "middle",
-                            "right",
-                            "center"
+                        "src": [
+                            { 
+                                "type": "meta-reference", 
+                                "target": {
+                                    "name": "attributes",
+                                    "rel": "children",
+                                    "value": "name"
+                                },
+                                "query": {
+                                    "type": "resource",
+                                    "resource": "concepts",
+                                    "params": [
+                                        { 
+                                            "type": "eq",
+                                            "eq": [
+                                                { "type": "property", "value": "name"},
+                                                { "type": "reference", "rel": "parent", "name": "projection",
+                                                    "value": { "type": "reference", "rel": "children", "name": "concept",
+                                                        "value": { "type": "attribute", "name": "name" }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
                         ]
                     }
                 }
             ]
         },
         {
-            "name": "coordinates-first",
+            "name": "text-field",
             "nature": "concrete",
-            "attributes":[
+            "prototype": "field",
+            "attributes": [
                 {
-                    "name": "x",
-                    "target":{
-                        "name": "number",
-                        "default": 50
-                    }
+                    "name": "multiline",
+                    "target": {
+                        "name": "boolean"
+                    },
+                    "default": "false",
+                    "required": true
                 },
                 {
-                    "name": "y",
-                    "target":{
-                        "name": "number",
-                        "default": 150
-                    }
-                }
-            ]
-        },
-        {
-            "name": "coordinates-next",
-            "nature": "concrete",
-            "attributes":[
-                {
-                    "name": "x",
-                    "target":{
-                        "name": "number",
-                        "default": 100
-                    }
-                },
-                {
-                    "name": "y",
-                    "target":{
-                        "name": "number",
-                        "default": 0
-                    }
-                }
-            ]
-        },
-        {
-            "name": "rtag",
-            "nature": "derivative",
-            "base": "string",
-            "constraint": {
-                "value": {
-                    "type": "pattern",
-                    "pattern": {
-                        "insensitive": true,
-                        "global": true,
-                        "value": "^\\w+(-\\w+)*$"
-                    }
-                }
-            }
-        },
-        {
-            "name": "textSVG-style",
-            "nature": "concrete",
-            "attributes":[
-                {
-                    "name": "font",
-                    "target":{
-                        "name": "string",
-                        "default": "Verdana"
-                    }
-                },
-                {
-                    "name": "size",
-                    "target":{
-                        "name": "number",
-                        "default": 11
-                    }
+                    "name": "placeholder",
+                    "target": {
+                        "name": "string"
+                    },
+                    "default": "undefined",
+                    "required": true
                 },
                 {
                     "name": "anchor",
-                    "target":{
-                        "name": "string",
-                        "values":[
-                            "left",
-                            "middle",
-                            "right"
-                        ],
-                        "default": "middle"
-                    }
-                },
-                {
-                    "name": "weight",
-                    "target":{
-                        "name": "number"
+                    "target": {
+                        "name": "string"
                     },
-                    "required": false
+                    "default": "start",
+                    "constraint": {
+                        "values": ["start", "middle", "end"]
+                    }
                 },
                 {
                     "name": "baseline",
-                    "target":{
-                        "name": "string",
-                        "values":[
-                            "auto",
-                            "text-bottom",
-                            "alphabetic",
-                            "ideographic",
-                            "middle",
-                            "central",
-                            "mathematical",
-                            "hanging",
-                            "text-top"
-                        ],
-                        "default": "auto"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "arrow-style",
-            "nature": "concrete",
-            "attributes":[
-                {
-                    "name": "stroke",
-                    "target":{
-                        "name": "hex-color__black"
-                    }
-                },
-                {
-                    "name": "dasharray",
-                    "target":{
+                    "target": {
                         "name": "string"
-                    }
-                },
-                {
-                    "name": "width",
-                    "target":{
-                        "name": "number",
-                        "default": 1
-                    }
-                },
-                {
-                    "name": "linecap",
-                    "target":{
-                        "name": "string",
-                        "default": "butt"
-                    }
-                },
-                {
-                    "name": "end",
-                    "target":{
-                        "name": "markerArrow"
                     },
-                    "required": false
-                },
-                {
-                    "name": "start",
-                    "target":{
-                       "name": "markerArrow"
-                    },
-                    "required": false
-                }
-            ]
-        },
-        {
-            "name": "markerArrow",
-            "nature": "concrete",
-            "attributes":[
-                {
-                    "name": "id",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "minX",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "minY",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "width",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "height",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "refX",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "refY",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "markerWidth",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "markerHeight",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "d",
-                    "target":{
-                        "name": "string"
+                    "default": "auto",
+                    "constraint": {
+                        "values": ["auto", "middle", "hanging"]
                     }
                 }
             ]
         },
         {
-            "name": "projection-dynamic",
+            "name": "choice-field",
             "nature": "concrete",
-            "prototype": "graphics",
+            "prototype": "field",
             "attributes": [
                 {
-                    "name": "src",
-                    "target": {
-                        "name": "name"
-                    }
-                },
-                {
-                    "name": "attribute",
+                    "name": "direction",
                     "target": {
                         "name": "string"
-                    }
+                    },
+                    "default": "vertical",
+                    "constraint": {
+                        "values": ["vertical", "horizontal"]
+                    },
+                    "required": true
                 },
+                {
+                    "name": "closeable",
+                    "target": {
+                        "name": "boolean"
+                    },
+                    "default": false,
+                    "required": true
+                },
+                {
+                    "name": "view",
+                    "target": {
+                        "name": "choice-view"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "icon",
+                    "target": {
+                        "name": "choice-icon"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "choice",
+                    "target": {
+                        "name": "template reference"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "choice-icon",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "adaptable",
+                    "target": {
+                        "name": "boolean"
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "name": "choice-view",
+            "nature": "concrete",
+            "attributes": [
+               
+            ]
+        },
+        {
+            "name": "template reference",
+            "nature": "concrete",
+            "prototype": "render",
+            "attributes": [
                 {
                     "name": "tag",
                     "target": {
-                        "name": "g-tag"
-                    }
-                },
-                {
-                    "name": "dimension",
-                    "target":{
-                        "name": "dimensions",
-                        "accept":[
-                            { "name": "pure" },
-                            { "name": "absolute" },
-                            { "name": "fixed" }
-                        ],
-                        "default":{
-                            "name": "pure"
+                        "name": "reference",
+                        "accept": {
+                            "name": "tag"
                         }
                     }
                 },
                 {
-                    "name": "coordinates",
-                    "target":{
-                        "name": "coordinates"
+                    "name": "name",
+                    "target": {
+                        "name": "string"
                     }
                 }
-            ],
-            "properties": [
-                { "name": "contentType", "type": "string", "value": "dynamic" },
-                { "name": "elementType", "type": "string", "value": "projection" }
             ]
+        },
+        {
+            "name": "name",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "length": {
+                    "type": "range",
+                    "range": {
+                        "min": { "value": 1 },
+                        "max": { "value": 50 }
+                    }
+                }
+            }
         }
     ]
 }
