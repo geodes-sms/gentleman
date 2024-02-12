@@ -89,6 +89,18 @@
                         "name": "boolean",
                         "default": true
                     }
+                },
+                {
+                    "name": "coordinates",
+                    "target": {
+                        "name": "coordinates"
+                    }
+                },
+                {
+                    "name": "dimension",
+                    "target": {
+                        "name": "dimension"
+                    }
                 }
             ]
         },
@@ -143,7 +155,7 @@
                     "name": "elements",
                     "target": {
                         "name": "set",
-                        "target": {
+                        "accept": {
                            "name": "render",
                            "accept": [
                             { "name": "adaptive-algorithm"},
@@ -179,7 +191,18 @@
             "name": "coordinates",
             "nature": "concrete",
             "attributes": [
-            
+                {
+                    "name": "x",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "y",
+                    "target": {
+                        "name": "number"
+                    }
+                }
             ]
         },
         {
@@ -240,17 +263,181 @@
                 {
                     "name": "multiline",
                     "target": {
-                        "name": "boolean"
+                        "name": "boolean",
+                        "default": false
                     },
-                    "default": "false",
                     "required": true
                 },
                 {
                     "name": "placeholder",
                     "target": {
-                        "name": "string"
+                        "name": "string",
+                        "default": "Empty..."
                     },
-                    "default": "undefined",
+                    "required": true
+                },
+                {
+                    "name": "anchor",
+                    "target": {
+                        "name": "string",
+                        "default": "middle"
+                    },
+                    "constraint": {
+                        "values": ["start", "middle", "end"]
+                    }
+                },
+                {
+                    "name": "baseline",
+                    "target": {
+                        "name": "string",
+                        "default": "middle"
+                    },
+                    "constraint": {
+                        "values": ["auto", "middle", "hanging"]
+                    }
+                },
+                {
+                    "name": "style",
+                    "target": {
+                        "name": "text-style"
+                    }
+                }             
+            ]
+        },
+        {
+            "name": "choice-field",
+            "nature": "concrete",
+            "prototype": "field",
+            "attributes": [
+                {
+                    "name": "direction",
+                    "target": {
+                        "name": "string",
+                        "default": "vertical"
+                    },
+                    "constraint": {
+                        "values": ["vertical", "horizontal"]
+                    },
+                    "required": true
+                },
+                {
+                    "name": "choice-tag",
+                    "target": {
+                        "name": "template reference"
+                    }
+                },            
+                {
+                    "name": "choice-container",
+                    "target": {
+                        "name": "choice-container",
+                        "default": "expanded"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "choice-selection",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "placeholder",
+                    "target": {
+                        "name": "string",
+                        "default": "TO DO"
+                    }
+                }
+            ]
+
+        },
+        {
+            "name": "choice-container",
+            "nature": "prototype",
+            "attributes": []
+        },
+        {
+            "name": "expanded",
+            "nature": "concrete",
+            "prototype": "choice-container",
+            "attributes": []
+        },
+        {
+            "name": "closeable",
+            "nature": "concrete",
+            "prototype": "choice-container",
+            "attributes": [
+                {
+                    "name": "template",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "placeholder-field",
+            "nature": "concrete",
+            "prototype": "field",
+            "attributes": [
+                {
+                    "name": "placeholder-tag",
+                    "target": {
+                        "name": "template reference"
+                    }
+                },
+                {
+                    "name": "template",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "switch-field",
+            "nature": "concrete",
+            "prototype": "field",
+            "attributes": [
+                {
+                    "name": "switch-tag",
+                    "target": {
+                        "name": "template reference"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "static-element",
+            "nature": "prototype",
+            "prototype": "element",
+            "attributes": []
+        },
+        {
+            "name": "image-static",
+            "nature": "concrete",
+            "prototype": "static-element",
+            "attributes": [
+              
+            ]
+        },
+        {
+            "name": "text-static",
+            "nature": "concrete",
+            "prototype": "static-element",
+            "attributes": [
+                {
+                    "name": "multiline",
+                    "target": {
+                        "name": "boolean",
+                        "default": false
+                    },
+                    "required": true
+                },
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "string",
+                        "default": "Empty..."
+                    },
                     "required": true
                 },
                 {
@@ -276,76 +463,127 @@
             ]
         },
         {
-            "name": "choice-field",
+            "name": "button-static",
             "nature": "concrete",
-            "prototype": "field",
+            "prototype": "static-element",
             "attributes": [
                 {
-                    "name": "direction",
+                    "name": "content",
                     "target": {
-                        "name": "string"
-                    },
-                    "default": "vertical",
-                    "constraint": {
-                        "values": ["vertical", "horizontal"]
-                    },
-                    "required": true
+                        "name": "string",
+                        "default":"TO DO"
+                    }
                 },
                 {
-                    "name": "closeable",
+                    "name": "action",
                     "target": {
-                        "name": "boolean"
-                    },
-                    "default": false,
-                    "required": true
-                },
-                {
-                    "name": "view",
-                    "target": {
-                        "name": "choice-view"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "icon",
-                    "target": {
-                        "name": "choice-icon"
-                    },
-                    "required": false
-                },
-                {
-                    "name": "choice",
-                    "target": {
-                        "name": "template reference"
+                        "name": "btn-action"
                     }
                 }
             ]
         },
         {
-            "name": "choice-icon",
+            "name": "btn-action",
+            "nature": "prototype",
+            "prototype": "static-element",
+            "attributes": [
+ 
+            ]
+        },
+        {
+            "name": "create-action",
             "nature": "concrete",
+            "prototype": "btn-action",
+            "attributes": [
+
+            ]
+        },
+        {
+            "name": "create-select-action",
+            "nature": "concrete",
+            "prototype": "btn-action",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "string",
+                        "default": "TO DO"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "create-tree-action",
+            "nature": "concrete",
+            "prototype": "btn-action",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "string",
+                        "default": "TO DO"
+                    }
+                },
+                {
+                    "name": "tag",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "plink-static",
+            "nature": "concrete",
+            "prototype": "static-element",
             "attributes": [
                 {
                     "name": "content",
                     "target": {
                         "name": "string"
-                    },
-                    "required": true
+                    }
                 },
                 {
-                    "name": "adaptable",
+                    "name": "tag",
                     "target": {
-                        "name": "boolean"
-                    },
-                    "required": true
+                        "name": "string",
+                        "default": "TO DO"
+                    }
                 }
             ]
         },
         {
-            "name": "choice-view",
+            "name": "text-style",
             "nature": "concrete",
             "attributes": [
-               
+                {
+                    "name": "size",
+                    "target": {
+                        "name": "number",
+                        "default": 10
+                    }
+                },
+                {
+                    "name": "font",
+                    "target": {
+                        "name": "string",
+                        "default": "Segoe UI"
+                    }
+                },
+                {
+                    "name": "color",
+                    "target": {
+                        "name": "string",
+                        "default": "black"
+                    }
+                },
+                {
+                    "name": "weight",
+                    "target": {
+                        "name": "number",
+                        "default": 1
+                    }
+                }
             ]
         },
         {
@@ -367,6 +605,111 @@
                     "target": {
                         "name": "string"
                     }
+                }
+            ]
+        },
+        {
+            "name": "template",
+            "nature": "concrete",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "name"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "param",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "parameter"
+                        }
+                    },
+                    "required": false
+                },
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "render",
+                            "accept": [
+                                { "name": "adaptive-algorithm"},
+                                { "name": "text-field" },
+                                { "name": "choice-field" },
+                                { "name": "switch-field" },
+                                { "name": "placeholder-field" },
+                                { "name": "button-static" },
+                                { "name": "plink-static" },
+                                { "name": "text-static" },
+                                { "name": "image-static"}
+                            ]
+                        }
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "handler", "type": "string", "value": "template" }
+            ]
+        },
+        {
+            "name": "parameter",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "type",
+                    "target": {
+                        "name": "value"
+                    },
+                    "required": true
+                }
+            ]
+        },
+        {
+            "name": "value",
+            "nature": "prototype",
+            "attributes": []
+        },
+        {
+            "name": "string-value",
+            "nature": "concrete",
+            "prototype": "value",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": { "name": "string" }
+                }
+            ]
+        },
+        {
+            "name": "number-value",
+            "nature": "concrete",
+            "prototype": "value",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": { "name": "number" }
+                }
+            ]
+        },
+        {
+            "name": "boolean-value",
+            "nature": "concrete",
+            "prototype": "value",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": { "name": "boolean" }
                 }
             ]
         },
