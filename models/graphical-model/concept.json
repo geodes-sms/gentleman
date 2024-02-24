@@ -177,7 +177,127 @@
             "name": "background",
             "nature": "concrete",
             "attributes": [
-        
+                {
+                    "name": "wrap",
+                    "target": {
+                        "name" : "string" 
+                    }
+                },
+                {
+                    "name": "padding",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "speed",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "svg-import"
+                    }
+                }
+
+            ]
+        },
+        {
+            "name": "svg-projection",
+            "nature": "prototype",
+            "attributes": []
+        },
+        {
+            "name": "svg-import",
+            "nature": "concrete",
+            "prototype": "svg-projection",
+            "attributes": [
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "svg-shape",
+            "nature": "concrete",
+            "prototype": "svg-projection",
+            "attributes": [
+                {
+                    "name": "dimension",
+                    "target": {
+                        "name": "dimension"
+                    }
+                },
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "set",
+                        "accept": [
+                            { "name": "shape" }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "shape",
+            "nature": "prototype",
+            "attributes": [
+                {
+                    "name": "fill",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "stroke",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "stroke-width",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "stroke-dasharray",
+                    "target": {
+                        "name": "number"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "circle-shape",
+            "nature": "concrete",
+            "prototype": "shape",
+            "attributes": [
+                {
+                    "name": "cx",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "cy",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "r",
+                    "target": {
+                        "name": "number"
+                    }
+                }
             ]
         },
         {
@@ -366,9 +486,9 @@
             "prototype": "choice-container",
             "attributes": [
                 {
-                    "name": "template",
+                    "name": "content",
                     "target": {
-                        "name": "string"
+                        "name": "svg-import"
                     }
                 }
             ]
@@ -385,7 +505,7 @@
                     }
                 },
                 {
-                    "name": "template",
+                    "name": "content",
                     "target": {
                         "name": "string"
                     }
@@ -443,9 +563,9 @@
                 {
                     "name": "anchor",
                     "target": {
-                        "name": "string"
+                        "name": "string",
+                        "default": "middle"
                     },
-                    "default": "start",
                     "constraint": {
                         "values": ["start", "middle", "end"]
                     }
@@ -453,13 +573,19 @@
                 {
                     "name": "baseline",
                     "target": {
-                        "name": "string"
+                        "name": "string",
+                        "default": "middle"
                     },
-                    "default": "auto",
                     "constraint": {
                         "values": ["auto", "middle", "hanging"]
                     }
-                }
+                }, 
+                {
+                    "name": "style",
+                    "target": {
+                        "name": "text-style"
+                    }
+                }           
             ]
         },
         {

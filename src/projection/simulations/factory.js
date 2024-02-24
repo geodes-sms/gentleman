@@ -13,6 +13,7 @@ import { SubPathSimulation } from "./sub-path";
 import { AnchorSimulation } from "./anchor-simulation";
 import { SetSimulation } from "./set-simulation";
 import { TreeSimulation } from "./tree-simulation";
+import { ChoiceSimulation } from "./choice-simulation";
 
 var inc = 0;
 const nextId = () => `algo${inc++}`;
@@ -132,6 +133,16 @@ const Handler = {
         object: { value: "simulation" },
         name: { value: "tree-simulation" },
         type: { value: "tree" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    }),
+    'choice': (model, schema, projection) => Object.create(ChoiceSimulation, {
+        object: { value: "simulation" },
+        name: { value: "choice-simulation" },
+        type: { value: "choice" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
