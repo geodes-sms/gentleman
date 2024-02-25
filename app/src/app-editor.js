@@ -357,7 +357,7 @@ export const App = {
                         ],
                     },
                     handlers: {
-                        "export.model": function () { console.log(this); this.export(); },
+                        "export.model": function () { console.log(this);  },
                         "open.menu": function () { this.home.open(); },
                         "close.editor": function () { this.close(); },
                         "build-concept": function (args) { buildConceptHandler.call(this); },

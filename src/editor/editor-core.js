@@ -1585,13 +1585,14 @@ const EditorCore = {
             }
         });
         this.registerHandler("delete", (target) => {
-            const { target: actionTarget } = target.dataset;
+            /*const { target: actionTarget } = target.dataset;
+
 
             if (actionTarget === "parent") {
                 let parent = target.parentElement;
                 removeChildren(parent);
                 parent.remove();
-            }
+            }*/
         });
         this.registerHandler("create-instance", (target) => {
             const { concept: cname } = target.dataset;
