@@ -1,4 +1,4 @@
-import { isNullOrUndefined } from "zenkai";
+import { isEmpty, isNullOrUndefined } from "zenkai";
 import { Algorithm } from "./algorithm";
 
 
@@ -25,6 +25,12 @@ export const BaseForceAlgorithm = {
 
         if(isNullOrUndefined(this.force)) {
             this.setUpForce();
+        }
+
+        if(!isEmpty(this.source.getValue()) && isEmpty(this.nodes)) {
+            this.source.getValue().forEach((value) => {
+                this.addItem(value);
+            });
         }
 
         this.bindEvents();
@@ -61,13 +67,23 @@ export const BaseForceAlgorithm = {
         this.node
         .attr("x", function(d) { return d.x} )
         .attr("y", function(d) { return d.y} );
+
     },
 
     addItem(value) { 
-        let container = this.createItem(value);
+        let id = this.createItem(value);
+        
+        const schema = {
+            id: id
+        }
 
-        this.container.append(container);
-        this.nodes.push({});
+        if(!isNullOrUndefined(value.force)) {
+            const { x, y } = value.force;
+            schema.x = x;
+            schema.y = y;
+        }
+
+        this.nodes.push(schema);
         this.restart();
     },
 
@@ -76,16 +92,26 @@ export const BaseForceAlgorithm = {
 
         let itemProjection = this.model.createProjection(value, tag);
         itemProjection.parent = this;
+        itemProjection.optional = true;
 
         let container = itemProjection.init().render();
         container.classList.add("node" + this.id);
-        
-        return container;
+
+        this.container.append(container);
+        itemProjection.update("displayed");
+
+        return itemProjection.concept.id;
     },
 
     removeItem(value) {
-        console.log("Value removed");
-        console.log(value);
+        for(let i = 0; i < this.nodes.length; i++) {
+            if(this.nodes[i].id == value.id) {
+                this.nodes.splice(i, 1);
+                break;
+            }
+        }
+
+        this.restart();
     },
 
     display() {
