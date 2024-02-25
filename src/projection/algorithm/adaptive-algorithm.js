@@ -86,9 +86,9 @@ const BaseAdaptiveAlgorithm = {
 
             this.background = parser.parseFromString(background.content.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement;
             
-            this.background.childNodes.forEach(child => {
-                this.container.append(child);
-            })
+            while(!isEmpty(this.background.childNodes)) {
+                this.container.append(this.background.childNodes[0]);
+            }
 
             this.container.setAttribute("width", this.background.getAttribute("width"));
             this.container.setAttribute("height", this.background.getAttribute("height"));
