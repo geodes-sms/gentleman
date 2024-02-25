@@ -291,7 +291,6 @@ export function ContentHandler(schema, concept, args = {}) {
 
             clear();
 
-
             if (contentConcept.hasValue()) {
                 let concept = contentConcept.getValue(true);
 
@@ -312,8 +311,11 @@ export function ContentHandler(schema, concept, args = {}) {
                 }
 
                 projection.element.parent = this.projection.element;
-  
-                this.projection.update("binding", {projection: projection, id: this.projection.element.id});
+                try {
+                    this.projection.element.updateContent(projection.concept.id, projection.element);
+                } catch (e) {
+
+                }
 
                 projection.update("displayed");
             }

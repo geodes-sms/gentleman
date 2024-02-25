@@ -1,6 +1,5 @@
 import { isNullOrUndefined } from "zenkai";
 import { ForceAlgorithm } from "./temp_force.js";
-//import { PatternAlgorithm } from "./pattern-algorithm.js";
 import { PatternAlgorithm } from "./temp_pattern.js";
 import { DecorationAlgorithm } from "./decoration-algorithm.js";
 import { AnchorAlgorithm } from "./anchor-algorithm.js";
@@ -62,7 +61,7 @@ const Handler = {
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
     }),
-    'adaptive': (model, schema, projection) => Object.create(AdaptiveAlgorithm, {
+    'adaptative': (model, schema, projection) => Object.create(AdaptiveAlgorithm, {
         object: { value: "algorithm" },
         name: { value: "adaptive-layout" },
         type: { value: "adaptive" },

@@ -34,18 +34,15 @@ const BaseSpanField = {
     },
 
     clickHandler(target){
-        console.log("Span getting clicked");
-        console.log(target);
+
     },
 
     focusIn(target){
-        console.log("Focusing in span");
-        console.log(target);
+
     },
 
     focusOut(target){
-        console.log("Focusing out");
-        console.log(target);
+
     }
 }
 

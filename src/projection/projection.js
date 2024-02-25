@@ -1,6 +1,6 @@
 import {
     createButton, removeChildren, isNode, isHTMLElement, hasOwn, isNullOrUndefined,
-    valOrDefault, isEmpty, toBoolean, findAncestor,
+    valOrDefault, isEmpty, toBoolean, findAncestor, isNull,
 } from "zenkai";
 import { hide, show, makeResizable } from "@utils/index.js";
 import { LayoutFactory } from "./layout/index.js";
@@ -433,40 +433,33 @@ const Projection = {
             "object": this.concept.object,
         });
 
-        if (this.optional) {
-            if (this.element.schema.rmv) {
-                this.element.createDelete();
+        if (this.optional) {          
+            let btnDelete = createButton({
+                class: ["btn", "structure__btn-delete", "projection__btn-delete"],
+                title: `Delete ${this.concept.name}`,
+                tabindex: -1,
+                dataset: {
+                    "action": "delete",
+                    "projection": this.id
+                }
+            });
 
-                container.dataset.deletable = true;
-            } else {
-                /** @type {HTMLElement} */
-                let btnDelete = createButton({
-                    class: ["btn", "structure__btn-delete", "projection__btn-delete"],
-                    title: `Delete ${this.concept.name}`,
-                    tabindex: -1,
-                    dataset: {
-                        "action": "delete",
-                        "projection": this.id
-                    }
-                });
+            btnDelete.addEventListener('click', (event) => {
+                let container = this.getContainer();
+                let parent = findAncestor(container, (el) => el.tabIndex === 0);
+                this.environment.save(this.concept.getParent(), container.cloneNode(true));
+                this.concept.delete();
 
-                btnDelete.addEventListener('click', (event) => {
-                    let container = this.getContainer();
-                    let parent = findAncestor(container, (el) => el.tabIndex === 0);
-                    this.environment.save(this.concept.getParent(), container.cloneNode(true));
-                    this.concept.delete();
+                let element = this.environment.resolveElement(parent);
 
-                    let element = this.environment.resolveElement(parent);
+                if (!isNullOrUndefined(element)) {
+                    element.focus();
+                }
+            });
 
-                    if (!isNullOrUndefined(element)) {
-                        element.focus();
-                    }
-                });
+            container.dataset.deletable = true;
 
-                container.dataset.deletable = true;
-
-                container.prepend(btnDelete);
-            }
+            container.prepend(btnDelete);
         }
         if (this.collapsible) {
             /** @type {HTMLElement} */
@@ -518,6 +511,11 @@ const Projection = {
                 container.tabIndex = null;
             });
         }
+    },
+
+    updateContent(id, projection) {
+        let proj = this.element;
+        this.element.updateContent(id, projection);
     },
 
     createSibling(concept, sibling) {
@@ -598,7 +596,18 @@ const Projection = {
             container = this.render();
         }
 
-        currentContainer.replaceWith(container);2
+        currentContainer.replaceWith(container);
+
+        let currentProjection = this.resolveElement(currentContainer)
+        let projection = this.resolveElement(container);
+
+        if(!isNullOrUndefined(currentProjection.parent)) {
+            projection.parent = currentProjection.parent;
+            projection.parent.updateContent(this.concept.id, projection);
+        };
+
+        currentProjection.updateSize();
+        
 
         // if (this.parent) {
         //     this.parent.update("view.changed", container, this);

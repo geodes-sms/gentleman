@@ -231,7 +231,6 @@ const BaseSwitchField = {
      * Adapts the container size
      * @return nothing
      */
-
     updateSize(){
         if(isNullOrUndefined(this.containerView)){
             this.containerView = {};

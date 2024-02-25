@@ -3,7 +3,7 @@ import { Static } from "./static.js"
 
 const ActionHandler = {
     "CREATE": createElement,
-    "CREATES": createAndSelect,
+    "CREATE-SELECT": createAndSelect,
     "DELETE": deleteElement,
     "EXTRACT": extractShape,
     "SIDE": openSide,
@@ -62,10 +62,6 @@ function createElement(target, value){
 }
 
 function deleteElement(target, value){
-    if(this.source.parent.schema.nature === "prototype"){
-        this.source.parent.delete();
-        return;
-    }
     this.source.delete();
 }
 
@@ -147,7 +143,7 @@ const BaseSVGButton = {
     },
 
     render(){
-        const { action, content } = this.schema;
+        const { action, content, dimensions } = this.schema;
 
         if(isNullOrUndefined(this.element)){
             this.element = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -163,9 +159,18 @@ const BaseSVGButton = {
             this.createContent(content);
         }
 
+        if(dimensions) {
+            this.element.setAttribute("width", dimensions.width);
+            this.element.setAttribute("height", dimensions.height);
+        }
+
         this.action = action;
 
         this.bindEvents();
+
+        if(this.action == "DELETE" && !this.projection.optional) {
+            this.container.classList.add("hidden");
+        }
 
         return this.element
     },

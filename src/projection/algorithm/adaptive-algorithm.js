@@ -149,8 +149,6 @@ const BaseAdaptiveAlgorithm = {
      * @return nothing
      */
     updateSize(){
-        console.log("Adaptive update");
-
         if(this.fixed){
             return;
         }

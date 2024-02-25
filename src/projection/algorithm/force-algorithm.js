@@ -80,7 +80,7 @@ export const BaseForceAlgorithm = {
     setUpForce(){
         const { intensity, linkval } = this.schema.force;
 
-        this.force = d3.layout.force()
+        this.force = d3.layout()
                     .size([this.width, this.height])
                     .nodes([])
                     .links([])
@@ -587,9 +587,6 @@ export const BaseForceAlgorithm = {
     createItem(object, button){
 
         const item = this.schema.item;
-
-        console.log(item);
-
 
         let itemProjection = this.model.createProjection(object, item);
         itemProjection.optional = true;
@@ -1722,7 +1719,7 @@ const BorderHandler = {
 
 }
 
-export const ForceAlgorithm = Object.assign({},
+/*export const ForceAlgorithm = Object.assign({},
     Algorithm,
     BaseForceAlgorithm
-);
+);*/

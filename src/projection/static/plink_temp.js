@@ -38,7 +38,7 @@ const BaseProjectionLinkSVGStatic = {
      * @return An SVG element
     */
     render(){
-        const { content } = this.schema;
+        const { content, dimensions } = this.schema;
 
         if(isNullOrUndefined(this.element)){
             this.element = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -49,6 +49,12 @@ const BaseProjectionLinkSVGStatic = {
             this.element.dataset.nature = "static";
             this.element.dataset.view = "svg-plink";
             this.element.dataset.ignore = "all";
+        }
+
+        if(!isNullOrUndefined(dimensions)) {
+            const { width, height } = dimensions;
+            this.element.setAttribute("width", width);
+            this.element.setAttribute("height", height);            
         }
 
         const parser = new DOMParser();

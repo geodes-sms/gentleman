@@ -65,12 +65,11 @@ const BaseWrapAlgorithm = {
     },
 
     display(){
-
         if(!isNullOrUndefined(this.parent) && !this.parent.displayed){
             return;
         }
 
-        if(this.displayed){
+        if(this.displayed || !document.getElementById(this.id)){
             return;
         }
 
@@ -95,9 +94,17 @@ const BaseWrapAlgorithm = {
         this.updateSize();
     },
 
-    updateSize(){
-        console.log("wrapping update");
+    updateContent(conceptId, projection) {
+        for(let i = 0; i < this.content.length; i++) {
+            if(this.content[i].source.id === conceptId) {
+                this.content[i] = projection;
+                return;
+            }   
+        }
+        this.content.push(projection);
+    },
 
+    updateSize(){
         if(this.fixed){
             return;
         }
@@ -105,17 +112,18 @@ const BaseWrapAlgorithm = {
         if(!this.displayed){
             this.display();
         }
-
-        console.log("Content?");
-        console.log(this.content);
         if(isNullOrUndefined(this.content) || isEmpty(this.content)){
             this.containerView = {
                 targetW: 0,
-                targetH: 0
+                targetH: 0,
+                x: 0,
+                y: 0,
+                w: 0,
+                h: 0
             }
             return;
         }
-
+        
         SizeHandler["wrap"].call(this);
 
         if(!isNullOrUndefined(this.parent)){
@@ -130,7 +138,7 @@ const BaseWrapAlgorithm = {
     },
 }
 
-export const WrapAlgoritm = Object.assign({},
-    Object.create(Algorithm),
+export const WrapAlgorithm = Object.assign({},
+    Algorithm,
     BaseWrapAlgorithm
 )

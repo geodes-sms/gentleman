@@ -2,9 +2,6 @@ import { ContentHandler } from "./../content-handler";
 import { Field } from "./field";
 
 const { isNullOrUndefined, isEmpty, isNull, first, valOrDefault } = require("zenkai");
-/**TO DO TEXT STYLE */
-/**TO DO READONLY */
-/**TO DO FOCUS BUG  => Use text fields*/
 
 
 const BaseTextSVG = {
@@ -57,7 +54,7 @@ const BaseTextSVG = {
             if(this.source.hasValue()){
                 this.content = this.source.value;
             }else{
-                this.content = placeholder;
+                this.content = this.placeholders;
             }
         }
 
@@ -459,12 +456,20 @@ const BaseTextSVG = {
     },
 
     focusIn(){
+        console.log(this);
     },
 
     focusOut(){
+        console.log("Focusing out");
+        if(!isNullOrUndefined(this.timer)){
+            clearInterval(this.timer);
+            this.caret.remove();
+        }
+        return;
     },
 
     _focusOut(){
+        console.log("_Focusing out");
         if(!isNullOrUndefined(this.timer)){
             clearInterval(this.timer);
             this.caret.remove();
@@ -503,7 +508,7 @@ const BaseTextSVG = {
             this.displayMonoCaret(this.inputElement.selectionStart);
         });
 
-        this.inputElement.addEventListener("focusout", () => {
+        this.element.addEventListener("focusout", () => {
             this._focusOut();
         })
 
@@ -539,7 +544,7 @@ const BaseTextSVG = {
                     
                 }
             }
-            this.content = content;
+            this.content = isEmpty(content) ? content : this.placeholder;
             this.source.setValue(content);
         }else{
             this.source.setValue(this.inputElement.value);

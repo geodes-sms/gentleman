@@ -172,7 +172,7 @@ function resetCircle(radius, adapter){
             
         adapter.element.setAttribute("r", this.containerView.radius);
 
-        if(progress < 1){
+        if (progress < 1) {
             this.animationFrame = window.requestAnimationFrame(animateStep);
         }
     }
@@ -492,6 +492,7 @@ function adaptRect(offsets, adapter, stroke){
 
 
 function updateWrap() {
+
     if(!isNullOrUndefined(this.animationFrame)){
         window.cancelAnimationFrame(this.animationFrame);
     }
@@ -569,7 +570,6 @@ function updateWrap() {
         if (!startTime) startTime = timestamp;
         const progress = (timestamp - startTime) / totalTime;
 
-
         this.containerView.x = defaultView.x - (offSet.x * progress);
         this.containerView.y = defaultView.y - (offSet.y * progress);
         this.containerView.w = defaultView.w - (offSet.w * progress);
@@ -585,8 +585,23 @@ function updateWrap() {
         this.container.setAttribute("width", this.containerView.w);
         this.container.setAttribute("height", this.containerView.h);
 
-        if(progress < 1){
+        if (progress < 1) {
             this.animationFrame = window.requestAnimationFrame(animateStep);
+        } else {
+            this.containerView.w = this.containerView.targetW;
+            this.containerView.h = this.containerView.targetH;
+            this.containerView.x = this.containerView.targetX;
+            this.containerView.y = this.containerView.targetY;
+
+            this.container.setAttribute("viewBox",
+                this.containerView.targetX + " " +
+                this.containerView.targetY + " " +
+                this.containerView.w + " " +
+                this.containerView.h + " "
+            );
+
+            this.container.setAttribute("width", this.containerView.w);
+            this.container.setAttribute("height", this.containerView.h);
         }
     }
     this.animationFrame = window.requestAnimationFrame(animateStep);
