@@ -1,309 +1,148 @@
 {
     "type": "concept",
-    "concept":[
+    "concept": [
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead3",
-            "name": "partition",
-            "nature": "concrete",
+            "name": "sheet",
             "root": true,
-            "attributes":[
+            "nature": "concrete",
+            "attributes": [
                 {
                     "name": "name",
-                    "target":{
+                    "target": {
                         "name": "string"
                     }
                 },
                 {
                     "name": "author",
-                    "target":{
+                    "target": {
                         "name": "string"
                     }
                 },
                 {
+                    "name": "tempo",
+                    "target": {
+                        "name": "tempo",
+                        "default": "4x4"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "tempo",
+            "nature": "prototype",
+            "attributes": [
+            ]
+        },
+        {
+            "name": "4x4",
+            "nature": "concrete",
+            "prototype": "tempo",
+            "attributes": [
+                {
                     "name": "staves",
-                    "target":{
+                    "target": {
                         "name": "set",
                         "accept": {
-                            "name": "stave"
+                            "name": "quad-staff"
                         }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "quad-staff",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "left",
+                    "target": {
+                        "name": "4-tempo"
                     }
                 },
                 {
-                    "name": "notes",
-                    "target":{
-                        "name": "set",
-                        "accept":{
-                            "name": "note"
-                        }
-                    }  
+                    "name": "right",
+                    "target": {
+                        "name": "4 tempo"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "tempo",
+            "nature": "prototype",
+            "attributes": [
+                {
+                    "name": "end-measure",
+                    "target": {
+                        "name": "measure",
+                        "default": "simple-measure"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "4-tempo",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "first-time",
+                    "target": {
+                        "name": "time"
+                    }
                 },
                 {
-                    "name": "nolets",
-                    "target":{
-                        "name": "set",
-                        "accept":{
-                            "name": "nolet"
-                        }
+                    "name": "second-time",
+                    "target": {
+                        "name": "time"
                     }
-                }
-            ]
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead4",
-            "name": "stave",
-            "root": false,
-            "nature": "concrete",
-            "attributes":[]
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead5",
-            "name": "nolet",
-            "root": false,
-            "nature": "concrete",
-            "attributes":[
+                },
                 {
-                    "name": "components",
-                    "target":{
-                        "name": "set",
-                        "accept":{
-                            "name": "reference",
-                            "accept":{
-                                "name": "note"
-                            }
-
-                        }
+                    "name": "third-time",
+                    "target": {
+                        "name": "time"
                     }
-                }
-            ]
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead6",
-            "name": "note",
-            "root": false,
-            "nature": "prototype",
-            "attributes":[
+                },
                 {
-                    "name": "tempo",
-                    "target":{
-                        "name": "note-type",
-                        "default": { "name": "noire"}
+                    "name": "fourth-time",
+                    "target": {
+                        "name": "time"
                     }
                 }
             ]
         },
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead7",
-            "name": "note-type",
-            "root": false,
+            "name": "measure",
             "nature": "prototype",
-            "attributes":[]
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eae9",
-            "name": "noire",
-            "root": false,
-            "prototype": "note-type",
-            "nature": "concrete",
-            "attributes":[]
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eae9",
-            "name": "blanche",
-            "root": false,
-            "prototype": "note-type",
-            "nature": "concrete",
-            "attributes":[]
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead8",
-            "name": "do",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
-            "attributes":[]
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead9",
-            "name": "re",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
-            "attributes":[]
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eae0",
-            "name": "mi",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
-            "attributes":[]
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eade1",
-            "name": "fa",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
-            "attributes":[]
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eade2",
-            "name": "sol",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
             "attributes": []
         },
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eade2",
-            "name": "la",
-            "root": false,
+            "name": "simple-measure",
             "nature": "concrete",
-            "prototype": "note",
+            "prototype": "measure",
             "attributes": []
         },
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eade2",
-            "name": "si",
-            "root": false,
+            "name": "double-measure",
             "nature": "concrete",
-            "prototype": "note",
+            "prototype": "measure",
             "attributes": []
         },
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eade2",
-            "name": "doM",
-            "root": false,
+            "name": "final-measure",
             "nature": "concrete",
-            "prototype": "note",
+            "prototype": "measure",
             "attributes": []
         },
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eade3",
-            "name": "siL",
-            "root": false,
+            "name": "start-measure",
             "nature": "concrete",
-            "prototype": "note",
+            "prototype": "measure",
             "attributes": []
         },
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eade4",
-            "name": "laL",
-            "root": false,
+            "name": "end-measure",
             "nature": "concrete",
-            "prototype": "note",
-            "attributes": []
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eadY4",
-            "name": "solL",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
-            "attributes": []
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eadY5",
-            "name": "faL",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
-            "attributes": []
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eadY6",
-            "name": "miL",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
-            "attributes": []
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eadY7",
-            "name": "reL",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
-            "attributes": []
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eadY8",
-            "name": "doL",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
-            "attributes": []
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eadY9",
-            "name": "siLL",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
-            "attributes": []
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eadZ0",
-            "name": "laLL",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
-            "attributes": []
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eadZ1",
-            "name": "solLL",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
-            "attributes": []
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eadZ2",
-            "name": "faLL",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
-            "attributes": []
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eadZ3",
-            "name": "miLL",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
-            "attributes": []
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eadZ4",
-            "name": "reM",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
-            "attributes": []
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eadZ5",
-            "name": "miM",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
-            "attributes": []
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eadZ6",
-            "name": "faM",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
-            "attributes": []
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9eadZ7",
-            "name": "solM",
-            "root": false,
-            "nature": "concrete",
-            "prototype": "note",
+            "prototype": "measure",
             "attributes": []
         }
     ]
