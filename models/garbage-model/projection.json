@@ -1,208 +1,68 @@
 {
     "type": "projection",
-    "projection":[
+    "projection": [
         {
             "concept": { "name": "Family" },
-            "type": "algorithm",
             "tags": [],
+            "type": "algorithm",
             "content": {
-                "type": "adaptive",
+                "type": "adaptative",
                 "background": {
-                    "padding": 0,
-                    "speed": 150,
                     "wrap": "myContainer",
-                    "content":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"60\"><rect data-myContainer=\"here\" width=\"100\" height=\"60\" fill=\"green\"></rect></svg>"
+                    "speed": 1,
+                    "padding": 0,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1440\" height=\"800\"><rect data-myContainer=\"here\" fill=\"#f7fafa\" width=\"1440\" height=\"800\"></rect></svg>"
                 },
                 "content": [
                     {
                         "coordinates": {
-                            "x": 20,
+                            "x": 0,
                             "y": 0
                         },
                         "dimension": {
                             "type": "pure"
                         },
-                        "render":{
+                        "render": {
                             "type": "algorithm",
                             "algorithm": {
-                                "type": "wrap",
-                                "speed": 150,
+                                "type": "adaptative",
+                                "background": {
+                                    "wrap": "myContainer",
+                                    "speed": 1,
+                                    "padding": 0,
+                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1440\" height=\"60\"><rect data-myContainer=\"here\" x=\"1.25\" y=\"1.25\" width=\"1437.5\" height=\"57.5\" fill=\"#f7fafa\" stroke=\"black\" stroke-width=\"2.5\"></rect></svg>"
+                                },
                                 "content": [
                                     {
                                         "coordinates": {
-                                            "x": 0,
-                                            "y": 0
+                                            "x": 20,
+                                            "y": 7.5
                                         },
                                         "dimension": {
                                             "type": "pure"
                                         },
                                         "render": {
                                             "type": "attribute",
-                                            "name": "person",
-                                            "tag": "default"
+                                            "name": "infos",
+                                            "tag": "class_btn"
                                         }
                                     }
                                 ]
                             }
                         }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "PersonAbs" },
-            "type": "algorithm",
-            "tags": ["default"],
-            "content": {
-                "type": "adaptive",
-                "background": { 
-                    "padding": 5,
-                    "speed": 150,
-                    "wrap": "myContainer",
-                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"60\" height=\"60\"><circle data-myContainer=\"here\" fill=\"red\" r=\"30\" cx=\"30\" cy=\"30\"></circle></svg>"
-                },
-                "content": [
+                    },
                     {
                         "coordinates": {
-                            "x": 10,
-                            "y": 10
+                            "x": 0,
+                            "y": 60
                         },
                         "dimension": {
                             "type": "pure"
                         },
                         "render": {
-                            "type": "field",
-                            "field": {
-                                "type": "svg-switch",
-                                "choice":{
-                                    "option": {
-                                        "template": {
-                                            "tag": "static"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "guy" },
-            "type": "algorithm",
-            "tags": ["static"],
-            "content": {
-                "type": "adaptive",
-                "background": {
-                    "padding": 0,
-                    "speed": 150,
-                    "wrap": "myContainer",
-                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"30\"><rect data-myContainer=\"here\" width=\"30\" height=\"30\" data-position=\"\" data-markerX=\"20\" data-markerY=\"20\" fill=\"blue\"></rect></svg>"
-                },
-                "content": []
-            }
-        },
-        {
-            "concept": { "name": "guy" },
-            "type": "algorithm",
-            "tags": ["value"],
-            "content": {
-                "type": "adaptive",
-                "background": {
-                    "padding": 0,
-                    "speed": 150,
-                    "wrap": "myContainer",
-                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"30\"><rect data-myContainer=\"here\" width=\"30\" height=\"30\" data-position=\"\" data-markerX=\"20\" data-markerY=\"20\" fill=\"blue\"></rect></svg>"
-                },
-                "content": []
-            }
-        },
-        {
-            "concept": { "name": "girl" },
-            "type": "algorithm",
-            "tags": ["static"],
-            "content": {
-                "type": "adaptive",
-                "background": {
-                    "padding": 0,
-                    "speed": 150,
-                    "wrap": "myContainer",
-                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"70\" height=\"70\"><rect data-myContainer=\"here\" width=\"70\" height=\"70\" data-position=\"\" data-markerX=\"70\" data-markerY=\"70\" fill=\"pink\"></rect></svg>"
-                },
-                "content": []
-            }
-        },
-        {
-            "concept": { "name": "girl" },
-            "type": "algorithm",
-            "tags": ["value"],
-            "content": {
-                "type": "adaptive",
-                "background": {
-                    "padding": 0,
-                    "speed": 150,
-                    "wrap": "myContainer",
-                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"30\"><rect data-myContainer=\"here\" width=\"30\" height=\"30\" data-position=\"\" data-markerX=\"70\" data-markerY=\"70\" fill=\"pink\"></rect></svg>"
-                },
-                "content": []
-            }
-        },
-        {
-            "concept": { "name": "Person" },
-            "type": "algorithm",
-            "tags": ["choice-example"],
-            "content":{
-                "type": "adaptive",
-                "background": {
-                    "padding": 0,
-                    "speed": 150,
-                    "wrap": "myContainer",
-                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"60\" height=\"60\"><circle data-myContainer=\"here\" fill=\"red\" r=\"30\" cx=\"30\" cy=\"30\"></circle></svg>"
-                },
-                "content":[
-                    {
-                        "dimension": {
-                            "type": "pure"
-                        },
-                        "coordinates": {
-                            "x": 10,
-                            "y": 40
-                        },
-                        "render":{
                             "type": "attribute",
-                            "name": "dad",
-                            "tag": "default"
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "Person" },
-            "type": "algorithm",
-            "tags": ["default"],
-            "content":{
-                "type": "adaptive",
-                "overlap": 5,
-                "background":{
-                    "padding": 5,
-                    "speed": 150,
-                    "wrap": "myContainer",
-                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"60\" height=\"60\"><circle data-myContainer=\"here\" fill=\"red\" r=\"30\" cx=\"30\" cy=\"30\"></circle></svg>"
-                },
-                "content":[
-                    {
-                        "dimension":{
-                            "type": "pure"
-                        },
-                        "coordinates":{
-                            "x": 30,
-                            "y": 30
-                        },
-                        "render":{
-                            "type": "attribute",
-                            "name": "name",
-                            "tag": "str-base"
+                            "name": "infos",
+                            "tag": "force"
                         }
                     }
                 ]
@@ -210,31 +70,24 @@
         },
         {
             "concept": { "name": "set" },
+            "tags": [ "class_btn" ],
             "type": "algorithm",
-            "tags": ["default"],
-            "content":{
-                "type": "adaptive",
-                "overlap": 5,
-                "background":{
-                    "padding": 0,
-                    "speed": 150,
-                    "wrap": "caca",
-                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\"><rect data-caca=\"prout\" width=\"20\" height=\"20\" fill=\"transparent\"></rect></svg>"
-                },
-                "content":[
+            "content": {
+                "type": "wrap",
+                "content": [
                     {
-                        "dimension":{
-                            "type": "pure"
-                        },
-                        "coordinates":{
+                        "coordinates": {
                             "x": 0,
                             "y": 0
                         },
-                        "render":{
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
                             "kind": "static",
                             "type": "svg-button",
-                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\"><rect width=\"20\" height=\"20\" fill=\"blue\"></rect></svg>",
-                            "action":{
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"45\"><rect x=\"0.5\" y=\"0.5\" width=\"29\" height=\"44\" fill=\"#1b8aca\" stroke=\"black\" stroke-width=\"1\"/><line x1=\"0\" x2=\"30\" y1=\"14.6\" y2=\"14.6\" stroke=\"black\"/><line x1=\"0\" x2=\"30\" y1=\"29.3\" y2=\"29.3\" stroke=\"black\"/><text x=\"15\" y=\"7.3\" font-size=\"4\" style=\"dominant-baseline:middle\" text-anchor=\"middle\" font-weight=\"bold\"><tspan>Class</tspan></text></svg>",
+                            "action": {
                                 "type": "CREATE"
                             }
                         }
@@ -243,126 +96,54 @@
             }
         },
         {
-            "concept": { "name": "string" },
-            "tags": ["str-base"],
-            "type": "field",
-            "content":{
-                "type": "svg",
-                "readonly": false,
-                "placeholder": "Oh-bla-di oh-bla-da\nLife goes on\nAhhhhh\nLi-li-li-li-life goes on",
-                "multiline": true,
-                "anchor": "middle",
-                "baseline": "middle",
-                "style":{
-                    "baseline": "middle",
-                    "font": "Segoe UI",
-                    "size": 12,
-                    "fill": "black",
-                    "weight": false
-                } 
-            }
-        },
-        {
-            "concept": { "name": "reference" },
-            "tags": ["default"],
-            "type": "field",
-            "content":{
-                "type": "svg-choice",
-                "closeable": true,
-                "direction": "vertical",
-                "choice":{
-                    "option":{
-                        "template": {
-                            "tag": "static"
-                        }
-                    }
+            "concept": { "name": "set" },
+            "tags": ["force"],
+            "type": "algorithm",
+            "content": {
+                "type": "force",
+                "force": {
+                    "width": 1500,
+                    "height": 800,
+                    "charge": -2000,
+                    "linkDistance": 200                    
                 },
-                "preserve":{
-                    "multiline": false,
-                    "padding": 5,
-                    "speed": 150,
-                    "placeholder": "Unknown"
-                },
-                "icon": {
-                    
+                "items": {
+                    "tag": "simple"
                 }
             }
         },
         {
             "concept": { "name": "Person" },
-            "tags": ["static"],
-            "type": "algorithm",
-            "content":{
-                "type": "adaptive",
-                "background": {
-                    "wrap": "myContainer",
-                    "padding": 5,
-                    "speed": 150,
-                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\"><rect data-myContainer=\"here\" width=\"10\" height=\"10\" fill=\"transparent\"></rect></svg>"
-                },
-                "content":[
-                    {
-                        "dimension": {
-                            "type": "pure"
-                        },
-                        "coordinates": {
-                            "x": 5,
-                            "y": 5
-                        },
-                        "render": {
-                            "kind": "static",
-                            "type": "svg-text",
-                            "content": "Dead",
-                            "anchor": "middle",
-                            "baseline": "middle",
-                            "multiline": false
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "Family" },
+            "tags": ["simple"],
             "type": "algorithm",
             "content": {
-                "type": "adaptive",
-                "background":{
-                    "padding": 0,
-                    "speed": 150,
+                "type": "adaptative",
+                "background": {
                     "wrap": "myContainer",
-                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"60\"><rect data-myContainer=\"here\" width=\"100\" height=\"60\" fill=\"green\"></rect></svg>"
+                    "speed": 1,
+                    "padding": 0,
+                    "content":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"30\"><circle data-myContainer=\"here\" cx=\"15\" cy=\"15\" r=\"15\"></circle></svg>"
                 },
                 "content": [
                     {
                         "dimension": {
                             "type": "pure"
                         },
-                        "coordinates":{
-                            "x": 20,
-                            "y": 0
-                        },
-                        "render":{
-                            "type": "attribute",
-                            "name": "person",
-                            "tag": "default"
-                        }
-                    },
-                    {
-                        "dimension": {
-                            "type": "pure"
-                        },
                         "coordinates": {
-                            "x": 0,
+                            "x": 10,
                             "y": 10
                         },
-                        "render":{
-                            "type": "attribute",
-                            "name": "infos",
-                            "tag": "default"
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\"><circle cx=\"5\" cy=\"5\" r=\"5\" fill=\"red\"></circle></svg>",
+                            "action": {
+                                "type": "DELETE"
+                            }
                         }
                     }
                 ]
             }
-        }
+        } 
     ]
 }

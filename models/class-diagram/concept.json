@@ -2,11 +2,32 @@
     "type": "concept",
     "concept": [
         {
+            "name": "class-diagram",
+            "nature": "concrete",
+            "root": "true",
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "items",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "prototype"
+                        }
+                    }
+                }
+            ]
+        },
+        {
             "name": "prototype",
             "nature": "prototype",
             "attributes": []
-        },
-        
+        },        
         {
             "name": "class",
             "nature": "concrete",
@@ -17,6 +38,22 @@
                     "name": "name",
                     "target": {
                         "name": "string"
+                    }
+                },
+                {
+                    "name": "parent",
+                    "target": {
+                        "name": "class"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "relations",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "relation"
+                        }
                     }
                 },
                 {
@@ -38,6 +75,58 @@
                     }
                 }
             ]
+        },
+        {
+            "name": "relation",
+            "nature": "prototype",
+            "attributes": [
+                {
+                    "name": "target",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "class"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "association",
+            "nature": "concrete",
+            "prototype": "relation",
+            "attributes":[
+                {
+                    "name": "multiplicity-in",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "multiplicity-out",
+                    "target": {
+                        "name": "number"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "aggregation",
+            "nature": "concrete",
+            "prototype": "relation",
+            "attributes":[]
+        },
+        {
+            "name": "composition",
+            "nature": "concrete",
+            "prototype": "relation",
+            "attributes": []
+        },
+        {
+            "name": "realization",
+            "nature": "concrete",
+            "prototype": "relation",
+            "attributes": []
         },
         {
             "name": "string-primitive",

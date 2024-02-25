@@ -1,0 +1,461 @@
+{
+    "type": "model",
+    "concept": [
+        {
+            "name": "Family",
+            "nature": "concrete",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "person",
+                    "target": {
+                        "name": "PersonAbs",
+                        "accept": [
+                            {
+                                "name": "guy"
+                            },
+                            {
+                                "name": "girl"
+                            }
+                        ],
+                        "default": {
+                            "name": "guy"
+                        }
+                    },
+                    "required": true
+                },
+                {
+                    "name": "thirdChoice",
+                    "target": {
+                        "name": "Person"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "infos",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "Person"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "PersonAbs",
+            "nature": "prototype",
+            "root": false,
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "guy",
+            "nature": "concrete",
+            "prototype": "PersonAbs",
+            "attributes": []
+        },
+        {
+            "name": "girl",
+            "nature": "concrete",
+            "prototype": "PersonAbs",
+            "attributes": []
+        },
+        {
+            "name": "Person",
+            "nature": "concrete",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    },
+                    "required": true
+                },
+                {
+                    "name": "dad",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "Person"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "projection": {
+        "type": "projection",
+        "projection": [
+            {
+                "concept": { "name": "Family" },
+                "tags": [],
+                "type": "algorithm",
+                "content": {
+                    "type": "adaptative",
+                    "background": {
+                        "wrap": "myContainer",
+                        "speed": 1,
+                        "padding": 0,
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1440\" height=\"800\"><rect data-myContainer=\"here\" fill=\"#f7fafa\" width=\"1440\" height=\"800\"></rect></svg>"
+                    },
+                    "content": [
+                        {
+                            "coordinates": {
+                                "x": 0,
+                                "y": 0
+                            },
+                            "dimension": {
+                                "type": "pure"
+                            },
+                            "render": {
+                                "type": "algorithm",
+                                "algorithm": {
+                                    "type": "adaptative",
+                                    "background": {
+                                        "wrap": "myContainer",
+                                        "speed": 1,
+                                        "padding": 0,
+                                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1440\" height=\"60\"><rect data-myContainer=\"here\" x=\"1.25\" y=\"1.25\" width=\"1437.5\" height=\"57.5\" fill=\"#f7fafa\" stroke=\"black\" stroke-width=\"2.5\"></rect></svg>"
+                                    },
+                                    "content": [
+                                        {
+                                            "coordinates": {
+                                                "x": 20,
+                                                "y": 7.5
+                                            },
+                                            "dimension": {
+                                                "type": "pure"
+                                            },
+                                            "render": {
+                                                "type": "attribute",
+                                                "name": "infos",
+                                                "tag": "class_btn"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "coordinates": {
+                                "x": 0,
+                                "y": 60
+                            },
+                            "dimension": {
+                                "type": "pure"
+                            },
+                            "render": {
+                                "type": "attribute",
+                                "name": "infos",
+                                "tag": "force"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "concept": { "name": "set" },
+                "tags": [ "class_btn" ],
+                "type": "algorithm",
+                "content": {
+                    "type": "wrap",
+                    "content": [
+                        {
+                            "coordinates": {
+                                "x": 0,
+                                "y": 0
+                            },
+                            "dimension": {
+                                "type": "pure"
+                            },
+                            "render": {
+                                "kind": "static",
+                                "type": "svg-button",
+                                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"45\"><rect x=\"0.5\" y=\"0.5\" width=\"29\" height=\"44\" fill=\"#1b8aca\" stroke=\"black\" stroke-width=\"1\"/><line x1=\"0\" x2=\"30\" y1=\"14.6\" y2=\"14.6\" stroke=\"black\"/><line x1=\"0\" x2=\"30\" y1=\"29.3\" y2=\"29.3\" stroke=\"black\"/><text x=\"15\" y=\"7.3\" font-size=\"4\" style=\"dominant-baseline:middle\" text-anchor=\"middle\" font-weight=\"bold\"><tspan>Class</tspan></text></svg>",
+                                "action": {
+                                    "type": "CREATE"
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "concept": { "name": "set" },
+                "tags": ["force"],
+                "type": "algorithm",
+                "content": {
+                    "type": "force",
+                    "force": {
+                        "width": 1500,
+                        "height": 800,
+                        "charge": -2000,
+                        "linkDistance": 200                    
+                    },
+                    "items": {
+                        "tag": "simple"
+                    }
+                }
+            },
+            {
+                "concept": { "name": "Person" },
+                "tags": ["simple"],
+                "type": "algorithm",
+                "content": {
+                    "type": "adaptative",
+                    "background": {
+                        "wrap": "myContainer",
+                        "speed": 1,
+                        "padding": 0,
+                        "content":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"30\"><circle data-myContainer=\"here\" cx=\"15\" cy=\"15\" r=\"15\"></circle></svg>"
+                    },
+                    "content": [
+                        {
+                            "dimension": {
+                                "type": "pure"
+                            },
+                            "coordinates": {
+                                "x": 10,
+                                "y": 10
+                            },
+                            "render": {
+                                "kind": "static",
+                                "type": "svg-button",
+                                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\"><circle cx=\"5\" cy=\"5\" r=\"5\" fill=\"red\"></circle></svg>",
+                                "action": {
+                                    "type": "DELETE"
+                                }
+                            }
+                        }
+                    ]
+                }
+            } 
+        ]
+    },
+    "values": [
+        {
+            "id": "4df53ab6-312e-40aa-bbf4-6821377b0810",
+            "name": "string",
+            "root": false,
+            "value": null
+        },
+        {
+            "id": "64634483-f8b8-46ef-b40a-7736d303d430",
+            "root": false,
+            "name": "guy",
+            "attributes": [
+                {
+                    "name": "name",
+                    "value": null
+                }
+            ]
+        },
+        {
+            "id": "fc7ed178-cd93-4bae-b789-ab0dcd4b9e45",
+            "name": "PersonAbs",
+            "root": false,
+            "value": {
+                "id": "64634483-f8b8-46ef-b40a-7736d303d430",
+                "name": "guy"
+            }
+        },
+        {
+            "id": "eefc5a3f-e41c-4808-8ecc-c4303c042326",
+            "name": "string",
+            "root": false,
+            "value": null
+        },
+        {
+            "id": "fa8eb06b-d67d-4ca6-89ae-ad89882e746b",
+            "name": "reference",
+            "root": false,
+            "value": null
+        },
+        {
+            "id": "3af8c5ff-91b5-4b5c-b05c-bfbbb10d683f",
+            "root": false,
+            "name": "Person",
+            "attributes": [
+                {
+                    "name": "name",
+                    "value": null
+                },
+                {
+                    "name": "dad",
+                    "value": null
+                }
+            ]
+        },
+        {
+            "id": "9efcd4cb-8c7c-47b2-b424-0e43a90a01a5",
+            "name": "set",
+            "root": false,
+            "value": [
+                "5c7d7e26-db3d-496c-a15a-215a15fc593c",
+                "64bc5ffe-67d6-4de6-80e8-d7383992c8c2",
+                "6ef4fdeb-200c-4377-84ad-327e12a38080",
+                "016e0e35-a5f2-43cc-96aa-04d2ddc18ff0"
+            ]
+        },
+        {
+            "id": "11b2caee-fad7-42b6-8300-f0399e7e79c0",
+            "root": true,
+            "name": "Family",
+            "attributes": [
+                {
+                    "name": "person",
+                    "value": {
+                        "id": "fc7ed178-cd93-4bae-b789-ab0dcd4b9e45",
+                        "name": "PersonAbs"
+                    }
+                },
+                {
+                    "name": "thirdChoice",
+                    "value": {
+                        "id": "3af8c5ff-91b5-4b5c-b05c-bfbbb10d683f",
+                        "name": "Person"
+                    }
+                },
+                {
+                    "name": "infos",
+                    "value": {
+                        "id": "9efcd4cb-8c7c-47b2-b424-0e43a90a01a5",
+                        "name": "set"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "35e07ae3-225b-43b2-a2a3-0980a0d42362",
+            "name": "string",
+            "root": false,
+            "value": null
+        },
+        {
+            "id": "75faabd8-466c-4399-9c92-102f23f01ca7",
+            "name": "reference",
+            "root": false,
+            "value": null
+        },
+        {
+            "id": "5c7d7e26-db3d-496c-a15a-215a15fc593c",
+            "root": false,
+            "name": "Person",
+            "attributes": [
+                {
+                    "name": "name",
+                    "value": null
+                },
+                {
+                    "name": "dad",
+                    "value": null
+                }
+            ],
+            "force": {
+                "x": 1080,
+                "y": 370
+            }
+        },
+        {
+            "id": "110d9aef-bf16-45a4-9b0c-1a6607c0b2c1",
+            "name": "string",
+            "root": false,
+            "value": null
+        },
+        {
+            "id": "4220f086-8ff2-4400-82be-61e79975172b",
+            "name": "reference",
+            "root": false,
+            "value": null
+        },
+        {
+            "id": "64bc5ffe-67d6-4de6-80e8-d7383992c8c2",
+            "root": false,
+            "name": "Person",
+            "attributes": [
+                {
+                    "name": "name",
+                    "value": null
+                },
+                {
+                    "name": "dad",
+                    "value": null
+                }
+            ],
+            "force": {
+                "x": 720,
+                "y": 555
+            }
+        },
+        {
+            "id": "b7222809-dbba-4518-aebe-0b2683106124",
+            "name": "string",
+            "root": false,
+            "value": null
+        },
+        {
+            "id": "cf7a267f-6a06-4c6e-833e-86506545058c",
+            "name": "reference",
+            "root": false,
+            "value": null
+        },
+        {
+            "id": "6ef4fdeb-200c-4377-84ad-327e12a38080",
+            "root": false,
+            "name": "Person",
+            "attributes": [
+                {
+                    "name": "name",
+                    "value": null
+                },
+                {
+                    "name": "dad",
+                    "value": null
+                }
+            ],
+            "force": {
+                "x": 720,
+                "y": 185
+            }
+        },
+        {
+            "id": "054f9bfa-9f3b-4a65-93b5-fb56b39db3ea",
+            "name": "string",
+            "root": false,
+            "value": null
+        },
+        {
+            "id": "b30e92e5-870d-4acc-ae1d-179ef2218cab",
+            "name": "reference",
+            "root": false,
+            "value": null
+        },
+        {
+            "id": "016e0e35-a5f2-43cc-96aa-04d2ddc18ff0",
+            "root": false,
+            "name": "Person",
+            "attributes": [
+                {
+                    "name": "name",
+                    "value": null
+                },
+                {
+                    "name": "dad",
+                    "value": null
+                }
+            ],
+            "force": {
+                "x": 360,
+                "y": 370
+            }
+        }
+    ]
+}
