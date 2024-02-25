@@ -54,7 +54,7 @@ const BaseTextSVG = {
             if(this.source.hasValue()){
                 this.content = this.source.value;
             }else{
-                this.content = this.placeholders;
+                this.content = this.placeholder;
             }
         }
 

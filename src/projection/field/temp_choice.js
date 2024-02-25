@@ -154,7 +154,7 @@ const BaseSVGChoice = {
         const schema = {
             type: "algorithm",
             algorithm: {
-                type: "adaptive",
+                type: "adaptative",
                 background: {
                     content: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"16\"><rect data-myContainer=\"prout\" width=\"5\" height=\"16\" notify=\"HEYO\" fill=\"transparent\"></rect></svg>",
                     wrap: "myContainer",
