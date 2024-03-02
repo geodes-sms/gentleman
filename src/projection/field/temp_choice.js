@@ -250,6 +250,10 @@ const BaseSVGChoice = {
             return true;
         }
 
+        if(isNullOrUndefined(this.selectListValue)) {
+            return;
+        }
+
         if(isNullOrUndefined(value)){
             /**Cancel selection */
         } else {
@@ -448,9 +452,15 @@ const BaseSVGChoice = {
             x = proj.containerView.targetW;
             maxH = proj.containerView.targetH;
         }else{
-            let box = firstElem.getBBox();
-            x = box.width;
-            maxH = box.height;
+            if(!isNullOrUndefined(firstElem.childNodes[0].getAttribute("width")) && !isNullOrUndefined(firstElem.childNodes[0].getAttribute("height"))) {
+                x = Number(firstElem.childNodes[0].getAttribute("width"));
+                maxH = Number(firstElem.childNodes[0].getAttribute("height"));
+            } else {
+                let box = firstElem.getBBox();
+                x = box.width;
+                maxH = box.height;
+            }
+
         }
 
         firstElem.setAttribute("x", 0);
@@ -466,20 +476,30 @@ const BaseSVGChoice = {
                 x += proj.containerView.targetW;
                 maxH = Math.max(maxH, proj.containerView.targetH); 
             }else{
-                let box = nodes[i].getBBox();
-                x += box.width;
-                maxH = Math.max(maxH, box.height);
+                if(!isNullOrUndefined(nodes[i].childNodes[0].getAttribute("width")) && !isNullOrUndefined(nodes[i].childNodes[0].getAttribute("height"))) {
+                    x += Number(nodes[i].childNodes[0].getAttribute("width"));
+                    maxH = Math.max(maxH, Number(nodes[i].childNodes[0].getAttribute("height")));
+                } else {
+                    let box = nodes[i].getBBox();
+                    x += box.width;
+                    maxH =  Math.max(maxH, box.height);
+                }
             }
         }
 
-        for(let i = 0; i < nodes.length; i++){
+        for(let i = 1; i < nodes.length; i++){
             proj = this.projection.resolveElement(nodes[i].childNodes[0]);
 
             if(!isNullOrUndefined(proj.containerView)){
                 nodes[i].setAttribute("y", (maxH - proj.containerView.targetH) / 2);
             }else{
-                let box = nodes[i].getBBox();
-                nodes[i].setAttribute("y", (maxH - box.height) / 2)
+                if(!isNullOrUndefined(nodes[i].childNodes[0].getAttribute("width")) && !isNullOrUndefined(nodes[i].childNodes[0].getAttribute("height"))) {
+                    nodes[i].setAttribute("y", (maxH - Number(nodes[i].childNodes[0].getAttribute("height"))) / 2);
+                } else {
+                    let box = nodes[i].getBBox();
+                    nodes[i].setAttribute("y", (maxH - box.height) / 2)
+                }
+
             }
         }
 
