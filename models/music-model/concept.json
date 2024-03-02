@@ -19,16 +19,16 @@
                     }
                 },
                 {
-                    "name": "tempo",
+                    "name": "rythm",
                     "target": {
-                        "name": "tempo",
+                        "name": "rythm",
                         "default": "4x4"
                     }
                 }
             ]
         },
         {
-            "name": "tempo",
+            "name": "rythm",
             "nature": "prototype",
             "attributes": [
             ]
@@ -36,8 +36,14 @@
         {
             "name": "4x4",
             "nature": "concrete",
-            "prototype": "tempo",
+            "prototype": "rythm",
             "attributes": [
+                {
+                    "name": "initial",
+                    "target": {
+                        "name": "quad-staff"
+                    }
+                },
                 {
                     "name": "staves",
                     "target": {
@@ -62,7 +68,7 @@
                 {
                     "name": "right",
                     "target": {
-                        "name": "4 tempo"
+                        "name": "4-tempo"
                     }
                 }
             ]
@@ -83,29 +89,15 @@
         {
             "name": "4-tempo",
             "nature": "concrete",
+            "prototype": "tempo",
             "attributes": [
                 {
-                    "name": "first-time",
+                    "name": "composition",
                     "target": {
-                        "name": "time"
-                    }
-                },
-                {
-                    "name": "second-time",
-                    "target": {
-                        "name": "time"
-                    }
-                },
-                {
-                    "name": "third-time",
-                    "target": {
-                        "name": "time"
-                    }
-                },
-                {
-                    "name": "fourth-time",
-                    "target": {
-                        "name": "time"
+                        "name": "time",
+                        "default": {
+                            "name": "1111"
+                        }
                     }
                 }
             ]
@@ -143,6 +135,174 @@
             "name": "end-measure",
             "nature": "concrete",
             "prototype": "measure",
+            "attributes": []
+        },
+        {
+            "name": "time",
+            "nature": "prototype",
+            "attributes": []
+        },
+        {
+            "name": "1111",
+            "nature": "concrete",
+            "prototype": "time",
+            "attributes": [
+                {
+                    "name": "first",
+                    "target": {
+                        "name": "simple-note"
+                    }
+                },
+                {
+                    "name": "second",
+                    "target": {
+                        "name": "simple-note"
+                    }
+                },
+                {
+                    "name": "third",
+                    "target": {
+                        "name": "simple-note"
+                    }
+                },
+                {
+                    "name": "fourth",
+                    "target": {
+                        "name": "simple-note"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "112",
+            "nature": "concrete",
+            "prototype": "time",
+            "attributes": [
+                {
+                    "name": "first",
+                    "target": {
+                        "name": "simple-note"
+                    }
+                },
+                {
+                    "name": "second",
+                    "target": {
+                        "name": "simple-note"
+                    }
+                },
+                {
+                    "name": "long",
+                    "target": {
+                        "name": "double-note"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "121",
+            "nature": "concrete",
+            "prototype": "time",
+            "attributes": [
+                {
+                    "name": "first",
+                    "target": {
+                        "name": "simple-note"
+                    }
+                },
+                {
+                    "name": "long",
+                    "target": {
+                        "name": "double-note"
+                    }
+                },
+                {
+                    "name": "second",
+                    "target": {
+                        "name": "simple-note"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "211",
+            "nature": "concrete",
+            "prototype": "time",
+            "attributes": [
+                {
+                    "name": "long",
+                    "target": {
+                        "name": "double-note"
+                    }
+                },
+                {
+                    "name": "first",
+                    "target": {
+                        "name": "simple-note"
+                    }
+                },
+                {
+                    "name": "second",
+                    "target": {
+                        "name": "simple-note"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "22",
+            "nature": "concrete",
+            "prototype": "time",
+            "attributes": [
+                {
+                    "name": "first",
+                    "target": {
+                        "name": "double-note"
+                    }
+                },
+                {
+                    "name": "second",
+                    "target": {
+                        "name": "double-note"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "4",
+            "nature": "concrete",
+            "prototype": "time",
+            "attributes": [
+                {
+                    "name": "long",
+                    "target": {
+                        "name": "long-note"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "note",
+            "nature": "prototype",
+            "attributes": []
+        },
+        {
+            "name": "simple-note",
+            "nature": "concrete",
+            "prototype": "note",
+            "attributes": [
+                
+            ]
+        },
+        {
+            "name": "double-note",
+            "nature": "concrete",
+            "prototype": "note",
+            "attributes": []
+        },
+        {
+            "name": "long-note",
+            "nature": "concrete",
+            "prototype": "note",
             "attributes": []
         }
     ]

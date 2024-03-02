@@ -6,12 +6,12 @@
             "tags": ["default"],
             "type": "algorithm",
             "content": {
-                "type": "adaptive",
+                "type": "adaptative",
                 "background": {
                     "wrap": "myContainer",
                     "speed": 1,
                     "padding": 0,
-                    "content": "<svg xmlns=\"https://www.w3.org/2000/svg\" width=\"993\" height=\"1404\"><rect data-myContainer=\"here\" fill=\"white\" width=\"993\" height=\"1404\"></svg>"
+                    "content": "<svg xmlns=\"https://www.w3.org/2000/svg\" width=\"993\" height=\"1404\"><rect data-myContainer=\"here\" fill=\"white\" width=\"993\" height=\"1404\"></rect></svg>"
                 },
                 "content": [
                     {
@@ -21,6 +21,521 @@
                         "coordinates": {
                             "x": 496.5,
                             "y": 100
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "name",
+                            "tag": "str__title"
+                        }
+                    },
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 850,
+                            "y": 250
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "author",
+                            "tag": "str__author"
+                        }
+                    },
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 46.5,
+                            "y": 275
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "rythm",
+                            "tag": "default"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["str__title"],
+            "type": "field",
+            "content": {
+                "type": "svg",
+                "placeholder": "Untitled",
+                "anchor": "middle",
+                "multiline": false,
+                "baseline": "middle" 
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["str__author"],
+            "type": "field",
+            "content": {
+                "type": "svg",
+                "placeholder": "Author",
+                "anchor": "middle",
+                "multiline": false,
+                "baseline": "middle" 
+            }
+        },
+        {
+            "concept": { "name": "rythm" },
+            "tags": ["default"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "projection",
+                            "bind": "value",
+                            "placeholder": false,
+                            "tag": "choice-selection"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 100,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "field",
+                            "field": {
+                                "type": "svg-switch",
+                                "choice": {
+                                    "option": {
+                                        "template": {
+                                            "tag": "choice"
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "4x4" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"200\"><text x=\"10\" y=\"46\" dominant-baseline=\"middle\" text-anchor=\"middle\" font-size=\"24\" font-family=\"Segoe UI\"><tspan>4</tspan></text><text x=\"10\" y=\"62\" dominant-baseline=\"middle\" text-anchor=\"middle\" font-size=\"24\" font-family=\"Segoe UI\"><tspan>4</tspan></text><text x=\"10\" y=\"156\" dominant-baseline=\"middle\" text-anchor=\"middle\" font-size=\"24\" font-family=\"Segoe UI\"><tspan>4</tspan></text><text x=\"10\" y=\"140\" dominant-baseline=\"middle\" text-anchor=\"middle\" font-size=\"24\" font-family=\"Segoe UI\"><tspan>4</tspan></text></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "3x4" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"200\"><text x=\"10\" y=\"46\" dominant-baseline=\"middle\" text-anchor=\"middle\" font-size=\"24\" font-family=\"Segoe UI\"><tspan>4</tspan></text><text x=\"10\" y=\"62\" dominant-baseline=\"middle\" text-anchor=\"middle\" font-size=\"24\" font-family=\"Segoe UI\"><tspan>4</tspan></text><text x=\"10\" y=\"156\" dominant-baseline=\"middle\" text-anchor=\"middle\" font-size=\"24\" font-family=\"Segoe UI\"><tspan>4</tspan></text><text x=\"10\" y=\"140\" dominant-baseline=\"middle\" text-anchor=\"middle\" font-size=\"24\" font-family=\"Segoe UI\"><tspan>4</tspan></text></svg>"
+                        }
+                    }
+                ]   
+            }
+        },
+        {
+            "concept": { "name": "4x4" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "initial",
+                            "tag": "default"
+                        }
+                    }
+                ]
+            } 
+        },
+        {
+            "concept": { "name": "quad-staff" },
+            "tags": ["default"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptative",
+                "background": {
+                    "wrap": "myContainer",
+                    "padding": 0,
+                    "speed": 1,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"900\" height=\"200\"><rect width=\"900\" height=\"200\" fill=\"transparent\" data-myContainer=\"here\"></rect><line x1=\"25\" x2=\"875\" y1=\"38\" y2=\"38\" stroke=\"black\" /><line x1=\"25\" x2=\"875\" y1=\"46\" y2=\"46\" stroke=\"black\" /><line x1=\"25\" x2=\"875\" y1=\"54\" y2=\"54\" stroke=\"black\" /><line x1=\"25\" x2=\"875\" y1=\"62\" y2=\"62\" stroke=\"black\" /><line x1=\"25\" x2=\"875\" y1=\"70\" y2=\"70\" stroke=\"black\" /><line x1=\"25\" x2=\"875\" y1=\"162\" y2=\"162\" stroke=\"black\" /><line x1=\"25\" x2=\"875\" y1=\"154\" y2=\"154\" stroke=\"black\" /><line x1=\"25\" x2=\"875\" y1=\"146\" y2=\"146\" stroke=\"black\" /><line x1=\"25\" x2=\"875\" y1=\"138\" y2=\"138\" stroke=\"black\" /><line x1=\"25\" x2=\"875\" y1=\"130\" y2=\"130\" stroke=\"black\" /><line x1=\"25\" x2=\"25\" y1=\"38\" y2=\"162\" stroke=\"black\"></line><svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"64\" viewBox=\"0 0 485.000000 1280.000000\" preserveAspectRatio=\"xMidYMid meet\" x=\"30\" y=\"16\"><metadata>Created by potrace 1.15, written by Peter Selinger 2001-2017</metadata><g transform=\"translate(0.000000,1280.000000) scale(0.100000,-0.100000)\" fill=\"#000000\" stroke=\"none\"><path d=\"M2536 12470 c-225 -36 -424 -138 -592 -305 -253 -251 -400 -579 -466 -1045 -20 -142 -17 -649 5 -865 53 -511 161 -1092 326 -1745 38 -151 71 -280 73 -287 1 -7 -49 -55 -112 -109 -508 -427 -881 -807 -1079 -1098 -277 -409 -448 -853 -518 -1351 -25 -179 -25 -596 0 -775 77 -551 288 -1001 641 -1368 185 -192 382 -335 621 -452 407 -199 816 -280 1345 -267 225 5 348 19 524 58 49 11 91 18 93 15 9 -9 85 -299 119 -456 101 -467 120 -858 53 -1118 -63 -248 -259 -500 -518 -668 -225 -144 -503 -189 -677 -110 -50 23 -144 99 -144 117 0 4 33 25 73 46 108 56 230 182 284 293 56 115 73 191 80 345 4 106 1 148 -15 226 -65 313 -308 576 -609 661 -102 28 -286 30 -383 4 -306 -83 -552 -290 -634 -536 -73 -219 -51 -481 59 -699 152 -303 430 -475 719 -445 l91 10 67 -38 c336 -194 714 -246 1097 -152 383 94 632 336 745 725 51 178 60 264 61 554 0 209 -4 299 -18 400 -29 202 -81 451 -142 674 -31 112 -55 204 -53 206 2 1 39 14 83 29 546 189 860 584 941 1184 18 139 21 447 4 577 -42 335 -152 635 -331 904 -212 319 -417 515 -671 645 -236 120 -446 159 -865 160 -123 1 -223 1 -223 2 0 0 -70 243 -155 539 -85 296 -155 543 -155 549 0 6 48 48 108 92 550 415 970 961 1251 1630 150 358 267 787 318 1169 25 187 24 616 -1 775 -65 415 -223 742 -477 985 -156 150 -317 243 -504 291 -112 29 -332 41 -439 24z m372 -506 c128 -26 214 -73 312 -173 129 -129 200 -281 235 -495 34 -212 28 -540 -16 -811 -68 -416 -215 -772 -457 -1103 -97 -134 -153 -201 -306 -362 -171 -181 -635 -620 -655 -620 -9 0 -24 68 -97 420 -194 943 -250 1704 -163 2220 25 151 61 283 98 365 124 274 409 498 711 560 90 18 246 18 338 -1z m-844 -4651 c20 -64 163 -556 221 -763 25 -91 47 -170 50 -177 3 -8 -36 -25 -110 -48 -490 -153 -889 -554 -986 -990 -8 -35 -13 -116 -13 -195 1 -115 5 -148 28 -223 59 -198 171 -358 349 -501 32 -25 61 -46 65 -46 4 0 6 80 4 178 -3 151 -1 192 18 282 69 336 264 543 616 653 87 28 253 62 260 54 8 -7 707 -2235 750 -2389 6 -21 -63 -48 -196 -76 -139 -30 -268 -42 -452 -42 -621 0 -1051 151 -1389 489 -280 281 -449 657 -498 1113 -16 142 -13 442 4 598 82 711 440 1440 920 1873 109 99 314 255 337 256 3 1 13 -20 22 -46z m1186 -1793 c104 -25 282 -111 371 -179 103 -79 250 -238 333 -363 117 -176 183 -335 222 -534 27 -133 24 -376 -5 -514 -50 -236 -158 -417 -333 -555 -74 -59 -261 -166 -270 -155 -3 3 -30 93 -62 200 -144 485 -476 1526 -606 1900 -79 228 -77 218 -38 223 77 12 304 -2 388 -23z\" /></g></svg><svg xmlns:svg=\"http://www.w3.org/2000/svg\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.0\" x=\"35\" y=\"130\" width=\"21.6\" height=\"24\" viewBox=\"0 0 18 20\" id=\"svg3083\"><defs id=\"defs3\" /><g transform=\"translate(6.600000e-3,3.125356e-3)\" id=\"layer1\"><g transform=\"translate(-230.9546,-533.6597)\" style=\"fill:#000000;fill-opacity:1.0000000\" id=\"g2883\"><path d=\"M 248.25999,536.80200 C 248.26766,537.17138 248.11044,537.54065 247.82878,537.78185 C 247.46853,538.11076 246.91933,538.17813 246.47048,538.01071 C 246.02563,537.83894 245.69678,537.39883 245.67145,536.92060 C 245.63767,536.54689 245.75685,536.15479 246.02747,535.88867 C 246.28257,535.61680 246.66244,535.48397 247.03147,535.50645 C 247.41131,535.51452 247.77805,535.70601 248.00489,536.01019 C 248.17962,536.23452 248.26238,536.51954 248.25999,536.80200 z \" style=\"fill:#000000;fill-opacity:1.0000000\" id=\"path2885\" /></g><g transform=\"translate(-230.9546,-533.6597)\" style=\"fill:#000000;fill-opacity:1.0000000\" id=\"g2887\"><path d=\"M 248.25999,542.64502 C 248.26772,543.01469 248.11076,543.38446 247.82878,543.62585 C 247.46853,543.95476 246.91933,544.02213 246.47048,543.85472 C 246.02537,543.68288 245.69655,543.24237 245.67145,542.76389 C 245.63651,542.38990 245.76354,542.00308 246.02700,541.73300 C 246.27663,541.45454 246.66060,541.32790 247.02845,541.34950 C 247.51230,541.36282 247.95159,541.69251 248.15162,542.12465 C 248.22565,542.28740 248.26043,542.46657 248.25999,542.64502 z \" style=\"fill:#000000;fill-opacity:1.0000000\" id=\"path2889\" /></g><g transform=\"translate(-230.9546,-533.6597)\" style=\"fill:#000000;fill-opacity:1.0000000\" id=\"g2891\"><path d=\"M 243.97900,540.86798 C 244.02398,543.69258 242.76360,546.43815 240.76469,548.40449 C 238.27527,550.89277 235.01791,552.47534 231.69762,553.53261 C 231.25590,553.77182 230.58970,553.45643 231.28550,553.13144 C 232.62346,552.52289 234.01319,552.00050 235.24564,551.18080 C 237.96799,549.49750 240.26523,546.84674 240.82279,543.61854 C 241.14771,541.65352 241.05724,539.60795 240.56484,537.67852 C 240.20352,536.25993 239.22033,534.79550 237.66352,534.58587 C 236.25068,534.36961 234.74885,534.85905 233.74057,535.88093 C 233.47541,536.14967 232.95916,536.89403 233.04435,537.74747 C 233.64637,537.27468 233.60528,537.32732 234.09900,537.10717 C 235.23573,536.60031 236.74349,537.32105 237.02700,538.57272 C 237.32909,539.72295 237.09551,541.18638 235.96036,541.79960 C 234.77512,542.44413 233.02612,542.17738 232.36450,540.90866 C 231.26916,538.95418 231.87147,536.28193 233.64202,534.92571 C 235.44514,533.42924 238.07609,533.37089 240.19963,534.13862 C 242.38419,534.95111 243.68629,537.21483 243.89691,539.45694 C 243.95419,539.92492 243.97896,540.39668 243.97900,540.86798 z \" style=\"fill:#000000;fill-opacity:1.0000000\" id=\"path2893\" /></g></g></svg></svg>"
+                },
+                "content": [
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 130,
+                            "y": 0
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "left",
+                            "tag": "default"
+                        }
+                    },
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 502.5,
+                            "y": 0
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "right",
+                            "tag": "default"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "4-tempo" },
+            "tags": ["default"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptative",
+                "background": {
+                    "wrap": "myContainer",
+                    "padding": 0,
+                    "speed": 1,
+                    "content":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"375.5\" height=\"200\"><rect width=\"375.5\" height=\"200\" fill=\"transparent\" data-myContainer=\"here\"></rect></svg>"
+                },
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "composition",
+                            "tag": "choice-selection"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 360,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "end-measure",
+                            "tag": "default"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "time" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "projection",
+                            "bind": "value",
+                            "placeholder": false,
+                            "tag": "choice-selection"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "1111" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "first",
+                            "tag": "simple-select"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 90,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "second",
+                            "tag": "simple-select"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 180,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "third",
+                            "tag": "simple-select"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 270,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "fourth",
+                            "tag": "simple-select"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "measure" },
+            "tags": ["default"],
+            "type": "field",
+            "content": {
+                "type": "svg-switch",
+                "choice": {
+                    "option": {
+                        "template": {
+                            "tag": "choice-selection"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "simple-measure" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12.5\" height=\"200\"><line x1=\"11.5\" x2=\"11.5\" y1=\"38\" y2=\"162\" stroke=\"black\"/></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "double-measure" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12.5\" height=\"200\"><line x1=\"10.5\" x2=\"10.5\" y1=\"38\" y2=\"162\" stroke=\"black\"/><line x1=\"7\" x2=\"7\" y1=\"38\" y2=\"162\" stroke=\"black\"/></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "final-measure" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12.5\" height=\"200\"><line x1=\"10.5\" x2=\"10.5\" y1=\"38\" y2=\"162\" stroke=\"black\" stroke-width=\"3\"/><line x1=\"7\" x2=\"7\" y1=\"38\" y2=\"162\" stroke=\"black\"/></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "start-measure" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12.5\" height=\"200\"><line x1=\"2\" x2=\"2\" y1=\"38\" y2=\"162\" stroke=\"black\" stroke-width=\"3\"/><line x1=\"5.5\" x2=\"5.5\" y1=\"38\" y2=\"162\" stroke=\"black\"/><circle cx=\"10.5\" cy=\"58\" r=\"2\"/><circle cx=\"10.5\" cy=\"50\" r=\"2\"/><circle cx=\"10.5\" cy=\"150\" r=\"2\"/><circle cx=\"10.5\" cy=\"142\" r=\"2\"/></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "end-measure" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12.5\" height=\"200\"><line x1=\"11\" x2=\"11\" y1=\"38\" y2=\"162\" stroke=\"black\" stroke-width=\"3\"/><line x1=\"7\" x2=\"7\" y1=\"38\" y2=\"162\" stroke=\"black\"/><circle cx=\"2\" cy=\"50\" r=\"2\"/><circle cx=\"2\" cy=\"58\" r=\"2\"/><circle cx=\"2\" cy=\"150\" r=\"2\"/><circle cx=\"2\" cy=\"142\" r=\"2\"/></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "simple-note" },
+            "tags": ["simple-select"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\"/></g></svg>"
                         }
                     }
                 ]
