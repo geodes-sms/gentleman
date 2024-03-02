@@ -95,6 +95,15 @@
                     "name": "composition",
                     "target": {
                         "name": "time",
+                        "accept": [
+                            { "name": "1111"},
+                            { "name": "22"},
+                            { "name": "4" },
+                            { "name": "112" },
+                            { "name": "121"},
+                            { "name": "211"}
+                            
+                        ],
                         "default": {
                             "name": "1111"
                         }

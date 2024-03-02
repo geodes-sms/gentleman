@@ -11,7 +11,7 @@
                     "wrap": "myContainer",
                     "speed": 1,
                     "padding": 0,
-                    "content": "<svg xmlns=\"https://www.w3.org/2000/svg\" width=\"993\" height=\"1404\"><rect data-myContainer=\"here\" fill=\"white\" width=\"993\" height=\"1404\"></rect></svg>"
+                    "content": "<svg xmlns=\"https://www.w3.org/2000/svg\" viewBox=\"0 0 993 1404\" width=\"1800\" height=\"2545\"><rect data-myContainer=\"here\" fill=\"white\" width=\"993\" height=\"1404\"></rect></svg>"
                 },
                 "content": [
                     {
@@ -312,8 +312,206 @@
                             "placeholder": false,
                             "tag": "choice-selection"
                         }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": { 
+                            "kind": "static",
+                            "type": "svg-link",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 52 52\"><rect x=\"2\" y=\"2\" width=\"48\" height=\"48\" fill=\"transparent\" stroke=\"black\" stroke-width=\"2\" rx=\"2\" ry=\"2\"/><svg xmlns=\"http://www.w3.org/2000/svg\" x=\"7\" y=\"4\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg><line x1=\"5\" x2=\"47\" y1=\"47\" y2=\"5\" stroke=\"black\"/><svg xmlns=\"http://www.w3.org/2000/svg\" x=\"33\" y=\"18\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g><g transform=\"rotate(-11)\"><ellipse rx=\"4.5\" ry=\"1.7\" cx=\"0.8\" cy=\"27\" fill=\"white\" /></g></svg></svg>",
+                            "tag": "choice"
+                        }
                     }
                 ]
+            }
+        },
+        {
+            "concept": { "name": "time" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 30,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "field",
+                            "field": {
+                                "type": "svg-choice",
+                                "closeable": false,
+                                "direction": "horizontal",
+                                "choice": {
+                                    "option": {
+                                        "template": {
+                                            "tag": "choice-up"
+                                        }
+                                    }
+                                },
+                                "preserve": false
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 30,
+                            "y": 100
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "field",
+                            "field": {
+                                "type": "svg-choice",
+                                "closeable": false,
+                                "direction": "horizontal",
+                                "choice": {
+                                    "option": {
+                                        "template": {
+                                            "tag": "choice-down"
+                                        }
+                                    }
+                                },
+                                "preserve": false
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-link",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 100 100\"><circle cx=\"20\" cy=\"40\" r=\"10\" fill=\"grey\"/><rect x=\"4\" y=\"4\" width=\"92\" height=\"92\" stroke-width=\"4\" rx=\"4\" ry=\"4\" fill=\"transparent\" stroke=\"black\"></rect><circle cx=\"20\" cy=\"80\" r=\"10\" fill=\"grey\"/><circle cx=\"50\" cy=\"30\" r=\"10\" fill=\"grey\"/><circle cx=\"50\" cy=\"70\" r=\"10\" fill=\"grey\"/><circle cx=\"80\" cy=\"20\" r=\"10\" fill=\"grey\"/><circle cx=\"80\" cy=\"60\" r=\"10\" fill=\"grey\"/></svg>",
+                            "tag": "choice-selection"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "1111" },
+            "tags": ["choice-up"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect width=\"105\" height=\"95\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"11\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"36\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"61\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"86\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg></svg>"
+            }
+        },
+        {
+            "concept": { "name": "1111" },
+            "tags": ["choice-down"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" heigt=\"\"></svg>"
+            }
+        },
+        {
+            "concept": { "name": "22" },
+            "tags": ["choice-up"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect width=\"105\" height=\"95\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" x=\"70\" y=\"39\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g><g transform=\"rotate(-11)\"><ellipse rx=\"4.5\" ry=\"1.7\" cx=\"0.8\" cy=\"27\" fill=\"white\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" x=\"28\" y=\"39\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g><g transform=\"rotate(-11)\"><ellipse rx=\"4.5\" ry=\"1.7\" cx=\"0.8\" cy=\"27\" fill=\"white\" /></g></svg></svg>"
+            }
+        },
+        {
+            "concept": { "name": "22" },
+            "tags": ["choice-down"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" heigt=\"\"></svg>"
+            }
+        },
+        {
+            "concept": { "name": "4" },
+            "tags": ["choice-up"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect width=\"105\" height=\"95\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" x=\"49\" y=\"61\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\" /><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"></ellipse></g></svg></svg>"
+            }
+        },
+        {
+            "concept": { "name": "4" },
+            "tags": ["choice-down"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" heigt=\"\"></svg>"
+            }
+        },
+        {
+            "concept": { "name": "121" },
+            "tags": ["choice-up"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" heigt=\"\"></svg>"
+            }
+        },
+        {
+            "concept": { "name": "121" },
+            "tags": ["choice-down"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect width=\"105\" height=\"95\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" x=\"54\" y=\"39\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g><g transform=\"rotate(-11)\"><ellipse rx=\"4.5\" ry=\"1.7\" cx=\"0.8\" cy=\"27\" fill=\"white\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"84\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"24\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg></svg>"
+            }
+        },
+        {
+            "concept": { "name": "112" },
+            "tags": ["choice-up"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" heigt=\"\"></svg>"
+            }
+        },
+        {
+            "concept": { "name": "112" },
+            "tags": ["choice-down"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect width=\"105\" height=\"95\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" x=\"84\" y=\"39\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g><g transform=\"rotate(-11)\"><ellipse rx=\"4.5\" ry=\"1.7\" cx=\"0.8\" cy=\"27\" fill=\"white\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"54\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"24\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg></svg>"
+            }
+        },
+        {
+            "concept": { "name": "211" },
+            "tags": ["choice-up"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" heigt=\"\"></svg>"
+            }
+        },
+        {
+            "concept": { "name": "211" },
+            "tags": ["choice-down"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect width=\"105\" height=\"95\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" x=\"24\" y=\"39\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g><g transform=\"rotate(-11)\"><ellipse rx=\"4.5\" ry=\"1.7\" cx=\"0.8\" cy=\"27\" fill=\"white\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"84\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"54\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg></svg>"
             }
         },
         {
