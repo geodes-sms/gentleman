@@ -174,6 +174,16 @@ const BaseAdaptiveAlgorithm = {
         }
     },
 
+    updateContent(conceptId, projection) {
+        for(let i = 0; i < this.content.length; i++) {
+            if(this.content[i].source.id === conceptId) {
+                this.content[i] = projection;
+                return;
+            }   
+        }
+        this.content.push(projection);
+    },
+
     /**
      * Adapts the projection to the DOM
      * @returns nothing
