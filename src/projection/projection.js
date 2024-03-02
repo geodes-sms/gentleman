@@ -606,7 +606,7 @@ const Projection = {
             projection.parent.updateContent(this.concept.id, projection);
         };
 
-        currentProjection.updateSize();
+        projection.display();
         
 
         // if (this.parent) {
