@@ -14,6 +14,12 @@ const BaseSVGStatic = {
 
         if(isNullOrUndefined(this.element)){
             this.element = parser.parseFromString(content.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement;
+            this.element.classList.add("static");
+
+            this.element.dataset.id = this.id;
+            this.element.dataset.nature = "static";
+            this.element.dataset.view = "svg-static";
+            this.element.dataset.ignore = "all";
         }
 
         return this.element;
