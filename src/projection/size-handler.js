@@ -552,14 +552,14 @@ function updateWrap() {
     }
 
     const offSet = {
-        x: this.containerView.x - minX,
-        y: this.containerView.y - minY,
+        x: this.containerView.x - Math.min(minX, 0),
+        y: this.containerView.y - Math.min(minY, 0),
         w: this.containerView.w - maxX,
         h: this.containerView.h - maxY
     }
 
-    this.containerView.targetX = minX;
-    this.containerView.targetY = minY;
+    this.containerView.targetX = Math.min(minX, 0);
+    this.containerView.targetY = Math.min(minY, 0);
     this.containerView.targetW = maxX;
     this.containerView.targetH = maxY;
 
