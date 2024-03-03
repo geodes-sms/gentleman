@@ -238,7 +238,8 @@ const Projection = {
 
                     if (attr.placeholder) {
                         attr.placeholder.after(render);
-                        hide(attr.placeholder);
+                        //hide(attr.placeholder);
+                        attr.placeholder.classList.add("hidden");
                     }
                 });
                 return;
