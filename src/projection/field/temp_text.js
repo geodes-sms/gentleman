@@ -131,6 +131,7 @@ const BaseTextSVG = {
         for(let i = 0; i < lines.length; i++){
             let {span, input} = this.createLine(lines[i], i > 0);
             this.lines.push(span);
+            this.style(span);
             this.createInputListeners(span, input);
         }
     },
@@ -531,6 +532,8 @@ const BaseTextSVG = {
                 
             }
         })
+
+        this.style(this.textElement);
     },
 
     setValue(){
@@ -574,6 +577,7 @@ const BaseTextSVG = {
                 }
 
                 let {span, input} = this.createLine(lineValue);
+                this.style(span);
                 
                 if(i < this.lines.length - 1){
                     this.textArea.insertBefore(span, this.lines[i + 1]);
@@ -670,6 +674,15 @@ const BaseTextSVG = {
         this.circle.setAttribute("cy", y);
 
         this.element.append(this.circle);
+    },
+
+    style(element) {
+        const { font = "Segoe UI", size = 10, color = "black", weight = false } = this.schema.style;
+
+        element.setAttribute("font-family", font);
+        element.setAttribute("font-size", size);
+        element.setAttribute("fill", color);
+        element.setAttribute("font-weight", weight);
     },
 
     bindEvents(){

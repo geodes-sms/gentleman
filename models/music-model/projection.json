@@ -67,8 +67,14 @@
                 "type": "svg",
                 "placeholder": "Untitled",
                 "anchor": "middle",
-                "multiline": false,
-                "baseline": "middle" 
+                "multiline": true,
+                "baseline": "middle",
+                "style": {
+                    "size": 40,
+                    "font": "Segoe UI",
+                    "weight": 500,
+                    "color": "black"
+                }
             }
         },
         {
@@ -80,7 +86,13 @@
                 "placeholder": "Author",
                 "anchor": "middle",
                 "multiline": false,
-                "baseline": "middle" 
+                "baseline": "middle",
+                "style": {
+                    "size": 13,
+                    "font": "Segoe UI",
+                    "weight": 1,
+                    "color": "black"
+                }
             }
         },
         {
