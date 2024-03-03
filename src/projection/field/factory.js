@@ -7,8 +7,6 @@ import { TextField } from './text-field.js';
 import { Arrow } from './arrow.js';
 import { SvgText } from './temp_text.js';
 import { SVGChoice } from './temp_choice.js';
-import { SVGPlaceholder } from './svg-placeholder.js';
-import { SVGSwitch } from './svg-switch.js';
 import { SwitchField } from './temp_switch.js';
 import { SpanField } from './span-field.js';
 import { PlaceholderField } from './temp_placeholder.js';
@@ -97,8 +95,8 @@ const Handler = {
     }),
     'svg-placeholder': (model, schema, projection) => Object.create(PlaceholderField, {
         object: { value: "field" },
-        name: { value: "switch" },
-        type: { value: "switch" },
+        name: { value: "placeholder" },
+        type: { value: "placeholder" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
