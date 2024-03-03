@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="110" height="100">
+    <rect width="105" height="95" x="2.5" y="2.5" fill="white" rx="2" ry="2" stroke-width="2.5" stroke-opacity="0.1"
+        stroke="grey" fill-opacity=".80">
+    </rect>
+    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="32" x="11" y="39">
+        <line x1="10.5" x2="10.5" y1="0" y2="26" stroke="black" />
+        <g transform="rotate(-10)">
+            <ellipse rx="5" ry="2.5" cx="1.45" cy="27" />
+        </g>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="32" x="36" y="39">
+        <line x1="10.5" x2="10.5" y1="0" y2="26" stroke="black" />
+        <g transform="rotate(-10)">
+            <ellipse rx="5" ry="2.5" cx="1.45" cy="27" />
+        </g>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="32" x="61" y="39">
+        <line x1="10.5" x2="10.5" y1="0" y2="26" stroke="black" />
+        <g transform="rotate(-10)">
+            <ellipse rx="5" ry="2.5" cx="1.45" cy="27" />
+        </g>
+    </svg><svg xmlns="http://www.w3.org/2000/svg" width="12" height="32" x="86" y="39">
+        <line x1="10.5" x2="10.5" y1="0" y2="26" stroke="black" />
+        <g transform="rotate(-10)">
+            <ellipse rx="5" ry="2.5" cx="1.45" cy="27" />
+        </g>
+    </svg>
+</svg>

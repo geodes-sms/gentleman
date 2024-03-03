@@ -530,9 +530,33 @@
                             "type": "pure"
                         },
                         "render": {
-                            "type": "attribute",
-                            "name": "first",
-                            "tag": "simple-select"
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "first",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><rect width=\"90\" height=\"200\" fill=\"transparent\"/><circle cx=\"45\" cy=\"100\" r=\"10\" fill=\"grey\"/><line x1=\"45\" x2=\"45\" y1=\"93\" y2=\"107\" stroke=\"white\" stroke-width=\"2\"/><line x1=\"38\" x2=\"52\" y1=\"100\" y2=\"100\" stroke=\"white\" stroke-width=\"2\"/></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
                         }
                     },
                     {
@@ -544,9 +568,33 @@
                             "type": "pure"
                         },
                         "render": {
-                            "type": "attribute",
-                            "name": "second",
-                            "tag": "simple-select"
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "second",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><rect width=\"90\" height=\"200\" fill=\"transparent\"/><circle cx=\"45\" cy=\"100\" r=\"10\" fill=\"grey\"/><line x1=\"45\" x2=\"45\" y1=\"93\" y2=\"107\" stroke=\"white\" stroke-width=\"2\"/><line x1=\"38\" x2=\"52\" y1=\"100\" y2=\"100\" stroke=\"white\" stroke-width=\"2\"/></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
                         }
                     },
                     {
@@ -558,9 +606,33 @@
                             "type": "pure"
                         },
                         "render": {
-                            "type": "attribute",
-                            "name": "third",
-                            "tag": "simple-select"
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "third",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><rect width=\"90\" height=\"200\" fill=\"transparent\"/><circle cx=\"45\" cy=\"100\" r=\"10\" fill=\"grey\"/><line x1=\"45\" x2=\"45\" y1=\"93\" y2=\"107\" stroke=\"white\" stroke-width=\"2\"/><line x1=\"38\" x2=\"52\" y1=\"100\" y2=\"100\" stroke=\"white\" stroke-width=\"2\"/></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
                         }
                     },
                     {
@@ -572,9 +644,539 @@
                             "type": "pure"
                         },
                         "render": {
-                            "type": "attribute",
-                            "name": "fourth",
-                            "tag": "simple-select"
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "fourth",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><rect width=\"90\" height=\"200\" fill=\"transparent\"/><circle cx=\"45\" cy=\"100\" r=\"10\" fill=\"grey\"/><line x1=\"45\" x2=\"45\" y1=\"93\" y2=\"107\" stroke=\"white\" stroke-width=\"2\"/><line x1=\"38\" x2=\"52\" y1=\"100\" y2=\"100\" stroke=\"white\" stroke-width=\"2\"/></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "22" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "first",
+                                            "tag": "double-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><rect width=\"90\" height=\"200\" fill=\"transparent\"/><circle cx=\"45\" cy=\"100\" r=\"10\" fill=\"grey\"/><line x1=\"45\" x2=\"45\" y1=\"93\" y2=\"107\" stroke=\"white\" stroke-width=\"2\"/><line x1=\"38\" x2=\"52\" y1=\"100\" y2=\"100\" stroke=\"white\" stroke-width=\"2\"/></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 180,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "second",
+                                            "tag": "double-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><rect width=\"90\" height=\"200\" fill=\"transparent\"/><circle cx=\"45\" cy=\"100\" r=\"10\" fill=\"grey\"/><line x1=\"45\" x2=\"45\" y1=\"93\" y2=\"107\" stroke=\"white\" stroke-width=\"2\"/><line x1=\"38\" x2=\"52\" y1=\"100\" y2=\"100\" stroke=\"white\" stroke-width=\"2\"/></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "4" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "long",
+                                            "tag": "long-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><rect width=\"90\" height=\"200\" fill=\"transparent\"/><circle cx=\"45\" cy=\"100\" r=\"10\" fill=\"grey\"/><line x1=\"45\" x2=\"45\" y1=\"93\" y2=\"107\" stroke=\"white\" stroke-width=\"2\"/><line x1=\"38\" x2=\"52\" y1=\"100\" y2=\"100\" stroke=\"white\" stroke-width=\"2\"/></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "112" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "first",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><rect width=\"90\" height=\"200\" fill=\"transparent\"/><circle cx=\"45\" cy=\"100\" r=\"10\" fill=\"grey\"/><line x1=\"45\" x2=\"45\" y1=\"93\" y2=\"107\" stroke=\"white\" stroke-width=\"2\"/><line x1=\"38\" x2=\"52\" y1=\"100\" y2=\"100\" stroke=\"white\" stroke-width=\"2\"/></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 90,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "second",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><rect width=\"90\" height=\"200\" fill=\"transparent\"/><circle cx=\"45\" cy=\"100\" r=\"10\" fill=\"grey\"/><line x1=\"45\" x2=\"45\" y1=\"93\" y2=\"107\" stroke=\"white\" stroke-width=\"2\"/><line x1=\"38\" x2=\"52\" y1=\"100\" y2=\"100\" stroke=\"white\" stroke-width=\"2\"/></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 180,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "long",
+                                            "tag": "double-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><rect width=\"90\" height=\"200\" fill=\"transparent\"/><circle cx=\"45\" cy=\"100\" r=\"10\" fill=\"grey\"/><line x1=\"45\" x2=\"45\" y1=\"93\" y2=\"107\" stroke=\"white\" stroke-width=\"2\"/><line x1=\"38\" x2=\"52\" y1=\"100\" y2=\"100\" stroke=\"white\" stroke-width=\"2\"/></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "121" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "first",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><rect width=\"90\" height=\"200\" fill=\"transparent\"/><circle cx=\"45\" cy=\"100\" r=\"10\" fill=\"grey\"/><line x1=\"45\" x2=\"45\" y1=\"93\" y2=\"107\" stroke=\"white\" stroke-width=\"2\"/><line x1=\"38\" x2=\"52\" y1=\"100\" y2=\"100\" stroke=\"white\" stroke-width=\"2\"/></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 90,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "long",
+                                            "tag": "double-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><rect width=\"90\" height=\"200\" fill=\"transparent\"/><circle cx=\"45\" cy=\"100\" r=\"10\" fill=\"grey\"/><line x1=\"45\" x2=\"45\" y1=\"93\" y2=\"107\" stroke=\"white\" stroke-width=\"2\"/><line x1=\"38\" x2=\"52\" y1=\"100\" y2=\"100\" stroke=\"white\" stroke-width=\"2\"/></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 270,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "second",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><rect width=\"90\" height=\"200\" fill=\"transparent\"/><circle cx=\"45\" cy=\"100\" r=\"10\" fill=\"grey\"/><line x1=\"45\" x2=\"45\" y1=\"93\" y2=\"107\" stroke=\"white\" stroke-width=\"2\"/><line x1=\"38\" x2=\"52\" y1=\"100\" y2=\"100\" stroke=\"white\" stroke-width=\"2\"/></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "211" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "long",
+                                            "tag": "double-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><rect width=\"90\" height=\"200\" fill=\"transparent\"/><circle cx=\"45\" cy=\"100\" r=\"10\" fill=\"grey\"/><line x1=\"45\" x2=\"45\" y1=\"93\" y2=\"107\" stroke=\"white\" stroke-width=\"2\"/><line x1=\"38\" x2=\"52\" y1=\"100\" y2=\"100\" stroke=\"white\" stroke-width=\"2\"/></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 180,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "first",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><rect width=\"90\" height=\"200\" fill=\"transparent\"/><circle cx=\"45\" cy=\"100\" r=\"10\" fill=\"grey\"/><line x1=\"45\" x2=\"45\" y1=\"93\" y2=\"107\" stroke=\"white\" stroke-width=\"2\"/><line x1=\"38\" x2=\"52\" y1=\"100\" y2=\"100\" stroke=\"white\" stroke-width=\"2\"/></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 270,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "second",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><rect width=\"90\" height=\"200\" fill=\"transparent\"/><circle cx=\"45\" cy=\"100\" r=\"10\" fill=\"grey\"/><line x1=\"45\" x2=\"45\" y1=\"93\" y2=\"107\" stroke=\"white\" stroke-width=\"2\"/><line x1=\"38\" x2=\"52\" y1=\"100\" y2=\"100\" stroke=\"white\" stroke-width=\"2\"/></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
                         }
                     }
                 ]
@@ -731,9 +1333,2488 @@
                             "type": "pure"
                         },
                         "render": {
+                            "type": "attribute",
+                            "name": "value",
+                            "tag": "note-selection"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "double-note" },
+            "tags": ["double-select"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "value",
+                            "tag": "note-double"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "long-note" },
+            "tags": ["long-select"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "value",
+                            "tag": "note-long"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "note-value" },
+            "tags": [ "note-selection" ],
+            "type": "field",
+            "content": {
+                "type": "svg-placeholder",
+                "choice": {
+                    "option": {
+                        "template": {
+                            "tag": "choice"
+                        }
+                    },
+                    "link": "choice-selection"
+                }
+            }
+        },
+        {
+            "concept": { "name": "note-value" },
+            "tags": [ "choice-selection" ],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "projection",
+                            "bind": "value",
+                            "placeholder": false,
+                            "tag": "simple"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "note-value" },
+            "tags": [ "note-double" ],
+            "type": "field",
+            "content": {
+                "type": "svg-placeholder",
+                "choice": {
+                    "option": {
+                        "template": {
+                            "tag": "choice"
+                        }
+                    },
+                    "link": "double-selection"
+                }
+            }
+        },
+        {
+            "concept": { "name": "note-value" },
+            "tags": [ "double-selection" ],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "projection",
+                            "bind": "value",
+                            "placeholder": false,
+                            "tag": "double"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "note-value" },
+            "tags": [ "note-long" ],
+            "type": "field",
+            "content": {
+                "type": "svg-placeholder",
+                "choice": {
+                    "option": {
+                        "template": {
+                            "tag": "choice"
+                        }
+                    },
+                    "link": "long-selection"
+                }
+            }
+        },
+        {
+            "concept": { "name": "note-value" },
+            "tags": [ "long-selection" ],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "projection",
+                            "bind": "value",
+                            "placeholder": false,
+                            "tag": "long"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-C" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 5.25,
+                            "y": 74
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
                             "kind": "static",
                             "type": "svg",
-                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\"/></g></svg>"
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-C" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 52
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"32\" viewBox=\"-5 0 22 32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><line x1=\"-5\" x2=\"17\" y1=\"26\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-C" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 52
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"32\" viewBox=\"-5 0 22 32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><line x1=\"-5\" x2=\"17\" y1=\"26\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-C" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 74
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"8\" viewBox=\"-5 0 22 8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><line x1=\"-5\" x2=\"17\" y1=\"4\" y2=\"4\" stroke=\"black\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"></ellipse></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-D" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 27.75,
+                            "y": 70
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-D" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 48
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-D" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 48
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-D" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 70
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-E" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 50.25,
+                            "y": 66
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-E" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 44
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-E" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 44
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-E" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 66
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-F" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 72.75,
+                            "y": 62
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-F" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 40
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-F" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 40
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-F" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 62
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-G" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 5.25,
+                            "y": 58
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-G" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 36
+
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"32\" viewBox=\"-5 0 22 32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><line x1=\"-5\" x2=\"17\" y1=\"26\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-G" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 36
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"32\" viewBox=\"-5 0 22 32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><line x1=\"-5\" x2=\"17\" y1=\"26\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-G" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 58
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"8\" viewBox=\"-5 0 22 8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><line x1=\"-5\" x2=\"17\" y1=\"4\" y2=\"4\" stroke=\"black\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"></ellipse></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-A" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 27.75,
+                            "y": 54
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-A" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 32
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-A" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 32
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-A" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 54
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-B" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 50.25,
+                            "y": 50
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-B" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 28
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-B" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 28
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-B" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 50
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-C" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 72.75,
+                            "y": 46
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-C" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 24
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-C" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 24
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-C" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 46
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-D" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 5.25,
+                            "y": 42
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-D" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 20
+
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"32\" viewBox=\"-5 0 22 32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><line x1=\"-5\" x2=\"17\" y1=\"26\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-D" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 20
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"32\" viewBox=\"-5 0 22 32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><line x1=\"-5\" x2=\"17\" y1=\"26\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-D" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 42
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"8\" viewBox=\"-5 0 22 8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><line x1=\"-5\" x2=\"17\" y1=\"4\" y2=\"4\" stroke=\"black\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"></ellipse></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-E" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 27.75,
+                            "y": 38
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-E" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 16
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-E" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 16
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-E" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 38
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-F" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 50.25,
+                            "y": 34
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-F" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 12
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-F" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 12
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-F" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 34
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-G" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 72.75,
+                            "y": 30
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-G" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 8
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-G" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 8
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "high-G" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 30
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "min-E" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 5.25,
+                            "y": 166
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "min-E" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 144
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"32\" viewBox=\"-5 0 22 32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><line x1=\"-5\" x2=\"17\" y1=\"26\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "min-E" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 144
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"32\" viewBox=\"-5 0 22 32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><line x1=\"-5\" x2=\"17\" y1=\"26\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "min-E" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 166
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"8\" viewBox=\"-5 0 22 8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><line x1=\"-5\" x2=\"17\" y1=\"4\" y2=\"4\" stroke=\"black\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"></ellipse></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "min-F" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 27.75,
+                            "y": 162
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "min-F" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 140
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "min-F" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 140
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "min-F" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 162
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "min-G" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 50.25,
+                            "y": 158
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "min-G" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 136
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "min-G" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 136
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "min-G" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 158
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-A" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 72.75,
+                            "y": 154
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-A" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 132
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-A" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 132
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-A" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 154
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-B" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 5.25,
+                            "y": 150
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-B" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 128
+
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"32\" viewBox=\"-5 0 22 32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><line x1=\"-5\" x2=\"17\" y1=\"26\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-B" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 128
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"32\" viewBox=\"-5 0 22 32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><line x1=\"-5\" x2=\"17\" y1=\"26\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-B" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 150
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"8\" viewBox=\"-5 0 22 8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><line x1=\"-5\" x2=\"17\" y1=\"4\" y2=\"4\" stroke=\"black\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"></ellipse></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-C" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 27.75,
+                            "y": 146
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-C" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 124
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-C" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 124
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-C" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 146
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-D" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 50.25,
+                            "y": 142
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-D" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 120
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-D" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 120
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-D" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 142
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-E" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 72.75,
+                            "y": 138
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-E" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 116
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-E" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 116
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-E" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 138
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-F" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 5.25,
+                            "y": 134
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-F" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 112
+
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"32\" viewBox=\"-5 0 22 32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><line x1=\"-5\" x2=\"17\" y1=\"26\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-F" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 112
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"32\" viewBox=\"-5 0 22 32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><line x1=\"-5\" x2=\"17\" y1=\"26\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-F" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 11.5,
+                            "y": 134
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"8\" viewBox=\"-5 0 22 8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><line x1=\"-5\" x2=\"17\" y1=\"4\" y2=\"4\" stroke=\"black\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"></ellipse></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-G" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 27.75,
+                            "y": 130
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-G" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 108
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-G" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 108
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "low-G" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 130
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-A" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 50.25,
+                            "y": 126
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-A" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 104
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-A" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 104
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-A" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 126
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-B" },
+            "tags": ["choice"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 72.75,
+                            "y": 122
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"> <rect width=\"12\" height=\"8\" fill=\"white\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.6\" ry=\"3.754\" cx=\"4.5\" cy=\"5.9\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-B" },
+            "tags": ["simple"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 100
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-B" },
+            "tags": ["double"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 100
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg>"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "middle-B" },
+            "tags": ["long"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 16.5,
+                            "y": 122
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\"/><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"/></g></svg>"
                         }
                     }
                 ]

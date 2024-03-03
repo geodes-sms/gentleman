@@ -160,25 +160,29 @@
                     "name": "first",
                     "target": {
                         "name": "simple-note"
-                    }
+                    },
+                    "required": false
                 },
                 {
                     "name": "second",
                     "target": {
                         "name": "simple-note"
-                    }
+                    },
+                    "required": false
                 },
                 {
                     "name": "third",
                     "target": {
                         "name": "simple-note"
-                    }
+                    },
+                    "required": false
                 },
                 {
                     "name": "fourth",
                     "target": {
                         "name": "simple-note"
-                    }
+                    },
+                    "required": false
                 }
             ]
         },
@@ -191,19 +195,22 @@
                     "name": "first",
                     "target": {
                         "name": "simple-note"
-                    }
+                    },
+                    "required": false
                 },
                 {
                     "name": "second",
                     "target": {
                         "name": "simple-note"
-                    }
+                    },
+                    "required": false
                 },
                 {
                     "name": "long",
                     "target": {
                         "name": "double-note"
-                    }
+                    },
+                    "required": false
                 }
             ]
         },
@@ -216,19 +223,22 @@
                     "name": "first",
                     "target": {
                         "name": "simple-note"
-                    }
+                    },
+                    "required": false
                 },
                 {
                     "name": "long",
                     "target": {
                         "name": "double-note"
-                    }
+                    },
+                    "required": false
                 },
                 {
                     "name": "second",
                     "target": {
                         "name": "simple-note"
-                    }
+                    },
+                    "required": false
                 }
             ]
         },
@@ -241,19 +251,22 @@
                     "name": "long",
                     "target": {
                         "name": "double-note"
-                    }
+                    },
+                    "required": false
                 },
                 {
                     "name": "first",
                     "target": {
                         "name": "simple-note"
-                    }
+                    },
+                    "required": false
                 },
                 {
                     "name": "second",
                     "target": {
                         "name": "simple-note"
-                    }
+                    },
+                    "required": false
                 }
             ]
         },
@@ -266,13 +279,15 @@
                     "name": "first",
                     "target": {
                         "name": "double-note"
-                    }
+                    },
+                    "required": false
                 },
                 {
                     "name": "second",
                     "target": {
                         "name": "double-note"
-                    }
+                    },
+                    "required": false
                 }
             ]
         },
@@ -285,7 +300,8 @@
                     "name": "long",
                     "target": {
                         "name": "long-note"
-                    }
+                    },
+                    "required": false
                 }
             ]
         },
@@ -299,19 +315,187 @@
             "nature": "concrete",
             "prototype": "note",
             "attributes": [
-                
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "note-value"
+                    }
+                }
             ]
         },
         {
             "name": "double-note",
             "nature": "concrete",
             "prototype": "note",
-            "attributes": []
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "note-value"
+                    }
+                }
+            ]
         },
         {
             "name": "long-note",
             "nature": "concrete",
             "prototype": "note",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "note-value"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "note-value",
+            "nature": "prototype",
+            "attributes": []
+        },
+        {
+            "name": "min-E",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "min-F",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "min-G",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "low-A",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "low-B",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "low-C",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "low-D",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "low-E",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "low-F",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "low-G",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "middle-A",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "middle-B",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "middle-C",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "middle-D",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "middle-E",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "middle-F",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "middle-G",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "high-A",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "high-B",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "high-C",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "high-D",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "high-E",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "high-F",
+            "nature": "concrete",
+            "prototype": "note-value",
+            "attributes": []
+        },
+        {
+            "name": "high-G",
+            "nature": "concrete",
+            "prototype": "note-value",
             "attributes": []
         }
     ]

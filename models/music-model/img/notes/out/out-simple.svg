@@ -1,5 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="12" height="32">
+<svg xmlns="http://www.w3.org/2000/svg" width="22" height="32" viewBox="-5 0 22 32">
     <line x1="10.5" x2="10.5" y1="0" y2="26" stroke="black"/>
+    <line x1="-5" x2="17" y1="26" y2="26" stroke="black"/>
     <g transform="rotate(-20)">
         <ellipse rx="5.5" ry="3.8" cx="-3" cy="26.6"/>
     </g>

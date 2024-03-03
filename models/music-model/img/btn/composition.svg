@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 52 52">
+    <rect x="2" y="2" width="48" height="48" fill="transparent" stroke="black" stroke-width="2" rx="2" ry="2"/>
+    <svg xmlns="http://www.w3.org/2000/svg" x="7" y="4" width="12" height="32">
+        <line x1="10.5" x2="10.5" y1="0" y2="26" stroke="black" />
+        <g transform="rotate(-10)">
+            <ellipse rx="5" ry="2.5" cx="1.45" cy="27" />
+        </g>
+    </svg>
+    <line x1="5" x2="47" y1="47" y2="5" stroke="black"/>
+    <svg xmlns="http://www.w3.org/2000/svg" x="33" y="18" width="12" height="32">
+        <line x1="10.5" x2="10.5" y1="0" y2="26" stroke="black" />
+        <g transform="rotate(-10)">
+            <ellipse rx="5" ry="2.5" cx="1.45" cy="27" />
+        </g>
+        <g transform="rotate(-11)">
+            <ellipse rx="4.5" ry="1.7" cx="0.8" cy="27" fill="white" />
+        </g>
+    </svg>
+</svg>
