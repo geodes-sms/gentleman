@@ -252,7 +252,8 @@ const Projection = {
                     }
 
                     if (attr.placeholder) {
-                        show(attr.placeholder);
+                        //show(attr.placeholder);
+                        attr.placeholder.classList.remove("hidden");
                     }
                 });
                 return;
