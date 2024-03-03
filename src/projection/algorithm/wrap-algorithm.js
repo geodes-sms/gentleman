@@ -64,6 +64,30 @@ const BaseWrapAlgorithm = {
         return this.container;
     },
 
+    focus(){
+        if(!this.displayed){
+            this.display();
+        }
+    },
+
+    /**
+     * Handles the focusin event
+     * @returns this
+     */
+    focusIn(){
+        console.warn(`FOCUSIN_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        return;
+    },
+
+    /**
+     * Handles the focusin event
+     * @returns this
+     */
+    focusOut(){
+        console.warn(`FOCUSOUT_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        return;
+    },
+
     display(){
         if(!isNullOrUndefined(this.parent) && !this.parent.displayed){
             return;
