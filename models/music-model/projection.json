@@ -90,7 +90,7 @@
                 "style": {
                     "size": 13,
                     "font": "Segoe UI",
-                    "weight": 1,
+                    "weight": 500,
                     "color": "black"
                 }
             }
@@ -282,8 +282,39 @@
                         },
                         "render": {
                             "type": "attribute",
-                            "name": "composition",
+                            "name": "upper-composition",
                             "tag": "choice-selection"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 100
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "lower-composition",
+                                            "tag": "choice-selection"
+                                        }
+                                    }
+                                ]
+                            }
                         }
                     },
                     {
@@ -378,7 +409,7 @@
                     {
                         "coordinates": {
                             "x": 30,
-                            "y": 100
+                            "y": 50
                         },
                         "dimension": {
                             "type": "pure"
@@ -419,115 +450,223 @@
             }
         },
         {
-            "concept": { "name": "1111" },
+            "concept": { "name": "1111-up" },
             "tags": ["choice-up"],
             "type": "static",
             "content": {
                 "type": "svg",
-                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect width=\"105\" height=\"95\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"11\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"36\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"61\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"86\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg></svg>"
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"50\"><rect width=\"105\" height=\"45\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"7.75\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"35.25\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"62.75\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"90.25\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg></svg>"
             }
         },
         {
-            "concept": { "name": "1111" },
+            "concept": { "name": "1111-up" },
             "tags": ["choice-down"],
             "type": "static",
             "content": {
                 "type": "svg",
-                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" heigt=\"\"></svg>"
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" height=\"0\"></svg>"
             }
         },
         {
-            "concept": { "name": "22" },
+            "concept": { "name": "1111-low" },
             "tags": ["choice-up"],
             "type": "static",
             "content": {
                 "type": "svg",
-                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect width=\"105\" height=\"95\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" x=\"70\" y=\"39\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g><g transform=\"rotate(-11)\"><ellipse rx=\"4.5\" ry=\"1.7\" cx=\"0.8\" cy=\"27\" fill=\"white\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" x=\"28\" y=\"39\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g><g transform=\"rotate(-11)\"><ellipse rx=\"4.5\" ry=\"1.7\" cx=\"0.8\" cy=\"27\" fill=\"white\" /></g></svg></svg>"
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"50\"><rect width=\"105\" height=\"45\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"7.75\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"35.25\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"62.75\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"90.25\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg></svg>"
             }
         },
         {
-            "concept": { "name": "22" },
+            "concept": { "name": "1111-low" },
             "tags": ["choice-down"],
             "type": "static",
             "content": {
                 "type": "svg",
-                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" heigt=\"\"></svg>"
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" height=\"0\"></svg>"
             }
         },
         {
-            "concept": { "name": "4" },
+            "concept": { "name": "22-up" },
             "tags": ["choice-up"],
             "type": "static",
             "content": {
                 "type": "svg",
-                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect width=\"105\" height=\"95\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" x=\"49\" y=\"61\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\" /><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\" fill=\"white\"></ellipse></g></svg></svg>"
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"50\"><rect width=\"105\" height=\"45\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"31\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"67\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg></svg>"
             }
         },
         {
-            "concept": { "name": "4" },
+            "concept": { "name": "22-up" },
             "tags": ["choice-down"],
             "type": "static",
             "content": {
                 "type": "svg",
-                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" heigt=\"\"></svg>"
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" height=\"0\"></svg>"
             }
         },
         {
-            "concept": { "name": "121" },
+            "concept": { "name": "22-low" },
             "tags": ["choice-up"],
             "type": "static",
             "content": {
                 "type": "svg",
-                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" heigt=\"\"></svg>"
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"50\"><rect width=\"105\" height=\"45\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"31\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"67\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg></svg>"
             }
         },
         {
-            "concept": { "name": "121" },
+            "concept": { "name": "22-low" },
             "tags": ["choice-down"],
             "type": "static",
             "content": {
                 "type": "svg",
-                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect width=\"105\" height=\"95\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" x=\"54\" y=\"39\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g><g transform=\"rotate(-11)\"><ellipse rx=\"4.5\" ry=\"1.7\" cx=\"0.8\" cy=\"27\" fill=\"white\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"84\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"24\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg></svg>"
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" height=\"0\"></svg>"
             }
         },
         {
-            "concept": { "name": "112" },
+            "concept": { "name": "4-up" },
             "tags": ["choice-up"],
             "type": "static",
             "content": {
                 "type": "svg",
-                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" heigt=\"\"></svg>"
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"50\"><rect width=\"105\" height=\"45\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" x=\"49\" y=\"21\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\" /><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\"  fill=\"white\" /></g></svg></svg>"
             }
         },
         {
-            "concept": { "name": "112" },
+            "concept": { "name": "4-up" },
             "tags": ["choice-down"],
             "type": "static",
             "content": {
                 "type": "svg",
-                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect width=\"105\" height=\"95\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" x=\"84\" y=\"39\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g><g transform=\"rotate(-11)\"><ellipse rx=\"4.5\" ry=\"1.7\" cx=\"0.8\" cy=\"27\" fill=\"white\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"54\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"24\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg></svg>"
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" height=\"0\"></svg>"
             }
         },
         {
-            "concept": { "name": "211" },
+            "concept": { "name": "4-low" },
             "tags": ["choice-up"],
             "type": "static",
             "content": {
                 "type": "svg",
-                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" heigt=\"\"></svg>"
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"50\"><rect width=\"105\" height=\"45\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"8\" x=\"49\" y=\"21\"><ellipse rx=\"5.5\" ry=\"4\" cx=\"5.5\" cy=\"4\" /><g transform=\"rotate(18)\"><ellipse rx=\"4.5\" ry=\"2\" cx=\"6.5\" cy=\"2\"  fill=\"white\" /></g></svg></svg>"
             }
         },
         {
-            "concept": { "name": "211" },
+            "concept": { "name": "4-low" },
             "tags": ["choice-down"],
             "type": "static",
             "content": {
                 "type": "svg",
-                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect width=\"105\" height=\"95\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" x=\"24\" y=\"39\" width=\"12\" height=\"32\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g><g transform=\"rotate(-11)\"><ellipse rx=\"4.5\" ry=\"1.7\" cx=\"0.8\" cy=\"27\" fill=\"white\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"84\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"54\" y=\"39\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\" /><g transform=\"rotate(-10)\"><ellipse rx=\"5\" ry=\"2.5\" cx=\"1.45\" cy=\"27\" /></g></svg></svg>"
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" height=\"0\"></svg>"
             }
         },
         {
-            "concept": { "name": "1111" },
+            "concept": { "name": "121-up" },
+            "tags": ["choice-up"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" height=\"0\"></svg>"
+            }
+        },
+        {
+            "concept": { "name": "121-up" },
+            "tags": ["choice-down"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"50\"><rect width=\"105\" height=\"45\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"21.5\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"76.5\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"49\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg></svg>"
+            }
+        },
+        {
+            "concept": { "name": "121-low" },
+            "tags": ["choice-up"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" height=\"0\"></svg>"
+            }
+        },
+        {
+            "concept": { "name": "121-low" },
+            "tags": ["choice-down"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"50\"><rect width=\"105\" height=\"45\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"21.5\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"76.5\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"49\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg></svg>"
+            }
+        },
+        {
+            "concept": { "name": "112-up" },
+            "tags": ["choice-up"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" height=\"0\"></svg>"
+            }
+        },
+        {
+            "concept": { "name": "112-up" },
+            "tags": ["choice-down"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"50\"><rect width=\"105\" height=\"45\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"21.5\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"49\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"76.5\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg></svg>"
+            }
+        },
+        {
+            "concept": { "name": "112-low" },
+            "tags": ["choice-up"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" height=\"0\"></svg>"
+            }
+        },
+        {
+            "concept": { "name": "112-low" },
+            "tags": ["choice-down"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"50\"><rect width=\"105\" height=\"45\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"21.5\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"49\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"76.5\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg></svg>"
+            }
+        },
+        {
+            "concept": { "name": "211-up" },
+            "tags": ["choice-up"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" height=\"0\"></svg>"
+            }
+        },
+        {
+            "concept": { "name": "211-up" },
+            "tags": ["choice-down"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"50\"><rect width=\"105\" height=\"45\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"49\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"76.5\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"21.5\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg></svg>"
+            }
+        },
+        {
+            "concept": { "name": "211-low" },
+            "tags": ["choice-up"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"0\" height=\"0\"></svg>"
+            }
+        },
+        {
+            "concept": { "name": "211-low" },
+            "tags": ["choice-down"],
+            "type": "static",
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"50\"><rect width=\"105\" height=\"45\" x=\"2.5\" y=\"2.5\" fill=\"white\" rx=\"2\" ry=\"2\" stroke-width=\"2.5\" stroke-opacity=\"0.1\" stroke=\"grey\" fill-opacity=\".80\"></rect><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"49\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"76.5\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"32\" x=\"21.5\" y=\"9\"><line x1=\"10.5\" x2=\"10.5\" y1=\"0\" y2=\"26\" stroke=\"black\"/><g transform=\"rotate(-20)\"><ellipse rx=\"5.5\" ry=\"3.8\" cx=\"-3\" cy=\"26.6\"/></g><g transform=\"rotate(-45)\"><ellipse rx=\"4\" ry=\"2.5\" cx=\"-14\" cy=\"23\" fill=\"white\"/></g></svg></svg>"
+            }
+        },
+        {
+            "concept": { "name": "1111-up" },
             "tags": ["choice-selection"],
             "type": "algorithm",
             "content": {
@@ -562,7 +701,7 @@
                                                 "content": {
                                                     "kind": "static",
                                                     "type": "svg",
-                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"
                                                 }
                                             }
                                         }
@@ -600,7 +739,7 @@
                                                 "content": {
                                                     "kind": "static",
                                                     "type": "svg",
-                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"
                                                 }
                                             }
                                         }
@@ -638,7 +777,7 @@
                                                 "content": {
                                                     "kind": "static",
                                                     "type": "svg",
-                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
                                             }
                                         }
                                     }
@@ -675,7 +814,7 @@
                                                 "content": {
                                                     "kind": "static",
                                                     "type": "svg",
-                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
                                             }    
                                         }
                                     }
@@ -687,7 +826,167 @@
             }
         },
         {
-            "concept": { "name": "22" },
+            "concept": { "name": "1111-low" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "first",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"34\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 90,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "second",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"34\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 180,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "third",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"34\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 270,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "fourth",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"34\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
+                                            }    
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "22-up" },
             "tags": ["choice-selection"],
             "type": "algorithm",
             "content": {
@@ -722,7 +1021,7 @@
                                                 "content": {
                                                     "kind": "static",
                                                     "type": "svg",
-                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"200\" width=\"90\"><rect x=\"11.5\" y=\"50\" width=\"12\" height=\"4\" /></svg>"
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"100\" width=\"90\"><rect x=\"11.5\" y=\"50\" width=\"12\" height=\"4\" /></svg>"
                                                 }
                                             }
                                         }
@@ -760,7 +1059,7 @@
                                                 "content": {
                                                     "kind": "static",
                                                     "type": "svg",
-                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"200\" width=\"90\"><rect x=\"11.5\" y=\"50\" width=\"12\" height=\"4\" /></svg>"
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"100\" width=\"90\"><rect x=\"11.5\" y=\"50\" width=\"12\" height=\"4\" /></svg>"
                                                 }
                                             }
                                         }
@@ -773,7 +1072,93 @@
             }
         },
         {
-            "concept": { "name": "4" },
+            "concept": { "name": "22-low" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "first",
+                                            "tag": "double-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"100\" width=\"90\"><rect x=\"11.5\" y=\"42\" width=\"12\" height=\"4\" /></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 180,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "second",
+                                            "tag": "double-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"100\" width=\"90\"><rect x=\"11.5\" y=\"42\" width=\"12\" height=\"4\" /></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "4-up" },
             "tags": ["choice-selection"],
             "type": "algorithm",
             "content": {
@@ -808,7 +1193,7 @@
                                                 "content": {
                                                     "kind": "static",
                                                     "type": "svg",
-                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"200\" width=\"90\"><rect x=\"11.5\" y=\"46\" width=\"12\" height=\"4\" /></svg>"
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"100\" width=\"90\"><rect x=\"11.5\" y=\"46\" width=\"12\" height=\"4\" /></svg>"
                                                 }
                                             }
                                         }
@@ -821,7 +1206,55 @@
             }
         },
         {
-            "concept": { "name": "112" },
+            "concept": { "name": "4-low" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "long",
+                                            "tag": "long-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"100\" width=\"90\"><rect x=\"11.5\" y=\"38\" width=\"12\" height=\"4\" /></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "112-up" },
             "tags": ["choice-selection"],
             "type": "algorithm",
             "content": {
@@ -856,7 +1289,7 @@
                                                 "content": {
                                                     "kind": "static",
                                                     "type": "svg",
-                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
                                             }
                                         }
                                     }
@@ -893,7 +1326,7 @@
                                                 "content": {
                                                     "kind": "static",
                                                     "type": "svg",
-                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
                                             }
                                         }
                                     }
@@ -930,7 +1363,7 @@
                                                 "content": {
                                                     "kind": "static",
                                                     "type": "svg",
-                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"200\" width=\"90\"><rect x=\"11.5\" y=\"50\" width=\"12\" height=\"4\" /></svg>"
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"100\" width=\"90\"><rect x=\"11.5\" y=\"50\" width=\"12\" height=\"4\" /></svg>"
                                                 }
                                             }
                                         }
@@ -943,7 +1376,7 @@
             }
         },
         {
-            "concept": { "name": "121" },
+            "concept": { "name": "112-low" },
             "tags": ["choice-selection"],
             "type": "algorithm",
             "content": {
@@ -978,7 +1411,129 @@
                                                 "content": {
                                                     "kind": "static",
                                                     "type": "svg",
-                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"34\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 90,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "second",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 180,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "long",
+                                            "tag": "double-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"100\" width=\"90\"><rect x=\"11.5\" y=\"42\" width=\"12\" height=\"4\" /></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "121-up" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "first",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
                                             }
                                         }
                                     }
@@ -1015,7 +1570,7 @@
                                                 "content": {
                                                     "kind": "static",
                                                     "type": "svg",
-                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"200\" width=\"90\"><rect x=\"11.5\" y=\"50\" width=\"12\" height=\"4\" /></svg>"
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"100\" width=\"90\"><rect x=\"11.5\" y=\"50\" width=\"12\" height=\"4\" /></svg>"
                                                 }
                                             }
                                         }
@@ -1053,7 +1608,7 @@
                                                 "content": {
                                                     "kind": "static",
                                                     "type": "svg",
-                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
                                             }
                                         }
                                     }
@@ -1065,7 +1620,129 @@
             }
         },
         {
-            "concept": { "name": "211" },
+            "concept": { "name": "121-low" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "first",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"34\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 90,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "long",
+                                            "tag": "double-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"100\" width=\"90\"><rect x=\"11.5\" y=\"42\" width=\"12\" height=\"4\" /></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 270,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "second",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"34\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "211-up" },
             "tags": ["choice-selection"],
             "type": "algorithm",
             "content": {
@@ -1100,7 +1777,7 @@
                                                 "content": {
                                                     "kind": "static",
                                                     "type": "svg",
-                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"200\" width=\"90\"><rect x=\"11.5\" y=\"50\" width=\"12\" height=\"4\" /></svg>"
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"100\" width=\"90\"><rect x=\"11.5\" y=\"50\" width=\"12\" height=\"4\" /></svg>"
                                                 }
                                             }
                                         }
@@ -1138,7 +1815,7 @@
                                                 "content": {
                                                     "kind": "static",
                                                     "type": "svg",
-                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
                                             }
                                         }
                                     }
@@ -1175,7 +1852,129 @@
                                                 "content": {
                                                     "kind": "static",
                                                     "type": "svg",
-                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"200\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"42\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "211-low" },
+            "tags": ["choice-selection"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "long",
+                                            "tag": "double-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"100\" width=\"90\"><rect x=\"11.5\" y=\"42\" width=\"12\" height=\"4\" /></svg>"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 180,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "first",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"34\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 270,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "second",
+                                            "tag": "simple-select",
+                                            "placeholder": {
+                                                "content": {
+                                                    "kind": "static",
+                                                    "type": "svg",
+                                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"100\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7.016\" height=\"20\" viewBox=\"0 0 26.219999 74.739998\" x=\"11.5\" y=\"34\" id=\"svg2\" version=\"1.1\" ><g id=\"layer1\" transform=\"translate(0,-977.62215)\"><g style=\"font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\" id=\"text2824\" transform=\"matrix(0.99974987,0,0,0.99997083,-112.50645,534.65124)\"><path d=\"m 138.76116,462.5307 c -6.84377,8.15627 -10.26565,14.25001 -10.26562,18.28125 -3e-5,3.89063 3.25778,9.72656 9.77343,17.50781 l -2.03906,2.88282 c -3.28128,-1.92189 -6.09377,-2.88283 -8.4375,-2.88282 -3.04689,-10e-6 -4.57033,1.82811 -4.57031,5.48438 -2e-5,3.74998 1.66404,7.47654 4.99219,11.17969 l -1.82813,2.74218 c -9.23438,-6.84377 -13.85157,-12.93751 -13.85156,-18.28125 -1e-5,-2.71876 0.93749,-4.875 2.8125,-6.46875 1.73436,-1.5 3.98436,-2.25 6.75,-2.25 1.78123,0 3.74998,0.46875 5.90625,1.40625 l -14.13281,-18.77343 c 6.70311,-5.90624 10.05467,-11.24998 10.05468,-16.03125 -10e-6,-3.79685 -2.27345,-8.57809 -6.82031,-14.34375 l 5.625,0 16.03125,19.54687\" style=\"font-size:144px;font-family:musica;\" id=\"path2829\" /></g></g></svg></svg>"                                                }
                                             }
                                         }
                                     }
@@ -1322,7 +2121,7 @@
             }
         },
         {
-            "concept": { "name": "simple-note" },
+            "concept": { "name": "simple-note_up" },
             "tags": ["simple-select"],
             "type": "algorithm",
             "content": {
@@ -1363,7 +2162,48 @@
             }
         },
         {
-            "concept": { "name": "double-note" },
+            "concept": { "name": "simple-note_low" },
+            "tags": ["simple-select"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "value",
+                            "tag": "note-selection"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 85,
+                            "y": 0
+                        },
+                        "dimension": { 
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"5\"><circle cx=\"2.5\" cy=\"2.5\" r=\"2.5\"/><line x1=\"1\" x2=\"4\" y1=\"4\" y2=\"1\" stroke=\"white\"/><line x1=\"1\" x2=\"4\" y1=\"1\" y2=\"4\" stroke=\"white\"/></svg>",
+                            "action": {
+                                "type": "DELETE"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "double-note_up" },
             "tags": ["double-select"],
             "type": "algorithm",
             "content": {
@@ -1382,12 +2222,70 @@
                             "name": "value",
                             "tag": "note-double"
                         }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 85,
+                            "y": 0
+                        },
+                        "dimension": { 
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"5\"><circle cx=\"2.5\" cy=\"2.5\" r=\"2.5\"/><line x1=\"1\" x2=\"4\" y1=\"4\" y2=\"1\" stroke=\"white\"/><line x1=\"1\" x2=\"4\" y1=\"1\" y2=\"4\" stroke=\"white\"/></svg>",
+                            "action": {
+                                "type": "DELETE"
+                            }
+                        }
                     }
                 ]
             }
         },
         {
-            "concept": { "name": "long-note" },
+            "concept": { "name": "double-note_low" },
+            "tags": ["double-select"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "value",
+                            "tag": "note-double"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 85,
+                            "y": 0
+                        },
+                        "dimension": { 
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"5\"><circle cx=\"2.5\" cy=\"2.5\" r=\"2.5\"/><line x1=\"1\" x2=\"4\" y1=\"4\" y2=\"1\" stroke=\"white\"/><line x1=\"1\" x2=\"4\" y1=\"1\" y2=\"4\" stroke=\"white\"/></svg>",
+                            "action": {
+                                "type": "DELETE"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "long-note_up" },
             "tags": ["long-select"],
             "type": "algorithm",
             "content": {
@@ -1405,6 +2303,64 @@
                             "type": "attribute",
                             "name": "value",
                             "tag": "note-long"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 85,
+                            "y": 0
+                        },
+                        "dimension": { 
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"5\"><circle cx=\"2.5\" cy=\"2.5\" r=\"2.5\"/><line x1=\"1\" x2=\"4\" y1=\"4\" y2=\"1\" stroke=\"white\"/><line x1=\"1\" x2=\"4\" y1=\"1\" y2=\"4\" stroke=\"white\"/></svg>",
+                            "action": {
+                                "type": "DELETE"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "long-note_low" },
+            "tags": ["long-select"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "value",
+                            "tag": "note-long"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 85,
+                            "y": 0
+                        },
+                        "dimension": { 
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"5\"><circle cx=\"2.5\" cy=\"2.5\" r=\"2.5\"/><line x1=\"1\" x2=\"4\" y1=\"4\" y2=\"1\" stroke=\"white\"/><line x1=\"1\" x2=\"4\" y1=\"1\" y2=\"4\" stroke=\"white\"/></svg>",
+                            "action": {
+                                "type": "DELETE"
+                            }
                         }
                     }
                 ]
@@ -2697,7 +3653,7 @@
                     {
                         "coordinates": {
                             "x": 5.25,
-                            "y": 166
+                            "y": 66
                         },
                         "dimension": {
                             "type": "pure"
@@ -2721,7 +3677,7 @@
                     {
                         "coordinates": {
                             "x": 11.5,
-                            "y": 144
+                            "y": 44
                         },
                         "dimension": {
                             "type": "pure"
@@ -2745,7 +3701,7 @@
                     {
                         "coordinates": {
                             "x": 11.5,
-                            "y": 144
+                            "y": 44
                         },
                         "dimension": {
                             "type": "pure"
@@ -2769,7 +3725,7 @@
                     {
                         "coordinates": {
                             "x": 11.5,
-                            "y": 166
+                            "y": 66
                         },
                         "dimension": {
                             "type": "pure"
@@ -2793,7 +3749,7 @@
                     {
                         "coordinates": {
                             "x": 27.75,
-                            "y": 162
+                            "y": 62
                         },
                         "dimension": {
                             "type": "pure"
@@ -2817,7 +3773,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 140
+                            "y": 40
                         },
                         "dimension": {
                             "type": "pure"
@@ -2841,7 +3797,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 140
+                            "y": 40
                         },
                         "dimension": {
                             "type": "pure"
@@ -2865,7 +3821,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 162
+                            "y": 62
                         },
                         "dimension": {
                             "type": "pure"
@@ -2889,7 +3845,7 @@
                     {
                         "coordinates": {
                             "x": 50.25,
-                            "y": 158
+                            "y": 58
                         },
                         "dimension": {
                             "type": "pure"
@@ -2913,7 +3869,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 136
+                            "y": 36
                         },
                         "dimension": {
                             "type": "pure"
@@ -2937,7 +3893,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 136
+                            "y": 36
                         },
                         "dimension": {
                             "type": "pure"
@@ -2961,7 +3917,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 158
+                            "y": 58
                         },
                         "dimension": {
                             "type": "pure"
@@ -2985,7 +3941,7 @@
                     {
                         "coordinates": {
                             "x": 72.75,
-                            "y": 154
+                            "y": 54
                         },
                         "dimension": {
                             "type": "pure"
@@ -3009,7 +3965,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 132
+                            "y": 32
                         },
                         "dimension": {
                             "type": "pure"
@@ -3033,7 +3989,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 132
+                            "y": 32
                         },
                         "dimension": {
                             "type": "pure"
@@ -3057,7 +4013,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 154
+                            "y": 54
                         },
                         "dimension": {
                             "type": "pure"
@@ -3081,7 +4037,7 @@
                     {
                         "coordinates": {
                             "x": 5.25,
-                            "y": 150
+                            "y": 50
                         },
                         "dimension": {
                             "type": "pure"
@@ -3105,7 +4061,7 @@
                     {
                         "coordinates": {
                             "x": 11.5,
-                            "y": 128
+                            "y": 28
 
                         },
                         "dimension": {
@@ -3130,7 +4086,7 @@
                     {
                         "coordinates": {
                             "x": 11.5,
-                            "y": 128
+                            "y": 28
                         },
                         "dimension": {
                             "type": "pure"
@@ -3154,7 +4110,7 @@
                     {
                         "coordinates": {
                             "x": 11.5,
-                            "y": 150
+                            "y": 50
                         },
                         "dimension": {
                             "type": "pure"
@@ -3178,7 +4134,7 @@
                     {
                         "coordinates": {
                             "x": 27.75,
-                            "y": 146
+                            "y": 46
                         },
                         "dimension": {
                             "type": "pure"
@@ -3202,7 +4158,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 124
+                            "y": 24
                         },
                         "dimension": {
                             "type": "pure"
@@ -3226,7 +4182,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 124
+                            "y": 24
                         },
                         "dimension": {
                             "type": "pure"
@@ -3250,7 +4206,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 146
+                            "y": 46
                         },
                         "dimension": {
                             "type": "pure"
@@ -3274,7 +4230,7 @@
                     {
                         "coordinates": {
                             "x": 50.25,
-                            "y": 142
+                            "y": 42
                         },
                         "dimension": {
                             "type": "pure"
@@ -3298,7 +4254,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 120
+                            "y": 20
                         },
                         "dimension": {
                             "type": "pure"
@@ -3322,7 +4278,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 120
+                            "y": 20
                         },
                         "dimension": {
                             "type": "pure"
@@ -3346,7 +4302,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 142
+                            "y": 42
                         },
                         "dimension": {
                             "type": "pure"
@@ -3370,7 +4326,7 @@
                     {
                         "coordinates": {
                             "x": 72.75,
-                            "y": 138
+                            "y": 38
                         },
                         "dimension": {
                             "type": "pure"
@@ -3394,7 +4350,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 116
+                            "y": 16
                         },
                         "dimension": {
                             "type": "pure"
@@ -3418,7 +4374,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 116
+                            "y": 16
                         },
                         "dimension": {
                             "type": "pure"
@@ -3442,7 +4398,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 138
+                            "y": 38
                         },
                         "dimension": {
                             "type": "pure"
@@ -3466,7 +4422,7 @@
                     {
                         "coordinates": {
                             "x": 5.25,
-                            "y": 134
+                            "y": 34
                         },
                         "dimension": {
                             "type": "pure"
@@ -3490,7 +4446,7 @@
                     {
                         "coordinates": {
                             "x": 11.5,
-                            "y": 112
+                            "y": 12
 
                         },
                         "dimension": {
@@ -3515,7 +4471,7 @@
                     {
                         "coordinates": {
                             "x": 11.5,
-                            "y": 112
+                            "y": 12
                         },
                         "dimension": {
                             "type": "pure"
@@ -3539,7 +4495,7 @@
                     {
                         "coordinates": {
                             "x": 11.5,
-                            "y": 134
+                            "y": 34
                         },
                         "dimension": {
                             "type": "pure"
@@ -3563,7 +4519,7 @@
                     {
                         "coordinates": {
                             "x": 27.75,
-                            "y": 130
+                            "y": 30
                         },
                         "dimension": {
                             "type": "pure"
@@ -3587,7 +4543,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 108
+                            "y": 8
                         },
                         "dimension": {
                             "type": "pure"
@@ -3611,7 +4567,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 108
+                            "y": 8
                         },
                         "dimension": {
                             "type": "pure"
@@ -3635,7 +4591,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 130
+                            "y": 30
                         },
                         "dimension": {
                             "type": "pure"
@@ -3659,7 +4615,7 @@
                     {
                         "coordinates": {
                             "x": 50.25,
-                            "y": 126
+                            "y": 26
                         },
                         "dimension": {
                             "type": "pure"
@@ -3683,7 +4639,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 104
+                            "y": 4
                         },
                         "dimension": {
                             "type": "pure"
@@ -3707,7 +4663,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 104
+                            "y": 4
                         },
                         "dimension": {
                             "type": "pure"
@@ -3731,7 +4687,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 126
+                            "y": 26
                         },
                         "dimension": {
                             "type": "pure"
@@ -3755,7 +4711,7 @@
                     {
                         "coordinates": {
                             "x": 72.75,
-                            "y": 122
+                            "y": 22
                         },
                         "dimension": {
                             "type": "pure"
@@ -3779,7 +4735,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 100
+                            "y": 0
                         },
                         "dimension": {
                             "type": "pure"
@@ -3803,7 +4759,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 100
+                            "y": 0
                         },
                         "dimension": {
                             "type": "pure"
@@ -3827,7 +4783,7 @@
                     {
                         "coordinates": {
                             "x": 16.5,
-                            "y": 122
+                            "y": 22
                         },
                         "dimension": {
                             "type": "pure"

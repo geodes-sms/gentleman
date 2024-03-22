@@ -92,20 +92,38 @@
             "prototype": "tempo",
             "attributes": [
                 {
-                    "name": "composition",
+                    "name": "upper-composition",
                     "target": {
                         "name": "time",
                         "accept": [
-                            { "name": "1111"},
-                            { "name": "22"},
-                            { "name": "4" },
-                            { "name": "112" },
-                            { "name": "121"},
-                            { "name": "211"}
+                            { "name": "1111-up"},
+                            { "name": "22-up"},
+                            { "name": "4-up" },
+                            { "name": "112-up" },
+                            { "name": "121-up"},
+                            { "name": "211-up"}
                             
                         ],
                         "default": {
-                            "name": "1111"
+                            "name": "1111-up"
+                        }
+                    }
+                },
+                {
+                    "name": "lower-composition",
+                    "target": {
+                        "name": "time",
+                        "accept": [
+                            { "name": "1111-low"},
+                            { "name": "22-low"},
+                            { "name": "4-low" },
+                            { "name": "112-low" },
+                            { "name": "121-low"},
+                            { "name": "211-low"}
+                            
+                        ],
+                        "default": {
+                            "name": "1111-low"
                         }
                     }
                 }
@@ -152,154 +170,308 @@
             "attributes": []
         },
         {
-            "name": "1111",
+            "name": "1111-up",
             "nature": "concrete",
             "prototype": "time",
             "attributes": [
                 {
                     "name": "first",
                     "target": {
-                        "name": "simple-note"
+                        "name": "simple-note_up"
                     },
                     "required": false
                 },
                 {
                     "name": "second",
                     "target": {
-                        "name": "simple-note"
+                        "name": "simple-note_up"
                     },
                     "required": false
                 },
                 {
                     "name": "third",
                     "target": {
-                        "name": "simple-note"
+                        "name": "simple-note_up"
                     },
                     "required": false
                 },
                 {
                     "name": "fourth",
                     "target": {
-                        "name": "simple-note"
+                        "name": "simple-note_up"
                     },
                     "required": false
                 }
             ]
         },
         {
-            "name": "112",
+            "name": "112-up",
             "nature": "concrete",
             "prototype": "time",
             "attributes": [
                 {
                     "name": "first",
                     "target": {
-                        "name": "simple-note"
+                        "name": "simple-note_up"
                     },
                     "required": false
                 },
                 {
                     "name": "second",
                     "target": {
-                        "name": "simple-note"
+                        "name": "simple-note_up"
                     },
                     "required": false
                 },
                 {
                     "name": "long",
                     "target": {
-                        "name": "double-note"
+                        "name": "double-note_up"
                     },
                     "required": false
                 }
             ]
         },
         {
-            "name": "121",
+            "name": "121-up",
             "nature": "concrete",
             "prototype": "time",
             "attributes": [
                 {
                     "name": "first",
                     "target": {
-                        "name": "simple-note"
+                        "name": "simple-note_up"
                     },
                     "required": false
                 },
                 {
                     "name": "long",
                     "target": {
-                        "name": "double-note"
+                        "name": "double-note_up"
                     },
                     "required": false
                 },
                 {
                     "name": "second",
                     "target": {
-                        "name": "simple-note"
+                        "name": "simple-note_up"
                     },
                     "required": false
                 }
             ]
         },
         {
-            "name": "211",
+            "name": "211-up",
             "nature": "concrete",
             "prototype": "time",
             "attributes": [
                 {
                     "name": "long",
                     "target": {
-                        "name": "double-note"
+                        "name": "double-note_up"
                     },
                     "required": false
                 },
                 {
                     "name": "first",
                     "target": {
-                        "name": "simple-note"
+                        "name": "simple-note_up"
                     },
                     "required": false
                 },
                 {
                     "name": "second",
                     "target": {
-                        "name": "simple-note"
+                        "name": "simple-note_up"
                     },
                     "required": false
                 }
             ]
         },
         {
-            "name": "22",
+            "name": "22-up",
             "nature": "concrete",
             "prototype": "time",
             "attributes": [
                 {
                     "name": "first",
                     "target": {
-                        "name": "double-note"
+                        "name": "double-note_up"
                     },
                     "required": false
                 },
                 {
                     "name": "second",
                     "target": {
-                        "name": "double-note"
+                        "name": "double-note_up"
                     },
                     "required": false
                 }
             ]
         },
         {
-            "name": "4",
+            "name": "4-up",
             "nature": "concrete",
             "prototype": "time",
             "attributes": [
                 {
                     "name": "long",
                     "target": {
-                        "name": "long-note"
+                        "name": "long-note_up"
+                    },
+                    "required": false
+                }
+            ]
+        },
+        {
+            "name": "1111-low",
+            "nature": "concrete",
+            "prototype": "time",
+            "attributes": [
+                {
+                    "name": "first",
+                    "target": {
+                        "name": "simple-note_low"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "second",
+                    "target": {
+                        "name": "simple-note_low"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "third",
+                    "target": {
+                        "name": "simple-note_low"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "fourth",
+                    "target": {
+                        "name": "simple-note_low"
+                    },
+                    "required": false
+                }
+            ]
+        },
+        {
+            "name": "112-low",
+            "nature": "concrete",
+            "prototype": "time",
+            "attributes": [
+                {
+                    "name": "first",
+                    "target": {
+                        "name": "simple-note_low"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "second",
+                    "target": {
+                        "name": "simple-note_low"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "long",
+                    "target": {
+                        "name": "double-note_low"
+                    },
+                    "required": false
+                }
+            ]
+        },
+        {
+            "name": "121-low",
+            "nature": "concrete",
+            "prototype": "time",
+            "attributes": [
+                {
+                    "name": "first",
+                    "target": {
+                        "name": "simple-note_low"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "long",
+                    "target": {
+                        "name": "double-note_low"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "second",
+                    "target": {
+                        "name": "simple-note_low"
+                    },
+                    "required": false
+                }
+            ]
+        },
+        {
+            "name": "211-low",
+            "nature": "concrete",
+            "prototype": "time",
+            "attributes": [
+                {
+                    "name": "long",
+                    "target": {
+                        "name": "double-note_low"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "first",
+                    "target": {
+                        "name": "simple-note_low"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "second",
+                    "target": {
+                        "name": "simple-note_low"
+                    },
+                    "required": false
+                }
+            ]
+        },
+        {
+            "name": "22-low",
+            "nature": "concrete",
+            "prototype": "time",
+            "attributes": [
+                {
+                    "name": "first",
+                    "target": {
+                        "name": "double-note_low"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "second",
+                    "target": {
+                        "name": "double-note_low"
+                    },
+                    "required": false
+                }
+            ]
+        },
+        {
+            "name": "4-low",
+            "nature": "concrete",
+            "prototype": "time",
+            "attributes": [
+                {
+                    "name": "long",
+                    "target": {
+                        "name": "long-note_low"
                     },
                     "required": false
                 }
@@ -311,40 +483,165 @@
             "attributes": []
         },
         {
-            "name": "simple-note",
+            "name": "simple-note_up",
             "nature": "concrete",
             "prototype": "note",
             "attributes": [
                 {
                     "name": "value",
                     "target": {
-                        "name": "note-value"
+                        "name": "note-value",
+                        "accept": [
+                            { "name": "middle-C" },
+                            { "name": "middle-D" },
+                            { "name": "middle-E" },
+                            { "name": "middle-F" },
+                            { "name": "middle-G" },
+                            { "name": "high-A" },
+                            { "name": "high-B" },
+                            { "name": "high-C" },
+                            { "name": "high-D" },
+                            { "name": "high-E" },
+                            { "name": "high-F" },
+                            { "name": "high-G" }
+                        ]
+                    }
+                    
+                }
+            ]
+        },
+        {
+            "name": "double-note_up",
+            "nature": "concrete",
+            "prototype": "note",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "note-value",
+                        "accept": [
+                            { "name": "middle-C" },
+                            { "name": "middle-D" },
+                            { "name": "middle-E" },
+                            { "name": "middle-F" },
+                            { "name": "middle-G" },
+                            { "name": "high-A" },
+                            { "name": "high-B" },
+                            { "name": "high-C" },
+                            { "name": "high-D" },
+                            { "name": "high-E" },
+                            { "name": "high-F" },
+                            { "name": "high-G" }
+                        ]
                     }
                 }
             ]
         },
         {
-            "name": "double-note",
+            "name": "long-note_up",
             "nature": "concrete",
             "prototype": "note",
             "attributes": [
                 {
                     "name": "value",
                     "target": {
-                        "name": "note-value"
+                        "name": "note-value",
+                        "accept": [
+                            { "name": "middle-C" },
+                            { "name": "middle-D" },
+                            { "name": "middle-E" },
+                            { "name": "middle-F" },
+                            { "name": "middle-G" },
+                            { "name": "high-A" },
+                            { "name": "high-B" },
+                            { "name": "high-C" },
+                            { "name": "high-D" },
+                            { "name": "high-E" },
+                            { "name": "high-F" },
+                            { "name": "high-G" }
+                        ]
                     }
                 }
             ]
         },
         {
-            "name": "long-note",
+            "name": "simple-note_low",
             "nature": "concrete",
             "prototype": "note",
             "attributes": [
                 {
                     "name": "value",
                     "target": {
-                        "name": "note-value"
+                        "name": "note-value",
+                        "accept": [
+                            { "name": "min-E" },
+                            { "name": "min-F" },
+                            { "name": "min-G" },
+                            { "name": "low-A" },
+                            { "name": "low-B" },
+                            { "name": "low-C" },
+                            { "name": "low-D" },
+                            { "name": "low-E" },
+                            { "name": "low-F" },
+                            { "name": "low-G" },
+                            { "name": "middle-A" },
+                            { "name": "middle-B" }
+                        ]
+                    }
+                    
+                }
+            ]
+        },
+        {
+            "name": "double-note_low",
+            "nature": "concrete",
+            "prototype": "note",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "note-value",
+                        "accept": [
+                            { "name": "min-E" },
+                            { "name": "min-F" },
+                            { "name": "min-G" },
+                            { "name": "low-A" },
+                            { "name": "low-B" },
+                            { "name": "low-C" },
+                            { "name": "low-D" },
+                            { "name": "low-E" },
+                            { "name": "low-F" },
+                            { "name": "low-G" },
+                            { "name": "middle-A" },
+                            { "name": "middle-B" }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "long-note_low",
+            "nature": "concrete",
+            "prototype": "note",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "note-value",
+                        "accept": [
+                            { "name": "min-E" },
+                            { "name": "min-F" },
+                            { "name": "min-G" },
+                            { "name": "low-A" },
+                            { "name": "low-B" },
+                            { "name": "low-C" },
+                            { "name": "low-D" },
+                            { "name": "low-E" },
+                            { "name": "low-F" },
+                            { "name": "low-G" },
+                            { "name": "middle-A" },
+                            { "name": "middle-B" }
+                        ]
                     }
                 }
             ]
