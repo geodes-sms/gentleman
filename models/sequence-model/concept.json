@@ -1,15 +1,20 @@
 {
     "type": "concept",
-    "concept":[
+    "concept": [
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead3",
-            "name": "diagram",
+            "name": "sequence-diagram",
             "nature": "concrete",
             "root": true,
-            "attributes":[
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    }
+                },
                 {
                     "name": "lifelines",
-                    "target":{
+                    "target": {
                         "name": "set",
                         "accept": {
                             "name": "lifeline"
@@ -17,147 +22,58 @@
                     }
                 },
                 {
-                    "name": "name",
-                    "target":{
-                        "name": "string"
+                    "name": "components",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "component"
+                        }
                     }
                 }
             ]
         },
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead4",
             "name": "lifeline",
             "nature": "concrete",
             "root": false,
-            "attributes":[
-                {
+            "attributes": [
+                { 
                     "name": "name",
-                    "target":{
+                    "target": {
                         "name": "string"
-                    }
-                },
-                {
-                    "name": "elements",
-                    "target":{
-                        "name": "set",
-                        "accept":{
-                            "name": "element",
-                            "accept":[
-                                { "name": "message" },
-                                { "name": "response" },
-                                { "name": "loop"}
-                            ]
-                        }
                     }
                 }
             ]
         },
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead5",
-            "name": "element",
+            "name": "component",
             "nature": "prototype",
             "root": false,
-            "attributes":[
-                {
-                    "name": "order",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "bloc",
-                    "target":{
-                        "name": "reference",
-                        "accept":{
-                            "name": "loop"
-                        }
-                    }
-                }
-            ]
+            "attributes": []
         },
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead6",
             "name": "message",
             "nature": "concrete",
-            "prototype": "element",
-            "attributes":[
+            "root": false,
+            "attributes": [
                 {
-                    "name": "target",
-                    "target":{
+                    "name": "origin",
+                    "target": {
                         "name": "reference",
-                        "accept":{
+                        "target": {
                             "name": "lifeline"
                         }
                     }
                 },
                 {
-                    "name": "content",
-                    "target":{
-                        "name": "string"
-                    }
-                }
-            ]
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead7",
-            "name": "response",
-            "nature": "concrete",
-            "prototype": "element",
-            "attributes":[
-                {
                     "name": "target",
-                    "target":{
+                    "target": {
                         "name": "reference",
-                        "accept":{
+                        "target": {
                             "name": "lifeline"
                         }
                     }
-                },
-                {
-                    "name": "content",
-                    "target":{
-                        "name": "string"
-                    }
                 }
-            ]
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead8",
-            "name": "loop",
-            "nature": "concrete",
-            "prototype": "element",
-            "attributes":[
-                {
-                    "name": "condition",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "order",
-                    "target":{
-                        "name": "number"
-                    },
-                    "default": 1
-                }
-            ]
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead9",
-            "name": "ifBloc",
-            "nature": "concrete",
-            "prototype": "element",
-            "attributes":[
-                
-            ]
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead9",
-            "name": "elseBloc",
-            "nature": "concrete",
-            "prototype": "element",
-            "attributes":[
-               
             ]
         }
     ]
