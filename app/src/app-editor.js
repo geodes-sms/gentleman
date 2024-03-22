@@ -768,8 +768,8 @@ function createGraphicEditor() {
             PMODEL__PROJECTION = await PM_PROJECTION.json();*/
 
             let editor = this.createEditor({
-                conceptModel: [GMODEL__CONCEPT, PMODEL__CONCEPT, SMODEL__CONCEPT],
-                projectionModel: [GMODEL__PROJECTION, PMODEL__PROJECTION, SMODEL__PROJECTION],
+                conceptModel: [GMODEL__CONCEPT],
+                projectionModel: [GMODEL__PROJECTION],
                 config: Object.assign({}, GMODEL__EDITOR),
                 handlers: GMODEL__HANDLER,
             });

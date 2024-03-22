@@ -737,7 +737,7 @@
         {
             "name": "template",
             "nature": "concrete",
-            "root": true,
+            "root": false,
             "attributes": [
                 {
                     "name": "name",
