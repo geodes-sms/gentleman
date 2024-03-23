@@ -77,6 +77,10 @@ const BasePatternAlgorithm = {
 
     },
 
+    updateSize() {
+        return;
+    },
+
     display() {
         if(!this.parent.displayed) {
             return;
@@ -103,7 +107,11 @@ const BasePatternAlgorithm = {
         this.projection.registerHandler("value.added", (value) => {
             let item = this.createItem(value);
 
-            this.container.append(item)
+            this.container.append(item);
+
+            let projection = this.projection.resolveElement(item);
+            projection.projection.update("displayed");
+
             this.refresh();
         });
 
@@ -159,7 +167,7 @@ function manageVertical() {
         if(!isNullOrUndefined(projection.containerView)) {
             y += projection.containerView.targetH;
         } else {
-            let box = item.getBbox();
+            let box = item.getBBox();
             y += box.width;
         }
     })

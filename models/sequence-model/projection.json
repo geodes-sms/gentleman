@@ -96,20 +96,66 @@
             "tags": ["list-item"],
             "type": "algorithm",
             "content": {
-                "type": "wrap",
+                "type": "adaptative",
+                "background": {
+                    "speed": 1,
+                    "padding": 20,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"200\"><rect fill=\"transparent\" width=\"100\" height=\"200\" data-myContainer=\"here\"/></svg>",
+                    "wrap": "myContainer"
+                },
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "name",
+                            "tag": "lf_nm"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["lf_nm"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptative",
+                "background": {
+                    "speed": 1,
+                    "padding": 0,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"104\" height=\"64\"><rect width=\"100\" height=\"60\" fill=\"white\" stroke=\"black\" stroke-width=\"4\" x=\"2\" y=\"2\" data-myContainer=\"here\"/></svg>",
+                    "wrap": "myContainer"
+                },
                 "content": [
                     {
                         "dimension": {
                             "type": "pure"
                         },
                         "coordinates": {
-                            "x": 0,
-                            "y": 0
+                            "x": 50,
+                            "y": 30
                         },
                         "render": {
-                            "kind": "static",
-                            "type": "svg",
-                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"60\" height=\"60\"><circle cx=\"30\" cy=\"30\" r=\"30\" fill=\"red\"/></svg>"
+                            "type": "field",
+                            "field": {
+                                "type": "svg",
+                                "placeholder": "Actor",
+                                "anchor": "middle", 
+                                "baseline": "middle",
+                                "style": {
+                                    "size": 10,
+                                    "font": "Segoe UI",
+                                    "weight": 500,
+                                    "color": "black"
+                                }
+                            }
                         }
                     }
                 ]
