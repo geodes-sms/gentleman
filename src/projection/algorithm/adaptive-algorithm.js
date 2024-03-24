@@ -311,11 +311,11 @@ const BaseAdaptiveAlgorithm = {
             }
         })
 
-        if(this.meet){
+        /*if(this.meet){
             this.projection.registerHandler("dimension.changed", (id) => {
-                if(id === this.parent.id){ MeetHandler[this.adapter.tagName].call(this, this.adapter)};
+                if(id === this.parent.id){ MeetHandler[this.meet.type].call(this, this.adapter)};
             })
-        }
+        }*/
     }
 }
 

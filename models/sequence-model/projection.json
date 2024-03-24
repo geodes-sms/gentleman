@@ -63,7 +63,7 @@
                         "render": {
                             "kind": "static",
                             "type": "svg-button",
-                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\"><circle cx=\"5\" cy=\"5\" r=\"5\"/></svg>",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 200\" width=\"30\" height=\"60\"><rect width=\"10\" height=\"40\" x=\"47\" rx=\"5\" y=\"60\"/><rect x=\"2\" y=\"2\" width=\"96\" height=\"60\" fill=\"white\" stroke=\"black\" stroke-width=\"4\" rx=\"6\" /><text x=\"52\" y=\"32\" dominant-baseline=\"middle\" text-anchor=\"middle\" fill=\"green\">New</text></svg>",
                             "action": {
                                 "type": "CREATE"
                             }
@@ -103,7 +103,33 @@
                     "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"200\"><rect fill=\"transparent\" width=\"100\" height=\"200\" data-myContainer=\"here\"/></svg>",
                     "wrap": "myContainer"
                 },
+                "meet": {
+                    "type": "directed",
+                    "direction": "bottom"
+                },
                 "content": [
+                    {
+                        "coordinates": {
+                            "x": 45,
+                            "y": 60
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "adaptative",
+                                "background": {
+                                    "speed": 1,
+                                    "padding": 0,
+                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"140\"><rect data-myContainer=\"here\" width=\"10\" height=\"140\" rx=\"6\"/></svg>",
+                                    "wrap": "myContainer"
+                                },
+                                "content": []
+                            }
+                        }
+                    },
                     {
                         "coordinates": {
                             "x": 0,
@@ -117,7 +143,7 @@
                             "name": "name",
                             "tag": "lf_nm"
                         }
-                    }
+                    }                    
                 ]
             }
         },
@@ -129,8 +155,8 @@
                 "type": "adaptative",
                 "background": {
                     "speed": 1,
-                    "padding": 0,
-                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"104\" height=\"64\"><rect width=\"100\" height=\"60\" fill=\"white\" stroke=\"black\" stroke-width=\"4\" x=\"2\" y=\"2\" data-myContainer=\"here\"/></svg>",
+                    "padding": 5,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"104\" height=\"64\"><rect width=\"100\" height=\"60\" rx=\"6\" fill=\"white\" stroke=\"black\" stroke-width=\"4\" x=\"2\" y=\"2\" data-myContainer=\"here\"/></svg>",
                     "wrap": "myContainer"
                 },
                 "content": [

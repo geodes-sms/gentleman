@@ -12,6 +12,7 @@ const BaseWrapAlgorithm = {
 
         this.speed = speed;
         this.focusable = focusable;
+        this.adapter = { tagName: "wrap" };
 
         return this;
     },

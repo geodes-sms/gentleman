@@ -11,7 +11,7 @@
                     "wrap": "myContainer",
                     "speed": 1,
                     "padding": 0,
-                    "content": "<svg xmlns=\"https://www.w3.org/2000/svg\" viewBox=\"0 0 993 1404\" width=\"1800\" height=\"2545\"><rect data-myContainer=\"here\" fill=\"white\" width=\"993\" height=\"1404\"></rect></svg>"
+                    "content": "<svg xmlns=\"https://www.w3.org/2000/svg\" viewBox=\"0 0 993 1404\" width=\"993\" height=\"1404\"><rect data-myContainer=\"here\" fill=\"white\" width=\"993\" height=\"1404\"></rect></svg>"
                 },
                 "content": [
                     {

@@ -78,6 +78,7 @@ const BasePatternAlgorithm = {
     },
 
     updateSize() {
+        this.refresh();
         return;
     },
 
