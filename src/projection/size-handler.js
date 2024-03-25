@@ -95,8 +95,8 @@ function generateExtremums() {
 
         extremums.minX = Math.min(box.x - padding, extremums.minX) ;
         extremums.minY = Math.min(box.y - padding, extremums.minY);
-        extremums.maxX = Math.max(box.w + box.x + padding, extremums.maxX);
-        extremums.maxY = Math.max(box.h + box.y + padding, extremums.maxY);    
+        extremums.maxX = Math.max(box.w + box.x + padding * 2, extremums.maxX);
+        extremums.maxY = Math.max(box.h + box.y + padding * 2, extremums.maxY);    
     }
 
     return extremums;
