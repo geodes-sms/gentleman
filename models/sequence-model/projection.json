@@ -459,6 +459,66 @@
                     }
                 ]
             }
+        },
+        {
+            "concept": { "name": "alt" },
+            "tags": [ "list-item" ],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptative",
+                "background": {
+                    "padding": 5,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect width=\"20\" height=\"10\" fill=\"grey\" x=\"2\" y=\"3\" rx=\"1\"/><text x=\"6\" y=\"10\" font-size=\"6\" font-weight=\"500\" font-family=\"Segoe UI\">Alt</text><rect x=\"2\" y=\"2\" width=\"106\" height=\"96\" data-myContainer=\"here\" stroke=\"black\" stroke-width=\"4\"  rx=\"6\" fill=\"transparent\"/></svg>",
+                    "speed": 1,
+                    "wrap": "myContainer"
+                },
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 26,
+                            "y": 10
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "condition",
+                            "tag": "cond_str"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "opt" },
+            "tags": [ "list-item" ],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptative",
+                "background": {
+                    "padding": 5,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect width=\"20\" height=\"10\" fill=\"grey\" x=\"2\" y=\"3\" rx=\"1\"/><text x=\"6\" y=\"10\" font-size=\"6\" font-weight=\"500\" font-family=\"Segoe UI\">Opt</text><rect x=\"2\" y=\"2\" width=\"106\" height=\"96\" data-myContainer=\"here\" stroke=\"black\" stroke-width=\"4\"  rx=\"6\" fill=\"transparent\"/></svg>",
+                    "speed": 1,
+                    "wrap": "myContainer"
+                },
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 26,
+                            "y": 10
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "condition",
+                            "tag": "cond_str"
+                        }
+                    }
+                ]
+            }
         }
     ]
 }
