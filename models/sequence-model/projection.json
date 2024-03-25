@@ -19,13 +19,69 @@
                             "type": "pure"
                         },
                         "coordinates": {
-                            "x": 1250,
+                            "x": 900,
                             "y": 10
                         },
                         "render": {
                             "type": "attribute",
                             "name": "lifelines",
                             "tag": "lf_btn"
+                        }
+                    },
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 1000,
+                            "y": 10
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "components",
+                            "tag": "btn_opt"
+                        }
+                    },
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 1100,
+                            "y": 10
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "components",
+                            "tag": "btn_loop"
+                        }
+                    },
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 1200,
+                            "y": 10
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "components",
+                            "tag": "btn_alt"
+                        }
+                    },
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 1300,
+                            "y": 10
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "components",
+                            "tag": "btn_msg"
                         }
                     },
                     {
@@ -40,6 +96,20 @@
                             "type": "attribute",
                             "name": "lifelines",
                             "tag": "lf_view"
+                        }
+                    },
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 10,
+                            "y": 150
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "components",
+                            "tag": "component_view"
                         }
                     }
                 ]
@@ -63,7 +133,7 @@
                         "render": {
                             "kind": "static",
                             "type": "svg-button",
-                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 200\" width=\"30\" height=\"60\"><rect width=\"10\" height=\"40\" x=\"47\" rx=\"5\" y=\"60\"/><rect x=\"2\" y=\"2\" width=\"96\" height=\"60\" fill=\"white\" stroke=\"black\" stroke-width=\"4\" rx=\"6\" /><text x=\"52\" y=\"32\" dominant-baseline=\"middle\" text-anchor=\"middle\" fill=\"green\">New</text></svg>",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\"><rect width=\"30\" height=\"30\" fill=\"transparent\" rx=\"6\" stroke-width=\"2\" stroke=\"black\" y=\"1\" x=\"1\"/><text dominant-baseline=\"middle\" text-anchor=\"middle\" x=\"15\" y=\"15\" font-size=\"10\" font-family=\"Segoe UI\" fill=\"green\">New</text></svg>",
                             "action": {
                                 "type": "CREATE"
                             }
@@ -71,6 +141,50 @@
                     }
                 ]
             }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": [ "component_view" ],
+            "type": "algorithm",
+            "content": {
+                "type": "pattern",
+                "orientation": {
+                    "type": "vertical"
+                },
+                "list": {
+                    "item": {
+                        "template": {
+                            "tag": "list-item",
+                            "options": {}
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "component" },
+            "tags": [ "list-item" ],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "projection",
+                            "bind": "value",
+                            "placeholder": false,
+                            "tag": "list-item"
+                        }
+                    }
+                ]
+            } 
         },
         {
             "concept": { "name": "set" },
@@ -182,6 +296,165 @@
                                     "color": "black"
                                 }
                             }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": [ "cond_str"],
+            "type": "field",
+            "content": {
+                "type": "svg",
+                "placeholder": "Condition...",
+                "anchor": "start",
+                "baseline": "middle",
+                "style": {
+                    "size": 6,
+                    "font": "Segoe UI",
+                    "weight": 1,
+                    "color": "black"
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["btn_opt"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\"><rect width=\"30\" height=\"30\" fill=\"transparent\" rx=\"6\" stroke-width=\"2\" stroke=\"black\" stroke-dasharray=\"5\" y=\"1\" x=\"1\"/><text dominant-baseline=\"middle\" text-anchor=\"middle\" x=\"15\" y=\"15\" font-size=\"10\" font-family=\"Segoe UI\">Opt</text></svg>",
+                            "action": {
+                                "type": "CREATE-SELECT",
+                                "value": "opt"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["btn_loop"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\"><rect width=\"30\" height=\"30\" fill=\"transparent\" rx=\"6\" stroke-width=\"2\" stroke=\"black\" stroke-dasharray=\"5\" y=\"1\" x=\"1\"/><text dominant-baseline=\"middle\" text-anchor=\"middle\" x=\"15\" y=\"15\" font-size=\"10\" font-family=\"Segoe UI\">Loop</text></svg>",
+                            "action": {
+                                "type": "CREATE-SELECT",
+                                "value": "loop"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["btn_alt"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\"><rect width=\"30\" height=\"30\" fill=\"transparent\" rx=\"6\" stroke-width=\"2\" stroke=\"black\" stroke-dasharray=\"5\" y=\"1\" x=\"1\"/><text dominant-baseline=\"middle\" text-anchor=\"middle\" x=\"15\" y=\"15\" font-size=\"10\" font-family=\"Segoe UI\">Alt</text></svg>",
+                            "action": {
+                                "type": "CREATE-SELECT",
+                                "value": "alt"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["btn_msg"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\"><defs><marker id=\"msg_btn\" viewBox=\"0 0 5 5\" markerWidth=\"5\" markerHeight=\"5\" refX=\"0\" refY=\"2.5\"><path d=\"M 0 0 L 5 2.5 L 0 5 Z\" /></marker></defs><rect width=\"30\" height=\"30\" fill=\"transparent\" rx=\"6\" y=\"1\" x=\"1\"/><line x1=\"1\" x2=\"25\" y1=\"25\" y2=\"25\" stroke=\"black\" marker-end=\"url(#msg_btn)\" stroke-linecap=\"round\"/><text dominant-baseline=\"middle\" text-anchor=\"middle\" x=\"15\" y=\"15\" font-size=\"10\" font-family=\"Segoe UI\">Msg</text></svg>",
+                            "action": {
+                                "type": "CREATE-SELECT",
+                                "value": "message"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "loop" },
+            "tags": [ "list-item" ],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptative",
+                "background": {
+                    "padding": 5,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect width=\"20\" height=\"10\" fill=\"grey\" x=\"2\" y=\"3\" rx=\"1\"/><text x=\"6\" y=\"10\" font-size=\"6\" font-weight=\"500\" font-family=\"Segoe UI\">Loop</text><rect x=\"2\" y=\"2\" width=\"106\" height=\"96\" data-myContainer=\"here\" stroke=\"black\" stroke-width=\"4\"  rx=\"6\" fill=\"transparent\"/></svg>",
+                    "speed": 1,
+                    "wrap": "myContainer"
+                },
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 26,
+                            "y": 10
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "condition",
+                            "tag": "cond_str"
                         }
                     }
                 ]

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32">
+    <defs>
+        <marker id="msg_btn" viewBox="0 0 5 5" markerWidth="5" markerHeight="5" refX="0" refY="2.5">
+            <path d="M 0 0 L 5 2.5 L 0 5 Z" />
+        </marker>
+    </defs>
+    <rect width="30" height="30" fill="transparent" rx="6" y="1" x="1"/>
+    <line x1="1" x2="25" y1="25" y2="25" stroke="black" marker-end="url(#msg_btn)" stroke-linecap="round"/>
+    <text dominant-baseline="middle" text-anchor="middle" x="15" y="15" font-size="10" font-family="Segoe UI">
+        Msg
+    </text>
+</svg>

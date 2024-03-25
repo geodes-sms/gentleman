@@ -26,7 +26,10 @@
                     "target": {
                         "name": "set",
                         "accept": {
-                            "name": "component"
+                            "name": "component",
+                            "accept": [
+                                { "name": "opt" }
+                            ]
                         }
                     }
                 }
@@ -52,8 +55,91 @@
             "attributes": []
         },
         {
+            "name": "bloc",
+            "nature": "prototype",
+            "prototype": "component",
+            "root": false,
+            "attributes": []
+        },
+        {
+            "name": "loop",
+            "nature": "concrete",
+            "prototype": "bloc",
+            "attributes": [
+                {
+                    "name": "condition",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "messages",
+                    "target": { 
+                        "name": "set",
+                        "accept": {
+                            "name": "message"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "opt",
+            "nature": "concrete",
+            "prototype": "bloc",
+            "attributes": [
+                {
+                    "name": "condition",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "messages",
+                    "target": { 
+                        "name": "set",
+                        "accept": {
+                            "name": "message"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "alt",
+            "nature": "concrete",
+            "prototype": "bloc",
+            "attributes": [
+                {
+                    "name": "condition",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "alt-messages",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "message"
+                        }
+                    }
+                },
+                {
+                    "name": "else-messages",
+                    "target": {
+                        "name": "set",
+                        "target": {
+                            "name": "message"
+                        }
+                    }
+                }
+            ]
+        },
+        {
             "name": "message",
             "nature": "concrete",
+            "prototype": "component",
             "root": false,
             "attributes": [
                 {
