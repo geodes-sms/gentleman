@@ -1,4 +1,4 @@
-import { isEmpty, isNull, isNullOrUndefined, valOrDefault } from "zenkai"
+import { isNullOrUndefined, valOrDefault } from "zenkai"
 
 export const SizeSchema = {
     "circle": createCircleSchema,
@@ -27,12 +27,10 @@ function createRectSchema(adapter){
     return schema;
 }
 
-
+/** TODO: Update Circle and others */
 export const SizeHandler = {
-    //"circle": updateCircle,
     "rect": updateRect,
-    "wrap": updateWrap/*,
-    "wrap": updateWrap,*/
+    "wrap": updateWrap
 }
 
 function updateRect() {
@@ -54,6 +52,11 @@ function updateRect() {
     this.containerView.targetW = Math.max(this.containerView.defaultW, extremums.maxX) + stroke;
     this.containerView.targetH = Math.max(this.containerView.defaultH, extremums.maxY) + stroke;
 
+    this.containerView.contentX = this.containerView.targetX;
+    this.containerView.contentY = this.containerView.targetY;
+    this.containerView.contentW = this.containerView.targetW;
+    this.containerView.contentH = this.containerView.targetH;
+
     createFrame.call(this);
 }
 
@@ -72,6 +75,11 @@ function updateWrap() {
     this.containerView.targetY = Math.min(0, extremums.minY);
     this.containerView.targetW = extremums.maxX;
     this.containerView.targetH = extremums.maxY;
+
+    this.containerView.contentX = this.containerView.targetX;
+    this.containerView.contentY = this.containerView.targetY;
+    this.containerView.contentW = this.containerView.targetW;
+    this.containerView.contentH = this.containerView.targetH;
 
     createFrame.call(this);
 }
@@ -119,8 +127,8 @@ function getBox(item, projection) {
     res.y = y - stroke;
 
     if(!isNullOrUndefined(projection.containerView)) {
-        res.w = projection.containerView.targetW + stroke;
-        res.h = projection.containerView.targetH + stroke;
+        res.w = projection.containerView.contentW + stroke;
+        res.h = projection.containerView.contentH + stroke;
     } else {
         res.w = w + stroke;
         res.h = h + stroke;
@@ -148,6 +156,31 @@ function initContainerView(projection) {
     }
 }
 
+
+export const MeetHandler = {
+    "right": meetRight
+/**  right: meetRight,
+ *  top: meetTop,
+ *  bottom: meetBottom,
+*/
+}
+
+function meetRight() {
+    const view = this.parent.containerView;
+
+    const x = valOrDefault(Number(this.container.getAttribute("x")), 0);
+    let stroke = 0;
+
+    if(!isNullOrUndefined(this.adapter) && !isNullOrUndefined(this.adapter.element)) {
+        stroke =  valOrDefault(Number(this.adapter.element.getAttribute("stroke-width")) / 2, 0);
+    }
+
+    this.containerView.targetW = view.targetW - valOrDefault(view.targetX, 0) - x - stroke;
+
+    createFrame.call(this);
+
+}
+
 const FrameCreator = {
     "rect": rectFraming,
     "wrap": wrapFraming
@@ -171,8 +204,14 @@ function createFrame() {
     let startTime = 0;
     const totalTime = this.speed;
 
+    let tagName = "wrap";
+
+    if(!isNullOrUndefined(this.adapter)) {
+        tagName = this.adapter.tagName;
+    }
+
     const update = (progress) => {
-        FrameCreator[this.adapter.tagName].call(this, current, offsets, progress);
+        FrameCreator[tagName].call(this, current, offsets, progress);
     }
 
     const animateStep = (timestamp) => {
@@ -233,5 +272,3 @@ function wrapFraming(current, offsets, progress) {
 }
 
 
-
-export const MeetHandler = {}
