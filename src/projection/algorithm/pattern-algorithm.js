@@ -68,15 +68,16 @@ const BasePatternAlgorithm = {
     },
 
     removeItem(item) {
-        console.log(item);
         for(let i = 0; i < this.content.length; i++) {
-            if(this.content[i].id == item) {
+            if(this.content[i].source.id == item.id) {
                 let container = this.content[i].container || this.content[i].element;
                 container.remove();
 
                 this.content.splice(i, 1);
             }
         }
+
+        this.updateSize();
 
     },
 
@@ -123,7 +124,7 @@ const BasePatternAlgorithm = {
             let projection = this.projection.resolveElement(item);
             projection.projection.update("displayed");
 
-            this.refresh();
+            this.updateSize();
         });
 
         this.projection.registerHandler("value.removed", (value) => {

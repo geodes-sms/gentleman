@@ -254,6 +254,8 @@ const BaseSwitchField = {
 
         this.containerView.targetW = x + w;
         this.containerView.targetH = y + h;
+        this.containerView.contentW = x + w;
+        this.containerView.contentH = y + h;
 
         this.parent.updateSize();
     },
@@ -330,7 +332,7 @@ const BaseSwitchField = {
     
 }
 
-export const SwitchField = Object.assign({},
+export const SwitchField = Object.assign(
     Object.create(Field),
     BaseSwitchField
 )

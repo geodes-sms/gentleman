@@ -29,6 +29,10 @@ export const Algorithm = {
 
         MeetHandler[this.meet].call(this);
 
+        if(isNullOrUndefined(this.content)) {
+            return;
+        }
+
         for(let i = 0; i < this.content.length; i++) {
             this.content[i].meetSize();
         }

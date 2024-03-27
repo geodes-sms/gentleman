@@ -1,4 +1,4 @@
-import { isNullOrUndefined, valOrDefault } from "zenkai"
+import { isEmpty, isNullOrUndefined, valOrDefault } from "zenkai"
 
 export const SizeSchema = {
     "circle": createCircleSchema,
@@ -34,6 +34,10 @@ export const SizeHandler = {
 }
 
 function updateRect() {
+
+    if(this.id === "algo4") {
+        console.log("Hello")
+    }
 
     if(!isNullOrUndefined(this.animationFrame)) {
         window.cancelAnimationFrame(this.animationFrame);
@@ -85,6 +89,14 @@ function updateWrap() {
 }
  
 function generateExtremums() {
+    if(isNullOrUndefined(this.content) || isEmpty(this.content)) {
+        return {
+            minX: 0,
+            minY: 0,
+            maxX: 0,
+            maxY: 0
+        }
+    }
     let item = this.content[0].container || this.content[0].element;
 
     let box = getBox(item, this.content[0]);
@@ -158,11 +170,8 @@ function initContainerView(projection) {
 
 
 export const MeetHandler = {
-    "right": meetRight
-/**  right: meetRight,
- *  top: meetTop,
- *  bottom: meetBottom,
-*/
+    "right": meetRight,
+    "bottom": meetBottom
 }
 
 function meetRight() {
@@ -179,6 +188,21 @@ function meetRight() {
 
     createFrame.call(this);
 
+}
+
+function meetBottom() {
+    const view = this.parent.containerView;
+    const x = valOrDefault(Number(this.container.getAttribute("y")), 0);
+    let stroke = 0;
+
+
+    if(!isNullOrUndefined(this.adapter) && !isNullOrUndefined(this.adapter.element)) {
+        stroke =  valOrDefault(Number(this.adapter.element.getAttribute("stroke-width")) / 2, 0);
+    }
+
+    this.containerView.targetH = view.targetH - valOrDefault(view.targetY, 0) - x - stroke;
+
+    createFrame.call(this);
 }
 
 const FrameCreator = {
