@@ -207,7 +207,7 @@ const BaseSVGButton = {
     }
 }
 
-export const SVGButton = Object.assign({},
+export const SVGButton = Object.assign(
     Object.create(Static),
     BaseSVGButton
 )

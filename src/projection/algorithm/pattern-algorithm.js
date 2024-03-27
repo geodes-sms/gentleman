@@ -9,10 +9,11 @@ const BasePatternAlgorithm = {
     init(args) {
         Object.assign(this.schema, args);
 
-        const { orientation  } = this.schema;
+        const { orientation, meet } = this.schema;
 
         this.orientation = orientation;
         this.content = [];
+        this.meet = meet;
 
         return this;
     },
@@ -34,8 +35,8 @@ const BasePatternAlgorithm = {
             let item = this.createItem(value);
 
             this.container.append(item);
-            this.refresh();
         })
+
 
         this.bindEvents();
 
@@ -57,7 +58,7 @@ const BasePatternAlgorithm = {
         
         itemProjection.element.parent = this;
 
-        this.content.push(container);
+        this.content.push(itemProjection.element);
 
         return container;
     },
@@ -70,7 +71,9 @@ const BasePatternAlgorithm = {
         console.log(item);
         for(let i = 0; i < this.content.length; i++) {
             if(this.content[i].id == item) {
-                this.content[i].remove();
+                let container = this.content[i].container || this.content[i].element;
+                container.remove();
+
                 this.content.splice(i, 1);
             }
         }
@@ -79,6 +82,15 @@ const BasePatternAlgorithm = {
 
     updateSize() {
         this.refresh();
+
+        if(!isNullOrUndefined(this.parent)) {
+            this.parent.updateSize();
+        }
+
+        this.content.forEach( (item) => {
+            item.meetSize();
+        })
+
         return;
     },
 
@@ -94,12 +106,10 @@ const BasePatternAlgorithm = {
         this.displayed = true;
 
         this.content.forEach((element) => {
-            let projection = this.projection.resolveElement(element);
-
-            projection.projection.update("displayed");
-
-            this.refresh();
+            element.projection.update("displayed");
         })
+
+        this.refresh();
 
         return;
     },
@@ -123,7 +133,6 @@ const BasePatternAlgorithm = {
         this.projection.registerHandler("displayed", () => {
             this.display();
         });
-
     }
 
 }
@@ -142,36 +151,91 @@ const ContentManager = {
 
 function manageHorizontal() {
     let x = 0;
+    let maxY = 0
 
-    this.content.forEach( (item)  => {
-        item.setAttribute("x", x);
+    for(let i = 0; i < this.content.length; i++) {
+        let item = this.content[i];
+        let container = item.container || item.element;
 
-        let projection = this.projection.resolveElement(item);
+        container.setAttribute("x", x);
         
-        if(!isNullOrUndefined(projection.containerView)) {
-            x += projection.containerView.targetW;
+        if(!isNullOrUndefined(item.containerView)) {
+            x += item.containerView.targetW;
+            maxY = Math.max(item.containerView.targetH, maxY);
         } else {
-            let box = item.getBBox();
+            let box = container.getBBox();
             x += box.width;
+            maxY = Math.max(box.height, maxY);
         }
-    })
+    }
+
+    this.container.setAttribute("width", x);
+    this.container.setAttribute("height", maxY);
+
+    if(isNullOrUndefined(this.containerView)) {
+        this.containerView = {
+            x: 0,
+            y: 0,
+            w: 0,
+            h: 0
+        };
+    }
+
+
+    this.containerView.targetW = x;
+    this.containerView.targetH = maxY;
+    this.containerView.targetX = 0;
+    this.containerView.targetY = 0;
+
+    this.containerView.contentW = x;
+    this.containerView.contentH = maxY;
+    this.containerView.contentX = 0;
+    this.containerView.contentY = 0;
 }
 
 function manageVertical() {
     let y = 0;
+    let maxX = 0;
 
-    this.content.forEach( (item)  => {
-        item.setAttribute("y", y);
-
-        let projection = this.projection.resolveElement(item);
+    for(let i = 0; i < this.content.length; i++) {
+        let item = this.content[i];
+        let container = item.container || item.element;
         
-        if(!isNullOrUndefined(projection.containerView)) {
-            y += projection.containerView.targetH;
+        container.setAttribute("y", y);
+        
+        if(!isNullOrUndefined(item.containerView)) {
+            y += item.containerView.targetH;
+            maxX = Math.max(item.containerView.targetW, maxX);
         } else {
-            let box = item.getBBox();
-            y += box.width;
+            let box = container.getBBox();
+            y += box.height;
+            maxX = Math.max(box.width, maxX);
         }
-    })
+    }
+
+    this.container.setAttribute("width", maxX);
+    this.container.setAttribute("height", y);
+
+    if(isNullOrUndefined(this.containerView)) {
+        this.containerView = {
+            x: 0,
+            y: 0,
+            w: 0,
+            h: 0
+        };
+    }
+
+
+    this.containerView.targetW = maxX;
+    this.containerView.targetH = y;
+    this.containerView.targetX = 0;
+    this.containerView.targetY = 0;
+
+    this.containerView.contentW = maxX;
+    this.containerView.contentH = y;
+    this.containerView.contentX = 0;
+    this.containerView.contentY = 0;
+    
 }
 
 function manageCustom() {

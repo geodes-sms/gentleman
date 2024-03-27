@@ -167,11 +167,13 @@ const BaseAdaptiveAlgorithm = {
 
         SizeHandler[this.adapter.tagName].call(this, this.adapter);
 
-        this.source.notify("dimension.changed", this.id);
-
         if(!isNullOrUndefined(this.parent)){
             this.parent.updateSize();
         }
+
+        this.content.forEach( (item) => {
+            item.meetSize();
+        })
     },
 
     updateContent(conceptId, projection) {
@@ -310,16 +312,10 @@ const BaseAdaptiveAlgorithm = {
 
             }
         })
-
-        /*if(this.meet){
-            this.projection.registerHandler("dimension.changed", (id) => {
-                if(id === this.parent.id){ MeetHandler[this.meet.type].call(this, this.adapter)};
-            })
-        }*/
     }
 }
 
-export const AdaptiveAlgorithm = Object.assign({},
+export const AdaptiveAlgorithm = Object.assign(
     Algorithm,
     BaseAdaptiveAlgorithm
 )
