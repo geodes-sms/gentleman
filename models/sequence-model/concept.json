@@ -62,24 +62,31 @@
             "attributes": []
         },
         {
-            "name": "loop",
+            "name": "alt", 
             "nature": "concrete",
             "prototype": "bloc",
             "attributes": [
                 {
-                    "name": "condition",
+                    "name": "initial",
                     "target": {
-                        "name": "string"
+                        "name": "fragment"
                     }
                 },
                 {
-                    "name": "messages",
-                    "target": { 
+                    "name": "fragments",
+                    "target": {
                         "name": "set",
                         "accept": {
-                            "name": "message"
+                            "name": "fragment"
                         }
                     }
+                },
+                {
+                    "name": "default",
+                    "target": {
+                        "name": "else-fragment"
+                    },
+                    "required": false
                 }
             ]
         },
@@ -89,6 +96,31 @@
             "prototype": "bloc",
             "attributes": [
                 {
+                    "name": "fragment",
+                    "target": {
+                        "name": "fragment"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "loop",
+            "nature": "concrete",
+            "prototype": "bloc",
+            "attributes": [
+                {
+                    "name": "fragment",
+                    "target": {
+                        "name": "fragment"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "fragment",
+            "nature": "concrete",
+            "attributes": [
+                {
                     "name": "condition",
                     "target": {
                         "name": "string"
@@ -96,70 +128,20 @@
                 },
                 {
                     "name": "messages",
-                    "target": { 
+                    "target": {
                         "name": "set",
                         "accept": {
-                            "name": "message"
+                            "name": "messages"
                         }
                     }
                 }
             ]
         },
         {
-            "name": "alt",
+            "name": "else-fragment",
             "nature": "concrete",
-            "prototype": "bloc",
             "attributes": [
-                {
-                    "name": "condition",
-                    "target": {
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "alt-messages",
-                    "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "message"
-                        }
-                    }
-                },
-                {
-                    "name": "else-messages",
-                    "target": {
-                        "name": "set",
-                        "target": {
-                            "name": "message"
-                        }
-                    }
-                }
-            ]
-        },
-        {
-            "name": "message",
-            "nature": "concrete",
-            "prototype": "component",
-            "root": false,
-            "attributes": [
-                {
-                    "name": "origin",
-                    "target": {
-                        "name": "reference",
-                        "target": {
-                            "name": "lifeline"
-                        }
-                    }
-                },
-                {
-                    "name": "target",
-                    "target": {
-                        "name": "reference",
-                        "target": {
-                            "name": "lifeline"
-                        }
-                    }
-                }
+
             ]
         }
     ]

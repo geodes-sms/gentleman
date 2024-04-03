@@ -147,6 +147,8 @@ const BaseWrapAlgorithm = {
             this.containerView = {
                 targetW: 0,
                 targetH: 0,
+                targetX: 0,
+                targetY: 0,
                 x: 0,
                 y: 0,
                 w: 0,
