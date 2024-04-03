@@ -131,7 +131,7 @@
                     "target": {
                         "name": "set",
                         "accept": {
-                            "name": "messages"
+                            "name": "message"
                         }
                     }
                 }
@@ -142,6 +142,30 @@
             "nature": "concrete",
             "attributes": [
 
+            ]
+        },
+        {
+            "name": "message",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "from",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "lifeline"
+                        }
+                    }
+                },
+                {
+                    "name": "to",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "lifeline"
+                        }
+                    }
+                }
             ]
         }
     ]

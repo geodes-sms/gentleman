@@ -173,7 +173,9 @@
                     "item": {
                         "template": {
                             "tag": "list-item",
-                            "options": {}
+                            "options": {
+                                "spacing": 20
+                            }
                         }
                     }
                 }
@@ -498,7 +500,7 @@
                                         "render": {
                                             "kind": "static",
                                             "type": "svg",
-                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"28\" height=\"15\"><rect width=\"28\" height=\"14\" fill=\"grey\" x=\"2\" y=\"1\" rx=\"1\"/><text x=\"6\" y=\"12\" font-size=\"12\" font-weight=\"500\" font-family=\"Segoe UI\">Opt</text></svg>"
+                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"15\"><rect width=\"32\" height=\"14\" fill=\"grey\" x=\"2\" y=\"1\" rx=\"1\"/><text x=\"6\" y=\"12\" font-size=\"12\" font-weight=\"500\" font-family=\"Segoe UI\">Opt</text></svg>"
                                         }
                                     },
                                     {
@@ -519,6 +521,81 @@
                             }
                         }
                     }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "loop" },
+            "tags": [ "list-item" ],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "meet": "right",
+                "content": [
+                    {
+                        "coordinates": { 
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "meet": "right",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg",
+                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"36\" height=\"15\"><rect width=\"36\" height=\"14\" fill=\"grey\" x=\"2\" y=\"1\" rx=\"1\"/><text x=\"6\" y=\"12\" font-size=\"12\" font-weight=\"500\" font-family=\"Segoe UI\">Loop</text></svg>"
+                                        }
+                                    },
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "fragment",
+                                            "tag": "fragment_init"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "message" },
+            "tags": [ "list-item" ],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptative",
+                "background": {
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"60\"><rect x=\"2\" y=\"2\" width=\"106\" height=\"56\" fill=\"transparent\" data-myContainer=\"here\"/></svg>",
+                    "wrap": "myContainer",
+                    "padding": 0,
+                    "speed": 1
+                },
+                "meet": "right",
+                "content": [
+
                 ]
             }
         },
@@ -669,7 +746,9 @@
                     "item": {
                         "template": {
                             "tag": "list-item",
-                            "options": {}
+                            "options": {
+                                "lazy": true
+                            }
                         }
                     }
                 }

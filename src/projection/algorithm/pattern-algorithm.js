@@ -154,6 +154,8 @@ function manageHorizontal() {
     let x = 0;
     let maxY = 0
 
+    const { spacing = 0 } = this.schema.list.item.template.options;
+
     for(let i = 0; i < this.content.length; i++) {
         let item = this.content[i];
         let container = item.container || item.element;
@@ -161,11 +163,11 @@ function manageHorizontal() {
         container.setAttribute("x", x);
         
         if(!isNullOrUndefined(item.containerView)) {
-            x += item.containerView.targetW;
+            x += item.containerView.targetW + spacing;
             maxY = Math.max(item.containerView.targetH, maxY);
         } else {
             let box = container.getBBox();
-            x += box.width;
+            x += box.width + spacing;
             maxY = Math.max(box.height, maxY);
         }
     }
@@ -198,6 +200,8 @@ function manageVertical() {
     let y = 0;
     let maxX = 0;
 
+    const { spacing = 0 } = this.schema.list.item.template.options;
+
     for(let i = 0; i < this.content.length; i++) {
         let item = this.content[i];
         let container = item.container || item.element;
@@ -205,11 +209,11 @@ function manageVertical() {
         container.setAttribute("y", y);
         
         if(!isNullOrUndefined(item.containerView)) {
-            y += item.containerView.targetH;
+            y += item.containerView.targetH + spacing;
             maxX = Math.max(item.containerView.targetW, maxX);
         } else {
             let box = container.getBBox();
-            y += box.height;
+            y += box.height + spacing;
             maxX = Math.max(box.width, maxX);
         }
     }
