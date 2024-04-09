@@ -485,7 +485,7 @@
                         "render": {
                             "kind": "static",
                             "type": "svg-button",
-                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 32 32\"><defs><marker id=\"msg_btn\" viewBox=\"0 0 5 5\" markerWidth=\"5\" markerHeight=\"5\" refX=\"0\" refY=\"2.5\"><path d=\"M 0 0 L 5 2.5 L 0 5 Z\" /></marker></defs><rect width=\"30\" height=\"30\" fill=\"transparent\" rx=\"6\" y=\"1\" x=\"1\"/><line x1=\"1\" x2=\"25\" y1=\"25\" y2=\"25\" stroke=\"black\" marker-end=\"url(#msg_btn)\" stroke-linecap=\"round\"/><text dominant-baseline=\"middle\" text-anchor=\"middle\" x=\"15\" y=\"15\" font-size=\"10\" font-family=\"Segoe UI\">Msg</text></svg>",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\" viewBox=\"0 0 30 30\"><text dominant-baseline=\"middle\" text-anchor=\"middle\" x=\"15\" y=\"15\" font-size=\"26\" font-family=\"Segoe UI\" font-weight=\"500\">M</text></svg>",
                             "action": {
                                 "type": "CREATE-SELECT",
                                 "value": "message"
@@ -526,23 +526,40 @@
                                             "type": "pure"
                                         },
                                         "render": {
-                                            "kind": "static",
-                                            "type": "svg",
-                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"15\"><rect width=\"32\" height=\"14\" fill=\"grey\" x=\"2\" y=\"1\" rx=\"1\"/><text x=\"6\" y=\"12\" font-size=\"12\" font-weight=\"500\" font-family=\"Segoe UI\">Opt</text></svg>"
+                                            "type": "attribute",
+                                            "name": "fragment",
+                                            "tag": "fragment_init"
                                         }
                                     },
                                     {
                                         "coordinates": {
-                                            "x": 0,
-                                            "y": 0
+                                            "x": 2,
+                                            "y": 2
                                         },
                                         "dimension": {
                                             "type": "pure"
                                         },
                                         "render": {
-                                            "type": "attribute",
-                                            "name": "fragment",
-                                            "tag": "fragment_init"
+                                            "kind": "static",
+                                            "type": "svg-button",
+                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\"><rect width=\"15\" height=\"15\" fill=\"red\"/><line x1=\"2\" x2=\"13\" y1=\"2\" y2=\"13\" stroke=\"white\" stroke-linecap=\"round\"/><line x1=\"2\" x2=\"13\" y1=\"13\" y2=\"2\" stroke=\"white\" stroke-linecap=\"round\"/></svg>",
+                                            "action": {
+                                                "type": "DELETE"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "coordinates": {
+                                            "x": 17,
+                                            "y": 2
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg",
+                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"16\"><rect width=\"32\" height=\"15\" fill=\"grey\" x=\"0\" y=\"0\"/><text x=\"6\" y=\"11\" font-size=\"12\" font-weight=\"500\" font-family=\"Segoe UI\">Opt</text></svg>"
                                         }
                                     }
                                 ]
@@ -583,23 +600,40 @@
                                             "type": "pure"
                                         },
                                         "render": {
-                                            "kind": "static",
-                                            "type": "svg",
-                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"36\" height=\"15\"><rect width=\"36\" height=\"14\" fill=\"grey\" x=\"2\" y=\"1\" rx=\"1\"/><text x=\"6\" y=\"12\" font-size=\"12\" font-weight=\"500\" font-family=\"Segoe UI\">Loop</text></svg>"
+                                            "type": "attribute",
+                                            "name": "fragment",
+                                            "tag": "fragment_init"
                                         }
                                     },
                                     {
                                         "coordinates": {
-                                            "x": 0,
-                                            "y": 0
+                                            "x": 2,
+                                            "y": 2
                                         },
                                         "dimension": {
                                             "type": "pure"
                                         },
                                         "render": {
-                                            "type": "attribute",
-                                            "name": "fragment",
-                                            "tag": "fragment_init"
+                                            "kind": "static",
+                                            "type": "svg-button",
+                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\"><rect width=\"15\" height=\"15\" fill=\"red\"/><line x1=\"2\" x2=\"13\" y1=\"2\" y2=\"13\" stroke=\"white\" stroke-linecap=\"round\"/><line x1=\"2\" x2=\"13\" y1=\"13\" y2=\"2\" stroke=\"white\" stroke-linecap=\"round\"/></svg>",
+                                            "action": {
+                                                "type": "DELETE"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "coordinates": {
+                                            "x": 17,
+                                            "y": 2
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg",
+                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"36\" height=\"15\"><rect width=\"36\" height=\"15\" fill=\"grey\" /><text x=\"6\" y=\"11\" font-size=\"12\" font-weight=\"500\" font-family=\"Segoe UI\">Loop</text></svg>"
                                         }
                                     }
                                 ]
@@ -693,20 +727,6 @@
                                             "type": "pure"
                                         },
                                         "render": {
-                                            "kind": "static",
-                                            "type": "svg",
-                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"28\" height=\"15\"><rect width=\"28\" height=\"14\" fill=\"grey\" x=\"2\" y=\"1\" rx=\"1\"/><text x=\"6\" y=\"12\" font-size=\"12\" font-weight=\"500\" font-family=\"Segoe UI\">Alt</text></svg>"
-                                        }
-                                    },
-                                    {
-                                        "coordinates": {
-                                            "x": 0,
-                                            "y": 0
-                                        },
-                                        "dimension": {
-                                            "type": "pure"
-                                        },
-                                        "render": {
                                             "type": "attribute",
                                             "name": "initial",
                                             "tag": "fragment_init"
@@ -724,6 +744,37 @@
                                             "type": "attribute",
                                             "name": "fragments",
                                             "tag": "fragment_val"
+                                        }
+                                    },
+                                    {
+                                        "coordinates": {
+                                            "x": 2,
+                                            "y": 2
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg-button",
+                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\"><rect width=\"15\" height=\"15\" fill=\"red\"/><line x1=\"2\" x2=\"13\" y1=\"2\" y2=\"13\" stroke=\"white\" stroke-linecap=\"round\"/><line x1=\"2\" x2=\"13\" y1=\"13\" y2=\"2\" stroke=\"white\" stroke-linecap=\"round\"/></svg>",
+                                            "action": {
+                                                "type": "DELETE"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "coordinates": {
+                                            "x": 17,
+                                            "y": 2
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg",
+                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"28\" height=\"15\"><rect width=\"28\" height=\"15\" fill=\"grey\"/><text x=\"6\" y=\"11\" font-size=\"12\" font-weight=\"500\" font-family=\"Segoe UI\">Alt</text></svg>"
                                         }
                                     }
                                 ]
@@ -798,7 +849,7 @@
                 "content": [
                     {
                         "coordinates": {
-                            "x": 10,
+                            "x": 18,
                             "y": 25
                         },
                         "dimension": {
@@ -808,20 +859,6 @@
                             "type": "attribute",
                             "name": "condition",
                             "tag": "cond_str"
-                        }
-                    },
-                    {
-                        "coordinates": {
-                            "x": 32,
-                            "y": 0
-                        },
-                        "dimension": {
-                            "type": "pure"
-                        },
-                        "render": {
-                            "type": "attribute",
-                            "name": "messages",
-                            "tag": "btn_msg__frg"
                         }
                     },
                     {
@@ -836,6 +873,20 @@
                             "type": "attribute",
                             "name": "messages",
                             "tag": "component_view"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 2,
+                            "y": 20
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "messages",
+                            "tag": "btn_msg__frg"
                         }
                     }
                 ]
@@ -857,7 +908,7 @@
                 "content": [
                     {
                         "coordinates": {
-                            "x": 10,
+                            "x": 17,
                             "y": 25
                         },
                         "dimension": {
@@ -867,20 +918,6 @@
                             "type": "attribute",
                             "name": "condition",
                             "tag": "cond_str"
-                        }
-                    },
-                    {
-                        "coordinates": {
-                            "x": 3,
-                            "y": 0
-                        },
-                        "dimension": {
-                            "type": "pure"
-                        },
-                        "render": {
-                            "type": "attribute",
-                            "name": "messages",
-                            "tag": "btn_msg__frg"
                         }
                     },
                     {
@@ -895,6 +932,20 @@
                             "type": "attribute",
                             "name": "messages",
                             "tag": "component_view"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 2,
+                            "y": 2
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "messages",
+                            "tag": "btn_msg__frg"
                         }
                     }
                 ]
