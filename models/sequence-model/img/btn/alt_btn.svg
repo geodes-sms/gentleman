@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32">
+    <rect width="30" height="30" fill="transparent" rx="6" stroke-width="2" stroke="black" stroke-dasharray="5" y="1" x="1"/>
+    <text dominant-baseline="middle" text-anchor="middle" x="15" y="15" font-size="10" font-family="Segoe UI">
+        Alt
+    </text>
+</svg>

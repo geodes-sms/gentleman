@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="110" height="100">
+    <rect width="20" height="10" fill="grey" x="2" y="3" rx="1"/>
+    <text x="6" y="10" font-size="6" font-weight="500" font-family="Segoe UI">
+        Opt
+    </text>
+    <rect x="2" y="2" width="106" height="96" stroke="black" stroke-width="4"  rx="6" fill="transparent"/>
+</svg>

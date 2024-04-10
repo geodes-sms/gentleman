@@ -2,60 +2,131 @@
     "type": "projection",
     "projection": [
         {
-            "concept": { "name": "diagram"},
+            "concept": { "name": "sequence-diagram" },
             "type": "algorithm",
-            "tags": [],
-            "rtag": "diagram",
-            "content":{
-                "type": "decoration",
-                "dimensions":{
-                    "width": 1500,
-                    "height": 875
+            "tags": ["default"],
+            "content": {
+                "type": "adaptative",
+                "background": {
+                    "wrap": "myContainer",
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1200\" height=\"900\"><rect data-myContainer=\"here\" fill=\"white\" width=\"1200\" height=\"900\"/></svg>",
+                    "speed": 1,
+                    "padding": 0
                 },
-                "background": false,
-                "content":[
+                "content": [
                     {
                         "dimension": {
                             "type": "pure"
                         },
-                        "coordinates":{
-                            "x": 20,
-                            "y": 30
+                        "coordinates": {
+                            "x": 100,
+                            "y": 10
                         },
-                        "render":{
+                        "render": {
                             "type": "attribute",
                             "name": "lifelines",
-                            "tag": "lf-button"
-                        }
-                    },
-                    {
-                        "dimension":{
-                            "type": "absolute",
-                            "width": 1450,
-                            "height": 800
-                        },
-                        "coordinates":{
-                            "x": 25,
-                            "y": 75
-                        },
-                        "render":{
-                            "type": "attribute",
-                            "name": "lifelines",
-                            "tag": "lf-pattern"
+                            "tag": "lf_btn"
                         }
                     },
                     {
                         "dimension": {
                             "type": "pure"
                         },
-                        "coordinates":{
-                            "x": 60,
-                            "y": 30
+                        "coordinates": {
+                            "x": 200,
+                            "y": 10
                         },
-                        "render":{
+                        "render": {
                             "type": "attribute",
-                            "name": "name",
-                            "tag": "diagram__name"
+                            "name": "components",
+                            "tag": "btn_opt"
+                        }
+                    },
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 300,
+                            "y": 10
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "components",
+                            "tag": "btn_loop"
+                        }
+                    },
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 400,
+                            "y": 10
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "components",
+                            "tag": "btn_alt"
+                        }
+                    },
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 500,
+                            "y": 10
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "components",
+                            "tag": "btn_msg"
+                        }
+                    },
+                    {
+                        "dimension": { 
+                            "type": "pure"
+                         },
+                        "coordinates": {
+                            "x": 10,
+                            "y": 50
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "lifelines",
+                                            "tag": "lf_view"
+                                        }
+                                    },
+                                    {
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 100
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "components",
+                                            "tag": "component_view"
+                                        }
+                                    }
+                                ]
+                            }
                         }
                     }
                 ]
@@ -63,68 +134,790 @@
         },
         {
             "concept": { "name": "set" },
+            "tags": ["lf_btn"],
             "type": "algorithm",
-            "tags": ["lf-pattern"],
-            "rtag": "lf-pattern",
-            "content":{
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\"><rect width=\"30\" height=\"30\" fill=\"transparent\" rx=\"6\" stroke-width=\"2\" stroke=\"black\" y=\"1\" x=\"1\"/><text dominant-baseline=\"middle\" text-anchor=\"middle\" x=\"15\" y=\"15\" font-size=\"10\" font-family=\"Segoe UI\" fill=\"green\">New</text></svg>",
+                            "action": {
+                                "type": "CREATE"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": [ "component_view" ],
+            "type": "algorithm",
+            "content": {
                 "type": "pattern",
-                "dimensions": {
-                    "width": 1450,
-                    "height": 800
+                "orientation": {
+                    "type": "vertical"
                 },
-                "pattern":{
-                    "tag": "lf",
-                    "first":{
-                        "x": 50,
-                        "y": 50
-                    },
-                    "next":{
-                        "x": 250,
-                        "y": 0
-                    },
-                    "dimension":{
-                        "type": "pure"
+                "meet": "right",
+                "list": {
+                    "item": {
+                        "template": {
+                            "tag": "list-item",
+                            "options": {
+                                "spacing": 20
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "component" },
+            "tags": [ "list-item" ],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "meet": "right",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "projection",
+                            "bind": "value",
+                            "placeholder": false,
+                            "tag": "list-item"
+                        }
+                    }
+                ]
+            } 
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["lf_view"],
+            "type": "algorithm",
+            "content": {
+                "type": "pattern",
+                "orientation": {
+                    "type": "horizontal"
+                },
+                "meet": "bottom",
+                "list": {
+                    "item": {
+                        "template": {
+                            "tag": "list-item",
+                            "options" : {}
+                        }
                     }
                 }
             }
         },
         {
             "concept": { "name": "lifeline" },
+            "tags": ["list-item"],
             "type": "algorithm",
-            "tags": ["lf"],
-            "rtag": "lf",
-            "content":{
-                "type": "decoration",
-                "dimensions": false,
-                "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" style=\"overflow:visible;\" width=\"200\" height=\"80\"> \t<rect width=\"196\" height=\"32\" fill=\"white\" x=\"2\" y=\"2\" stroke=\"black\" stroke-width=\"2\"></rect> \t<rect width=\"6\" height=\"60\" x=\"96\" y=\"36\" data-augment=\"rect\" data-val=\"height\"></rect> </svg>",
-                "style": "overflow:visible;",
-                "rmv": {
-                    "coordinates":{
-                        "x": 183,
-                        "y": 5
-                    },
-                    "dimension":{
-                        "type": "pure"
-                    },
-                    "render":{
-                        "kind": "static",
-                        "type": "svg",
-                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.0\" width=\"10\" y=\"10\"><circle cx=\"5\" cy=\"5\" r=\"5\" fill=\"black\"></circle><line x1=\"2\" y1=\"2\" x2=\"8\" y2=\"8\" stroke=\"white\"></line><line x1=\"8\" y1=\"2\" x2=\"2\" y2=\"8\" stroke=\"white\"></line></svg>"
-                    }
+            "content": {
+                "type": "adaptative",
+                "background": {
+                    "speed": 1,
+                    "padding": 20,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"200\"><rect fill=\"transparent\" width=\"100\" height=\"200\" data-myContainer=\"here\"/></svg>",
+                    "wrap": "myContainer"
                 },
-                "content":[
+                "meet": "bottom",
+                "content": [
                     {
-                        "coordinates":{
-                            "x": 100,
-                            "y": 26
+                        "coordinates": {
+                            "x": 45,
+                            "y": 60
                         },
                         "dimension": {
                             "type": "pure"
                         },
-                        "render":{
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "adaptative",
+                                "meet": "bottom",
+                                "background": {
+                                    "speed": 1,
+                                    "padding": 0,
+                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"140\"><rect data-myContainer=\"here\" width=\"10\" height=\"140\" rx=\"6\" fill=\"#888787\"/></svg>",
+                                    "wrap": "myContainer"
+                                },
+                                "content": []
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
                             "type": "attribute",
                             "name": "name",
-                            "tag": "lf__name"
+                            "tag": "lf_nm"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 10,
+                            "y": 10
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": { 
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\"><circle cx=\"5\" cy=\"5\" r=\"5\" fill=\"grey\"/><line x1=\"2.5\" x2=\"7.5\" y1=\"2.5\" y2=\"7.5\" stroke=\"black\"/><line x1=\"2.5\" x2=\"7.5\" y1=\"7.5\" y2=\"2.5\" stroke=\"black\"/></svg>", 
+                            "action": {
+                                "type": "DELETE"
+                            }
+                        }
+                    }                
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": ["lf_nm"],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptative",
+                "background": {
+                    "speed": 1,
+                    "padding": 5,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"104\" height=\"64\"><rect width=\"100\" height=\"60\" rx=\"6\" fill=\"white\" stroke=\"black\" stroke-width=\"4\" x=\"2\" y=\"2\" data-myContainer=\"here\"/></svg>",
+                    "wrap": "myContainer"
+                },
+                "content": [
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 50,
+                            "y": 30
+                        },
+                        "render": {
+                            "type": "field",
+                            "field": {
+                                "type": "svg",
+                                "placeholder": "Actor",
+                                "anchor": "middle", 
+                                "baseline": "middle",
+                                "style": {
+                                    "size": 10,
+                                    "font": "Segoe UI",
+                                    "weight": 500,
+                                    "color": "black"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": [ "cond_str"],
+            "type": "field",
+            "content": {
+                "type": "svg",
+                "placeholder": "Condition...",
+                "anchor": "start",
+                "baseline": "middle",
+                "style": {
+                    "size": 12,
+                    "font": "Segoe UI",
+                    "weight": 500,
+                    "color": "black"
+                }
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["btn_opt"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\"><rect width=\"30\" height=\"30\" fill=\"transparent\" rx=\"6\" stroke-width=\"2\" stroke=\"black\" stroke-dasharray=\"5\" y=\"1\" x=\"1\"/><text dominant-baseline=\"middle\" text-anchor=\"middle\" x=\"15\" y=\"15\" font-size=\"10\" font-family=\"Segoe UI\">Opt</text></svg>",
+                            "action": {
+                                "type": "CREATE-SELECT",
+                                "value": "opt"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["btn_loop"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\"><rect width=\"30\" height=\"30\" fill=\"transparent\" rx=\"6\" stroke-width=\"2\" stroke=\"black\" stroke-dasharray=\"5\" y=\"1\" x=\"1\"/><text dominant-baseline=\"middle\" text-anchor=\"middle\" x=\"15\" y=\"15\" font-size=\"10\" font-family=\"Segoe UI\">Loop</text></svg>",
+                            "action": {
+                                "type": "CREATE-SELECT",
+                                "value": "loop"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["btn_alt"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\"><rect width=\"30\" height=\"30\" fill=\"transparent\" rx=\"6\" stroke-width=\"2\" stroke=\"black\" stroke-dasharray=\"5\" y=\"1\" x=\"1\"/><text dominant-baseline=\"middle\" text-anchor=\"middle\" x=\"15\" y=\"15\" font-size=\"10\" font-family=\"Segoe UI\">Alt</text></svg>",
+                            "action": {
+                                "type": "CREATE-SELECT",
+                                "value": "alt"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["btn_msg"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\"><defs><marker id=\"msg_btn\" viewBox=\"0 0 5 5\" markerWidth=\"5\" markerHeight=\"5\" refX=\"0\" refY=\"2.5\"><path d=\"M 0 0 L 5 2.5 L 0 5 Z\" /></marker></defs><rect width=\"30\" height=\"30\" fill=\"transparent\" rx=\"6\" y=\"1\" x=\"1\"/><line x1=\"1\" x2=\"25\" y1=\"25\" y2=\"25\" stroke=\"black\" marker-end=\"url(#msg_btn)\" stroke-linecap=\"round\"/><text dominant-baseline=\"middle\" text-anchor=\"middle\" x=\"15\" y=\"15\" font-size=\"10\" font-family=\"Segoe UI\">Msg</text></svg>",
+                            "action": {
+                                "type": "CREATE-SELECT",
+                                "value": "message"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": ["btn_msg__frg"],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\" viewBox=\"0 0 30 30\"><text dominant-baseline=\"middle\" text-anchor=\"middle\" x=\"15\" y=\"15\" font-size=\"26\" font-family=\"Segoe UI\" font-weight=\"500\">M</text></svg>",
+                            "action": {
+                                "type": "CREATE-SELECT",
+                                "value": "message"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "opt" },
+            "tags": [ "list-item" ],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "meet": "right",
+                "content": [
+                    {
+                        "coordinates": { 
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "meet": "right",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "fragment",
+                                            "tag": "fragment_init"
+                                        }
+                                    },
+                                    {
+                                        "coordinates": {
+                                            "x": 2,
+                                            "y": 2
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg-button",
+                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\"><rect width=\"15\" height=\"15\" fill=\"red\"/><line x1=\"2\" x2=\"13\" y1=\"2\" y2=\"13\" stroke=\"white\" stroke-linecap=\"round\"/><line x1=\"2\" x2=\"13\" y1=\"13\" y2=\"2\" stroke=\"white\" stroke-linecap=\"round\"/></svg>",
+                                            "action": {
+                                                "type": "DELETE"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "coordinates": {
+                                            "x": 17,
+                                            "y": 2
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg",
+                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"16\"><rect width=\"32\" height=\"15\" fill=\"grey\" x=\"0\" y=\"0\"/><text x=\"6\" y=\"11\" font-size=\"12\" font-weight=\"500\" font-family=\"Segoe UI\">Opt</text></svg>"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "loop" },
+            "tags": [ "list-item" ],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "meet": "right",
+                "content": [
+                    {
+                        "coordinates": { 
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "meet": "right",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "fragment",
+                                            "tag": "fragment_init"
+                                        }
+                                    },
+                                    {
+                                        "coordinates": {
+                                            "x": 2,
+                                            "y": 2
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg-button",
+                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\"><rect width=\"15\" height=\"15\" fill=\"red\"/><line x1=\"2\" x2=\"13\" y1=\"2\" y2=\"13\" stroke=\"white\" stroke-linecap=\"round\"/><line x1=\"2\" x2=\"13\" y1=\"13\" y2=\"2\" stroke=\"white\" stroke-linecap=\"round\"/></svg>",
+                                            "action": {
+                                                "type": "DELETE"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "coordinates": {
+                                            "x": 17,
+                                            "y": 2
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg",
+                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"36\" height=\"15\"><rect width=\"36\" height=\"15\" fill=\"grey\" /><text x=\"6\" y=\"11\" font-size=\"12\" font-weight=\"500\" font-family=\"Segoe UI\">Loop</text></svg>"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "message" },
+            "tags": [ "list-item" ],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptative",
+                "background": {
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"60\"><rect x=\"2\" y=\"2\" width=\"106\" height=\"56\" fill=\"transparent\" data-myContainer=\"here\"/></svg>",
+                    "wrap": "myContainer",
+                    "padding": 0,
+                    "speed": 1
+                },
+                "meet": "right",
+                "content": [
+
+                ]
+            }
+        },
+        {
+            "concept": { "name": "alt" },
+            "tags": [ "list-item" ],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "meet": "right",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "fragments",
+                            "tag": "fragment_btn"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 20,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "default",
+                            "tag": "default_hidden",
+                            "placeholder": {
+                                "content": {
+                                    "kind": "static",
+                                    "type": "svg",
+                                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\"><rect width=\"18\" height=\"18\" fill=\"#8a0202\" x=\"1\" y=\"1\" stroke=\"black\" stroke-width=\"1\"/><text font-size=\"5\" font-family=\"Segoe UI\" fill=\"white\" x=\"10\" y=\"10\" text-anchor=\"middle\" dominant-baseline=\"middle\">Else</text></svg>"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "coordinates": { 
+                            "x": 0,
+                            "y": 20
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "meet": "right",
+                                "content": [
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "initial",
+                                            "tag": "fragment_init"
+                                        }
+                                    },
+                                    {
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 100
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "fragments",
+                                            "tag": "fragment_val"
+                                        }
+                                    },
+                                    {
+                                        "coordinates": {
+                                            "x": 2,
+                                            "y": 2
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg-button",
+                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\"><rect width=\"15\" height=\"15\" fill=\"red\"/><line x1=\"2\" x2=\"13\" y1=\"2\" y2=\"13\" stroke=\"white\" stroke-linecap=\"round\"/><line x1=\"2\" x2=\"13\" y1=\"13\" y2=\"2\" stroke=\"white\" stroke-linecap=\"round\"/></svg>",
+                                            "action": {
+                                                "type": "DELETE"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "coordinates": {
+                                            "x": 17,
+                                            "y": 2
+                                        },
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg",
+                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"28\" height=\"15\"><rect width=\"28\" height=\"15\" fill=\"grey\"/><text x=\"6\" y=\"11\" font-size=\"12\" font-weight=\"500\" font-family=\"Segoe UI\">Alt</text></svg>"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": [ "fragment_btn" ],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-button",
+                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\"><rect x=\"1\" y=\"1\" width=\"18\" height=\"18\" stroke=\"black\" stroke-width=\"1\" fill=\"#00a505\"/><text fill=\"white\" text-anchor=\"middle\" dominant-baseline=\"middle\" font-size=\"5\" x=\"10\" y=\"10\" font-family=\"Segoe UI\">&lt;New&gt;</text></svg>",
+                            "action": {
+                                "type": "CREATE"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "set" },
+            "tags": [ "fragment_val" ],
+            "type": "algorithm",
+            "content": {
+                "type": "pattern",
+                "orientation": {
+                    "type": "vertical"
+                },
+                "meet": "right",
+                "list": {
+                    "item": {
+                        "template": {
+                            "tag": "list-item",
+                            "options": {
+                                "lazy": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "fragment" },
+            "tags": [ "fragment_init" ],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptative",
+                "background": {
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect x=\"1\" y=\"1\" width=\"108\" height=\"98\" data-myContainer=\"here\" stroke=\"black\" stroke-width=\"2\" fill=\"transparent\"/></svg>",
+                    "wrap": "myContainer",
+                    "padding": 0,
+                    "speed": 1
+                },
+                "meet": "right",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 18,
+                            "y": 25
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "condition",
+                            "tag": "cond_str"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 0,
+                            "y": 30
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "messages",
+                            "tag": "component_view"
+                        }
+                    },
+                    {
+                        "coordinates": {
+                            "x": 2,
+                            "y": 20
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "messages",
+                            "tag": "btn_msg__frg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "fragment" },
+            "tags": [ "list-item" ],
+            "type": "algorithm",
+            "content": {
+                "type": "adaptative",
+                "background": {
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect x=\"1\" y=\"1\" width=\"108\" height=\"98\" data-myContainer=\"here\" stroke=\"black\" stroke-width=\"2\" fill=\"transparent\"/></svg>",
+                    "wrap": "myContainer",
+                    "padding": 0,
+                    "speed": 1
+                },
+                "meet": "right",
+                "content": [
+                    {
+                        "coordinates": {
+                            "x": 17,
+                            "y": 25
+                        },
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "render": {
+                            "type": "attribute",
+                            "name": "condition",
+                            "tag": "cond_str"
                         }
                     },
                     {
@@ -135,855 +928,37 @@
                         "dimension": {
                             "type": "pure"
                         },
-                        "render":{
+                        "render": {
                             "type": "attribute",
-                            "name": "elements",
-                            "tag": "elem__pattern"
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "set" },
-            "type": "algorithm",
-            "tags": ["elem__pattern"],
-            "rtag": "elem",
-            "content":{
-                "type": "pattern",
-                "dimensions": false,
-                "create": false,
-                "style": "overflow:visible;",
-                "handler": {
-                    "rtag": "lf-pattern",
-                    "id": "anchorLf"
-                },
-                "add": {
-                    "render":{
-                        "kind": "static",
-                        "type": "svg-button",
-                        "action": {
-                            "type": "CREATE",
-                            "target": false,
-                            "value": "element"
-                        },
-                        "content": "<svg width=\"20\" height=\"20\" version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" x=\"0.56\"><circle cx=\"10\" cy=\"10\" r=\"8\" fill=\"white\" stroke=\"#87a1ff\" stroke-width=\"1\"></circle><line x1=\"10\" x2=\"10\" y1=\"2\" y2=\"18\" stroke=\"#87a1ff\" stroke-width=\"1\"></line><line x1=\"2\" x2=\"18\" y1=\"10\" y2=\"10\" stroke=\"#87a1ff\" stroke-width=\"1\"></line></svg>"
-                    },
-                    "coordinates": false
-                },
-                "pattern":{
-                    "tag": "elem-choice",
-                    "first":{
-                        "x": 88,
-                        "y": 60
-                    },
-                    "next":{
-                        "x": 0,
-                        "y": 80
-                    },
-                    "dimension":{
-                        "type": "pure"
-                    }
-                }                
-            }
-        },
-        {
-            "concept": { "name": "element" },
-            "type": "algorithm",
-            "tags": ["elem-choice"],
-            "content":{
-                "type": "decoration",
-                "dimensions": false,
-                "background": false,
-                "style": "overflow:visible;",
-                "rmv": {
-                    "coordinates":{
-                        "x": 3,
-                        "y": 3
-                    },
-                    "dimension":{
-                        "type": "pure"
-                    },
-                    "render":{
-                        "kind": "static",
-                        "type": "svg",
-                        "content": "<svg width=\"14\" height=\"14\" version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"7\" cy=\"7\" r=\"6\" fill=\"red\" stroke=\"white\" stroke-width=\"0.5\"></circle><line x1=\"4\" x2=\"10\" y1=\"4\" y2=\"10\" stroke=\"white\" stroke-width=\"1\"></line><line x1=\"4\" x2=\"10\" y1=\"10\" y2=\"4\" stroke=\"white\" stroke-width=\"1\"></line></svg>"                    }
-                },
-                "content":[
-                    {
-                        "coordinates":{
-                            "x": 0,
-                            "y": 0
-                        },
-                        "dimension": {
-                            "type": "pure"
-                        },
-                        "render":{
-                            "kind": "static",
-                            "type": "svg",
-                            "content": "<svg width=\"20\" height=\"20\" version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"10\" cy=\"10\" r=\"10\"></circle></svg>"
-                        }
-                    },
-                    {
-                        "coordinates":{
-                            "x": -90,
-                            "y": 0
-                        },
-                        "dimension":{
-                            "type": "pure"
-                        },
-                        "render":{
-                            "type": "field",
-                            "field":{
-                                "type": "svg-choice",
-                                "dimensions": false,
-                                "openSelection": "<svg width=\"8\" height=\"8\" x=\"86\" y=\"6\" version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"4\" cy=\"4\" r=\"3\" fill=\"white\" stroke=\"black\" stroke-width=\"0.5\"></circle></svg>",
-                                "selection":{
-                                    "item":{
-                                        "dimension":{
-                                            "width": 20,
-                                            "height": 20
-                                        },
-                                        "tag": "choice"
-                                    },
-                                    "breakPoint": false,
-                                    "direction": "horizontal",
-                                    "close": true
-                                }
-                            }
+                            "name": "messages",
+                            "tag": "component_view"
                         }
                     },
                     {
                         "coordinates": {
-                            "x": 30,
-                            "y": 0
-                        },
-                        "dimension":{
-                            "type": "pure"
-                        },
-                        "render":{
-                            "type": "projection",
-                            "bind": "value",
-                            "placeholder": false,
-                            "tag": "choice-selection"
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "message" },
-            "type": "algorithm",
-            "tags": ["choice"],
-            "content":{
-                "type": "decoration",
-                "background": "<svg width=\"20\" height=\"20\" version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"20\" height=\"20\" fill=\"black\"></rect><text text-anchor=\"middle\" x=\"10\" y=\"10\" font-family=\"Segoe UI\" font-size=\"12\" style=\"dominant-baseline:middle;\" fill=\"white\">M</text></svg>",
-                "dimensions": false,
-                "content":[]
-            }
-        },
-        {
-            "concept": { "name": "message" },
-            "type": "algorithm",
-            "tags": ["choice-selection"],
-            "sibling":{
-                "render":{
-                    "tag": "m-arrow",
-                    "rtag": "lf-pattern"
-                },
-                "bind": true
-            },
-            "content":{
-                "type": "decoration",
-                "dimensions": false,
-                "background": false,
-                "coordinates":{
-                    "x": 30,
-                    "y": 0
-                },
-                "content":[
-                    {
-                        "coordinates": {
-                            "x": 0,
-                            "y": 0
-                        },
-                        "dimension":{
-                            "type": "pure"
-                        },
-                        "render":{
-                            "type": "attribute",
-                            "name": "target",
-                            "tag": "ref"
-                        }
-                    },
-                    {
-                        "coordinates":{
-                            "x": 0,
-                            "y": 34
-                        },
-                        "dimension":{
-                            "type": "pure"
-                        },
-                        "render":{
-                            "type": "attribute",
-                            "name": "bloc",
-                            "tag": "ref_bloc"
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "response" },
-            "type": "algorithm",
-            "tags": ["choice-selection"],
-            "sibling":{
-                "render":{
-                    "tag": "r-arrow",
-                    "rtag": "lf-pattern"
-                },
-                "bind": true
-            },
-            "content":{
-                "type": "decoration",
-                "dimensions": false,
-                "background": false,
-                "coordinates":{
-                    "x": 30,
-                    "y": 0
-                },
-                "content":[
-                    {
-                        "coordinates": {
-                            "x": 0,
-                            "y": 0
-                        },
-                        "dimension":{
-                            "type": "pure"
-                        },
-                        "render":{
-                            "type": "attribute",
-                            "name": "target",
-                            "tag": "ref"
-                        }
-                    },
-                    {
-                        "coordinates":{
-                            "x": 0,
-                            "y": 34
-                        },
-                        "dimension":{
-                            "type": "pure"
-                        },
-                        "render":{
-                            "type": "attribute",
-                            "name": "bloc",
-                            "tag": "ref_bloc"
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "reference" },
-            "type": "field",
-            "tags": ["ref"],
-            "content":{
-                "type": "svg-choice",
-                "dimensions": false,
-                "openSelection": "<svg width=\"8\" height=\"8\" version=\"1.0\" x=\"-14\" y=\"6\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"4\" cy=\"4\" r=\"3\" fill=\"white\" stroke=\"black\" stroke-width=\"0.5\"></circle></svg>",
-                "selection":{
-                    "item":{
-                        "dimension":{
-                            "width": 40,
-                            "height": 20
-                        },
-                        "tag": "choice"
-                    },
-                    "breakPoint": false,
-                    "direction": "horizontal",
-                    "close": true
-                }
-
-            }
-        },
-        {
-            "concept": { "name": "reference" },
-            "type": "field",
-            "tags": ["ref_bloc"],
-            "content":{
-                "type": "svg-choice",
-                "dimensions": false,
-                "openSelection": "<svg width=\"8\" height=\"8\" version=\"1.0\" x=\"-17\" y=\"-17\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"4\" cy=\"4\" r=\"3\" fill=\"white\" stroke=\"black\" stroke-width=\"0.5\"></circle></svg>",
-                "selection":{
-                    "item":{
-                        "dimension":{
-                            "width": 40,
-                            "height": 20
-                        },
-                        "tag": "choice_bloc"
-                    },
-                    "breakPoint": false,
-                    "direction": "horizontal",
-                    "close": true
-                }
-
-            }
-        },
-        {
-            "concept": { "name": "loop" },
-            "type": "algorithm",
-            "tags": ["choice_bloc"],
-            "content":{
-                "type": "decoration",
-                "dimensions": false, 
-                "background": "<svg width=\"40\" height=\"20\" version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"40\" height=\"20\" stroke=\"black\" stroke-width=\"1\" fill=\"white\"></rect></svg>",
-                "content":[
-                    {
-                        "coordinates":{
-                            "x": 20,
-                            "y": 10
-                        },
-                        "dimension":{
-                            "type": "pure"
-                        },
-                        "render":{
-                            "type": "attribute",
-                            "name": "order",
-                            "tag": "ro_nb"
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "message" },
-            "type": "arrow",
-            "tags": ["m-arrow"],
-            "content":{
-                "type": "anchor",
-                "model": "anchorLf",
-                "aiming": { 
-                    "name": "target"
-                },
-                "move":{
-                    "name": "bloc"
-                },
-                "offset": {
-                    "x": 10,
-                    "y": 10
-                },
-                "self":{
-                    "points": [
-                        {"x": 80, "y": 0},
-                        {"x": 0, "y": 45},
-                        {"x": -80, "y": 0}
-                    ]
-                },
-                "decorator":{
-                    "coordinates": {
-                        "origin": "minX",
-                        "x": 40,
-                        "y": -24
-                    },
-                    "dimension":{
-                        "type": "pure"
-                    },
-                    "render":{
-                        "type": "algorithm",
-                        "algorithm":{
-                            "type": "decoration",
-                            "dimensions": false,
-                            "background": false,
-                            "style": "overflow:visible;",
-                            "content":[
-                                {
-                                    "coordinates":{
-                                        "x": 0,
-                                        "y": 0
-                                    },
-                                    "dimension":{
-                                        "type": "pure"
-                                    },
-                                    "render":{
-                                        "type": "attribute",
-                                        "name": "order",
-                                        "tag": "order__textual"
-                                    }
-                                },
-                                {
-                                    "coordinates":{
-                                        "x": 1,
-                                        "y": 0
-                                    },
-                                    "dimension":{
-                                        "type": "pure"
-                                    },
-                                    "render":{
-                                        "kind": "static",
-                                        "type": "svg-text",
-                                        "content": ":",
-                                        "style":{
-                                            "font": "Segoe UI",
-                                            "size": 16,
-                                            "anchor": "left",
-                                            "baseline": "hanging",
-                                            "weight": 500,
-                                            "fill": "black"
-                                        }
-                                    }
-                                },
-                                {
-                                    "coordinates":{
-                                        "x": 5,
-                                        "y": 0
-                                    },
-                                    "dimension":{
-                                        "type": "pure"
-                                    },
-                                    "render":{
-                                        "type": "attribute",
-                                        "name": "content",
-                                        "tag": "content"
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                },
-                "style": {
-                    "stroke": "black",
-                    "dasharray": null,
-                    "width": 1,
-                    "linecap": "butt",
-                    "end": true
-                }
-            }
-        },
-        {
-            "concept": { "name": "response" },
-            "type": "arrow",
-            "tags": ["r-arrow"],
-            "content":{
-                "type": "anchor",
-                "model": "anchorLf",
-                "aiming": { 
-                    "name": "target"
-                },
-                "move":{
-                    "name": "bloc"
-                },
-                "offset": {
-                    "x": 10,
-                    "y": 10
-                },
-                "self":{
-                    "points": [
-                        {"x": 80, "y": 0},
-                        {"x": 0, "y": 45},
-                        {"x": -80, "y": 0}
-                    ]
-                },
-                "decorator":{
-                    "coordinates": {
-                        "origin": "minX",
-                        "x": 40,
-                        "y": -24
-                    },
-                    "dimension":{
-                        "type": "pure"
-                    },
-                    "render":{
-                        "type": "algorithm",
-                        "algorithm":{
-                            "type": "decoration",
-                            "dimensions": false,
-                            "background": false,
-                            "style": "overflow:visible;",
-                            "content":[
-                                {
-                                    "coordinates":{
-                                        "x": 0,
-                                        "y": 0
-                                    },
-                                    "dimension":{
-                                        "type": "pure"
-                                    },
-                                    "render":{
-                                        "type": "attribute",
-                                        "name": "order",
-                                        "tag": "order__textual"
-                                    }
-                                },
-                                {
-                                    "coordinates":{
-                                        "x": 1,
-                                        "y": 0
-                                    },
-                                    "dimension":{
-                                        "type": "pure"
-                                    },
-                                    "render":{
-                                        "kind": "static",
-                                        "type": "svg-text",
-                                        "content": ":",
-                                        "style":{
-                                            "font": "Segoe UI",
-                                            "size": 16,
-                                            "anchor": "left",
-                                            "baseline": "hanging",
-                                            "weight": 500,
-                                            "fill": "black"
-                                        }
-                                    }
-                                },
-                                {
-                                    "coordinates":{
-                                        "x": 5,
-                                        "y": 0
-                                    },
-                                    "dimension":{
-                                        "type": "pure"
-                                    },
-                                    "render":{
-                                        "type": "attribute",
-                                        "name": "content",
-                                        "tag": "content"
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                },
-                "style": {
-                    "stroke": "black",
-                    "dasharray": "3",
-                    "width": 1,
-                    "linecap": "butt",
-                    "end": true
-                }
-            }
-        },
-        {
-            "concept": { "name": "response" },
-            "type": "algorithm",
-            "tags": ["choice"],
-            "content":{
-                "type": "decoration",
-                "background": "<svg width=\"20\" height=\"20\" version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"20\" height=\"20\" fill=\"black\"></rect><text text-anchor=\"middle\" x=\"10\" y=\"10\" font-family=\"Segoe UI\" font-size=\"12\" style=\"dominant-baseline:middle;\" fill=\"white\">R</text></svg>",
-                "dimensions": false,
-                "content":[]
-            }
-        },
-        {
-            "concept": { "name": "loop" },
-            "type": "algorithm",
-            "tags": ["choice"],
-            "content":{
-                "type": "decoration",
-                "background": "<svg width=\"20\" height=\"20\" version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"20\" height=\"20\" fill=\"black\"></rect><text text-anchor=\"middle\" x=\"10\" y=\"10\" font-family=\"Segoe UI\" font-size=\"12\" style=\"dominant-baseline:middle;\" fill=\"white\">L</text></svg>",
-                "dimensions": false,
-                "content":[]
-            }
-        },
-        {
-            "concept": { "name": "loop" },
-            "type": "algorithm",
-            "rtag": "loop_anchors",
-            "tags": ["choice-selection"],
-            "content":{
-                "type": "anchor",
-                "reserve": 1,
-                "dimensions":{
-                    "width": 200,
-                    "height": 60
-                },
-                "rtag": "lf-pattern",
-                "model": "anchorLf",
-                "offset":{
-                    "x": 30,
-                    "y": 5
-                },
-                "contains":{
-                    "name": "elements",
-                    "tag": "elem-choice" 
-                },
-                "content":[
-                    {
-                        "coordinates":{
-                            "x": 90,
-                            "y": 40
-                        },
-                        "dimension":{
-                            "type": "pure"
-                        },
-                        "render":{
-                            "type": "algorithm",
-                            "algorithm":{
-                                "type": "decoration",
-                                "background": false,
-                                "dimensions": false,
-                                "content":[
-                                    {
-                                        "coordinates":{
-                                            "x": 0,
-                                            "y": 0
-                                        },
-                                        "dimension":{
-                                            "type": "pure"
-                                        },
-                                        "render":{
-                                            "type": "attribute",
-                                            "name": "order",
-                                            "tag": "order__textual"
-                                        }
-                                    },
-                                    {
-                                        "coordinates":{
-                                            "x": 1,
-                                            "y": 0
-                                        },
-                                        "dimension":{
-                                            "type": "pure"
-                                        },
-                                        "render":{
-                                            "kind": "static",
-                                            "type": "svg-text",
-                                            "content": ":",
-                                            "style":{
-                                                "font": "Segoe UI",
-                                                "size": 16,
-                                                "anchor": "left",
-                                                "baseline": "hanging",
-                                                "weight": 500,
-                                                "fill": "black"
-                                            }
-                                        }
-                                    },
-                                    {
-                                        "coordinates":{
-                                            "x": 5,
-                                            "y": 0
-                                        },
-                                        "dimension":{
-                                            "type": "pure"
-                                        },
-                                        "render":{
-                                            "type": "attribute",
-                                            "name": "condition",
-                                            "tag": "condition__textual"
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                ],
-                "zindex": "prepend",
-                "style": "stroke:black; stroke-dasharray:5;fill:transparent;"
-            }
-        },
-        {
-            "concept": { "name": "if" },
-            "type": "algorithm",
-            "tags": ["choice"],
-            "content":{
-                "type": "decoration",
-                "background": "<svg width=\"10\" height=\"10\" version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"10\" height=\"10\" fill=\"black\"></rect><text text-anchor=\"middle\" x=\"5\" y=\"5\" font-family=\"Segoe UI\" font-size=\"6\" style=\"dominant-baseline:middle;\" fill=\"white\">I</text></svg>",
-                "dimensions": false,
-                "content":[]
-            }
-        },
-        {
-            "concept": { "name": "lifeline" },
-            "type": "algorithm",
-            "tags": ["choice"],
-            "content":{
-                "type": "decoration",
-                "dimensions": false, 
-                "background": "<svg width=\"40\" height=\"20\" version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"40\" height=\"20\" stroke=\"black\" stroke-width=\"1\" fill=\"white\"></rect></svg>",
-                "content":[
-                    {
-                        "coordinates":{
-                            "x": 6,
-                            "y": 10
+                            "x": 2,
+                            "y": 2
                         },
                         "dimension": {
                             "type": "pure"
-                        },
-                        "render":{
-                            "type": "attribute",
-                            "name": "name",
-                            "tag": "ro"
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "concept": { "name": "string" },
-            "type": "field",
-            "tags": ["ro"],
-            "content":{
-                "type": "svg",
-                "readonly": true,
-                "breakDown": 3,
-                "placeholder": "Unknown",
-                "style":{
-                    "font": "Segoe UI",
-                    "size": 10,
-                    "anchor": "left",
-                    "baseline": "middle",
-                    "weight": 500,
-                    "fill": "black"
-                }
-            }
-        },
-        {
-            "concept": { "name": "set" },
-            "type": "algorithm",
-            "rtag": "button",
-            "tags": ["lf-button"],
-            "content":{
-                "type": "decoration",
-                "dimension": false,
-                "background": false,
-                "content":[
-                    {
-                        "dimension": {
-                            "type": "pure"
-                        },
-                        "coordinates":{
-                            "x": 0,
-                            "y": 0
                         },
                         "render": {
-                            "kind": "static",
-                            "type": "svg-button",
-                            "action": {
-                                "type": "CREATE",
-                                "target": false,
-                                "value": "lifeline"
-                            },
-                            "content": "<svg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"30\"> \t<circle cx=\"15\" cy=\"15\" r=\"15\" fill=\"#029c2b\"></circle> \t<line x1=\"15\" y1=\"3\" x2=\"15\" y2=\"27\" stroke=\"white\"></line> \t<line x1=\"3\" y1=\"15\" x2=\"27\" y2=\"15\" stroke=\"white\"></line> </svg>"
+                            "type": "attribute",
+                            "name": "messages",
+                            "tag": "btn_msg__frg"
                         }
                     }
                 ]
             }
         },
         {
-            "concept": { "name": "string" },
-            "type": "field",
-            "tags":["diagram__name"],
-            "content":{
-                "type": "svg",
-                "readonly": false,
-                "breakDown": false,
-                "placeholder": "Name",
-                "style":{
-                    "font": "Segoe UI",
-                    "size": 25,
-                    "anchor": "left",
-                    "baseline": "hanging",
-                    "weight": 500,
-                    "fill": "black"
-                }
+            "concept": { "name": "else-fragment" },
+            "tags": [ "default_hidden" ],
+            "type": "algorithm",
+            "content": {
+                "type": "wrap",
+                "content": []
             }
-        },
-        {
-            "concept": { "name": "string" },
-            "type": "field",
-            "tags":["lf__name"],
-            "content":{
-                "type": "svg",
-                "readonly": false,
-                "breakDown": false,
-                "placeholder": "Name",
-                "style":{
-                    "font": "Segoe UI",
-                    "size": 22,
-                    "anchor": "middle",
-                    "baseline": "auto",
-                    "weight": 500,
-                    "fill": "black"
-                }
-            }
-        },
-        {
-            "concept": { "name": "string" },
-            "type": "field",
-            "tags":["content"],
-            "content":{
-                "type": "svg",
-                "readonly": false,
-                "breakDown": false,
-                "placeholder": "Description",
-                "style":{
-                    "font": "Segoe UI",
-                    "size": 16,
-                    "anchor": "left",
-                    "baseline": "hanging",
-                    "weight": 500,
-                    "fill": "black"
-                }
-            }
-        },
-        {
-            "concept": { "name": "string" },
-            "type": "field",
-            "tags":["condition__textual"],
-            "content":{
-                "type": "svg",
-                "readonly": false,
-                "breakDown": false,
-                "placeholder": "Condition",
-                "style":{
-                    "font": "Segoe UI",
-                    "size": 16,
-                    "anchor": "left",
-                    "baseline": "hanging",
-                    "weight": 500,
-                    "fill": "grey"
-                }
-            }
-        },
-        {
-            "concept": { "name": "number" },
-            "type": "field",
-            "tags":["order__textual"],
-            "content":{
-                "type": "svg",
-                "readonly": false,
-                "breakDown": false,
-                "placeholder": "1",
-                "style":{
-                    "font": "Segoe UI",
-                    "size": 16,
-                    "anchor": "end",
-                    "baseline": "hanging",
-                    "weight": 500,
-                    "fill": "grey"
-                }
-            }
-        },
-        {
-            "concept": { "name": "number" },
-            "type": "field",
-            "tags": ["ro_nb"],
-            "content":{
-                "type": "svg",
-                "readonly": true,
-                "breakDown": 3,
-                "placeholder": "0",
-                "style":{
-                    "font": "Segoe UI",
-                    "size": 10,
-                    "anchor": "left",
-                    "baseline": "middle",
-                    "weight": 500,
-                    "fill": "black"
-                }
-            }
-        }    
+        }
     ]
 }

@@ -179,6 +179,10 @@ const BaseStatic = {
 
         return false;
     },
+
+    meetSize() {
+        return;
+    }
 };
 
 

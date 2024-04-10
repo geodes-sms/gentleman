@@ -1,7 +1,7 @@
 import { ContentHandler } from "./../content-handler";
 import { DimensionHandler } from "./../dimension-handler";
 import { MeetHandler, SizeHandler, SizeSchema } from "./../size-handler";
-import { isEmpty, isNullOrUndefined } from "zenkai";
+import { isEmpty, isNullOrUndefined, valOrDefault } from "zenkai";
 import { Algorithm } from "./algorithm"
 import { OverlapManager } from "./overlap-manager";
 
@@ -157,21 +157,23 @@ const BaseAdaptiveAlgorithm = {
             this.display();
         }
 
-        if(isNullOrUndefined(this.content) || isEmpty(this.content)){
-            return;
-        }
-
         if(!isNullOrUndefined(this.overlap)){
             OverlapManager[this.overlap.orientation].call(this);
         }
 
         SizeHandler[this.adapter.tagName].call(this, this.adapter);
 
-        this.source.notify("dimension.changed", this.id);
-
         if(!isNullOrUndefined(this.parent)){
             this.parent.updateSize();
         }
+
+        if(isNullOrUndefined(this.content)) {
+            return;
+        }
+
+        this.content.forEach( (item) => {
+            item.meetSize();
+        })
     },
 
     updateContent(conceptId, projection) {
@@ -310,16 +312,10 @@ const BaseAdaptiveAlgorithm = {
 
             }
         })
-
-        if(this.meet){
-            this.projection.registerHandler("dimension.changed", (id) => {
-                if(id === this.parent.id){ MeetHandler[this.adapter.tagName].call(this, this.adapter)};
-            })
-        }
     }
 }
 
-export const AdaptiveAlgorithm = Object.assign({},
+export const AdaptiveAlgorithm = Object.assign(
     Algorithm,
     BaseAdaptiveAlgorithm
 )

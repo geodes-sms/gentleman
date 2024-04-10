@@ -263,6 +263,10 @@ const BaseField = {
         console.warn(`SHIFT_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
 
         return false;
+    },
+
+    meetSize() {
+        return;
     }
 };
 

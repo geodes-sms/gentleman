@@ -268,7 +268,7 @@ const BasePlaceholderField = {
 
 }
 
-export const PlaceholderField = Object.assign({},
+export const PlaceholderField = Object.assign(
     Object.create(Field),
     BasePlaceholderField
     )

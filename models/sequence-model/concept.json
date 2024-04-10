@@ -1,15 +1,20 @@
 {
     "type": "concept",
-    "concept":[
+    "concept": [
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead3",
-            "name": "diagram",
+            "name": "sequence-diagram",
             "nature": "concrete",
             "root": true,
-            "attributes":[
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    }
+                },
                 {
                     "name": "lifelines",
-                    "target":{
+                    "target": {
                         "name": "set",
                         "accept": {
                             "name": "lifeline"
@@ -17,35 +22,13 @@
                     }
                 },
                 {
-                    "name": "name",
-                    "target":{
-                        "name": "string"
-                    }
-                }
-            ]
-        },
-        {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead4",
-            "name": "lifeline",
-            "nature": "concrete",
-            "root": false,
-            "attributes":[
-                {
-                    "name": "name",
-                    "target":{
-                        "name": "string"
-                    }
-                },
-                {
-                    "name": "elements",
-                    "target":{
+                    "name": "components",
+                    "target": {
                         "name": "set",
-                        "accept":{
-                            "name": "element",
-                            "accept":[
-                                { "name": "message" },
-                                { "name": "response" },
-                                { "name": "loop"}
+                        "accept": {
+                            "name": "component",
+                            "accept": [
+                                { "name": "opt" }
                             ]
                         }
                     }
@@ -53,111 +36,136 @@
             ]
         },
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead5",
-            "name": "element",
+            "name": "lifeline",
+            "nature": "concrete",
+            "root": false,
+            "attributes": [
+                { 
+                    "name": "name",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "component",
             "nature": "prototype",
             "root": false,
-            "attributes":[
-                {
-                    "name": "order",
-                    "target":{
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "bloc",
-                    "target":{
-                        "name": "reference",
-                        "accept":{
-                            "name": "loop"
-                        }
-                    }
-                }
-            ]
+            "attributes": []
         },
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead6",
-            "name": "message",
+            "name": "bloc",
+            "nature": "prototype",
+            "prototype": "component",
+            "root": false,
+            "attributes": []
+        },
+        {
+            "name": "alt", 
             "nature": "concrete",
-            "prototype": "element",
-            "attributes":[
+            "prototype": "bloc",
+            "attributes": [
                 {
-                    "name": "target",
-                    "target":{
-                        "name": "reference",
-                        "accept":{
-                            "name": "lifeline"
+                    "name": "initial",
+                    "target": {
+                        "name": "fragment"
+                    }
+                },
+                {
+                    "name": "fragments",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "fragment"
                         }
                     }
                 },
                 {
-                    "name": "content",
-                    "target":{
-                        "name": "string"
-                    }
+                    "name": "default",
+                    "target": {
+                        "name": "else-fragment"
+                    },
+                    "required": false
                 }
             ]
         },
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead7",
-            "name": "response",
+            "name": "opt",
             "nature": "concrete",
-            "prototype": "element",
-            "attributes":[
+            "prototype": "bloc",
+            "attributes": [
                 {
-                    "name": "target",
-                    "target":{
-                        "name": "reference",
-                        "accept":{
-                            "name": "lifeline"
-                        }
-                    }
-                },
-                {
-                    "name": "content",
-                    "target":{
-                        "name": "string"
+                    "name": "fragment",
+                    "target": {
+                        "name": "fragment"
                     }
                 }
             ]
         },
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead8",
             "name": "loop",
             "nature": "concrete",
-            "prototype": "element",
-            "attributes":[
+            "prototype": "bloc",
+            "attributes": [
                 {
-                    "name": "condition",
-                    "target":{
-                        "name": "string"
+                    "name": "fragment",
+                    "target": {
+                        "name": "fragment"
                     }
-                },
-                {
-                    "name": "order",
-                    "target":{
-                        "name": "number"
-                    },
-                    "default": 1
                 }
             ]
         },
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead9",
-            "name": "ifBloc",
+            "name": "fragment",
             "nature": "concrete",
-            "prototype": "element",
-            "attributes":[
-                
+            "attributes": [
+                {
+                    "name": "condition",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "messages",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "message"
+                        }
+                    }
+                }
             ]
         },
         {
-            "id": "32437678-2f78-45e1-ae14-41ee79a9ead9",
-            "name": "elseBloc",
+            "name": "else-fragment",
             "nature": "concrete",
-            "prototype": "element",
-            "attributes":[
-               
+            "attributes": [
+
+            ]
+        },
+        {
+            "name": "message",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "from",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "lifeline"
+                        }
+                    }
+                },
+                {
+                    "name": "to",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "lifeline"
+                        }
+                    }
+                }
             ]
         }
     ]

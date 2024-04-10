@@ -150,6 +150,9 @@ function ExternalHandler(tag, target) {
 }
 
 export function ContentHandler(schema, concept, args = {}) {
+    if(isNullOrUndefined(schema)) {
+        console.log(concept);
+    }
     if (schema.kind) {
         return ContentKindHandler.call(this, schema, concept, args);
     }

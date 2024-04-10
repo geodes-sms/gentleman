@@ -696,7 +696,7 @@ const BaseTextSVG = {
     
 }
 
-export const SvgText = Object.assign({},
+export const SvgText = Object.assign(
     Object.create(Field),
     BaseTextSVG
 )

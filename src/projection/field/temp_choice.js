@@ -431,12 +431,16 @@ const BaseSVGChoice = {
         if(isNullOrUndefined(this.containerView)){
             this.containerView = {
                 targetW : maxW,
-                targetH : y
+                targetH : y,
+                contentW: maxW,
+                contentH : y
             }
         }
 
         this.containerView.targetW = x + maxW;
         this.containerView.targetH = y;
+        this.containerView.contentW = x + maxW;
+        this.containerView.contentH = y;
 
         this.element.setAttribute("width", this.containerView.targetW);
         this.element.setAttribute("height", this.containerView.targetH);
@@ -507,12 +511,16 @@ const BaseSVGChoice = {
         if(isNullOrUndefined(this.containerView)){
             this.containerView = {
                 targetW : x,
-                targetH : maxH
+                targetH : maxH,
+                contentW : x,
+                contentH : maxH
             }
         }
 
         this.containerView.targetW = x;
         this.containerView.targetH = maxH;
+        this.containerView.contentW = x;
+        this.containerView.contentH = maxH;
 
         this.element.setAttribute("width", this.containerView.targetW);
         this.element.setAttribute("height", this.containerView.targetH);
@@ -625,7 +633,7 @@ const BaseSVGChoice = {
     }
 }
 
-export const SVGChoice = Object.assign({},
+export const SVGChoice = Object.assign(
     Object.create(Field),
     BaseSVGChoice
 )

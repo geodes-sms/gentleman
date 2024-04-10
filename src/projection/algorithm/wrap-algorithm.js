@@ -1,17 +1,19 @@
 import { ContentHandler } from "./../content-handler";
 import { Algorithm } from "./algorithm";
 import { DimensionHandler } from "./../dimension-handler";
-import { SizeHandler } from "./../size-handler";
+import { SizeHandler, MeetHandler } from "./../size-handler";
 const { isNullOrUndefined, isEmpty } = require("zenkai");
 
 const BaseWrapAlgorithm = {
     init(args){
         Object.assign(this.schema, args);
 
-        const {focusable = true, speed = 1} = this.schema;
+        const {focusable = true, speed = 1, meet = false} = this.schema;
 
         this.speed = speed;
         this.focusable = focusable;
+        this.adapter = { tagName: "wrap" };
+        this.meet = meet;
 
         return this;
     },
@@ -115,6 +117,11 @@ const BaseWrapAlgorithm = {
         }
 
         this.fixed = false;
+
+        if(this.meet){
+            this.parent.source.register(this.projection);
+        }
+        
         this.updateSize();
     },
 
@@ -140,6 +147,8 @@ const BaseWrapAlgorithm = {
             this.containerView = {
                 targetW: 0,
                 targetH: 0,
+                targetX: 0,
+                targetY: 0,
                 x: 0,
                 y: 0,
                 w: 0,
@@ -153,6 +162,10 @@ const BaseWrapAlgorithm = {
         if(!isNullOrUndefined(this.parent)){
             this.parent.updateSize();
         }
+
+        this.content.forEach( (item) => {
+            item.meetSize();
+        })
     },
 
     bindEvents(){
