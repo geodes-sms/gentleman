@@ -194,33 +194,13 @@
                     "target": {
                         "name": "number"
                     }
-                },
-                {
-                    "name": "content",
-                    "target": {
-                        "name": "svg-import"
-                    }
                 }
-
             ]
         },
         {
             "name": "svg-projection",
             "nature": "prototype",
             "attributes": []
-        },
-        {
-            "name": "svg-import",
-            "nature": "concrete",
-            "prototype": "svg-projection",
-            "attributes": [
-                {
-                    "name": "content",
-                    "target": {
-                        "name": "string"
-                    }
-                }
-            ]
         },
         {
             "name": "svg-shape",
@@ -400,20 +380,20 @@
                     "name": "anchor",
                     "target": {
                         "name": "string",
-                        "default": "middle"
-                    },
-                    "constraint": {
-                        "values": ["start", "middle", "end"]
+                        "default": "middle",
+                        "constraint": {
+                            "values": ["start", "middle", "end"]
+                        }
                     }
                 },
                 {
                     "name": "baseline",
                     "target": {
                         "name": "string",
-                        "default": "middle"
-                    },
-                    "constraint": {
-                        "values": ["auto", "middle", "hanging"]
+                        "default": "middle",
+                        "constraint": {
+                            "values": ["auto", "middle", "hanging"]
+                        }
                     }
                 },
                 {
@@ -485,12 +465,6 @@
             "nature": "concrete",
             "prototype": "choice-container",
             "attributes": [
-                {
-                    "name": "content",
-                    "target": {
-                        "name": "svg-import"
-                    }
-                }
             ]
         },
         {
@@ -505,10 +479,11 @@
                     }
                 },
                 {
-                    "name": "content",
+                    "name": "tag",
                     "target": {
-                        "name": "string"
-                    }
+                        "name": "template reference"
+                    },
+                    "required": false
                 }
             ]
         },
@@ -536,7 +511,13 @@
             "nature": "concrete",
             "prototype": "static-element",
             "attributes": [
-              
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "graphics",
+                        "default": "imported"
+                    }
+                }
             ]
         },
         {
@@ -564,20 +545,20 @@
                     "name": "anchor",
                     "target": {
                         "name": "string",
-                        "default": "middle"
-                    },
-                    "constraint": {
-                        "values": ["start", "middle", "end"]
+                        "default": "middle",
+                        "constraint": {
+                            "values": ["start", "middle", "end"]
+                        }
                     }
                 },
                 {
                     "name": "baseline",
                     "target": {
                         "name": "string",
-                        "default": "middle"
-                    },
-                    "constraint": {
-                        "values": ["auto", "middle", "hanging"]
+                        "default": "middle",
+                        "constraint": {
+                            "values": ["auto", "middle", "hanging"]
+                        }
                     }
                 }, 
                 {
@@ -596,8 +577,8 @@
                 {
                     "name": "content",
                     "target": {
-                        "name": "string",
-                        "default":"TO DO"
+                        "name": "graphics",
+                        "default": "imported"
                     }
                 },
                 {
@@ -632,30 +613,17 @@
                 {
                     "name": "value",
                     "target": {
-                        "name": "string",
-                        "default": "TO DO"
+                        "name": "string"
                     }
                 }
             ]
         },
         {
-            "name": "create-tree-action",
+            "name": "delete-action",
             "nature": "concrete",
             "prototype": "btn-action",
             "attributes": [
-                {
-                    "name": "value",
-                    "target": {
-                        "name": "string",
-                        "default": "TO DO"
-                    }
-                },
-                {
-                    "name": "tag",
-                    "target": {
-                        "name": "string"
-                    }
-                }
+
             ]
         },
         {
@@ -666,14 +634,14 @@
                 {
                     "name": "content",
                     "target": {
-                        "name": "string"
+                        "name": "graphics",
+                        "default": "imported"
                     }
                 },
                 {
                     "name": "tag",
                     "target": {
-                        "name": "string",
-                        "default": "TO DO"
+                        "name": "template reference"
                     }
                 }
             ]
@@ -683,31 +651,83 @@
             "nature": "concrete",
             "attributes": [
                 {
+                    "name": "color",
+                    "target": {
+                        "name": "hex-color"
+                    }
+                },
+                {
                     "name": "size",
                     "target": {
-                        "name": "number",
-                        "default": 10
+                        "name": "size"
                     }
                 },
                 {
                     "name": "font",
                     "target": {
                         "name": "string",
-                        "default": "Segoe UI"
+                        "default": "Arial, sans-serif",
+                        "constraint": {
+                            "values": [
+                                "Arial, sans-serif",
+                                "Baskerville, 'Baskerville Old Face', serif",
+                                "'Bradley Hand', cursive",
+                                "'Brush Script MT', 'Brush Script Std', cursive",
+                                "Calibri, sans-serif",
+                                "Cambria, serif",
+                                "' Century Gothic', CenturyGothic, AppleGothic, sans-serif",
+                                "'Comic Sans MS', 'Comic Sans', cursive",
+                                "Consolas, monospace",
+                                "'Courier New', Courier, monospace", 
+                                "Monaco, monospace",
+                                "Didot, 'Didot LT STD', serif",
+                                "Garamond, serif",
+                                "'Hoefler Text', serif",
+                                "'Gill Sans', 'Gill Sans MT', sans-serif",
+                                "Georgia, serif",
+                                "'Helvetica Neue', Helvetica, sans-serif",
+                                "Impact, Haettenschweiler, fantasy",
+                                "'Lucida Grande', sans-serif",
+                                "'Lucida Sans', 'Lucida Sans Regular', sans-serif",
+                                "Luminari, fantasy",
+                                "Rockwell, serif",
+                                "'Segoe UI', 'Droid Sans', Ubuntu, sans-serif",
+                                "Tahoma, sans-serif",
+                                "'Times New Roman', Times, serif",
+                                "'Trebuchet MS', sans-serif",
+                                "Geneva, sans-serif",
+                                "Verdana, sans-serif",
+                                "sans-serif", "serif", "monospace", "cursive", "fantasy"
+                            ]
+                        }
                     }
                 },
                 {
-                    "name": "color",
+                    "name": "bold",
                     "target": {
-                        "name": "string",
-                        "default": "black"
+                        "name": "boolean",
+                        "default": false
                     }
                 },
                 {
-                    "name": "weight",
+                    "name": "italic",
                     "target": {
-                        "name": "number",
-                        "default": 1
+                        "name": "boolean",
+                        "default": false
+                    }
+                },
+                {
+                    "name": "underline",
+                    "target": {
+                        "name": "boolean",
+                        "default": false
+                    }
+                },
+                {
+                    "name": "strikethrough",
+                    "target": {
+                        "name": "boolean",
+                        "default": false
                     }
                 }
             ]
@@ -849,6 +869,92 @@
                     "range": {
                         "min": { "value": 1 },
                         "max": { "value": 50 }
+                    }
+                }
+            }
+        },
+        {
+            "name": "graphics",
+            "nature": "prototype",
+            "attributes": [
+               
+            ]
+        },
+        {
+            "name": "imported",
+            "nature": "concrete",
+            "prototype": "graphics",
+            "attributes": [
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+
+            ]
+        },
+        {
+            "name": "defined",
+            "nature": "concrete",
+            "prototype": "graphics",
+            "attributes": []
+        },
+        {
+            "name": "hex-color",
+            "nature": "concrete",
+            "prototype": "color",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "hex" }
+            ]
+        },
+        {
+            "name": "size",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "number",
+                        "default": 10
+                    }
+                },
+                {
+                    "name": "unit",
+                    "target": {
+                        "name": "size-unit",
+                        "default": "px"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "size-unit",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "values": ["px", "em", "rem", "%", "vw", "vh"]
+            }
+        },
+        {
+            "name": "tag",
+            "nature": "derivative",
+            "base": "string",
+            "constraint": {
+                "value": {
+                    "type": "pattern",
+                    "pattern": {
+                        "insensitive": true,
+                        "global": true,
+                        "value": "^\\w+(-\\w+)*$"
                     }
                 }
             }
