@@ -1176,6 +1176,7 @@
                     {
                         "type": "attribute",
                         "name": "placeholder-tag",
+<<<<<<< HEAD
                         "tag": "choice-field-option",
                         "style": {
                             "ref": ["box-bottom"]
@@ -1195,6 +1196,9 @@
                             "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"25\"><rect width=\"100\" height=\"25\" rx=\"10\" fill=\"green\"/><circle r=\"10\" cx=\"15\" cy=\"12.5\" fill=\"#027402\"/><text x=\"30\" y=\"13\" dominant-baseline=\"middle\" font-family=\"Segoe UI\" fill=\"white\" font-weight=\"bold\" font-size=\"13\">Add link</text><line x1=\"15\" x2=\"15\" y1=\"5\" y2=\"20\" stroke=\"white\" stroke-width=\"2\"/>    <line x1=\"7.5\" x2=\"22.5\" y1=\"12.5\" y2=\"12.5\" stroke=\"white\" stroke-width=\"2\"/></svg>"
                             }
                         }
+=======
+                        "tag": "choice-field-option"
+>>>>>>> 7ebff8e (feat(static/field):refacto editeur)
                     }
                     
                 ],
@@ -2064,6 +2068,66 @@
                                         "content": "Tag",
                                         "style": {
                                             "css": ["label", "mp-fieldwrap__label"]
+<<<<<<< HEAD
+=======
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "tag",
+                                    "tag": "tag-reference"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "style": {
+                    "css": ["tag-reference-wrapper"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "template reference" },
+            "type": "layout",
+            "tags": ["choice-field-reference"],
+            "projection": {
+                "type": "flex",
+                "orientation": "column",
+                "disposition": [
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "row",
+                            "disposition": [
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "View template",
+                                        "style": {
+                                            "css": ["title"]
+                                        }
+                                    }
+                                }                                
+                            ]
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "row",
+                            "disposition": [
+                                {
+                                    "type": "static",
+                                    "static": {
+                                        "type": "text",
+                                        "content": "Tag",
+                                        "style": {
+                                            "css": ["label"]
+>>>>>>> 7ebff8e (feat(static/field):refacto editeur)
                                         }
                                     }
                                 },
@@ -3519,6 +3583,7 @@
                     }
                 }
             }
+<<<<<<< HEAD
         },
         {
             "type": "style",
@@ -3530,6 +3595,8 @@
                     }
                 }
             }
+=======
+>>>>>>> 7ebff8e (feat(static/field):refacto editeur)
         }
     ]
 }
