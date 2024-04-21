@@ -508,20 +508,6 @@ const BaseSVGChoice = {
         this.element.setAttribute("height", this.containerView.targetH);
     },
 
-    enterHandler(target) {
-        const item = getItem.call(this, target);
-
-        if(!isNullOrUndefined(item) && target !== this.selection) {
-            let type = getItemType(item);
-
-            if(type === "placeholder") {
-                this.source.removeValue();
-            } else {
-                this.setValue(getItemValue.call(this, item), true)
-            }
-        }
-    },
-
     clickHandler(target){
         const item = getItem.call(this, target);
 
@@ -593,31 +579,6 @@ const BaseSVGChoice = {
         
         this.adaptView();
         return this;
-    },
-
-    arrowHandler(dir, target) {
-
-        if(isNullOrUndefined(target)) {
-            return false;
-        }
-
-        const { parentElement } = target;
-
-        let item = getItem.call(this, target);
-
-        if(item) {
-            let closestItem = getClosestSVG(item, dir, this.choices);
-
-            if(isNullOrUndefined(closestItem)) {
-                return this.parent.arrowHandler(dir, this.element);
-            }
-
-            closestItem.focus();
-
-            return true;
-        }
-
-        return this.parent.arrowHandler(dir, this.element);
     },
 
     bindEvents(){

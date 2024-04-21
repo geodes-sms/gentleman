@@ -1,4 +1,4 @@
-import { isEmpty, isNullOrUndefined } from "zenkai";
+import { findAncestor, isEmpty, isNullOrUndefined } from "zenkai";
 import { Algorithm } from "./algorithm"
 import { getFirstGraphical } from "@utils/index.js";
 
@@ -204,14 +204,31 @@ const BasePatternAlgorithm = {
         }
 
         let element = this.projection.resolveElement(closestElement);
-        console.log("Arrow");
-        console.log(element);
+
         if(element) {
             element.focus();
         }
 
         return true;
     },
+
+    escapeHandler(target) {
+        if(isNullOrUndefined(this.parent)) {
+            return false;
+        }
+
+        let parent = findAncestor(target, (el) => el.tabIndex === 0);
+        let element = this.projection.resolveElement(parent);
+
+        if(isNullOrUndefined(element)) {
+            return false;
+        }
+
+        element.focus(parent);
+
+        return true;
+    },
+
 
     bindEvents() {
         this.projection.registerHandler("value.added", (value) => {
