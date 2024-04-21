@@ -5,7 +5,13 @@ const { isNullOrUndefined, isEmpty, isNull, first, valOrDefault } = require("zen
 
 
 const BaseTextSVG = {
-    init(){
+    init(args){
+        Object.assign(this.schema, args);
+
+        const { readonly = false } = this.schema;
+
+        this.readonly = readonly;
+
         return this;
     },
 
@@ -16,7 +22,6 @@ const BaseTextSVG = {
             this.element = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             this.element.id = this.id;
             this.element.classList.add("field");
-            this.element.tabIndex = -1;
 
             this.element.dataset.nature = "field";
             this.element.dataset.view = "svg";
@@ -66,6 +71,12 @@ const BaseTextSVG = {
             this.initiateLines();
         }else{
             this.initiateText();
+        }
+
+        if(!this.readonly) {
+            this.element.tabIndex = 0;
+        } else {
+            this.element.dataset.ignore = "all";
         }
 
         this.bindEvents();
@@ -261,7 +272,7 @@ const BaseTextSVG = {
             }
 
             if(e.key === "ArrowDown"){
-
+                this.parent.arrowHandler("bottom", this.element)
             }
         })
 
@@ -273,6 +284,10 @@ const BaseTextSVG = {
                 this.displayCaretEmpty(span);
             }
         })
+    },
+
+    arrowHandler(dir, target) {
+        return this.parent.arrowHandler(dir, this.element);
     },
 
     /*Ensures that the caret follows the input range*/

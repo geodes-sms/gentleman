@@ -1,7 +1,9 @@
 import { ContentHandler } from "./../content-handler";
-import { hide, NotificationType } from "@utils/index.js";
+import { getClosestSVG, hide, NotificationType } from "@utils/index.js";
 import { isNullOrUndefined, valOrDefault, isObject, removeChildren, findAncestor } from "zenkai";
 import { Field } from "./field"
+import { getElementTop, getElementBottom, getElementLeft, getElementRight } from '@utils/index.js';
+
 
 /**
  * Get the choice element
@@ -238,6 +240,7 @@ const BaseSVGChoice = {
     },  
 
     setValue(value, update = false){
+        console.log("Setting Value");
         var response = null;
 
         if(update){
@@ -316,26 +319,6 @@ const BaseSVGChoice = {
         }
     }, 
 
-    /**TO DO: How to display the current choice if needed */
-    setChoice(value){
-        /*const children = this.choices.childNodes;
-
-        for(let i = 0; i < children.length; i++){
-            const item = children[i];
-
-            let itemValue = getItemValue.call(item);
-        }*/
-    },
-
-
-    openSelection(){
-
-    },
-
-    closeSelection(){
-
-    },
-
     updateSize(){
         if(this.fixed){
             return;
@@ -355,7 +338,6 @@ const BaseSVGChoice = {
         this.parent.updateSize();
     },
 
-    /**Target vs current */
     setVerticalSelection(){
         let y = 0;
         let x = 0;
@@ -526,6 +508,20 @@ const BaseSVGChoice = {
         this.element.setAttribute("height", this.containerView.targetH);
     },
 
+    enterHandler(target) {
+        const item = getItem.call(this, target);
+
+        if(!isNullOrUndefined(item) && target !== this.selection) {
+            let type = getItemType(item);
+
+            if(type === "placeholder") {
+                this.source.removeValue();
+            } else {
+                this.setValue(getItemValue.call(this, item), true)
+            }
+        }
+    },
+
     clickHandler(target){
         const item = getItem.call(this, target);
 
@@ -597,6 +593,31 @@ const BaseSVGChoice = {
         
         this.adaptView();
         return this;
+    },
+
+    arrowHandler(dir, target) {
+
+        if(isNullOrUndefined(target)) {
+            return false;
+        }
+
+        const { parentElement } = target;
+
+        let item = getItem.call(this, target);
+
+        if(item) {
+            let closestItem = getClosestSVG(item, dir, this.choices);
+
+            if(isNullOrUndefined(closestItem)) {
+                return this.parent.arrowHandler(dir, this.element);
+            }
+
+            closestItem.focus();
+
+            return true;
+        }
+
+        return this.parent.arrowHandler(dir, this.element);
     },
 
     bindEvents(){

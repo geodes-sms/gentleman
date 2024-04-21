@@ -1,9 +1,10 @@
 import { ContentHandler } from "./../content-handler";
 import { DimensionHandler } from "./../dimension-handler";
 import { MeetHandler, SizeHandler, SizeSchema } from "./../size-handler";
-import { isEmpty, isNullOrUndefined, valOrDefault } from "zenkai";
+import { findAncestor, isEmpty, isFunction, isNullOrUndefined, valOrDefault } from "zenkai";
 import { Algorithm } from "./algorithm"
 import { OverlapManager } from "./overlap-manager";
+import { getClosestSVG, getFirstGraphical } from "@utils/index.js";
 
 
 const BaseAdaptiveAlgorithm = {
@@ -238,6 +239,8 @@ const BaseAdaptiveAlgorithm = {
         if(!this.displayed){
             this.display();
         }
+
+        this.container.focus();
     },
 
     /**
@@ -269,6 +272,85 @@ const BaseAdaptiveAlgorithm = {
         return;
     },
 
+    /**
+     * Handles the `enter` command
+     * @param {HTMLElement} target element
+     */
+    enterHandler(target) {
+        if(isNullOrUndefined(this.content) || isEmpty(this.content)) {
+            return;
+        }
+
+        let focusableElement = getFirstGraphical(this.content, this.containerView.targetX, this.containerView.targetY);
+
+        if(isNullOrUndefined(focusableElement)) {
+            return;
+        }
+
+        let child = this.projection.resolveElement(focusableElement);
+
+        if(isNullOrUndefined(child)) {
+            return;
+        }
+
+        child.focus();
+
+        console.log(child);
+
+        return true;
+    },
+
+    /**
+     * Handles the `arrow` command
+     * @param {string} dir direction 
+     * @param {HTMLElement} target element
+     */
+    arrowHandler(dir, target) {
+        if(target === this.container) {
+            if(isNullOrUndefined(this.parent)) {
+                return;
+            }
+
+            return this.parent.arrowHandler(dir, this.container);
+        }
+
+        let closestElement = getClosestSVG(target, dir, this.content);
+
+        if(isNullOrUndefined(closestElement)) {
+            if(isNullOrUndefined(this.parent) || this.parent.object !== "algorithm") {
+                return false;
+            }
+
+            return this.parent.arrowHandler(dir, this.container);
+        }
+
+        let element = this.projection.resolveElement(closestElement);
+        console.log("Arrow");
+        console.log(element);
+        if(element) {
+            element.focus();
+        }
+
+        return true;
+
+    },
+
+    escapeHandler(target) {
+        if(isNullOrUndefined(this.parent)) {
+            return false;
+        }
+
+        let parent = findAncestor(target, (el) => el.tabIndex === 0);
+        let element = this.projection.resolveElement(parent);
+
+        if(isNullOrUndefined(element)) {
+            return false;
+        }
+
+        element.focus(parent);
+
+        return true;
+    },
 
     /**
      * Creates the handlers for the projection

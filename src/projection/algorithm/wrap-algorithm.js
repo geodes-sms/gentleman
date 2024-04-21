@@ -2,6 +2,7 @@ import { ContentHandler } from "./../content-handler";
 import { Algorithm } from "./algorithm";
 import { DimensionHandler } from "./../dimension-handler";
 import { SizeHandler, MeetHandler } from "./../size-handler";
+import { getFirstGraphical } from "@utils/index.js";
 const { isNullOrUndefined, isEmpty } = require("zenkai");
 
 const BaseWrapAlgorithm = {
@@ -26,7 +27,7 @@ const BaseWrapAlgorithm = {
 
             this.container.classList.add("agorithm-container");
             this.container.dataset.nature = "algorithm";
-            this.container.dataset.view = "wrap";
+            this.container.dataset.algorithm = "wrap";
             this.container.dataset.id = this.id;
             this.container.id = this.id;
         }
@@ -70,6 +71,8 @@ const BaseWrapAlgorithm = {
         if(!this.displayed){
             this.display();
         }
+
+        this.container.focus();
     },
 
     /**
@@ -166,6 +169,66 @@ const BaseWrapAlgorithm = {
         this.content.forEach( (item) => {
             item.meetSize();
         })
+    },
+
+    enterHandler(target) {
+        if(isNullOrUndefined(this.content) || isEmpty(this.content)) {
+            return;
+        }
+
+        let focusableElement = getFirstGraphical(this.content, this.containerView.targetX, this.containerView.targetY);
+
+        if(isNullOrUndefined(focusableElement)) {
+            return;
+        }
+
+        let child = this.projection.resolveElement(focusableElement);
+
+        if(isNullOrUndefined(child)) {
+            return;
+        }
+        console.log(child);
+
+        child.focus();
+
+
+
+        return true;
+    },
+
+    /**
+     * Handles the `arrow` command
+     * @param {string} dir direction 
+     * @param {HTMLElement} target element
+     */
+    arrowHandler(dir, target) {
+        if(target === this.container) {
+            if(isNullOrUndefined(this.parent)) {
+                return;
+            }
+
+            return this.parent.arrowHandler(dir, this.container);
+        }
+
+        let closestElement = getClosestSVG(target, dir, this.content);
+
+        if(isNullOrUndefined(closestElement)) {
+            if(isNullOrUndefined(this.parent) || this.parent.object !== "algorithm") {
+                return false;
+            }
+
+            return this.parent.arrowHandler(dir, this.container);
+        }
+
+        let element = this.projection.resolveElement(closestElement);
+        console.log("Arrow");
+        console.log(element);
+        if(element) {
+            element.focus();
+        }
+
+        return true;
+
     },
 
     bindEvents(){
