@@ -8,3 +8,4 @@ export * from './string-helpers.js';
 export * from './pubsub.js';
 export * from './uuid.js';
 export * from './browser.js';
+export * from './svg.js'

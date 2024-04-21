@@ -1,5 +1,6 @@
-import { isNullOrUndefined } from "zenkai";
+import { findAncestor, isEmpty, isNullOrUndefined } from "zenkai";
 import { Algorithm } from "./algorithm"
+import { getFirstGraphical } from "@utils/index.js";
 
 const BasePatternAlgorithm = {
 
@@ -9,11 +10,12 @@ const BasePatternAlgorithm = {
     init(args) {
         Object.assign(this.schema, args);
 
-        const { orientation, meet } = this.schema;
+        const { orientation, meet, focusable = true } = this.schema;
 
         this.orientation = orientation;
         this.content = [];
         this.meet = meet;
+        this.focusable = focusable;
 
         return this;
     },
@@ -23,7 +25,7 @@ const BasePatternAlgorithm = {
         if(isNullOrUndefined(this.container)) {
             this.container = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
-            this.container.classList.add("pattern-container");
+            this.container.classList.add("algorithm-container");
             this.container.dataset.nature = "algorithm";
             this.container.dataset.algorithm = "pattern";
             this.container.dataset.id = this.id;
@@ -36,6 +38,12 @@ const BasePatternAlgorithm = {
 
             this.container.append(item);
         })
+
+        if (this.focusable) {
+            this.container.tabIndex = 0;
+        } else {
+            this.container.dataset.ignore = "all";
+        }
 
 
         this.bindEvents();
@@ -95,6 +103,34 @@ const BasePatternAlgorithm = {
         return;
     },
 
+    focus(){
+        if(!this.displayed){
+            this.display();
+        }
+
+        this.container.focus();
+    },
+
+        /**
+     * Handles the focusin event
+     * @returns this
+     */
+    focusIn(){
+        console.warn(`FOCUSIN_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        return;
+    },
+
+    /**
+     * Handles the focusin event
+     * @returns this
+     */
+    focusOut(){
+        console.warn(`FOCUSOUT_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+        return;
+    },
+    
+
+
     display() {
         if(!this.parent.displayed) {
             return;
@@ -114,6 +150,85 @@ const BasePatternAlgorithm = {
 
         return;
     },
+
+    /**
+     * Handles the `enter` command
+     * @param {HTMLElement} target element
+     */
+    enterHandler(target) {
+        if(isNullOrUndefined(this.content) || isEmpty(this.content)) {
+            return;
+        }
+
+        let focusableElement = getFirstGraphical(this.content, this.containerView.targetX, this.containerView.targetY);
+
+        if(isNullOrUndefined(focusableElement)) {
+            return;
+        }
+
+        let child = this.projection.resolveElement(focusableElement);
+
+        if(isNullOrUndefined(child)) {
+            return;
+        }
+
+        child.focus();
+
+        console.log(child);
+
+        return true;
+    },
+
+    /**
+     * Handles the `arrow` command
+     * @param {string} dir direction 
+     * @param {HTMLElement} target element
+     */
+    arrowHandler(dir, target) {
+        if(target === this.container) {
+            if(isNullOrUndefined(this.parent)) {
+                return;
+            }
+
+            return this.parent.arrowHandler(dir, this.container);
+        }
+
+        let closestElement = getClosestSVG(target, dir, this.content);
+
+        if(isNullOrUndefined(closestElement)) {
+            if(isNullOrUndefined(this.parent) || this.parent.object !== "algorithm") {
+                return false;
+            }
+
+            return this.parent.arrowHandler(dir, this.container);
+        }
+
+        let element = this.projection.resolveElement(closestElement);
+
+        if(element) {
+            element.focus();
+        }
+
+        return true;
+    },
+
+    escapeHandler(target) {
+        if(isNullOrUndefined(this.parent)) {
+            return false;
+        }
+
+        let parent = findAncestor(target, (el) => el.tabIndex === 0);
+        let element = this.projection.resolveElement(parent);
+
+        if(isNullOrUndefined(element)) {
+            return false;
+        }
+
+        element.focus(parent);
+
+        return true;
+    },
+
 
     bindEvents() {
         this.projection.registerHandler("value.added", (value) => {
