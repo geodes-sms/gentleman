@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15">
+    <line x1="14" x2="1" y1="1" y2="14" stroke-linecap="round" stroke="#046204"/>
+    <text text-anchor="middle" dominant-baseline="middle" font-size="8.5" x="3.5" y="3.5" fill="#046204">
+        x
+    </text>
+    <text text-anchor="middle" dominant-baseline="middle" font-size="8.5" x="11" y="11" fill="#046204">
+        y
+    </text>
+</svg>

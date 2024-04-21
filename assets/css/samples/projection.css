@@ -316,6 +316,14 @@
         display: none;
     }
 
+.mp-tag-txt {
+
+}
+
+    .mp-tag-txt .projection__btn-delete {
+        order: 2;
+        margin-left: 5px;
+    }
     
 /*
     Target choice

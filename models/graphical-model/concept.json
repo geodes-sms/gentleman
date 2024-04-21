@@ -120,7 +120,7 @@
         {
             "name": "adaptive-algorithm",
             "nature": "concrete",
-            "prototype": "element",
+            "prototype": "algorithm",
             "attributes": [
                 {
                     "name": "meet",
@@ -159,6 +159,9 @@
                            "name": "render",
                            "accept": [
                             { "name": "adaptive-algorithm"},
+                            { "name": "pattern-algorithm" },
+                            { "name": "force-algorithm" },
+                            { "name": "grid-layout" },
                             { "name": "text-field" },
                             { "name": "choice-field" },
                             { "name": "switch-field" },
@@ -172,6 +175,96 @@
                     }
                 }
             ]
+        },
+        {
+            "name": "force-algorithm",
+            "nature": "concrete",
+            "prototype": "algorithm",
+            "attributes": [
+                {
+                    "name": "width",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "height",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "intensity",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "edgeDist",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "tag",
+                    "target": {
+                        "name": "template reference"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "pattern-algorithm",
+            "nature": "concrete",
+            "prototype": "algorithm",
+            "attributes": [
+                {
+                    "name": "orientation",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": [
+                                "horizontal",
+                                "vertical"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "spacing",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    },
+                    "required": true
+                },
+                {
+                    "name": "meet",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": [
+                                "right",
+                                "bottom"
+                            ]
+                        },
+                        "default": "right"
+                    },
+                    "required": false
+                },
+                {
+                    "name": "tag",
+                    "target": {
+                        "name": "template reference"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "grid-algorithm",
+            "nature": "concrete",
+            "prototype": "algorithm",
+            "attributes": []
         },
         {
             "name": "background",
@@ -316,6 +409,12 @@
             "attributes": []
         },
         {
+            "name": "algorithm",
+            "nature": "prototype",
+            "prototype": "element",
+            "attributes": []
+        },
+        {
             "name": "field",
             "nature": "prototype",
             "prototype": "element",
@@ -425,13 +524,13 @@
                     "target": {
                         "name": "template reference"
                     }
-                },            
+                },
                 {
-                    "name": "choice-container",
+                    "name": "link",
                     "target": {
-                        "name": "choice-container",
-                        "default": "expanded"
-                    }
+                        "name": "template reference"
+                    },
+                    "required": false
                 }
             ]
         },
@@ -479,7 +578,7 @@
                     }
                 },
                 {
-                    "name": "tag",
+                    "name": "link",
                     "target": {
                         "name": "template reference"
                     },
