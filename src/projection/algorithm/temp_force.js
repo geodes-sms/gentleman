@@ -1,186 +1,159 @@
+import { isEmpty, isNullOrUndefined } from "zenkai";
 import { Algorithm } from "./algorithm";
 
-const { isNullOrUndefined, isEmpty } = require("zenkai");
 
-
-const BaseForceAlgorithm = {
-    init(args){
+export const BaseForceAlgorithm = {
+    init(args) {
         Object.assign(this.schema, args);
 
-        const { focusable = true, dimensions } = this.schema;
-        const { width, height } = dimensions;
-
-        this.focusable = focusable;
-        this.content = [];
-        this.width = width;
-        this.height = height;
+        const {} = this.schema;
 
         return this;
     },
-    
-    render(){
-        const {width, height} = this.schema.dimensions;
 
-        if(isNullOrUndefined(this.container)){
+    render() {
+        
+        if(isNullOrUndefined(this.container)) {
             this.container = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-
+            
             this.container.classList.add("algorithm-container");
             this.container.dataset.nature = "algorithm";
             this.container.dataset.algorithm = "force";
             this.container.dataset.id = this.id;
             this.container.id = this.id;
-
-            this.container.setAttribute("width", width);
-            this.container.setAttribute("height", height);
         }
 
-        this.source.getValue().forEach((value) => {
-            let item = this.createItem(value);
-            this.container.append(item);
-        })
+        if(isNullOrUndefined(this.force)) {
+            this.setUpForce();
+        }
 
-        this.bindEvent();
+        if(!isEmpty(this.source.getValue()) && isEmpty(this.nodes)) {
+            this.source.getValue().forEach((value) => {
+                this.addItem(value);
+            });
+        }
+
+        this.bindEvents();
 
         return this.container;
     },
 
-    createItem(object){
-        const { template = {} } = this.schema.list.item;
-
-        if(!this.model.hasProjectionSchema(object, template.tag)){
-            return "";
-        }
-
-        let itemProjection = this.model.createProjection(object, template.tag);
-        itemProjection.optional = true;
-        itemProjection.parent = this.projection;
-
-        let container = itemProjection.init(template.options).render();
-        container.dataset.index = object.index;
-
-        itemProjection.element.parent = this;
-
-        container.classList.add("node" + this.id);
-
-        this.content.push(itemProjection.element);
-
-        return container;
-    },
-
-    setUpForce(){
-        const { intensity, edgeDist } = this.schema.force;
+    setUpForce() {
+        const { width, height, charge, linkDistance } = this.schema.force;
 
         this.force = d3.layout.force()
-            .size([this.width, this.height])
+            .size([width, height])
             .nodes([])
             .links([])
-            .linkDistance(edgeDist)
-            .charge(intensity)
+            .charge(charge)
+            .linkDistance(linkDistance)
             .on("tick", this.ticked.bind(this));
-
-        this.d3Container = d3.select("#" + this.id);
 
         this.nodes = this.force.nodes();
         this.links = this.force.links();
-
-        this.force.start();
     },
 
-    createNode(projection){
-        const schema = {};
+    restart() {
+        this.node = d3.selectAll(".node" + this.id).data(this.nodes);
 
-        schema.c_id = projection.source.id;
-        schema.p_id = projection.id;
-
-        this.nodes.push(schema)
+        this.force.start()
     },
 
-    restart(){
-        this.node = this.d3Container.selectAll(".node" + this.id).data(this.nodes);
-        this.link = this.d3Container.selectAll(".link" + this.id).data(this.links);
+    stop() {
 
-        this.force.start();
     },
 
-    ticked(){
-        const width = this.width;
-        const height = this.height;
+    ticked() {
+        this.node
+        .attr("x", function(d) { return d.x} )
+        .attr("y", function(d) { return d.y} );
 
-        this.node.attr("x", function(d) {
-            return Math.max(0, Math.min(width - d.width / 2, d.x) - d.width / 2);
-        })
-        .attr("y", function(d){
-            return Math.max(0, Math.min(height - d.height / 2, d.y) - d.height / 2);
-        })
     },
 
-    updateSize(){
-        console.log("Updating force-size");
-
-        if(!this.displayed){
-            return;
+    addItem(value) { 
+        let id = this.createItem(value);
+        
+        const schema = {
+            id: id
         }
 
-        this.content.forEach((element) => {
-            this.registerContentDimension(element);
-        })
+        if(!isNullOrUndefined(value.force)) {
+            const { x, y } = value.force;
+            schema.x = x;
+            schema.y = y;
+        }
+
+        this.nodes.push(schema);
+        this.restart();
+    },
+
+    createItem(value) {
+        const { tag } = this.schema.items;
+
+        let itemProjection = this.model.createProjection(value, tag);
+        itemProjection.parent = this;
+        itemProjection.optional = true;
+
+        let container = itemProjection.init().render();
+        container.classList.add("node" + this.id);
+
+        this.container.append(container);
+        itemProjection.update("displayed");
+
+        return itemProjection.concept.id;
+    },
+
+    removeItem(value) {
+        for(let i = 0; i < this.nodes.length; i++) {
+            if(this.nodes[i].id == value.id) {
+                this.nodes.splice(i, 1);
+                break;
+            }
+        }
 
         this.restart();
     },
 
-    registerContentDimension(projection){
-        for(let i = 0; i < this.nodes.length; i++){
-            if(projection.id === this.nodes[i].p_id){
-                if(!isNullOrUndefined(projection.containerView)){
-                    this.nodes[i].width = projection.containerView.targetW;
-                    this.nodes[i].height = projection.containerView.targetH;
-                }else{
-                    let element = projection.element || projection.container;
-                    this.nodes[i].width = Number(element.getAttribute("width"));
-                    this.nodes[i].height = Number(element.getAttribute("height"));
-                }
-                return;
-            }
-        }
+    display() {
+        this.displayed = true;
+
+        this.restart();
     },
 
-    bindEvent(){
+    updateSize() {
+
+    },
+
+    focusIn() {
+
+    },
+
+    focusOut() {
+
+    },
+
+    clickHandler() {
+
+    },
+
+    bindEvents() {
         this.projection.registerHandler("displayed", () => {
-            if(!this.parent.displayed){
+            if(this.displayed) {
                 return;
             }
 
-            if(this.displayed){
-                return;
-            }
-
-            this.displayed = true;
-
-            this.setUpForce();
-            
-            this.content.forEach((element) => {
-                let projection = this.projection.resolveElement(element);
-
-                this.createNode(projection);
-                projection.projection.update("displayed");
-            })
-
-            this.restart();
+            this.display();
         })
 
         this.projection.registerHandler("value.added", (value) => {
-            let item = this.createItem(value);
-            this.container.append(item);
+            this.addItem(value);
+        })
 
-            let projection = this.projection.resolveElement(item);
-            this.createNode(projection);
-            projection.projection.update("displayed");
-
-            this.restart();
+        this.projection.registerHandler("value.removed", (value) => {
+            this.removeItem(value);
         })
     }
-}
-
+};
 
 export const ForceAlgorithm = Object.assign({},
     Algorithm,
