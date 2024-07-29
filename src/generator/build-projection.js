@@ -861,7 +861,6 @@ const FieldHanlders = {
     "dynamic": DynamicSVGHandler,
     "static": StaticSVGHandler,
     "add": AddFieldHandler,
-    "arrow": ArrowHandler,
     "svg": SvgTextHandler
 };
 
@@ -1331,90 +1330,8 @@ function AddFieldHandler(field) {
     return schema;
 }
 
-function ArrowHandler(arrow) {
-    const schema = {};
 
-    schema.type = "arrow";
 
-    if (hasAttr(arrow, "source")) {
-        schema.source = getValue(arrow, "source");
-    }
-
-    if (hasAttr(arrow, "target")) {
-        schema.target = getValue(arrow, "target");
-    }
-
-    if (hasAttr(arrow, "decorator")) {
-        schema.decorator = buildDecorator.call(this, getAttr(arrow, "decorator"));
-    }
-
-    if (hasAttr(arrow, "arrow-style")) {
-        schema.arrowStyle = buildArrowStyle.call(this, getAttr(arrow, "arrow-style"));
-    }
-
-    return schema;
-}
-
-function buildDecorator(decorator) {
-    const schema = {};
-
-    if (hasAttr(decorator, "attribute")) {
-        schema.attribute = {
-            type: "dynamic",
-            dynamic: buildDynamic.call(this, getAttr(decorator, "attribute"))
-        };
-    }
-
-    if (hasAttr(decorator, "base")) {
-        schema.base = getValue(decorator, "base");
-    }
-
-    return schema;
-}
-
-function buildArrowStyle(style) {
-    const schema = {};
-
-    if (hasAttr(style, "stroke")) {
-        let color = getAttr(style, "stroke");
-        let value = getValue(color, "value");
-        if (isNullOrUndefined(value)) {
-            schema.stroke = "#000000";
-        } else {
-            schema.stroke = value.startsWith("#") ? value : `#${value}`;
-        }
-    }
-
-    if (hasAttr(style, "stroke-width")) {
-        schema.width = getValue(style, "stroke-width");
-    }
-
-    if (hasAttr(style, "stroke-dasharray")) {
-        schema.dasharray = getValue(style, "stroke-dasharray");
-    }
-
-    if (hasAttr(style, "stroke-linecap")) {
-        schema.linecap = getValue(style, "stroke-linecap");
-    }
-
-    if (hasAttr(style, "marker-end")) {
-        schema.end = getValue(style, "marker-end");
-    }
-
-    if (hasAttr(style, "marker-start")) {
-        schema.start = getValue(style, "marker-start");
-    }
-
-    return schema;
-}
-
-function buildTarget(target) {
-    if (hasAttr(target, "attribute")) {
-        return getValue(target, "attribute");
-    } else {
-        return "self";
-    }
-}
 
 function buildInput(element) {
     let schema = {

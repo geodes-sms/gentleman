@@ -221,8 +221,7 @@ const BaseWrapAlgorithm = {
         }
 
         let element = this.projection.resolveElement(closestElement);
-        console.log("Arrow");
-        console.log(element);
+
         if(element) {
             element.focus();
         }

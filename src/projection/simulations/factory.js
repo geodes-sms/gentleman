@@ -2,15 +2,10 @@ import { isNullOrUndefined } from "zenkai";
 
 import { Simulation } from "./simulation";
 import { ForceSimulation } from "./force-simulation";
-import { ArrowSimulation } from "./arrow-simulation";
 import { TextSimulation } from "./text-simulation";
 import { SelectionSimulation } from "./selection-simulation";
-import { MarkerSimulation } from "./marker-simulation";
 import { ContentSimulation } from "./content-simulation";
 import { PatternSimulation } from "./pattern-simulation";
-import { MultiSimulation } from "./multi-simulation";
-import { SubPathSimulation } from "./sub-path";
-import { AnchorSimulation } from "./anchor-simulation";
 import { SetSimulation } from "./set-simulation";
 import { TreeSimulation } from "./tree-simulation";
 import { ChoiceSimulation } from "./choice-simulation";

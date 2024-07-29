@@ -3,9 +3,8 @@ import { StackLayout } from "./stack-layout.js";
 import { WrapLayout } from "./wrap-layout.js";
 import { TableLayout } from "./table-layout.js";
 import { FlexLayout } from "./flex-layout.js";
-import { SVGLayout } from "./svg-layout";
 import { Visualizer } from "./visualizer.js";
-import { Holder } from "./holder.js";
+
 
 var inc = 0;
 const nextId = () => `layout${inc++}`;
@@ -51,30 +50,10 @@ const Handler = {
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
     }),
-    'svg': (model, schema, projection) => Object.create(SVGLayout, {
-        object: { value: "layout" },
-        name: { value: "svg-layout" },
-        type: { value: "svg" },
-        id: { value: nextId() },
-        model: { value: model },
-        schema: { value: schema },
-        projection: { value: projection },
-        source: { value: projection.concept, writable: true },
-    }),
     'visualizer': (model, schema, projection) => Object.create(Visualizer, {
         object: { value: "layout" },
         name: { value: "svg-layout" },
         type: { value: "svg" },
-        id: { value: nextId() },
-        model: { value: model },
-        schema: { value: schema },
-        projection: { value: projection },
-        source: { value: projection.concept, writable: true },
-    }),
-    'holder': (model, schema, projection) => Object.create(Holder, {
-        object: { value: "layout" },
-        name: { value: "holder-layout" },
-        type: { value: "holder" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },

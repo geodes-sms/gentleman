@@ -1,7 +1,6 @@
 import { isNullOrUndefined, isEmpty, isIterable, isString, valOrDefault } from "zenkai";
 import { deepCopy, NotificationType } from "@utils/index.js";
 import { ProjectionFactory } from "./projection.js";
-import { Arrow } from "./field/arrow.js";
 
 
 const PREDEFINED_PROJECTIONS = [
@@ -92,7 +91,6 @@ export const ProjectionModel = {
         this.statics = new Map();
         this.layouts = new Map();
         this.algos = new Map();
-        this.arrows = new Map();
         this.shapes = new Map();
         this.simulations = new Map();
 
@@ -275,55 +273,12 @@ export const ProjectionModel = {
         return this.layouts.get(id);
     },
 
-    registerArrow(arrow){
-        arrow.environment = this.environment;
-        this.arrows.set(arrow.id, arrow);
-
-        return this;
-    },
-
-    unregisterArrow(arrow) {
-        var _arrow = this.arrows.get(arrow.id);
-
-        if (_arrow) {
-            _arrow.environment = null;
-            this._arrow.delete(_arrow.id);
-        }
-
-        return this;
-    },
-
-    getArrow(id) {
-        return this.arrows.get(id);
-    },
-
-    registerShape(shape){
-        shape.environment = this.environment;
-        this.shapes.set(shape.id, shape);
-
-        return this;
-    },
 
     registerSimulation(simulation){
         simulation.environment = this.environment;
         this.simulations.set(simulation.id, simulation);
 
         return this;
-    },
-
-    unregisterArrow(shape) {
-        var _shape = this.shapes.get(shape.id);
-
-        if (_shape) {
-            _shape.environment = null;
-            this._shape.delete(_shape.id);
-        }
-
-        return this;
-    },
-
-    getArrow(id) {
-        return this.shapes.get(id);
     },
 
     registerAlgorithm(algo) {
@@ -352,9 +307,6 @@ export const ProjectionModel = {
         return this.simulations.get(id);
     },
 
-    getArrow(id) {
-        return this.arrows.get(id);
-    },
 
     /**
      * Get the metadata of a projection

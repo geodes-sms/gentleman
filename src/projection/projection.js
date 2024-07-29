@@ -8,7 +8,6 @@ import { FieldFactory } from "./field/index.js";
 import { StaticFactory } from "./static/index.js";
 import { StyleHandler } from "./style-handler.js";
 import { AlgorithmFactory } from "./algorithm/factory.js";
-import { ArrowFactory } from "./arrow/factory.js";
 import { ShapeFactory } from "./shapes/factory.js";
 import { createContainer } from "./container.js";
 import { SimulationFactory } from "./simulations/factory.js";
@@ -277,31 +276,6 @@ const Projection = {
             if (isHTMLElement(container)) {
                 container.remove();
             }
-
-            if (container.tagName === "path") {
-                if (container.dataset.algorithm === "force") {
-                    let arrow = this.environment.resolveElement(container);
-                    arrow.projection.parent.removeArrow(arrow);
-                }
-
-                if (container.dataset.algorithm === "anchor") {
-                    let anchor = this.environment.resolveElement(container);
-                    anchor.deleteFromView();
-                }
-                if (container.dataset.algorithm === "multi") {
-                    let multi = this.environment.resolveElement(container);
-                    multi.deletePaths();
-                }
-
-            }
-
-            if (["svg", "text"].includes(container.tagName)) {
-                container.remove();
-            }
-
-            if (this.sibling) {
-                this.sibling.delete();
-            }
         });
 
         this.model.removeProjection(this.id);
@@ -383,10 +357,7 @@ const Projection = {
             this.element = AlgorithmFactory.createAlgo(this.model, valOrDefault(projection, content), this).init(this.args);
 
             this.model.registerAlgorithm(this.element);
-        } else if (type === "arrow") {
-            this.element = ArrowFactory.createArrow(this.model, valOrDefault(projection, content), this).init(this.args);
-
-            this.model.registerArrow(this.element);
+            
         } else if (type === "shape") {
             this.element = ShapeFactory.createShape(this.model, valOrDefault(projection, content), this).init(this.args);
 

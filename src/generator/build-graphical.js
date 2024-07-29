@@ -33,7 +33,6 @@ const GraphicalBuildHandler = {
 
 const GraphicalHandler = {
     "algorithm": buildLayout,
-    "arrow": buildArrow,
     "field": buildField
 }
 
@@ -156,59 +155,6 @@ function buildGraphical(concept) {
     };
 }
 
-const ArrowHandler = {
-    "force": buildForceArrow
-};
-
-function buildArrow(arrow) {
-    const elementType = arrow.getProperty(PROP_ELEMTYPE);
-
-    var schema = {
-        type: elementType
-    };
-
-    const handler = ArrowHandler[elementType];
-
-    if (!isFunction(handler)) {
-        return null;
-    }
-
-    Object.assign(schema, handler.call(this, arrow));
-
-    return schema;
-}
-
-function buildForceArrow(arrow) {
-    const schema = {};
-
-    if (!hasValue(arrow, "from")) {
-        let link = createProjectionLink.call(this, "from", getAttr(arrow, "from"));
-        let error = createSpan({
-            class: ["error-message"]
-        }, [`Projection error: `, link, ` is missing a value`]);
-
-        this.__errors.push(error);
-    }
-
-    schema.from = { name: getValue(arrow, "from") };
-
-    if (!hasValue(arrow, "to")) {
-        let link = createProjectionLink.call(this, "to", getAttr(arrow, "from"));
-        let error = createSpan({
-            class: ["error-message"]
-        }, [`Projection error: `, link, ` is missing a value`]);
-
-        this.__errors.push(error);
-    }
-
-    schema.to = { name: getValue(arrow, "to") };
-
-    if (hasAttr(arrow, "decorator")) {
-        schema.decorator = buildDynamic.call(this, getAttr(arrow, "decorator"));
-    }
-
-    return schema;
-}
 
 const LayoutHandler = {
     "decoration": buildDecorationLayout,

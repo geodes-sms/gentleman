@@ -4,7 +4,6 @@ import { ChoiceField } from './choice-field.js';
 import { ListField } from './list-field.js';
 import { TableField } from './table-field.js';
 import { TextField } from './text-field.js';
-import { Arrow } from './arrow.js';
 import { SvgText } from './temp_text.js';
 import { SVGChoice } from './temp_choice.js';
 import { SwitchField } from './temp_switch.js';
@@ -57,16 +56,6 @@ const Handler = {
         object: { value: "field" },
         name: { value: "text-field" },
         type: { value: "text" },
-        id: { value: nextId() },
-        model: { value: model },
-        schema: { value: schema },
-        projection: { value: projection },
-        source: { value: projection.concept },
-    }),
-    'arrow': (model, schema, projection) => Object.create(Arrow, {
-        object: { value: "field" },
-        name: { value: "arrow" },
-        type: { value: "arrow" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
