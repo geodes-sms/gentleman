@@ -401,8 +401,7 @@
                                             "tag": "choice-up"
                                         }
                                     }
-                                },
-                                "preserve": false
+                                }
                             }
                         }
                     },
@@ -426,8 +425,7 @@
                                             "tag": "choice-down"
                                         }
                                     }
-                                },
-                                "preserve": false
+                                }
                             }
                         }
                     },

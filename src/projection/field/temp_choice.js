@@ -75,11 +75,10 @@ const BaseSVGChoice = {
     init(args){
         Object.assign(this.schema, args);
 
-        const { direction = "vertical", preserve = false, closeable = false} = this.schema;
+        const { direction = "vertical", closeable = false} = this.schema;
 
         this.items = new Map();
         this.direction = direction;
-        this.preserve = preserve;
         this.closeable = closeable;
 
         return this;
@@ -114,10 +113,6 @@ const BaseSVGChoice = {
             this.choices.append(this.createChoiceOption(value));
         })
 
-        if(this.preserve){
-            this.createSelectListValue();
-        }
-
         if(this.source.hasValue()){
             if(this.source.schema.nature === "prototype"){
                 this.setValue(this.source.getValue(true));
@@ -148,52 +143,6 @@ const BaseSVGChoice = {
         this.icon.dataset.adaptable = adaptable;
         this.element.prepend(this.icon);
 
-    },
-
-    createSelectListValue(value){
-        const { placeholder, padding, speed, multiline, size } = this.schema.preserve;
-
-        const schema = {
-            type: "algorithm",
-            algorithm: {
-                type: "adaptative",
-                background: {
-                    content: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"5\" height=\"16\"><rect data-myContainer=\"prout\" width=\"5\" height=\"16\" notify=\"HEYO\" fill=\"transparent\"></rect></svg>",
-                    wrap: "myContainer",
-                    padding: padding,
-                    speed: speed
-                },
-                content: [
-                    {
-                        coordinates: {
-                            x: 2.5,
-                            y: 8
-                        },
-                        dimension: {
-                            type: "pure"
-                        },
-                        render:{
-                            kind: "static",
-                            type: "svg-text",
-                            content: (this.hasValue() ? this.value : valOrDefault(value, placeholder)),
-                            multiline: multiline,
-                            size: size,
-                            anchor: "middle",
-                            baseline: "middle"
-                        }
-                    }
-                ]
-            }
-        }
-
-        this.selectListValue = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        let render = ContentHandler.call(this, schema, null, {focusable : false});
-
-        this.selectListValue.append(render);
-        this.selectListValueProj = this.projection.resolveElement(render);
-        this.selectListValueProj.parent = this;
-
-        this.element.prepend(this.selectListValue);
     },
 
     hasValue(){ return !isNullOrUndefined(this.value) },
@@ -272,8 +221,6 @@ const BaseSVGChoice = {
         } else {
             this.value = value;
         }
-
-        const { tag } = this.schema.preserve;
 
         const isConcept = isObject(value);
 
