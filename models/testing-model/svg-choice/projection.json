@@ -1,0 +1,456 @@
+{
+    "type": "projection",
+    "projection": [
+        {
+            "concept": { "name": "Grade" },
+            "type": "algorithm",
+            "tags": ["default"],
+            "projection": {
+                "type": "adaptative",
+                "background": {
+                    "wrap": "myContainer",
+                    "speed": 1,
+                    "padding": 25,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"500\" height=\"350\"><rect data-myContainer=\"here\" fill=\"white\" width=\"500\" height=\"350\" rx=\"15\" ry=\"15\"></rect><defs><style type=\"text/css\">@import url(\"https://fonts.googleapis.com/css?family=Pacifico:400,400i,700,700i\");</style></defs><text text-anchor=\"middle\" dominant-baseline=\"middle\" x=\"250\" y=\"50\" font-size=\"50\" font-family=\"Pacifico\">Your Grade</text></svg>"
+                },
+                "content": [
+                    {
+                        "dimension": { 
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 50,
+                            "y": 120
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "coordinates": {
+                                            "x": 10,
+                                            "y": 10
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg-text",
+                                            "content": "Highest:",
+                                            "baseline": "hanging",
+                                            "multiline": false,
+                                            "style": {
+                                                "size": 20,
+                                                "font": "Pacifico",
+                                                "weight": false
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 60
+                                        },
+                                        "render": {
+                                            "type": "algorithm",
+                                            "algorithm": {
+                                                "type": "wrap",
+                                                "content":[
+                                                    {
+                                                        "dimension": {
+                                                            "type": "pure"
+                                                        },
+                                                        "coordinates": {
+                                                            "x": 0,
+                                                            "y": 0
+                                                        },
+                                                        "render": {
+                                                            "type": "attribute",
+                                                            "name": "best",
+                                                            "tag": "letter-hor"
+                                                        }
+                                                    },
+                                                    {
+                                                        "dimension": {
+                                                            "type": "pure"
+                                                        },
+                                                        "coordinates": {
+                                                            "x": 180,
+                                                            "y": 0
+                                                        },
+                                                        "render": {
+                                                            "kind": "static",
+                                                            "type": "svg",
+                                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"40\"><defs><style type=\"text/css\">@import url(\"https://fonts.googleapis.com/css?family=Courgette:400,400i,700,700i\");</style></defs><text x=\"20\" y=\"22\" font-size=\"25\" font-family=\"Courgette\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\">=</text></svg>"
+                                                        }
+                                                    },
+                                                    {
+                                                        "dimension": {
+                                                            "type": "pure"
+                                                        },
+                                                        "coordinates": {
+                                                            "x": 340,
+                                                            "y": 0
+                                                        },
+                                                        "render": {
+                                                            "type": "attribute",
+                                                            "name": "best",
+                                                            "tag": "letter_val"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "dimension": { 
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 50,
+                            "y": 250
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "coordinates": {
+                                            "x": 10,
+                                            "y": 10
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg-text",
+                                            "content": "Lowest:",
+                                            "baseline": "hanging",
+                                            "multiline": false,
+                                            "style": {
+                                                "size": 20,
+                                                "font": "Pacifico",
+                                                "weight": false
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 60
+                                        },
+                                        "render": {
+                                            "type": "algorithm",
+                                            "algorithm": {
+                                                "type": "wrap",
+                                                "content":[
+                                                    {
+                                                        "dimension": {
+                                                            "type": "pure"
+                                                        },
+                                                        "coordinates": {
+                                                            "x": 40,
+                                                            "y": 0
+                                                        },
+                                                        "render": {
+                                                            "type": "attribute",
+                                                            "name": "worst",
+                                                            "tag": "letter-ver"
+                                                        }
+                                                    },
+                                                    {
+                                                        "dimension": {
+                                                            "type": "pure"
+                                                        },
+                                                        "coordinates": {
+                                                            "x": 180,
+                                                            "y": 40
+                                                        },
+                                                        "render": {
+                                                            "kind": "static",
+                                                            "type": "svg",
+                                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"40\"><defs><style type=\"text/css\">@import url(\"https://fonts.googleapis.com/css?family=Courgette:400,400i,700,700i\");</style></defs><text x=\"20\" y=\"22\" font-size=\"25\" font-family=\"Courgette\" fill=\"black\" text-anchor=\"middle\" dominant-baseline=\"middle\">=</text></svg>"
+                                                        }
+                                                    },
+                                                    {
+                                                        "dimension": {
+                                                            "type": "pure"
+                                                        },
+                                                        "coordinates": {
+                                                            "x": 340,
+                                                            "y": 40
+                                                        },
+                                                        "render": {
+                                                            "type": "attribute",
+                                                            "name": "worst",
+                                                            "tag": "letter_val"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "dimension": { 
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 50,
+                            "y": 440
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "coordinates": {
+                                            "x": 10,
+                                            "y": 10
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg-text",
+                                            "content": "Yours:",
+                                            "baseline": "hanging",
+                                            "multiline": false,
+                                            "style": {
+                                                "size": 20,
+                                                "font": "Pacifico",
+                                                "weight": false
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "coordinates": {
+                                            "x": 0,
+                                            "y": 0
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "grade",
+                                            "tag": "letter-self"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "letter" },
+            "type": "field",
+            "tags": ["letter-hor"],
+            "content": {
+                "type": "svg-choice",
+                "direction": "horizontal",
+                "choice": {
+                    "option": {
+                        "template": {
+                            "tag": "letter_choice"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "letter" },
+            "type": "field",
+            "tags": ["letter-ver"],
+            "content": {
+                "type": "svg-choice",
+                "direction": "vertical",
+                "choice": {
+                    "option": {
+                        "template": {
+                            "tag": "letter_choice"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "concept": { "name": "letter" },
+            "type": "algorithm",
+            "tags": [ "letter-self" ],
+            "projection": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 120,
+                            "y": 40
+                        },
+                        "render": {
+                            "type": "field",
+                            "field":{
+                                "type": "svg-choice",
+                                "direction": "horizontal",
+                                "choice": {
+                                    "option": {
+                                        "template": {
+                                            "tag": "letter_big"
+                                        }
+                                    },
+                                    "redirect": {
+                                        "tag": "letter_auloin"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "letter" },
+            "type": "algorithm",
+            "tags": ["letter_val"],
+            "projection": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "render": {
+                            "type": "projection",
+                            "bind": "value",
+                            "placeholder": false,
+                            "tag": "letter_choice"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "letter" },
+            "type": "algorithm",
+            "tags": ["letter_auloin"],
+            "projection": {
+                "type": "wrap",
+                "content": [
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "render": {
+                            "kind": "static",
+                            "type": "svg-link",
+                            "tag": "letter-self",
+                            "content": [
+                                {
+                                    "dimension": {
+                                        "type": "pure"
+                                    },
+                                    "coordinates": {
+                                        "x": 170,
+                                        "y": 40
+                                    },
+                                    "render": {
+                                        "type": "projection",
+                                        "bind": "value",
+                                        "placeholder": false,
+                                        "tag": "letter_big"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+
+        {
+            "concept": { "name": "A" },
+            "type": "static",
+            "tags": ["letter_choice"],
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"40\"><circle stroke-width=\"2.5\" stroke=\"red\" fill=\"transparent\" r=\"17.5\" cx=\"20\" cy=\"20\"/><defs><style type=\"text/css\">@import url(\"https://fonts.googleapis.com/css?family=Courgette:400,400i,700,700i\");</style></defs><text x=\"20\" y=\"22\" font-size=\"25\" font-family=\"Courgette\" fill=\"red\" text-anchor=\"middle\" dominant-baseline=\"middle\">A</text></svg>"
+            }
+        },
+        {
+            "concept": { "name": "A" },
+            "type": "static",
+            "tags": ["letter_big"],
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"60\" height=\"60\" viewBox=\"0 0 40 40\"><circle stroke-width=\"2.5\" stroke=\"red\" fill=\"transparent\" r=\"17.5\" cx=\"20\" cy=\"20\"/><defs><style type=\"text/css\">@import url(\"https://fonts.googleapis.com/css?family=Courgette:400,400i,700,700i\");</style></defs><text x=\"20\" y=\"22\" font-size=\"25\" font-family=\"Courgette\" fill=\"red\" text-anchor=\"middle\" dominant-baseline=\"middle\">A</text></svg>"
+            }
+        },
+        {
+            "concept": { "name": "B" },
+            "type": "static",
+            "tags": ["letter_choice"],
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"40\"><circle stroke-width=\"2.5\" stroke=\"red\" fill=\"transparent\" r=\"17.5\" cx=\"20\" cy=\"20\"/><defs><style type=\"text/css\">@import url(\"https://fonts.googleapis.com/css?family=Courgette:400,400i,700,700i\");</style></defs><text x=\"20\" y=\"22\" font-size=\"25\" font-family=\"Courgette\" fill=\"red\" text-anchor=\"middle\" dominant-baseline=\"middle\">B</text></svg>"
+            }
+        },
+        {
+            "concept": { "name": "B" },
+            "type": "static",
+            "tags": ["letter_big"],
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"60\" height=\"60\" viewBox=\"0 0 40 40\"><circle stroke-width=\"2.5\" stroke=\"red\" fill=\"transparent\" r=\"17.5\" cx=\"20\" cy=\"20\"/><defs><style type=\"text/css\">@import url(\"https://fonts.googleapis.com/css?family=Courgette:400,400i,700,700i\");</style></defs><text x=\"20\" y=\"22\" font-size=\"25\" font-family=\"Courgette\" fill=\"red\" text-anchor=\"middle\" dominant-baseline=\"middle\">B</text></svg>"
+            }
+        },
+        {
+            "concept": { "name": "C" },
+            "type": "static",
+            "tags": ["letter_choice"],
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"40\"><circle stroke-width=\"2.5\" stroke=\"red\" fill=\"transparent\" r=\"17.5\" cx=\"20\" cy=\"20\"/><defs><style type=\"text/css\">@import url(\"https://fonts.googleapis.com/css?family=Courgette:400,400i,700,700i\");</style></defs><text x=\"20\" y=\"22\" font-size=\"25\" font-family=\"Courgette\" fill=\"red\" text-anchor=\"middle\" dominant-baseline=\"middle\">C</text></svg>"
+            }
+        },
+        {
+            "concept": { "name": "C" },
+            "type": "static",
+            "tags": ["letter_big"],
+            "content": {
+                "type": "svg",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"60\" height=\"60\" viewBox=\"0 0 40 40\"><circle stroke-width=\"2.5\" stroke=\"red\" fill=\"transparent\" r=\"17.5\" cx=\"20\" cy=\"20\"/><defs><style type=\"text/css\">@import url(\"https://fonts.googleapis.com/css?family=Courgette:400,400i,700,700i\");</style></defs><text x=\"20\" y=\"22\" font-size=\"25\" font-family=\"Courgette\" fill=\"red\" text-anchor=\"middle\" dominant-baseline=\"middle\">C</text></svg>"
+            }
+        }
+    ]
+}

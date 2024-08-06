@@ -5,7 +5,7 @@ import { ListField } from './list-field.js';
 import { TableField } from './table-field.js';
 import { TextField } from './text-field.js';
 import { SvgText } from './temp_text.js';
-import { SVGChoice } from './temp_choice.js';
+import { SVGChoice } from './svg-choice.js';
 import { SwitchField } from './temp_switch.js';
 import { SpanField } from './span-field.js';
 import { PlaceholderField } from './temp_placeholder.js';
@@ -74,8 +74,8 @@ const Handler = {
     }),
     'svg-choice': (model, schema, projection) => Object.create(SVGChoice, {
         object: { value: "field" },
-        name: { value: "switch" },
-        type: { value: "switch" },
+        name: { value: "svg-choice" },
+        type: { value: "choice" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },

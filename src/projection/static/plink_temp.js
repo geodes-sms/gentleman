@@ -1,6 +1,9 @@
+import { ContentHandler } from "../content-handler";
 import { Static } from "./static";
+import { DimensionHandler } from "../dimension-handler";
+import { SizeHandler } from "../size-handler";
 
-const { isNullOrUndefined, valOrDefault } = require("zenkai");
+const { isNullOrUndefined, isEmpty } = require("zenkai");
 
 const BaseProjectionLinkSVGStatic = {
     /** @type {SVGElement} */
@@ -38,39 +41,46 @@ const BaseProjectionLinkSVGStatic = {
      * @return An SVG element
     */
     render(){
-        const { content, dimensions } = this.schema;
+        const { content } = this.schema;
 
-        if(isNullOrUndefined(this.element)){
+        if(isNullOrUndefined(this.element)) {
             this.element = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             this.element.classList.add("static");
 
             this.element.dataset.id = this.id;
             this.element.tabIndex = -1;
             this.element.dataset.nature = "static";
-            this.element.dataset.view = "svg-plink";
+            this.element.dataset.view = "svg-link";
             this.element.dataset.ignore = "all";
         }
 
-        if(!isNullOrUndefined(dimensions)) {
-            const { width, height } = dimensions;
-            this.element.setAttribute("width", width);
-            this.element.setAttribute("height", height);            
+        if(isNullOrUndefined(this.content) && !isEmpty(content)) {
+            this.content = [];
+            this.displayWaitings = [];
+
+            content.forEach( (element) => {
+                let render = ContentHandler.call(this, element.render);
+                let projection = this.projection.resolveElement(render);
+
+                let dimensions = DimensionHandler.analyseDim(element);
+                let position = DimensionHandler.analysePos(element);
+
+                this.displayWaitings.push({
+                        render: render,
+                        dimensions: dimensions,
+                        position: position,
+                        placeholder: isNullOrUndefined(projection) ? null : projection.projection.placeholder
+                });
+
+                this.element.append(dimensions.await ? dimensions.holder : render);
+            });
         }
 
-        const parser = new DOMParser();
+        this.bindEvents();
 
-        this.content = parser.parseFromString(content.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement;
-
-        this.element.append(this.content);
-
-        if(this.discardable){
-            this.element.dataset.discard = "absolute";
-        }
-
-        this.bindEvent();
+        this.displayed = false;
 
         return this.element;
-
     },
 
     /**
@@ -109,35 +119,70 @@ const BaseProjectionLinkSVGStatic = {
         return false;
     },
 
+    /**
+     * Updates the size of the projection
+     * @returns nothing
+     */
+    updateSize() {
+        if(this.fixed) {
+            return;
+        }
+
+        if(!this.displayed) {
+            this.display();
+            return;
+        }
+
+        SizeHandler["wrap"].call(this);
+
+        this.parent.updateSize();
+    },
+
 
     /**
      * Adapts the projection to the DOM
      * @returns nothing
      */
     display(){
-        if(!this.parent.displayed){
+        if(!this.parent.displayed) {
             return;
         }
 
-        if(this.displayed){
+        if(this.displayed) {
             return;
         }
 
         this.displayed = true;
 
-        this.element.setAttribute("width", valOrDefault(Number(this.content.getAttribute("width"))), this.content.getBBox().width);
-        this.element.setAttribute("height", valOrDefault(Number(this.content.getAttribute("height"))), this.content.getBBox().height);
+        if(!isNullOrUndefined(this.displayWaitings)){
+            this.fixed = true;
+            this.displayWaitings.forEach(element => {
+                DimensionHandler.setDimensions(element.render, element.dimensions);
+                DimensionHandler.setPosition(element.render, element.position);
+               
 
-        this.parent.updateSize();
-        
-        return;
+                let projection = this.projection.resolveElement(element.render);
+
+                if(!isNullOrUndefined(projection)){    
+                    this.content.push(projection);
+                    projection.projection.update("displayed");
+                }
+            })
+        }else{
+            this.element.dataset.contentWidth = 0;
+            this.element.dataset.contentHeight = 0;
+        }
+
+        this.fixed = false;
+
+        this.updateSize();
     },
 
     /**
      * Creates the handlers for the projection
      * @returns nothing
      */
-    bindEvent(){
+    bindEvents(){
         this.projection.registerHandler("displayed", () => {
             this.display();
         })

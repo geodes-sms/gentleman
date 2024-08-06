@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="350">
+    <rect fill="white" width="500" height="350" rx="15" ry="15"></rect>
+    <defs>
+        <style type="text/css">
+            @import url("https://fonts.googleapis.com/css?family=Pacifico:400,400i,700,700i");
+        </style>
+    </defs>
+    <text text-anchor="middle" dominant-baseline="middle" x="250" y="50" font-size="50" font-family="Pacifico">My Grade</text>
+</svg>

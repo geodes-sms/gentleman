@@ -150,11 +150,13 @@ function getBox(item, projection) {
 }
 
 function initContainerView(projection) {
-    let viewBox = projection.container.viewBox.baseVal;
-    let box = projection.container.getBBox();
+    let container = projection.container || projection.element;
 
-    const width = Number(projection.container.getAttribute("width"));
-    const height = Number(projection.container.getAttribute("height"));
+    let viewBox = container.viewBox.baseVal;
+    let box = container.getBBox();
+
+    const width = Number(container.getAttribute("width"));
+    const height = Number(container.getAttribute("height"));
 
     return { 
         x: viewBox.x,
@@ -284,10 +286,12 @@ function wrapFraming(current, offsets, progress) {
     this.containerView.w = current.w + (offsets.w * progress);
     this.containerView.h = current.h + (offsets.h * progress);
 
-    this.container.setAttribute("width", this.containerView.w);
-    this.container.setAttribute("height", this.containerView.h);
+    const container = this.container || this.element;
 
-    this.container.setAttribute("viewBox", 
+    container.setAttribute("width", this.containerView.w);
+    container.setAttribute("height", this.containerView.h);
+
+    container.setAttribute("viewBox", 
         this.containerView.x + " " +
         this.containerView.y + " " +
         this.containerView.w + " " +

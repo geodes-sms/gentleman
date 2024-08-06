@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40">
+    <defs>
+        <style type="text/css">
+            @import url("https://fonts.googleapis.com/css?family=Courgette:400,400i,700,700i");
+        </style>
+    </defs>
+    <text x="20" y="22" font-size="25" font-family="Courgette" fill="red" text-anchor="middle" dominant-baseline="middle">
+        =
+    </text>
+</svg>

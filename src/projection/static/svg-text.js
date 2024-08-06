@@ -23,7 +23,7 @@ const BaseSVGTextStatic = {
             this.textArea = document.createElementNS("http://www.w3.org/2000/svg", "text");
             this.textArea.dataset.ignore = "all";
             this.element.append(this.textArea);
-            this.textArea.setAttribute("font-size", 12);
+            this.style(this.textArea);
         }
 
         if(isNullOrUndefined(this.box)){
@@ -151,6 +151,16 @@ const BaseSVGTextStatic = {
 
         this.parent.updateSize();
     },
+
+    style(element) {
+        const { font = "Segoe UI", size = 10, color = "black", weight = false } = this.schema.style;
+
+        element.setAttribute("font-family", font);
+        element.setAttribute("font-size", size);
+        element.setAttribute("fill", color);
+        element.setAttribute("font-weight", weight);
+    },
+
 
     bindEvents(){
         this.projection.registerHandler("displayed", () => {

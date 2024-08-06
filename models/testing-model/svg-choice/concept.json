@@ -1,0 +1,59 @@
+{
+    "type": "concept",
+    "concept": [
+        {
+            "name": "Grade",
+            "nature": "concrete",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "best",
+                    "target": {
+                        "name": "letter",
+                        "default": "A"
+                    }
+                },
+                {
+                    "name": "worst",
+                    "target": {
+                        "name": "letter",
+                        "default": "C"
+                    }
+                },
+                {
+                    "name": "grade",
+                    "target": {
+                        "name": "letter"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "letter",
+            "nature": "prototype",
+            "root": false,
+            "attributes": []
+        },
+        {
+            "name": "A",
+            "nature": "concrete",
+            "prototype": "letter",
+            "root": false,
+            "attributes": []
+        },
+        {
+            "name": "B",
+            "nature": "concrete",
+            "prototype": "letter",
+            "root": false,
+            "attributes": []
+        },
+        {
+            "name": "C",
+            "nature": "concrete",
+            "prototype": "letter",
+            "root": false,
+            "attributes": []
+        }
+    ]
+}
