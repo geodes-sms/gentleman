@@ -140,7 +140,6 @@ const BaseSVGChoice = {
         container.dataset.id = this.id;
         container.dataset.type = isConcept? "concept" : "value";
         container.dataset.value = isConcept? value.id : value;
-        container.dataset.ignore = "all";
 
         this.items.set(value.id, container);
 

@@ -33,12 +33,6 @@ const isSame = (val1, val2) => {
     return val1 === val2;
 };
 
-function getItemType(item) {
-    const { type } = item.dataset;
-
-    return type;
-}
-
 function getItemValue(item) {
     const { type, value } = item.dataset;
 
@@ -135,6 +129,11 @@ const BaseSwitchField = {
         const isConcept = isObject(value);
 
         const container = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        container.tabIndex = 0;
+
+        container.dataset.nature =  "field-component";
+        container.dataset.view = "switch";
+        container.dataset.id = this.id;
         container.dataset.type = isConcept? "concept" : "value";
         container.dataset.value = isConcept? value.id : value;
 

@@ -1,0 +1,103 @@
+{
+    "type": "concept",
+    "concept": [
+        {
+            "name": "Flags",
+            "nature": "concrete",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "flag_simple",
+                    "target": {
+                        "name": "flag",
+                        "default": "France",
+                        "accept": [
+                            { "name": "France" },
+                            { "name": "Bulgaria" },
+                            { "name": "Ireland" },
+                            { "name": "Spain" }
+                        ]
+                    }
+                },
+                {
+                    "name": "flag_selector",
+                    "target": {
+                        "name": "flag",
+                        "default": "Bulgaria"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "flag",
+            "nature": "prototype",
+            "root": false,
+            "attributes": [
+
+            ]
+        },
+        {
+            "name": "France",
+            "nature": "concrete",
+            "prototype": "flag",
+            "root": false,
+            "attributes": [
+                
+            ]
+        },
+        {
+            "name": "Canada",
+            "nature": "concrete",
+            "prototype": "flag",
+            "root": false,
+            "attributes": [
+                
+            ]
+        },
+        {
+            "name": "USA",
+            "nature": "concrete",
+            "prototype": "flag",
+            "root": false,
+            "attributes": [
+                
+            ]
+        },
+        {
+            "name": "Spain",
+            "nature": "concrete",
+            "prototype": "flag",
+            "root": false,
+            "attributes": [
+                
+            ]
+        },
+        {
+            "name": "Bulgaria",
+            "nature": "concrete",
+            "prototype": "flag",
+            "root": false,
+            "attributes": [
+                
+            ]
+        }        ,
+        {
+            "name": "Brittany",
+            "nature": "concrete",
+            "prototype": "flag",
+            "root": false,
+            "attributes": [
+                
+            ]
+        },
+        {
+            "name": "Ireland",
+            "nature": "concrete",
+            "prototype": "flag",
+            "root": false,
+            "attributes": [
+                
+            ]
+        }
+    ]
+}

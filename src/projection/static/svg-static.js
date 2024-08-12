@@ -33,13 +33,7 @@ const BaseSVGStatic = {
         return this.element;
     },
 
-    display() {
-        if(this.displayed) {
-            return;
-        }
-
-        this.displayed = true;
-
+    updateSize() {
         if(!isNullOrUndefined(this.content.getAttribute("width")) && !isNullOrUndefined(this.content.getAttribute("height"))) {
             this.element.setAttribute("width", Number(this.content.getAttribute("width"))); 
             this.element.setAttribute("height", Number(this.content.getAttribute("height"))); 
@@ -48,6 +42,16 @@ const BaseSVGStatic = {
             this.element.setAttribute("width", width);
             this.element.setAttribute("height", height);            
         }
+    },
+
+    display() {
+        if(this.displayed) {
+            return;
+        }
+
+        this.displayed = true;
+
+        this.updateSize();
     },
 
     bindEvents(){
