@@ -389,6 +389,8 @@ const BaseSVGChoice = {
         this.focused = true;
         this.element.classList.add("active");
 
+        this.element.focus();
+
         let newChoices = []
         this.source.getCandidates()
             .filter(val => !this.values.some(value => isSame(value, val)))

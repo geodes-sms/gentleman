@@ -6,8 +6,7 @@ import { TableField } from './table-field.js';
 import { TextField } from './text-field.js';
 import { SvgText } from './temp_text.js';
 import { SVGChoice } from './svg-choice.js';
-import { SwitchField } from './temp_switch.js';
-import { SpanField } from './span-field.js';
+import { SwitchField } from './svg-switch.js';
 import { PlaceholderField } from './temp_placeholder.js';
 
 
@@ -101,16 +100,6 @@ const Handler = {
         schema: { value: schema },
         projection: { value: projection },
         source: { value: projection.concept },
-    }),
-    'span': (model, schema, projection) => Object.create(SpanField, {
-        object: { value: "field" },
-        name: { value: "span" },
-        type: { value: "span" },
-        id: { value: nextId() },
-        model: { value: model },
-        schema: { value: schema },
-        projection: { value: projection },
-        source: { value: projection.concept }
     })
 };
 
