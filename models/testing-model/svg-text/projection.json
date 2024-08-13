@@ -1,0 +1,170 @@
+{
+    "type": "projection",
+    "projection": [
+        {
+            "concept": { "name": "textArea" },
+            "type": "algorithm",
+            "tags": ["default"],
+            "projection": {
+                "type": "adaptative",
+                "background": {
+                    "wrap": "myContainer",
+                    "speed": 1,
+                    "padding": 25,
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1000\" height=\"750\"><defs><style type=\"text/css\">@import url(\"https://fonts.googleapis.com/css?family=Oswald:400,400i,700,700i\");</style></defs><rect data-myContainer=\"here\" width=\"1000\" height=\"750\" fill=\"white\"></rect><text x=\"500\" y=\"50\" text-anchor=\"middle\" dominant-baseline=\"middle\" font-family=\"Oswald\" font-size=\"50\">How to : text-field</text></svg>"
+                },
+                "content": [
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 30,
+                            "y": 100
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "coordinates": {
+                                            "x": 25,
+                                            "y": 162.5
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg-text",
+                                            "content": "Single Line",
+                                            "anchor": "start",
+                                            "baseline": "middle",
+                                            "style": {
+                                                "size": 20,
+                                                "font": "Oswald",
+                                                "weight": false
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "coordinates": {
+                                            "x": 160,
+                                            "y": 15
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg",
+                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"295\"><line x1=\"5\" x2=\"5\" y1=\"5\" y2=\"290\" stroke-width=\"5\" stroke=\"black\" stroke-linecap=\"round\"/></svg>"
+                                        }
+                                    },
+                                    {
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "coordinates": {
+                                            "x": 180,
+                                            "y": 162.5
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "single",
+                                            "tag": "single_line"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "dimension": {
+                            "type": "pure"
+                        },
+                        "coordinates": {
+                            "x": 30,
+                            "y": 450
+                        },
+                        "render": {
+                            "type": "algorithm",
+                            "algorithm": {
+                                "type": "wrap",
+                                "content": [
+                                    {
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "coordinates": {
+                                            "x": 25,
+                                            "y": 162.5
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg-text",
+                                            "content": "Multiple Lines",
+                                            "anchor": "start",
+                                            "baseline": "middle",
+                                            "style": {
+                                                "size": 20,
+                                                "font": "Oswald",
+                                                "weight": false
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "coordinates": {
+                                            "x": 160,
+                                            "y": 15
+                                        },
+                                        "render": {
+                                            "kind": "static",
+                                            "type": "svg",
+                                            "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"295\"><line x1=\"5\" x2=\"5\" y1=\"5\" y2=\"290\" stroke-width=\"5\" stroke=\"black\" stroke-linecap=\"round\"/></svg>"
+                                        }
+                                    },
+                                    {
+                                        "dimension": {
+                                            "type": "pure"
+                                        },
+                                        "coordinates": {
+                                            "x": 180,
+                                            "y": 162.5
+                                        },
+                                        "render": {
+                                            "type": "attribute",
+                                            "name": "multiline",
+                                            "tag": "single_line"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": [ "single_line" ],
+            "type": "field",
+            "content": {
+                "type": "svg",
+                "anchor": "start",
+                "baseline": "middle",
+                "placeholder": "Content Placeholder",
+                "multiline": false,
+                "style": {
+                    "size": 30,
+                    "font": "Segoe UI",
+                    "weight": false
+                }
+            }
+        }
+    ]
+}

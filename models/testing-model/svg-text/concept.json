@@ -1,0 +1,25 @@
+{
+    "type": "concept",
+    "concept": [
+        {
+            "name": "textArea",
+            "nature": "concrete",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "single",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "multiline",
+                    "target": {
+                        "name": "string",
+                        "default": "Lorem ipsum dolor."
+                    }
+                }
+            ]
+        }
+    ]
+}

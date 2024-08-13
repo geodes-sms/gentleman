@@ -4,7 +4,7 @@ import { ChoiceField } from './choice-field.js';
 import { ListField } from './list-field.js';
 import { TableField } from './table-field.js';
 import { TextField } from './text-field.js';
-import { SvgText } from './temp_text.js';
+import { SvgText } from './svg-text.js';
 import { SVGChoice } from './svg-choice.js';
 import { SwitchField } from './svg-switch.js';
 import { PlaceholderField } from './temp_placeholder.js';
