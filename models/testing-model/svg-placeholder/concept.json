@@ -1,0 +1,60 @@
+{
+    "type": "concept",
+    "concept": [
+        {
+            "name": "Knight",
+            "root": true,
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "piece",
+                    "target": { 
+                        "name": "position",
+                        "default": "3x2"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "position",
+            "root": false,
+            "nature": "prototype",
+            "attributes": []
+        },
+        {
+            "name": "1x1",
+            "root": false,
+            "nature": "concrete",
+            "prototype": "position",
+            "attributes": []
+        },
+        {
+            "name": "3x2",
+            "root": false,
+            "nature": "concrete",
+            "prototype": "position",
+            "attributes": []
+        },
+        {
+            "name": "1x3",
+            "root": false,
+            "nature": "concrete",
+            "prototype": "position",
+            "attributes": []
+        },
+        {
+            "name": "5x1",
+            "root": false,
+            "nature": "concrete",
+            "prototype": "position",
+            "attributes": []
+        },
+        {
+            "name": "5x3",
+            "root": false,
+            "nature": "concrete",
+            "prototype": "position",
+            "attributes": []
+        }
+    ]
+}

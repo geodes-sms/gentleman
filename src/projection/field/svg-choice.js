@@ -115,7 +115,7 @@ const BaseSVGChoice = {
         if(this.source.hasValue()){
             if(this.source.schema.nature === "prototype"){
                 this.setValue(this.source.getValue(true));
-            }else{
+            } else {
                 this.setValue(this.source.getValue());
             }
         }

@@ -82,13 +82,23 @@ const BasePlaceholderField = {
             this.element.dataset.nature = "field";
             this.element.dataset.view = "svg-placeholder";
             this.element.dataset.id = this.id;
-            this.element.dataset.ignore = "all";
+        }
+
+        if(isNullOrUndefined(this.choices)) {
+            this.choices = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            this.choices.tabIndex = -1;
+            
+            this.choices.dataset.nature = "field-component";
+            this.choices.dataset.view = "svg-placeholder";
+            this.choices.dataset.id = this.id;
+
+            this.element.append(this.choices);
         }
 
         this.values = this.source.getCandidates();
 
         this.values.forEach( (value) => {
-            this.element.append(this.createChoiceOption(value));
+            this.choices.append(this.createChoiceOption(value));
         })
 
         this.bindEvents();
@@ -102,6 +112,11 @@ const BasePlaceholderField = {
         const isConcept = isObject(value);
 
         const container = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        container.tabIndex = 0;
+
+        container.dataset.nature =  "field-component";
+        container.dataset.view = "choice";
+        container.dataset.id = this.id;
         container.dataset.type = isConcept? "concept" : "value";
         container.dataset.value = isConcept? value.id : value;
 
@@ -136,13 +151,36 @@ const BasePlaceholderField = {
     },
 
     focusIn(){
-        console.warn(`FOCUSIN_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
-        return;
+        this.focused = true;
+        this.element.classList.add("active");
+
+        this.element.focus();
+
+        let newChoices = []
+        this.source.getCandidates()
+            .filter(val => !this.values.some(value => isSame(value, val)))
+            .forEach(value => {
+                let choiceOption = this.createChoiceOption(value);
+                this.choices.append(choiceOption);
+
+                newChoices.push(this.projection.resolveElement(choiceOption.childNodes[0]));
+                this.values.push(value);
+            })
+
+        newChoices.forEach((choice) => {
+            choice.projection.update("displayed");
+        });
+
+        this.updateSize();
+        return this;
     },
 
     focusOut(){
-        console.warn(`FOCUSOUT_HANDLER NOT IMPLEMENTED FOR ${this.name}`);
-        return;
+        this.focused = false;
+        this.element.classList.remove("focused");
+
+        this.updateSize();
+        return this;
     },
 
     focus() {
