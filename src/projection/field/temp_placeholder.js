@@ -13,7 +13,7 @@ function hasDimensions(item) {
 }
 
 function getItem(element) {
-    const isValid = (el) => el.parentElement === this.element;
+    const isValid = (el) => el.parentElement === this.choices;
 
     if (isValid(element)) {
         return element;
@@ -224,7 +224,7 @@ const BasePlaceholderField = {
 
         this.fixed = true;
 
-        let item = this.element.childNodes[0].childNodes[0];
+        let item = this.choices.childNodes[0].childNodes[0];
         let itemProjection = this.projection.resolveElement(item);
 
         let minX, minY, maxX, maxY;
@@ -251,7 +251,7 @@ const BasePlaceholderField = {
             maxY = box.y + box.height;
         }
 
-        this.element.childNodes.forEach((node) => {
+        this.choices.childNodes.forEach((node) => {
             item = node.childNodes[0];
             itemProjection = this.projection.resolveElement(item);
 
