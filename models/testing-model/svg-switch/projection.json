@@ -11,7 +11,7 @@
                     "wrap": "myContainer",
                     "speed": 1,
                     "padding": 25,
-                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"500\" height=\"350\"><rect data-myContainer=\"here\" fill=\"white\" width=\"500\" height=\"350\" rx=\"15\" ry=\"15\"></rect></svg>"
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"500\" height=\"590\"><rect data-myContainer=\"here\" fill=\"white\" width=\"500\" height=\"350\" rx=\"15\" ry=\"15\"></rect><defs><style type=\"text/css\">@import url(\"https://fonts.googleapis.com/css?family=Lilita One:400,400i,700,700i\");</style></defs></svg>"
                 },
                 "content": [
                     {
@@ -20,17 +20,17 @@
                         },
                         "coordinates": {
                             "x": 250,
-                            "y": 70
+                            "y": 50
                         },
                         "render": {
                             "kind": "static",
                             "type": "svg-text",
-                            "content": "Choose a team",
+                            "content": "Switch-field",
                             "anchor": "middle",
                             "baseline": "middle",
                             "style": {
-                                "font": "Segoe UI",
-                                "size": 30,
+                                "font": "Lilita One",
+                                "size": 50,
                                 "weight": false,
                                 "color": "black"
                             }
@@ -42,7 +42,7 @@
                         },
                         "coordinates": {
                             "x": 175,
-                            "y": 175
+                            "y": 282.5
                         },
                         "render": {
                             "type": "attribute",
