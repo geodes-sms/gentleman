@@ -7,7 +7,7 @@ import { TextField } from './text-field.js';
 import { SvgText } from './svg-text.js';
 import { SVGChoice } from './svg-choice.js';
 import { SwitchField } from './svg-switch.js';
-import { PlaceholderField } from './temp_placeholder.js';
+import { PlaceholderField } from './svg-placeholder.js';
 
 
 const Handler = {
