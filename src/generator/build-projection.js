@@ -276,7 +276,7 @@ function buildElement(element) {
 }
 
 
-export function buildContainer(container) {
+function buildContainer(container) {
     const schema = {
         type: "container"
     };
