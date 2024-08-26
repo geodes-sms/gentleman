@@ -1,9 +1,7 @@
 {
     "name": "Gentleman graphical",
     "concepts":[
-        {
-            "name": "graphical-projection"
-        }
+        { "name": "projection" }
     ],
     "toolbar": [
         {
