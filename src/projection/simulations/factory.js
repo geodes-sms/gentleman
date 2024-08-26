@@ -1,6 +1,5 @@
 import { isNullOrUndefined } from "zenkai";
 
-import { Simulation } from "./simulation";
 import { ForceSimulation } from "./force-simulation";
 import { TextSimulation } from "./text-simulation";
 import { SelectionSimulation } from "./selection-simulation";
@@ -9,6 +8,9 @@ import { PatternSimulation } from "./pattern-simulation";
 import { SetSimulation } from "./set-simulation";
 import { TreeSimulation } from "./tree-simulation";
 import { ChoiceSimulation } from "./choice-simulation";
+import { TextAnchorSimulation } from "./text-anchor-simulation";
+import { TextBaselineSimulation } from "./text-baseline-simulation";
+import { TextStyleSimulation } from "./text-style-simulation";
 
 var inc = 0;
 const nextId = () => `algo${inc++}`;
@@ -18,16 +20,6 @@ const Handler = {
         object: { value: "simulation" },
         name: { value: "force-simulation" },
         type: { value: "force" },
-        id: { value: nextId() },
-        model: { value: model },
-        schema: { value: schema },
-        projection: { value: projection },
-        source: { value: projection.concept, writable: true },
-    }),
-    'arrow': (model, schema, projection) => Object.create(ArrowSimulation, {
-        object: { value: "simulation" },
-        name: { value: "arrow-simulation" },
-        type: { value: "arrow" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
@@ -54,16 +46,6 @@ const Handler = {
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
     }),
-    'marker': (model, schema, projection) => Object.create(MarkerSimulation, {
-        object: { value: "simulation" },
-        name: { value: "marker-simulation" },
-        type: { value: "marker" },
-        id: { value: nextId() },
-        model: { value: model },
-        schema: { value: schema },
-        projection: { value: projection },
-        source: { value: projection.concept, writable: true },
-    }),
     'content': (model, schema, projection) => Object.create(ContentSimulation, {
         object: { value: "simulation" },
         name: { value: "content-simulation" },
@@ -83,36 +65,6 @@ const Handler = {
         schema: { value: schema },
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
-    }),
-    'multi': (model, schema, projection) => Object.create(MultiSimulation, {
-        object: { value: "simulation" },
-        name: { value: "multi-simulation" },
-        type: { value: "multi" },
-        id: { value: nextId() },
-        model: { value: model },
-        schema: { value: schema },
-        projection: { value: projection },
-        source: { value: projection.concept, writable: true },
-    }),
-    'sub-path': (model, schema, projection) => Object.create(SubPathSimulation, {
-        object: { value: "simulation" },
-        name: { value: "subPath-simulation" },
-        type: { value: "subPath" },
-        id: { value: nextId() },
-        model: { value: model },
-        schema: { value: schema },
-        projection: { value: projection },
-        source: { value: projection.concept, writable: true },
-    }),
-    'anchor': (model, schema, projection) => Object.create(AnchorSimulation, {
-    object: { value: "simulation" },
-    name: { value: "anchor-simulation" },
-    type: { value: "anchor" },
-    id: { value: nextId() },
-    model: { value: model },
-    schema: { value: schema },
-    projection: { value: projection },
-    source: { value: projection.concept, writable: true },
     }),
     'set': (model, schema, projection) => Object.create(SetSimulation, {
         object: { value: "simulation" },
@@ -144,6 +96,36 @@ const Handler = {
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
     }),
+    'text-anchor': (model, schema, projection) => Object.create(TextAnchorSimulation, {
+        object: { value: "simulation" },
+        name: { value: "choice-simulation" },
+        type: { value: "choice" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    }),
+    'text-baseline': (model, schema, projection) => Object.create(TextBaselineSimulation, {
+        object: { value: "simulation" },
+        name: { value: "choice-simulation" },
+        type: { value: "choice" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    }),
+    'text-style': (model, schema, projection) => Object.create(TextStyleSimulation, {
+        object: { value: "simulation" },
+        name: { value: "choice-simulation" },
+        type: { value: "choice" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    })
 };
 
 export const SimulationFactory = {
