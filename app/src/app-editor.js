@@ -464,6 +464,8 @@ const PMODEL__HANDLER = {
         });
 
         window.addInstance(instance);
+
+        concept.notify("displayed");
     },
     "open-state": function (args) {
         let concept = args[0];
@@ -535,6 +537,8 @@ const GMODEL__HANDLER = {
         });
 
         window.addInstance(instance);
+        
+        concept.notify("displayed");
     },
     "open-sibling": function (args) {
         let concept = args[0];
