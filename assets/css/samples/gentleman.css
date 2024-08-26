@@ -890,7 +890,19 @@
             border: 1px solid #555;
         }
 
-
+    .textfield--labeled__input--shape {
+        font-weight: 600;
+        font-size: 1.2em;
+        border-radius: 56px;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 2px;    
+        border: solid #c1b8b8 1px;
+    }
+        .textfield--labeled__input--shape:active,
+        .textfield--labeled__input--shape:focus {
+            box-shadow: 0 2px 1px -1px royalblue;
+        }
 
 .input-config > .projection__btn-delete {
     position: absolute;

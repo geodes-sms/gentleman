@@ -736,6 +736,16 @@
         color: #fff;
     }
 
+    .mp-toggle-field--selected .mp-toggle-field__label {
+        width: 50px;
+        background-color: #1f75fe; 
+        color: #fff;
+    }
+
+    .mp-toggle-field--selector .mp-toggle-field__label {
+        width: 55px;
+    }
+
 
 /*
   Tag reference
@@ -998,7 +1008,7 @@
 }
 
 .container-config-header {
-    padding: 2px 1% 3px;
+    padding: 2px 3px;
     align-items: center;
 }
 
@@ -1175,6 +1185,10 @@
     box-shadow: 0 1px 2px -1px #d5d5d5;
     background-color: #eee;
     border-radius: 2px;
+}
+
+.mp-fieldwrap__textfield-input--layout {
+    font-weight: 500;
 }
 
 /*

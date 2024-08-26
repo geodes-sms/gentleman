@@ -90,7 +90,26 @@
                 justify-content: center;
                 min-width: 24px;
             }
-    
+    .url-config {
+        border-bottom: 2px solid #696969;
+    }
+        .url-config .field--textbox__input {
+            min-width: 24px;
+            padding-left: 2px;
+        }
+
+            .url-config .field--textbox:first-child .field--textbox__input {
+                border-bottom-right-radius: 0; border-top-right-radius: 0;
+            }
+
+            .url-config .field--textbox:last-child .field--textbox__input {
+                border-bottom-left-radius: 0; border-top-left-radius: 0;
+                text-transform: lowercase;
+                background-color: transparent;
+                justify-content: center;
+                min-width: 24px;
+            }
+
     .border-value-config > .structure__btn-delete {
         align-self: flex-end;
         margin: 0;
