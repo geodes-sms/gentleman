@@ -57,10 +57,6 @@ const BaseTextAnchorSimulation = {
             const parser = new DOMParser();
 
             this.visualCue = parser.parseFromString(Cue.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement;
-            
-            /*this.visualCue.dataset.nature = "simulation-component";
-            this.visualCue.dataset.view = "text-anchor";
-            this.visualCue.dataset.id = this.id;*/
 
             this.container.append(this.visualCue);
         }

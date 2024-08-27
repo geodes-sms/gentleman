@@ -7,10 +7,10 @@ import { ContentSimulation } from "./content-simulation";
 import { PatternSimulation } from "./pattern-simulation";
 import { SetSimulation } from "./set-simulation";
 import { TreeSimulation } from "./tree-simulation";
-import { ChoiceSimulation } from "./choice-simulation";
 import { TextAnchorSimulation } from "./text-anchor-simulation";
 import { TextBaselineSimulation } from "./text-baseline-simulation";
 import { TextStyleSimulation } from "./text-style-simulation";
+import { ChoiceDisplaySimulation } from "./choices-display-simulation";
 
 var inc = 0;
 const nextId = () => `algo${inc++}`;
@@ -86,20 +86,10 @@ const Handler = {
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
     }),
-    'choice': (model, schema, projection) => Object.create(ChoiceSimulation, {
-        object: { value: "simulation" },
-        name: { value: "choice-simulation" },
-        type: { value: "choice" },
-        id: { value: nextId() },
-        model: { value: model },
-        schema: { value: schema },
-        projection: { value: projection },
-        source: { value: projection.concept, writable: true },
-    }),
     'text-anchor': (model, schema, projection) => Object.create(TextAnchorSimulation, {
         object: { value: "simulation" },
-        name: { value: "choice-simulation" },
-        type: { value: "choice" },
+        name: { value: "text-anchor-simulation" },
+        type: { value: "text-anchor" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
@@ -108,8 +98,8 @@ const Handler = {
     }),
     'text-baseline': (model, schema, projection) => Object.create(TextBaselineSimulation, {
         object: { value: "simulation" },
-        name: { value: "choice-simulation" },
-        type: { value: "choice" },
+        name: { value: "text-baseline-simulation" },
+        type: { value: "text-baseline" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
@@ -118,8 +108,18 @@ const Handler = {
     }),
     'text-style': (model, schema, projection) => Object.create(TextStyleSimulation, {
         object: { value: "simulation" },
-        name: { value: "choice-simulation" },
-        type: { value: "choice" },
+        name: { value: "text-style-simulation" },
+        type: { value: "text-style" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    }),
+    'choices-display': (model, schema, projection) => Object.create(ChoiceDisplaySimulation, {
+        object: { value: "simulation" },
+        name: { value: "choice-display-simulation" },
+        type: { value: "choice-display" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
