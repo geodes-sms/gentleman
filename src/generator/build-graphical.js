@@ -5,10 +5,14 @@ import { createProjectionLink } from "./utils";
 
 const PROP_HANDLER = "handler";
 
+const ATTR_TAG = "tag";
 const ATTR_TAGS = "tags";
 const ATTR_CONCEPT = "concept";
 const ATTR_NAME = "name";
 const ATTR_PROTOTYPE = "prototype";
+
+const PROP_READONLY = "readonly";
+const PROP_DISABLED = "disabled";
 
 
 const getAttr = (concept, name) => concept.getAttributeByName(name).target;
@@ -214,7 +218,8 @@ function buildElement(element) {
 
 
 const FieldHandler = {
-    "text": buildTextField
+    "text": buildTextField,
+    "choice": buildChoiceField,
 }
 
 function buildField(field) {
@@ -222,11 +227,16 @@ function buildField(field) {
 
     const handler = FieldHandler[elementType];
 
+    const schema = {}
+
+    schema[PROP_READONLY] = getValue(field, PROP_READONLY);
+    schema[PROP_DISABLED] = getValue(field, PROP_DISABLED);
+
     if(!isFunction(handler)) {
         return;
     }
 
-    const schema = handler.call(this, field);
+    Object.assign(schema, handler.call(this, field));
 
     return {
         type: "field",
@@ -247,6 +257,34 @@ function buildTextField(field) {
     }
 
     schema.style = buildTextStyle.call(this, getAttr(field, "style"));
+
+    return schema;
+}
+
+function buildChoiceField(field) {
+    const schema = {
+        type: "svg-choice"
+    }
+
+    schema.direction = getValue(field, "orientation");
+
+    const choice = {};
+    const option = {};
+
+    option.padding = getValue(field, "padding");
+
+    const template = {};
+    
+    template.tag = getValue(field, ATTR_TAG);
+    option.template = template;
+    choice.option = option;
+
+    if(hasValue(field, "viewswitch")) {
+        choice.redirect = {};
+        choice.redirect.tag = getValue(field, "viewswitch");
+    }
+
+    schema.choice = choice;
 
     return schema;
 }
