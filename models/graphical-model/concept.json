@@ -385,6 +385,55 @@
             ]
         },
         {
+            "name": "choice-field",
+            "nature": "concrete",
+            "prototype": "field",
+            "attributes": [
+                {
+                    "name": "tag",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "tag"
+                        }
+                    }
+                },
+                {
+                    "name": "orientation",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": [
+                                "horizontal",
+                                "vertical"
+                            ]
+                        },
+                        "default": "horizontal"
+                    }
+                },
+                {
+                    "name": "padding",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "viewswitch",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "tag"
+                        }
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "field" },
+                { "name": "elementType", "type": "string", "value": "choice" }
+            ]
+        },
+        {
             "name": "text-placement",
             "nature": "prototype",
             "attributes": []
