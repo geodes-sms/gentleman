@@ -119,13 +119,6 @@
                         "name": "boolean",
                         "default": false
                     }
-                },
-                {
-                    "name": "sibling",
-                    "target": {
-                        "name": "sibling"
-                    },
-                    "required": false
                 }
             ]
         },
@@ -165,7 +158,11 @@
                         "accept": {
                             "name": "render",
                             "accept": [
-                                { "name": "text-field" }
+                                { "name": "text-field" },
+                                { "name": "choice-field" },
+                                { "name": "placeholder-field" },
+                                { "name": "switch-field" },
+                                { "name": "text-static" }
                             ]
                         }
                     }
@@ -241,7 +238,7 @@
                     "target": {
                         "name": "background",
                         "default": {
-                            "name": "imported-background"
+                            "name": "imported-content"
                         }
                     }
                 }
@@ -255,7 +252,7 @@
             ]
         },
         {
-            "name": "imported-background",
+            "name": "imported-content",
             "nature": "concrete",
             "prototype": "background",
             "attributes": [
@@ -268,7 +265,7 @@
             ]
         },
         {
-            "name": "shaped-background",
+            "name": "shaped-content",
             "nature": "concrete",
             "prototype": "background",
             "attributes": [
@@ -431,6 +428,175 @@
             "properties": [
                 { "name": "contentType", "type": "string", "value": "field" },
                 { "name": "elementType", "type": "string", "value": "choice" }
+            ]
+        },
+        {
+            "name": "placeholder-field",
+            "prototype": "field",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "tag",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "tag"
+                        }
+                    }
+                },
+                {
+                    "name": "viewswitch",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "tag"
+                        }
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "field" },
+                { "name": "elementType", "type": "string", "value": "placeholder" }
+            ]
+        },
+        {
+            "name": "switch-field",
+            "prototype": "field",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "tag",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "tag"
+                        }
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "field" },
+                { "name": "elementType", "type": "string", "value": "switch" }
+            ]
+        },
+        {
+            "name": "static",
+            "prototype": "element",
+            "nature": "prototype",
+            "attributes": [
+
+            ]
+        },
+        {
+            "name": "text-static",
+            "prototype": "static",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "anchor",
+                    "target": {
+                        "name": "text-placement",
+                        "accept": [
+                            { "name": "start" },
+                            { "name": "middle" },
+                            { "name": "end" }
+                        ],
+                        "default": { "name": "start" }
+                    }
+                },
+                {
+                    "name": "baseline",
+                    "target": {
+                        "name": "text-placement",
+                        "accept": [
+                            { "name": "auto" },
+                            { "name": "middle" },
+                            { "name": "hanging" }
+                        ],
+                        "default": { "name": "auto" }
+                    }
+                },
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "string"
+                    }
+                },
+                {
+                    "name": "style",
+                    "target": {
+                        "name": "text-style"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "static" },
+                { "name": "elementType", "type": "string", "value": "text" }
+            ]
+        },
+        {
+            "name": "image-static",
+            "nature": "concrete",
+            "prototype": "static",
+            "attributes": [
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "background",
+                        "default": "imported-content"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "static" },
+                { "name": "elementType", "type": "string", "value": "image" }
+            ]
+        },
+        {
+            "name": "plink-static",
+            "nature": "concrete",
+            "prototype": "static",
+            "attributes": [
+                {
+                    "name": "tag",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "tag"
+                        }
+                    }
+                },
+                {
+                    "name": "elements",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "render"
+                        }
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "static" },
+                { "name": "elementType", "type": "string", "value": "plink" }
+            ]
+        },
+        {
+            "name": "add-static",
+            "nature": "concrete",
+            "prototype": "static",
+            "attributes": [
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "background",
+                        "default": "imported-content"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "static" },
+                { "name": "elementType", "type": "string", "value": "add" }
             ]
         },
         {
