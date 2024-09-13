@@ -1,3 +1,4 @@
+const path = require('path');
 const webpack = require('webpack');
 const { merge } = require('webpack-merge');
 const common = require('./webpack.common.js');
@@ -10,9 +11,11 @@ module.exports = merge(common, {
         app: './app/index.dev.js'
     },
     devServer: {
-        contentBase: './app',
-        hot: true,
+        static: {
+            directory: path.join(__dirname, './../app')
+        },
         open: true,
+        port: 9000,
     },
     module: {
         rules: [

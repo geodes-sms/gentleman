@@ -191,8 +191,9 @@ const ProjectionAside = {
         hide(this.container);
     },
     addModel(schema) {
-        this.model = schema;
+        this.model = JSON.parse(schema);
 
+        console.log(this.model);
         this.model.concept.forEach(c => {
             let concept = this.createConcept(c).init(c);
             this.concepts.push(concept);

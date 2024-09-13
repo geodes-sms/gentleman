@@ -25,7 +25,7 @@ const Model = {
     TL: "trafficlight",
 };
 
-const modelName = Model.MC;
+const modelName = Model.MP;
 
 const MODEL__EDITOR = require(`@models/${modelName}-model/config.json`);
 const MODEL__CONCEPT = require(`@models/${modelName}-model/concept.json`);
