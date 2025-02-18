@@ -446,18 +446,10 @@ const ProjectionAside = {
 
         this.editor.actions.set("create-instance", (element) => {
             const { concept: cname } = element.dataset;
-
-            let concept = this.editor.createConcept(cname); console.log(this.selectedConcept.tag);
-            let projection = this.editor.createProjection(concept, this.selectedConcept.tag);
-            let instance = this.editor.createInstance(concept, projection);
-
-            if (cname === "projection" || cname === "general" || cname === "graphical") {
-                let _concept = instance.concept.getAttribute("concept").getTarget();
-                let _name = _concept.getAttribute("name").getTarget();
-                _name.setValue(this.selectedConcept.getName());
-            }
-
-            this.selectedConcept.addInstance(instance);
+            
+            let concept = this.editor.createConcept(cname);
+            let projection = this.editor.createProjection(concept);
+            this.editor.createInstance(concept, projection);
         });
 
         this.editor.actions.set("extract-instance", (element) => {

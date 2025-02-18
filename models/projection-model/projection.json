@@ -613,14 +613,6 @@
                                     "type": "template",
                                     "name": "mp-button",
                                     "param": [
-                                        { "name": "type", "value": "svg-container" },
-                                        { "name": "name", "value": "Svg" }
-                                    ] 
-                                },
-                                {
-                                    "type": "template",
-                                    "name": "mp-button",
-                                    "param": [
                                         { "name": "type", "value": "text-static" },
                                         { "name": "name", "value": "Text" }
                                     ]
