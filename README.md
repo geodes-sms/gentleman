@@ -138,12 +138,16 @@ $ npm run build
   
 # Publication 📃
 
-1. L-E Lafontant, E. Syriani. *Gentleman: a light-weight web-based projectional editor generator*  
-   [Paper](https://dl.acm.org/doi/pdf/10.1145/3417990.3421998)  
+1. L.E. Lafontant, E. Syriani. *Gentleman: a light-weight web-based projectional editor generator* (2020)  
+   [Paper](https://dl.acm.org/doi/pdf/10.1145/3417990.3421998) |
    [Demonstration](https://youtu.be/wJ4hVZjmrv4)
 
-2. Aurélien Ducoin, E.Syriani. *Graphical Projectional Editing in Gentleman*  
+2. A. Ducoin, E.Syriani. *Graphical Projectional Editing in Gentleman* (2022)  
+   [Paper](https://doi.org/10.1145/3550356.3559092) | 
    [Demonstration](https://www.youtube.com/watch?v=wd00pRAHxsU&ab_channel=GEODESGentleman)
+
+3. L.E. Lafontant, E.Syriani. *Modeling with Gentleman: a web-based projectional editor* (2024)  
+   [Paper](https://doi.org/10.1007/s10270-024-01219-4)
 
 # Distribution 📂
 
