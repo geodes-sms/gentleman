@@ -203,10 +203,13 @@ function buildAdaptiveLayout(layout) {
 
 const ElementHandler = {
     "field": buildField,
+    "static": buildStatic
 }
 
 function buildElement(element) {
     const contentType = element.getProperty("contentType");
+
+    console.log("ContentType: ", contentType);
 
     const handler = ElementHandler[contentType];
 
@@ -334,6 +337,76 @@ function buildSwitchField(field) {
     return schema;
 }
 
+const StaticHandler = {
+    "text": buildTextStatic,
+    "image": buildImageStatic,
+    "plink": buildPlinkStatic
+}
+
+
+function buildStatic(elem) {
+    const elementType = elem.getProperty("elementType");
+
+    const handler = StaticHandler[elementType];
+
+    const schema = {
+        "kind": "static"
+    }
+
+    schema[PROP_FOCUSABLE] = getValue(elem, PROP_FOCUSABLE);
+
+    if(!isFunction(handler)) {
+        return;
+    }
+
+    Object.assign(schema, handler.call(this, elem));
+
+    return schema;
+}
+
+function buildTextStatic(elem) {
+    const schema = {
+        type: "svg-text"
+    }
+
+    schema.anchor = getValue(elem, "anchor");
+    schema.baseline = getValue(elem, "baseline");
+    schema.content = getValue(elem, "content");
+
+    schema.style = buildTextStyle.call(this, getAttr(elem, "style"));
+
+    return schema;
+}
+
+function buildImageStatic(elem) {
+    const schema = {
+        type: "svg"
+    }
+
+    schema.content = buildImageContent.call(this, getValue(elem, "content", true))
+
+    return schema;
+}
+
+function buildPlinkStatic(elem){
+    const schema = {
+        type: "svg-link"
+    }
+
+    schema.tag = getValue(elem, ATTR_TAG);
+
+    const content = [];
+
+    getValue(elem, "elements").filter( (proto) => proto.hasValue()).forEach( (proto) => {
+        const element = proto.getValue(true);
+        content.push(buildElement.call(this, element));
+    })
+
+    schema.content = content;
+
+    return schema;
+}
+
 function buildTextStyle(style) {
     const schema = {};
 
@@ -374,6 +447,15 @@ function buildTextFont(font) {
     }
     
     return schema;
+}
+
+function buildImageContent(content) {
+    switch(content.name) {
+        case "shaped-content":
+            return "";
+        case "imported-content":
+            return getValue(content, "content");
+    }
 }
 
 function buildConcept(concept) {
