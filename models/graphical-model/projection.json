@@ -1587,7 +1587,11 @@
                         "type": "attribute",
                         "name": "baseline",
                         "tag": "baseline-placement"
-                    }             
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "coordinates"
+                    }                      
                 ],
                 "style": {
                     "css": ["mp-static", "mp-static--text"]
@@ -1759,33 +1763,53 @@
                         }
                     },
                     {
-                        "type": "attribute",
-                        "name": "padding",
-                        "tag": "textual--labelled"
-                    },              
-                    {
                         "type": "layout",
                         "layout": {
-                            "type": "flex",
+                            "type": "stack",
                             "orientation": "horizontal",
                             "disposition": [
                                 {
-                                    "kind": "static",
-                                    "type": "text",
-                                    "content": "Orientation",
-                                    "style": {
-                                        "css": ["label", "mp-fieldwrap__label"]
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            {
+                                                "type": "attribute",
+                                                "name": "padding",
+                                                "tag": "textual--labelled"
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["text-style"]
+                                        }
                                     }
-                                },
+                                },           
                                 {
-                                    "type": "attribute",
-                                    "name": "orientation",
-                                    "tag": "choice"
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "horizontal",
+                                        "disposition": [
+                                            {
+                                                "kind": "static",
+                                                "type": "text",
+                                                "content": "Orientation",
+                                                "style": {
+                                                    "css": ["label", "mp-fieldwrap__label"]
+                                                }
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "orientation",
+                                                "tag": "choice"
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["text-style"]
+                                        }
+                                    }
                                 }
-                            ],
-                            "style": {
-                                "css": ["text-style-rule"]
-                            }
+                            ]
                         }
                     },
                     {
@@ -1817,10 +1841,14 @@
                                 }
                             ],
                             "style": {
-                                "css": ["text-style-rule"]
+                                "css": ["text-style-rule", "text-style"]
                             }
                         }
-                    }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "coordinates"
+                    }         
                 ],
                 "style": {
                     "css": ["mp-static", "mp-static--text"]
@@ -1924,9 +1952,13 @@
                                 }
                             ],
                             "style": {
-                                "css": ["text-style-rule"]
+                                "css": ["text-style-rule", "text-style"]
                             }
                         }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "coordinates"
                     }
                 ],
                 "style": {
@@ -1996,6 +2028,10 @@
                                 "css": ["text-style"]
                             }
                         }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "coordinates"
                     }
                 ],
                 "style": {
@@ -2105,6 +2141,10 @@
                         "type": "attribute",
                         "name": "baseline",
                         "tag": "baseline-placement"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "coordinates"
                     }             
                 ],
                 "style": {
@@ -2243,6 +2283,10 @@
                     {
                         "type": "attribute",
                         "name": "content"
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "coordinates"
                     }
                 ],
                 "style": {
@@ -2339,6 +2383,10 @@
                                 "css": ["text-style"]
                             }
                         }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "coordinates"
                     }
                 ],
                 "style": {
@@ -3610,7 +3658,67 @@
                     "css": ["size-config"]
                 }
             }
-        }        
+        },
+        {
+            "concept": { "name": "coordinates" },
+            "tags": [],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "Coordinates",
+                        "style": {
+                            "css": ["mp-style__title"]
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            {
+                                                "type": "attribute",
+                                                "name": "x",
+                                                "tag": "textual--labelled"
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["text-style"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            {
+                                                "type": "attribute",
+                                                "name": "y",
+                                                "tag": "textual--labelled"
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["text-style"]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }    
     ],
     "template": [
         {

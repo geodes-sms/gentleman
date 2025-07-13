@@ -119,6 +119,12 @@
                         "name": "boolean",
                         "default": false
                     }
+                },
+                {
+                    "name": "coordinates",
+                    "target": {
+                        "name": "coordinates"
+                    }
                 }
             ]
         },
@@ -830,6 +836,26 @@
                     "name": "family",
                     "target": {
                         "name": "string"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "coordinates",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "x",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "y",
+                    "target": {
+                        "name": "number",
+                        "default": 0
                     }
                 }
             ]

@@ -10,6 +10,9 @@ const ATTR_TAGS = "tags";
 const ATTR_CONCEPT = "concept";
 const ATTR_NAME = "name";
 const ATTR_PROTOTYPE = "prototype";
+const ATTR_COORD = "coordinates";
+const ATTR_X = "x";
+const ATTR_Y = "y";
 
 const PROP_READONLY = "readonly";
 const PROP_DISABLED = "disabled";
@@ -209,7 +212,11 @@ const ElementHandler = {
 function buildElement(element) {
     const contentType = element.getProperty("contentType");
 
-    console.log("ContentType: ", contentType);
+    const schema = {
+        dimension: { type: "pure" }
+    };
+
+    schema.coordinates = buildCoordinates.call(this, getAttr(element, ATTR_COORD));
 
     const handler = ElementHandler[contentType];
 
@@ -217,9 +224,19 @@ function buildElement(element) {
         return null;
     }
 
-    return handler.call(this, element)
+    schema.render = handler.call(this, element);
+
+    return schema;
 }
 
+function buildCoordinates(coords) {
+    const schema = {};
+
+    schema.x = getValue(coords, ATTR_X);
+    schema.y = getValue(coords, ATTR_Y);
+
+    return schema;
+}
 
 const FieldHandler = {
     "text": buildTextField,
