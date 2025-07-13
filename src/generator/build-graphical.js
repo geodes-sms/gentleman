@@ -13,6 +13,7 @@ const ATTR_PROTOTYPE = "prototype";
 
 const PROP_READONLY = "readonly";
 const PROP_DISABLED = "disabled";
+const PROP_FOCUSABLE = "focusable";
 
 
 const getAttr = (concept, name) => concept.getAttributeByName(name).target;
@@ -220,6 +221,8 @@ function buildElement(element) {
 const FieldHandler = {
     "text": buildTextField,
     "choice": buildChoiceField,
+    "placeholder": buildPlaceholderField,
+    "switch": buildSwitchField
 }
 
 function buildField(field) {
@@ -231,6 +234,7 @@ function buildField(field) {
 
     schema[PROP_READONLY] = getValue(field, PROP_READONLY);
     schema[PROP_DISABLED] = getValue(field, PROP_DISABLED);
+    schema[PROP_FOCUSABLE] = getValue(field, PROP_FOCUSABLE);
 
     if(!isFunction(handler)) {
         return;
@@ -283,6 +287,47 @@ function buildChoiceField(field) {
         choice.redirect = {};
         choice.redirect.tag = getValue(field, "viewswitch");
     }
+
+    schema.choice = choice;
+
+    return schema;
+}
+
+function buildPlaceholderField(field) {
+    const schema = {
+        type: "svg-placeholder"
+    }
+
+    const choice = {};
+    const option = {};
+    const template = {};
+    
+    template.tag = getValue(field, ATTR_TAG);
+    option.template = template;
+    choice.option = option;
+
+    if(hasValue(field, "viewswitch")) {
+        choice.redirect = {};
+        choice.redirect.tag = getValue(field, "viewswitch");
+    }
+
+    schema.choice = choice;
+
+    return schema;
+}
+
+function buildSwitchField(field) {
+    const schema = {
+        type: "svg-switch"
+    }
+
+    const choice = {};
+    const option = {};
+    const template = {};
+    
+    template.tag = getValue(field, ATTR_TAG);
+    option.template = template;
+    choice.option = option;
 
     schema.choice = choice;
 
