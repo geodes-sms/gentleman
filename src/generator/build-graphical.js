@@ -7,12 +7,18 @@ const PROP_HANDLER = "handler";
 
 const ATTR_TAG = "tag";
 const ATTR_TAGS = "tags";
+
 const ATTR_CONCEPT = "concept";
 const ATTR_NAME = "name";
 const ATTR_PROTOTYPE = "prototype";
+
 const ATTR_COORD = "coordinates";
 const ATTR_X = "x";
 const ATTR_Y = "y";
+
+const ATTR_CONTENT = "content";
+const ATTR_VALUE = "value";
+const ATTR_SRC = "src";
 
 const PROP_READONLY = "readonly";
 const PROP_DISABLED = "disabled";
@@ -206,7 +212,8 @@ function buildAdaptiveLayout(layout) {
 
 const ElementHandler = {
     "field": buildField,
-    "static": buildStatic
+    "static": buildStatic,
+    "dynamic": buildDynamic
 }
 
 function buildElement(element) {
@@ -357,7 +364,10 @@ function buildSwitchField(field) {
 const StaticHandler = {
     "text": buildTextStatic,
     "image": buildImageStatic,
-    "plink": buildPlinkStatic
+    "plink": buildPlinkStatic,
+    "create": buildCreateStatic,
+    "create-select": buildCreateSelectStatic,
+    "remove": buildRemoveStatic
 }
 
 
@@ -420,6 +430,82 @@ function buildPlinkStatic(elem){
     })
 
     schema.content = content;
+
+    return schema;
+}
+
+function buildCreateStatic(elem) {
+    const schema = {
+        type: "svg-button"
+    };
+
+    const action = {};
+    action.type = "CREATE";
+
+    schema.action = action;
+
+    schema.content = buildImageContent.call(this, getValue(elem, ATTR_CONTENT, true));
+
+    return schema;
+}
+
+function buildCreateSelectStatic(elem) {
+    const schema = {
+        type: "svg-button"
+    };
+
+    const action = {};
+    action.type = "CREATE-SELECT";
+    action.value = getValue(elem, ATTR_VALUE);
+
+    schema.action = action;
+
+    schema.content = buildImageContent.call(this, getValue(elem, ATTR_CONTENT, true));
+
+    return schema;
+}
+
+function buildRemoveStatic(elem) {
+    const schema = {
+        type: "svg-button"
+    };
+
+    const action = {};
+    action.type = "DELETE";
+
+    schema.action = action;
+
+    schema.content = buildImageContent.call(this, getValue(elem, ATTR_CONTENT, true));
+
+    return schema;
+}
+
+const DYNAMIC_HANDLER = {
+    "projection": buildDynamicProjection
+}
+
+function buildDynamic(elem) {
+    const elementType = elem.getProperty("elementType");
+
+    const handler = DYNAMIC_HANDLER[elementType];
+    const schema = {};
+
+    if(!isFunction(handler)) {
+        return;
+    }
+
+    Object.assign(schema, handler.call(this, elem));
+
+    return schema;
+}
+
+function buildDynamicProjection(elem) {
+    const schema = {
+        type: "attribute",
+        name: getValue(elem, ATTR_SRC)
+    }
+
+    schema.tag = getValue(elem, ATTR_TAG);
 
     return schema;
 }

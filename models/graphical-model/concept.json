@@ -341,6 +341,32 @@
             ]
         },
         {
+            "name": "projection-dynamic",
+            "nature": "concrete",
+            "prototype": "element",
+            "attributes": [
+                {
+                    "name": "src",
+                    "target": {
+                        "name": "name"
+                    }
+                },
+                {
+                    "name": "tag",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "tag"
+                        }
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "dynamic" },
+                { "name": "elementType", "type": "string", "value": "projection" }
+            ]
+        },
+        {
             "name": "text-field",
             "nature": "concrete",
             "prototype": "field",
@@ -588,7 +614,7 @@
             ]
         },
         {
-            "name": "add-static",
+            "name": "create-static",
             "nature": "concrete",
             "prototype": "static",
             "attributes": [
@@ -596,13 +622,61 @@
                     "name": "content",
                     "target": {
                         "name": "background",
-                        "default": "imported-content"
+                        "default": {
+                            "name": "imported-content"
+                        }
                     }
                 }
             ],
             "properties": [
                 { "name": "contentType", "type": "string", "value": "static" },
-                { "name": "elementType", "type": "string", "value": "add" }
+                { "name": "elementType", "type": "string", "value": "create" }
+            ]
+        },
+        {
+            "name": "create-select-static",
+            "nature": "concrete",
+            "prototype": "static",
+            "attributes": [
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "background",
+                        "default": {
+                            "name": "imported-content"
+                        }
+                    }
+                },
+                {
+                    "name": "value",
+                    "target": {
+                        "name": "string"
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "static" },
+                { "name": "elementType", "type": "string", "value": "create-select" }
+            ]
+        },
+        {
+            "name": "remove-static",
+            "nature": "concrete",
+            "prototype": "static",
+            "attributes": [
+                {
+                    "name": "content",
+                    "target": {
+                        "name": "background",
+                        "default": {
+                            "name": "imported-content"
+                        }
+                    }
+                }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "remove" },
+                { "name": "elementType", "type": "string", "value": "plink" }
             ]
         },
         {

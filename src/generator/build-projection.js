@@ -610,7 +610,7 @@ const DynamicHanlders = {
     "template": TemplateDynamicHandler,
 };
 
-export function buildDynamic(dynamic) {
+function buildDynamic(dynamic) {
 
     const elementType = dynamic.getProperty("elementType");
 
