@@ -11,6 +11,7 @@ import { TextAnchorSimulation } from "./text-anchor-simulation";
 import { TextBaselineSimulation } from "./text-baseline-simulation";
 import { TextStyleSimulation } from "./text-style-simulation";
 import { ChoiceDisplaySimulation } from "./choices-display-simulation";
+import { RectShapeSimulation } from "./rect-shape-simulation";
 
 var inc = 0;
 const nextId = () => `algo${inc++}`;
@@ -125,7 +126,17 @@ const Handler = {
         schema: { value: schema },
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
-    })
+    }),
+    'rect-shape': (model, schema, projection) => Object.create(RectShapeSimulation, {
+        object: { value: "simulation" },
+        name: { value: "rect-shape-simulation" },
+        type: { value: "rect-shape" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    }),
 };
 
 export const SimulationFactory = {

@@ -64,7 +64,7 @@ const BaseTextAnchorSimulation = {
 
         this.bindEvents();
 
-        return this.container
+        return this.container;
     },
 
     updateAnchor() {

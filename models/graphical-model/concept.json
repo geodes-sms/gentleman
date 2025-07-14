@@ -59,6 +59,185 @@
                     "target": {
                         "name": "name"
                     }
+                },
+                {
+                    "name": "elements",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "shape-component"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "shape-component",
+            "nature": "prototype",
+            "attributes": [
+                {
+                    "name": "opacity",
+                    "target": {
+                        "name": "number",
+                        "default": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "bordered-component",
+            "nature": "prototype",
+            "prototype": "shape-component",
+            "attributes": [
+                {
+                    "name": "stroke",
+                    "target": {
+                        "name": "color"
+                    }
+                },
+                {
+                    "name": "stroke-width",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                }
+            ]
+        },
+        {
+            "name": "line-component",
+            "nature": "concrete",
+            "prototype": "bordered-component",
+            "attributes": [
+                {
+                    "name" : "x1",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                { 
+                    "name": "y1",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "x2",
+                    "target": {
+                        "name": "number"
+                    }
+                },
+                {
+                    "name": "y2",
+                    "target": {
+                        "name": "number"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "filled-component",
+            "nature": "prototype",
+            "prototype": "bordered-component",
+            "attributes": [
+                {
+                    "name": "fill",
+                    "target": {
+                        "name": "color"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "rect-component",
+            "nature": "concrete",
+            "prototype": "filled-component",
+            "attributes": [
+                {
+                    "name": "width",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "height",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "rx",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "ry",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "coordinates",
+                    "target": {
+                        "name": "coordinates"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "circle-component",
+            "nature": "concrete",
+            "prototype": "filled-component",
+            "attributes": [
+                {
+                    "name": "radius",
+                    "target": {
+                        "name": "number"
+                    }
+
+                },
+                {
+                    "name": "coordinates",
+                    "target": {
+                        "name": "coordinates"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "ellipse-component",
+            "nature": "concrete",
+            "prototype": "filled-component",
+            "attributes": [
+                {
+                    "name": "center",
+                    "target": {
+                        "name": "coordinates"
+                    }
+                },
+                {
+                    "name": "radius",
+                    "target": {
+                        "name": "coordinates"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "path-component",
+            "nature": "concrete",
+            "prototype": "filled-component",
+            "attributes": [
+                {
+                    "name": "d",
+                    "target": {
+                        "name": "string"
+                    }
                 }
             ]
         },
@@ -921,15 +1100,13 @@
                 {
                     "name": "x",
                     "target": {
-                        "name": "number",
-                        "default": 0
+                        "name": "number"
                     }
                 },
                 {
                     "name": "y",
                     "target": {
-                        "name": "number",
-                        "default": 0
+                        "name": "number"
                     }
                 }
             ]
