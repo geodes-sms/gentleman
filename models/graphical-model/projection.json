@@ -145,7 +145,7 @@
                                 {
                                     "type": "attribute",
                                     "name": "coordinates",
-                                    "tag": "config"
+                                    "tag": "config--rect"
                                 }
                             ],
                             "style": {
@@ -190,7 +190,7 @@
                             ]
                         }
                     },
-                     {
+                    {
                         "type": "layout",
                         "layout": {
                             "type": "flex",
@@ -411,6 +411,472 @@
                                                             "type": "attribute",
                                                             "name": "height",
                                                             "tag": "textual--labelled"
+                                                        }
+                                                    ],
+                                                    "style": {
+                                                        "css": ["text-style"]
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "style": {
+                    "css": ["mp-static", "mp-static--text"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "circle-component" },
+            "tags": ["choice-selection", "config"], 
+            "container": {
+                "content": [
+                    {
+                        "type": "template",
+                        "name": "tpl-element-header",
+                        "param": [
+                            { "name": "type", "value": "Crc" }
+                        ]
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "column",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "coordinates",
+                                    "tag": "config--circle"
+                                }
+                            ],
+                            "style": {
+                                "css": ["field-config-main"]                            
+                            }
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" },
+                "style": {
+                    "css": ["dynamic-config", "dynamic-config--attribute"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "circle-component" },
+            "type": "layout",
+            "tags": ["state", "config-state"],
+            "content": {
+                "type": "flex",
+                "orientation": "column",
+                "disposition": [
+                    {
+                        "type": "template",
+                        "name": "tpl-options--style"
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "alignItems": "center",
+                            "disposition": [
+                                {
+                                    "type": "simulation",
+                                    "simulation": {
+                                        "type": "circle-shape",
+                                        "width": 300,
+                                        "height": 120
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "column",
+                            "disposition": [
+                                {
+                                    "kind": "static",
+                                    "type": "text",
+                                    "content": "Fill",
+                                    "style": {
+                                        "css": ["mp-style__title"]
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "row",
+                                        "disposition": [
+                                            {
+                                                "type": "layout",
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "disposition": [
+                                                        {
+                                                            "type": "attribute",
+                                                            "name": "fill"
+                                                        }
+                                                    ],
+                                                    "style": {
+                                                        "css": ["text-style"]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "type": "layout",
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "disposition": [
+                                                        {
+                                                            "type": "attribute",
+                                                            "name": "opacity",
+                                                            "tag": "textual--labelled"
+                                                        }
+                                                    ],
+                                                    "style": {
+                                                        "css": ["text-style"]
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "column",
+                            "disposition": [
+                                {
+                                    "kind": "static",
+                                    "type": "text",
+                                    "content": "Stroke",
+                                    "style": {
+                                        "css": ["mp-style__title"]
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "row",
+                                        "disposition": [
+                                            {
+                                                "type": "layout",
+                                                "layout": {
+                                                    "type": "flex",
+                                                    "orientation": "wrap",
+                                                    "disposition": [
+                                                        {
+                                                            "type": "attribute",
+                                                            "name": "stroke-width",
+                                                            "tag": "textual--labelled"
+                                                        }
+                                                    ],
+                                                    "style": {
+                                                        "css": ["text-style"]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "type": "layout",
+                                                "layout": {
+                                                    "type": "flex",
+                                                    "orientation": "wrap",
+                                                    "disposition": [
+                                                        {
+                                                            "type": "attribute",
+                                                            "name": "stroke"
+                                                        }
+                                                    ],
+                                                    "style": {
+                                                        "css": ["text-style"]
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "column",
+                            "disposition": [
+                                {
+                                    "kind": "static",
+                                    "type": "text",
+                                    "content": "Dimensions",
+                                    "style": {
+                                        "css": ["mp-style__title"]
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "row",
+                                        "disposition": [
+                                            {
+                                                "type": "layout",
+                                                "layout": {
+                                                    "type": "flex",
+                                                    "orientation": "wrap",
+                                                    "disposition": [
+                                                        {
+                                                            "type": "attribute",
+                                                            "name": "radius",
+                                                            "tag": "textual--labelled"
+                                                        }
+                                                    ],
+                                                    "style": {
+                                                        "css": ["text-style"]
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "style": {
+                    "css": ["mp-static", "mp-static--text"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "ellipse-component" },
+            "tags": ["choice-selection", "config"], 
+            "container": {
+                "content": [
+                    {
+                        "type": "template",
+                        "name": "tpl-element-header",
+                        "param": [
+                            { "name": "type", "value": "Eps" }
+                        ]
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "column",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "center",
+                                    "tag": "config--circle"
+                                }
+                            ],
+                            "style": {
+                                "css": ["field-config-main"]                            
+                            }
+                        }
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" },
+                "style": {
+                    "css": ["dynamic-config", "dynamic-config--attribute"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "ellipse-component" },
+            "type": "layout",
+            "tags": ["state", "config-state"],
+            "content": {
+                "type": "flex",
+                "orientation": "column",
+                "disposition": [
+                    {
+                        "type": "template",
+                        "name": "tpl-options--style"
+                    },
+                    {
+                        "type": "simulation",
+                        "simulation": {
+                            "type": "ellipse-shape",
+                            "width": 300,
+                            "height": 120
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "column",
+                            "disposition": [
+                                {
+                                    "kind": "static",
+                                    "type": "text",
+                                    "content": "Radius",
+                                    "style": {
+                                        "css": ["mp-style__title"]
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "row",
+                                        "disposition": [
+                                            {
+                                                "type": "layout",
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "disposition": [
+                                                        {
+                                                            "type": "attribute",
+                                                            "name": "rx",
+                                                            "tag": "textual--labelled"
+                                                        }
+                                                    ],
+                                                    "style": {
+                                                        "css": ["text-style"]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "type": "layout",
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "disposition": [
+                                                        {
+                                                            "type": "attribute",
+                                                            "name": "ry",
+                                                            "tag": "textual--labelled"
+                                                        }
+                                                    ],
+                                                    "style": {
+                                                        "css": ["text-style"]
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "column",
+                            "disposition": [
+                                {
+                                    "kind": "static",
+                                    "type": "text",
+                                    "content": "Fill",
+                                    "style": {
+                                        "css": ["mp-style__title"]
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "row",
+                                        "disposition": [
+                                            {
+                                                "type": "layout",
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "disposition": [
+                                                        {
+                                                            "type": "attribute",
+                                                            "name": "fill"
+                                                        }
+                                                    ],
+                                                    "style": {
+                                                        "css": ["text-style"]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "type": "layout",
+                                                "layout": {
+                                                    "type": "wrap",
+                                                    "disposition": [
+                                                        {
+                                                            "type": "attribute",
+                                                            "name": "opacity",
+                                                            "tag": "textual--labelled"
+                                                        }
+                                                    ],
+                                                    "style": {
+                                                        "css": ["text-style"]
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "column",
+                            "disposition": [
+                                {
+                                    "kind": "static",
+                                    "type": "text",
+                                    "content": "Stroke",
+                                    "style": {
+                                        "css": ["mp-style__title"]
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "row",
+                                        "disposition": [
+                                            {
+                                                "type": "layout",
+                                                "layout": {
+                                                    "type": "flex",
+                                                    "orientation": "wrap",
+                                                    "disposition": [
+                                                        {
+                                                            "type": "attribute",
+                                                            "name": "stroke-width",
+                                                            "tag": "textual--labelled"
+                                                        }
+                                                    ],
+                                                    "style": {
+                                                        "css": ["text-style"]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "type": "layout",
+                                                "layout": {
+                                                    "type": "flex",
+                                                    "orientation": "wrap",
+                                                    "disposition": [
+                                                        {
+                                                            "type": "attribute",
+                                                            "name": "stroke"
                                                         }
                                                     ],
                                                     "style": {
@@ -4467,7 +4933,7 @@
         } ,
         {
             "concept": { "name": "coordinates" },
-            "tags": [ "config" ],
+            "tags": [ "config--rect" ],
             "type": "layout",
             "content": {
                 "type": "stack",
@@ -4511,6 +4977,66 @@
                                                 "options": {
                                                     "resizable": true,
                                                     "placeholder": "y ..."
+                                                },
+                                                "style": {
+                                                    "css": ["text-static"]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "coordinates" },
+            "tags": [ "config--circle" ],
+            "type": "layout",
+            "content": {
+                "type": "stack",
+                "orientation": "vertical",
+                "disposition": [
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "disposition": [
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            {
+                                                "type": "attribute",
+                                                "name": "x",
+                                                "tag": "textual",
+                                                "options": {
+                                                    "resizable": true,
+                                                    "placeholder": "cx ..."
+                                                },
+                                                "style": {
+                                                    "css": ["text-static"]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            {
+                                                "type": "attribute",
+                                                "name": "y",
+                                                "tag": "textual",
+                                                "options": {
+                                                    "resizable": true,
+                                                    "placeholder": "cy ..."
                                                 },
                                                 "style": {
                                                     "css": ["text-static"]

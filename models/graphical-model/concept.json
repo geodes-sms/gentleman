@@ -197,7 +197,8 @@
                 {
                     "name": "radius",
                     "target": {
-                        "name": "number"
+                        "name": "number",
+                        "default": 0
                     }
 
                 },
@@ -221,9 +222,17 @@
                     }
                 },
                 {
-                    "name": "radius",
+                    "name": "rx",
                     "target": {
-                        "name": "coordinates"
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "ry",
+                    "target": {
+                        "name": "number",
+                        "default": 0
                     }
                 }
             ]

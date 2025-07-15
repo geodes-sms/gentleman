@@ -12,6 +12,8 @@ import { TextBaselineSimulation } from "./text-baseline-simulation";
 import { TextStyleSimulation } from "./text-style-simulation";
 import { ChoiceDisplaySimulation } from "./choices-display-simulation";
 import { RectShapeSimulation } from "./rect-shape-simulation";
+import { CircleShapeSimulation } from "./circle-shape-simulation";
+import { EllipseShapeSimulation } from "./ellipse-shape-simulation";
 
 var inc = 0;
 const nextId = () => `algo${inc++}`;
@@ -131,6 +133,26 @@ const Handler = {
         object: { value: "simulation" },
         name: { value: "rect-shape-simulation" },
         type: { value: "rect-shape" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    }),
+    'circle-shape': (model, schema, projection) => Object.create(CircleShapeSimulation, {
+        object: { value: "simulation" },
+        name: { value: "circle-shape-simulation" },
+        type: { value: "circle-shape" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    }),
+    'ellipse-shape': (model, schema, projection) => Object.create(EllipseShapeSimulation, {
+        object: { value: "simulation" },
+        name: { value: "ellipse-shape-simulation" },
+        type: { value: "ellipse-shape" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },
