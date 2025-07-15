@@ -16,6 +16,7 @@ import { CircleShapeSimulation } from "./circle-shape-simulation";
 import { EllipseShapeSimulation } from "./ellipse-shape-simulation";
 import { LineShapeSimulation } from "./line-shape-simulation";
 import { PathShapeSimulation } from "./path-shape-simulation";
+import { ShapeSimulation } from "./shape-simulation";
 
 var inc = 0;
 const nextId = () => `algo${inc++}`;
@@ -172,6 +173,16 @@ const Handler = {
         source: { value: projection.concept, writable: true },
     }),
     'path-shape': (model, schema, projection) => Object.create(PathShapeSimulation, {
+        object: { value: "simulation" },
+        name: { value: "path-shape-simulation" },
+        type: { value: "path-shape" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    }),
+    'root-shape': (model, schema, projection) => Object.create(ShapeSimulation, {
         object: { value: "simulation" },
         name: { value: "path-shape-simulation" },
         type: { value: "path-shape" },

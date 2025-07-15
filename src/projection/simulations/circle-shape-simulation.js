@@ -91,8 +91,6 @@ const  BaseCirclShapeSimulation = {
 
         this.strokeAttr = this.source.getAttributeByName("stroke").target.getAttributeByName("value").target;
         this.strokeAttr.register(this.projection);
-
-        console.log(this);
     },
 
     bindEvents() {

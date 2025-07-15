@@ -50,28 +50,6 @@
             ]
         },
         {
-            "name": "shape",
-            "nature": "concrete",
-            "root": true,
-            "attributes": [
-                {
-                    "name": "name",
-                    "target": {
-                        "name": "name"
-                    }
-                },
-                {
-                    "name": "elements",
-                    "target": {
-                        "name": "set",
-                        "accept": {
-                            "name": "shape-component"
-                        }
-                    }
-                }
-            ]
-        },
-        {
             "name": "shape-component",
             "nature": "prototype",
             "attributes": [
@@ -105,6 +83,96 @@
             ]
         },
         {
+            "name": "filled-component",
+            "nature": "prototype",
+            "prototype": "bordered-component",
+            "attributes": [
+                {
+                    "name": "fill",
+                    "target": {
+                        "name": "color"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "shape",
+            "nature": "concrete",
+            "prototype": "filled-component",
+            "root": true,
+            "attributes": [
+                {
+                    "name": "name",
+                    "target": {
+                        "name": "name"
+                    }
+                },
+                {
+                    "name": "width",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "height",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "viewBox",
+                    "target": {
+                        "name": "viewBox"
+                    }
+                },
+                {
+                    "name": "elements",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "shape-component"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "viewBox",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "x",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "y",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "width",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "height",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                }
+            ]
+        },
+        {
             "name": "line-component",
             "nature": "concrete",
             "prototype": "bordered-component",
@@ -119,19 +187,6 @@
                     "name": "end",
                     "target": {
                         "name": "coordinates"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "filled-component",
-            "nature": "prototype",
-            "prototype": "bordered-component",
-            "attributes": [
-                {
-                    "name": "fill",
-                    "target": {
-                        "name": "color"
                     }
                 }
             ]
