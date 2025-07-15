@@ -14,6 +14,8 @@ import { ChoiceDisplaySimulation } from "./choices-display-simulation";
 import { RectShapeSimulation } from "./rect-shape-simulation";
 import { CircleShapeSimulation } from "./circle-shape-simulation";
 import { EllipseShapeSimulation } from "./ellipse-shape-simulation";
+import { LineShapeSimulation } from "./line-shape-simulation";
+import { PathShapeSimulation } from "./path-shape-simulation";
 
 var inc = 0;
 const nextId = () => `algo${inc++}`;
@@ -153,6 +155,26 @@ const Handler = {
         object: { value: "simulation" },
         name: { value: "ellipse-shape-simulation" },
         type: { value: "ellipse-shape" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    }),
+    'line-shape': (model, schema, projection) => Object.create(LineShapeSimulation, {
+        object: { value: "simulation" },
+        name: { value: "line-shape-simulation" },
+        type: { value: "line-shape" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    }),
+    'path-shape': (model, schema, projection) => Object.create(PathShapeSimulation, {
+        object: { value: "simulation" },
+        name: { value: "path-shape-simulation" },
+        type: { value: "path-shape" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },

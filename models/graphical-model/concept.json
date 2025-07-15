@@ -110,27 +110,15 @@
             "prototype": "bordered-component",
             "attributes": [
                 {
-                    "name" : "x1",
+                    "name": "start",
                     "target": {
-                        "name": "number"
-                    }
-                },
-                { 
-                    "name": "y1",
-                    "target": {
-                        "name": "number"
+                        "name": "coordinates"
                     }
                 },
                 {
-                    "name": "x2",
+                    "name": "end",
                     "target": {
-                        "name": "number"
-                    }
-                },
-                {
-                    "name": "y2",
-                    "target": {
-                        "name": "number"
+                        "name": "coordinates"
                     }
                 }
             ]
