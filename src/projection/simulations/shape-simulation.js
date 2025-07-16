@@ -174,14 +174,77 @@ const ShapeFactory = {
 
         circle.setAttribute("cx", coordinates.getAttributeByName("x").target.getValue());
         circle.setAttribute("cy", coordinates.getAttributeByName("y").target.getValue());
-        console.log(shape.getAttributeByName("radius"));
-        console.log(shape.getAttributeByName("radius").target.getValue());
         circle.setAttribute("r", shape.getAttributeByName("radius").target.getValue());
 
         this.fill(circle, shape);
         this.outline(circle, shape);
 
         return circle;
+    },
+
+    drawRect(shape) {
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+
+        const coordinates = shape.getAttributeByName("coordinates").target;
+
+        rect.setAttribute("x", coordinates.getAttributeByName("x").target.getValue());
+        rect.setAttribute("y", coordinates.getAttributeByName("y").target.getValue());
+
+        rect.setAttribute("width", shape.getAttributeByName("width").target.getValue());
+        rect.setAttribute("height", shape.getAttributeByName("height").target.getValue());
+
+        rect.setAttribute("rx", shape.getAttributeByName("rx").target.getValue());
+        rect.setAttribute("ry", shape.getAttributeByName("ry").target.getValue());
+
+        this.fill(rect, shape);
+        this.outline(rect, shape);
+
+        return rect;
+    },
+
+    drawEllipse(shape) {
+        const ellipse = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+
+        const coordinates = shape.getAttributeByName("center").target;
+
+        ellipse.setAttribute("cx", coordinates.getAttributeByName("x").target.getValue());
+        ellipse.setAttribute("cy", coordinates.getAttributeByName("y").target.getValue());
+
+        ellipse.setAttribute("rx", shape.getAttributeByName("rx").target.getValue());
+        ellipse.setAttribute("ry", shape.getAttributeByName("ry").target.getValue());
+
+        this.fill(ellipse, shape);
+        this.outline(ellipse, shape);
+
+        return ellipse;
+    },
+
+    drawLine(shape) {
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+
+        const start = shape.getAttributeByName("start").target;
+        const end = shape.getAttributeByName("end").target;
+
+        line.setAttribute("x1", start.getAttributeByName("x").target.getValue());
+        line.setAttribute("y1", start.getAttributeByName("y").target.getValue());
+
+        line.setAttribute("x2", end.getAttributeByName("x").target.getValue());
+        line.setAttribute("y2", end.getAttributeByName("y").target.getValue());
+
+        this.outline(line, shape)
+
+        return line;
+    },
+
+    drawPath(shape) {
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
+        path.setAttribute("d", shape.getAttributeByName("d").target.getValue());
+
+        this.fill(path, shape);
+        this.outline(path, shape);
+        
+        return path;
     },
 
     fill(component, shape) {
