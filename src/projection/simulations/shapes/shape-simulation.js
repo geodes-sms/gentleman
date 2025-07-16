@@ -1,5 +1,5 @@
 import { isNullOrUndefined } from "zenkai";
-import { Simulation } from "./simulation"
+import { Simulation } from "./../simulation"
 
 const BaseShapeSimulation = {
     init(args) {

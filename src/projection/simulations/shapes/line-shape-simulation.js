@@ -1,10 +1,11 @@
-import { isNullOrUndefined } from "zenkai";
-import { Simulation } from "./simulation"
+import { Simulation } from "./../simulation";
 
-const  BaseCirclShapeSimulation = {
+const { isNullOrUndefined } = require("zenkai");
+
+const BaseLineShapeSimulation = {
     init(args) {
         Object.assign(this.schema, args);
-        
+
         this.width = this.schema.width;
         this.height = this.schema.height;
 
@@ -17,7 +18,7 @@ const  BaseCirclShapeSimulation = {
 
             this.container.classList.add("simulation-container");
             this.container.dataset.nature = "simulation";
-            this.container.dataset.view = "circle-shape";
+            this.container.dataset.view = "line-shape";
             this.container.dataset.id = this.id;
             
             this.background = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -31,14 +32,14 @@ const  BaseCirclShapeSimulation = {
             this.container.append(this.background);
         }
 
-        if(isNullOrUndefined(this.circleElement)) {
-            this.circleElement = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        if (isNullOrUndefined(this.lineElement)) {
+            this.lineElement = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            
+            this.lineElement.dataset.nature = "simulation-component";
+            this.lineElement.dataset.view = "line";
+            this.lineElement.dataset.id = this.id;
 
-            this.circleElement.dataset.nature = "simulation-component";
-            this.circleElement.dataset.view = "circle";
-            this.circleElement.dataset.id = this.id;
-
-            this.container.append(this.circleElement);
+            this.container.append(this.lineElement);
         }
 
         this.bindEvents();
@@ -46,24 +47,21 @@ const  BaseCirclShapeSimulation = {
         return this.container;
     },
 
-    updateCircle() {
-        this.circleElement.setAttribute("r", this.radiusAttr.getValue());
-
-        this.circleElement.setAttribute("fill", this.fillAttr.getValue());
-        this.circleElement.setAttribute("opacity", this.opacityAttr.getValue());
-
-        this.circleElement.setAttribute("stroke-width", this.strokeWidthAttr.getValue());
-        this.circleElement.setAttribute("stroke", this.strokeAttr.getValue());
+    updateLine() {
+        this.lineElement.setAttribute("stroke-width", this.strokeWidthAttr.getValue());
+        this.lineElement.setAttribute("stroke", this.strokeAttr.getValue());
 
         this.updateContainer();
     },
 
     updateContainer() {
-        const height = Math.max(this.height, this.radiusAttr.getValue() * 2 + 2 * this.strokeWidthAttr.getValue() + 10);
+        const height = Math.max(this.height, this.strokeWidthAttr.getValue() * 2 + 30);
         const width = this.width * (height / this.height);
 
-        const cx = width / 2;
-        const cy = height / 2;
+        const x1 = width / 8;
+        const x2 = width - x1;
+
+        const y = height /2;
 
         const viewBox = "0 0 " + width + " " + height;
 
@@ -72,20 +70,13 @@ const  BaseCirclShapeSimulation = {
         this.background.setAttribute("width", width);
         this.background.setAttribute("height", height);
 
-        this.circleElement.setAttribute("cx", cx);
-        this.circleElement.setAttribute("cy", cy);
+        this.lineElement.setAttribute("x1", x1);
+        this.lineElement.setAttribute("y1", y);
+        this.lineElement.setAttribute("x2", x2);
+        this.lineElement.setAttribute("y2", y);
     },
 
     register() {
-        this.radiusAttr = this.source.getAttributeByName("radius").target;
-        this.radiusAttr.register(this.projection);
-
-        this.fillAttr = this.source.getAttributeByName("fill").target.getAttributeByName("value").target;
-        this.fillAttr.register(this.projection);
-
-        this.opacityAttr = this.source.getAttributeByName("opacity").target;
-        this.opacityAttr.register(this.projection);
-
         this.strokeWidthAttr = this.source.getAttributeByName("stroke-width").target;
         this.strokeWidthAttr.register(this.projection);
 
@@ -95,18 +86,18 @@ const  BaseCirclShapeSimulation = {
 
     bindEvents() {
         this.projection.registerHandler( "displayed", () => {
-            this.updateCircle();
+            this.updateLine();
         })
 
-        this.projection.registerHandler( "value.changed", () => {
-            this.updateCircle();
+        this.projection.registerHandler( "value.changed", () =>{
+            this.updateLine();
         })
 
         this.register();
     }
 }
 
-export const CircleShapeSimulation = Object.assign(
+export const LineShapeSimulation = Object.assign(
     Object.create(Simulation),
-    BaseCirclShapeSimulation
-)
+    BaseLineShapeSimulation
+) 

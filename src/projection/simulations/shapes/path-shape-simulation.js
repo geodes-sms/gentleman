@@ -1,7 +1,8 @@
-import { isNullOrUndefined } from "zenkai";
-import { Simulation } from "./simulation";
+import { Simulation } from "./../simulation";
 
-const BaseEllipseShapeSimulation = {
+const { isNullOrUndefined } = require("zenkai");
+
+const BasePathShapeSimulation = {
     init(args) {
         Object.assign(this.schema, args);
 
@@ -17,7 +18,7 @@ const BaseEllipseShapeSimulation = {
 
             this.container.classList.add("simulation-container");
             this.container.dataset.nature = "simulation";
-            this.container.dataset.view = "ellipse-shape";
+            this.container.dataset.view = "path-shape";
             this.container.dataset.id = this.id;
             
             this.background = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -31,14 +32,14 @@ const BaseEllipseShapeSimulation = {
             this.container.append(this.background);
         }
 
-        if (isNullOrUndefined(this.ellipseElement)) {
-            this.ellipseElement = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+        if (isNullOrUndefined(this.pathElement)) {
+            this.pathElement = document.createElementNS("http://www.w3.org/2000/svg", "path");
             
-            this.ellipseElement.dataset.nature = "simulation-component";
-            this.ellipseElement.dataset.view = "ellipse";
-            this.ellipseElement.dataset.id = this.id;
+            this.pathElement.dataset.nature = "simulation-component";
+            this.pathElement.dataset.view = "path";
+            this.pathElement.dataset.id = this.id;
 
-            this.container.append(this.ellipseElement);
+            this.container.append(this.pathElement);
         }
 
         this.bindEvents();
@@ -46,48 +47,45 @@ const BaseEllipseShapeSimulation = {
         return this.container;
     },
 
-    updateEllipse() {
-        this.ellipseElement.setAttribute("rx", this.rxAttr.getValue());
-        this.ellipseElement.setAttribute("ry", this.ryAttr.getValue());
+    updatePath() {
+        this.pathElement.setAttribute("d", this.dAttr.getValue());
 
-        this.ellipseElement.setAttribute("fill", this.fillAttr.getValue());
-        this.ellipseElement.setAttribute("opacity", this.opacityAttr.getValue());
+        this.pathElement.setAttribute("fill", this.fillAttr.getValue());
+        this.pathElement.setAttribute("opacity", this.opacityAttr.getValue());
 
-        this.ellipseElement.setAttribute("stroke-width", this.strokeWidthAttr.getValue());
-        this.ellipseElement.setAttribute("stroke", this.strokeAttr.getValue());
+        this.pathElement.setAttribute("stroke-width", this.strokeWidthAttr.getValue());
+        this.pathElement.setAttribute("stroke", this.strokeAttr.getValue());
 
         this.updateContainer();
     },
 
     updateContainer() {
-        const maxWidth = Math.max(this.width, this.rxAttr.getValue() * 2 + 2 * this.strokeWidthAttr.getValue() + 10);
-        const maxHeight = Math.max(this.height, this.ryAttr.getValue() + 2 * this.strokeWidthAttr.getValue() + 10);
+        const bBox = this.pathElement.getBBox();
 
-        const ratio =  Math.max(maxWidth / this.width, maxHeight / this.height);
+        const minX = Math.min(0, bBox.x - this.strokeWidthAttr.getValue() - 10);
+        const minY = Math.min(0, bBox.y - this.strokeWidthAttr.getValue() - 10);
+        const maxX = Math.max(this.width, bBox.x + bBox.width + this.strokeWidthAttr.getValue() + 10);
+        const maxY = Math.max(this.height, bBox.y + bBox.height + this.strokeWidthAttr.getValue() + 10);
+
+        const diffW = maxX - minX;
+        const diffH = maxY - minY;
+
+        const ratio = Math.max(diffW / this.width, diffH / this.height);
 
         const width = this.width * ratio;
         const height = this.height * ratio;
 
-        const x = width / 2;
-        const y = height /2;
-
-        const viewBox = "0 0 " + width + " " + height;
+        const viewBox = minX + " " + minY + " " + width + " " + height;
 
         this.container.setAttribute("viewBox", viewBox);
 
         this.background.setAttribute("width", width);
         this.background.setAttribute("height", height);
-
-        this.ellipseElement.setAttribute("cx", x);
-        this.ellipseElement.setAttribute("cy", y);
     },
 
     register() {
-        this.rxAttr = this.source.getAttributeByName("rx").target;
-        this.rxAttr.register(this.projection);
-
-        this.ryAttr = this.source.getAttributeByName("ry").target;
-        this.ryAttr.register(this.projection);
+        this.dAttr = this.source.getAttributeByName("d").target;
+        this.dAttr.register(this.projection);
 
         this.fillAttr = this.source.getAttributeByName("fill").target.getAttributeByName("value").target;
         this.fillAttr.register(this.projection);
@@ -104,18 +102,19 @@ const BaseEllipseShapeSimulation = {
 
     bindEvents() {
         this.projection.registerHandler( "displayed", () => {
-            this.updateEllipse();
+            this.updatePath();
         })
 
         this.projection.registerHandler( "value.changed", () => {
-            this.updateEllipse();
+            this.updatePath();
         })
 
         this.register();
     }
+
 }
 
-export const EllipseShapeSimulation = Object.assign(
+export const PathShapeSimulation = Object.assign(
     Object.create(Simulation),
-    BaseEllipseShapeSimulation
+    BasePathShapeSimulation
 )

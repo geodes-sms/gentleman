@@ -11,12 +11,12 @@ import { TextAnchorSimulation } from "./text-anchor-simulation";
 import { TextBaselineSimulation } from "./text-baseline-simulation";
 import { TextStyleSimulation } from "./text-style-simulation";
 import { ChoiceDisplaySimulation } from "./choices-display-simulation";
-import { RectShapeSimulation } from "./rect-shape-simulation";
-import { CircleShapeSimulation } from "./circle-shape-simulation";
-import { EllipseShapeSimulation } from "./ellipse-shape-simulation";
-import { LineShapeSimulation } from "./line-shape-simulation";
-import { PathShapeSimulation } from "./path-shape-simulation";
-import { ShapeSimulation } from "./shape-simulation";
+import { RectShapeSimulation } from "./shapes/rect-shape-simulation";
+import { CircleShapeSimulation } from "./shapes/circle-shape-simulation";
+import { EllipseShapeSimulation } from "./shapes/ellipse-shape-simulation";
+import { LineShapeSimulation } from "./shapes/line-shape-simulation";
+import { PathShapeSimulation } from "./shapes/path-shape-simulation";
+import { ShapeSimulation } from "./shapes/shape-simulation";
 
 var inc = 0;
 const nextId = () => `algo${inc++}`;

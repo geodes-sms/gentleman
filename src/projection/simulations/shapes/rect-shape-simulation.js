@@ -1,4 +1,4 @@
-import { Simulation } from "./simulation";
+import { Simulation } from "./../simulation";
 
 const { isNullOrUndefined } = require("zenkai");
 
