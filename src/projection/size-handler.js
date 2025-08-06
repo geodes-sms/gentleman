@@ -35,10 +35,6 @@ export const SizeHandler = {
 
 function updateRect() {
 
-    if(this.id === "algo4") {
-        console.log("Hello")
-    }
-
     if(!isNullOrUndefined(this.animationFrame)) {
         window.cancelAnimationFrame(this.animationFrame);
     }
@@ -53,8 +49,8 @@ function updateRect() {
 
     this.containerView.targetX = Math.min(this.containerView.defaultX, extremums.minX) - stroke;
     this.containerView.targetY = Math.min(this.containerView.defaultY, extremums.minY) - stroke;
-    this.containerView.targetW = Math.max(this.containerView.defaultW, extremums.maxX) + stroke;
-    this.containerView.targetH = Math.max(this.containerView.defaultH, extremums.maxY) + stroke;
+    this.containerView.targetW = Math.max(this.containerView.defaultW, extremums.maxX) - this.containerView.targetX + stroke;
+    this.containerView.targetH = Math.max(this.containerView.defaultH, extremums.maxY) - this.containerView.targetY + stroke;
 
     this.containerView.contentX = this.containerView.targetX;
     this.containerView.contentY = this.containerView.targetY;

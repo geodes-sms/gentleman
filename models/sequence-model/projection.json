@@ -6,7 +6,7 @@
             "type": "algorithm",
             "tags": ["default"],
             "content": {
-                "type": "adaptative",
+                "type": "adaptive",
                 "background": {
                     "wrap": "myContainer",
                     "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1200\" height=\"900\"><rect data-myContainer=\"here\" fill=\"white\" width=\"1200\" height=\"900\"/></svg>",
@@ -232,7 +232,7 @@
             "tags": ["list-item"],
             "type": "algorithm",
             "content": {
-                "type": "adaptative",
+                "type": "adaptive",
                 "background": {
                     "speed": 1,
                     "padding": 20,
@@ -252,7 +252,7 @@
                         "render": {
                             "type": "algorithm",
                             "algorithm": {
-                                "type": "adaptative",
+                                "type": "adaptive",
                                 "meet": "bottom",
                                 "background": {
                                     "speed": 1,
@@ -303,7 +303,7 @@
             "tags": ["lf_nm"],
             "type": "algorithm",
             "content": {
-                "type": "adaptative",
+                "type": "adaptive",
                 "background": {
                     "speed": 1,
                     "padding": 5,
@@ -648,7 +648,7 @@
             "tags": [ "list-item" ],
             "type": "algorithm",
             "content": {
-                "type": "adaptative",
+                "type": "adaptive",
                 "background": {
                     "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"60\"><rect x=\"2\" y=\"2\" width=\"106\" height=\"56\" fill=\"transparent\" data-myContainer=\"here\"/></svg>",
                     "wrap": "myContainer",
@@ -838,7 +838,7 @@
             "tags": [ "fragment_init" ],
             "type": "algorithm",
             "content": {
-                "type": "adaptative",
+                "type": "adaptive",
                 "background": {
                     "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect x=\"1\" y=\"1\" width=\"108\" height=\"98\" data-myContainer=\"here\" stroke=\"black\" stroke-width=\"2\" fill=\"transparent\"/></svg>",
                     "wrap": "myContainer",
@@ -897,7 +897,7 @@
             "tags": [ "list-item" ],
             "type": "algorithm",
             "content": {
-                "type": "adaptative",
+                "type": "adaptive",
                 "background": {
                     "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"110\" height=\"100\"><rect x=\"1\" y=\"1\" width=\"108\" height=\"98\" data-myContainer=\"here\" stroke=\"black\" stroke-width=\"2\" fill=\"transparent\"/></svg>",
                     "wrap": "myContainer",

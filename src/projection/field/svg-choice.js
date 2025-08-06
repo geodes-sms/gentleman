@@ -354,6 +354,8 @@ const BaseSVGChoice = {
     },
 
     clickHandler(target){
+        console.log("Clicked !");
+        console.log(this.element);
         const item = getItem.call(this, target);
 
         if(!isNullOrUndefined(item) && target !== this.selection){

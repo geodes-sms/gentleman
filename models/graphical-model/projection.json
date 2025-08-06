@@ -1980,25 +1980,33 @@
                                     "type": "template",
                                     "name": "mp-button",
                                     "param": [
-                                        { "name": "type", "value": "create-static" },
-                                        { "name": "name", "value": "CreateButton" }
-                                    ]
-                                },
-                                {
-                                    "type": "template",
-                                    "name": "mp-button",
-                                    "param": [
-                                        { "name": "type", "value": "create-select-static" },
-                                        { "name": "name", "value": "CreateSelectButton" }
-                                    ]
-                                },
-                                {
-                                    "type": "template",
-                                    "name": "mp-button",
-                                    "param": [
                                         { "name": "type", "value": "projection-dynamic" },
                                         { "name": "name", "value": "Projection" }
                                     ]
+                                },
+                                {
+                                    "type": "template",
+                                    "name": "mp-button",
+                                    "param": [
+                                        { "name": "type", "value": "container" },
+                                        { "name": "name", "value": "Container" }
+                                    ]
+                                },
+                                {
+                                    "kind": "static",
+                                    "type": "button",
+                                    "trigger": "open-layout",
+                                    "help": "Layout",
+                                    "content": [
+                                        {
+                                            "kind": "static",
+                                            "type": "text",
+                                            "content": "Layout"
+                                        }
+                                    ],
+                                    "style": {
+                                        "css": ["mp-element__btn-trigger", "mp-element__btn-trigger--layout"]
+                                    }
                                 }
                             ],
                             "style": {
@@ -2066,6 +2074,22 @@
                                         { "name": "type", "value": "plink-static" },
                                         { "name": "name", "value": "Viewswitch" }
                                     ]
+                                },
+                                {
+                                    "kind": "static",
+                                    "type": "button",
+                                    "trigger": "open-layout",
+                                    "help": "Layout",
+                                    "content": [
+                                        {
+                                            "kind": "static",
+                                            "type": "text",
+                                            "content": "Layout"
+                                        }
+                                    ],
+                                    "style": {
+                                        "css": ["mp-element__btn-trigger", "mp-element__btn-trigger--layout"]
+                                    }
                                 },
                                 {
                                     "kind": "static",

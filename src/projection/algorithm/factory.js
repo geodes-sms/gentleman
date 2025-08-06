@@ -61,7 +61,7 @@ const Handler = {
         projection: { value: projection },
         source: { value: projection.concept, writable: true },
     }),
-    'adaptative': (model, schema, projection) => Object.create(AdaptiveAlgorithm, {
+    'adaptive': (model, schema, projection) => Object.create(AdaptiveAlgorithm, {
         object: { value: "algorithm" },
         name: { value: "adaptive-layout" },
         type: { value: "adaptive" },

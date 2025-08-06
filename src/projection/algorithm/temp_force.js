@@ -6,7 +6,10 @@ export const BaseForceAlgorithm = {
     init(args) {
         Object.assign(this.schema, args);
 
-        const {} = this.schema;
+        const { width, height } = this.schema.dimensions;
+
+        this.width = width;
+        this.height = height;
 
         return this;
     },
@@ -39,14 +42,14 @@ export const BaseForceAlgorithm = {
     },
 
     setUpForce() {
-        const { width, height, charge, linkDistance } = this.schema.force;
+        const { charge, linkLength } = this.schema.force;
 
         this.force = d3.layout.force()
-            .size([width, height])
+            .size([this.width, this.height])
             .nodes([])
             .links([])
             .charge(charge)
-            .linkDistance(linkDistance)
+            .linkDistance(linkLength)
             .on("tick", this.ticked.bind(this));
 
         this.nodes = this.force.nodes();

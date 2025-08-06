@@ -181,10 +181,12 @@ const BaseSwitchField = {
             if(itemValue && isSame(itemValue, value)){
                 this.element.append(item);
                 let projection = this.projection.resolveElement(item.childNodes[0]);
-                projection.projection.update("displayed");
 
-                projection.updateSize();
-
+                if(this.displayed) {
+                    projection.projection.update("displayed");
+                    projection.updateSize();
+                }
+                
                 item.classList.add("selected");
                 item.dataset.selected = "selected";
                 this.selection = item.childNodes[0];
@@ -300,8 +302,6 @@ const BaseSwitchField = {
 
     enterHandler(target) {
         const item = getItem.call(this, target);
-
-        console.log(item);
 
         if(!isNullOrUndefined(item) && this.selection.parentNode === item
             || target === this.element) {
