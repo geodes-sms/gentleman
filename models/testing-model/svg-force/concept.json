@@ -1,0 +1,44 @@
+{
+    "type": "concept",
+    "concept": [
+        {
+            "name": "Board",
+            "nature": "concrete",
+            "root": "true",
+            "attributes": [
+                {
+                    "name": "geometrics",
+                    "target": {
+                        "name": "set",
+                        "accept": {
+                            "name": "geometric"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "geometric",
+            "nature": "prototype",
+            "attributes":[]
+        },
+        {
+            "name": "triangle",
+            "nature": "concrete",
+            "prototype": "geometric",
+            "attributes": []
+        },
+        {
+            "name": "rect",
+            "nature": "concrete",
+            "prototype": "geometric",
+            "attributes": []
+        },
+        {
+            "name": "circle",
+            "nature": "concrete",
+            "prototype": "geometric",
+            "attributes": []
+        }
+    ]
+}

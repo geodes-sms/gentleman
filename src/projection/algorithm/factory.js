@@ -1,5 +1,5 @@
 import { isNullOrUndefined } from "zenkai";
-import { ForceAlgorithm } from "./temp_force.js";
+import { ForceAlgorithm } from "./force-algorithm.js";
 import { PatternAlgorithm } from "./pattern-algorithm.js";
 import { DecorationAlgorithm } from "./decoration-algorithm.js";
 import { AnchorAlgorithm } from "./anchor-algorithm.js";

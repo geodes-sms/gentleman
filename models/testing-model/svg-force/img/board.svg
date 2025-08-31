@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900">
+    <rect width="1500" height="900" fill="#031c01"/>
+    <defs>
+        <style type="text/css">
+            @import url("https://fonts.googleapis.com/css?family=Pacifico:400,400i,700,700i");
+        </style>
+    </defs>
+    <g transform="rotate(-10)">
+        <text x="10" y="130" text-decoration="underline" font-family="Pacifico" font-size="75" fill="whitesmoke">
+            Geometrics
+        </text>
+    </g>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 34" width="72" height="72" x="500" y="57">
+        <path d="M 17 1 L 33 33 L 1 33 Z" fill="#faeb16" stroke="#e0dedc" stroke-width="1"/>    
+    </svg>
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 28" width="100" height="56" x="630" y="65">
+        <rect x="1" y="1" width="48" height="26" fill="#c96f20" stroke="#e0dedc" stroke-width="1" rx="1"/>    
+    </svg>
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="70" height="70" x="788" y="57">
+        <circle cx="15" cy="15" r="14" fill="#282ec9" stroke="#e0dedc" stroke-width="1"/>
+    </svg>    
+</svg>
