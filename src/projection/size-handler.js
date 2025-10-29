@@ -30,7 +30,8 @@ function createRectSchema(adapter){
 /** TODO: Update Circle and others */
 export const SizeHandler = {
     "rect": updateRect,
-    "wrap": updateWrap
+    "wrap": updateWrap,
+    "force": updateForce
 }
 
 function updateRect() {
@@ -82,6 +83,21 @@ function updateWrap() {
     this.containerView.contentH = this.containerView.targetH;
 
     createFrame.call(this);
+}
+
+function updateForce() {
+    if(isNullOrUndefined(this.nodes) || isEmpty(this.nodes)) {
+        return;
+    }
+
+    this.nodes.forEach( (n) => {
+        let proj = this.projection.resolveElement(this.elements.get(n.id));
+
+        const view = proj.containerView;
+
+        n.width = view.targetW;
+        n.height = view.targetH;
+    })
 }
  
 function generateExtremums() {

@@ -1,5 +1,6 @@
 import { isEmpty, isNullOrUndefined } from "zenkai";
 import { Algorithm } from "./algorithm";
+import { SizeHandler } from "../size-handler";
 
 
 export const BaseForceAlgorithm = {
@@ -44,7 +45,6 @@ export const BaseForceAlgorithm = {
     },
 
     render() {
-        
         if(isNullOrUndefined(this.container)) {
             this.container = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             
@@ -70,6 +70,9 @@ export const BaseForceAlgorithm = {
         return this.container;
     },
 
+    /**
+     * Creates the d3 force layout used to compute nodes coordinates.
+     */
     setUpForce() {
         const { charge, linkLength } = this.schema.force;
 
@@ -85,16 +88,26 @@ export const BaseForceAlgorithm = {
         this.links = this.force.links();
     },
 
+    /**
+     * Restarts the computation of coordinates.
+     */
     restart() {
         this.node = d3.selectAll(".node" + this.id).data(this.nodes);
 
         this.force.start()
     },
 
+    /**
+     * Stops the computation of coordinates.
+     */
     stop() {
-
+        this.force.stop();
     },
 
+    /** 
+     * Periodically called function when the computation is activated.
+     * Uses the collision handler to prevent overlapping issues before applying the computed coordinates to nodes projections.
+    */
     ticked() {
         // Updates coordinates based on Collision detection
         CollisionHandler.init(this);
@@ -108,9 +121,8 @@ export const BaseForceAlgorithm = {
             const x = d.x - d.width / 2;
 
             return Math.min(width - d.width, Math.max(0, x));
-
             } )
-        .attr("y", function(d) { 
+        .attr("y", function(d) {
             const y = d.y - d.height / 2;
 
             return Math.min(height - d.height, Math.max(0, y));
@@ -118,6 +130,10 @@ export const BaseForceAlgorithm = {
 
     },
 
+    /**
+     * Adds an item to the algorithm.
+     * @param {Concept} value 
+     */
     addItem(value) { 
         const schema = this.createItem(value);
 
@@ -131,6 +147,11 @@ export const BaseForceAlgorithm = {
         this.restart();
     },
 
+    /**
+     * Creates the projection for an element of the layout.
+     * @param {Concept} value 
+     * @returns A node schema.
+     */
     createItem(value) {
         const { tag } = this.schema.items;
 
@@ -156,7 +177,11 @@ export const BaseForceAlgorithm = {
 
         return schema;
     },
-
+    
+    /**
+     * Removes a node from the layout.
+     * @param {Concept} value 
+     */
     removeItem(value) {
         for(let i = 0; i < this.nodes.length; i++) {
             if(this.nodes[i].id == value.id) {
@@ -170,28 +195,53 @@ export const BaseForceAlgorithm = {
         this.restart();
     },
 
+    /**
+     * Function called when the element is rendered in the DOM.
+     */
     display() {
         this.displayed = true;
 
         this.restart();
     },
 
+    /**
+     * Allows to update nodes size when projections change.
+     */
     updateSize() {
+        if(this.fixed) {
+            return;
+        }
 
+        if(!this.displayed) {
+            this.display();
+        }
+
+        SizeHandler["force"].call(this);
     },
 
+    /**
+     * Handles focusIn event.
+     */
     focusIn() {
 
     },
-
+/**
+     * Handles focusOut event.
+     */
     focusOut() {
 
     },
 
+    /**
+     * Handles click event.
+     */
     clickHandler() {
 
     },
 
+    /**
+     * Allows to attach handlers for various events.
+     */
     bindEvents() {
         this.projection.registerHandler("displayed", () => {
             if(this.displayed) {
@@ -211,6 +261,9 @@ export const BaseForceAlgorithm = {
     }
 };
 
+/**
+ * Handles overlapping issues in the layout.
+ */
 const CollisionHandler = {
     /**@type {boolean} */
     resolved: false,
@@ -385,16 +438,14 @@ const CollisionHandler = {
         const dy = this.getYOffset();
         const dx = this.getXOffset();
 
-        const x = this.node.x;
-        const y = this.node.y;
         const { a, b } = this.getEq();
 
-        if(Math.abs(dy) > Math.abs(dx)) {
-            this.node.y = this.seekerBox.y + dy;
-            this.node.x = this.solveForY(a, b, y);
+        if(Math.abs(dy) < Math.abs(dx)) {
+            this.node.y += dy;
+            this.node.x = this.solveForY(a, b, this.node.y);
         } else {
-            this.node.x = this.seekerBox.x + dx;
-            this.node.y = this.solveForX(a, b, x)
+            this.node.x += dx;
+            this.node.y = this.solveForX(a, b, this.node.x)
         }
     },
 
