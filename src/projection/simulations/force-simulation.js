@@ -1,8 +1,8 @@
-import { ContentHandler } from './../content-handler.js';
-import { isNullOrUndefined, isUndefined } from 'zenkai';
+import { isNullOrUndefined, } from 'zenkai';
 import { Simulation } from './simulation.js';
 
 import * as d3 from "d3";
+import { CollisionHandler } from '../collision-handler.js';
 
 const First = "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"node\" width=\"30\" height=\"30\"><rect rx=\"2\" width=\"27\" height=\"27\" x=\"1.5\" y=\"1.5\" stroke=\"#555\" stroke-width=\"1.5\" fill=\"transparent\"></rect><text fill=\"#555\" x=\"15\" y=\"15\" text-anchor=\"middle\" font-size=\"18\" font-family=\"Segoe UI\" dominant-baseline=\"middle\">1</text></svg>"
 const Second = "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"node\" width=\"30\" height=\"30\"><rect rx=\"2\" width=\"27\" height=\"27\" x=\"1.5\" y=\"1.5\" stroke=\"#555\" stroke-width=\"1.5\" fill=\"transparent\"></rect><text fill=\"#555\" x=\"15\" y=\"15\" text-anchor=\"middle\" font-size=\"18\" font-family=\"Segoe UI\" dominant-baseline=\"middle\">2</text></svg>"
@@ -49,12 +49,23 @@ const BaseForceSimulation = {
 
             const parser = new DOMParser();
 
-            this.elements.append(parser.parseFromString(First.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement);
-            this.elements.append(parser.parseFromString(Second.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement);
-            this.elements.append(parser.parseFromString(Third.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement);
+            this.items = new Map();
+
+            let first = parser.parseFromString(First.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement;
+            this.elements.append(first);
+            this.items.set(1, first);
+
+            let second = parser.parseFromString(Second.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement;
+            this.elements.append(second);
+            this.items.set(2, second);
+
+            let third = parser.parseFromString(Third.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement;
+            this.elements.append(third);
+            this.items.set(3, third);
 
             this.container.append(this.elements);
         }
+
 
         this.bindEvents();
 
@@ -65,7 +76,7 @@ const BaseForceSimulation = {
 
         this.force = d3.layout.force()
             .size([this.width, this.height])
-            .nodes([{}, {}, {}])
+            .nodes([{id: 1}, { id: 2}, {id: 3}])
             .charge(this.charge.value * -1)
             .on("tick", this.tick.bind(this));
 
@@ -77,6 +88,14 @@ const BaseForceSimulation = {
     },
 
     tick(){
+        CollisionHandler.init({
+            nodes: this.nodes,
+            width: this.width,
+            height: this.height,
+            elements: this.items
+        });
+        CollisionHandler.compute();
+
         this.node
         .attr("x", function(d) {
             return d.x - 15
