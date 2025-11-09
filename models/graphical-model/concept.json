@@ -400,7 +400,8 @@
                                 { "name": "placeholder-field" },
                                 { "name": "switch-field" },
                                 { "name": "text-static" },
-                                { "name": "pattern-layout" }
+                                { "name": "pattern-layout" },
+                                { "name": "force-layout" }
                             ]
                         }
                     }
@@ -516,6 +517,10 @@
                         }
                     }
                 }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "layout" },
+                { "name": "elementType", "type": "string", "value": "pattern" }
             ]
         },
         {
@@ -560,6 +565,10 @@
                         }
                     }
                 }
+            ],
+            "properties": [
+                { "name": "contentType", "type": "string", "value": "layout" },
+                { "name": "elementType", "type": "string", "value": "force" }
             ]
         },
         {
@@ -753,7 +762,7 @@
                     }
                 },
                 {
-                    "name": "padding",
+                    "name": "spacing",
                     "target": {
                         "name": "number",
                         "default": 0

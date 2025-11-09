@@ -60,13 +60,13 @@ const BaseChoiceDisplaySimulation = {
 
     update() {
         const orientation = this.orientation.getValue();
-        const padding = this.padding.getValue();
+        const spacing = this.spacing.getValue();
 
         const choices = this.choices.childNodes;
 
         switch(orientation) {
             case "horizontal":
-                const width = 90 + 2 * padding;
+                const width = 90 + 2 * spacing;
 
                 if( 300 < width + 40) {
                     this.width = width + 40;
@@ -76,13 +76,13 @@ const BaseChoiceDisplaySimulation = {
 
                 this.height = 75 * this.width / 300;
 
-                choices[0].setAttribute("x", this.width / 2 - 45 - padding);
+                choices[0].setAttribute("x", this.width / 2 - 45 - spacing);
                 choices[0].setAttribute("y", this.height / 2 - 15);
 
                 choices[1].setAttribute("x", this.width / 2 - 15);
                 choices[1].setAttribute("y", this.height / 2 - 15);
 
-                choices[2].setAttribute("x", this.width / 2 + 15 +  padding);
+                choices[2].setAttribute("x", this.width / 2 + 15 +  spacing);
                 choices[2].setAttribute("y", this.height / 2 - 15);
 
                 this.container.setAttribute("viewBox", "0 0 " + this.width + " " + this.height);
@@ -92,7 +92,7 @@ const BaseChoiceDisplaySimulation = {
 
                 break;
             case "vertical":
-                const height = 90 + 2 * padding;
+                const height = 90 + 2 * spacing;
 
                 if(75 < height + 10) {
                     this.height = height + 10;
@@ -103,13 +103,13 @@ const BaseChoiceDisplaySimulation = {
                 this.width = 300 * this.height / 75;
 
                 choices[0].setAttribute("x", this.width / 2 - 15);
-                choices[0].setAttribute("y", this.height / 2 - 45 - padding);
+                choices[0].setAttribute("y", this.height / 2 - 45 - spacing);
 
                 choices[1].setAttribute("x", this.width / 2 - 15);
                 choices[1].setAttribute("y", this.height / 2 - 15);
 
                 choices[2].setAttribute("x", this.width / 2 - 15);
-                choices[2].setAttribute("y", this.height / 2 + 15 + padding);
+                choices[2].setAttribute("y", this.height / 2 + 15 + spacing);
 
                 this.container.setAttribute("viewBox", "0 0 " + this.width + " " + this.height);
                 
@@ -125,8 +125,8 @@ const BaseChoiceDisplaySimulation = {
         this.orientation = this.source.getAttributeByName("orientation").target;
         this.orientation.register(this);
 
-        this.padding = this.source.getAttributeByName("padding").target;
-        this.padding.register(this);
+        this.spacing = this.source.getAttributeByName("spacing").target;
+        this.spacing.register(this);
 
         this.projection.registerHandler("value.changed", () => {
             this.update();

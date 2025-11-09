@@ -1,5 +1,5 @@
 import { isEmpty, isFunction, isNullOrUndefined, valOrDefault } from "zenkai";
-import { NotificationType, LogType } from "@utils/index.js";
+import { NotificationType, LogType, shake } from "@utils/index.js";
 import { createProjectionLink } from "./utils";
 
 
@@ -165,7 +165,7 @@ function buildContainer(container) {
 
 const LayoutHandler = {
     "wrap-layout": buildWrapLayout,
-    "adaptive-layout": buildAdaptiveLayout,
+    "adaptive-layout": buildAdaptiveLayout
 }
 
 function buildWrapLayout(layout) {
@@ -203,8 +203,6 @@ function buildAdaptiveLayout(layout) {
         background.meet = meet.toLowerCase();
     }
 
-    
-
     schema.background = background;
 
     return schema;
@@ -213,7 +211,8 @@ function buildAdaptiveLayout(layout) {
 const ElementHandler = {
     "field": buildField,
     "static": buildStatic,
-    "dynamic": buildDynamic
+    "dynamic": buildDynamic,
+    "layout": buildLayout
 }
 
 function buildElement(element) {
@@ -302,7 +301,7 @@ function buildChoiceField(field) {
     const choice = {};
     const option = {};
 
-    option.padding = getValue(field, "padding");
+    option.padding = getValue(field, "spacing");
 
     const template = {};
     
@@ -506,6 +505,82 @@ function buildDynamicProjection(elem) {
     }
 
     schema.tag = getValue(elem, ATTR_TAG);
+
+    return schema;
+}
+
+const LAYOUT_HANDLER = {
+    "pattern": buildPatternLayout,
+    "force": buildForceLayout
+}
+
+function buildLayout(layout) {
+    const elementType = layout.getProperty("elementType");
+
+    const handler = LAYOUT_HANDLER[elementType];
+    const schema = {
+        type: "algorithm"
+    }
+
+    if(!isFunction(handler)) {
+        return;
+    }
+
+    schema.algorithm = handler.call(this, layout);
+
+    return schema;
+}
+
+function buildPatternLayout(layout) {
+    const schema = {
+        type: "pattern"
+    };
+
+    schema.orientation = {
+        type: getValue(layout, "orientation")
+    }
+
+    const meet = getValue(layout, "meet");
+    if(meet !== "None" && !isNullOrUndefined(meet)) {
+        schema.meet = meet.toLowerCase();
+    }
+
+    const template = {};
+    template.tag = getValue(layout, ATTR_TAG);
+    template.options = {
+        spacing: getValue(layout, "spacing")
+    };
+    const item = {
+        template: template
+    }
+    schema.list = {
+        item: item
+    };
+
+    return schema;
+}
+
+function buildForceLayout(layout) {
+    const schema = {
+        type: "force"
+    }
+
+    schema.items = {
+        tag: getValue(layout, ATTR_TAG)
+    }
+    
+    const dimensions = {
+        width: getValue(layout, "width"),
+        height: getValue(layout, "height")
+    }
+    schema.dimensions = dimensions;
+
+    const charge = getValue(layout, "charge");
+    const force = {
+        charge: Math.min(charge, charge * -1),
+        linkLenght: getValue(layout, "links-dist")
+    }
+    schema.force = force;
 
     return schema;
 }

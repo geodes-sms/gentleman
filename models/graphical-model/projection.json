@@ -3081,7 +3081,7 @@
                                         "disposition": [
                                             {
                                                 "type": "attribute",
-                                                "name": "padding",
+                                                "name": "spacing",
                                                 "tag": "textual--labelled"
                                             }
                                         ],
@@ -3723,7 +3723,7 @@
                                         "disposition": [
                                             {
                                                 "type": "attribute",
-                                                "name": "padding",
+                                                "name": "spacing",
                                                 "tag": "textual--labelled"
                                             }
                                         ],
