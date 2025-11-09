@@ -2484,6 +2484,14 @@
                                 "css": ["container-config-header"]
                             }
                         }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "elements",
+                        "tag": "element-set",
+                        "style": {
+                            "css": ["container-config-content"]
+                        }
                     }
                 ],
                 "style": {
@@ -2969,6 +2977,146 @@
                             }
                         }
                     ]
+                }
+            }
+        },
+        {
+            "concept": { "name": "pattern-layout" },
+            "tags": ["choice-selection", "config"],
+            "type": "container",
+            "container": {
+                "content": [
+                    {
+                            "type": "template",
+                            "name": "tpl-element-header",
+                            "param": [
+                                { "name": "type", "value": "Ptr" }
+                            ]
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "tag",
+                        "tag": "tag-reference"
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" },
+                "style": {
+                    "css": ["dynamic-config", "dynamic-config--attribute"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "pattern-layout" },
+            "type": "layout",
+            "tags": ["state", "config-state"],
+            "projection": {
+                "type": "flex",
+                "orientation": "column",
+                "disposition": [
+                    {
+                        "type": "template",
+                        "name": "tpl-options--state"
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "column",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "focusable",
+                                    "tag": "switch-field"
+                                }
+                            ],
+                            "style": {
+                                "css": ["text-style"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Choices display",
+                            "style": {
+                                "css": ["mp-style__title"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                {
+                                    "type": "simulation",
+                                    "simulation": {
+                                        "type": "choices-display",
+                                        "width": 300,
+                                        "height": 75
+                                    }
+                                }
+                            ],
+                            "style": {
+                                "css": ["text-style"]
+                            }
+
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            {
+                                                "type": "attribute",
+                                                "name": "padding",
+                                                "tag": "textual--labelled"
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["text-style"]
+                                        }
+                                    }
+                                },           
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "horizontal",
+                                        "disposition": [
+                                            {
+                                                "kind": "static",
+                                                "type": "text",
+                                                "content": "Orientation",
+                                                "style": {
+                                                    "css": ["label", "mp-fieldwrap__label"]
+                                                }
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "orientation",
+                                                "tag": "choice"
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["text-style"]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }        
+                ],
+                "style": {
+                    "css": ["mp-static", "mp-static--text"]
                 }
             }
         },

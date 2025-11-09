@@ -399,7 +399,8 @@
                                 { "name": "choice-field" },
                                 { "name": "placeholder-field" },
                                 { "name": "switch-field" },
-                                { "name": "text-static" }
+                                { "name": "text-static" },
+                                { "name": "pattern-layout" }
                             ]
                         }
                     }
@@ -476,6 +477,42 @@
                         "name": "background",
                         "default": {
                             "name": "imported-content"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "pattern-layout",
+            "nature": "concrete",
+            "prototype": "layout",
+            "attributes": [
+                {
+                    "name": "orientation",
+                    "target": {
+                        "name": "string",
+                        "constraint": {
+                            "values": [
+                                "horizontal",
+                                "vertical"
+                            ]
+                        },
+                        "default": "horizontal"
+                    }
+                },
+                {
+                    "name": "spacing",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "tag",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "tag"
                         }
                     }
                 }
