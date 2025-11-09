@@ -519,6 +519,50 @@
             ]
         },
         {
+            "name": "force-layout",
+            "nature": "concrete",
+            "prototype": "layout",
+            "attributes": [
+                {
+                    "name": "width",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "height",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "charge",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "links-dist",
+                    "target": {
+                        "name": "number",
+                        "default": 0
+                    }
+                },
+                {
+                    "name": "tag",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "tag"
+                        }
+                    }
+                }
+            ]
+        },
+        {
             "name": "background",
             "nature": "prototype",
             "attributes": [
@@ -1189,13 +1233,15 @@
                 {
                     "name": "x",
                     "target": {
-                        "name": "number"
+                        "name": "number",
+                        "default": 0
                     }
                 },
                 {
                     "name": "y",
                     "target": {
-                        "name": "number"
+                        "name": "number",
+                        "default": 0
                     }
                 }
             ]

@@ -2526,6 +2526,10 @@
                 "orientation": "column",
                 "disposition": [
                     {
+                        "type": "template",
+                        "name": "tpl-options--state"
+                    },
+                    {
                         "type": "layout",
                         "layout": {
                             "type": "flex",
@@ -3112,6 +3116,255 @@
                                     }
                                 }
                             ]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "coordinates"
+                    },
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "Wrap Management",
+                        "style": {
+                            "css": ["mp-style__title"]
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "column",
+                            "disposition":[
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "row",
+                                        "disposition": [
+                                            {
+                                                "kind": "static",
+                                                "type": "text",
+                                                "content": "Meet",
+                                                "style": {
+                                                    "css": ["label", "mp-fieldwrap__label"]
+                                                }
+                                            },
+                                            {   
+                                                "type": "attribute",
+                                                "name": "meet",
+                                                "tag": "choice-option"
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["mp-fieldwrap", "mp-fieldwrap--layout"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "speed",
+                                    "tag": "textual--labelled"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "padding",
+                                    "tag": "textual--labelled"
+                                }                    
+                            ],
+                            "style": {
+                                "css": ["text-style"]
+                            }
+                        }
+                    }        
+                ],
+                "style": {
+                    "css": ["mp-static", "mp-static--text"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "force-layout" },
+            "tags": ["choice-selection", "config"],
+            "type": "container",
+            "container": {
+                "content": [
+                    {
+                            "type": "template",
+                            "name": "tpl-element-header",
+                            "param": [
+                                { "name": "type", "value": "Frc" }
+                            ]
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "tag",
+                        "tag": "tag-reference"
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" },
+                "style": {
+                    "css": ["dynamic-config", "dynamic-config--attribute"]
+                }
+            }
+        },
+                {
+            "concept": { "name": "force-layout" },
+            "type": "layout",
+            "tags": ["state", "config-state"],
+            "projection": {
+                "type": "flex",
+                "orientation": "column",
+                "disposition": [
+                    {
+                        "type": "template",
+                        "name": "tpl-options--state"
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "column",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "focusable",
+                                    "tag": "switch-field"
+                                }
+                            ],
+                            "style": {
+                                "css": ["text-style"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Force description",
+                            "style": {
+                                "css": ["mp-style__title"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                {
+                                    "type": "simulation",
+                                    "simulation": {
+                                        "type": "force",
+                                        "width": 300,
+                                        "height": 300
+                                    }
+                                }
+                            ],
+                            "style": {
+                                "css": ["text-style"]
+                            }
+
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            {
+                                                "type": "attribute",
+                                                "name": "charge",
+                                                "tag": "textual--labelled"
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["text-style"]
+                                        }
+                                    }
+                                },           
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            {
+                                                "type": "attribute",
+                                                "name": "links-dist",
+                                                "tag": "textual--labelled"
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["text-style"]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "coordinates"
+                    },
+                    {
+                        "kind": "static",
+                        "type": "text",
+                        "content": "Wrap Management",
+                        "style": {
+                            "css": ["mp-style__title"]
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "column",
+                            "disposition":[
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "row",
+                                        "disposition": [
+                                            {
+                                                "kind": "static",
+                                                "type": "text",
+                                                "content": "Meet",
+                                                "style": {
+                                                    "css": ["label", "mp-fieldwrap__label"]
+                                                }
+                                            },
+                                            {   
+                                                "type": "attribute",
+                                                "name": "meet",
+                                                "tag": "choice-option"
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["mp-fieldwrap", "mp-fieldwrap--layout"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "speed",
+                                    "tag": "textual--labelled"
+                                },
+                                {
+                                    "type": "attribute",
+                                    "name": "padding",
+                                    "tag": "textual--labelled"
+                                }                    
+                            ],
+                            "style": {
+                                "css": ["text-style"]
+                            }
                         }
                     }        
                 ],
