@@ -17,6 +17,8 @@ import { EllipseShapeSimulation } from "./shapes/ellipse-shape-simulation";
 import { LineShapeSimulation } from "./shapes/line-shape-simulation";
 import { PathShapeSimulation } from "./shapes/path-shape-simulation";
 import { ShapeSimulation } from "./shapes/shape-simulation";
+import { SimpleConnectorSimulation } from "./simple-connector-simulation";
+import { ConnectorStyleSimulation } from "./connector-style-simulation";
 
 var inc = 0;
 const nextId = () => `algo${inc++}`;
@@ -186,6 +188,26 @@ const Handler = {
         object: { value: "simulation" },
         name: { value: "path-shape-simulation" },
         type: { value: "path-shape" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    }),
+    'simple-connector': (model, schema, projection) => Object.create(SimpleConnectorSimulation, {
+        object: { value: "simulation" },
+        name: { value: "simple-connector-simulation" },
+        type: { value: "simple-connector" },
+        id: { value: nextId() },
+        model: { value: model },
+        schema: { value: schema },
+        projection: { value: projection },
+        source: { value: projection.concept, writable: true },
+    }),
+    'connector-style': (model, schema, projection) => Object.create(ConnectorStyleSimulation, {
+        object: { value: "simulation" },
+        name: { value: "connector-style-simulation" },
+        type: { value: "connector-style" },
         id: { value: nextId() },
         model: { value: model },
         schema: { value: schema },

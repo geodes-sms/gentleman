@@ -1993,6 +1993,14 @@
                                     ]
                                 },
                                 {
+                                    "type": "template",
+                                    "name": "mp-button",
+                                    "param": [
+                                        { "name": "type", "value": "simple-connector" },
+                                        { "name": "name", "value": "Simple-Connector"}
+                                    ]
+                                },
+                                {
                                     "kind": "static",
                                     "type": "button",
                                     "trigger": "open-layout",
@@ -2074,22 +2082,6 @@
                                         { "name": "type", "value": "plink-static" },
                                         { "name": "name", "value": "Viewswitch" }
                                     ]
-                                },
-                                {
-                                    "kind": "static",
-                                    "type": "button",
-                                    "trigger": "open-layout",
-                                    "help": "Layout",
-                                    "content": [
-                                        {
-                                            "kind": "static",
-                                            "type": "text",
-                                            "content": "Layout"
-                                        }
-                                    ],
-                                    "style": {
-                                        "css": ["mp-element__btn-trigger", "mp-element__btn-trigger--layout"]
-                                    }
                                 },
                                 {
                                     "kind": "static",
@@ -3371,6 +3363,297 @@
                 "style": {
                     "css": ["mp-static", "mp-static--text"]
                 }
+            }
+        },
+        {
+            "concept": { "name": "simple-connector" },
+            "tags": ["choice-selection", "config"],
+            "type": "container",
+            "container": {
+                "content": [
+                    {
+                        "type": "template",
+                        "name": "tpl-element-header",
+                        "param": [
+                            { "name": "type", "value": "Spl" }
+                        ]
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "source",
+                        "tag": "text-string",
+                        "options": { "placeholder": "source" }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "target",
+                        "tag": "text-string",
+                        "options": { "placeholder": "target" }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "tag",
+                        "tag": "tag-reference"
+                    }
+                ],
+                "layout": { "type": "flex", "orientation": "column" },
+                "style": {
+                    "css": ["dynamic-config", "dynamic-config--attribute"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "simple-connector" },
+            "tags": ["choice-selection", "state"],
+            "type": "layout",
+            "projection": {
+                "type": "flex",
+                "orientation": "column",
+                "disposition": [
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "column",
+                            "disposition": [
+                                {
+                                    "type": "attribute",
+                                    "name": "disabled",
+                                    "tag": "switch-field"
+                                }
+                            ],
+                            "style": {
+                                "css": ["text-style"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Connecting methods",
+                            "style": {
+                                "css": ["mp-style__title"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "wrap",
+                            "disposition": [
+                                {
+                                    "type": "simulation",
+                                    "simulation": {
+                                        "type": "simple-connector",
+                                        "width": 300,
+                                        "height": 75
+                                    }
+                                }
+                            ],
+                            "style": {
+                                "css": ["text-style"]
+                            }
+
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "vertical",
+                            "disposition": [
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "horizontal",
+                                        "disposition": [
+                                            {
+                                                "kind": "static",
+                                                "type": "text",
+                                                "content": "Candidates",
+                                                "style": {
+                                                    "css": ["label", "mp-fieldwrap__label"]
+                                                }
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "candidate-policy",
+                                                "tag": "choice"
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["mp-fieldwrap", "mp-fieldwrap--layout"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "horizontal",
+                                        "disposition": [
+                                            {
+                                                "kind": "static",
+                                                "type": "text",
+                                                "content": "Connection",
+                                                "style": {
+                                                    "css": ["label", "mp-fieldwrap__label"]
+                                                }
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "connection-point",
+                                                "tag": "choice"
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["mp-fieldwrap", "mp-fieldwrap--layout"]
+                                        }
+                                    }
+                                }
+                            ],
+                            "style": {
+                                "css": ["text-style"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "attribute",
+                        "name": "style"
+                    }
+                ]
+            }
+        },
+        {
+            "concept": { "name": "connector-style" },
+            "tags": [],
+            "type": "layout",
+            "projection": {
+                "type": "flex",
+                "orientation": "column",
+                "disposition": [
+                     {
+                        "type": "static",
+                        "static": {
+                            "type": "text",
+                            "content": "Connector style",
+                            "style": {
+                                "css": ["mp-style__title"]
+                            }
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "flex",
+                            "orientation": "column",
+                            "alignItems": "center",
+                            "disposition": [
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "flex",
+                                        "orientation": "row",
+                                        "disposition": [
+                                            {
+                                                "type": "attribute",
+                                                "name": "rounded-linecap",
+                                                "tag": "toggle-field--linecap"
+                                            },
+                                            {
+                                                "type": "attribute",
+                                                "name": "dasharray",
+                                                "tag": "toggle-field--dasharray"
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["text-style"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            {
+                                                "type": "simulation",
+                                                "simulation": {
+                                                    "type": "connector-style",
+                                                    "width": 300,
+                                                    "height": 75
+                                                }
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["text-style"]
+                                        }
+
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "layout",
+                        "layout": {
+                            "type": "stack",
+                            "orientation": "horizontal",
+                            "disposition": [
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            {
+                                                "type": "attribute",
+                                                "name": "stroke",
+                                                "tag": "textual--labelled"
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["text-style"]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "layout",
+                                    "layout": {
+                                        "type": "wrap",
+                                        "disposition": [
+                                            {
+                                                "type": "attribute",
+                                                "name": "opacity",
+                                                "tag": "textual--labelled"
+                                            }
+                                        ],
+                                        "style": {
+                                            "css": ["text-style"]
+                                        }
+                                    }
+                                },
+                                            {
+                                                "type": "layout",
+                                                "layout": {
+                                                    "type": "flex",
+                                                    "orientation": "row",
+                                                    "disposition": [
+                                                        {
+                                                            "type": "attribute",
+                                                            "name": "color"
+                                                        }
+                                                    ],
+                                                    "style": {
+                                                        "css": ["mp-toggle-field", "mp-fieldwrap"]
+                                                    }
+                                                }
+                                            }
+                            ]
+                        }
+                    }
+                ]
             }
         },
         {
@@ -4665,7 +4948,7 @@
                                 }
                             ],
                             "style": {
-                                "css": ["text-style-rule"]
+                                "css": ["text-style-rule", "mp-fieldwrap"]
                             }
                         }
                     },
@@ -4679,7 +4962,10 @@
                                     "name": "font",
                                     "tag": "choice-selection"
                                 }
-                            ]
+                            ],
+                            "style": {
+                                "css": ["text-style-rule", "mp-fieldwrap"]
+                            }
                         }
                     }                   
                 ],
@@ -5440,6 +5726,84 @@
                             { 
                                 "type": "raw", 
                                 "raw": "Strikethrough",
+                                "style": {
+                                    "css": ["mp-toggle-field__label-help"]
+                                }
+                            }
+                        ],       
+                        "style": {
+                            "css": ["mp-toggle-field__label"]
+                        }
+                    },
+                    "style": {
+                        "css": ["mp-toggle-field__checkbox"]
+                    }
+                },
+                "style": {
+                    "css": ["mp-toggle-field"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "boolean" },
+            "tags": ["toggle-field--linecap"],
+            "type": "field",
+            "content": {
+                "type": "binary",
+                "checkbox": {
+                    "label": {
+                        "content": [
+                            { 
+                                "type": "raw",
+                                "raw": "R",
+                                "style": {
+                                    "gss": {
+                                        "text": { "bold": true }
+                                    }
+                                }
+                            },
+                            { 
+                                "type": "raw", 
+                                "raw": "Rounded-linecap",
+                                "style": {
+                                    "css": ["mp-toggle-field__label-help"]
+                                }
+                            }
+                        ],       
+                        "style": {
+                            "css": ["mp-toggle-field__label"]
+                        }
+                    },
+                    "style": {
+                        "css": ["mp-toggle-field__checkbox"]
+                    }
+                },
+                "style": {
+                    "css": ["mp-toggle-field"]
+                }
+            }
+        },
+        {
+            "concept": { "name": "boolean" },
+            "tags": ["toggle-field--dasharray"],
+            "type": "field",
+            "content": {
+                "type": "binary",
+                "checkbox": {
+                    "label": {
+                        "content": [
+                            { 
+                                "type": "raw",
+                                "raw": "D",
+                                "style": {
+                                    "gss": {
+                                        "text": { "bold": true }
+                                    }
+                                }
+                            },
+                            { 
+                                "type": "raw", 
+                                "raw": "Dasharray",
                                 "style": {
                                     "css": ["mp-toggle-field__label-help"]
                                 }

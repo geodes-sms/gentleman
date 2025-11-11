@@ -401,7 +401,8 @@
                                 { "name": "switch-field" },
                                 { "name": "text-static" },
                                 { "name": "pattern-layout" },
-                                { "name": "force-layout" }
+                                { "name": "force-layout" },
+                                { "name": "simple-connector" }
                             ]
                         }
                     }
@@ -569,6 +570,122 @@
             "properties": [
                 { "name": "contentType", "type": "string", "value": "layout" },
                 { "name": "elementType", "type": "string", "value": "force" }
+            ]
+        },
+        {
+            "name": "connector",
+            "nature": "prototype",
+            "prototype": "element",
+            "attributes": [
+                {
+                    "name": "style",
+                    "target": {
+                        "name": "connector-style"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "connector-style",
+            "nature": "concrete",
+            "attributes": [
+                {
+                    "name": "color",
+                    "target": {
+                        "name": "color"
+                    }
+                },
+                {
+                    "name": "stroke",
+                    "target": {
+                        "name": "number",
+                        "default": 5
+                    }
+                },
+                {
+                    "name": "rounded-linecap",
+                    "target": {
+                        "name": "boolean",
+                        "default": false
+                    }
+                },
+                {
+                    "name": "dasharray",
+                    "target": {
+                        "name": "boolean",
+                        "default": false
+                    }
+                },
+                {
+                    "name": "opacity",
+                    "target": {
+                        "name": "number",
+                        "default": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "simple-connector",
+            "nature": "concrete",
+            "prototype": "connector",
+            "attributes": [
+                {
+                    "name": "source",
+                    "target": {
+                        "name": "name"
+                    }
+                },
+                {
+                    "name": "target",
+                    "target": {
+                        "name": "name"
+                    } 
+                },
+                {
+                    "name": "tag",
+                    "target": {
+                        "name": "reference",
+                        "accept": {
+                            "name": "tag"
+                        }
+                    }
+                },
+                {
+                    "name": "disabled",
+                    "target": {
+                        "name": "boolean",
+                        "default": "true"
+                    }
+                },
+                {
+                    "name": "candidate-policy",
+                    "target": {
+                        "name": "string",
+                        "constraint":{
+                            "values": [
+                                "always",
+                                "selected",
+                                "hidden"
+                            ]
+                        },
+                        "default": "always"
+                    }
+                },
+                {
+                    "name": "connection-point",
+                    "target": {
+                        "name": "string",
+                        "constraint":{
+                            "values": [
+                                "absolute",
+                                "centered",
+                                "bordered"
+                            ]
+                        },
+                        "default": "centered"
+                    }
+                }
             ]
         },
         {
