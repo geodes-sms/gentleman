@@ -6,7 +6,7 @@
             "type": "algorithm",
             "tags": [ "default" ],
             "projection": {
-                "type": "adaptative",
+                "type": "adaptive",
                 "background": {
                     "wrap": "myContainer",
                     "speed": 1,
