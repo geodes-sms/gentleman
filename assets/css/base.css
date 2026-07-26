@@ -4,6 +4,10 @@ body {
     font: normal 10px 'Segoe UI', 'Droid Sans', Ubuntu, 'Lucida Grande', Arial, sans-serif;
 }
 
+svg *:focus{
+    outline: none;
+}
+
 h1, h2, h3, h4, h5, h6 {
     font-family: Garamond, Baskerville, Georgia, 'Times New Roman', Times, serif;
 }

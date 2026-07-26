@@ -8,7 +8,7 @@ export const FnProjectionElement = {
   */
     getField(element) {
 
-        if (!isHTMLElement(element) && element.tagName !== "path" && element.tagName !== "text" && element.tagName !== "svg") {
+        if (!isHTMLElement(element) && !(element instanceof SVGElement)) {
             console.warn("Field error: Bad argument");
             return null;
         }
@@ -148,19 +148,8 @@ export const FnProjectionElement = {
     },
 
     resolveElement(element) {
-        if(element instanceof SVGElement){
-            let copy = element;
 
-            while(!isNullOrUndefined(copy.parentNode) && isNullOrUndefined(copy.dataset)){
-                copy = copy.parentNode;
-            }
-
-            if(!isNullOrUndefined(copy.dataset.nature)){
-                element = copy;
-            }
-        }
-
-        if (!isHTMLElement(element) &&  element.tagName !== "path" && element.tagName !== "svg" && element.tagName !== "text") {
+        if (!isHTMLElement(element) &&  !(element instanceof SVGElement)) {
             return null;
         }
 

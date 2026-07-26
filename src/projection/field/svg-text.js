@@ -1,13 +1,124 @@
 import { Field } from "./field";
+import { GraphicalBuilder } from "../../builder/graphical-builder";
+import { SvgHelper } from "../../builder/svg-helper";
+import { findAncestor } from "zenkai";
 
 const { isNullOrUndefined } = require("zenkai");
 
 const BaseTextSVG = {
+    /**
+     * @type { string }
+     * Represents the text-anchor svg attribute.
+     */
+    anchor: "start",
+    /**
+     * @type { string }
+     * Represents the dominant-baseline svg attribute.
+     */
+    baseline: "middle",
+    /**
+     * @type { string }
+     * A string displayed when the field is empty.
+     */
+    placeholder: "...",
+
+    /**
+     * @type { SVGElement }
+     * The SVG projection.
+     */
+    element: null,
+    /**
+     * @type { SVGRectElement }
+     * A box containing the textual element. Used to compute the field size.
+     */
+    box: null,
+    /**
+     * @type { SVGTextElement }
+     * The text area.
+     */
+    textArea: null,
+    /**
+     * @Type { SVGRectElement }
+     * The caret displayed on the text.
+     */
+    caret: null,
+
+    /**
+     * @type { boolean }
+     * Indicates if the field is empty or not.
+     */
+    empty: true,
+    /**
+     * @type { string | number }
+     * The displayed text or number.
+     */
+    content: null,
+    /**
+     * @type { boolean }
+     * Indicates if the field's value can be changed.
+     */
+    readonly: false,
+    /**
+     * @type { boolean }
+     * Indicates if the field is being edited.
+     */
+    active: false,
+    /**
+     * @type { boolean }
+     * Indicated if the field has been added to the DOM.
+     */
+    displayed: false,
+
+    /**
+     * @type { SVGTSpanElement }
+     * The projection text content.
+     */
+    textElement: null,
+    /**
+     * @type { SVGForeignObjectElement }
+     * The input's holder.
+     */
+    holder: null,
+    /**
+     * @type { HTMLInputElement }
+     * The input's used to interact with the field.
+     */
+    inputElement: null,
+
+    /**
+     * @type { number }
+     * The projection default abscissa.
+     */
+    defaultX: 0,
+    /**
+     * @type { number }
+     * The projection default ordinate.
+     */
+    defaultY: 0,
+
+    /**
+     * @type { number }
+     * The current index of the caret in the content. The value is -1 if placed before the first character.
+     */
+    index: -1,
+    /**
+     * @type { number | null }
+     * The id of the interval used to make the caret clip.
+     */
+    interval: null,
+
+    /**
+     * Sets up the TextField's Attribute.
+     *
+     * @param args : Object. The object containing the field properties.
+     *
+     * @return {BaseTextSVG} : The configurated TextField.
+     */
     init(args) {
         Object.assign(this.schema, args);
 
         const { anchor = "start", baseline = "auto", placeholder = "..." } = this.schema;
-        
+
         this.anchor = anchor;
         this.baseline = baseline;
         this.placeholder = placeholder;
@@ -15,440 +126,499 @@ const BaseTextSVG = {
         return this;
     },
 
+    /**
+     * Renders the TextField.
+     *
+     * @return {SVGElement} : The field's element.
+     */
     render() {
 
-        if(isNullOrUndefined(this.element)) {
-            this.element = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            this.element.id = this.id;
-            this.element.classList.add("field");
-
-            this.element.dataset.nature = "field";
-            this.element.dataset.view = "svg-text";
-            this.element.dataset.id = this.id;
+        if (isNullOrUndefined(this.element)) {
+            this.element = GraphicalBuilder.createField(this.id, this.name);
         }
 
-        if(isNullOrUndefined(this.box)){
-            this.box = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            this.box.setAttribute("fill", "transparent");
-            
-            this.box.dataset.nature = "field-component";
-            this.box.dataset.view = "svg-text";
-            this.box.dataset.id = this.id;
-
+        if (isNullOrUndefined(this.box)) {
+            this.box = GraphicalBuilder.createTextBox(this.id, this.name);
             this.element.append(this.box);
         }
 
-        
-        if(isNullOrUndefined(this.textArea)){
-            this.textArea = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        if (isNullOrUndefined(this.textArea)) {
+            this.textArea = GraphicalBuilder.createTextArea(this.id, this.anchor, this.baseline);
             this.element.append(this.textArea);
         }
 
-        this.textArea.setAttribute("text-anchor", this.anchor);
-        this.textArea.setAttribute("dominant-baseline", this.baseline);
-        
-        if(this.source.hasValue()) {
-            this.empty = false;
-            this.content = this.source.value;
+        if (this.readonly) {
+            SvgHelper.preventInteraction(this.element);
         } else {
-            this.empty = true;
-            this.content = this.placeholder
+            SvgHelper.allowFocus(this.element);
+            this.initInput();
         }
 
-        if(this.readonly) {
-            this.element.dataset.ignore = "all";
-        } else {
-            this.element.tabIndex = 0;
-            this.createInput();
-        }
-
-        this.setValue();
-
+        this.loadValue();
+        this.updateValue();
+        this.style();
         this.bindEvents();
 
-        this.style();
-
         return this.element;
-
     },
 
-    createInput() {
-        if(isNullOrUndefined(this.textElement)) {
-            this.textElement = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-            this.textElement.tabIndex = -1;
-            
-            this.textElement.dataset.nature = "field-component";
-            this.textElement.dataset.view = "span";
-            this.textElement.dataset.id = this.id;
+    /**
+     * Sets up the required element to simulate a text input.
+     */
+    initInput() {
+        if (isNullOrUndefined(this.textElement)) {
+            this.textElement = GraphicalBuilder.createTextElement(this.id);
+            this.textArea.append(this.textElement);
+
+            SvgHelper.preventFocus(this.textElement);
         }
 
-        this.textArea.append(this.textElement);
-
-        if(isNullOrUndefined(this.holder)) {
-            this.holder = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
-            
-            this.holder.dataset.nature = "field-component";
-            this.holder.dataset.view = "holder";
-            this.holder.dataset.id = this.id;
+        if (isNullOrUndefined(this.holder)) {
+            this.holder = GraphicalBuilder.createHolder(this.id);
+            this.element.append(this.holder);
         }
 
-        this.element.append(this.holder);
-
-        if(isNullOrUndefined(this.inputElement)) {
-            this.inputElement = document.createElementNS("http://www.w3.org/1999/xhtml", "input");
-            
-            this.inputElement.dataset.nature = "field-component";
-            this.inputElement.dataset.view = "input";
-            this.inputElement.dataset.id = this.id;
-
-            if(this.source.name === "string") {
-                this.inputElement.setAttribute("type", "text")
-            } else if (this.source.name === "number") {
-                this.inputElement.setAttribute("type", "number");
-            }
-        }
-        
-        this.holder.append(this.inputElement);
-
-        if(this.source.hasValue()) {
-            this.inputElement.value = this.source.value;
+        if (isNullOrUndefined(this.inputElement)) {
+            this.inputElement = GraphicalBuilder.createInputElement(this.id, this.source.name === "number" ? "number" : "text");
+            this.holder.append(this.inputElement);
         }
     },
 
-    createCaret() {
-        let { height } = this.textElement.getBBox();
-
-        this.caret = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        this.caret.setAttribute("width", 1);
-        this.caret.setAttribute("height", height);
-        this.caret.setAttribute("y", 0);
-     
-        this.caret.dataset.nature = "field-component";
-        this.caret.dataset.view = "caret";
-        this.caret.dataset.id = this.id;
+    /**
+     * Sets the field's initial value.
+     */
+    loadValue() {
+        this.empty = !this.source.hasValue();
+        this.content = this.empty && !this.active ? this.placeholder : this.source.value;
     },
 
-    getCharIndex(e) {
-        const clientRect = this.textElement.getBoundingClientRect();
-        const startOffset = this.textElement.getStartPositionOfChar(0).x;
-
-        let min = Math.pow(e.x - clientRect.x - Math.abs(startOffset) * 2, 2);
-        let index = 0;
-
-        const length = this.textElement.textContent.length;
-
-        for(let i = 1; i < length; i++) {
-            const start = Math.pow(e.x - clientRect.x - Math.abs(startOffset) - this.textElement.getStartPositionOfChar(i).x, 2)
-        
-            if(min < start) {
-                return index;
-            }
-
-            min = start;
-            index = i;
+    /**
+     * Updates the field value.
+     *
+     * @param updateSource : boolean. True if the source's value should be updated.
+     */
+    updateValue(updateSource = false) {
+        if (updateSource) {
+            this.source.setValue(this.inputElement.value);
+            this.loadValue();
         }
 
-        const ending = Math.pow(e.x - clientRect.x - this.textElement.getEndPositionOfChar(index).x, 2); 
-    
-        if(min < ending) {
-            return index;
-        }
-
-        return index + 1;
-    },
-
-    placeEmptyCaret() {
-        this.caret.setAttribute("x", 0);
-        this.caretIndex = 0;
-
-        this.placeInput(0);
-
-        this.setTimer();
-    },
-
-    setTimer() {
-        if(!isNullOrUndefined(this.timer)) {
-            clearInterval(this.timer);
-        }
-
-        this.timer = setInterval( () => {
-            if(this.element.contains(this.caret)) {
-                this.caret.remove();
-            } else {
-                this.element.append(this.caret);
-            }
-        }, 500)
-    },
-
-    placeCaret() {
-        let x;
-
-        const length = this.textElement.textContent.length;
-
-        if(this.caretIndex >= length) {
-            x = this.textElement.getEndPositionOfChar(this.caretIndex - 1).x;
+        if (this.empty && !this.active) {
+            SvgHelper.set(this.textElement, "font-style", "italic");
+            SvgHelper.set(this.textElement, "opacity", "25%");
+            this.content = this.placeholder;
         } else {
-            x = this.textElement.getStartPositionOfChar(this.caretIndex).x;
+            SvgHelper.remove(this.textElement, "font-style");
+            SvgHelper.remove(this.textElement, "opacity");
         }
 
-        this.caret.setAttribute("x", x);
-        
-        this.placeInput(this.caretIndex);
-
-        this.setTimer();
+        this.textElement.textContent = this.content;
     },
 
-    placeInput(index) {
-        if(this.inputElement.createTextRange) {
-            let range = this.inputElement.createTextRange();
-            range.move('character', index)
-            range.select();
-        } else {
-            if(this.inputElement.selectionStart) {
-                this.inputElement.focus();
-                this.inputElement.setSelectionRange(index, index);
-            } else {
-                this.inputElement.focus();
+    /**
+     * Applies the selected style on the textElement.
+     */
+    style() {
+        const { font = "Segoe UI", size = 10, color = "black", weight = false } = this.schema.style;
+
+        SvgHelper.set(this.textElement, "font-family", font);
+        SvgHelper.set(this.textElement, "font-size", size);
+        SvgHelper.set(this.textElement, "fill", color);
+        SvgHelper.set(this.textElement, "font-weight", weight);
+    },
+
+    /**
+     * Sets up the default position for the field.
+     */
+    initCoordinates() {
+        this.defaultX = Number(SvgHelper.get(this.element, "x"));
+        this.defaultY = Number(SvgHelper.get(this.element, "y"));
+    },
+
+    /**
+     * Updates the field's dimension and position to wrap its content.
+     */
+    updateSize() {
+        if (this.empty && this.active) {
+            this.updateSizeEmpty();
+            return;
+        }
+
+        const box = SvgHelper.getBox(this.textElement);
+
+        if (this.active) {
+            if (this.index === -1) {
+                box.x += 1;
+                box.width += 1;
+            }
+
+            if (this.index >= this.content.length - 1) {
+                box.width += 1;
             }
         }
+
+
+        this.updateSizeFromBox(box);
+
+        this.parent.updateSize();
     },
 
-    focusIn() {
+    /**
+     * Updates the field's dimension and position to wrap its content when the field is empty but active.
+     */
+    updateSizeEmpty() {
+        const height = Number(SvgHelper.get(this.caret, "height"));
+        const box = { x: 0, y: -(height / 2), width: 1, height: height }
+
+        this.updateSizeFromBox(box);
+
+        this.parent.updateSize();
 
     },
 
-    focusOut() {
-        if(!isNullOrUndefined(this.timer)) {
-            clearInterval(this.timer);
+    /**
+     * Updates the field's dimension based on a DOMRect.
+     *
+     * @param box : DOMRect. The field's dimensions
+     */
+    updateSizeFromBox(box) {
+
+        SvgHelper.setViewBox(this.element, box);
+
+        SvgHelper.set(this.element, "x", this.computeX(box.width));
+        SvgHelper.set(this.element, "y", this.computeY(box.height));
+        SvgHelper.set(this.element, "width", box.width);
+        SvgHelper.set(this.element, "height", box.height);
+
+        SvgHelper.set(this.box, "x", box.x);
+        SvgHelper.set(this.box, "y", box.y);
+        SvgHelper.set(this.box, "width", box.width);
+        SvgHelper.set(this.box, "height", box.height);
+    },
+
+    /**
+     * Computes the abscissa of the textElement.
+     *
+     * @param witdh : number. The textElement witdh.
+     *
+     * @return {number} : The textElement new x coordinate.
+     */
+    computeX(witdh) {
+        switch (this.anchor) {
+            case "middle":
+                return this.defaultX - witdh / 2;
+            case "end":
+                return this.defaultX - witdh;
+            default:
+                return this.defaultX;
+        }
+    },
+
+    /**
+     * Computes the abscissa of the textElement.
+     *
+     * @param height : number. The textElement height.
+     *
+     * @return {number} : The textElement new y coordinate.
+     */
+    computeY(height) {
+        switch (this.baseline) {
+            case "middle":
+                return this.defaultY - height / 2;
+            case "auto":
+                return this.defaultY - height;
+            default:
+                return this.defaultY;
+        }
+    },
+
+    /**
+     * Adapts the projection when it first enters the DOM.
+     */
+    display() {
+        if (!this.parent.displayed) {
+            return;
         }
 
-        this.caret.remove();
-
-        this.active = false;
-
-        this.setValue();
-
+        this.initCoordinates();
         this.updateSize();
+
+        this.displayed = true;
+    },
+
+    /**
+     * Handles the click action.
+     *
+     * @param target : SVGElement. The target of the click.
+     */
+    clickHandler(target) {
+        console.warn(`CLICK HANDLER NOT IMPLEMENTED FOR ${this.name}`);
+    },
+
+    /**
+     * Handles a click on the field. Starts the flow to position the caret on the projection.
+     *
+     * @param event : PointerEvent. The click event.
+     *
+     * @private Requires the event position, that is not given to the default clickHandler().
+     */
+    _clickHandler(event) {
+        this.active = true;
+
+        if (isNullOrUndefined(this.caret)) {
+            const height = SvgHelper.getBox(this.element).height;
+            this.caret = GraphicalBuilder.createCaret(this.id, height);
+
+            SvgHelper.set(this.caret, "y", 0 - height / 2);
+        }
+
+        this.loadValue();
+
+        if (this.empty) {
+            this.content = "";
+            this.updateValue(true);
+            this.index = -1;
+        } else {
+            this.index = this.findCurrentIndex(event.clientX);
+        }
+
+        this.placeCaret();
+        this.updateSize();
+        this.inputElement.focus();
+    },
+
+    /**
+     * Handles the `escape` command
+     * @param {HTMLElement} target
+     */
+    escapeHandler(target) {
+        let parent = findAncestor(target, (el) => el.tabIndex === 0);
+
+        this.parent.focus(parent);
 
         return false;
     },
 
-    setValue(update = false) {
-        if(update) {
-            this.source.setValue(this.inputElement.value);
-            this.content = this.inputElement.value;
-        }
-
-        if(this.empty && !this.active) {
-            this.textElement.setAttribute("font-style", "italic");
-            this.textElement.setAttribute("opacity", "25%");
-            this.content = this.placeholder;
-        } 
-
-        this.textElement.textContent = this.content;
-
+    /**
+     * Handles the `arrow` command
+     * @param {HTMLElement} target
+     */
+    arrowHandler(dir, target) {
+        console.warn(`ARROW HANDLER NOT IMPLEMENTED FOR ${this.name}`);
     },
 
-    style() {
-        const { font = "Segoe UI", size = 10, color = "black", weight = false } = this.schema.style;
+    /**
+     * Handles the `arrow` commanad in the input
+     */
+    _arrowHandler(dir) {
+        switch (dir) {
+            case "ArrowRight":
+            case "right":
+                if (this.index >= this.content.length - 1) {
+                    this.arrowHandler(dir, this.inputElement);
+                    return;
+                }
 
-        this.textElement.setAttribute("font-family", font);
-        this.textElement.setAttribute("font-size", size);
-        this.textElement.setAttribute("fill", color);
-        this.textElement.setAttribute("font-weight", weight);
+                this.index++;
+                this.placeCaret();
+                return;
+            case "ArrowLeft":
+            case "left":
+                if (this.index <= -1) {
+                    this.arrowHandler(dir, this.inputElement);
+                    return;
+                }
+
+                this.index--;
+                this.placeCaret();
+                return;
+        }
     },
 
-    updateEmptySize() {
-        const height = Number(this.caret.getAttribute("height"));
-
-        this.element.setAttribute("viewBox",
-            "0 0 " +
-            1 + " " +
-            height
-        );
-
-        this.element.setAttribute("width", 1);
-        this.element.setAttribute("height", height);
-
-        if(this.active) {
-            this.caret.setAttribute("y", 0);
+    /**
+     * Places the caret on the appropriated position.
+     */
+    placeCaret() {
+        if (this.empty) {
+            SvgHelper.set(this.caret, "x", 0);
+            this.inputElement.setSelectionRange(0, 0);
+        } else if (this.index < 0) {
+            SvgHelper.set(this.caret, "x", SvgHelper.getStartPosCharX(this.textElement, 0));
+            this.inputElement.setSelectionRange(0, 0);
+        } else {
+            SvgHelper.set(this.caret, "x", SvgHelper.getEndPosCharX(this.textElement, this.index));
+            this.inputElement.setSelectionRange(this.index + 1, this.index + 1);
         }
 
-        switch(this.anchor) {
-            case "middle":
-                this.element.setAttribute("x", this.defaultCoordinates.x - 0.5);
-                break;
-            case "end":
-                this.element.setAttribute("x", this.defaultCoordinates.x - 1);
-                break;
-            case "start":
-                this.element.setAttribute("x", this.defaultCoordinates.x);
-                break;
-        }
-
-        switch(this.baseline) {
-            case "middle":
-                this.element.setAttribute("y", this.defaultCoordinates.y - height / 2);
-                break;
-            case "auto":
-                this.element.setAttribute("y", this.defaultCoordinates.y - height);
-                break;
-            case "hanging":
-                this.element.setAttribute("y", this.defaultCoordinates.y);
-                break;
-        }
-
-        this.box.setAttribute("width", 1);
-        this.box.setAttribute("height", height);
-        this.box.setAttribute("y", 0);
-        this.box.setAttribute("x", 0);
-
-        this.parent.updateSize();
-
+        this.startTimer();
     },
 
-    updateSize() {
-        let box = this.textElement.getBBox();
-                
-        if(isNullOrUndefined(this.defaultCoordinates)){
-            this.defaultCoordinates = {
-                x: Number(this.element.getAttribute("x")),
-                y: Number(this.element.getAttribute("y"))
+    /**
+     * Finds the index where the caret should be placed.
+     *
+     * @param x : number. A click event position on the x-axis.
+     *
+     * @return {number} : The index of the end of the letter where the character should be placed.
+     * Returns -1 if the caret should be placed at the beginning of the text
+     */
+    findCurrentIndex(x) {
+        const clientX = SvgHelper.getAbsBox(this.textElement).x;
+        const offset = SvgHelper.getStartPosCharX(this.textElement, 0);
+        const clickPos = x - clientX - offset;
+
+        let index = -1;
+        let min = SvgHelper.getDistanceOnAxe(clickPos, offset);
+
+        for (let $idx = 0; $idx < this.content.length; $idx++) {
+            const dist = SvgHelper.getDistanceOnAxe(clickPos, SvgHelper.getEndPosCharX(this.textElement, $idx));
+
+            if (min < dist) {
+                return index;
             }
+
+            min = dist;
+            index = $idx;
         }
 
-
-        if(this.empty && this.displayed && this.active) {
-            this.updateEmptySize();
-            return;
-        }
-
-        this.element.setAttribute("viewBox",
-            box.x + " " +
-            box.y + " " +
-            box.width + " " +
-            box.height
-        )
-
-        this.element.setAttribute("width", box.width);
-        this.element.setAttribute("height", box.height);
-
-        if(this.active) {
-            this.caret.setAttribute("y", box.y);
-        }
-
-        switch(this.anchor){
-            case "middle":
-                this.element.setAttribute("x", this.defaultCoordinates.x - box.width / 2);
-                break;
-            case "end":
-                this.element.setAttribute("x", this.defaultCoordinates.x - box.width);
-                break;
-            case "start":
-                this.element.setAttribute("x", this.defaultCoordinates.x);
-                break;
-        }
-
-        switch(this.baseline){
-            case "middle":
-                this.element.setAttribute("y", this.defaultCoordinates.y - box.height / 2);
-                break;
-            case "auto":
-                this.element.setAttribute("y", this.defaultCoordinates.y - box.height);
-                break;
-            case "hanging":
-                this.element.setAttribute("y", this.defaultCoordinates.y);
-                break;
-        }
-
-        
-        this.box.setAttribute("width", box.width);
-        this.box.setAttribute("height", box.height);
-        this.box.setAttribute("y", box.y);
-        this.box.setAttribute("x", box.x);
-
-        this.parent.updateSize();
+        return index;
     },
 
+    /**
+     * Creates the interval managing caret's clipping visual effect.
+     */
+    startTimer() {
+        if (!isNullOrUndefined(this.interval)) {
+            this.clearTimer();
+        }
+
+        this.interval = window.setInterval(this.clipCaret.bind(this), 500);
+    },
+
+    /**
+     * Manages the caret's clipping visual effect.
+     */
+    clipCaret() {
+        if (this.element.contains(this.caret)) {
+            this.hideCaret();
+        } else {
+            this.showCaret();
+        }
+    },
+
+    /**
+     * Removes the caret from the DOM.
+     */
+    hideCaret() {
+        this.caret.remove();
+    },
+
+    /**
+     * Adds the caret to the DOM.
+     */
+    showCaret() {
+        this.element.append(this.caret);
+    },
+
+    /**
+     * Removes the current interval for the caret's clipping visual effect.
+     */
+    clearTimer() {
+        clearInterval(this.interval);
+    },
+
+    /**
+     * Handles changes in the input value.
+     */
+    inputHandler() {
+        this.content = this.inputElement.value;
+        this.index = this.inputElement.selectionStart - 1;
+
+        this.updateValue(true);
+        this.placeCaret();
+        this.updateSize();
+    },
+
+    /**
+     * Handles the manual focus of the element.
+     *
+     * @param target : HTMLElement. The element that caught focus.
+     */
+    focus(target) {
+        this.active = true;
+
+        if (isNullOrUndefined(this.caret)) {
+            const height = SvgHelper.getBox(this.element).height;
+            this.caret = GraphicalBuilder.createCaret(this.id, height);
+
+            SvgHelper.set(this.caret, "y", 0 - height / 2);
+        }
+
+        this.loadValue();
+
+        if (this.empty) {
+            this.content = "";
+            this.updateValue(true);
+        }
+
+        this.index = -1;
+
+        this.placeCaret();
+        this.inputElement.focus();
+    },
+
+    /**
+     * Handles the impact of getting focused.
+     *
+     * @return {BaseTextSVG} : This.
+     */
+    focusIn() {
+        this.element.classList.add("active");
+
+        return this;
+    },
+
+    /**
+     * Handles the impact of the focus leaving.
+     *
+     * @return {BaseTextSVG} : This.
+     */
+    focusOut() {
+        this.active = false;
+
+        this.clearTimer();
+        this.hideCaret();
+        this.updateValue();
+        this.updateSize();
+
+        this.element.classList.remove("active");
+
+        return this;
+    },
+
+    /**
+     * Registers handlers on the projection.
+     */
     bindEvents() {
-        this.textElement.addEventListener("click", (e) => {
-            this.active = true;
-
-            this.textElement.removeAttribute("opacity");
-            this.textElement.removeAttribute("font-style");
-
-            if(isNullOrUndefined(this.caret)) {
-                this.createCaret();
-            }
-
-            if(this.empty) {
-                this.textElement.textContent = "";
-                this.placeEmptyCaret()
-            } else {
-                this.caretIndex = this.getCharIndex(e);
-                this.placeCaret();
-            }
-                        
-            this.updateSize();
-        })
-
-        this.inputElement.addEventListener("focusout", (e) => {
-            this.focusOut();
-        })
-
-        this.inputElement.addEventListener("input", (e) => {
-            const value = this.inputElement.value;
-
-            this.textElement.textContent = value;
-
-            if(value === "") {
-                this.empty = true;
-                this.caretIndex = 0;
-                this.placeEmptyCaret();
-            } else {
-                this.empty = false;
-                this.caretIndex = this.inputElement.selectionStart;
-                this.placeCaret();
-            }
-
-            this.setValue(true);
-            this.updateSize();
-        })
-
-        this.inputElement.addEventListener("keyup", (e) => {
-            if(e.key === "ArrowRight") {
-                if(this.caretIndex > this.textElement.textContent.length) {
-                    return;
-                }
-
-                this.caretIndex++;
-                this.placeCaret();
-
-                return;
-            }
-
-            if(e.key === "ArrowLeft") {
-                if(this.caretIndex === 0) {
-                    return;
-                }
-
-                this.caretIndex--;
-                this.placeCaret();
-
-                return;
-            }
-        })
-
         this.projection.registerHandler("displayed", () => {
-            if(!this.parent.displayed) {
-                return;
-            }
-
-            this.updateSize();
-
-            this.displayed = true;
+            this.display();
         });
+
+        this.element.addEventListener('click', (event) => {
+            this._clickHandler(event);
+        })
+
+        this.inputElement.addEventListener('input', (event) => {
+            this.inputHandler();
+        })
+
+        this.inputElement.addEventListener('keydown', (event) => {
+            const arrows = ["ArrowRight", "ArrowLeft"];
+            if (arrows.includes(event.key)) {
+                this._arrowHandler(event.key);
+            }
+        })
     }
+
 }
 
 export const SvgText = Object.assign(
