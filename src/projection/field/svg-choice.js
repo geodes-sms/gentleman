@@ -1,24 +1,9 @@
-import { ContentHandler } from "../content-handler";
-import { NotificationType } from "@utils/index.js";
-import { isNullOrUndefined, valOrDefault, isObject, findAncestor } from "zenkai";
 import { Field } from "./field"
-
-
-/**
- * Get the choice element
- * @param {HTMLElement} element 
- * @this {BaseChoiceField}
- * @returns {HTMLElement}
- */
-function getItem(element) {
-    const isValid = (el) => el.parentElement === this.choices;
-
-    if (isValid(element)) {
-        return element;
-    }
-
-    return findAncestor(element, isValid, 5);
-}
+import { findAncestor, isNullOrUndefined, isObject, valOrDefault } from "zenkai";
+import { GraphicalBuilder } from "../../builder/graphical-builder";
+import { ContentHandler } from "../content-handler";
+import { SvgHelper } from "../../builder/svg-helper";
+import { NotificationType } from "@utils/index.js";
 
 const isSame = (val1, val2) => {
     if (val1.type === "concept") {
@@ -38,416 +23,545 @@ const isSame = (val1, val2) => {
     }
 
     return val1 === val2;
-};
-
-function getItemType(item) {
-    const { type } = item.dataset;
-
-    return type;
-}
-
-function getItemValue(item) {
-    const { type, value } = item.dataset;
-
-    if (type === "concept") {
-        return this.values.find(val => val.id === value).id;
-    }
-
-    if (type === "meta-concept") {
-        return this.values.find(val => val.name === value).name;
-    }
-
-    if (type === "value") {
-        return value;
-    }
-
-    if (type === "placeholder") {
-        return null;
-    }
-
-    return value;
 }
 
 
 const BaseSVGChoice = {
-    init(args){
+    /**
+     * @type { string }
+     * The direction used to display the field.
+     */
+    direction: "vertical",
+
+    /**
+     * @type { SVGElement }
+     * The SVG projection.
+     */
+    element: null,
+    /**
+     * @type { SVGElement }
+     * The box containing the available choices.
+     */
+    choicesBox: null,
+
+    /**
+     * @type { Map<string, SVGElement> }
+     * A Map to access the displayed choice based on their id.
+     */
+    items: null,
+    /** @type { Array<Concept> }
+     * An array of the currently displayed values.
+     */
+    values: null,
+    /**
+     * @type { boolean }
+     * Indicated if the field has been added to the DOM.
+     */
+    displayed : false,
+
+    /**
+     * @type { Objects }
+     * Describes the field's current dimension and the targeted ones.
+     */
+    containerView : null,
+
+    /**
+     * Sets up the ChoiceField's base attributes.
+     *
+     * @param args : Object. The object containing the field proprerties.
+     *
+     * @return { BaseSVGChoice } : The configurated ChoiceField.
+     */
+    init(args) {
         Object.assign(this.schema, args);
 
         const { direction = "vertical" } = this.schema;
 
-        this.items = new Map();
         this.direction = direction;
 
         return this;
     },
 
-    render(){
+    /**
+     * Renders the ChoiceField.
+     *
+     * @return { SVGElement } : The field's element.
+     */
+    render() {
 
-        if(isNullOrUndefined(this.element)){
-            this.element = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            this.element.id = this.id;
-            this.element.classList.add("field");
-            this.element.tabIndex = -1;
-
-            this.element.dataset.nature = "field";
-            this.element.dataset.view = "svg-choice";
-            this.element.dataset.id = this.id;
+        if (isNullOrUndefined(this.element)) {
+            this.element = GraphicalBuilder.createField(this.id, this.name);
         }
 
-        if(isNullOrUndefined(this.choices)){
-            this.choices = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            this.choices.tabIndex = -1;
-            
-            this.choices.dataset.nature = "field-component";
-            this.choices.dataset.view = "svg-choice";
-            this.choices.dataset.id = this.id;
+        if (isNullOrUndefined(this.choicesBox)) {
+            this.choicesBox = GraphicalBuilder.createChoicesBox(this.id);
 
-            this.element.append(this.choices);
+            this.element.append(this.choicesBox)
         }
 
-
-        this.values = this.source.getCandidates();
-
-        this.values.forEach((value) => {
-            this.choices.append(this.createChoiceOption(value));
-        })
-
-        if(this.source.hasValue()){
-            if(this.source.schema.nature === "prototype"){
-                this.setValue(this.source.getValue(true));
-            } else {
-                this.setValue(this.source.getValue());
-            }
+        if(isNullOrUndefined(this.items)) {
+            this.items = new Map();
         }
 
+        this.refreshValues();
         this.bindEvents();
 
         return this.element;
     },
 
-    hasValue(){ return !isNullOrUndefined(this.value) },
-
-    createChoiceOption(value){
-        const { template = {} } = this.schema.choice.option;
-
-        const isConcept = isObject(value);
-
-        const container = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        container.tabIndex = 0;
-
-        container.dataset.nature =  "field-component";
-        container.dataset.view = "choice";
-        container.dataset.id = this.id;
-        container.dataset.type = isConcept? "concept" : "value";
-        container.dataset.value = isConcept? value.id : value;
-
-        this.items.set(value.id, container);
-
-        if(value.type === "meta-concept"){
-            let choiceProjectionSchema = this.model.getProjectionSchema(value.concept, valOrDefault(template.tag))[0];
-
-            let type = choiceProjectionSchema.type;
-            let schema = {
-                "type": type,
-                [type]: choiceProjectionSchema.content || choiceProjectionSchema.projection
-            }
-            let render = ContentHandler.call(this, schema, value.concept, { focusable: false, meta: value.name });
-            container.dataset.type = "meta-concept";
-            container.dataset.value = value.name;
-            container.append(render);
-        }else if(isConcept){
-            if(!this.model.hasProjectionSchema(value, template.tag)){
-                return container;
-            }
-
-            let choiceProjection = this.model.createProjection(value, template.tag).init({focusable: false});
-            choiceProjection.readonly = true;
-            choiceProjection.focusable = false;
-            choiceProjection.parent = this.projection;
-
-            container.append(choiceProjection.render());
-        }else{
-            container.append(value.toString);
+    /**
+     * Creates and renders the projections of the available choices.
+     */
+    refreshValues() {
+        if (isNullOrUndefined(this.values)) {
+            this.values = [];
         }
 
-        return container;
-    },  
+        const newValues = this.source.getCandidates();
 
-    setValue(value, update = false){
-        var response = null;
-
-        if(update){
-            response = this.source.setValue(value);
-
-            if(!response.success){
-                this.environment.notify(response.message, NotificationType.ERROR);
-            }
-
-            return true;
-        }
-    }, 
-
-    updateSize(){
-        if(this.fixed){
-            return;
-        }
-        this.adaptView();
+        this.removeOldValues(newValues);
+        this.values = newValues;
+        this.createNewValues(newValues);
     },
 
-    adaptView(){
-        switch(this.direction){
-            case "horizontal":
-                this.setHorizontalSelection();
-                break;
-            default:
-                this.setVerticalSelection();
-                break;
+    /**
+     * Removes the options that are not available anymore.
+     *
+     * @param newValues : Array. The new options' values.
+     */
+    removeOldValues(newValues) {
+        this.values
+            .filter(value => !newValues.some(v => isSame(v, value)))
+            .forEach(choice => this.removeChoiceOption(choice));
+    },
+
+    /**
+     * Removes a single option from the projection.
+     *
+     * @param value : Object. The option's value.
+     */
+    removeChoiceOption(value) {
+        if(value.type === "meta-concept") {
+            this.items.get(value.name).remove();
+            this.items.delete(value.name);
+
+            return;
+        } else if(isObject(value)) {
+            this.items.get(value.id).remove();
+            this.items.delete(value.id);
+
+            return;
         }
+
+        this.items.get(value.toString()).remove();
+        this.items.delete(value.toString());
+    },
+
+    /**
+     * Creates the options that are not displayed yet.
+     *
+     * @param newValues : Array. The new options' values.
+     */
+    createNewValues(newValues) {
+      newValues
+          .filter(value => !this.hasItem(value))
+          .forEach(choice => this.choicesBox.append(this.createChoiceOption(choice)));
+    },
+
+    /**
+     * Checks if an item is displayed in the options.
+     *
+     * @param value : Object. The option to look for.
+     *
+     * @return { * | boolean } : true if the value is an option, false if not.
+     */
+    hasItem(value) {
+        if(value.type === "concept") {
+            return this.hasItem(value.id);
+        }
+
+        if(value.type === "meta-concept") {
+            return this.hasItem(value.name)
+        }
+
+        return this.items.has(value);
+    },
+
+    /**
+     * Creates an option for a value.
+     *
+     * @param value : Object. The value.
+     *
+     * @return { SVGElement } : A freshly created choiceOption.
+     */
+    createChoiceOption(value) {
+        const choiceOption = GraphicalBuilder.createChoiceOption(this.id);
+
+        if(value.type === "meta-concept") {
+            const metaChoice = this.createMetaConceptChoice(value);
+
+            choiceOption.dataset.type = "meta-concept";
+            choiceOption.dataset.value = value.name;
+
+            choiceOption.append(metaChoice);
+            this.items.set(value.name, choiceOption);
+        } else if (isObject(value)) {
+            const conceptChoice = this.createConceptChoice(value);
+
+            choiceOption.dataset.type = "concept";
+            choiceOption.dataset.value = value.id;
+
+            choiceOption.append(conceptChoice);
+            this.items.set(value.id, choiceOption);
+        } else {
+            const stringValue = value.toString();
+
+            choiceOption.dataset.type = "value";
+            choiceOption.dataset.value = value;
+
+            choiceOption.append(stringValue);
+            this.items.set(stringValue, choiceOption);
+        }
+
+        return choiceOption;
+    },
+
+    /**
+     * Creates the projection of a metaConcept displayed as a choice.
+     *
+     * @param value : Object. The metaConcept.
+     *
+     * @return { SVGElement } : The metaConcept's projection.
+     */
+    createMetaConceptChoice(value) {
+        const { template } = this.schema.choice.option;
+
+        const projectionSchema = this.model.getProjectionSchema(value.concept, valOrDefault(template.tag))[0];
+
+        const schema = {
+            "type": projectionSchema.type,
+            [projectionSchema.type]: projectionSchema.content || projectionSchema.projection
+        }
+
+        return ContentHandler.call(this, schema, value.concept, { focusable: false, meta: value.name });
+
+    },
+
+    /**
+     * Creates the projection of a concept displayed as a choice.
+     *
+     * @param value : Object. The concept.
+     *
+     * @return { SVGElement } : The concept's projection.
+     */
+    createConceptChoice(value) {
+        const { template } = this.schema.choice.option;
+
+        const choiceProjection = this.model.createProjection(value, template.tag).init({ focusable: false});
+        choiceProjection.readonly = true;
+        choiceProjection.focusable = false;
+        choiceProjection.parent = this.projection;
+
+        return choiceProjection.render();
+    },
+
+    /**
+     * Updates the field's dimension.
+     */
+    updateSize() {
+        if(this.direction === "horizontal") {
+            this.updateSizeHorizontally();
+
+        } else {
+            this.updateSizeVertically();
+        }
+
         this.parent.updateSize();
     },
 
-    setVerticalSelection() {
-        let firstElem = this.choices.childNodes[0];
+    /**
+     * Updates the choices disposition horizontally.
+     */
+    updateSizeHorizontally() {
+        const avalaibleChoices = Array.from(this.items.values());
 
-        let proj = this.projection.resolveElement(firstElem.childNodes[0])
+        const firstChoice = avalaibleChoices[0];
 
-        let y, maxW;
+        let { height, width } = this.getItemDimensions(firstChoice);
 
-        if(!isNullOrUndefined(proj.containerView)) {
-            y = proj.containerView.targetH;
-            maxW = proj.containerView.targetW;
-        } else {
-            if(!isNullOrUndefined(firstElem.childNodes[0].getAttribute("height")) && !isNullOrUndefined(firstElem.childNodes[0].getAttribute("width"))) {
-                y = Number(firstElem.childNodes[0].getAttribute("height"));
-                maxW = Number(firstElem.childNodes[0].getAttribute("width")); 
-            } else {
-                let box = firstElem.getBBox();
-                y = box.height;
-                maxW = box.width;
-            }
-        }
+        SvgHelper.set(firstChoice, "x", 0);
+        SvgHelper.set(firstChoice, "y", 0);
 
-        firstElem.setAttribute("x", 0);
-        firstElem.setAttribute("y", 0);
+        for(let $idx = 1; $idx < avalaibleChoices.length; $idx++ ) {
+            const choice = avalaibleChoices[$idx];
 
-        let nodes = this.choices.childNodes;
+            SvgHelper.set(choice, "x", width);
+            SvgHelper.set(choice, "y", 0);
 
-        for(let i = 1; i < nodes.length; i++){
-            proj = this.projection.resolveElement(nodes[i].childNodes[0]);
-            nodes[i].setAttribute("y", y);
+            const dimensions = this.getItemDimensions(choice);
 
-            if(!isNullOrUndefined(proj.containerView)){
-                y += proj.containerView.targetH;
-                maxW = Math.max(maxW, proj.containerView.targetW); 
-            }else{
-                if(!isNullOrUndefined(nodes[i].childNodes[0].getAttribute("height")) && !isNullOrUndefined(nodes[i].childNodes[0].getAttribute("width"))) {
-                    y += Number(nodes[i].childNodes[0].getAttribute("height"));
-                    maxW = Math.max(maxW, Number(nodes[i].childNodes[0].getAttribute("width")));
-                } else {
-                    let box = nodes[i].getBBox();
-                    y += box.height;
-                    maxW =  Math.max(maxW, box.width);
-                }
-            }
-        }
-
-        for(let i = 1; i < nodes.length; i++){
-            proj = this.projection.resolveElement(nodes[i].childNodes[0]);
-
-            if(!isNullOrUndefined(proj.containerView)){
-                nodes[i].setAttribute("x", (maxW - proj.containerView.targetW) / 2);
-            }else{
-                if(!isNullOrUndefined(nodes[i].childNodes[0].getAttribute("height")) && !isNullOrUndefined(nodes[i].childNodes[0].getAttribute("width"))) {
-                    nodes[i].setAttribute("x", (maxW - Number(nodes[i].childNodes[0].getAttribute("width"))) / 2);
-                } else {
-                    let box = nodes[i].getBBox();
-                    nodes[i].setAttribute("x", (maxW - box.width) / 2)
-                }
-
-            }
+            height = Math.max(height, dimensions.height);
+            width += dimensions.width;
         }
 
         this.containerView = {
-            targetW : maxW,
-            targetH : y,
-            contentW : maxW,
-            contentH : y
+            targetW: width,
+            targetH: height,
+            contentW : width,
+            contentH : height,
+            w: width,
+            h: height
         }
 
-        this.element.setAttribute("width", this.containerView.targetW);
-        this.element.setAttribute("height", this.containerView.targetH);
-
+        SvgHelper.set(this.element, "width", this.containerView.targetW);
+        SvgHelper.set(this.element, "height", this.containerView.targetH);
     },
 
-    setHorizontalSelection(){
-        let firstElem = this.choices.childNodes[0];
+    /**
+     * Updates the choices disposition vertically.
+     */
+    updateSizeVertically() {
+        const availableChoices = Array.from(this.items.values());
 
-        let proj = this.projection.resolveElement(firstElem.childNodes[0]);
-    
-        let x, maxH;
-        if(!isNullOrUndefined(proj.containerView)){
-            x = proj.containerView.targetW;
-            maxH = proj.containerView.targetH;
-        } else {
-            if(!isNullOrUndefined(firstElem.childNodes[0].getAttribute("width")) && !isNullOrUndefined(firstElem.childNodes[0].getAttribute("height"))) {
-                x = Number(firstElem.childNodes[0].getAttribute("width"));
-                maxH = Number(firstElem.childNodes[0].getAttribute("height"));
-            } else {
-                let box = firstElem.getBBox();
-                x = box.width;
-                maxH = box.height;
-            }
+        const firstChoice = availableChoices[0];
 
+        let { height , width } = this.getItemDimensions(firstChoice);
+
+        SvgHelper.set(firstChoice, "x", 0);
+        SvgHelper.set(firstChoice, "y", 0);
+
+        for(let $idx = 1; $idx < availableChoices.length; $idx++) {
+            const choice = availableChoices[$idx];
+
+            SvgHelper.set(choice, "x", 0);
+            SvgHelper.set(choice, "y", height);
+
+            const dimensions = this.getItemDimensions(choice);
+
+            height += height;
+            width = Math.max(width, dimensions.width);
         }
-
-        firstElem.setAttribute("x", 0);
-        firstElem.setAttribute("y", 0);
-
-        let nodes = this.choices.childNodes;
-
-        for(let i = 1; i < nodes.length; i++){
-            proj = this.projection.resolveElement(nodes[i].childNodes[0]);
-            nodes[i].setAttribute("x", x);
-
-            if(!isNullOrUndefined(proj.containerView)){
-                x += proj.containerView.targetW;
-                maxH = Math.max(maxH, proj.containerView.targetH); 
-            }else{
-                if(!isNullOrUndefined(nodes[i].childNodes[0].getAttribute("width")) && !isNullOrUndefined(nodes[i].childNodes[0].getAttribute("height"))) {
-                    x += Number(nodes[i].childNodes[0].getAttribute("width"));
-                    maxH = Math.max(maxH, Number(nodes[i].childNodes[0].getAttribute("height")));
-                } else {
-                    let box = nodes[i].getBBox();
-                    x += box.width;
-                    maxH =  Math.max(maxH, box.height);
-                }
-            }
-        }
-
-        for(let i = 1; i < nodes.length; i++){
-            proj = this.projection.resolveElement(nodes[i].childNodes[0]);
-
-            if(!isNullOrUndefined(proj.containerView)){
-                nodes[i].setAttribute("y", (maxH - proj.containerView.targetH) / 2);
-            }else{
-                if(!isNullOrUndefined(nodes[i].childNodes[0].getAttribute("width")) && !isNullOrUndefined(nodes[i].childNodes[0].getAttribute("height"))) {
-                    nodes[i].setAttribute("y", (maxH - Number(nodes[i].childNodes[0].getAttribute("height"))) / 2);
-                } else {
-                    let box = nodes[i].getBBox();
-                    nodes[i].setAttribute("y", (maxH - box.height) / 2)
-                }
-
-            }
-        }
-
-
 
         this.containerView = {
-            targetW : x,
-            targetH : maxH,
-            contentW : x,
-            contentH : maxH
+            targetW: width,
+            targetH: height,
+            contentW : width,
+            contentH : height,
+            w: width,
+            h: height
         }
 
-        this.element.setAttribute("width", this.containerView.targetW);
-        this.element.setAttribute("height", this.containerView.targetH);
+        SvgHelper.set(this.element, "width", this.containerView.targetW);
+        SvgHelper.set(this.element, "height", this.containerView.targetH);
     },
 
-    clickHandler(target){
-        console.log("Clicked !");
-        console.log(this.element);
-        const item = getItem.call(this, target);
+    /**
+     * Gets an item dimension.
+     *
+     * @param element : SVGElement. The item.
+     *
+     * @return { Object | SVGRect } : The SVGElement's dimensions.
+     */
+    getItemDimensions(element) {
+        const projection = this.projection.resolveElement(SvgHelper.getChild(element));
+        const svgElement = projection.container || projection.element;
 
-        if(!isNullOrUndefined(item) && target !== this.selection){
-            let type = getItemType(item);
-            
-            /** TO DO: Gestion du placeholder? */
-            if(type === "placeholder"){
-                this.source.removeValue();
-            } else {
-                this.setValue(getItemValue.call(this, item), true);
-            }
-
-           
-
-            if(!isNullOrUndefined(this.schema.choice.redirect)) {
-                const { tag } = this.schema.choice.redirect;
-
-                let index = this.projection.findView(tag);
-
-                if(index === -1){
-                    return false;
-                }
-        
-                this.projection.changeView(index);
-            }
-
+        if(GraphicalBuilder.hasContainerView(projection)) {
+            return { height : projection.containerView.targetH, width : projection.containerView.targetW };
         }
 
-        return false;
+        if(GraphicalBuilder.hasDimensions(svgElement)) {
+            return { height : Number(SvgHelper.get(svgElement, "height")), width: Number(SvgHelper.get(svgElement, "width"))};
+        }
+
+        return SvgHelper.getBox(svgElement);
     },
 
-    focusIn(){
-        this.focused = true;
-        this.element.classList.add("active");
+    /**
+     * Adapts the projection when it first enters the DOM.
+     */
+    display() {
+      if(!this.parent.displayed || this.displayed) {
+          return;
+      }
+      this.displayed = true;
+
+      this.displayChoices();
+      this.updateSize();
+    },
+
+    /**
+     * Notifies each choice that it got displayed.
+     */
+    displayChoices() {
+        Array.from(this.items.values())
+            .forEach( element => {
+                const choiceProjection = this.projection.resolveElement(element);
+                choiceProjection.projection.update("displayed");
+            })
+    },
+
+    /**
+     * Handles the click action.
+     *
+     * @param target : SVGElement. The target of the click.
+     *
+     * @return { boolean } : True if the click was handled.
+     */
+    clickHandler(target) {
+        const item = this.getItem(target);
+
+        if(!isNullOrUndefined(item)) {
+            const { value } = item.dataset;
+
+            this.setValue(value);
+            item.focus();
+        }
+
+        return true;
+    },
+
+    /**
+     * Handles the `escape` command.
+     *
+     * @param target : SVGElement. The active element when the `escape` command was used.
+     *
+     * @return { boolean } : True if the command was handled.
+     */
+    escapeHandler(target) {
+        const item = this.getItem(target);
+
+        if(isNullOrUndefined(item)) {
+
+            let parent = findAncestor(target, (el) => el.tabIndex === 0);
+            let element = this.projection.resolveElement(parent);
+
+            if(element) {
+                element.focus(parent);
+            }
+
+            return false;
+        }
 
         this.element.focus();
 
-        let newChoices = []
-        this.source.getCandidates()
-            .filter(val => !this.values.some(value => isSame(value, val)))
-            .forEach(value => {
-                let choiceOption = this.createChoiceOption(value);
-                this.choices.append(choiceOption);
-
-                newChoices.push(this.projection.resolveElement(choiceOption.childNodes[0]));
-                this.values.push(value);
-            })
-
-        newChoices.forEach((choice) => {
-            choice.projection.update("displayed");
-        });
-
-        this.adaptView();
-        return this;
+        return true;
     },
 
-    focusOut(){
-        this.focused = false;
-        this.element.classList.remove("focused");
+    /**
+     * Handles the `enter` command.
+     *
+     * @param target : SVGElement. The active element when the `enter` command was used.
+     *
+     * @return { boolean } : True if the command was handled.
+     */
+    enterHandler(target) {
+        const item = this.getItem(target);
 
-        this.adaptView();
-        return this;
-    },
+        if(item) {
+            const { value } = item.dataset;
 
-    display() {
-        if(!this.parent.displayed){
-            return;
-        }
-        if(this.displayed){
-            return;
-        }
-        this.displayed = true;
-        
-        if(!isNullOrUndefined(this.selectListValue)){
-            this.selectListValueProj.projection.update("displayed");
-        }
-
-        this.choices.childNodes.forEach((c) => {
-            let projection = this.projection.resolveElement(c.childNodes[0]);
-            projection.projection.update("displayed");
-        })
-
-        this.adaptView();
-    },
-
-    bindEvents(){
-        this.projection.registerHandler("displayed", () => {
-            this.display()
-        })
-
-        this.projection.registerHandler("value.changed", (value) => {
             this.setValue(value);
+        } else {
+            this.items.values().next()?.value().focus();
+        }
+
+        return true;
+    },
+
+    /**
+     * Handles the `backspace` command.
+     *
+     * @param target : SVGElement. The active element when the `backspace` command was used.
+     *
+     * @return { boolean } : True if the command was handled.
+     */
+    backspaceHandler(target) {
+        return true;
+    },
+
+    /**
+     * Handles the `arrow` command.
+     *
+     * @param dir : string. The arrow's direction.
+     * @param target : SVGElement. The active element when the `arrow` command was used.
+     *
+     * @return { boolean } : True if the command was handled.
+     */
+    arrowHandler(dir, target) {
+        return true;
+    },
+
+    /**
+     * Handles the manual focus of the element.
+     *
+     * @param target : HTMLElement. The element that caught focus.
+     */
+    focus(target) {
+        this.element.focus();
+    },
+
+    /**
+     * Handles the impact of getting focused.
+     *
+     * @return { BaseTextSVG } : This.
+     */
+    focusIn() {
+        this.element.classList.add('active');
+
+        this.refreshValues();
+        this.updateSize();
+
+        return this;
+    },
+
+    /**
+     * Handles the impact of the focus leaving.
+     *
+     * @return { BaseTextSVG } : This.
+     */
+    focusOut() {
+        this.element.classList.remove('active');
+
+        return this;
+    },
+
+    /**
+     * Updates the source's value.
+     *
+     * @param value : Object. The source's new value.
+     */
+    setValue(value) {
+        const response = this.source.setValue(value);
+
+        if(!response.success) {
+            this.environment.notify(response.message, NotificationType.ERROR);
+        }
+    },
+
+    /**
+     * Find's the field's choice that is associated with the given SVGElement.
+     *
+     * @param target : SVGElement. The base element.
+     *
+     * @return { Element | null } : The associated choice or null if it cannot be found.
+     */
+    getItem(target) {
+      const isValid = (element) =>  this.choicesBox === element.parentNode;
+
+      if(isValid(target)) {
+          return target;
+      }
+
+      return findAncestor(target, isValid, 5);
+    },
+
+    /**
+     * Registers handlers on the projection.
+     */
+    bindEvents() {
+        this.projection.registerHandler("displayed", () => {
+            this.display();
         })
     }
 }

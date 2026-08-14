@@ -1,6 +1,7 @@
 import { SvgBuilder } from "./svg-builder";
 import { SvgHelper } from "./svg-helper";
 import { HtmlBuilder } from "./html-builder";
+import { isNullOrUndefined } from "zenkai";
 
 export const GraphicalBuilder = {
     /**
@@ -139,5 +140,65 @@ export const GraphicalBuilder = {
         SvgHelper.set(caret, "y", 0);
 
         return caret;
+    },
+
+    /**
+     * Creates a box to contain available choices.
+     *
+     * @param id : string. The associated field's id.
+     *
+     * @return { SVGElement } : A freshly created choicesBox.
+     */
+    createChoicesBox(id) {
+        const choicesBox = SvgBuilder.createSvg();
+
+        choicesBox.dataset.nature = "field-component";
+        choicesBox.dataset.view = "choices-box";
+        choicesBox.dataset.id = id;
+
+        SvgHelper.preventFocus(choicesBox);
+
+        return choicesBox;
+    },
+
+    /**
+     * Creates a choice option.
+     *
+     * @param id : string. The associated field's id.
+     *
+     * @return {SVGElement}
+     */
+    createChoiceOption(id) {
+        const choiceOption = SvgBuilder.createSvg();
+
+        choiceOption.dataset.nature = "field-component";
+        choiceOption.dataset.view = "choice-option";
+        choiceOption.dataset.id = id;
+
+        SvgHelper.set(choiceOption, "tabIndex", 0);
+
+        return choiceOption;
+     },
+
+    /**
+     * Indicates if the projection has calculated its targeted dimensions.
+     *
+     * @param projection : Object. The projection.
+     *
+     * @return {boolean} : True if the projection has defined its targeted dimensions.
+     */
+    hasContainerView(projection) {
+        return !isNullOrUndefined(projection.containerView);
+    },
+
+    /**
+     * Indicates if the projection has dimensions attributes.
+     *
+     * @param element : Object. The projection.
+     *
+     * @return {boolean} : True if the projection has dimensions attributes.
+     */
+    hasDimensions(element) {
+        return !isNullOrUndefined(SvgHelper.get(element, "height")) && !isNullOrUndefined(SvgHelper.get(element, "width"));
     }
 }

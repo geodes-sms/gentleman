@@ -139,7 +139,7 @@
                                         "render": {
                                             "type": "attribute",
                                             "name": "multiline",
-                                            "tag": "single_line"
+                                            "tag": "multi_line"
                                         }
                                     }
                                 ]
@@ -158,7 +158,22 @@
                 "anchor": "start",
                 "baseline": "middle",
                 "placeholder": "Content Placeholder",
-                "multiline": false,
+                "style": {
+                    "size": 30,
+                    "font": "Segoe UI",
+                    "weight": false
+                }
+            }
+        },
+        {
+            "concept": { "name": "string" },
+            "tags": [ "multi_line" ],
+            "type": "field",
+            "content": {
+                "type": "svg-multiline",
+                "anchor": "middle",
+                "baseline": "hanging",
+                "placeholder": "Testing\nMultiline\nFields !!!",
                 "style": {
                     "size": 30,
                     "font": "Segoe UI",

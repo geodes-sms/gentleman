@@ -15,8 +15,7 @@
                 {
                     "name": "multiline",
                     "target": {
-                        "name": "string",
-                        "default": "Lorem ipsum dolor."
+                        "name": "string"
                     }
                 }
             ]

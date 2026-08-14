@@ -108,11 +108,11 @@ const BaseTextSVG = {
     interval: null,
 
     /**
-     * Sets up the TextField's Attribute.
+     * Sets up the TextField's base attributes.
      *
-     * @param args : Object. The object containing the field properties.
+     * @param args : Object. The object containing the field's properties.
      *
-     * @return {BaseTextSVG} : The configurated TextField.
+     * @return { BaseTextSVG } : The configurated TextField.
      */
     init(args) {
         Object.assign(this.schema, args);
@@ -129,7 +129,7 @@ const BaseTextSVG = {
     /**
      * Renders the TextField.
      *
-     * @return {SVGElement} : The field's element.
+     * @return { SVGElement } : The field's element.
      */
     render() {
 
@@ -257,7 +257,6 @@ const BaseTextSVG = {
             }
         }
 
-
         this.updateSizeFromBox(box);
 
         this.parent.updateSize();
@@ -282,7 +281,6 @@ const BaseTextSVG = {
      * @param box : DOMRect. The field's dimensions
      */
     updateSizeFromBox(box) {
-
         SvgHelper.setViewBox(this.element, box);
 
         SvgHelper.set(this.element, "x", this.computeX(box.width));
@@ -336,14 +334,13 @@ const BaseTextSVG = {
      * Adapts the projection when it first enters the DOM.
      */
     display() {
-        if (!this.parent.displayed) {
+        if (!this.parent.displayed || this.displayed) {
             return;
         }
+        this.displayed = true;
 
         this.initCoordinates();
         this.updateSize();
-
-        this.displayed = true;
     },
 
     /**
@@ -365,7 +362,7 @@ const BaseTextSVG = {
     _clickHandler(event) {
         this.active = true;
 
-        if (isNullOrUndefined(this.caret)) {
+        if(isNullOrUndefined(this.caret)) {
             const height = SvgHelper.getBox(this.element).height;
             this.caret = GraphicalBuilder.createCaret(this.id, height);
 
@@ -408,7 +405,7 @@ const BaseTextSVG = {
     },
 
     /**
-     * Handles the `arrow` commanad in the input
+     * Handles the `arrow` command in the input
      */
     _arrowHandler(dir) {
         switch (dir) {
@@ -469,7 +466,7 @@ const BaseTextSVG = {
         let index = -1;
         let min = SvgHelper.getDistanceOnAxe(clickPos, offset);
 
-        for (let $idx = 0; $idx < this.content.length; $idx++) {
+        for(let $idx = 0; $idx < this.content.length; $idx++) {
             const dist = SvgHelper.getDistanceOnAxe(clickPos, SvgHelper.getEndPosCharX(this.textElement, $idx));
 
             if (min < dist) {
@@ -607,7 +604,7 @@ const BaseTextSVG = {
             this._clickHandler(event);
         })
 
-        this.inputElement.addEventListener('input', (event) => {
+        this.inputElement.addEventListener('input', () => {
             this.inputHandler();
         })
 

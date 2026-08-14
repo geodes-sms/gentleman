@@ -1222,6 +1222,7 @@ const EditorCore = {
 
         this.body.addEventListener('keydown', (event) => {
             const { target } = event;
+            console.log("Keydown : ", target);
 
             const { nature } = target.dataset;
 

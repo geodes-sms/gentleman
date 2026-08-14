@@ -126,5 +126,21 @@ export const SvgHelper = {
      */
     getEndPosCharX(element, index) {
         return element.getEndPositionOfChar(index).x;
+    },
+
+    /**
+     * Gets the childNode of an element based on its index.
+     *
+     * @param element : SVGElement. The element.
+     * @param index : number. The index.
+     *
+     * @return { HTMLElement | null } : The child element at the specified index or null if it does not exist.
+     */
+    getChild(element, index = 0) {
+        if(element.childNodes.length <= index) {
+            return null;
+        }
+
+        return element.childNodes[index];
     }
 }
