@@ -5,7 +5,7 @@ import { isNullOrUndefined } from "zenkai";
 
 export const GraphicalBuilder = {
     /**
-     * Creates a graphical field
+     * Creates a graphical field.
      *
      * @param id : string. The field's id.
      * @param view : string. The field's type.
@@ -22,6 +22,26 @@ export const GraphicalBuilder = {
         field.dataset.id = id;
 
         return field;
+    },
+
+    /**
+     * Creates a graphical static.
+     *
+     * @param id : string. The static's id.
+     * @param view : string. The static's type.
+     *
+     * @return { SVGElement } : A freshly created static.
+     */
+    createStatic(id, view) {
+      const statik = SvgBuilder.createSvg();
+      statik.id = id;
+      statik.classList.add("static");
+
+      statik.dataset.nature = "static";
+      statik.dataset.view = view;
+      statik.dataset.id = id;
+
+      return statik;
     },
 
     /**
@@ -200,5 +220,16 @@ export const GraphicalBuilder = {
      */
     hasDimensions(element) {
         return !isNullOrUndefined(SvgHelper.get(element, "height")) && !isNullOrUndefined(SvgHelper.get(element, "width"));
+    },
+
+    /**
+     * Translates a string into an SVGElement.
+     *
+     * @param content : string. The input string.
+     *
+     * @return { HTMLElement } : A element created from the string.
+     */
+    createFromString(content) {
+        return new DOMParser().parseFromString(content.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement;
     }
 }

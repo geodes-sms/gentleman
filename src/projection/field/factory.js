@@ -8,7 +8,6 @@ import { SvgText } from './svg-text.js';
 import { SVGChoice } from './svg-choice.js';
 import { SwitchField } from './svg-switch.js';
 import { PlaceholderField } from './svg-placeholder.js';
-import { MultilineSvg } from './svg-multiline.js';
 
 
 const Handler = {
@@ -102,16 +101,6 @@ const Handler = {
         projection: { value: projection },
         source: { value: projection.concept },
     }),
-    'svg-multiline': (model, schema, projection) => Object.create(MultilineSvg, {
-        object: { value: "field" },
-        name: { value: "multiline" },
-        type: { value: "multiline" },
-        id: { value: nextId() },
-        model: { value: model },
-        schema: { value: schema },
-        projection: { value: projection },
-        source: { value: projection.concept }
-    })
 };
 
 var inc = 0;

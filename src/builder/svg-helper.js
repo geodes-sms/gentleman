@@ -50,6 +50,28 @@ export const SvgHelper = {
     },
 
     /**
+     * Gets an SVGElement's width.
+     *
+     * @param element : SVGElement. The SVGElement.
+     *
+     * @return { number } : The element's width.
+     */
+    getWidth(element) {
+        return Number(this.get(element, "width"));
+    },
+
+    /**
+     * Gets an SVGElement's height.
+     *
+     * @param element : SVGElement. The SVGElement.
+     *
+     * @return { number } : The element's height.
+     */
+    getHeight(element) {
+        return Number(this.get(element, "height"));
+    },
+
+    /**
      * Removes an attribute on an SVGElement.
      *
      * @param element : SVGElement. The SVGElement.

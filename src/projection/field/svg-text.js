@@ -566,7 +566,7 @@ const BaseTextSVG = {
     /**
      * Handles the impact of getting focused.
      *
-     * @return {BaseTextSVG} : This.
+     * @return { BaseTextSVG } : This.
      */
     focusIn() {
         this.element.classList.add("active");
@@ -577,7 +577,7 @@ const BaseTextSVG = {
     /**
      * Handles the impact of the focus leaving.
      *
-     * @return {BaseTextSVG} : This.
+     * @return { BaseTextSVG } : This.
      */
     focusOut() {
         this.active = false;
@@ -596,7 +596,7 @@ const BaseTextSVG = {
      * Registers handlers on the projection.
      */
     bindEvents() {
-        this.projection.registerHandler("displayed", () => {
+        this.projection.registerHandler('displayed', () => {
             this.display();
         });
 

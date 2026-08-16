@@ -1,0 +1,10 @@
+{
+  "type" : "concept",
+  "concept" : [
+    {
+      "name" : "Logo",
+      "nature" : "concrete",
+      "root" : true
+    }
+  ]
+}
