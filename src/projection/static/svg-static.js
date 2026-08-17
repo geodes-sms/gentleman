@@ -27,7 +27,7 @@ const BaseSVGStatic = {
      *
      * @param args : Object. The object containing the field's properties.
      *
-     * @return { BaseSVGStatic } : The configurated SVGStatic.
+     * @return { BaseSVGStatic } : The configured SVGStatic.
      */
     init(args) {
         Object.assign(this.schema, args);
@@ -46,6 +46,7 @@ const BaseSVGStatic = {
         if(isNullOrUndefined(this.element)) {
             this.element = GraphicalBuilder.createStatic(this.id, this.name);
             SvgHelper.preventFocus(this.element);
+            SvgHelper.preventInteraction(this.element);
         }
 
         if(isNullOrUndefined(this.content)) {
@@ -86,17 +87,6 @@ const BaseSVGStatic = {
         SvgHelper.set(this.element, "height", box.height);
     },
 
-
-    /**
-     * Handles the manual focus of the element.
-     *
-     * @param target : HTMLElement. The element that caught focus.
-     */
-    focus(target) {
-        console.log('focus : ');
-        console.log('target : ', target);
-    },
-
     /**
      * Handles the impact of getting focused.
      *
@@ -125,8 +115,7 @@ const BaseSVGStatic = {
     bindEvents() {
         this.projection.registerHandler('displayed', () => {
             this.display();
-        })
-
+        });
     }
 }
 

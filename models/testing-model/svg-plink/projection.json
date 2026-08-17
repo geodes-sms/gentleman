@@ -1,0 +1,59 @@
+{
+  "type" : "projection",
+  "projection" : [
+    {
+      "concept" : {
+        "name" : "Sign"
+      },
+      "type" : "algorithm",
+      "tags" : ["eng"],
+      "projection" : {
+        "type" : "wrap",
+        "content" : [
+          {
+            "dimension": {
+              "type": "pure"
+            },
+            "coordinates": {
+              "x" : 0,
+              "y" : 0
+            },
+            "render": {
+              "kind": "static",
+              "type": "svg-plink",
+              "tag" : "fr",
+              "content" : "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"250\" height=\"250\" viewBox=\"0 0 250 250\"><rect width=\"250\" height=\"250\" fill=\"none\"/><polygon points=\"75,12 175,12 238,75 238,175 175,238 75,238 12,175 12,75\" fill=\"#D00A0A\" stroke=\"#FFFFFF\" stroke-width=\"9\" stroke-linejoin=\"round\"/><text x=\"125\" y=\"134\" text-anchor=\"middle\" dominant-baseline=\"middle\" fill=\"#FFFFFF\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"53\" font-weight=\"900\" letter-spacing=\"1\">STOP</text></svg>"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "concept" : {
+        "name" : "Sign"
+      },
+      "type" : "algorithm",
+      "tags" : ["fr"],
+      "projection" : {
+        "type" : "wrap",
+        "content" : [
+          {
+            "dimension": {
+              "type": "pure"
+            },
+            "coordinates": {
+              "x" : 0,
+              "y" : 0
+            },
+            "render": {
+              "kind": "static",
+              "type": "svg-plink",
+              "tag": "eng",
+              "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"250\" height=\"250\" viewBox=\"0 0 250 250\"><rect width=\"250\" height=\"250\" fill=\"none\"/><polygon points=\"75,12 175,12 238,75 238,175 175,238 75,238 12,175 12,75\" fill=\"#D00A0A\" stroke=\"#FFFFFF\" stroke-width=\"9\" stroke-linejoin=\"round\"/><text x=\"125\" y=\"134\" text-anchor=\"middle\" dominant-baseline=\"middle\" fill=\"#FFFFFF\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"43\" font-weight=\"900\" letter-spacing=\"0\">ARRÊT</text></svg>"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

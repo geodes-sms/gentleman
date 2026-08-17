@@ -6,7 +6,7 @@
         "name": "Logo"
       },
       "type": "algorithm",
-      "tags": "default",
+      "tags": ["default"],
       "projection": {
         "type": "wrap",
         "content": [

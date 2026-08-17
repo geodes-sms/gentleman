@@ -227,7 +227,7 @@ export const GraphicalBuilder = {
      *
      * @param content : string. The input string.
      *
-     * @return { HTMLElement } : A element created from the string.
+     * @return { HTMLElement | SVGElement } : A element created from the string.
      */
     createFromString(content) {
         return new DOMParser().parseFromString(content.replace(/\&nbsp;/g, ''), "image/svg+xml").documentElement;

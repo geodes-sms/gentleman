@@ -116,7 +116,7 @@ const Handler = {
         schema: { value: schema },
         projection: { value: projection },
     }),
-    'svg-link': (model, schema, projection) => Object.create(ProjectionLinkSVGStatic, {
+    'svg-plink': (model, schema, projection) => Object.create(ProjectionLinkSVGStatic, {
         object: { value: "static" },
         name: { value: "plinkSVG-static" },
         type: { value: "plinkSVG" },
